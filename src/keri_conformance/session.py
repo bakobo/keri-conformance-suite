@@ -333,8 +333,8 @@ class AdapterSession:
         self.hello = self._start()
         return self.hello
 
-    def request(self, op: str, fields: dict) -> Reply | Failure:
-        """Send one request and read its response; restart first if the last one failed."""
+    def ensure_running(self) -> None:
+        """Restart the adapter if the last request killed it, and require the same hello."""
         if self._proc is None:
             hello = self._start()
             if hello != self.hello:
@@ -343,6 +343,10 @@ class AdapterSession:
                                    "The adapter's hello after a restart differs from its first "
                                    "hello, so results before and after the restart would "
                                    "describe different adapters.", ["The hello changed."])
+
+    def request(self, op: str, fields: dict) -> Reply | Failure:
+        """Send one request and read its response; restart first if the last one failed."""
+        self.ensure_running()
         rid = self.next_id()
         outcome = self._roundtrip({**fields, "id": rid, "op": op}, op, rid)
         if isinstance(outcome, Failure):

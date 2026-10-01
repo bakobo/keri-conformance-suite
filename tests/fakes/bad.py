@@ -139,6 +139,7 @@ def main():
     if MODE == "crash-on-junk":
         hello()
         read_request()
+        sys.exit(5)
     if MODE == "silent-on-junk":
         hello()
         for line in sys.stdin.buffer:

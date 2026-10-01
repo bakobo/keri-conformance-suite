@@ -7,6 +7,7 @@ from pathlib import Path
 
 from keri_conformance import __version__
 from keri_conformance.cases import load_cases
+from keri_conformance.check import check_adapter, exit_code, render
 from keri_conformance.errors import (
     E_REPORT_WRITE,
     E_USAGE_INVALID,
@@ -27,6 +28,14 @@ exit codes:
   4  runner fault: the adapter could not be started, a case is malformed, the runner is
      running as root, the report could not be written, or an active MUST assertion uses a
      check this runner version cannot evaluate
+"""
+
+CHECK_EXIT_CODES = """\
+exit codes:
+  0  every available probe passed
+  1  at least one probe failed
+  2  usage error
+  4  runner fault: the adapter could not be started, or the runner is running as root
 """
 
 
@@ -89,6 +98,12 @@ def _parser() -> argparse.ArgumentParser:
                      help="where to write the JSON report (default: kcs-report.json)")
     _adapter_options(run)
     run.set_defaults(handler=_run)
+    check = commands.add_parser("check-adapter", help="probe an adapter's protocol behaviour",
+                                epilog=CHECK_EXIT_CODES,
+                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    check.add_argument("adapter", metavar="CMD", help="the command that starts the adapter")
+    _adapter_options(check)
+    check.set_defaults(handler=_check)
     return parser
 
 
@@ -111,6 +126,13 @@ def _run(args) -> int:
                                           f"{exc}.") from exc
     print(human_summary(report, args.report))
     return VERDICT_EXIT[report["verdict"]]
+
+
+def _check(args) -> int:
+    with _session(args, args.adapter) as session:
+        results = check_adapter(session)
+    print(render(results))
+    return exit_code(results)
 
 
 def main(argv: list[str] | None = None) -> int:
