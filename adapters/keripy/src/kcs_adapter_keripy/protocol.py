@@ -89,6 +89,10 @@ def handle(request):
                                       f"{type(exc).__name__}: {exc}")
 
 
+def _usable_id(rid) -> bool:
+    return type(rid) is int and rid >= 0
+
+
 def handle_line(line: bytes) -> bytes:
     try:
         request = json.loads(line.decode("utf-8"))
@@ -97,6 +101,10 @@ def handle_line(line: bytes) -> bytes:
     if not isinstance(request, dict):
         response = _error(None, "harness", f"{E_MALFORMED}: The request line is not a UTF-8 "
                                            "JSON object.")
+    elif not _usable_id(request.get("id")):
+        # The protocol: a request with no usable id is answered with an error whose id is null.
+        response = _error(None, "harness", f'{E_MALFORMED}: The request has no usable "id"; '
+                                           "it must be a non-negative integer.")
     else:
         response = handle(request)
     return json.dumps(response, separators=(",", ":")).encode()
