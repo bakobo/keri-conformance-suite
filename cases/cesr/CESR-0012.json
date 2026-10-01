@@ -1,0 +1,69 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.",
+        "section": "Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#master-code-table-for-genusversion--_aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 12,
+          "group_end": 56,
+          "kind": "counter",
+          "size": 11,
+          "start": 8
+        },
+        {
+          "code": "D",
+          "end": 56,
+          "kind": "primitive",
+          "raw": "c04415d9f7a7c284034fe48c60e87b7bee25aa4a434bf6c86d5f300661a1944d",
+          "start": 12
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "A genus/version code, then a -J group of 11 quadlets holding one 44-character D primitive. The decoder must report the key's code and raw value at its offsets.",
+  "id": "CESR-0012",
+  "input": {
+    "stream": "2d5f4141414341412d4a414c444d424546646e3370384b4541305f6b6a47446f653376754a61704b51307632794731664d415a686f5a524e"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/primitives.json#parse-ed25519-key-text"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse one Ed25519 verification key in a list group"
+}

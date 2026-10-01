@@ -1,0 +1,77 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 12,
+          "group_end": 12,
+          "kind": "counter",
+          "size": 0,
+          "start": 8
+        },
+        {
+          "code": "-J",
+          "end": 16,
+          "group_end": 60,
+          "kind": "counter",
+          "size": 11,
+          "start": 12
+        },
+        {
+          "code": "D",
+          "end": 60,
+          "kind": "primitive",
+          "raw": "1aa4c717f8c5c5ed2f88b32e4968b614e2de494bc4fea0622b4ca693d1abd59f",
+          "start": 16
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "A -J group of size 0 followed immediately by a -J group holding one D key. The empty group ends where its count code ends.",
+  "id": "CESR-0031",
+  "input": {
+    "stream": "2d5f4141414341412d4a41412d4a414c4442716b78786634786358744c34697a4c6b6c6f74685469336b6c4c785036675969744d7070505271395766"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/framing.json#empty-group"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "An empty group has size zero and ends at its count code"
+}

@@ -1,0 +1,65 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -A ControllerIdxSigs: the size counts indexed signatures (src/keri/core/counting.py, CounterCodex_1_0).",
+      "check": "decoded",
+      "expected": [
+        {
+          "code": "-A",
+          "end": 4,
+          "group_end": 180,
+          "kind": "counter",
+          "size": 2,
+          "start": 0
+        },
+        {
+          "code": "A",
+          "end": 92,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "980e7b85c052ec653168682bcae7f83b8c8c70c30246355e2a50048230c2d857e492499ea720ce2ab8efcfa2bc368380f6f9c9a5f9166161d684206424a2b9db",
+          "start": 4
+        },
+        {
+          "code": "A",
+          "end": 180,
+          "index": 1,
+          "kind": "indexed",
+          "raw": "019148ac3c5752a80d122c1c78ba87c4b5991e5cb345a04f943812f00707cccfbd438d79bbd00f62de99e179eaf165c8ccca7a83641a9862b8c85bd55ca5d755",
+          "start": 92
+        }
+      ],
+      "id": "a1",
+      "level": "INTEROP"
+    }
+  ],
+  "description": "A 1.00 -A (ControllerIdxSigs) group of two Ed25519 indexed signatures. In keripy 1.x its size is 2, the number of signatures, and the group ends after them.",
+  "id": "CESR-0047",
+  "input": {
+    "stream": "2d41414341414359446e754677464c735a54466f6143764b355f67376a49787777774a474e563471554153434d4d4c59562d5353535a366e494d3471754f5f506f727732673444322d636d6c2d525a68596461454947516b6f726e62414241426b55697350466453714130534c427834756f6645745a6b65584c4e466f452d554f424c774277664d7a3731446a586d373041396933706e68656572785a636a4d796e71445a42715959726a495739566370646456"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-controller-sigs-count-items"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00"
+    ],
+    "wire": [
+      "CESR-1.00"
+    ]
+  },
+  "title": "keripy 1.x: -A counts indexed signatures, not quadlets"
+}

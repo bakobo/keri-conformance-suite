@@ -1,0 +1,69 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.",
+        "section": "Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#master-code-table-for-genusversion--_aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 12,
+          "group_end": 168,
+          "kind": "counter",
+          "size": 39,
+          "start": 8
+        },
+        {
+          "code": "1AAE",
+          "end": 168,
+          "kind": "primitive",
+          "raw": "f78e3a700f60b31f17ada092bc7ff77652cf89a605e63ad002a8798980ead0153d8f09c882c6588515bb165148d67f56a70eaa5684485882d3e61b51dcdcbd1d156f09a4a9069c4c931174cd71d1a4457388d97da6afe6c253078dd647f002bf96e2eb985cf84d680c184ca058930d601faa",
+          "start": 12
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 1AAE, a 114-byte signature with pad size 0, 156 characters, in a -J group of 39 quadlets.",
+  "id": "CESR-0016",
+  "input": {
+    "stream": "2d5f4141414341412d4a416e314141453934343663413967737838587261435376485f33646c4c5069615946356a72514171683569594471304255396a776e4967735a5968525737466c4649316e395770773671566f524957494c5435687452334e793948525676436153704270784d6b7846307a5848527045567a694e6c3970715f6d776c4d486a645a4838414b5f6c754c726d467a345457674d47457967574a4d4e59422d71"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/primitives.json#parse-ed448-signature"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse an Ed448 signature with a four-character code"
+}

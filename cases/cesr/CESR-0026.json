@@ -1,0 +1,109 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-C",
+          "end": 12,
+          "group_end": 280,
+          "kind": "counter",
+          "size": 67,
+          "start": 8
+        },
+        {
+          "code": "-K",
+          "end": 16,
+          "group_end": 280,
+          "kind": "counter",
+          "size": 66,
+          "start": 12
+        },
+        {
+          "code": "A",
+          "end": 104,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "cdc11957ee0c88c3ad4ba4c4e4db78a43b580aa8351a971f6cd3e69ef4472d4eaaaa07d221eed5265ac53832c420510d8e1a426ca51de34133aa8ecc51075531",
+          "start": 16
+        },
+        {
+          "code": "A",
+          "end": 192,
+          "index": 1,
+          "kind": "indexed",
+          "raw": "c67f7c477bbce56ecf82eae369b123018419071f0af555d5b8a2bbe1e46f68701d7ae6d5a2357f2009a216fc5352bc3e6d85ddb100ce5f33cc18f34aeb0920d5",
+          "start": 104
+        },
+        {
+          "code": "A",
+          "end": 280,
+          "index": 2,
+          "kind": "indexed",
+          "raw": "e2c72dc102171c2c37278b7c07dad50cbdf9fa759c0a4e90b162553dd1258c580a7b2754883746d6902033e47f863bb9ece36996032d1bd0ad0b94291be53b8e",
+          "start": 192
+        },
+        {
+          "code": "-J",
+          "end": 284,
+          "group_end": 328,
+          "kind": "counter",
+          "size": 11,
+          "start": 280
+        },
+        {
+          "code": "E",
+          "end": 328,
+          "kind": "primitive",
+          "raw": "96e476731fbc2f738f87e0af3dd703eae98ee4ed9ef48607fde204e27169c65f",
+          "start": 284
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "An attachments group (-C) holds a controller indexed signature group (-K) of three Ed25519 indexed signatures. -K has size 66 (3 x 22 quadlets), not 3; -C has size 67. A digest group follows. This is the framing that made streams unreadable between keripy and the item-counting implementations. The symbol legends of the Encoding Scheme Symbols Table and the indexed-code symbol table say a count code's digits determine 'the count of the following Primitives or groups of Primitives'; this case rests on the explicit rule at the Count Code tables section instead, and the conflict between the two texts is noted, not resolved, here.",
+  "id": "CESR-0026",
+  "input": {
+    "stream": "2d5f4141414341412d4342442d4b42434141444e77526c58376779497736314c704d546b3233696b4f31674b714455616c783973302d61653945637454717171423949683774556d577355344d7351675551324f476b4a737052336a51544f716a73785242315578414244476633784865377a6c62732d4336754e7073534d4268426b4848777231566457346f7276683547396f63423136357457694e583867436149575f464e537644357468643278414d35664d38775938307272435344564143446978793342416863634c44636e693377483274554d76666e36645a774b54704378596c55393053574d574170374a3153494e3062576b43417a35482d474f376e7334326d5741793062304b304c6c436b623554754f2d4a414c454a626b646e4d667643397a6a346667727a3358412d72706a7554746e765347425f3369424f4a7861635a66"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/framing.json#founding-indexed-signatures"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "A controller signature group's size counts quadlets, not signatures"
+}

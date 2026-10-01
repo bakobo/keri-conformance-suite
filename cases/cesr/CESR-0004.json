@@ -1,0 +1,45 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "3042415476594c4d7a50694539626c7a7350537368457262424356773057617144544852386b4952356874326a543876355631515368364d6262574c49367241424f30354c5f617666755f796d6e594957336b71452d5574",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 0B, a 64-byte raw value. 64 mod 3 = 1, so the pad size is 2: two zero lead bytes are prepended and the two zero characters that result are replaced by the two-character code, giving 88 characters.",
+  "id": "CESR-0004",
+  "input": {
+    "code": "0B",
+    "domain": "text",
+    "raw": "13bd82ccccf884f5b973b0f4ac844adb042570d166aa0d31d1f24211e61b768d3f2fe55d504a1e8c6db58b23aac004ed392ff6af7eeff29a76085b792a13e52d"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-ed25519-signature-text"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode an Ed25519 signature in the text domain"
+}

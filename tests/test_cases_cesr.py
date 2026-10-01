@@ -1,0 +1,207 @@
+"""The committed CESR cases are well-formed, cite the pinned specification verbatim, and are
+exactly what their scenarios generate.
+
+These tests read committed files and the pinned specification text from its cache. Tests that need
+the text fetch it into the cache if it is missing, and skip with the reason when they cannot,
+unless KCS_REQUIRE_SPEC=1 is set, when they fail instead.
+"""
+
+import json
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+import pytest
+from jsonschema import Draft202012Validator
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from generators.spec_tables import spec_source
+
+SCHEMA = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
+VALIDATOR = Draft202012Validator(SCHEMA)
+FEATURES = json.loads((ROOT / "profiles" / "features.json").read_text(encoding="utf-8"))["features"]
+CASE_DIR = ROOT / "cases" / "cesr"
+CASE_FILES = sorted(CASE_DIR.glob("*.json"))
+CASES = {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in CASE_FILES}
+HEX = re.compile(r"^([0-9a-f]{2})*$")
+NORMATIVE = "cesr-1.0"
+INTEROP = "keripy-1x-interop"
+
+
+@pytest.fixture(scope="module")
+def spec():
+    try:
+        return spec_source.load_spec()
+    except spec_source.SpecUnavailable as e:
+        if os.environ.get("KCS_REQUIRE_SPEC") == "1":
+            raise
+        pytest.skip(f"the pinned CESR specification text is unavailable: {e}")
+
+
+def _scenario_gaps() -> set[int]:
+    gaps = set()
+    for path in (ROOT / "scenarios" / "cesr").glob("*.json"):
+        gaps.update(g["number"] for g in json.loads(path.read_text(encoding="utf-8")).get("id_gaps", []))
+    return gaps
+
+
+def _assertions():
+    for cid, case in sorted(CASES.items()):
+        for a in case["assertions"]:
+            yield pytest.param(cid, a, id=f"{cid}-{a['id']}")
+
+
+def test_there_are_cases():
+    assert len(CASES) >= 30
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_case_validates_against_the_case_schema(cid):
+    errors = sorted(VALIDATOR.iter_errors(CASES[cid]), key=lambda e: list(e.path))
+    assert not errors, [f"{list(e.path)}: {e.message}" for e in errors]
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_case_id_matches_its_file_name(cid):
+    assert CASES[cid]["id"] == cid
+
+
+def test_case_ids_are_contiguous_apart_from_documented_gaps():
+    numbers = sorted(int(cid.split("-")[1]) for cid in CASES)
+    assert numbers[0] == 1
+    missing = set(range(1, numbers[-1] + 1)) - set(numbers)
+    assert missing <= _scenario_gaps()
+
+
+@pytest.mark.parametrize(("cid", "a"), list(_assertions()))
+def test_normative_assertion_quotes_the_pinned_spec_verbatim(cid, a, spec):
+    if a["level"] == "INTEROP":
+        assert "clause" not in a and a["basis"]
+        return
+    clause = a["clause"]
+    assert clause["spec"] == "cesr"
+    assert clause["commit"] == spec_source.SPEC_COMMIT
+    line = spec_source.find_quote(spec, clause["quote"])
+    heading = spec_source.section_of_line(spec, line)
+    assert clause["section"] == heading.text
+    assert clause["url"] == spec_source.file_url(heading.anchor)
+    assert a["level"] in clause["quote"]
+
+
+def test_the_cached_spec_is_the_pinned_text(spec):
+    assert spec_source.sha256(spec) == spec_source.SPEC_SHA256
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_case_profile_level_and_provenance_agree(cid):
+    case = CASES[cid]
+    levels = {a["level"] for a in case["assertions"]}
+    if case["profile"] == NORMATIVE:
+        assert levels <= {"MUST", "SHOULD", "MAY"}
+        assert case["provenance"]["reference"] is None
+    else:
+        assert case["profile"] == INTEROP
+        assert levels == {"INTEROP"}
+        assert case["provenance"]["reference"]["implementation"] == "keripy"
+    assert case["provenance"]["generator"]["name"] == "kcs-gen-spec-tables"
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_case_features_are_in_the_vocabulary(cid):
+    for feature in CASES[cid]["targets"]["features"]:
+        assert feature in FEATURES, feature
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_encoded_expectations_are_hex(cid):
+    for a in CASES[cid]["assertions"]:
+        if a["check"] == "encoded":
+            assert HEX.match(a["expected"]) and a["expected"]
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_disputed_cases_carry_a_dispute(cid):
+    case = CASES[cid]
+    assert (case["status"] == "disputed") == ("dispute" in case)
+
+
+@pytest.mark.parametrize("name", [NORMATIVE, INTEROP])
+def test_profile_lists_exactly_its_cases(name):
+    profile = json.loads((ROOT / "profiles" / f"{name}.json").read_text(encoding="utf-8"))
+    assert profile["name"] == name and profile["about"]
+    assert profile["cases"] == sorted(cid for cid, c in CASES.items() if c["profile"] == name)
+
+
+def test_normative_profile_cites_the_pinned_spec():
+    profile = json.loads((ROOT / "profiles" / f"{NORMATIVE}.json").read_text(encoding="utf-8"))
+    assert profile["normative"] is True
+    assert profile["spec"]["tag"] == "v1.0"
+    assert profile["spec"]["commit"] == spec_source.SPEC_COMMIT
+
+
+def test_interop_profile_is_not_normative():
+    profile = json.loads((ROOT / "profiles" / f"{INTEROP}.json").read_text(encoding="utf-8"))
+    assert profile["normative"] is False
+
+
+def test_founding_case_counts_quadlets_not_items():
+    """The case the suite exists for: a group whose size in quadlets differs from its number of
+    primitives, followed by material an item-counting parser would misframe."""
+    case = CASES["CESR-0025"]
+    items = case["assertions"][0]["expected"]
+    group = items[1]
+    inside = [it for it in items[2:] if it["end"] <= group["group_end"]]
+    assert group["size"] != len(inside)
+    assert group["group_end"] == group["end"] + 4 * group["size"]
+    assert items[4]["start"] == group["group_end"]  # the next group starts where this one ends
+    assert items[-1]["end"] == len(bytes.fromhex(case["input"]["stream"]))
+
+
+def test_regenerate_check_passes(spec):
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "regenerate"), "--check"],
+        capture_output=True, text=True, cwd=ROOT, check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+PROTOCOL = json.loads((ROOT / "schema" / "adapter-protocol.schema.json").read_text(encoding="utf-8"))
+
+
+DECODED = Draft202012Validator({"$defs": PROTOCOL["$defs"], "$ref": "#/$defs/result_decoded"})
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_decoded_expectations_are_valid_adapter_results(cid):
+    """An expected item list must be something a conforming adapter could return."""
+    for a in CASES[cid]["assertions"]:
+        if a["check"] == "decoded":
+            errors = list(DECODED.iter_errors({"items": a["expected"]}))
+            assert not errors, [e.message for e in errors]
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_case_loads_through_the_runner(cid):
+    """The runner's own hand-written case checks accept every committed case, as the JSON schema
+    does; a case the runner refused would be a runner fault, never a scored case."""
+    from keri_conformance.cases import case_problem
+
+    assert case_problem(CASES[cid]) is None
+
+
+def test_the_runner_loads_the_whole_cases_directory():
+    from keri_conformance.cases import load_cases
+
+    assert [c["id"] for c in load_cases(ROOT / "cases")] == sorted(CASES)
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_every_expected_counter_states_where_its_group_ends(cid):
+    for a in CASES[cid]["assertions"]:
+        for item in a.get("expected", []) if a["check"] == "decoded" else []:
+            if item["kind"] == "counter":
+                assert item["group_end"] >= item["end"] > item["start"]

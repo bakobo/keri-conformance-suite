@@ -1,0 +1,71 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.",
+        "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-K",
+          "end": 12,
+          "group_end": 104,
+          "kind": "counter",
+          "size": 23,
+          "start": 8
+        },
+        {
+          "code": "2A",
+          "end": 104,
+          "index": 65,
+          "kind": "indexed",
+          "ondex": 70,
+          "raw": "a50254a6d2f428830513dd4fec0524e332cd31528d197b788d91037f794271eddcc2ee4988fa3fd348528a6b54097cd6684ef0219bd951e924772f8e9a890ec6",
+          "start": 12
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 2A#### (Ed25519 indexed sig big dual): two-character index 65 and two-character ondex 70, 92 characters. Both values exceed what one Base64 digit holds.",
+  "id": "CESR-0020",
+  "input": {
+    "stream": "2d5f4141414341412d4b4158324142424247436c416c536d3076516f6777555433555f734253546a4d733078556f305a6533694e6b514e5f65554a7837647a43376b6d492d6a5f5453464b4b6131514a664e5a6f547641686d396c52365352334c34366169513747"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-big-dual"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse a big dual-indexed Ed25519 signature"
+}

@@ -1,0 +1,45 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "44504c4f5f483162383361546c325632754b794d3243367a724b4930615a5f584d6f71574e474f686e6c5831",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code D, a 32-byte raw value. 32 mod 3 = 2, so the pad size is 1: one zero lead byte is prepended before Base64 conversion and the single zero character that results is replaced by the one-character code, giving 44 characters with the value right aligned.",
+  "id": "CESR-0001",
+  "input": {
+    "code": "D",
+    "domain": "text",
+    "raw": "f2cefc7d5bf37693976576b8ac8cd82eb3aca234699fd7328a963463a19e55f5"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-ed25519-verkey-text"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode an Ed25519 verification key in the text domain"
+}

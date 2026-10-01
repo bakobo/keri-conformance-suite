@@ -1,0 +1,92 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 6,
+          "genus": "AAA",
+          "group_end": 6,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 9,
+          "group_end": 108,
+          "kind": "counter",
+          "size": 33,
+          "start": 6
+        },
+        {
+          "code": "D",
+          "end": 42,
+          "kind": "primitive",
+          "raw": "0a2acea4579374d08375f2723a960c247db5110d8e0ff80c805c795a48f10dc7",
+          "start": 9
+        },
+        {
+          "code": "0B",
+          "end": 108,
+          "kind": "primitive",
+          "raw": "1eb733db659ec45430839781c3a13aa8be3a4e2598e197cc98f701057956fb3e9a18b2a3926954f5717cd082fc9c000598c4e7364bfee27001dbcdf074a22f6b",
+          "start": 42
+        },
+        {
+          "code": "-J",
+          "end": 111,
+          "group_end": 144,
+          "kind": "counter",
+          "size": 11,
+          "start": 108
+        },
+        {
+          "code": "E",
+          "end": 144,
+          "kind": "primitive",
+          "raw": "56dffa5dfa0ed414e1395ba05c75a1ebcbda4400be92c66777983ae502160026",
+          "start": 111
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "The stream of CESR-0025 in the binary domain. The size digits are unchanged (33) and now count 3-byte triplets, so the first group ends 99 bytes after its count code. The symbol legends of the Encoding Scheme Symbols Table and the indexed-code symbol table say a count code's digits determine 'the count of the following Primitives or groups of Primitives'; this case rests on the explicit rule at the Count Code tables section instead, and the conflict between the two texts is noted, not resolved, here.",
+  "id": "CESR-0027",
+  "input": {
+    "stream": "fbf000002000f890210c0a2acea4579374d08375f2723a960c247db5110d8e0ff80c805c795a48f10dc7d0101eb733db659ec45430839781c3a13aa8be3a4e2598e197cc98f701057956fb3e9a18b2a3926954f5717cd082fc9c000598c4e7364bfee27001dbcdf074a22f6bf8900b1056dffa5dfa0ed414e1395ba05c75a1ebcbda4400be92c66777983ae502160026"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/framing.json#founding-binary-triplets"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "In the binary domain a group's size counts triplets, not primitives"
+}

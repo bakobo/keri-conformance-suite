@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: nonzero-pad."
+    }
+  ],
+  "description": "An A# indexed signature whose pad bits, between the index and the value, are not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "id": "CESR-0044",
+  "input": {
+    "stream": "2d5f4141414341412d4b41574141697447513849326a3250376c53474a74555a75696741534e716c7843683536597258525262324b3670435a394e456e333858706778537a725258785678574b54596f74747853496d7955695939684d786f7a6b7a4f50"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-nonzero-pad-bits-indexed"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Reject an indexed signature whose pad bits are not zero"
+}

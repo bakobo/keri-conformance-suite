@@ -1,0 +1,78 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.",
+        "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-K",
+          "end": 12,
+          "group_end": 188,
+          "kind": "counter",
+          "size": 44,
+          "start": 8
+        },
+        {
+          "code": "B",
+          "end": 100,
+          "index": 5,
+          "kind": "indexed",
+          "raw": "e02304d16f4467916d8fc004f036179f2734b4b7fa5ab307425907c33ee247bea3463b9e2e1e3570d1e625b2e3747c15471996d9ebd10282f8b60347f4a19497",
+          "start": 12
+        },
+        {
+          "code": "D",
+          "end": 188,
+          "index": 7,
+          "kind": "indexed",
+          "raw": "ee247502e79505efc27900037b9ee38832d54da8870d56004240562fe037b07e8be628872a0f9f349dccad2bd744ebd4a1afc07cc383c603d50b20390a9cc969",
+          "start": 100
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Codes B# (Ed25519, current only) with index 5 and D# (ECDSA secp256k1, current only) with index 7. Both rows define an index of one character and no ondex field, so no ondex is reported.",
+  "id": "CESR-0018",
+  "input": {
+    "stream": "2d5f4141414341412d4b417342464467497754526230526e6b573250774154774e6865664a7a5330745f7061737764435751664450754a4876714e474f353475486a56773065596c73754e3066425648475a625a3639454367766932413066306f5a5358444844754a4855433535554637384a3541414e376e754f494d74564e7149634e566742435146597634446577666f766d4b496371443538306e6379744b3964453639536872384238773450474139554c49446b4b6e4d6c70"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/indexed.json#indexed-current-only-small"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse current-only Ed25519 and secp256k1 indexed signatures"
+}

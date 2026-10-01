@@ -1,0 +1,44 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding.",
+        "section": "Stream parsing rules",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#stream-parsing-rules"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: bad-frame-start."
+    }
+  ],
+  "description": "After a text -J group, the stream continues with the binary encoding of an E digest and no count code. Its first byte has the tritet 0b000, which announces annotated text, but the byte is not text. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "id": "CESR-0045",
+  "input": {
+    "stream": "2d5f4141414341412d4a414c4443457973314436494b30715a5369644c43423572337665516b627551765f41415346304870735a37416c691013fbe275115d4c37dc6ba7f70a23abf8398d2f4d213eb5bdb17428a4a8c50ddf"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-domain-switch-without-count-code"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Reject a switch to the binary domain that does not start with a count code"
+}

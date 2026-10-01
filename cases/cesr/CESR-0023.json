@@ -1,0 +1,71 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.",
+        "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-K",
+          "end": 12,
+          "group_end": 172,
+          "kind": "counter",
+          "size": 40,
+          "start": 8
+        },
+        {
+          "code": "3A",
+          "end": 172,
+          "index": 4096,
+          "kind": "indexed",
+          "ondex": 5000,
+          "raw": "81b23f97e991855e900c5721d17a57f778b509e1e2a04c99bd844a364b05d5f1829e1f1d0c3acbeb4252402f1ad5b5758bbe24bf7b100410c2419dfe72376bf08554200f87f01c39d4f90879f665f31f9d8a5e64facc5da7a6a8ed66058706c81c309b2fb35007d6b4f37668cf01cdf30936",
+          "start": 12
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 3A###### (Ed448 indexed signature big dual): three-character index 4096 and ondex 5000, 160 characters.",
+  "id": "CESR-0023",
+  "input": {
+    "stream": "2d5f4141414341412d4b416f3341424141424f496762495f6c2d6d5268563651444663683058705839336931436548696f45795a7659524b4e6b7346316647436e6838644444724c36304a5351433861316256316937346b7633735142424443515a332d636a64723849565549412d483842773531506b4965665a6c38782d64696c356b2d7378647036616f3757594668776249484443624c374e514239613038335a6f7a77484e38776b32"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/indexed.json#indexed-ed448-big-dual"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse a big dual-indexed Ed448 signature"
+}

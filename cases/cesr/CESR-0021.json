@@ -1,0 +1,71 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.",
+        "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-K",
+          "end": 12,
+          "group_end": 104,
+          "kind": "counter",
+          "size": 23,
+          "start": 8
+        },
+        {
+          "code": "2B",
+          "end": 104,
+          "index": 70,
+          "kind": "indexed",
+          "ondex": 0,
+          "raw": "f77c2911e62ee9b72d3b2dad5b335f5f37ef8cf2af9ed7ee999bca054afbf88a5992dab67024d1cf8cc3159cffd751efc1996cc42594031b5ddecb44c42da153",
+          "start": 12
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 2B#### (Ed25519 indexed sig big current only). Its table row defines an ondex field of two characters even though the signature is current only, so the ondex is reported as encoded: 0.",
+  "id": "CESR-0021",
+  "input": {
+    "stream": "2d5f4141414341412d4b4158324242474141443366436b5235693770747930374c6131624d3139664e2d2d4d38712d65312d365a6d386f4653767634696c6d5332725a774a4e48506a4d4d566e505f5855655f426d577a454a5a514447313365793054454c614654"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-big-current-only-zero-ondex"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse a big current-only Ed25519 signature whose ondex field is zero"
+}

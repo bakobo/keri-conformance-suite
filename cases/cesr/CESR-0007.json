@@ -1,0 +1,45 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "31414142425a644172627a31736e585336567142486e626663514b3150316452494d36755538576c4d6b413153594538",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 1AAB, a 33-byte compressed public key. 33 mod 3 = 0, so there is no pad character to replace and the four-character code is prepended to the conversion, giving 48 characters.",
+  "id": "CESR-0007",
+  "input": {
+    "code": "1AAB",
+    "domain": "text",
+    "raw": "059740adbcf5b275d2e95a811e76df7102b53f575120ceae53c5a532403549813c"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-secp256k1-key-text"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode an ECDSA secp256k1 verification key in the text domain"
+}

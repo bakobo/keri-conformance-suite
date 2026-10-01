@@ -1,0 +1,84 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.",
+        "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-K",
+          "end": 12,
+          "group_end": 104,
+          "kind": "counter",
+          "size": 23,
+          "start": 8
+        },
+        {
+          "code": "2B",
+          "end": 104,
+          "index": 70,
+          "kind": "indexed",
+          "ondex": 9,
+          "raw": "5d7ccb95880f338b7a8f54032bd42ebf59b8b2a6ac655006487d668f33825ba9312b7e75d9fc6b90a112e1d4dac9d19e7ee83dbc46741510d73d1d93b0bed907",
+          "start": 12
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 2B#### with index 70 and ondex 9. The table row defines a two-character ondex field for this current-only code and states no constraint on its value, so the decoded structure reports the ondex as encoded.",
+  "dispute": {
+    "clauses": [
+      {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.",
+        "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
+      }
+    ],
+    "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-01; not yet raised with the CESR specification working group.",
+    "summary": "The Annex indexed code table gives 2B#### (Ed25519 indexed sig big current only) an ondex field of two characters and states no constraint on its value, so a stream carrying ondex 9 decodes to index 70, ondex 9. keripy main (9a8b7aa7) rejects it: Indexer raises 'Invalid ondex=9 for code=2B' because keripy requires the ondex of every current-only code to be zero (src/keri/core/indexing.py, the IdxCrtSigDex checks in _exfil and _bexfil). The specification should either state that constraint, making this a must-reject stream, or confirm that the field is free."
+  },
+  "id": "CESR-0022",
+  "input": {
+    "stream": "2d5f4141414341412d4b415832424247414a4264664d75566941387a6933715056414d723143365f576269797071786c55415a49665761504d344a6271544572666e585a5f4775516f524c68314e724a305a352d36443238526e5156454e6339485a4f7776746b48"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-big-current-only-nonzero-ondex"
+  },
+  "schema_version": 1,
+  "status": "disputed",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse a big current-only Ed25519 signature whose ondex field is not zero"
+}

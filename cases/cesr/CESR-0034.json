@@ -1,0 +1,65 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
+        "section": "Version 2.XX string field format",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
+      },
+      "expected": [
+        {
+          "end": 66,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 66,
+          "start": 0,
+          "version": "2.0"
+        },
+        {
+          "end": 131,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 65,
+          "start": 66,
+          "version": "1.0"
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Two JSON field maps back to back with no count code between them: the first with a 2.XX version string, the second with a legacy 1.XX one. Each body's end comes only from its own version string.",
+  "id": "CESR-0034",
+  "input": {
+    "stream": "7b2276223a224b4552494341414341414a534f4e414142432e222c2274223a22727079222c2264223a22222c2272223a222f6b63732f636573722f6669727374227d7b2276223a224b45524931304a534f4e3030303034315f222c2274223a22727079222c2264223a22222c2272223a222f6b63732f636573722f7365636f6e64227d"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/messages.json#json-2x-then-1x"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.serialization.json",
+      "keri.version-1.x",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "KERI10JSON",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Frame consecutive JSON bodies with 2.XX and 1.XX version strings"
+}

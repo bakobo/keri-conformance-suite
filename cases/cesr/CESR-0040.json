@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error.",
+        "section": "Small Count Code table",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#small-count-code-table"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: unknown-code."
+    }
+  ],
+  "description": "The count code -0AL has the numeral 0 as its second character. The specification reserves numerals for other count code tables, and genus 2.00 defines none, so the code is an error. (keripy 1.x used -0 as its big-count selector; genus 2.00 uses --.)",
+  "id": "CESR-0040",
+  "input": {
+    "stream": "2d5f4141414341412d30414c444b61524d7a6651645668427450716f44497a417142374e6c4532344f4d6a424345424555734d6366576d64"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-numeral-count-selector"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Reject a count code whose second character selects no defined table"
+}

@@ -1,0 +1,57 @@
+{
+  "about": "Non-normative cases for interoperability with keripy 1.x, which frames attachments with the CESR 1.00 count-code table. No specification defines that table, so these cases cite no clause: every assertion is level INTEROP with a basis naming keripy 1.2.14 behaviour, and the expected values come from the table as keripy 1.2.14 defines it (src/keri/core/counting.py, CounterCodex_1_0 and Counter.Sizes[1][0]). keripy 1.x streams carry no genus/version code; the 1.00 table is the context. In that table most count codes count items rather than quadlets.",
+  "profile": "keripy-1x-interop",
+  "context": "keripy-1.2.14",
+  "cases": [
+    {
+      "id": "CESR-0047", "key": "keripy1x-controller-sigs-count-items",
+      "title": "keripy 1.x: -A counts indexed signatures, not quadlets",
+      "description": "A 1.00 -A (ControllerIdxSigs) group of two Ed25519 indexed signatures. In keripy 1.x its size is 2, the number of signatures, and the group ends after them.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"group": "-A", "items": [
+          {"indexed": "A", "raw": "kcs/cesr/k1x/sig0", "index": 0},
+          {"indexed": "A", "raw": "kcs/cesr/k1x/sig1", "index": 1}
+        ]}
+      ],
+      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -A ControllerIdxSigs: the size counts indexed signatures (src/keri/core/counting.py, CounterCodex_1_0)."}]
+    },
+    {
+      "id": "CESR-0048", "key": "keripy1x-nontrans-receipt-couples",
+      "title": "keripy 1.x: -C counts receipt couples",
+      "description": "A 1.00 -C (NonTransReceiptCouples) group of one couple: a B non-transferable prefix and a 0B signature. In keripy 1.x its size is 1, the number of couples.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"group": "-C", "items": [
+          {"primitive": "B", "raw": "kcs/cesr/k1x/witness"},
+          {"primitive": "0B", "raw": "kcs/cesr/k1x/receipt"}
+        ]}
+      ],
+      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -C NonTransReceiptCouples: the size counts (prefix, signature) couples (src/keri/core/counting.py, CounterCodex_1_0)."}]
+    },
+    {
+      "id": "CESR-0049", "key": "keripy1x-attachment-group-quadlets",
+      "title": "keripy 1.x: -V counts quadlets around an item-counted group",
+      "description": "A 1.00 -V (AttachmentGroup) holding an -A group of one indexed signature. -V counts quadlets (23: the -A code and one 88-character signature) while the -A inside it counts items (1).",
+      "operation": "cesr.parse",
+      "stream": [
+        {"group": "-V", "items": [
+          {"group": "-A", "items": [{"indexed": "A", "raw": "kcs/cesr/k1x/attached", "index": 0}]}
+        ]}
+      ],
+      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -V AttachmentGroup counts quadlets while -A ControllerIdxSigs counts signatures (src/keri/core/counting.py, CounterCodex_1_0)."}]
+    },
+    {
+      "id": "CESR-0050", "key": "keripy1x-message-with-signature",
+      "title": "keripy 1.x: a 1.XX JSON body followed by a -A signature group",
+      "description": "The shape keripy 1.x emits: a JSON field map framed by a legacy KERI10JSON version string, then a -A group of one indexed signature with size 1.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"message": {"proto": "KERI", "version": [1, 0], "legacy": true,
+                     "fields": {"t": "rpy", "d": "", "dt": "2026-01-01T00:00:00.000000+00:00", "r": "/kcs/cesr/k1x", "a": {}}}},
+        {"group": "-A", "items": [{"indexed": "A", "raw": "kcs/cesr/k1x/msg-sig", "index": 0}]}
+      ],
+      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): a body framed by a 1.XX version string is followed by attachments in the CESR 1.00 count-code table, where -A counts indexed signatures (src/keri/core/counting.py, CounterCodex_1_0)."}]
+    }
+  ]
+}

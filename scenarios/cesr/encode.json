@@ -1,0 +1,83 @@
+{
+  "about": "cesr.encode cases: a code and a raw value in, the fully qualified encoding out, as hex bytes (the ASCII bytes of the Base64 text in the text domain; the qb2 bytes in the binary domain). One case per code size the master table uses: 1-, 2- and 4-character codes, with pad sizes 1, 2 and 0. Raw values are SHAKE-256 of the label unless hex is given.",
+  "profile": "cesr-1.0",
+  "cases": [
+    {
+      "id": "CESR-0001", "key": "encode-ed25519-verkey-text",
+      "title": "Encode an Ed25519 verification key in the text domain",
+      "description": "Code D, a 32-byte raw value. 32 mod 3 = 2, so the pad size is 1: one zero lead byte is prepended before Base64 conversion and the single zero character that results is replaced by the one-character code, giving 44 characters with the value right aligned.",
+      "operation": "cesr.encode", "code": "D", "raw": "kcs/cesr/encode/ed25519-verkey", "domain": "text",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0002", "key": "encode-ed25519-verkey-binary",
+      "title": "Encode an Ed25519 verification key in the binary domain",
+      "description": "The same code and raw value as CESR-0001 in the binary domain, which is the naive Base64 decoding of the text-domain primitive: 33 bytes whose first six bits are the code.",
+      "operation": "cesr.encode", "code": "D", "raw": "kcs/cesr/encode/ed25519-verkey", "domain": "binary",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0003", "key": "encode-blake3-digest-text",
+      "title": "Encode a Blake3-256 digest in the text domain",
+      "description": "Code E, a 32-byte digest, pad size 1, one-character code.",
+      "operation": "cesr.encode", "code": "E", "raw": "kcs/cesr/encode/blake3-digest", "domain": "text",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0004", "key": "encode-ed25519-signature-text",
+      "title": "Encode an Ed25519 signature in the text domain",
+      "description": "Code 0B, a 64-byte raw value. 64 mod 3 = 1, so the pad size is 2: two zero lead bytes are prepended and the two zero characters that result are replaced by the two-character code, giving 88 characters.",
+      "operation": "cesr.encode", "code": "0B", "raw": "kcs/cesr/encode/ed25519-signature", "domain": "text",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0005", "key": "encode-ed25519-signature-binary",
+      "title": "Encode an Ed25519 signature in the binary domain",
+      "description": "The same code and raw value as CESR-0004 in the binary domain: 66 bytes.",
+      "operation": "cesr.encode", "code": "0B", "raw": "kcs/cesr/encode/ed25519-signature", "domain": "binary",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0006", "key": "encode-salt-text",
+      "title": "Encode a 128-bit salt in the text domain",
+      "description": "Code 0A, a 16-byte raw value, pad size 2, two-character code, 24 characters.",
+      "operation": "cesr.encode", "code": "0A", "raw": "kcs/cesr/encode/salt", "domain": "text",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0007", "key": "encode-secp256k1-key-text",
+      "title": "Encode an ECDSA secp256k1 verification key in the text domain",
+      "description": "Code 1AAB, a 33-byte compressed public key. 33 mod 3 = 0, so there is no pad character to replace and the four-character code is prepended to the conversion, giving 48 characters.",
+      "operation": "cesr.encode", "code": "1AAB", "raw": "kcs/cesr/encode/secp256k1-key", "domain": "text",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0008", "key": "encode-secp256k1-key-binary",
+      "title": "Encode an ECDSA secp256k1 verification key in the binary domain",
+      "description": "The same code and raw value as CESR-0007 in the binary domain: 36 bytes, of which the first three are the code.",
+      "operation": "cesr.encode", "code": "1AAB", "raw": "kcs/cesr/encode/secp256k1-key", "domain": "binary",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0009", "key": "encode-ed448-key-text",
+      "title": "Encode an Ed448 verification key in the text domain",
+      "description": "Code 1AAD, a 57-byte key, pad size 0, four-character code prepended, 80 characters.",
+      "operation": "cesr.encode", "code": "1AAD", "raw": "kcs/cesr/encode/ed448-key", "domain": "text",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0010", "key": "encode-short-number-text",
+      "title": "Encode the specification's own short-number example in the text domain",
+      "description": "The worked example under 'Examples of pre-padding': (\"M\", 0x0001) encodes to \"MAAB\" in the text domain.",
+      "operation": "cesr.encode", "code": "M", "hex": "0001", "domain": "text",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    },
+    {
+      "id": "CESR-0011", "key": "encode-short-number-binary",
+      "title": "Encode the specification's own short-number example in the binary domain",
+      "description": "The worked example under 'Examples of pre-padding': (\"M\", 0x0001) encodes to 0x300001 in the binary domain.",
+      "operation": "cesr.encode", "code": "M", "hex": "0001", "domain": "binary",
+      "assertions": [{"check": "encoded", "clause": "mid-padding"}]
+    }
+  ]
+}

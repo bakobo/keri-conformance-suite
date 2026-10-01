@@ -1,0 +1,46 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "0cf2cefc7d5bf37693976576b8ac8cd82eb3aca234699fd7328a963463a19e55f5",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "The same code and raw value as CESR-0001 in the binary domain, which is the naive Base64 decoding of the text-domain primitive: 33 bytes whose first six bits are the code.",
+  "id": "CESR-0002",
+  "input": {
+    "code": "D",
+    "domain": "binary",
+    "raw": "f2cefc7d5bf37693976576b8ac8cd82eb3aca234699fd7328a963463a19e55f5"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-ed25519-verkey-binary"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode an Ed25519 verification key in the binary domain"
+}

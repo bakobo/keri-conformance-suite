@@ -1,0 +1,140 @@
+{
+  "about": "cesr.parse cases that must be rejected. Each stream is a well-formed stream with exactly one thing broken: truncated inside a primitive, a count code or a message; a group that ends inside a primitive or counts past the end of the stream; a count code whose second character selects no defined table; nonzero pad bits or lead bytes; or a switch into the binary domain that does not start with a count code.",
+  "profile": "cesr-1.0",
+  "cases": [
+    {
+      "id": "CESR-0035", "key": "reject-truncated-primitive",
+      "title": "Reject a stream that ends inside a primitive",
+      "description": "A -J group holding one D key, with the last two bytes of the stream removed, so the key is 42 characters, not a whole number of quadlets. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse", "truncate": 2,
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"group": "-J", "items": [{"primitive": "D", "raw": "kcs/cesr/reject/truncated-primitive"}]}
+      ],
+      "assertions": [{"check": "rejected", "clause": "text-multiple-of-four", "note": "Informative class: truncated."}]
+    },
+    {
+      "id": "CESR-0036", "key": "reject-group-ends-inside-primitive",
+      "title": "Reject a group whose size ends it inside a primitive",
+      "description": "A -J group of size 10 (40 characters) holding a 44-character D key: the group ends four characters before the key does, and those four characters then sit at the top level where no frame can start. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"group": "-J", "size": 10, "items": [{"primitive": "D", "raw": "kcs/cesr/reject/short-group"}]}
+      ],
+      "assertions": [{"check": "rejected", "clause": "count-quadlets", "note": "Informative class: group-boundary."}]
+    },
+    {
+      "id": "CESR-0037", "key": "reject-truncated-small-count-code",
+      "title": "Reject a stream that ends inside a small count code",
+      "description": "After the genus/version code the stream holds only -JA, three characters of a four-character count code. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"literal": "-JA"}
+      ],
+      "assertions": [{"check": "rejected", "clause": "small-count-four-chars", "note": "Informative class: truncated."}]
+    },
+    {
+      "id": "CESR-0038", "key": "reject-truncated-large-count-code",
+      "title": "Reject a stream that ends inside a large count code",
+      "description": "After the genus/version code the stream holds only --JAAA, six characters of an eight-character count code. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"literal": "--JAAA"}
+      ],
+      "assertions": [{"check": "rejected", "clause": "large-count-eight-chars", "note": "Informative class: truncated."}]
+    },
+    {
+      "id": "CESR-0039", "key": "reject-count-overruns-stream",
+      "title": "Reject a count that runs past the end of the stream",
+      "description": "A -J group of size 22 holding one D key of 11 quadlets, at the end of the stream: the count claims 11 quadlets that are not there. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"group": "-J", "size": 22, "items": [{"primitive": "D", "raw": "kcs/cesr/reject/overrun"}]}
+      ],
+      "assertions": [{"check": "rejected", "clause": "count-quadlets", "note": "Informative class: count-overrun."}]
+    },
+    {
+      "id": "CESR-0040", "key": "reject-numeral-count-selector",
+      "title": "Reject a count code whose second character selects no defined table",
+      "description": "The count code -0AL has the numeral 0 as its second character. The specification reserves numerals for other count code tables, and genus 2.00 defines none, so the code is an error. (keripy 1.x used -0 as its big-count selector; genus 2.00 uses --.)",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"literal": "-0AL"},
+        {"bare": {"primitive": "D", "raw": "kcs/cesr/reject/numeral-selector"}}
+      ],
+      "assertions": [{"check": "rejected", "clause": "count-numeral-selector", "note": "Informative class: unknown-code."}]
+    },
+    {
+      "id": "CESR-0041", "key": "reject-nonzero-pad-bits-text",
+      "title": "Reject a primitive whose pad bits are not zero",
+      "description": "A D key whose second character carries a 1 in the two bits that come from the zero lead byte, so the mid-padding is not zero. The raw value bits are untouched. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"group": "-J", "items": [{"primitive": "D", "raw": "kcs/cesr/reject/pad-text", "tamper": "pad"}]}
+      ],
+      "assertions": [{"check": "rejected", "clause": "mid-padding", "note": "Informative class: nonzero-pad."}]
+    },
+    {
+      "id": "CESR-0042", "key": "reject-nonzero-lead-byte",
+      "title": "Reject a variable-size primitive whose lead byte is not zero",
+      "description": "An 8-byte string with code 5B carries one lead byte; here that byte is not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"group": "-J", "items": [{"variable": "B", "raw": "kcs/cesr/reject/lead", "length": 8, "tamper": "pad"}]}
+      ],
+      "assertions": [{"check": "rejected", "clause": "mid-padding", "note": "Informative class: nonzero-pad."}]
+    },
+    {
+      "id": "CESR-0043", "key": "reject-nonzero-pad-bits-binary",
+      "title": "Reject a binary-domain primitive whose pad bits are not zero",
+      "description": "A 0B signature in a binary-domain group whose four pad bits, between the code and the value, are not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0, "domain": "binary"},
+        {"group": "-J", "domain": "binary", "items": [{"primitive": "0B", "raw": "kcs/cesr/reject/pad-binary", "tamper": "pad"}]}
+      ],
+      "assertions": [{"check": "rejected", "clause": "mid-padding", "note": "Informative class: nonzero-pad."}]
+    },
+    {
+      "id": "CESR-0044", "key": "reject-nonzero-pad-bits-indexed",
+      "title": "Reject an indexed signature whose pad bits are not zero",
+      "description": "An A# indexed signature whose pad bits, between the index and the value, are not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"group": "-K", "items": [{"indexed": "A", "raw": "kcs/cesr/reject/pad-indexed", "index": 0, "tamper": "pad"}]}
+      ],
+      "assertions": [{"check": "rejected", "clause": "mid-padding", "note": "Informative class: nonzero-pad."}]
+    },
+    {
+      "id": "CESR-0045", "key": "reject-domain-switch-without-count-code",
+      "title": "Reject a switch to the binary domain that does not start with a count code",
+      "description": "After a text -J group, the stream continues with the binary encoding of an E digest and no count code. Its first byte has the tritet 0b000, which announces annotated text, but the byte is not text. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"group": "-J", "items": [{"primitive": "D", "raw": "kcs/cesr/reject/switch-key"}]},
+        {"bare": {"primitive": "E", "raw": "kcs/cesr/reject/switch-digest"}, "domain": "binary"}
+      ],
+      "assertions": [{"check": "rejected", "clause": "stream-resume", "note": "Informative class: bad-frame-start."}]
+    },
+    {
+      "id": "CESR-0046", "key": "reject-truncated-message",
+      "title": "Reject a JSON body shorter than its version string declares",
+      "description": "A JSON field map with a 2.XX version string, with the last five bytes of the stream removed, so the body is shorter than the size its version string declares. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+      "operation": "cesr.parse", "truncate": 5,
+      "stream": [
+        {"message": {"proto": "KERI", "version": [2, 0], "genus_version": [2, 0],
+                     "fields": {"t": "rpy", "d": "", "r": "/kcs/cesr/truncated"}}}
+      ],
+      "assertions": [{"check": "rejected", "clause": "version-string-extract", "note": "Informative class: truncated."}]
+    }
+  ]
+}

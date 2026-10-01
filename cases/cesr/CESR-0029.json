@@ -1,0 +1,98 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 12,
+          "group_end": 196,
+          "kind": "counter",
+          "size": 46,
+          "start": 8
+        },
+        {
+          "code": "D",
+          "end": 56,
+          "kind": "primitive",
+          "raw": "5a1aa22a9b97c1366093f1850ccc259c4288f9d45343b449ac094c3792472eae",
+          "start": 12
+        },
+        {
+          "code": "-J",
+          "end": 60,
+          "group_end": 192,
+          "kind": "counter",
+          "size": 33,
+          "start": 56
+        },
+        {
+          "code": "E",
+          "end": 104,
+          "kind": "primitive",
+          "raw": "2388ab9514ce80496db966b3bb3a9c86095103da36dd97ad8cc53f61b6a1530c",
+          "start": 60
+        },
+        {
+          "code": "0B",
+          "end": 192,
+          "kind": "primitive",
+          "raw": "58f87c8d0c6ede29d12c08390cfc2bf4f41574b40d1cebe0228a8b17e76a2466f0ff9f611773781fd4f5e0509a7135d716b4bccfea667c4134407be5f8d246ec",
+          "start": 104
+        },
+        {
+          "code": "M",
+          "end": 196,
+          "kind": "primitive",
+          "raw": "0102",
+          "start": 192
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "A -J group holds a D key, a nested -J group (holding an E digest and a 0B signature, size 33) and an M short number. The outer size, 46, counts the nested group's count code and contents as well as the other primitives.",
+  "id": "CESR-0029",
+  "input": {
+    "stream": "2d5f4141414341412d4a417544466f616f6971626c384532594a507868517a4d4a5a784369506e5555304f305361774a54446553527936752d4a416845434f49713555557a6f424a62626c6d733773366e49594a555150614e74325872597a46503247326f564d4d304242592d48794e444737654b64457343446b4d5f4376303942563074413063362d4169696f735835326f6b5a76445f6e3245586333676631505867554a70784e646357744c7a50366d5a3851545241652d5834306b62734d414543"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/framing.json#nested-groups"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "A nested group's quadlets count toward its enclosing group"
+}

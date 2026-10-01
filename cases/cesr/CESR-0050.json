@@ -1,0 +1,69 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): a body framed by a 1.XX version string is followed by attachments in the CESR 1.00 count-code table, where -A counts indexed signatures (src/keri/core/counting.py, CounterCodex_1_0).",
+      "check": "decoded",
+      "expected": [
+        {
+          "end": 109,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 109,
+          "start": 0,
+          "version": "1.0"
+        },
+        {
+          "code": "-A",
+          "end": 113,
+          "group_end": 201,
+          "kind": "counter",
+          "size": 1,
+          "start": 109
+        },
+        {
+          "code": "A",
+          "end": 201,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "b5a4e18fb44f0a230986f540cf171a5bd04bd91846e7cdfcc4651284b0c127d473381c23b7ec2f16220e25585b7166bf902febefeb17a2c9c9412af79f73d253",
+          "start": 113
+        }
+      ],
+      "id": "a1",
+      "level": "INTEROP"
+    }
+  ],
+  "description": "The shape keripy 1.x emits: a JSON field map framed by a legacy KERI10JSON version string, then a -A group of one indexed signature with size 1.",
+  "id": "CESR-0050",
+  "input": {
+    "stream": "7b2276223a224b45524931304a534f4e3030303036645f222c2274223a22727079222c2264223a22222c226474223a22323032362d30312d30315430303a30303a30302e3030303030302b30303a3030222c2272223a222f6b63732f636573722f6b3178222c2261223a7b7d7d2d41414241414331704f47507445384b49776d4739554450467870623045765a4745626e7a667a455a524b45734d456e31484d3448434f33374338574967346c574674785a722d514c2d76763678656979636c424b76656663394a54"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-message-with-signature"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: a 1.XX JSON body followed by a -A signature group"
+}

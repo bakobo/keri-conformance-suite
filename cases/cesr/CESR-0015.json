@@ -1,0 +1,83 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 12,
+          "group_end": 60,
+          "kind": "counter",
+          "size": 12,
+          "start": 8
+        },
+        {
+          "code": "4B",
+          "end": 28,
+          "kind": "primitive",
+          "raw": "7c9e6e3af365fdb93b",
+          "start": 12
+        },
+        {
+          "code": "5B",
+          "end": 44,
+          "kind": "primitive",
+          "raw": "d70e0f4f12b287a8",
+          "start": 28
+        },
+        {
+          "code": "6B",
+          "end": 60,
+          "kind": "primitive",
+          "raw": "61df706f1f47ba",
+          "start": 44
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Byte strings of 9, 8 and 7 bytes need 0, 1 and 2 lead bytes to reach a multiple of 3, so they take the codes 4B, 5B and 6B, each with a size of 3 quadlets in its last two code characters. The raw value reported excludes the lead bytes.",
+  "id": "CESR-0015",
+  "input": {
+    "stream": "2d5f4141414341412d4a414d34424144664a35754f764e6c5f626b3735424144414e634f44303853736f656f36424144414142683333427648306536"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/primitives.json#parse-variable-size-lead-bytes"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse variable-size byte strings with zero, one and two lead bytes"
+}

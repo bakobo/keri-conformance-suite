@@ -1,0 +1,69 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Codes in the large Count Code table MUST be each 8 characters long.",
+        "section": "Large Count Code table",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#large-count-code-table"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "--J",
+          "end": 16,
+          "group_end": 60,
+          "kind": "counter",
+          "size": 11,
+          "start": 8
+        },
+        {
+          "code": "D",
+          "end": 60,
+          "kind": "primitive",
+          "raw": "6292b8dbc699e64d8b189fef85d7f239e04fa42f1c410fd5b5a16be9edbff828",
+          "start": 16
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "--J is the large form of the generic list code: two selector characters, the type, and five size digits. Here it frames one D key, size 11, written --JAAAAL.",
+  "id": "CESR-0028",
+  "input": {
+    "stream": "2d5f4141414341412d2d4a414141414c44474b53754e76476d655a4e6978696637345858386a6e67543651764845455031625768612d6e74765f676f"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/framing.json#large-count-code"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse a large (eight-character) count code"
+}

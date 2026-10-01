@@ -1,0 +1,65 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -V AttachmentGroup counts quadlets while -A ControllerIdxSigs counts signatures (src/keri/core/counting.py, CounterCodex_1_0).",
+      "check": "decoded",
+      "expected": [
+        {
+          "code": "-V",
+          "end": 4,
+          "group_end": 96,
+          "kind": "counter",
+          "size": 23,
+          "start": 0
+        },
+        {
+          "code": "-A",
+          "end": 8,
+          "group_end": 96,
+          "kind": "counter",
+          "size": 1,
+          "start": 4
+        },
+        {
+          "code": "A",
+          "end": 96,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "2790b536139735d6163be9439ff66642e801ec9a675d5827fb16a2d3657ffc7f2cdc2606e67b8fde184a61bdffd3de637f50fb3913a9f947295b4e888cb9a81c",
+          "start": 8
+        }
+      ],
+      "id": "a1",
+      "level": "INTEROP"
+    }
+  ],
+  "description": "A 1.00 -V (AttachmentGroup) holding an -A group of one indexed signature. -V counts quadlets (23: the -A code and one 88-character signature) while the -A inside it counts items (1).",
+  "id": "CESR-0049",
+  "input": {
+    "stream": "2d5641582d4141424141416e6b4c5532453563313168593736554f66396d5a43364148736d6d64645743663746714c545a585f3866797a634a67626d65345f654745706876665f54336d4e5f5550733545366e3552796c62546f694d75616763"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-attachment-group-quadlets"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00"
+    ],
+    "wire": [
+      "CESR-1.00"
+    ]
+  },
+  "title": "keripy 1.x: -V counts quadlets around an item-counted group"
+}

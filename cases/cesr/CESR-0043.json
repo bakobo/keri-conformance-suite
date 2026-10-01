@@ -1,0 +1,44 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: nonzero-pad."
+    }
+  ],
+  "description": "A 0B signature in a binary-domain group whose four pad bits, between the code and the value, are not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "id": "CESR-0043",
+  "input": {
+    "stream": "fbf000002000f89016d018d4cde220cc58e4f78e94588926a6a6c3ea27760b6b06d5abf47a87ed5bb379d4dd2f3c9a99439a3736a158e747bcc74d8b97fcfc0f8998a3b502cc07f5252b72"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-nonzero-pad-bits-binary"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Reject a binary-domain primitive whose pad bits are not zero"
+}

@@ -1,0 +1,70 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.",
+        "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-K",
+          "end": 12,
+          "group_end": 100,
+          "kind": "counter",
+          "size": 22,
+          "start": 8
+        },
+        {
+          "code": "A",
+          "end": 100,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "3403eb17e4dc7fd02c704f50e978acb8b3e23cfe486f7ce225149ec61feaf74cfbbc8b8c4204fef6827b98f246920c3f192ed571e3468892fa2f410a009a5ef3",
+          "start": 12
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code A# (Ed25519 indexed signature, both same): a one-character index and no ondex field, 88 characters.",
+  "id": "CESR-0017",
+  "input": {
+    "stream": "2d5f4141414341412d4b415741414130412d7358354e785f3043787754314470654b7934732d49385f6b6876664f496c464a3747482d7233545075386934784342503732676e7559386b61534444385a4c745678343061496b766f7651516f416d6c377a"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-both-same"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse an Ed25519 indexed signature with one index field"
+}

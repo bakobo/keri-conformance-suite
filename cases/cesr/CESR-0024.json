@@ -1,0 +1,79 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 6,
+          "genus": "AAA",
+          "group_end": 6,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-K",
+          "end": 9,
+          "group_end": 141,
+          "kind": "counter",
+          "size": 44,
+          "start": 6
+        },
+        {
+          "code": "A",
+          "end": 75,
+          "index": 1,
+          "kind": "indexed",
+          "raw": "37d472dbc2242be92c95f9632c380f80df04a368e08560525c53493d9fccacf123ef19e122d1a515cc9a20a2070e6b813c3a1102e5648fc64fbee227ee501b95",
+          "start": 9
+        },
+        {
+          "code": "A",
+          "end": 141,
+          "index": 2,
+          "kind": "indexed",
+          "raw": "d4571aa1cec7b45f4295cfe31b4a6cca44b0badd2de87d6ab8701ff993f4b5a16367eadab3202088124c8d76ddafa8c2da65431acfeb4d24bd3fca21a85ec0f4",
+          "start": 75
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "A -K group of two A# signatures, indexes 1 and 2, entirely in the binary domain: 44 triplets, 132 bytes of signatures.",
+  "id": "CESR-0024",
+  "input": {
+    "stream": "fbf000002000f8a02c001037d472dbc2242be92c95f9632c380f80df04a368e08560525c53493d9fccacf123ef19e122d1a515cc9a20a2070e6b813c3a1102e5648fc64fbee227ee501b950020d4571aa1cec7b45f4295cfe31b4a6cca44b0badd2de87d6ab8701ff993f4b5a16367eadab3202088124c8d76ddafa8c2da65431acfeb4d24bd3fca21a85ec0f4"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/indexed.json#indexed-binary"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse two Ed25519 indexed signatures in the binary domain"
+}

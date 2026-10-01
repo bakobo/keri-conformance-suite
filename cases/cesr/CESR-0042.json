@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: nonzero-pad."
+    }
+  ],
+  "description": "An 8-byte string with code 5B carries one lead byte; here that byte is not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "id": "CESR-0042",
+  "input": {
+    "stream": "2d5f4141414341412d4a414535424144674276566f5f7a45686f7552"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-nonzero-lead-byte"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Reject a variable-size primitive whose lead byte is not zero"
+}

@@ -1,0 +1,54 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events.",
+        "section": "Legacy Version 1.XX string field format",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#legacy-version-1xx-string-field-format"
+      },
+      "expected": [
+        {
+          "end": 112,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 112,
+          "start": 0,
+          "version": "1.0"
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "A JSON field map whose v field is a legacy 1.XX version string (protocol KERI, version 1.0 in two hex digits, kind JSON, size in six lowercase hex digits, terminator '_'). Version 2.XX implementations must still support this format.",
+  "id": "CESR-0033",
+  "input": {
+    "stream": "7b2276223a224b45524931304a534f4e3030303037305f222c2274223a22727079222c2264223a22222c226474223a22323032362d30312d30315430303a30303a30302e3030303030302b30303a3030222c2272223a222f6b63732f636573722f6c6567616379222c2261223a7b7d7d"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/messages.json#json-1x-legacy"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.serialization.json",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "KERI10JSON"
+    ]
+  },
+  "title": "Frame a JSON body by its legacy 1.XX version string"
+}

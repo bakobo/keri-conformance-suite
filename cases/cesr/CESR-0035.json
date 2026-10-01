@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters.",
+        "section": "Conversions",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#conversions"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: truncated."
+    }
+  ],
+  "description": "A -J group holding one D key, with the last two bytes of the stream removed, so the key is 42 characters, not a whole number of quadlets. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "id": "CESR-0035",
+  "input": {
+    "stream": "2d5f4141414341412d4a414c444a616f3147796e5a33445f472d35692d435f3975724d42446877377974766642525737364152327875"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-truncated-primitive"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Reject a stream that ends inside a primitive"
+}

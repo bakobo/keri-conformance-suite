@@ -1,0 +1,91 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 6,
+          "genus": "AAA",
+          "group_end": 6,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 9,
+          "group_end": 162,
+          "kind": "counter",
+          "size": 51,
+          "start": 6
+        },
+        {
+          "code": "D",
+          "end": 42,
+          "kind": "primitive",
+          "raw": "ad2c762227b656e9225df9f4d42cb16b9b254c1e5a6b18173ef0985ee49272b1",
+          "start": 9
+        },
+        {
+          "code": "0B",
+          "end": 108,
+          "kind": "primitive",
+          "raw": "be91860dc75f0bace1aec2225c062efbb913205ff3aa74f97a46adf76e54074de0ac28750e85f51458cbddadca26f4f3427aef57c1777dd4a941c17ddf540a0f",
+          "start": 42
+        },
+        {
+          "code": "1AAB",
+          "end": 144,
+          "kind": "primitive",
+          "raw": "a9e5c38f41687063b6f462682b4d53b9030f88970ed3bc409662a0b9423424699e",
+          "start": 108
+        },
+        {
+          "code": "0A",
+          "end": 162,
+          "kind": "primitive",
+          "raw": "ca26615fd69baf6a6e96b062d1a78601",
+          "start": 144
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "The stream of CESR-0013 entirely in the binary domain. Offsets are bytes, and the -J size is the same 51, now counting triplets.",
+  "id": "CESR-0014",
+  "input": {
+    "stream": "fbf000002000f890330cad2c762227b656e9225df9f4d42cb16b9b254c1e5a6b18173ef0985ee49272b1d010be91860dc75f0bace1aec2225c062efbb913205ff3aa74f97a46adf76e54074de0ac28750e85f51458cbddadca26f4f3427aef57c1777dd4a941c17ddf540a0fd40001a9e5c38f41687063b6f462682b4d53b9030f88970ed3bc409662a0b9423424699ed000ca26615fd69baf6a6e96b062d1a78601"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/primitives.json#parse-mixed-code-sizes-binary"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse primitives with one-, two- and four-character codes in the binary domain"
+}

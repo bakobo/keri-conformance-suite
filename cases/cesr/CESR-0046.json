@@ -1,0 +1,44 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
+        "section": "Version 2.XX string field format",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: truncated."
+    }
+  ],
+  "description": "A JSON field map with a 2.XX version string, with the last five bytes of the stream removed, so the body is shorter than the size its version string declares. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "id": "CESR-0046",
+  "input": {
+    "stream": "7b2276223a224b4552494341414341414a534f4e414142472e222c2274223a22727079222c2264223a22222c2272223a222f6b63732f636573722f7472756e6361"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-truncated-message"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Reject a JSON body shorter than its version string declares"
+}

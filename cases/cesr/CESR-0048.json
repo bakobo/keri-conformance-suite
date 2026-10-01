@@ -1,0 +1,63 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -C NonTransReceiptCouples: the size counts (prefix, signature) couples (src/keri/core/counting.py, CounterCodex_1_0).",
+      "check": "decoded",
+      "expected": [
+        {
+          "code": "-C",
+          "end": 4,
+          "group_end": 136,
+          "kind": "counter",
+          "size": 1,
+          "start": 0
+        },
+        {
+          "code": "B",
+          "end": 48,
+          "kind": "primitive",
+          "raw": "65659f21428eea925fb0e7ccbc396f5ebfb7619acc7b258b91b918d4d95794f9",
+          "start": 4
+        },
+        {
+          "code": "0B",
+          "end": 136,
+          "kind": "primitive",
+          "raw": "849361b829ae967450d5542b3c9ed3b34ebe65750b4cedbd7c51da018f70c5d062f57da1428a45dd2994a4369878d0603332a2126e68f8c7225fd297c0f0e8fa",
+          "start": 48
+        }
+      ],
+      "id": "a1",
+      "level": "INTEROP"
+    }
+  ],
+  "description": "A 1.00 -C (NonTransReceiptCouples) group of one couple: a B non-transferable prefix and a 0B signature. In keripy 1.x its size is 1, the number of couples.",
+  "id": "CESR-0048",
+  "input": {
+    "stream": "2d4341424247566c6e7946436a7571535837446e7a4c77356231365f743247617a48736c69354735474e545a56355435304243456b3247344b61365764464456564373386e744f7a5472356c6451744d3762313855646f426a33444630474c3166614643696b58644b5a536b4e7068343047417a4d714953626d6a3478794a6630706641384f6a36"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-nontrans-receipt-couples"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00"
+    ],
+    "wire": [
+      "CESR-1.00"
+    ]
+  },
+  "title": "keripy 1.x: -C counts receipt couples"
+}

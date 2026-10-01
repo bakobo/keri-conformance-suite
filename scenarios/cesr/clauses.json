@@ -1,0 +1,100 @@
+{
+  "about": "The specification clauses CESR scenarios cite, keyed by a short name. Each entry gives the heading the sentence sits under, the sentence verbatim, and the requirement level that sentence states. The generator checks every entry against the vendored text of the CESR specification at tag v1.0 (commit 037129608b9e6960858b752019ac273d40d7386c): the quote must appear exactly once, under the named heading, and must contain its level keyword.",
+  "clauses": {
+    "mid-padding": {
+      "section": "Code characters and lead bytes",
+      "level": "MUST",
+      "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined."
+    },
+    "value-right-aligned": {
+      "section": "Stable value encoding",
+      "level": "MUST",
+      "quote": "Therefore the value portion of any primitive MUST be right aligned."
+    },
+    "text-multiple-of-four": {
+      "section": "Conversions",
+      "level": "MUST",
+      "quote": "Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters."
+    },
+    "binary-multiple-of-three": {
+      "section": "Conversions",
+      "level": "MUST",
+      "quote": "This means that the length of any Primitive in the ‘B’ domain MUST be an integer multiple of three binary bytes with a minimum length of three binary bytes."
+    },
+    "code-size-from-pad-size": {
+      "section": "Text Code Size",
+      "level": "MUST",
+      "quote": "Thus, the size of the text code in Base64 characters MUST be a function of the equivalent pad size determined by the length `N mod 3` of the raw binary value."
+    },
+    "count-code-length": {
+      "section": "Count or Group Framing Codes",
+      "level": "MUST",
+      "quote": "A Count Code is its own composable Primitive, and its length, therefore, MUST be an integer multiple of four characters in the Text domain or, equivalently, an integer multiple of three bytes in the Binary domain."
+    },
+    "count-invariant": {
+      "section": "Count Code tables",
+      "level": "MUST",
+      "quote": "Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain."
+    },
+    "count-quadlets": {
+      "section": "Count Code tables",
+      "level": "MUST",
+      "quote": "The size component MUST count the Quadlets/triplets in its following group."
+    },
+    "group-element-aligned": {
+      "section": "Count Code tables",
+      "level": "MUST",
+      "quote": "Each element in content of a Count Code group MUST be aligned on a 24-bit boundary."
+    },
+    "small-count-four-chars": {
+      "section": "Small Count Code table",
+      "level": "MUST",
+      "quote": "Codes in the small Count Code table MUST be each four characters long."
+    },
+    "count-numeral-selector": {
+      "section": "Small Count Code table",
+      "level": "MUST",
+      "quote": "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error."
+    },
+    "large-count-eight-chars": {
+      "section": "Large Count Code table",
+      "level": "MUST",
+      "quote": "Codes in the large Count Code table MUST be each 8 characters long."
+    },
+    "genus-modifies": {
+      "section": "Protocol genus/version table",
+      "level": "MUST",
+      "quote": "A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets but MUST modify the protocol genus and Version of all the following Count Codes that either appear at the top level until another protocol and genus Count Code is provided or are inside a special enclosing Count Code group."
+    },
+    "stream-resume": {
+      "section": "Stream parsing rules",
+      "level": "MUST",
+      "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding."
+    },
+    "master-table": {
+      "section": "Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)",
+      "level": "MUST",
+      "quote": "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables."
+    },
+    "indexed-table": {
+      "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+      "level": "MUST",
+      "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table."
+    },
+    "version-string-extract": {
+      "section": "Version 2.XX string field format",
+      "level": "MUST",
+      "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps."
+    },
+    "version-string-legacy": {
+      "section": "Legacy Version 1.XX string field format",
+      "level": "MUST",
+      "quote": "Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events."
+    },
+    "parser-json-cbor-mgpk": {
+      "section": "Performant resynchronization with unique start bits",
+      "level": "MUST",
+      "quote": "A CESR Stream parser MUST support three specific interleaved serializations, namely, JSON, CBOR, and MGPK."
+    }
+  }
+}

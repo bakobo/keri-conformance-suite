@@ -1,0 +1,90 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
+        "section": "Version 2.XX string field format",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "end": 128,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 120,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 132,
+          "group_end": 224,
+          "kind": "counter",
+          "size": 23,
+          "start": 128
+        },
+        {
+          "code": "-K",
+          "end": 136,
+          "group_end": 224,
+          "kind": "counter",
+          "size": 22,
+          "start": 132
+        },
+        {
+          "code": "A",
+          "end": 224,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "585aa4003277270f19dbe9d6130abe449e33c096e8439b137235c17ec215213cfef22f5fbc67d091b4b014fdbc0b5496e853956d8d5ab1dd63037b77be980d38",
+          "start": 136
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "A genus/version code, a JSON field map whose first field v is a 2.XX version string (protocol KERI, protocol version 2.0, genus version 2.00, kind JSON, size in four Base64 digits, terminator '.'), then an attachments group (-C) holding a controller signature group (-K) of one indexed signature. The parser must take the body's length from its version string to find where the attachments begin.",
+  "id": "CESR-0032",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414142342e222c2274223a22727079222c2264223a22222c226474223a22323032362d30312d30315430303a30303a30302e3030303030302b30303a3030222c2272223a222f6b63732f636573722f6d657373616765222c2261223a7b226e223a317d7d2d4341582d4b415741414259577151414d6e636e44786e6236645954437235456e6a50416c7568446d784e794e63462d77685568505037794c312d385a394352744c41555f62774c564a626f553556746a56717833574d446533652d6d413034"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/messages.json#json-2x-with-attachments"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Frame a JSON body by its 2.XX version string, then its attachments"
+}

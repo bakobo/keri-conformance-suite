@@ -1,0 +1,100 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding.",
+        "section": "Stream parsing rules",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#stream-parsing-rules"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 12,
+          "group_end": 56,
+          "kind": "counter",
+          "size": 11,
+          "start": 8
+        },
+        {
+          "code": "D",
+          "end": 56,
+          "kind": "primitive",
+          "raw": "cb3182e20094aeb21a19a6201c93d01eda480c1e0f5a9f67b0bdd5c614b959d7",
+          "start": 12
+        },
+        {
+          "code": "-J",
+          "end": 59,
+          "group_end": 92,
+          "kind": "counter",
+          "size": 11,
+          "start": 56
+        },
+        {
+          "code": "E",
+          "end": 92,
+          "kind": "primitive",
+          "raw": "11e611308961424539a0b525249f52a9cd5484d1e9133f88c634fc41376f353a",
+          "start": 59
+        },
+        {
+          "code": "-J",
+          "end": 96,
+          "group_end": 184,
+          "kind": "counter",
+          "size": 22,
+          "start": 92
+        },
+        {
+          "code": "0B",
+          "end": 184,
+          "kind": "primitive",
+          "raw": "dc0e20dabef872dd5a7159ce299674f0a32b1f6d2cb4279a93990630213ae537609d33c6aac76d8bfcf91ff7f3887838e50b25d605e78716a4ad42bc71ac5f7a",
+          "start": 96
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "A text -J group, then a binary -J group, then a text -J group. Each group's count code is the first thing at its boundary, so its first tritet (0b001 for text '-', 0b111 for binary) tells the parser which domain the group is in.",
+  "id": "CESR-0030",
+  "input": {
+    "stream": "2d5f4141414341412d4a414c444d7378677549416c4b367947686d6d494279543042376153417765443171665a3743393163595575566e58f8900b1011e611308961424539a0b525249f52a9cd5484d1e9133f88c634fc41376f353a2d4a415730424463446944617676687933567078576334706c6e54776f797366625379304a3571546d5159774954726c4e3243644d3861717832324c5f506b66395f4f4965446a6c4379585742656548467153745172787872463936"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/framing.json#domain-switch-between-groups"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Switch between the text and binary domains at group boundaries"
+}

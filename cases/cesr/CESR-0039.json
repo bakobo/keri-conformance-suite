@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "id": "a1",
+      "level": "MUST",
+      "note": "Informative class: count-overrun."
+    }
+  ],
+  "description": "A -J group of size 22 holding one D key of 11 quadlets, at the end of the stream: the count claims 11 quadlets that are not there. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "id": "CESR-0039",
+  "input": {
+    "stream": "2d5f4141414341412d4a4157444b36466b6e41375a5176304f4e70337661436c353371553134764c444b414d2d4b523870436842457a6345"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-count-overruns-stream"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Reject a count that runs past the end of the stream"
+}

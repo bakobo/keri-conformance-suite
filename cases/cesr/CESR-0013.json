@@ -1,0 +1,90 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.",
+        "section": "Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#master-code-table-for-genusversion--_aaacaa-keriacdc-protocol-stack-version-200"
+      },
+      "expected": [
+        {
+          "code": "-_AAA",
+          "end": 8,
+          "genus": "AAA",
+          "group_end": 8,
+          "gvrsn": "2.00",
+          "kind": "counter",
+          "size": 0,
+          "start": 0
+        },
+        {
+          "code": "-J",
+          "end": 12,
+          "group_end": 216,
+          "kind": "counter",
+          "size": 51,
+          "start": 8
+        },
+        {
+          "code": "D",
+          "end": 56,
+          "kind": "primitive",
+          "raw": "ad2c762227b656e9225df9f4d42cb16b9b254c1e5a6b18173ef0985ee49272b1",
+          "start": 12
+        },
+        {
+          "code": "0B",
+          "end": 144,
+          "kind": "primitive",
+          "raw": "be91860dc75f0bace1aec2225c062efbb913205ff3aa74f97a46adf76e54074de0ac28750e85f51458cbddadca26f4f3427aef57c1777dd4a941c17ddf540a0f",
+          "start": 56
+        },
+        {
+          "code": "1AAB",
+          "end": 192,
+          "kind": "primitive",
+          "raw": "a9e5c38f41687063b6f462682b4d53b9030f88970ed3bc409662a0b9423424699e",
+          "start": 144
+        },
+        {
+          "code": "0A",
+          "end": 216,
+          "kind": "primitive",
+          "raw": "ca26615fd69baf6a6e96b062d1a78601",
+          "start": 192
+        }
+      ],
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "One -J group holding a D key (1-character code, 44 characters), a 0B signature (2-character code, 88), a 1AAB secp256k1 key (4-character code, 48) and a 0A salt (2-character code, 24). The group is 51 quadlets.",
+  "id": "CESR-0013",
+  "input": {
+    "stream": "2d5f4141414341412d4a417a444b30736469496e746c6270496c3335394e5173735775624a557765576d7359467a37776d46376b6b6e4b783042432d6b59594e7831384c724f477577694a634269373775524d67585f4f7164506c3652713333626c5148546543734b48554f68665555574d766472636f6d39504e436575395877586439314b6c427758336656416f5031414142716558446a30466f63474f3239474a6f4b30315475514d50694a634f303778416c6d4b67755549304a476d653041444b4a6d466631707576616d365773474c5270345942"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/primitives.json#parse-mixed-code-sizes-text"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Parse primitives with one-, two- and four-character codes"
+}

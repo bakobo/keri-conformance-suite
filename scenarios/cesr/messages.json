@@ -1,0 +1,45 @@
+{
+  "about": "cesr.parse cases for JSON field maps framed by a version string at the top level of a stream. The bodies carry only what the version-string rules need plus a few ordinary fields; they are not KERI events and nothing here checks KERI semantics. A message item reports the protocol, the protocol version, the serialization kind and the size the version string declares.",
+  "profile": "cesr-1.0",
+  "cases": [
+    {
+      "id": "CESR-0032", "key": "json-2x-with-attachments",
+      "title": "Frame a JSON body by its 2.XX version string, then its attachments",
+      "description": "A genus/version code, a JSON field map whose first field v is a 2.XX version string (protocol KERI, protocol version 2.0, genus version 2.00, kind JSON, size in four Base64 digits, terminator '.'), then an attachments group (-C) holding a controller signature group (-K) of one indexed signature. The parser must take the body's length from its version string to find where the attachments begin.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"genus": "AAA", "major": 2, "minor": 0},
+        {"message": {"proto": "KERI", "version": [2, 0], "genus_version": [2, 0],
+                     "fields": {"t": "rpy", "d": "", "dt": "2026-01-01T00:00:00.000000+00:00", "r": "/kcs/cesr/message", "a": {"n": 1}}}},
+        {"group": "-C", "items": [
+          {"group": "-K", "items": [{"indexed": "A", "raw": "kcs/cesr/message/sig", "index": 0}]}
+        ]}
+      ],
+      "assertions": [{"check": "decoded", "clause": "version-string-extract"}]
+    },
+    {
+      "id": "CESR-0033", "key": "json-1x-legacy",
+      "title": "Frame a JSON body by its legacy 1.XX version string",
+      "description": "A JSON field map whose v field is a legacy 1.XX version string (protocol KERI, version 1.0 in two hex digits, kind JSON, size in six lowercase hex digits, terminator '_'). Version 2.XX implementations must still support this format.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"message": {"proto": "KERI", "version": [1, 0], "legacy": true,
+                     "fields": {"t": "rpy", "d": "", "dt": "2026-01-01T00:00:00.000000+00:00", "r": "/kcs/cesr/legacy", "a": {}}}}
+      ],
+      "assertions": [{"check": "decoded", "clause": "version-string-legacy"}]
+    },
+    {
+      "id": "CESR-0034", "key": "json-2x-then-1x",
+      "title": "Frame consecutive JSON bodies with 2.XX and 1.XX version strings",
+      "description": "Two JSON field maps back to back with no count code between them: the first with a 2.XX version string, the second with a legacy 1.XX one. Each body's end comes only from its own version string.",
+      "operation": "cesr.parse",
+      "stream": [
+        {"message": {"proto": "KERI", "version": [2, 0], "genus_version": [2, 0],
+                     "fields": {"t": "rpy", "d": "", "r": "/kcs/cesr/first"}}},
+        {"message": {"proto": "KERI", "version": [1, 0], "legacy": true,
+                     "fields": {"t": "rpy", "d": "", "r": "/kcs/cesr/second"}}}
+      ],
+      "assertions": [{"check": "decoded", "clause": "version-string-extract"}]
+    }
+  ]
+}
