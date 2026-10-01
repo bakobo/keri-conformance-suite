@@ -10,7 +10,7 @@ Two things will check an adapter without running a single case: message schemas 
 
 - The runner writes requests to the adapter's standard input, one JSON object per line, UTF-8, terminated by `\n`.
 - The adapter writes exactly one response per request to its standard output, one JSON object per line, in the same order.
-- Anything the adapter writes to standard error is captured into the conformance report as diagnostics and otherwise ignored. Logging belongs there, never on standard output.
+- Anything the adapter writes to standard error is drained continuously, so the adapter never blocks on a full pipe, and only the last 64 KiB per case is kept for the conformance report as diagnostics; the rest is discarded. Logging belongs there, never on standard output.
 - Every stream travels as raw bytes, hex-encoded, whatever domain or serialization it contains. The adapter must hand those bytes to its implementation unchanged, so that the implementation does its own domain sniffing and framing. Other binary values, such as raw primitive values, are also hex.
 - The runner sends one request at a time and waits for its response. An adapter never has to handle concurrent requests.
 - Each request is independent. An adapter must start every request from empty state — no identifiers, keys or events left over from an earlier request. That is the most common way for an adapter to produce results that depend on case order.
@@ -40,10 +40,12 @@ A rejection is not an error. If a stream must be rejected and the implementation
 The first request of every session.
 
 ```json
-{"id": 0, "op": "hello", "protocol": 1}
+{"id": 0, "op": "hello", "protocol": 1, "supported": [1]}
 ```
 
-The adapter answers with its protocol version and what it is:
+`supported` lists every protocol version the runner can speak, and `protocol` is the highest of them. The adapter chooses the highest version in `supported` that it also implements, and answers with that version in `protocol`; the rest of the session uses it. An adapter that implements none of them answers with an `error` response, and the runner stops. This is how a version-1 adapter keeps working with a runner that has moved on to version 2.
+
+The adapter answers with the protocol version it chose and what it is:
 
 ```json
 {"id": 0, "result": {
@@ -56,7 +58,7 @@ The adapter answers with its protocol version and what it is:
 }}
 ```
 
-`features` is drawn from the feature vocabulary in `profiles/features.json`. `features` lists everything the implementation and adapter together can do, and is what the runner uses to decide which cases to send. `composes` is a subset of `features`: it marks the behaviours that the adapter supplies itself rather than delegating to the implementation — for example, escrow and routing on top of a library that only verifies events. It is reported in every conformance report and every conformance claim, so that nobody credits the implementation with what the adapter did. The runner refuses to run an adapter whose protocol version it does not support, whose `hello` is missing or malformed, or whose features or composed behaviours are not in the vocabulary. In each case it prints which field was wrong and what it expected, exits with a non-zero status, and runs no cases. These are runner-side refusals, not test failures, because no case was attempted.
+`features` is drawn from the feature vocabulary in `profiles/features.json`. `features` lists everything the implementation and adapter together can do, and is what the runner uses to decide which cases to send. `composes` is a subset of `features`: it marks the behaviours that the adapter supplies itself rather than delegating to the implementation — for example, escrow and routing on top of a library that only verifies events. It is reported in every conformance report and every conformance claim, so that nobody credits the implementation with what the adapter did. The runner refuses to run an adapter that answers with a protocol version outside `supported`, whose `hello` is missing or malformed, or whose features or composed behaviours are not in the vocabulary. In each case it prints which field was wrong and what it expected, exits with a non-zero status, and runs no cases. These are runner-side refusals, not test failures, because no case was attempted.
 
 ## `cesr.parse`
 
