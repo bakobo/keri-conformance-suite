@@ -308,3 +308,11 @@ def test_crypto_checks_are_not_implemented_not_passed(check):
     assert evaluation.outcome == "not-implemented"
     assert check in evaluation.detail
     assert evaluation.detail.startswith("e.feature.unsupported.check.f: ")
+
+
+def test_numeric_thresholds_are_bounded_to_64_hex_digits():
+    from keri_conformance.assertions import normalize_threshold
+
+    assert normalize_threshold("f" * 64) is not None
+    assert normalize_threshold("f" * 65) is None
+    assert normalize_threshold("0x" + "1" * 5000) is None

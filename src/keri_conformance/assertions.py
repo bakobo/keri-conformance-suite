@@ -12,7 +12,7 @@ from fractions import Fraction
 from keri_conformance.errors import E_CHECK_NOT_IMPLEMENTED
 
 # The schemas' threshold patterns, matched with re.search as Python's jsonschema matches them.
-NUMERIC = re.compile(r"^(0x)?[0-9a-fA-F]+$")
+NUMERIC = re.compile(r"^(0x)?[0-9a-fA-F]{1,64}$")
 FRACTION = re.compile(r"^[0-9]{1,64}(/(?=[0-9]{1,64}$)[0-9]*[1-9][0-9]*)?$")
 KEY_STATE_FIELDS = ("sn", "said", "keys", "kt", "ndigs", "nt", "wits", "bt", "delegator")
 CRYPTO_CHECKS = ("emitted_body", "signatures_verify", "attachments_equivalent")
