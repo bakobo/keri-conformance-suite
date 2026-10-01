@@ -7,6 +7,7 @@ import pytest
 from conftest import ROOT, bad, good
 
 from keri_conformance import cli, errors
+from keri_conformance import session as session_module
 from keri_conformance.check import PROBES, check_adapter
 from keri_conformance.session import AdapterSession, Limits
 
@@ -136,6 +137,12 @@ def test_cli_exit_1_when_a_probe_fails(capsys):
 def test_cli_runner_fault_when_the_adapter_cannot_start(tmp_path, capsys):
     assert check([str(tmp_path / "missing")]) == errors.EXIT_FAULT
     assert errors.E_ADAPTER_START in capsys.readouterr().err
+
+
+def test_cli_refuses_off_posix(monkeypatch, capsys):
+    monkeypatch.setattr(session_module, "is_posix", lambda: False)
+    assert check(good()) == errors.EXIT_FAULT
+    assert errors.E_PLATFORM in capsys.readouterr().err
 
 
 def test_cli_passes_environment_through(tmp_path, monkeypatch):

@@ -8,7 +8,8 @@ newline that may not come, and any misbehaviour becomes a typed `Failure` after 
 process group is killed and a fresh adapter is started for the next request.
 
 This module is POSIX-only: the reader multiplexes pipes with `selectors`, which Windows does not
-support for pipes.
+support for pipes, and containment needs rlimits and an effective uid. Elsewhere `open` refuses
+with a coded error before touching anything POSIX-specific.
 """
 
 import functools
@@ -16,7 +17,6 @@ import itertools
 import json
 import os
 import re
-import resource
 import selectors
 import shlex
 import signal
@@ -30,6 +30,7 @@ from keri_conformance.errors import (
     E_ADAPTER_HELLO,
     E_ADAPTER_HELLO_CHANGED,
     E_ADAPTER_START,
+    E_PLATFORM,
     E_ROOT,
     E_USAGE_INVALID,
     E_VOCABULARY,
@@ -75,6 +76,11 @@ class Failure:
 
     kind: str
     detail: str
+
+
+def is_posix() -> bool:
+    """Whether this platform can contain an adapter. Tests replace it to exercise the refusal."""
+    return os.name == "posix"
 
 
 def _clip(text: str) -> str:
@@ -296,12 +302,14 @@ class AdapterSession:
     """One adapter, restarted with a fresh hello after any failure."""
 
     def __init__(self, command, vocabulary: dict[str, bool], *, limits: Limits | None = None,
-                 pass_env=(), geteuid=None, environ=None, start_attempts: int = 2):
+                 pass_env=(), geteuid=None, environ=None, start_attempts: int = 2,
+                 posix: bool | None = None):
         self.argv = adapter_argv(command)
         self.vocabulary = vocabulary
         self.limits = limits or Limits()
         self.pass_env = tuple(pass_env)
-        self._geteuid = geteuid or os.geteuid
+        self._geteuid = geteuid
+        self._posix = posix
         self._environ = os.environ if environ is None else environ
         self._attempts = start_attempts
         self._ids = itertools.count(1)
@@ -326,7 +334,12 @@ class AdapterSession:
 
     def open(self) -> dict:
         """Start the adapter and validate its hello. Raises RunnerError or HelloRefused."""
-        if self._geteuid() == 0:
+        if not (is_posix() if self._posix is None else self._posix):
+            raise RunnerError(E_PLATFORM, "The runner runs only on POSIX systems, because "
+                                          "containing an untrusted adapter needs process groups, "
+                                          "resource limits, an effective uid and pollable pipes, "
+                                          "which this platform does not provide.")
+        if (self._geteuid or os.geteuid)() == 0:
             raise RunnerError(E_ROOT, "The runner refuses to run as root, because the adapter runs "
                                       "untrusted implementation code with the runner's "
                                       "privileges. Run kcs as an unprivileged user.")
@@ -445,6 +458,8 @@ class AdapterSession:
     # --- internals ------------------------------------------------------------------------------
 
     def _spawn(self) -> None:
+        import resource  # POSIX-only; imported here so that importing this module never fails
+
         error = None
         for _ in range(self._attempts):
             try:

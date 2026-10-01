@@ -313,6 +313,16 @@ def test_refuses_to_run_as_root(vocabulary):
     assert info.value.exit_code == errors.EXIT_FAULT
 
 
+def test_refuses_to_run_off_posix(vocabulary):
+    s = session(good(), vocabulary, posix=False)
+    with pytest.raises(errors.RunnerError) as info:
+        s.open()
+    assert info.value.code == errors.E_PLATFORM
+    assert info.value.exit_code == errors.EXIT_FAULT
+    assert "POSIX" in str(info.value)
+    assert s.pid is None
+
+
 def test_an_executable_that_cannot_start_is_a_runner_fault_after_one_retry(vocabulary, tmp_path):
     missing = str(tmp_path / "no-such-adapter")
     s = session([missing], vocabulary)
