@@ -496,3 +496,19 @@ def test_a_case_id_that_is_not_cesr_nnnn_is_refused_before_any_path_is_built(tre
     with pytest.raises(build.ScenarioError) as e:
         regenerate.generate(tree)
     assert e.value.code == "e.input.format.kcs-case-id.f"
+
+
+@pytest.mark.parametrize("content", [
+    b"\xff\xfe not utf-8",
+    b"[1, 2]",
+    b'{"profile": "cesr-1.0"}',
+    b'{"profile": "cesr-1.0", "cases": [3]}',
+    b'{"profile": 7, "cases": []}',
+    b'{"profile": "cesr-1.0", "cases": [], "id_gaps": [{"nope": 1}]}',
+], ids=["not-utf8", "not-object", "no-cases", "case-not-object", "profile-not-string",
+        "bad-gap"])
+def test_a_scenario_of_the_wrong_shape_is_a_coded_error(tree, content):
+    (tree / "scenarios" / "cesr" / "zz.json").write_bytes(content)
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate.generate(tree)
+    assert e.value.code.startswith("e.input.format.kcs-scenario") and "zz.json" in str(e.value)

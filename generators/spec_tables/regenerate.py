@@ -88,8 +88,23 @@ def dumps(obj) -> bytes:
 def _load_json(path: pathlib.Path):
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as e:
-        raise ScenarioError(f"{path.name} is not valid JSON: {e}.", E_SCENARIO_JSON) from None
+    except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
+        raise ScenarioError(f"{path.name} could not be read as JSON: {e}.",
+                            E_SCENARIO_JSON) from None
+
+
+def _scenario_shape(scenario, name: str) -> None:
+    """Refuse a scenario whose top-level shape the generator cannot walk, before walking it."""
+    ok = (isinstance(scenario, dict) and isinstance(scenario.get("profile"), str)
+          and isinstance(scenario.get("cases"), list)
+          and all(isinstance(c, dict) for c in scenario["cases"])
+          and isinstance(scenario.get("id_gaps", []), list)
+          and all(isinstance(g, dict) and isinstance(g.get("number"), int)
+                  for g in scenario.get("id_gaps", [])))
+    if not ok:
+        raise ScenarioError(f"{name} is not a scenario: it needs a string \"profile\", a list of "
+                            f"case objects under \"cases\", and id_gaps entries with an integer "
+                            f"\"number\".")
 
 
 def generate(root: pathlib.Path) -> dict[str, bytes]:
@@ -115,6 +130,7 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
         if path.name == CLAUSES_FILE:
             continue
         scenario = _load_json(path)
+        _scenario_shape(scenario, path.name)
         rel = path.relative_to(root).as_posix()
         allowed.update(gap["number"] for gap in scenario.get("id_gaps", []))
         for case in scenario["cases"]:
