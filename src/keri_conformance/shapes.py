@@ -19,6 +19,16 @@ Check = Callable[[object, str], str | None]
 HEX = r"^([0-9a-f]{2})*$"
 
 
+def _matches(compiled, value: str) -> bool:
+    """Match as JSON Schema (ECMA-262) does: search, but a pattern ending in "$" must reach the
+    true end of the string. Python's "$" also matches before a final newline, which would let
+    "0xabc\\n" pass a hex pattern."""
+    found = compiled.search(value)
+    if found is None:
+        return False
+    return not compiled.pattern.endswith("$") or found.end() == len(value)
+
+
 def _name(path: str) -> str:
     return path or "the document"
 
@@ -43,7 +53,7 @@ def string(pattern: str | None = None, min_length: int = 0) -> Check:
             return f"{_name(path)} must be a string"
         if len(value) < min_length:
             return f"{_name(path)} must not be empty"
-        if compiled and not compiled.search(value):
+        if compiled and not _matches(compiled, value):
             return f"{_name(path)} must match {pattern}"
         return None
 

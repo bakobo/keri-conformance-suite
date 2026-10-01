@@ -7,10 +7,26 @@ runner reads the same way.
 
 import copy
 import json
+import re
 
 import pytest
 from conftest import CLAUSE, ROOT, assertion, make_case
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator as _Draft202012
+from jsonschema import ValidationError, validators
+
+
+def _ecma_pattern(validator, pattern, instance, schema):
+    # JSON Schema patterns are ECMA-262, where "$" matches only at the true end of the string.
+    # Python's jsonschema uses re.search, whose "$" also matches before a final newline; that is
+    # the fail-open the runner closes, so the reference validator here closes it too.
+    if not validator.is_type(instance, "string"):
+        return
+    found = re.search(pattern, instance)
+    if found is None or (pattern.endswith("$") and found.end() != len(instance)):
+        yield ValidationError(f"{instance!r} does not match {pattern!r}")
+
+
+Draft202012Validator = validators.extend(_Draft202012, {"pattern": _ecma_pattern})
 
 from keri_conformance.assertions import normalize_threshold
 from keri_conformance.cases import case_problem
@@ -290,3 +306,15 @@ def test_keyed_refuses_a_non_object_on_its_own():
     from keri_conformance.shapes import keyed, string
 
     assert keyed({"a": string()})(["a"], "x") == "x must be an object"
+
+
+def test_runner_refuses_a_trailing_newline_that_python_jsonschema_admits():
+    # Python's jsonschema matches patterns with re.search, where "$" also matches before a final
+    # newline; ECMA-262 (the JSON Schema regex dialect) does not. The runner is deliberately
+    # stricter: a value with a trailing newline is malformed, never normalized into a match.
+    from keri_conformance import assertions, contracts
+
+    assert assertions.normalize_threshold("0xabc\n") is None or assertions.normalize_threshold(
+        "0xabc\n") != assertions.normalize_threshold("0xabc")
+    assert contracts.THRESHOLD("0xabc\n", ["kt"]) is not None
+    assert contracts.HEX_STRING("abcd\n", ["raw"]) is not None

@@ -39,13 +39,13 @@ def strict_equal(a, b) -> bool:
 
 
 def _numeric(value):
-    if isinstance(value, str) and NUMERIC.search(value):
+    if isinstance(value, str) and NUMERIC.fullmatch(value):
         return ("numeric", int(value.removeprefix("0x"), 16))
     return None
 
 
 def _fraction(value):
-    if not (isinstance(value, str) and FRACTION.search(value)):
+    if not (isinstance(value, str) and FRACTION.fullmatch(value)):
         return None
     return str(Fraction(value))  # FRACTION admits no zero denominator
 
