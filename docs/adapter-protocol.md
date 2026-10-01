@@ -19,7 +19,7 @@ Two things will check an adapter without running a single case: message schemas 
 
 ## Messages
 
-Every request has an `op` naming the operation and an `id` the response must echo. Every response is either a result or an error:
+Every request has an `op` naming the operation and an `id` the response must echo. If a request cannot be read at all — it is not valid JSON, or has no usable `id` — the adapter answers with an error response whose `id` is `null`, and keeps running. Every response is either a result or an error:
 
 ```json
 {"id": 7, "result": { ... }}
@@ -51,12 +51,12 @@ The adapter answers with its protocol version and what it is:
   "adapter": {"name": "keriox-adapter", "version": "0.17.13-1"},
   "implementation": {"name": "keriox", "version": "0.17.13", "commit": "ddcd2aba..."},
   "operations": ["cesr.parse", "keri.process"],
-  "features": ["cesr.genus-2.00", "keri.version-1.x", "kel.basic", "kel.delegation", "kel.multisig.weighted"],
+  "features": ["cesr.genus-2.00", "keri.version-1.x", "kel.basic", "kel.delegation", "kel.multisig.weighted", "keri.escrow"],
   "composes": ["keri.escrow"]
 }}
 ```
 
-`features` is drawn from the feature vocabulary in `profiles/features.json`. `composes` lists the behaviours, from the same vocabulary, that the adapter supplies itself rather than delegating to the implementation — for example, escrow and routing on top of a library that only verifies events. It is reported in every conformance report and every conformance claim, so that nobody credits the implementation with what the adapter did. The runner refuses to run an adapter whose protocol version it does not support, whose `hello` is missing or malformed, or whose features or composed behaviours are not in the vocabulary. In each case it prints which field was wrong and what it expected, exits with a non-zero status, and runs no cases. These are runner-side refusals, not test failures, because no case was attempted.
+`features` is drawn from the feature vocabulary in `profiles/features.json`. `features` lists everything the implementation and adapter together can do, and is what the runner uses to decide which cases to send. `composes` is a subset of `features`: it marks the behaviours that the adapter supplies itself rather than delegating to the implementation — for example, escrow and routing on top of a library that only verifies events. It is reported in every conformance report and every conformance claim, so that nobody credits the implementation with what the adapter did. The runner refuses to run an adapter whose protocol version it does not support, whose `hello` is missing or malformed, or whose features or composed behaviours are not in the vocabulary. In each case it prints which field was wrong and what it expected, exits with a non-zero status, and runs no cases. These are runner-side refusals, not test failures, because no case was attempted.
 
 ## `cesr.parse`
 
@@ -71,13 +71,13 @@ The stream is hex-encoded bytes and may be in either domain or mix them. The res
 ```json
 {"id": 1, "result": {"items": [
   {"kind": "message", "start": 0, "end": 343, "proto": "KERI", "version": "2.0", "serialization": "JSON", "size": 343},
-  {"kind": "counter", "start": 343, "end": 347, "code": "-K", "size": 22},
+  {"kind": "counter", "start": 343, "end": 347, "code": "-K", "size": 22, "group_end": 435},
   {"kind": "indexed", "start": 347, "end": 435, "code": "A", "index": 0, "raw": "9c1f..."}
 ]}}
 {"id": 1, "result": {"reject": {"class": "truncated"}}}
 ```
 
-`start` and `end` are byte offsets into the stream. Report what is on the wire, not what your implementation infers: an indexed item has exactly the index fields its code's table entry defines; a counter's `size` is the value of its size field as encoded, and its genus and version where the code carries them; a message item is reported only for a body framed by a version string, and a native CESR body is reported as its count code and primitives. The runner checks framing from the offsets, so a group whose size was misread ends in the wrong place.
+`start` and `end` are byte offsets into the stream. Report what is on the wire, not what your implementation infers: an indexed item has exactly the index fields its code's table entry defines; a counter's `size` is the value of its size field as encoded, its `group_end` is the offset at which the implementation ended the group the counter introduces, and it carries its genus and version where the code carries them; a message item is reported only for a body framed by a version string, and a native CESR body is reported as its count code and primitives. The runner checks framing from the offsets, so a group whose size was misread ends in the wrong place.
 
 ## `cesr.encode`
 
