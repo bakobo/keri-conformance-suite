@@ -10,7 +10,12 @@ import pathlib
 import re
 
 from . import keripy1x, spec_source, tables
-from .build import ScenarioError, build_case, resolve_clauses, resolve_records
+from .build import build_case, resolve_clauses, resolve_records
+from .errors import E_SCENARIO_JSON, E_SPEC_TABLE, GeneratorError, ScenarioError
+
+# Failures of a case's content that the builder does not name itself: an unknown code or table
+# entry, a raw value of the wrong size, a missing scenario field, a quote not in the text.
+BUILD_FAILURES = (KeyError, ValueError, LookupError, TypeError)
 
 SCENARIO_DIR = "scenarios/cesr"
 CASE_DIR = "cases/cesr"
@@ -80,14 +85,28 @@ def dumps(obj) -> bytes:
     return (json.dumps(obj, indent=2, sort_keys=True, ensure_ascii=False) + "\n").encode("utf-8")
 
 
+def _load_json(path: pathlib.Path):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        raise ScenarioError(f"{path.name} is not valid JSON: {e}.", E_SCENARIO_JSON) from None
+
+
 def generate(root: pathlib.Path) -> dict[str, bytes]:
     scen_dir = root / SCENARIO_DIR
-    t = tables.load()
     spec_text = spec_source.load_spec()
-    registry = json.loads((scen_dir / CLAUSES_FILE).read_text(encoding="utf-8"))
-    clauses = resolve_clauses(registry["clauses"], spec_text)
-    conflicts = resolve_records(registry.get("conflicts", {}), spec_text, "why")
-    inferences = resolve_records(registry.get("inferences", {}), spec_text, "inference")
+    try:
+        t = tables.load(spec_text)
+    except BUILD_FAILURES as e:
+        raise GeneratorError(f"The code tables could not be read from the pinned specification "
+                             f"text: {e}.", E_SPEC_TABLE) from None
+    registry = _load_json(scen_dir / CLAUSES_FILE)
+    try:
+        clauses = resolve_clauses(registry["clauses"], spec_text)
+        conflicts = resolve_records(registry.get("conflicts", {}), spec_text, "why")
+        inferences = resolve_records(registry.get("inferences", {}), spec_text, "inference")
+    except BUILD_FAILURES as e:
+        raise ScenarioError(f"{CLAUSES_FILE}: {e}") from None
 
     files: dict[str, bytes] = {}
     allowed: set[int] = set()
@@ -95,7 +114,7 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
     for path in sorted(scen_dir.glob("*.json")):
         if path.name == CLAUSES_FILE:
             continue
-        scenario = json.loads(path.read_text(encoding="utf-8"))
+        scenario = _load_json(path)
         rel = path.relative_to(root).as_posix()
         allowed.update(gap["number"] for gap in scenario.get("id_gaps", []))
         for case in scenario["cases"]:
@@ -108,9 +127,12 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
                 raise ScenarioError(f"Case id {case['id']} is used twice.")
             if case["profile"] not in members:
                 raise ScenarioError(f"{case['id']}: unknown profile {case['profile']!r}.")
-            files[out] = dumps(build_case(t, rel, case, clauses, legacy, reference,
-                                          scenario.get("messages"), keripy1x.TABLE,
-                                          conflicts, inferences))
+            try:
+                built = build_case(t, rel, case, clauses, legacy, reference,
+                                   scenario.get("messages"), keripy1x.TABLE, conflicts, inferences)
+            except BUILD_FAILURES as e:
+                raise ScenarioError(f"{rel}, {case['id']}: {type(e).__name__}: {e}") from None
+            files[out] = dumps(built)
             members[case["profile"]].append(case["id"])
 
     numbers = sorted(int(CASE_ID.match(p.split("/")[-1][:-5]).group(1)) for p in files)

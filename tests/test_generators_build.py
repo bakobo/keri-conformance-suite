@@ -20,6 +20,7 @@ from generators.spec_tables import (
     build,
     decoding,
     encoding,
+    errors,
     keripy1x,
     regenerate,
     spec_source,
@@ -430,3 +431,59 @@ def test_conflict_record_under_the_wrong_heading_is_refused():
               "quote": "The size component MUST count the Quadlets/triplets in its following group."}
     with pytest.raises(build.ScenarioError, match="not 'Text Code Size'"):
         build.resolve_records({"x": record}, SPEC, "why")
+
+
+# --- Coded generator errors -----------------------------------------------------------------
+
+
+def test_scenario_errors_carry_the_scenario_code():
+    e = build.ScenarioError("x")
+    assert e.code == "e.input.format.kcs-scenario.f" and str(e) == "e.input.format.kcs-scenario.f: x"
+
+
+def test_a_scenario_file_that_is_not_json_is_a_coded_error(tree):
+    (tree / "scenarios" / "cesr" / "zz.json").write_text("{not json")
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate.generate(tree)
+    assert e.value.code == "e.input.format.kcs-scenario-json.f" and "zz.json" in str(e.value)
+
+
+def test_a_case_the_tables_cannot_build_is_a_coded_scenario_error(tree):
+    bad = _case(id="CESR-0049", stream=[{"genus": "AAA", "major": 2, "minor": 0},
+                                        {"group": "-J", "items": [{"primitive": "b", "raw": "x"}]}])
+    _scenario(tree, "zz.json", [bad])
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate.generate(tree)
+    assert e.value.code == "e.input.format.kcs-scenario.f"
+    assert "CESR-0049: KeyError" in str(e.value)
+
+
+def test_a_clause_quote_not_in_the_text_is_a_coded_scenario_error(tree):
+    path = tree / "scenarios" / "cesr" / "clauses.json"
+    registry = json.loads(path.read_text())
+    registry["clauses"]["mid-padding"]["quote"] = "Nowhere in the specification."
+    path.write_text(json.dumps(registry))
+    with pytest.raises(build.ScenarioError, match="clauses.json") as e:
+        regenerate.generate(tree)
+    assert e.value.code == "e.input.format.kcs-scenario.f"
+
+
+def test_unreadable_code_tables_are_the_generators_own_coded_error(tree, monkeypatch):
+    def broken(text=None):
+        raise LookupError("There is no table under the heading 'Encoding Scheme Table'.")
+
+    monkeypatch.setattr(regenerate.tables, "load", broken)
+    with pytest.raises(errors.GeneratorError) as e:
+        regenerate.generate(tree)
+    assert e.value.code == "e.self.unknown.kcs-spec-table.f"
+
+
+def test_script_prints_a_coded_generator_error_and_exits_3(monkeypatch, capsys):
+    script = runpy.run_path(str(ROOT / "scripts" / "regenerate"))
+
+    def fail(root):
+        raise build.ScenarioError("broken scenario")
+
+    monkeypatch.setattr(script["regenerate"], "generate", fail)
+    assert script["main"](["--check"]) == 3
+    assert capsys.readouterr().err.strip() == "e.input.format.kcs-scenario.f: broken scenario"

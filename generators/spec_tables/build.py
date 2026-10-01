@@ -25,14 +25,11 @@ import json
 
 from . import GENERATOR_NAME, GENERATOR_VERSION, b64, blake3, encoding, spec_source
 from .decoding import Legacy, Parser, Rejected
+from .errors import ScenarioError
 from .tables import Tables
 
 SCHEMA_VERSION = 1
 LEVELS = ("MUST", "SHOULD", "MAY")
-
-
-class ScenarioError(Exception):
-    pass
 
 
 def raw_bytes(label: str, size: int) -> bytes:
