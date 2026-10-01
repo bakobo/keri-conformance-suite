@@ -1,0 +1,22 @@
+# A second instance of the keripy adapter, pinned to keripy 1.2.14 for the keripy-1x-interop
+# profile. It installs the adapter package from the directory above and pins keripy 1.2.14 by
+# full commit (tag 1.2.14, peeled). Python 3.12, which keripy 1.2.14 targets; the adapter
+# package's own keripy-main pin is confined to Python 3.14 by a marker, so it does not apply here.
+[project]
+name = "kcs-adapter-keripy-1x"
+version = "0.1.0"
+description = "The keripy adapter, pinned to keripy 1.2.14."
+requires-python = ">=3.12.2,<3.13"
+dependencies = [
+    "kcs-adapter-keripy",
+    "keri @ git+https://github.com/WebOfTrust/keripy@bab95c16e949b61398129a3e41a8f68bad84c94f",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-cov>=5"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+kcs-adapter-keripy = { path = "..", editable = true }
