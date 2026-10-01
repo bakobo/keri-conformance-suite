@@ -635,7 +635,8 @@
             ],
             "properties": {
               "code": {
-                "type": "string"
+                "type": "string",
+                "minLength": 1
               },
               "raw": {
                 "type": "string",
@@ -767,6 +768,106 @@
         "required": [
           "superseded_by"
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "cesr.parse"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "decoded",
+                    "rejected"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "cesr.encode"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "encoded"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "keri.process"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "disposition",
+                    "key_state"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "keri.emit"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "emitted_body",
+                    "signatures_verify",
+                    "attachments_equivalent"
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     }
   ],

@@ -325,3 +325,36 @@ def test_runner_refuses_a_trailing_newline_that_python_jsonschema_admits():
         "0xabc\n") != assertions.normalize_threshold("0xabc")
     assert contracts.THRESHOLD("0xabc\n", ["kt"]) is not None
     assert contracts.HEX_STRING("abcd\n", ["raw"]) is not None
+
+
+# --- checks that fit the operation (K) and a non-empty encode code (Q) ---------------------------
+
+SAMPLE_ASSERTIONS = {a["check"]: a for case in BASE_CASES for a in case["assertions"]
+                     if a["level"] != "INTEROP"}
+OPERATION_CHECKS = {
+    "cesr.parse": {"decoded", "rejected"},
+    "cesr.encode": {"encoded"},
+    "keri.process": {"disposition", "key_state"},
+    "keri.emit": {"emitted_body", "signatures_verify", "attachments_equivalent"},
+}
+
+
+def test_every_check_has_a_sample():
+    assert set(SAMPLE_ASSERTIONS) == set().union(*OPERATION_CHECKS.values())
+
+
+@pytest.mark.parametrize("base", BASE_CASES, ids=[c["id"] for c in BASE_CASES])
+@pytest.mark.parametrize("check", sorted(SAMPLE_ASSERTIONS))
+def test_an_assertion_check_must_fit_the_operation(base, check):
+    case = _replace(base, ("assertions",), [SAMPLE_ASSERTIONS[check]])
+    fits = check in OPERATION_CHECKS[base["operation"]]
+    assert CASE_VALIDATOR.is_valid(case) == fits
+    assert (case_problem(case) is None) == fits
+    if not fits:
+        assert "operation" in case_problem(case)
+
+
+def test_cesr_encode_needs_a_non_empty_code():
+    case = _replace(BASE_CASES[2], ("input", "code"), "")
+    assert not CASE_VALIDATOR.is_valid(case)
+    assert "code" in case_problem(case)

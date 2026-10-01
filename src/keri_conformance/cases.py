@@ -66,9 +66,18 @@ CHECK_FORMS = {
                                          expected=array(anything_object)),
 }
 
+# The checks that can apply to each operation's result.
+OPERATION_CHECKS = {
+    "cesr.parse": ("decoded", "rejected"),
+    "cesr.encode": ("encoded",),
+    "keri.process": ("disposition", "key_state"),
+    "keri.emit": ("emitted_body", "signatures_verify", "attachments_equivalent"),
+}
+
 INPUTS = {
     "cesr.parse": obj({"stream": HEX_STRING}),
-    "cesr.encode": obj({"code": string(), "raw": HEX_STRING, "domain": enum("text", "binary")}),
+    "cesr.encode": obj({"code": string(min_length=1), "raw": HEX_STRING,
+                        "domain": enum("text", "binary")}),
     "keri.process": obj({
         "perspective": obj({"role": enum("validator")}),
         "messages": array(obj({"stream": HEX_STRING, "source": string()}), min_items=1),
@@ -112,7 +121,12 @@ def _cross_field_problem(case: dict) -> str | None:
     for status, field in (("disputed", "dispute"), ("deprecated", "superseded_by")):
         if case["status"] == status and field not in case:
             return f'a {status} case needs "{field}"'
+    checks = OPERATION_CHECKS[case["operation"]]
     for n, assertion in enumerate(case["assertions"]):
+        if assertion["check"] not in checks:
+            return (f'assertions[{n}] uses the check {assertion["check"]}, which a '
+                    f'{case["operation"]} operation cannot satisfy; its checks are '
+                    f'{", ".join(checks)}')
         needs, forbids = (("clause", "basis") if assertion["level"] in NORMATIVE
                           else ("basis", "clause"))
         if needs not in assertion or forbids in assertion:
