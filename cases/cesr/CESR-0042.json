@@ -10,7 +10,13 @@
         "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
       },
       "id": "a1",
-      "level": "MUST",
+      "inferred_from": {
+        "inference": "A parser should reject a stream whose message body is shorter than the size its version string declares, since it cannot extract and deserialize that field map; the clause states the capability, not what to do with a short body.",
+        "line": 1129,
+        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
+        "section": "Version 2.XX string field format"
+      },
+      "level": "SHOULD",
       "note": "Relies on the adapter protocol's end-of-input rule. Informative class: truncated."
     }
   ],

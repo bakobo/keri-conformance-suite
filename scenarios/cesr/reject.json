@@ -433,7 +433,9 @@
         {
           "check": "rejected",
           "clause": "version-string-extract",
-          "note": "Relies on the adapter protocol's end-of-input rule. Informative class: truncated."
+          "note": "Relies on the adapter protocol's end-of-input rule. Informative class: truncated.",
+          "level": "SHOULD",
+          "inferred_from": "version-string-extract"
         }
       ],
       "truncate": 5

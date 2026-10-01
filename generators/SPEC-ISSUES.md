@@ -50,11 +50,12 @@ The suite's policy (decided 2026-10-01):
 - **The specification should state** that a parser MUST reject a frame whose first byte begins none of the permitted frames, and that a byte with tritet 0b010 other than `_` begins none. It should also define annotated text, or say that its syntax is out of scope.
 - **Re-issued at MUST if stated:** CESR-0041.
 
-### Not an inference: a body shorter than its version string declares (line 1129)
+### I7: a body shorter than its version string declares (line 1129)
 
-"Version 2.XX string field format", line 1129: "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps." This is a parser-side rule, so CESR-0042 keeps MUST. The specification could still say explicitly that a body shorter than its declared size is rejected. That would need no re-issue.
+"Version 2.XX string field format", line 1129: "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps." This states a capability for well-formed streams; it does not say what a parser does with a body shorter than its declared size, so rejecting one is inferred and graded SHOULD (revised 2026-10-02 after review; it was first graded MUST).
 
-## Spec-internal conflicts (cases stay MUST and active)
+- **The specification should state** that a parser MUST reject a body shorter than the size its version string declares, once the input is known to be complete.
+- **Re-issued at MUST if stated:** CESR-0042.
 
 ### C1. What a count code's size counts (line 591 against lines 674, 714 and 1103)
 

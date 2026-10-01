@@ -114,6 +114,11 @@
       "inference": "A parser should reject a stream that resumes with a byte that starts none of the eight permitted frames.",
       "section": "Stream parsing rules",
       "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding."
+    },
+    "version-string-extract": {
+      "inference": "A parser should reject a stream whose message body is shorter than the size its version string declares, since it cannot extract and deserialize that field map; the clause states the capability, not what to do with a short body.",
+      "section": "Version 2.XX string field format",
+      "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps."
     }
   }
 }
