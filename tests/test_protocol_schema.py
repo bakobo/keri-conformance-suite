@@ -159,3 +159,27 @@ def test_hello_request_carries_supported_versions():
 def test_requests_tolerate_unknown_fields():
     assert list(REQUEST.iter_errors({"id": 0, "op": "hello", "protocol": 2, "supported": [1, 2],
                                       "future": True})) == []
+
+
+def _walk(node):
+    yield node
+    if isinstance(node, dict):
+        for value in node.values():
+            yield from _walk(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _walk(value)
+
+
+def test_nested_request_objects_tolerate_unknown_fields_too():
+    request = {"id": 3, "op": "keri.process", "perspective": {"role": "validator", "future": 1},
+               "messages": [{"stream": "7b22", "source": "controller", "future": 1}]}
+    assert list(REQUEST.iter_errors(request)) == []
+
+
+def test_no_request_object_is_closed():
+    # The forward-compatibility rule: an adapter ignores unknown fields anywhere in a request, so
+    # no part of a request may forbid them.
+    for node in _walk(SCHEMA["$defs"]["request"]):
+        if isinstance(node, dict):
+            assert node.get("additionalProperties") is not False

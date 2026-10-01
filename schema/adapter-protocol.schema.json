@@ -109,7 +109,6 @@
             },
             "perspective": {
               "type": "object",
-              "additionalProperties": false,
               "required": [
                 "role"
               ],
@@ -124,7 +123,6 @@
               "minItems": 1,
               "items": {
                 "type": "object",
-                "additionalProperties": false,
                 "required": [
                   "stream",
                   "source"
