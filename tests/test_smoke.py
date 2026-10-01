@@ -6,15 +6,14 @@ import sys
 
 import pytest
 
-import keri_conformance
-from keri_conformance import cli, protocol
+from keri_conformance import __version__, cli, protocol
 
 # PEP 440 public version, the subset this project uses (release segment plus optional pre/dev).
 PEP440 = re.compile(r"^\d+(\.\d+)*((a|b|rc)\d+)?(\.dev\d+)?$")
 
 
 def test_version_is_a_pep440_release():
-    assert PEP440.match(keri_conformance.__version__)
+    assert PEP440.match(__version__)
 
 
 def test_protocol_version_is_current_and_supported():
@@ -30,7 +29,7 @@ def test_supported_protocols_are_current_and_previous_only():
 
 def test_cli_prints_version(capsys):
     assert cli.main(["--version"]) == 0
-    assert capsys.readouterr().out.strip() == f"kcs {keri_conformance.__version__}"
+    assert capsys.readouterr().out.strip() == f"kcs {__version__}"
 
 
 def test_cli_without_arguments_prints_usage_and_fails(capsys):

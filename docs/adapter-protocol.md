@@ -4,7 +4,7 @@
 
 An adapter is a program that connects one implementation to the runner. The runner starts it as a child process and talks to it over its standard input and output. This document is everything an adapter author needs.
 
-Two things check an adapter without running a single case: the message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Both are described under "Checking an adapter" in [`design.md`](design.md).
+Two things will check an adapter without running a single case: message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Neither exists yet; both are being built next, and are described under "Checking an adapter" in [`design.md`](design.md).
 
 ## Transport
 
@@ -85,8 +85,10 @@ Encode a primitive.
 
 ```json
 {"id": 2, "op": "cesr.encode", "code": "E", "raw": "4b2a...", "domain": "text"}
-{"id": 2, "result": {"encoded": "EEsq..."}}
+{"id": 2, "result": {"encoded": "4545737..."}}
 ```
+
+`encoded` is the encoding as hex bytes, like every other binary value: for the text domain those are the bytes of the Base64 characters, and for the binary domain they are the raw encoded bytes.
 
 ## `keri.process`
 
@@ -129,7 +131,7 @@ Build and sign an event from raw keys and parameters.
 
 ```json
 {"id": 4, "op": "keri.emit", "event": {"t": "icp", "...": "..."}, "seeds": {"DAbc...": "a1b2..."}}
-{"id": 4, "result": {"stream": "{\"v\":\"KERI10JSON...\"}-AAB..."}}
+{"id": 4, "result": {"stream": "7b2276223a224b45..."}}
 ```
 
 The exact shape of `event` for each event type is defined by the case schema, `schema/case.schema.json`, which is added with the first KERI cases. The runner checks the event body byte for byte, checks that every signature verifies, and parses the attachments to check that they carry the right signatures with the right indexes. How the attachments are grouped is up to the implementation.
