@@ -74,6 +74,9 @@ LINES = {
     "error-bad-kind": lambda rid: error(rid, "oops", "x"),
     "error-not-object": lambda rid: json.dumps({"id": rid, "error": "x"}).encode() + b"\n",
     "answer-all": encoded,
+    "few-dispositions": lambda rid: json.dumps({"id": rid, "result": {
+        "dispositions": [{"initial": "accepted", "final": "accepted"}],
+        "key_states": {}}}).encode() + b"\n",
 }
 
 

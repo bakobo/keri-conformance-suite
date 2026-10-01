@@ -167,6 +167,10 @@ def test_a_good_hello_has_no_problems(vocabulary):
         ({"adapter": {"name": "a"}}, '"adapter.version"'),
         ({"adapter": {"name": 1, "version": "1"}}, '"adapter.name"'),
         ({"implementation": {"name": "i", "version": "1"}}, '"implementation.commit"'),
+        ({"adapter": {"name": "a", "version": "1", "build": "x"}},
+         '"adapter" has the unexpected field "build"'),
+        ({"implementation": {"name": "i", "version": "1", "commit": "c", "url": "u"}},
+         '"implementation" has the unexpected field "url"'),
         ({"operations": None}, '"operations" is missing'),
         ({"operations": []}, '"operations"'),
         ({"operations": "cesr.parse"}, '"operations"'),
@@ -307,6 +311,37 @@ def test_an_integral_float_id_and_offsets_are_integers():
     assert isinstance(outcome, Reply)
     item = outcome.result["items"][0]
     assert (type(item["start"]), type(item["end"])) == (int, int)
+
+
+@pytest.mark.parametrize(("text", "value"), [
+    ("9007199254740993.0", 9007199254740993),
+    ("9007199254740993e0", 9007199254740993),
+    ("1.0", 1), ("-0.0", 0), ("4e0", 4), ("1.5e1", 15), ("12345678901234567890.0",
+                                                         12345678901234567890),
+])
+def test_integral_numbers_become_exact_ints(text, value):
+    from keri_conformance.jsonfile import loads
+
+    decoded = loads(text)
+    assert type(decoded) is int
+    assert decoded == value
+
+
+@pytest.mark.parametrize(("text", "value"), [("1.5", 1.5), ("1e-3", 0.001), ("0.1", 0.1)])
+def test_non_integral_numbers_stay_floats(text, value):
+    from keri_conformance.jsonfile import loads
+
+    decoded = loads(text)
+    assert type(decoded) is float
+    assert decoded == value
+
+
+@pytest.mark.parametrize("text", ["1e400", "-1e400", "NaN", "Infinity", "-Infinity", "1e999999"])
+def test_non_finite_and_overflowing_numbers_are_refused(text):
+    from keri_conformance.jsonfile import loads
+
+    with pytest.raises(ValueError):
+        loads(text)
 
 
 def test_vocabulary_refuses_non_finite_constants(tmp_path):
@@ -564,6 +599,22 @@ def test_an_adapter_that_closes_stderr_still_works(vocabulary):
         tail = s.take_stderr()
         assert outcome == Reply({"encoded": "10"})
         assert tail == ""
+
+
+def test_a_disposition_count_that_differs_from_the_messages_is_malformed(vocabulary):
+    messages = [{"stream": "7b7d", "source": "controller"}] * 2
+    with session(bad("few-dispositions"), vocabulary) as s:
+        s.open()
+        first = s.pid
+        outcome = s.request("keri.process", {"perspective": {"role": "validator"},
+                                             "messages": messages})
+        assert isinstance(outcome, Failure)
+        assert outcome.kind == "malformed"
+        assert "2 messages" in outcome.detail
+        assert "1 disposition" in outcome.detail
+        assert s.pid is None  # killed; restarted before the next request
+        s.ensure_running()
+        assert s.pid != first
 
 
 def test_an_answer_before_the_request_is_written_is_malformed(vocabulary):

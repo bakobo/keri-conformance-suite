@@ -163,6 +163,31 @@ def test_a_partial_result_shape_fails_every_assertion(cases_dir, tmp_path, write
     assert [a["outcome"] for a in case["assertions"]] == ["fail"]
 
 
+def test_too_few_dispositions_fail_the_case_end_to_end(cases_dir, tmp_path):
+    two = make_case("KERI-0009", "keri.process",
+                    {"perspective": {"role": "validator"},
+                     "messages": [{"stream": "7b7d", "source": "controller"}] * 2},
+                    [assertion("disposition", message=0, phase="final", expected="accepted")])
+    code, report = run(bad("few-dispositions"), cases_dir(two), tmp_path)
+    case = report["cases"][0]
+    assert code == errors.EXIT_FAILED
+    assert case["failure"]["kind"] == "malformed"
+    assert [a["outcome"] for a in case["assertions"]] == ["fail"]
+
+
+def test_a_case_feature_outside_the_vocabulary_is_a_malformed_case(cases_dir, tmp_path, capsys):
+    unknown = make_case("CESR-0030", "cesr.parse", {"stream": "2d4b"}, [assertion("rejected")],
+                        features=["cesr.genus-2.00", "kel.teleport"])
+    dump = tmp_path / "hello.json"
+    code, report = run(good("--hello-dump", dump), cases_dir(PASSING[0], unknown), tmp_path)
+    assert code == errors.EXIT_FAULT
+    assert report is None
+    err = capsys.readouterr().err
+    assert errors.E_CASE_FORMAT in err
+    assert "CESR-0030" in err
+    assert "kel.teleport" in err
+
+
 def test_a_hanging_adapter_times_out(cases_dir, tmp_path):
     _code, report = run(bad("hang"), cases_dir(PASSING[0]), tmp_path, "--timeout", "0.5")
     assert report["cases"][0]["failure"]["kind"] == "timeout"

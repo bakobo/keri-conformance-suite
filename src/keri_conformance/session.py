@@ -189,6 +189,10 @@ def validate_hello(result, vocabulary: dict[str, bool]) -> list[str]:
             for key in keys:
                 if not isinstance(value.get(key), str):
                     problems.append(f'"{field}.{key}" is missing or not a string.')
+            for key in value:
+                if key not in keys:
+                    problems.append(f'"{field}" has the unexpected field "{key}"; it may carry '
+                                    f'only {", ".join(keys)}.')
     if "operations" in result:
         ops = _check_names(result, "operations", OPERATIONS,
                            f"an operation of protocol version {PROTOCOL_VERSION}", problems)
@@ -323,6 +327,12 @@ class AdapterSession:
         self.ensure_running()
         rid = self.next_id()
         outcome = self._roundtrip({**fields, "id": rid, "op": op}, op, rid)
+        if op == "keri.process" and isinstance(outcome, Reply):
+            sent, got = len(fields["messages"]), len(outcome.result["dispositions"])
+            if sent != got:
+                outcome = Failure("malformed", f"The adapter reported {got} disposition"
+                                               f"{'' if got == 1 else 's'} for {sent} messages; "
+                                               "a keri.process result has one per message.")
         if isinstance(outcome, Failure):
             self.kill()
         return outcome

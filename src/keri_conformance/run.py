@@ -14,7 +14,7 @@ changed it is aborted, and its report holds the cases completed before that.
 
 from keri_conformance import __version__
 from keri_conformance.assertions import evaluate
-from keri_conformance.errors import HelloRefused
+from keri_conformance.errors import E_CASE_FORMAT, HelloRefused, RunnerError
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 from keri_conformance.session import AdapterSession, Failure
 
@@ -114,6 +114,13 @@ def summarize(entries: list[dict]) -> tuple[dict, str]:
 def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None,
               cases_dir: str, suite_version: str) -> dict:
     """Run the cases (filtered by profile) and return the conformance report."""
+    for case in cases:
+        unknown = [f for f in case["targets"]["features"] if f not in session.vocabulary]
+        if unknown:
+            raise RunnerError(E_CASE_FORMAT, f"The case {case['id']} is malformed: its "
+                                             f"targets.features lists {', '.join(unknown)}, "
+                                             "which the suite's feature vocabulary "
+                                             "(profiles/features.json) does not define.")
     session_stderr = session.take_stderr()
     entries, aborted = [], None
     for case in cases:
