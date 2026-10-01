@@ -31,10 +31,12 @@ def test_a_good_adapter_passes_every_available_probe(vocabulary):
     assert all(p.reason for p in result.values())
 
 
-def test_an_adapter_that_ignores_a_malformed_line_survives(vocabulary):
+def test_an_adapter_that_silently_drops_a_malformed_line_fails(vocabulary):
+    # Answering the next request is not enough: the unreadable line must get an error response
+    # whose id is null, or the runner cannot tell a dropped line from a lost one.
     result = probes(bad("silent-on-junk"), vocabulary)
-    assert result["malformed-request"].status == "pass"
-    assert "survived" in result["malformed-request"].reason
+    assert result["malformed-request"].status == "fail"
+    assert "null" in result["malformed-request"].reason
 
 
 def test_an_adapter_that_crashes_on_a_malformed_line_fails(vocabulary):

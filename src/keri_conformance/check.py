@@ -1,8 +1,8 @@
 """`kcs check-adapter`: probe an adapter's protocol behaviour without running a case.
 
 The probes check what the runner can check from the outside with no KERI material: that hello is
-valid, that ids are echoed, that a malformed request line gets an error response (or is survived),
-and that an unknown op gets an error. The statelessness and quiescence probes need real KERI
+valid, that ids are echoed, that a request line that is not JSON gets an error response whose id
+is null and the adapter then answers the next request, and that an unknown op gets an error. The statelessness and quiescence probes need real KERI
 streams from the keripy generator, which does not exist yet, so they are reported as not yet
 available rather than faked.
 """
@@ -65,8 +65,8 @@ def _probe_malformed(session: AdapterSession) -> tuple[bool, str]:
     if isinstance(line, Failure):
         return False, line.detail
     if _answered(parse_response(line, rid, "")):
-        return True, ("The adapter survived a line that is not JSON and answered the next "
-                      "request.")
+        return False, ("The adapter dropped a line that is not JSON without answering it; it "
+                       'must answer such a line with an error response whose "id" is null.')
     if not _null_id_error(line):
         return False, ("The adapter answered a line that is not JSON with something other than "
                        'an error response whose "id" is null.')
