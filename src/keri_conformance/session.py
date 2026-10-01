@@ -83,6 +83,13 @@ def is_posix() -> bool:
     return os.name == "posix"
 
 
+def hello_request() -> dict:
+    """Offer every protocol version this runner supports and ask for the highest; the adapter
+    answers with the one it chose."""
+    return {"id": 0, "op": "hello", "protocol": max(SUPPORTED_PROTOCOLS),
+            "supported": sorted(SUPPORTED_PROTOCOLS)}
+
+
 def _clip(text: str) -> str:
     return text if len(text) <= CLIP else text[:CLIP] + "..."
 
@@ -166,11 +173,11 @@ def validate_hello(result, vocabulary: dict[str, bool]) -> list[str]:
     for field in result:
         if field not in HELLO_FIELDS:
             problems.append(f'"{field}" is not a field of the hello result.')
-    supported = ", ".join(map(str, sorted(SUPPORTED_PROTOCOLS)))
     if "protocol" in result and (type(result["protocol"]) is not int
                                  or result["protocol"] not in SUPPORTED_PROTOCOLS):
-        problems.append(f'"protocol" is {json.dumps(result["protocol"])}; this runner supports '
-                        f"protocol version {supported}.")
+        problems.append(f'"protocol" is {json.dumps(result["protocol"])}, which is not in the '
+                        f'"supported" list {json.dumps(sorted(SUPPORTED_PROTOCOLS))} the runner '
+                        "offered; the adapter must choose one of those versions.")
     for field, keys in (("adapter", ("name", "version")),
                         ("implementation", ("name", "version", "commit"))):
         if field in result:
@@ -488,8 +495,7 @@ class AdapterSession:
 
     def _start(self) -> dict:
         self._spawn()
-        outcome = self._roundtrip({"id": 0, "op": "hello", "protocol": PROTOCOL_VERSION},
-                                  "hello", 0)
+        outcome = self._roundtrip(hello_request(), "hello", 0)
         if isinstance(outcome, Failure):
             self.kill()
             raise HelloRefused(E_ADAPTER_HELLO,

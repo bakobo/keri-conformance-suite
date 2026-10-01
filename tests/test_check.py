@@ -97,6 +97,14 @@ def test_a_refused_hello_fails_and_skips_the_rest(vocabulary):
     assert [result[n].status for n in PROBES[1:4]] == ["not-run"] * 3
 
 
+@pytest.mark.parametrize(("mode", "needle"), [("hello-version", '"supported" list [1]'),
+                                              ("hello-error", "the hello handler is broken")])
+def test_the_hello_probe_follows_negotiation(vocabulary, mode, needle):
+    result = probes(bad(mode), vocabulary)
+    assert result["hello"].status == "fail"
+    assert needle in result["hello"].reason
+
+
 def test_a_hello_that_changes_on_restart_fails_the_probe_that_restarted(vocabulary, monkeypatch):
     from keri_conformance import session as session_module
 

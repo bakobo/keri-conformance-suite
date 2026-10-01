@@ -117,10 +117,16 @@ def main():
         hang()
     if MODE == "hello-error":
         request = read_request()
-        return send({"id": request["id"], "error": {"kind": "harness", "message": "no"}})
+        return send({"id": request["id"],
+                     "error": {"kind": "harness", "message": "the hello handler is broken"}})
+    if MODE == "hello-version":
+        request = read_request()
+        send({"id": request["id"], "result": {**HELLO, "protocol": max(request["supported"]) + 1}})
+        hang()
     if MODE == "close-stdin":
-        hello()
-        os.close(0)
+        request = read_request()
+        os.close(0)  # before answering hello, so the runner's next write always finds it closed
+        send({"id": request["id"], "result": HELLO})
         hang()
     if MODE == "close-stderr":
         os.close(2)

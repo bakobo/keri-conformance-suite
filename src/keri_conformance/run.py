@@ -15,7 +15,7 @@ changed it is aborted, and its report holds the cases completed before that.
 from keri_conformance import __version__
 from keri_conformance.assertions import evaluate
 from keri_conformance.errors import HelloRefused
-from keri_conformance.protocol import PROTOCOL_VERSION
+from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 from keri_conformance.session import AdapterSession, Failure
 
 VERDICT_EXIT = {"conformant": 0, "not-conformant": 1, "aborted": 3, "incomplete": 4,
@@ -134,6 +134,8 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
         "runner_version": __version__,
         "suite_version": __version__,
         "protocol_version": PROTOCOL_VERSION,
+        "supported_protocols": sorted(SUPPORTED_PROTOCOLS),
+        "negotiated_protocol": hello["protocol"],
         "hello": hello,
         "declared_features": hello["features"],
         "composes": hello.get("composes", []),

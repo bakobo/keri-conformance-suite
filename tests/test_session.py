@@ -133,7 +133,7 @@ def test_a_good_hello_has_no_problems(vocabulary):
 @pytest.mark.parametrize(
     ("change", "needle"),
     [
-        ({"protocol": 99}, '"protocol" is 99'),
+        ({"protocol": 99}, '"protocol" is 99, which is not in the "supported" list [1]'),
         ({"protocol": True}, '"protocol"'),
         ({"protocol": None}, '"protocol" is missing'),
         ({"adapter": None}, '"adapter" is missing'),
@@ -370,6 +370,36 @@ def test_hello_failures_are_refusals(vocabulary, mode, needle):
     assert info.value.code == errors.E_ADAPTER_HELLO
     assert info.value.exit_code == errors.EXIT_REFUSED
     assert needle in str(info.value)
+    s.close()
+
+
+def test_hello_offers_every_supported_version_and_asks_for_the_highest(vocabulary, tmp_path):
+    from keri_conformance.protocol import SUPPORTED_PROTOCOLS
+
+    dump = tmp_path / "hello.json"
+    with session(good("--hello-dump", dump), vocabulary) as s:
+        assert s.open()["protocol"] == 1
+    request = json.loads(dump.read_text())
+    assert request == {"id": 0, "op": "hello", "protocol": max(SUPPORTED_PROTOCOLS),
+                       "supported": sorted(SUPPORTED_PROTOCOLS)}
+
+
+def test_a_version_outside_supported_is_refused(vocabulary):
+    s = session(bad("hello-version"), vocabulary)
+    with pytest.raises(errors.HelloRefused) as info:
+        s.open()
+    assert info.value.code == errors.E_ADAPTER_HELLO
+    assert info.value.exit_code == errors.EXIT_REFUSED
+    assert '"protocol" is 2, which is not in the "supported" list [1]' in str(info.value)
+    s.close()
+
+
+def test_a_hello_error_is_a_refusal_showing_its_message(vocabulary):
+    s = session(bad("hello-error"), vocabulary)
+    with pytest.raises(errors.HelloRefused) as info:
+        s.open()
+    assert "the hello handler is broken" in str(info.value)
+    assert "the hello handler is broken" in info.value.problems[0]
     s.close()
 
 

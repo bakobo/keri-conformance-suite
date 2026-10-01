@@ -72,6 +72,8 @@ def test_a_conformant_run(cases_dir, tmp_path, capsys):
     assert report["verdict"] == "conformant"
     assert report["runner_version"] == __version__
     assert report["protocol_version"] == PROTOCOL_VERSION
+    assert report["negotiated_protocol"] == 1
+    assert report["supported_protocols"] == [1]
     assert report["hello"]["composes"] == ["keri.escrow"]
     assert report["declared_features"] == report["hello"]["features"]
     assert report["composes"] == ["keri.escrow"]
@@ -186,6 +188,13 @@ def test_a_refused_hello_exits_3_and_runs_nothing(cases_dir, tmp_path, write_jso
     err = capsys.readouterr().err
     assert errors.E_ADAPTER_HELLO in err
     assert '"features" is missing.' in err
+
+
+def test_a_version_outside_supported_exits_3(cases_dir, tmp_path, capsys):
+    code, report = run(bad("hello-version"), cases_dir(PASSING[0]), tmp_path)
+    assert code == errors.EXIT_REFUSED
+    assert report is None
+    assert '"supported" list [1]' in capsys.readouterr().err
 
 
 def test_running_as_root_is_refused(cases_dir, tmp_path, monkeypatch, capsys):

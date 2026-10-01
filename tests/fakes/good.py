@@ -1,12 +1,15 @@
 """A correct fake adapter, driven by a table.
 
-Usage: good.py [--table FILE] [--hello FILE] [--late-stderr] [--env-dump FILE]
+Usage: good.py [--table FILE] [--hello FILE] [--late-stderr] [--env-dump FILE] [--hello-dump FILE]
+
+On hello the adapter chooses the highest protocol version in the request's "supported" list that
+it implements, and answers with an unsupported error if there is none.
 
 The table is a JSON list of {"match": {...}, "result": {...}} or {"match": {...}, "error": {...}}
 entries. A request matches an entry when every key in "match" equals the request's value for that
 key. The first matching entry answers; a request no entry matches gets a harness error. Without
 --table the built-in table below is used. --hello replaces the hello result; --late-stderr writes
-to stderr 0.1 s after each response; --env-dump writes the adapter's environment to a file so
+to stderr 0.1 s after each response; --hello-dump writes the hello request to a file; --env-dump writes the adapter's environment to a file so
 tests can see what the runner passed through.
 """
 
@@ -55,9 +58,20 @@ def load(name, default):
         return json.load(f)
 
 
+IMPLEMENTS = (1,)
+
+
 def answer(request, table):
     if request.get("op") == "hello":
-        return {"id": request["id"], "result": HELLO_RESULT}
+        dump = option("--hello-dump")
+        if dump:
+            with open(dump, "w", encoding="utf-8") as f:
+                json.dump(request, f)
+        offered = [v for v in request.get("supported", []) if v in IMPLEMENTS]
+        if not offered:
+            return {"id": request["id"], "error": {"kind": "unsupported",
+                                                   "message": "no common protocol version"}}
+        return {"id": request["id"], "result": {**HELLO_RESULT, "protocol": max(offered)}}
     for entry in table:
         if all(request.get(k) == v for k, v in entry["match"].items()):
             body = {k: v for k, v in entry.items() if k != "match"}
