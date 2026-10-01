@@ -968,7 +968,7 @@
       }
     },
     "threshold": {
-      "description": "A threshold as the implementation holds it, exactly the forms the runner normalizes: a hexadecimal integer string with an optional 0x prefix, as KERI encodes numeric thresholds; or weighted clauses, either one clause as a non-empty list of fraction strings or several as a non-empty list of such lists, never mixed. A fraction string is a non-negative integer, optionally over a non-zero denominator, with no spaces or signs. The runner normalizes both sides before comparing.",
+      "description": "A threshold as the implementation holds it, exactly the forms the runner normalizes: a hexadecimal integer string with an optional 0x prefix, as KERI encodes numeric thresholds; or weighted clauses, either one clause as a non-empty list of fraction strings or several as a non-empty list of such lists, never mixed. A fraction string is a non-negative integer of at most 64 digits, optionally over a non-zero denominator of at most 64 digits, with no spaces or signs. The runner normalizes both sides before comparing.",
       "oneOf": [
         {
           "type": "string",
@@ -979,7 +979,7 @@
           "minItems": 1,
           "items": {
             "type": "string",
-            "pattern": "^[0-9]+(/[0-9]*[1-9][0-9]*)?$"
+            "pattern": "^[0-9]{1,64}(/(?=[0-9]{1,64}$)[0-9]*[1-9][0-9]*)?$"
           }
         },
         {
@@ -990,7 +990,7 @@
             "minItems": 1,
             "items": {
               "type": "string",
-              "pattern": "^[0-9]+(/[0-9]*[1-9][0-9]*)?$"
+              "pattern": "^[0-9]{1,64}(/(?=[0-9]{1,64}$)[0-9]*[1-9][0-9]*)?$"
             }
           }
         }

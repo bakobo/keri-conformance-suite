@@ -194,6 +194,22 @@ def test_different_thresholds_normalize_differently(a, b):
     assert normalize_threshold(a) != normalize_threshold(b)
 
 
+def test_fraction_components_are_bounded_to_64_digits():
+    assert normalize_threshold(["9" * 64 + "/" + "9" * 64]) == ("weighted", (("1",),))
+    assert normalize_threshold(["9" * 65]) is None
+    assert normalize_threshold(["1/" + "9" * 65]) is None
+
+
+def test_a_fraction_that_fails_to_convert_is_malformed_not_an_exception(monkeypatch):
+    from keri_conformance import assertions
+
+    def broken(_text):
+        raise ValueError("cannot convert")
+
+    monkeypatch.setattr(assertions, "Fraction", broken)
+    assert normalize_threshold(["1/2"]) is None
+
+
 def test_normalized_forms_are_canonical():
     assert normalize_threshold("0x1f") == ("numeric", 31)
     assert normalize_threshold(["2/4", "3/3"]) == ("weighted", (("1/2", "1"),))
