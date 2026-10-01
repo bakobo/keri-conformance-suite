@@ -45,7 +45,7 @@ GOOD_RESPONSES = [
          "serialization": "JSON", "size": 343},
     ]}},
     {"id": 1, "result": {"reject": {"class": "truncated"}}},
-    {"id": 2, "result": {"encoded": "EEsq"}},
+    {"id": 2, "result": {"encoded": "45457371"}},
     {"id": 3, "result": {
         "dispositions": [{"initial": "pending", "final": "accepted", "reason": "out-of-order"}],
         "key_states": {"EAbc": {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1",
@@ -135,3 +135,7 @@ def test_key_state_shape_matches_the_case_schema():
     case = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
     for name in ("key_state", "threshold"):
         assert SCHEMA["$defs"][name] == case["$defs"][name], name
+
+
+def test_encoded_result_is_hex():
+    assert list(RESPONSE.iter_errors({"id": 2, "result": {"encoded": "EEsq"}}))
