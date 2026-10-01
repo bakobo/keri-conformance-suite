@@ -34,7 +34,8 @@ exit codes:
   4  runner fault: the adapter could not be started, a case is malformed, the runner is
      running as root or off POSIX, or the report could not be written; also the verdict
      incomplete: no MUST assertion failed, but an active one uses a check this runner
-     version cannot evaluate
+     version cannot evaluate; also a run aborted because the adapter's responses passed
+     the 512 MiB budget for retained output (the partial report is written as for 3)
   5  no-evidence: no active MUST assertion was evaluated, so nothing was shown
 """
 
@@ -144,6 +145,7 @@ def _run(args) -> int:
         print(f"kcs: {aborted['code']}: {aborted['reason']}", file=sys.stderr)
         for problem in aborted["problems"]:
             print(f"  - {problem}", file=sys.stderr)
+        return aborted["exit_code"]
     return VERDICT_EXIT[report["verdict"]]
 
 

@@ -97,6 +97,18 @@ def test_load_vocabulary_reads_features_and_composability():
     assert vocab["kel.basic"] is False
 
 
+@pytest.mark.parametrize("name", ["Bad.Key", "kel", "kel.", "kel basic", "kel.basic\n", ""])
+def test_vocabulary_keys_must_be_feature_names(tmp_path, name):
+    (tmp_path / "profiles").mkdir()
+    doc = {"features": {"kel.basic": {"description": "d", "composable": False},
+                        name: {"description": "d", "composable": False}}}
+    (tmp_path / "profiles" / "features.json").write_text(json.dumps(doc))
+    with pytest.raises(errors.RunnerError) as info:
+        load_vocabulary(tmp_path)
+    assert info.value.code == errors.E_VOCABULARY
+    assert json.dumps(name) in str(info.value)
+
+
 def test_load_vocabulary_names_a_missing_file(tmp_path):
     with pytest.raises(errors.RunnerError) as info:
         load_vocabulary(tmp_path)
@@ -660,7 +672,7 @@ def _alive(pid):
     status = pathlib.Path(f"/proc/{pid}/status")
     try:
         text = status.read_text()
-    except FileNotFoundError:
+    except (FileNotFoundError, ProcessLookupError):  # gone, possibly mid-read
         return False
     return "\nState:\tZ" not in text
 

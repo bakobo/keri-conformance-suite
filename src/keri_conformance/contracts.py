@@ -42,7 +42,7 @@ THRESHOLD = predicate(lambda value: normalize_threshold(value) is not None,
 
 KEY_STATE = obj({
     "sn": OFFSET, "said": string(), "keys": array(string()), "kt": THRESHOLD,
-    "ndigs": array(string()), "nt": THRESHOLD, "wits": array(string()), "bt": string(r"^(0x)?[0-9a-f]+$"),
+    "ndigs": array(string()), "nt": THRESHOLD, "wits": array(string()), "bt": string(r"^(0x)?[0-9a-f]{1,64}$"),
     "delegator": nullable(string()),
 })
 

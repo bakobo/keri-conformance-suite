@@ -16,6 +16,7 @@ import functools
 import itertools
 import json
 import os
+import re
 import selectors
 import shlex
 import signal
@@ -51,6 +52,8 @@ ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "SYSTEMROOT")
 HELLO_FIELDS = ("protocol", "adapter", "implementation", "operations", "features", "composes")
 CHUNK = 65536
 MAX_VOCABULARY_BYTES = 1024 * 1024
+# The feature-name pattern of schema/adapter-protocol.schema.json, matched to the true end.
+FEATURE_NAME = re.compile(r"[a-z0-9]+(\.[a-z0-9-]+)+")
 CLIP = 2000
 
 
@@ -149,6 +152,12 @@ def load_vocabulary(suite, max_bytes: int = MAX_VOCABULARY_BYTES) -> dict[str, b
         raise RunnerError(E_VOCABULARY,
                           f"The feature vocabulary {path} must have a \"features\" object whose "
                           "entries each carry a boolean \"composable\".")
+    for name in features:
+        if not FEATURE_NAME.fullmatch(name):
+            raise RunnerError(E_VOCABULARY,
+                              f"The feature vocabulary {path} names the feature "
+                              f"{json.dumps(name)}, which is not a feature name; names are "
+                              "dotted lowercase tokens such as kel.basic.")
     return {name: entry["composable"] for name, entry in features.items()}
 
 
@@ -283,6 +292,7 @@ class AdapterSession:
         self._buffer = bytearray()
         self._stderr = bytearray()
         self.hello = None
+        self.response_bytes = 0  # every response line read, which the report may retain
 
     def __enter__(self):
         return self
@@ -477,6 +487,7 @@ class AdapterSession:
         line = self.exchange(json.dumps(message, separators=(",", ":")).encode() + b"\n")
         if isinstance(line, Failure):
             return line
+        self.response_bytes += len(line)
         return parse_response(line, rid, op)
 
     def _keep_stderr(self, chunk: bytes) -> None:

@@ -265,6 +265,15 @@ def test_a_failure_to_size_a_case_file_is_coded(cases_dir, monkeypatch, number, 
     assert info.value.code == getattr(errors, code)
 
 
+def test_a_disposition_past_the_last_message_is_a_malformed_case(cases_dir):
+    case = copy.deepcopy(GOOD[3])
+    case["assertions"][0]["message"] = 1  # the case delivers one message
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(cases_dir(case))
+    assert info.value.code == errors.E_CASE_FORMAT
+    assert "KERI-0001" in str(info.value)
+
+
 def test_duplicate_assertion_ids_are_found_wherever_they_are():
     case = copy.deepcopy(GOOD[4])
     case["assertions"][2]["id"] = "a1"

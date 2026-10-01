@@ -188,6 +188,27 @@ def test_a_case_feature_outside_the_vocabulary_is_a_malformed_case(cases_dir, tm
     assert "kel.teleport" in err
 
 
+def test_the_retained_output_budget_aborts_the_run(cases_dir, tmp_path, capsys, monkeypatch):
+    from keri_conformance import run as run_module
+
+    # A one-byte budget is passed by the hello alone, so the run stops after the first case,
+    # keeping it, and the second is never sent.
+    monkeypatch.setattr(run_module, "MAX_RETAINED_BYTES", 1)
+    second = {**PASSING[0], "id": "CESR-0008"}
+    code, report = run(good(), cases_dir(PASSING[0], second), tmp_path)
+    assert code == errors.EXIT_FAULT
+    assert report["verdict"] == "aborted"
+    assert report["aborted"]["code"] == errors.E_REPORT_BUDGET
+    assert [c["id"] for c in report["cases"]] == ["CESR-0001"]
+    assert errors.E_REPORT_BUDGET in capsys.readouterr().err
+
+
+def test_the_default_budget_is_512_mib():
+    from keri_conformance import run as run_module
+
+    assert run_module.MAX_RETAINED_BYTES == 512 * 1024 * 1024
+
+
 def test_a_hanging_adapter_times_out(cases_dir, tmp_path):
     _code, report = run(bad("hang"), cases_dir(PASSING[0]), tmp_path, "--timeout", "0.5")
     assert report["cases"][0]["failure"]["kind"] == "timeout"

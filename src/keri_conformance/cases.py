@@ -155,6 +155,13 @@ def case_problem(case) -> str | None:
         if assertion["id"] in seen:
             return f'Its assertion id "{assertion["id"]}" is used twice.'
         seen.add(assertion["id"])
+        # Beyond the schema, which cannot relate an index to a list's length.
+        if assertion["check"] == "disposition":
+            delivered = len(case["input"]["messages"])
+            if assertion["message"] >= delivered:
+                return (f'Its assertion "{assertion["id"]}" names message '
+                        f'{assertion["message"]}, but the case delivers only {delivered} '
+                        f'message{"" if delivered == 1 else "s"}.')
     return None
 
 

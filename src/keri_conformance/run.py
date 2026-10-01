@@ -14,9 +14,19 @@ changed it is aborted, and its report holds the cases completed before that.
 
 from keri_conformance import __version__
 from keri_conformance.assertions import evaluate
-from keri_conformance.errors import E_CASE_FORMAT, HelloRefused, RunnerError
+from keri_conformance.errors import (
+    E_CASE_FORMAT,
+    E_REPORT_BUDGET,
+    EXIT_FAULT,
+    EXIT_REFUSED,
+    HelloRefused,
+    RunnerError,
+)
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 from keri_conformance.session import AdapterSession, Failure
+
+# The most adapter output, in response-line bytes, one run will read and keep in its report.
+MAX_RETAINED_BYTES = 512 * 1024 * 1024
 
 VERDICT_EXIT = {"conformant": 0, "not-conformant": 1, "aborted": 3, "incomplete": 4,
                 "no-evidence": 5}
@@ -130,7 +140,16 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
             entries.append(run_case(session, case))
         except HelloRefused as refusal:
             aborted = {"code": refusal.code, "reason": refusal.message,
-                       "problems": refusal.problems, "at_case": case["id"]}
+                       "problems": refusal.problems, "at_case": case["id"],
+                       "exit_code": EXIT_REFUSED}
+            break
+        if session.response_bytes > MAX_RETAINED_BYTES:
+            aborted = {"code": E_REPORT_BUDGET,
+                       "reason": f"The adapter's responses so far add up to "
+                                 f"{session.response_bytes} bytes, over the "
+                                 f"{MAX_RETAINED_BYTES}-byte budget for output the report "
+                                 "retains, so the run stopped after this case.",
+                       "problems": [], "at_case": case["id"], "exit_code": EXIT_FAULT}
             break
     summary, verdict = summarize(entries)
     if aborted:

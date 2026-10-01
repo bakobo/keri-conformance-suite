@@ -206,7 +206,8 @@ BASE_CASES = [
               [assertion("encoded", expected="10", note="n")], status="deprecated"),
     make_case("KERI-0001", "keri.process",
               {"perspective": {"role": "validator"},
-               "messages": [{"stream": "7b7d", "source": "controller"}]},
+               "messages": [{"stream": "7b7d", "source": "controller"},
+                            {"stream": "7b7d", "source": "witness"}]},
               [assertion("disposition", message=0, phase="final", expected="superseded"),
                assertion("key_state", name="a2", level="SHOULD", aid="EAbc", expected=STATE)],
               status="disputed"),
@@ -260,6 +261,27 @@ def test_an_integral_number_is_an_integer_as_the_schema_says():
     assert type(case["assertions"][0]["message"]) is int
     half = loads(text.replace('"message": 0.0', '"message": 0.5'))
     assert "message" in case_problem(half)
+
+
+@pytest.mark.parametrize(("bt", "valid"), [
+    ("f" * 64, True), ("0x" + "f" * 64, True), ("f" * 65, False), ("0x" + "f" * 65, False),
+    ("0", True), ("", False), ("0xF", False),
+])
+def test_bt_is_hex_of_at_most_64_digits_in_both(bt, valid):
+    state = {**STATE, "bt": bt}
+    for schema in (CASE, PROTOCOL):
+        assert validator(schema, "#/$defs/key_state").is_valid(state) == valid
+    from keri_conformance.contracts import KEY_STATE
+
+    assert (KEY_STATE(state, "") is None) == valid
+
+
+def test_a_disposition_message_index_past_the_messages_is_a_runtime_rule_beyond_the_schema():
+    # The schema cannot relate an assertion's index to the length of the input's message list.
+    case = _replace(BASE_CASES[3], ("assertions", 0, "message"), 2)  # it delivers two
+    assert CASE_VALIDATOR.is_valid(case)
+    assert "message 2" in case_problem(case)
+    assert case_problem(_replace(BASE_CASES[3], ("assertions", 0, "message"), 1)) is None
 
 
 def test_duplicate_assertion_ids_are_a_runtime_rule_beyond_the_schema():
