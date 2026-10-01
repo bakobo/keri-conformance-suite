@@ -866,7 +866,7 @@
       }
     },
     "threshold": {
-      "description": "A threshold as the implementation holds it: a hex or decimal integer string, or weighted clauses as (nested) lists of fraction strings. The runner normalizes before comparing.",
+      "description": "A threshold as the implementation holds it: a hexadecimal integer string (optional 0x prefix), as KERI encodes numeric thresholds, or weighted clauses as a list of fraction strings or a list of such lists. The runner normalizes before comparing.",
       "oneOf": [
         {
           "type": "string"
