@@ -86,6 +86,10 @@
       "description": "Holds events that are valid but not yet acceptable, and accepts them when what they wait for arrives.",
       "composable": true
     },
+    "keri.routing": {
+      "description": "Routes each incoming message to the processing it needs (key event, receipt, reply) and drives the implementation to quiescence after each delivery.",
+      "composable": true
+    },
     "keri.version-1.x": {
       "description": "Accepts KERI message bodies carrying the legacy 1.XX version string.",
       "composable": false

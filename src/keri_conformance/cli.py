@@ -5,8 +5,8 @@ import sys
 
 from keri_conformance import __version__
 
-USAGE_MISSING = "e.usage.command.missing.f"
-USAGE_INVALID = "e.usage.args.invalid.f"
+USAGE_MISSING = "e.input.missing.f"
+USAGE_INVALID = "e.input.format.f"
 
 
 class _UsageError(Exception):

@@ -35,14 +35,14 @@ def test_cli_prints_version(capsys):
 def test_cli_without_arguments_reports_a_coded_error(capsys):
     assert cli.main([]) == 2
     err = capsys.readouterr().err
-    assert err.startswith("e.usage.command.missing.f: ")
+    assert err.startswith("e.input.missing.f: ")
     assert "usage" in err.lower()
 
 
 def test_cli_unknown_argument_reports_a_coded_error(capsys):
     assert cli.main(["--no-such-flag"]) == 2
     err = capsys.readouterr().err
-    assert err.startswith("e.usage.args.invalid.f: ")
+    assert err.startswith("e.input.format.f: ")
     assert "--no-such-flag" in err
 
 

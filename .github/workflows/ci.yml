@@ -25,9 +25,9 @@ jobs:
         with:
           python-version: "3.12"
           enable-cache: true
-      # --frozen fails rather than silently updating uv.lock.
+      # --locked fails when uv.lock does not match pyproject.toml, rather than testing a stale environment.
       - name: Sync dependencies
-        run: uv sync --frozen
+        run: uv sync --locked
       - name: Lint
         run: uv run ruff check .
       - name: Run tests (100% branch coverage gate)
