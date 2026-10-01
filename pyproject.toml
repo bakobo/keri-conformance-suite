@@ -30,7 +30,10 @@ build-backend = "hatchling.build"
 packages = ["src/keri_conformance"]
 
 [tool.pytest.ini_options]
-addopts = "--cov=keri_conformance --cov-branch --cov-report=term-missing --cov-fail-under=100"
+# The gate measures the runner and the stdlib case generators (scripts/regenerate is a one-line
+# entry point to generators/spec_tables/cli.py). The keripy cross-checks under generators/keripy*
+# need keripy, run by hand in their own environments, and are not imported here.
+addopts = "--cov=keri_conformance --cov=generators.spec_tables --cov-branch --cov-report=term-missing --cov-fail-under=100"
 testpaths = ["tests"]
 
 [tool.ruff]

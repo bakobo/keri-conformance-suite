@@ -6,7 +6,6 @@ stream would let a wrong expectation into the suite."""
 import json
 import os
 import pathlib
-import runpy
 import shutil
 import sys
 
@@ -333,23 +332,23 @@ def test_write_and_committed_round_trip(tmp_path):
 
 
 def test_script_writes_under_out(tmp_path, capsys):
-    script = runpy.run_path(str(ROOT / "scripts" / "regenerate"))
-    assert script["main"](["--out", str(tmp_path)]) == 0
+    from generators.spec_tables import cli as script
+    assert script.main(["--out", str(tmp_path)]) == 0
     assert (tmp_path / "cases" / "cesr" / "CESR-0025.json").exists()
     assert "Wrote" in capsys.readouterr().out
 
 
 def test_script_check_fails_and_lists_differences(monkeypatch, capsys):
-    script = runpy.run_path(str(ROOT / "scripts" / "regenerate"))
-    monkeypatch.setattr(script["regenerate"], "differences", lambda want, have: ["differs: x"])
-    assert script["main"](["--check"]) == 1
+    from generators.spec_tables import cli as script
+    monkeypatch.setattr(script.regenerate, "differences", lambda want, have: ["differs: x"])
+    assert script.main(["--check"]) == 1
     out = capsys.readouterr().out
     assert "differs: x" in out and "never edit a case by hand" in out
 
 
 def test_script_check_passes_on_the_committed_tree(capsys):
-    script = runpy.run_path(str(ROOT / "scripts" / "regenerate"))
-    assert script["main"](["--check"]) == 0
+    from generators.spec_tables import cli as script
+    assert script.main(["--check"]) == 0
     assert "match the committed ones" in capsys.readouterr().out
 
 
@@ -479,13 +478,13 @@ def test_unreadable_code_tables_are_the_generators_own_coded_error(tree, monkeyp
 
 
 def test_script_prints_a_coded_generator_error_and_exits_3(monkeypatch, capsys):
-    script = runpy.run_path(str(ROOT / "scripts" / "regenerate"))
+    from generators.spec_tables import cli as script
 
     def fail(root):
         raise build.ScenarioError("broken scenario")
 
-    monkeypatch.setattr(script["regenerate"], "generate", fail)
-    assert script["main"](["--check"]) == 3
+    monkeypatch.setattr(script.regenerate, "generate", fail)
+    assert script.main(["--check"]) == 3
     assert capsys.readouterr().err.strip() == "e.input.format.kcs-scenario.f: broken scenario"
 
 
@@ -560,3 +559,18 @@ def test_a_scenario_file_at_the_limit_is_read(tree, monkeypatch):
     path.write_text('{"a": 1}')
     monkeypatch.setattr(regenerate, "MAX_SCENARIO_BYTES", len('{"a": 1}'))
     assert regenerate._load_json(path) == {"a": 1}
+
+
+def test_a_scenario_path_that_cannot_be_read_is_a_coded_error(tree):
+    (tree / "scenarios" / "cesr" / "zz.json").mkdir()
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate.generate(tree)
+    assert e.value.code == "e.input.format.kcs-scenario-json.f" and "zz.json" in str(e.value)
+
+
+def test_the_script_is_a_thin_entry_point_to_the_package():
+    import subprocess
+
+    result = subprocess.run([sys.executable, str(ROOT / "scripts" / "regenerate"), "--help"],
+                            capture_output=True, text=True, check=False)
+    assert result.returncode == 0 and "--check" in result.stdout

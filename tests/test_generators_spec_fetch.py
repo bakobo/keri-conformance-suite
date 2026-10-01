@@ -7,7 +7,6 @@ import hashlib
 import io
 import os
 import pathlib
-import runpy
 import sys
 import urllib.error
 
@@ -169,6 +168,6 @@ def test_load_without_fetch_refuses_an_empty_cache(cache):
 def test_regenerate_exits_2_with_the_coded_error_when_the_spec_is_unavailable(
         cache, monkeypatch, capsys):
     _serve(monkeypatch, error=urllib.error.URLError("no route"))
-    script = runpy.run_path(str(ROOT / "scripts" / "regenerate"))
-    assert script["main"](["--check"]) == 2
+    from generators.spec_tables import cli as script
+    assert script.main(["--check"]) == 2
     assert "e.env.kcs-spec.fetch.r" in capsys.readouterr().err
