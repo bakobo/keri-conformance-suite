@@ -36,11 +36,18 @@ cd adapters/keripy && uv run pytest                          # against keripy ma
 cd adapters/keripy/keripy-1.2.14 && uv run pytest ../tests   # against keripy 1.2.14
 ```
 
-Tests marked `main` or `onex` run only against that keripy generation. Branch coverage is 100% when the two runs are combined (`coverage combine`).
+Tests marked `main` or `onex` run only against that keripy generation. Branch coverage is 100% when the two runs are combined, and CI enforces it:
+
+```
+cd adapters/keripy
+COVERAGE_FILE=$PWD/.coverage.main uv run pytest --cov=kcs_adapter_keripy --cov-branch --cov-report=
+(cd keripy-1.2.14 && COVERAGE_FILE=$PWD/../.coverage.onex uv run pytest ../tests --cov=kcs_adapter_keripy --cov-branch --cov-report=)
+uv run coverage combine .coverage.main .coverage.onex && uv run coverage report -m --fail-under=100
+```
 
 ## CI and the baseline
 
-CI level 2 (`docs/design.md`) for this adapter is the `keripy-adapter` job in `.github/workflows/ci.yml`. It builds the keripy-main instance from its lockfile and runs the adapter's tests and `kcs check-adapter`. Then it runs `kcs run --profile cesr-1.0` and compares the report with `baseline-cesr-1.0.json`, the outcome of every assertion as last recorded. The comparison is `python -m kcs_adapter_keripy.baseline compare`, and it fails in two cases:
+CI level 2 (`docs/design.md`) for this adapter is the `keripy-adapter` job in `.github/workflows/ci.yml`. It builds both instances from their lockfiles: Python 3.14 with keripy main, and Python 3.12 with keripy 1.2.14. It runs the adapter's tests in each and gates on their combined branch coverage being 100%, then runs `kcs check-adapter` on both. Finally it runs `kcs run --profile cesr-1.0` on keripy main against `baseline-cesr-1.0.json`, and `kcs run --profile keripy-1x-interop` on keripy 1.2.14 against `baseline-keripy-1x-interop.json`. Each baseline records the verdict and the outcome of every assertion as last recorded. The comparison is `python -m kcs_adapter_keripy.baseline compare`, and it fails in two cases:
 - **A regression:** an assertion whose outcome is no longer what the baseline says, an assertion that disappeared, a different profile, or a different verdict (so an aborted run cannot pass the gate).
 - **An improvement:** a new pass, a new assertion, a different keripy commit, or a verdict that became conformant. This must be recorded in the same change:
 

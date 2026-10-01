@@ -65,14 +65,37 @@ jobs:
       - name: Build the keripy adapter at its pin
         working-directory: adapters/keripy
         run: uv sync --locked
-      - name: Adapter tests
+      # The adapter's tests run against both keripy generations it supports, and its 100% branch
+      # coverage is a property of the two runs combined: some paths exist only on one of them.
+      - name: Adapter tests (Python 3.14, keripy main)
         working-directory: adapters/keripy
-        run: uv run pytest
-      - name: Probe the adapter
-        run: uv run kcs check-adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy"
-      # The verdict is not the gate here; the baseline is. A run that regresses any assertion
-      # fails, and so does one that improves, until the baseline is updated in the same change.
-      - name: Run cesr-1.0 and compare with the baseline
+        env:
+          COVERAGE_FILE: ${{ github.workspace }}/adapters/keripy/.coverage.main
+        run: uv run pytest --cov=kcs_adapter_keripy --cov-branch --cov-report=
+      - name: Build the keripy 1.2.14 instance at its pin
+        working-directory: adapters/keripy/keripy-1.2.14
+        env:
+          UV_PYTHON: "3.12"
+        run: uv sync --locked
+      - name: Adapter tests (Python 3.12, keripy 1.2.14)
+        working-directory: adapters/keripy/keripy-1.2.14
+        env:
+          UV_PYTHON: "3.12"
+          COVERAGE_FILE: ${{ github.workspace }}/adapters/keripy/.coverage.onex
+        run: uv run pytest ../tests --cov=kcs_adapter_keripy --cov-branch --cov-report=
+      - name: Adapter coverage, both generations combined (100% branch gate)
+        working-directory: adapters/keripy
+        run: |
+          uv run coverage combine .coverage.main .coverage.onex
+          uv run coverage report -m --fail-under=100
+      - name: Probe both adapter instances
+        run: |
+          uv run kcs check-adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy"
+          uv run kcs check-adapter "$PWD/adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy"
+      # The verdict alone is not the gate here; the baseline is, and it records the verdict too.
+      # A run that regresses any assertion or the verdict fails, and so does one that improves,
+      # until the baseline is updated in the same change.
+      - name: Run cesr-1.0 on keripy main and compare with its baseline
         run: |
           set +e
           uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" \
@@ -81,3 +104,12 @@ jobs:
           set -e
           adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare \
             adapters/keripy/baseline-cesr-1.0.json "$RUNNER_TEMP/keripy-main-cesr-1.0.json"
+      - name: Run keripy-1x-interop on keripy 1.2.14 and compare with its baseline
+        run: |
+          set +e
+          uv run kcs run --adapter "$PWD/adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy" \
+            --profile keripy-1x-interop --report "$RUNNER_TEMP/keripy-1214-interop.json"
+          echo "kcs run exited $?"
+          set -e
+          adapters/keripy/keripy-1.2.14/.venv/bin/python -m kcs_adapter_keripy.baseline compare \
+            adapters/keripy/baseline-keripy-1x-interop.json "$RUNNER_TEMP/keripy-1214-interop.json"
