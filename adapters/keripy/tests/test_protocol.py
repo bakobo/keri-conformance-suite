@@ -130,3 +130,54 @@ def test_the_stdio_loop_answers_in_order_and_exits_zero_at_eof(entry_point):
     assert responses[2]["result"] == {"encoded": "4d414543"}
     assert "reject" in responses[3]["result"]
 
+
+
+# -- the request-line bound
+
+def test_the_request_line_bound_is_64_mib():
+    assert protocol.MAX_REQUEST_LINE == 64 * 1024 * 1024
+
+
+def _serve(monkeypatch, data, limit):
+    import io
+    monkeypatch.setattr(protocol, "MAX_REQUEST_LINE", limit)
+    stdout = io.BytesIO()
+    protocol.serve(io.BytesIO(data), stdout)
+    return [json.loads(line) for line in stdout.getvalue().splitlines()]
+
+
+def _padded(rid, length):
+    """A valid cesr.parse request padded with spaces to exactly length bytes."""
+    line = json.dumps({"id": rid, "op": "cesr.parse", "stream": ""}).encode()
+    return line + b" " * (length - len(line))
+
+
+def test_a_request_line_of_exactly_the_bound_is_answered(monkeypatch):
+    responses = _serve(monkeypatch, _padded(1, 200) + b"\n", 200)
+    assert responses == [{"id": 1, "result": {"items": []}}]
+
+
+def test_a_final_line_without_a_newline_at_the_bound_is_answered(monkeypatch):
+    assert _serve(monkeypatch, _padded(1, 200), 200) == [{"id": 1, "result": {"items": []}}]
+
+
+@pytest.mark.parametrize("extra", [1, 5000])
+def test_an_oversize_line_gets_a_null_id_error_and_the_adapter_keeps_running(monkeypatch, extra):
+    data = _padded(1, 200 + extra) + b"\n" + _padded(2, 60) + b"\n"
+    responses = _serve(monkeypatch, data, 200)
+    assert responses[0]["id"] is None
+    assert responses[0]["error"]["kind"] == "harness"
+    assert "e.input.range.request-size.f" in responses[0]["error"]["message"]
+    assert responses[1] == {"id": 2, "result": {"items": []}}
+
+
+def test_an_oversize_final_line_without_a_newline_gets_a_null_id_error(monkeypatch):
+    responses = _serve(monkeypatch, _padded(1, 300), 200)
+    assert len(responses) == 1 and responses[0]["id"] is None
+
+
+def test_handle_line_also_refuses_an_oversize_line(monkeypatch):
+    monkeypatch.setattr(protocol, "MAX_REQUEST_LINE", 10)
+    response = json.loads(protocol.handle_line(b'{"id": 1, "op": "hello"}'))
+    assert response["id"] is None
+    assert "e.input.range.request-size.f" in response["error"]["message"]

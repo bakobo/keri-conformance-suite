@@ -15,6 +15,12 @@ ADAPTER = {"name": "kcs-adapter-keripy", "version": "0.1.0"}
 OPERATIONS = ["cesr.parse", "cesr.encode"]
 HEX = re.compile(r"(?:[0-9a-f]{2})*")
 
+# The longest request line the adapter reads, in bytes, not counting its newline. A longer line
+# is answered with an error whose id is null and is skipped without being held in memory.
+MAX_REQUEST_LINE = 64 * 1024 * 1024
+_DISCARD_CHUNK = 64 * 1024
+
+E_OVERSIZE = "e.input.range.request-size.f"
 E_MALFORMED = "e.input.format.request.f"
 E_UNKNOWN_OP = "e.input.range.unknown-op.f"
 E_UNDECLARED_OP = "e.feature.unsupported.undeclared-op.f"
@@ -93,7 +99,15 @@ def _usable_id(rid) -> bool:
     return type(rid) is int and rid >= 0
 
 
+def _oversize() -> bytes:
+    return json.dumps(_error(None, "harness", f"{E_OVERSIZE}: The request line is longer than "
+                                              f"{MAX_REQUEST_LINE} bytes, the most this adapter "
+                                              "reads."), separators=(",", ":")).encode()
+
+
 def handle_line(line: bytes) -> bytes:
+    if len(line.rstrip(b"\n")) > MAX_REQUEST_LINE:
+        return _oversize()
     try:
         request = json.loads(line.decode("utf-8"))
     except (UnicodeDecodeError, ValueError):
@@ -111,10 +125,20 @@ def handle_line(line: bytes) -> bytes:
 
 
 def serve(stdin, stdout):
-    """Answer each non-blank request line until end of file."""
-    for line in stdin:
-        if not line.strip():
+    """Answer each non-blank request line until end of file. A line is read at most
+    MAX_REQUEST_LINE bytes (plus its newline) at a time, so an oversize line is never held whole."""
+    while True:
+        line = stdin.readline(MAX_REQUEST_LINE + 1)
+        if not line:
+            break
+        if len(line) > MAX_REQUEST_LINE and not line.endswith(b"\n"):
+            while line and not line.endswith(b"\n"):  # skip the rest of the oversize line
+                line = stdin.readline(_DISCARD_CHUNK)
+            response = _oversize()
+        elif not line.strip():
             continue
-        stdout.write(handle_line(line) + b"\n")
+        else:
+            response = handle_line(line)
+        stdout.write(response + b"\n")
         stdout.flush()
     print("kcs-adapter-keripy: end of input, exiting", file=sys.stderr)
