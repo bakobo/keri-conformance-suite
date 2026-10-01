@@ -15,11 +15,11 @@ ADAPTER = {"name": "kcs-adapter-keripy", "version": "0.1.0"}
 OPERATIONS = ["cesr.parse", "cesr.encode"]
 HEX = re.compile(r"(?:[0-9a-f]{2})*")
 
-E_MALFORMED = "e.request.malformed.p"
-E_UNKNOWN_OP = "e.request.op.unknown.p"
-E_UNDECLARED_OP = "e.request.op.undeclared.p"
-E_VERSION = "e.protocol.version.unsupported.p"
-E_INTERNAL = "e.adapter.internal.p"
+E_MALFORMED = "e.input.format.request.f"
+E_UNKNOWN_OP = "e.input.range.unknown-op.f"
+E_UNDECLARED_OP = "e.feature.unsupported.undeclared-op.f"
+E_VERSION = "e.feature.unsupported.protocol-version.f"
+E_INTERNAL = "e.self.unknown.f"
 
 
 class Malformed(Exception):

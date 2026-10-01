@@ -48,7 +48,7 @@ def test_hello_without_a_version_it_implements_is_an_error():
     response = handle({"id": 0, "op": "hello", "protocol": 3, "supported": [2, 3]})
     assert set(response) == {"id", "error"}
     assert response["error"]["kind"] == "unsupported"
-    assert "e.protocol.version.unsupported.p" in response["error"]["message"]
+    assert "e.feature.unsupported.protocol-version.f" in response["error"]["message"]
 
 
 def test_hello_with_protocol_above_ours_and_no_supported_list_is_an_error_not_a_crash():
@@ -66,7 +66,7 @@ def test_a_line_that_is_not_json_gets_an_error_with_null_id():
     response = json.loads(protocol.handle_line(b"this is not json"))
     assert response["id"] is None
     assert response["error"]["kind"] == "harness"
-    assert "e.request.malformed.p" in response["error"]["message"]
+    assert "e.input.format.request.f" in response["error"]["message"]
 
 
 @pytest.mark.parametrize("line", [b"[1, 2]", b'"text"', b"\xff\xfe"])
@@ -79,7 +79,7 @@ def test_a_line_that_is_not_an_object_gets_an_error_with_null_id(line):
 def test_unknown_op_is_a_harness_error_echoing_the_id():
     response = handle({"id": 9, "op": "kcs.probe.no-such-op"})
     assert response == {"id": 9, "error": {"kind": "harness", "message": response["error"]["message"]}}
-    assert "e.request.op.unknown.p" in response["error"]["message"]
+    assert "e.input.range.unknown-op.f" in response["error"]["message"]
 
 
 @pytest.mark.parametrize("op", ["keri.process", "keri.emit"])
@@ -103,7 +103,7 @@ def test_malformed_requests_are_harness_errors_echoing_the_id(message):
     response = handle(message)
     assert response["id"] == 1
     assert response["error"]["kind"] == "harness"
-    assert "e.request.malformed.p" in response["error"]["message"]
+    assert "e.input.format.request.f" in response["error"]["message"]
 
 
 def test_an_adapter_bug_is_a_harness_error(monkeypatch):
@@ -113,7 +113,7 @@ def test_an_adapter_bug_is_a_harness_error(monkeypatch):
     monkeypatch.setattr(protocol.cesr, "parse", boom)
     response = handle({"id": 5, "op": "cesr.parse", "stream": "2d4b"})
     assert response["error"]["kind"] == "harness"
-    assert "e.adapter.internal.p" in response["error"]["message"]
+    assert "e.self.unknown.f" in response["error"]["message"]
     assert "RuntimeError" in response["error"]["message"]
 
 

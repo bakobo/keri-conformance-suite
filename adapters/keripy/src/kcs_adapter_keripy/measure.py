@@ -18,8 +18,8 @@ from keri import kering
 
 from kcs_adapter_keripy.errors import AdapterBug, Rejection, Unsupported, keri
 
-E_UNMEASURABLE = "e.parse.group.unmeasurable.p"
-E_NATIVE = "e.parse.native.unsupported.p"
+E_UNMEASURABLE = "e.feature.unsupported.group-extent.f"
+E_NATIVE = "e.feature.unsupported.native-body.f"
 
 
 class Tracked(bytearray):
@@ -40,11 +40,11 @@ class Tracked(bytearray):
 
     def __delitem__(self, key):
         if not isinstance(key, slice):
-            raise AdapterBug("e.adapter.buffer.delete.p: keripy deleted a single byte from its "
+            raise AdapterBug("e.self.unknown.buffer-delete.f: keripy deleted a single byte from its "
                              "stream, which the adapter does not expect.")
         start, stop, step = key.indices(len(self))
         if step != 1 or start != 0:
-            raise AdapterBug("e.adapter.buffer.delete.p: keripy deleted bytes other than from "
+            raise AdapterBug("e.self.unknown.buffer-delete.f: keripy deleted bytes other than from "
                              "the front of its stream, which the adapter does not expect.")
         data = bytes(super().__getitem__(slice(0, stop)))
         if self.recorder is not None:
@@ -55,7 +55,7 @@ class Tracked(bytearray):
 
 def base_of(buf):
     if not isinstance(buf, Tracked):
-        raise AdapterBug("e.adapter.buffer.untracked.p: keripy extracted from a buffer the "
+        raise AdapterBug("e.self.unknown.untracked-buffer.f: keripy extracted from a buffer the "
                          "adapter did not give it, so its offset is unknown.")
     return buf.base
 
@@ -95,7 +95,7 @@ class Recorder:
             self.items.append({"kind": "primitive", "start": start, "end": end,
                                "code": instance.code, "raw": bytes(instance.raw).hex()})
         else:
-            raise AdapterBug(f"e.adapter.extraction.unknown.p: keripy extracted a "
+            raise AdapterBug(f"e.self.unknown.extracted-class.f: keripy extracted a "
                              f"{type(instance).__name__}, which the adapter cannot report.")
 
     def deleting(self, buf, data):
@@ -122,14 +122,14 @@ class Recorder:
         if self.keripy.sniff(bytearray(data)) == kering.Colds.msg:
             proto, pvrsn, kind, size = self.keripy.smell(bytearray(data))
             if size != n:
-                raise AdapterBug("e.adapter.message.size.p: keripy consumed a body of a "
+                raise AdapterBug("e.self.unknown.message-size.f: keripy consumed a body of a "
                                  "different size than its version string declares.")
             self.items.append({"kind": "message", "start": start, "end": start + n,
                                "proto": proto, "version": f"{pvrsn.major}.{pvrsn.minor}",
                                "serialization": kind, "size": n})
             self.messages += 1
             return
-        raise AdapterBug(f"e.adapter.deletion.unclassified.p: keripy stripped {n} bytes at "
+        raise AdapterBug(f"e.self.unknown.unclassified-deletion.f: keripy stripped {n} bytes at "
                          f"{start} that were neither a count code, a group body nor a message.")
 
     def counter(self, ctr, buf, start, end):
@@ -269,6 +269,6 @@ def parse(keripy, stream):
                 raise Rejection(type(exc).__name__, str(exc)) from exc
         recorder.end_round()
         if root.base == before:
-            raise AdapterBug("e.adapter.parse.stalled.p: keripy's parser returned without "
+            raise AdapterBug("e.self.unknown.parse-stalled.f: keripy's parser returned without "
                              "consuming anything.")
     return sorted(recorder.items, key=lambda item: item["start"])

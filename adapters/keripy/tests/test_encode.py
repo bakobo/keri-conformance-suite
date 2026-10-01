@@ -29,5 +29,5 @@ def test_short_number():
 def test_keripy_refusing_the_input_is_an_unsupported_error_naming_its_class(code, raw):
     with pytest.raises(cesr.Unsupported) as info:
         cesr.encode(code, raw, "text")
-    assert "e.encode.refused.p" in str(info.value)
+    assert "e.input.format.encode-refused.f" in str(info.value)
     assert "keripy raised" in str(info.value)

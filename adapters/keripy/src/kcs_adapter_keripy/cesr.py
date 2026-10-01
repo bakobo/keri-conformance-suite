@@ -11,7 +11,7 @@ from kcs_adapter_keripy.errors import Rejection, Unsupported, keri
 
 __all__ = ["Unsupported", "encode", "parse"]
 
-E_ENCODE_REFUSED = "e.encode.refused.p"
+E_ENCODE_REFUSED = "e.input.format.encode-refused.f"
 
 _API = None
 

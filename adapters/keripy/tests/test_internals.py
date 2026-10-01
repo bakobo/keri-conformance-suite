@@ -92,7 +92,7 @@ def test_a_message_consumed_at_other_than_its_declared_size_is_an_adapter_bug():
     buf = measure.Tracked(body, 0, rec)
     with pytest.raises(errors.AdapterBug) as info:
         del buf[:60]
-    assert "e.adapter.message.size.p" in str(info.value)
+    assert "e.self.unknown.message-size.f" in str(info.value)
 
 
 def test_a_parser_that_returns_without_consuming_is_an_adapter_bug(monkeypatch):
@@ -105,7 +105,7 @@ def test_a_parser_that_returns_without_consuming_is_an_adapter_bug(monkeypatch):
     monkeypatch.setattr(keripy, "run", idle)
     with pytest.raises(errors.AdapterBug) as info:
         measure.parse(keripy, b"-AAB")
-    assert "e.adapter.parse.stalled.p" in str(info.value)
+    assert "e.self.unknown.parse-stalled.f" in str(info.value)
 
 
 @pytest.mark.main
@@ -117,7 +117,7 @@ def test_main_a_native_body_is_unsupported():
     assert serder.kind == kering.Kinds.cesr
     with pytest.raises(errors.Unsupported) as info:
         measure.parse(keripy_api.load(), b"-_AAACAA" + serder.raw)
-    assert "e.parse.native.unsupported.p" in str(info.value)
+    assert "e.feature.unsupported.native-body.f" in str(info.value)
 
 
 # -- the stdio loop

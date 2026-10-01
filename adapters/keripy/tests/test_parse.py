@@ -310,4 +310,4 @@ def test_onex_trans_last_groups_cannot_be_measured_and_are_unsupported():
               + ctr("-A", 1, V1) + sigs(serder, 1))
     with pytest.raises(cesr.Unsupported) as info:
         cesr.parse(stream)
-    assert "e.parse.group.unmeasurable.p" in str(info.value)
+    assert "e.feature.unsupported.group-extent.f" in str(info.value)
