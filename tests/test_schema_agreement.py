@@ -30,6 +30,7 @@ Draft202012Validator = validators.extend(_Draft202012, {"pattern": _ecma_pattern
 
 from keri_conformance.assertions import normalize_threshold
 from keri_conformance.cases import case_problem
+from keri_conformance.jsonfile import loads
 from keri_conformance.session import check_result_shape
 
 CASE = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
@@ -124,7 +125,7 @@ def test_the_item_definition_is_identical_in_both_schemas():
 # object) given an unexpected extra field. The runner's check and the schema must agree on every
 # one of the resulting documents.
 
-PROBES = [None, True, 1, -1, 1.5, "", "x", "0a", "0a\n", [], {}, ["x"]]
+PROBES = [None, True, 1, -1, 1.0, 1.5, "", "x", "0a", "0a\n", [], {}, ["x"]]
 
 
 def _paths(node, path=()):
@@ -175,7 +176,9 @@ def mutations(doc):
 def disagreements(documents, ours, schema_validator):
     found = []
     for doc in documents:
-        mine = ours(doc) is None
+        # The runner sees a document only after decoding it from JSON text, which turns an
+        # integral number such as 1.0 into the integer 1, as the schema's "integer" type allows.
+        mine = ours(loads(json.dumps(doc))) is None
         theirs = schema_validator.is_valid(doc)
         if mine != theirs:
             found.append((mine, theirs, doc))
@@ -243,12 +246,16 @@ def test_cross_field_rules_agree_with_the_case_schema(base):
     assert found == [], found[:3]
 
 
-def test_runtime_integers_are_stricter_than_the_schema():
-    # Python's jsonschema counts 1.0 as an integer; the runner indexes with these values, so it
-    # requires a JSON integer. This is the one deliberate divergence, in the safe direction.
-    case = _replace(BASE_CASES[3], ("assertions", 0, "message"), 0.0)
-    assert CASE_VALIDATOR.is_valid(case)
-    assert "message" in case_problem(case)
+def test_an_integral_number_is_an_integer_as_the_schema_says():
+    # JSON Schema counts 1.0 as an integer. The runner's decoder turns integral numbers into
+    # ints, so a case written with 0.0 loads with the integer 0 and is accepted; 0.5 is not.
+    text = json.dumps(_replace(BASE_CASES[3], ("assertions", 0, "message"), 0.0))
+    case = loads(text)
+    assert CASE_VALIDATOR.is_valid(json.loads(text))
+    assert case_problem(case) is None
+    assert type(case["assertions"][0]["message"]) is int
+    half = loads(text.replace('"message": 0.0', '"message": 0.5'))
+    assert "message" in case_problem(half)
 
 
 def test_duplicate_assertion_ids_are_a_runtime_rule_beyond_the_schema():

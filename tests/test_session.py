@@ -287,6 +287,36 @@ def test_parse_response_classifies_bad_lines(line, kind):
     assert outcome.detail
 
 
+@pytest.mark.parametrize("line", [
+    b'{"id": 1, "result": {"encoded": "0a"}, "x": NaN}',
+    b'{"id": 1, "result": {"encoded": "0a"}, "x": Infinity}',
+    b'{"id": 1, "result": {"encoded": "0a"}, "x": -Infinity}',
+    b'{"id": 1e400, "result": {"encoded": "0a"}}',
+    b'{"id": 1.5, "result": {"encoded": "0a"}}',
+])
+def test_non_finite_and_non_integral_numbers_are_malformed(line):
+    outcome = parse_response(line, 1, "cesr.encode")
+    assert isinstance(outcome, Failure)
+    assert outcome.kind == "malformed"
+
+
+def test_an_integral_float_id_and_offsets_are_integers():
+    line = (b'{"id": 1.0, "result": {"items": [{"kind": "primitive", "start": 0.0, "end": 4e0, '
+            b'"code": "E", "raw": "00"}]}}')
+    outcome = parse_response(line, 1, "cesr.parse")
+    assert isinstance(outcome, Reply)
+    item = outcome.result["items"][0]
+    assert (type(item["start"]), type(item["end"])) == (int, int)
+
+
+def test_vocabulary_refuses_non_finite_constants(tmp_path):
+    (tmp_path / "profiles").mkdir()
+    (tmp_path / "profiles" / "features.json").write_text('{"features": {}, "x": NaN}')
+    with pytest.raises(errors.RunnerError) as info:
+        load_vocabulary(tmp_path)
+    assert info.value.code == errors.E_VOCABULARY
+
+
 def test_parse_response_accepts_a_good_result():
     assert parse_response(b'{"id": 1, "result": {"encoded": "0a"}}', 1, "cesr.encode") == Reply(
         {"encoded": "0a"})

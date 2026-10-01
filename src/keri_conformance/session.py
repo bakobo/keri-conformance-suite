@@ -41,7 +41,7 @@ from keri_conformance.errors import (
     HelloRefused,
     RunnerError,
 )
-from keri_conformance.jsonfile import JsonFileError, read_json
+from keri_conformance.jsonfile import JsonFileError, loads, read_json
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 
 OPERATIONS = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit")
@@ -228,7 +228,7 @@ def check_result_shape(op: str, result) -> str | None:
 def parse_response(line: bytes, request_id: int, op: str) -> Reply | Failure:
     """Validate one response line against the request it answers."""
     try:
-        message = json.loads(line.decode("utf-8"))
+        message = loads(line.decode("utf-8"))
     except (ValueError, RecursionError) as exc:
         return Failure("malformed", _clip(f"The adapter's response is not UTF-8 JSON: {exc}."))
     if not isinstance(message, dict):

@@ -6,10 +6,30 @@ Callers map a `JsonFileError` to their own error code by its `kind` (missing, io
 
 import errno
 import json
+import math
 from pathlib import Path
 
 TRANSIENT_ERRNOS = frozenset({errno.EIO, errno.EAGAIN, errno.EINTR, errno.EBUSY, errno.ENFILE,
                               errno.EMFILE, errno.ETIMEDOUT, errno.ESTALE})
+
+
+def _refuse_constant(name: str):
+    raise ValueError(f"{name} is not a JSON number")
+
+
+def _number(text: str):
+    value = float(text)
+    if not math.isfinite(value):
+        raise ValueError(f"the number {text} is out of range")
+    return int(value) if value.is_integer() else value
+
+
+def loads(text: str | bytes):
+    """Decode JSON as the suite's schemas read it, for files and protocol lines alike: NaN,
+    Infinity and -Infinity (which Python's json accepts but JSON does not) and numbers too large
+    for a float are refused with ValueError, and an integral number such as 1.0 or 4e0 becomes
+    an int, because JSON Schema's "integer" type admits it."""
+    return json.loads(text, parse_constant=_refuse_constant, parse_float=_number)
 
 
 class JsonFileError(Exception):
@@ -34,6 +54,6 @@ def read_json(path: Path, max_bytes: int):
     if len(data) > max_bytes:
         raise JsonFileError(f"is larger than the {max_bytes} bytes the runner will read", "size")
     try:
-        return json.loads(data.decode("utf-8"))
+        return loads(data.decode("utf-8"))
     except (ValueError, RecursionError) as exc:
         raise JsonFileError(f"is not UTF-8 JSON, or is nested too deeply: {exc}", "parse") from exc

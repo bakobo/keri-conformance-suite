@@ -162,6 +162,17 @@ def test_unparseable_case_files_are_faults(cases_dir, content):
     assert "bad.json" in str(info.value)
 
 
+@pytest.mark.parametrize("constant", ["NaN", "Infinity", "-Infinity"])
+def test_non_finite_numbers_in_a_case_file_are_faults(cases_dir, constant):
+    directory = cases_dir()
+    text = json.dumps(GOOD[0]).replace('"schema_version": 1', f'"schema_version": {constant}')
+    (directory / "nan.json").write_text(text)
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory)
+    assert info.value.code == errors.E_CASE_FORMAT
+    assert constant in str(info.value)
+
+
 def test_an_oversized_case_file_is_a_fault(cases_dir):
     directory = cases_dir(GOOD[0])
     with pytest.raises(errors.RunnerError) as info:

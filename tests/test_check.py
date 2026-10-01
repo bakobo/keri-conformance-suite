@@ -84,6 +84,8 @@ def test_answering_an_unknown_op_with_a_result_fails(vocabulary):
         (b'{"id": 3, "error": {"kind": "harness", "message": "bad json"}}', None, "fail"),
         (b'{"id": null, "result": {}}', None, "fail"),
         (b"[]", None, "fail"),
+        (b'{"id": null, "error": {"kind": "harness", "message": "bad json"}, "x": NaN}', None,
+         "fail"),
         (b'{"id": null, "error": {"kind": "oops", "message": "bad json"}}', None, "fail"),
         (b'{"id": null, "error": {"kind": "harness"}}', None, "fail"),
         (b'{"id": null, "error": {"kind": "harness", "message": 3}}', None, "fail"),
