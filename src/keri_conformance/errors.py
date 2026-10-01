@@ -13,8 +13,8 @@ EXIT_REFUSED = 3
 EXIT_FAULT = 4
 EXIT_NO_EVIDENCE = 5
 
-E_USAGE_MISSING = "e.usage.command.missing.f"
-E_USAGE_INVALID = "e.usage.args.invalid.f"
+E_USAGE_MISSING = "e.input.missing.f"
+E_USAGE_INVALID = "e.input.format.f"
 E_ADAPTER_START = "e.env.adapter.start.f"
 E_ADAPTER_HELLO = "e.env.adapter.hello.f"
 E_ADAPTER_HELLO_CHANGED = "e.env.adapter.hello.changed.f"
