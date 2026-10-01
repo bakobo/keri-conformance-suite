@@ -24,7 +24,10 @@ def _number(text: str):
     value = float(text)
     if not math.isfinite(value):
         raise ValueError(f"the number {text} is out of range")
-    exact = Decimal(text)
+    try:
+        exact = Decimal(text)
+    except ArithmeticError as exc:  # decimal.InvalidOperation: an exponent beyond its range
+        raise ValueError(f"the number {text} is out of range") from exc
     return int(exact) if exact == exact.to_integral_value() else value
 
 

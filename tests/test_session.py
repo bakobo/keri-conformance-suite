@@ -713,3 +713,12 @@ def test_close_kills_an_adapter_that_ignores_eof(vocabulary):
     s.close()
     assert proc.returncode is not None
     assert time.monotonic() - start < 3
+
+
+def test_numbers_beyond_decimal_range_are_refused_as_value_errors():
+    import pytest
+
+    from keri_conformance.jsonfile import loads
+
+    with pytest.raises(ValueError):
+        loads("1e-10000000000000000000")
