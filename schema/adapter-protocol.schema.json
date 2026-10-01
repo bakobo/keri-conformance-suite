@@ -214,8 +214,16 @@
           ],
           "properties": {
             "id": {
-              "type": "integer",
-              "minimum": 0
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "null only when the request could not be read at all"
             },
             "error": {
               "type": "object",
@@ -409,7 +417,8 @@
                   "start",
                   "end",
                   "code",
-                  "size"
+                  "size",
+                  "group_end"
                 ],
                 "properties": {
                   "kind": {
@@ -435,6 +444,10 @@
                   },
                   "gvrsn": {
                     "type": "string"
+                  },
+                  "group_end": {
+                    "type": "integer",
+                    "minimum": 0
                   }
                 }
               },

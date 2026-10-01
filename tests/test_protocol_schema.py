@@ -38,7 +38,7 @@ GOOD_REQUESTS = [
 GOOD_RESPONSES = [
     HELLO_RESULT,
     {"id": 1, "result": {"items": [
-        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 1},
+        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 1, "group_end": 92},
         {"kind": "indexed", "start": 4, "end": 92, "code": "A", "index": 0, "raw": "9c1f"},
         {"kind": "primitive", "start": 92, "end": 136, "code": "E", "raw": "4b2a"},
         {"kind": "message", "start": 136, "end": 479, "proto": "KERI", "version": "2.0",
@@ -139,3 +139,14 @@ def test_key_state_shape_matches_the_case_schema():
 
 def test_encoded_result_is_hex():
     assert list(RESPONSE.iter_errors({"id": 2, "result": {"encoded": "EEsq"}}))
+
+
+def test_unreadable_request_error_uses_null_id():
+    assert list(RESPONSE.iter_errors({"id": None, "error": {"kind": "harness", "message": "x"}})) == []
+    assert list(RESPONSE.iter_errors({"id": None, "result": {"encoded": "45"}}))
+
+
+def test_counter_reports_group_end():
+    message = copy.deepcopy(GOOD_RESPONSES[1])
+    del message["result"]["items"][0]["group_end"]
+    assert list(RESPONSE.iter_errors(message))
