@@ -7,7 +7,14 @@ from pathlib import Path
 
 from keri_conformance import __version__
 from keri_conformance.cases import load_cases
-from keri_conformance.errors import E_REPORT_WRITE, HelloRefused, RunnerError
+from keri_conformance.errors import (
+    E_REPORT_WRITE,
+    E_USAGE_INVALID,
+    E_USAGE_MISSING,
+    EXIT_USAGE,
+    HelloRefused,
+    RunnerError,
+)
 from keri_conformance.run import VERDICT_EXIT, human_summary, run_suite
 from keri_conformance.session import AdapterSession, Limits, load_vocabulary
 
@@ -21,6 +28,21 @@ exit codes:
      running as root, the report could not be written, or an active MUST assertion uses a
      check this runner version cannot evaluate
 """
+
+
+class _UsageError(Exception):
+    """Raised instead of argparse's own exit, so every usage failure carries a code."""
+
+
+class _Parser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:  # argparse calls this for every bad argument
+        raise _UsageError(message)
+
+
+def _fail(parser: argparse.ArgumentParser, code: str, sentence: str) -> int:
+    print(f"{code}: {sentence}", file=sys.stderr)
+    parser.print_usage(sys.stderr)
+    return EXIT_USAGE
 
 
 def _positive(kind):
@@ -49,7 +71,7 @@ def _adapter_options(parser):
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
+    parser = _Parser(
         prog="kcs",
         description="Run CESR, KERI, ACDC and IPEX conformance cases against an adapter.",
     )
@@ -93,13 +115,19 @@ def _run(args) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = _parser()
-    args = parser.parse_args(argv)
+    try:
+        args = parser.parse_args(argv)
+    except _UsageError as exc:
+        return _fail(parser, E_USAGE_INVALID,
+                     f"The command line could not be understood ({exc}). Retrying the same "
+                     "command will not help; correct the arguments.")
     if args.version:
         print(f"kcs {__version__}")
         return 0
     if args.command is None:
-        parser.print_usage(sys.stderr)
-        return 2
+        return _fail(parser, E_USAGE_MISSING,
+                     "No command was given. Pass --version, or a command such as run or "
+                     "check-adapter; see the usage line below.")
     try:
         return args.handler(args)
     except RunnerError as err:

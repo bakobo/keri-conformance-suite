@@ -27,11 +27,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from keri_conformance.errors import (
-    E_ADAPTER_COMMAND,
     E_ADAPTER_HELLO,
     E_ADAPTER_HELLO_CHANGED,
     E_ADAPTER_START,
     E_ROOT,
+    E_USAGE_INVALID,
     E_VOCABULARY,
     EXIT_USAGE,
     HelloRefused,
@@ -87,11 +87,11 @@ def adapter_argv(command: str | list[str]) -> list[str]:
     try:
         argv = shlex.split(command) if isinstance(command, str) else list(command)
     except ValueError as exc:
-        raise RunnerError(E_ADAPTER_COMMAND,
+        raise RunnerError(E_USAGE_INVALID,
                           f"The adapter command could not be split into arguments: {exc}.",
                           EXIT_USAGE) from exc
     if not argv:
-        raise RunnerError(E_ADAPTER_COMMAND,
+        raise RunnerError(E_USAGE_INVALID,
                           'The adapter command is empty; give the program that starts the adapter, '
                           'for example --adapter "python my_adapter.py".', EXIT_USAGE)
     return argv
@@ -180,9 +180,10 @@ def validate_hello(result, vocabulary: dict[str, bool]) -> list[str]:
                            f"an operation of protocol version {PROTOCOL_VERSION}", problems)
         if not ops and isinstance(result["operations"], list):
             problems.append('"operations" must list at least one operation.')
+    features = []
     if "features" in result:
-        _check_names(result, "features", vocabulary,
-                     "in the feature vocabulary (profiles/features.json)", problems)
+        features = _check_names(result, "features", vocabulary,
+                                "in the feature vocabulary (profiles/features.json)", problems)
     if "composes" in result:
         for name in _check_names(result, "composes", vocabulary,
                                  "in the feature vocabulary (profiles/features.json)", problems):
@@ -190,6 +191,9 @@ def validate_hello(result, vocabulary: dict[str, bool]) -> list[str]:
                 problems.append(f'"composes" lists "{name}", but "{name}" is not composable; only '
                                 "features marked composable in profiles/features.json may be "
                                 "composed.")
+            if name not in features:
+                problems.append(f'"composes" lists "{name}", which is not also listed in '
+                                '"features"; a composed behaviour is still a declared feature.')
     return problems
 
 
@@ -207,6 +211,8 @@ def _shape_parse(result):
                     and _is_int(item.get("start")) and _is_int(item.get("end"))):
                 return (f'Item {n} is not an object with a string "kind" and integer "start" '
                         'and "end".')
+            if item["kind"] == "counter" and not _is_int(item.get("group_end")):
+                return f'Item {n} is a counter without an integer "group_end".'
         return None
     if set(result) == {"reject"}:
         reject = result["reject"]

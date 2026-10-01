@@ -26,7 +26,7 @@ PASSING = [
     make_case("CESR-0001", "cesr.parse", {"stream": "2d4b"}, [assertion("rejected")],
               features=["cesr.genus-2.00"]),
     make_case("CESR-0002", "cesr.parse", {"stream": "00"}, [assertion("decoded", expected=[
-        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 0}])]),
+        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 0, "group_end": 4}])]),
     make_case("CESR-0003", "cesr.encode", {"code": "E", "raw": "00", "domain": "text"},
               [assertion("encoded", expected="10"),
                assertion("encoded", name="a2", level="SHOULD", expected="11")]),
@@ -262,16 +262,21 @@ def test_a_changed_hello_on_restart_aborts(cases_dir, tmp_path, write_json, caps
 
 
 @pytest.mark.parametrize("value", ["0", "-1", "x"])
-def test_bad_limits_are_usage_errors(value, capsys):
-    with pytest.raises(SystemExit) as info:
-        cli.main(["run", "--adapter", "x", "--timeout", value])
-    assert info.value.code == errors.EXIT_USAGE
+def test_bad_limits_are_coded_usage_errors(value, capsys):
+    assert cli.main(["run", "--adapter", "x", "--timeout", value]) == errors.EXIT_USAGE
+    assert capsys.readouterr().err.startswith(f"{errors.E_USAGE_INVALID}: ")
+
+
+def test_a_missing_adapter_option_is_a_coded_usage_error(capsys):
+    assert cli.main(["run"]) == errors.EXIT_USAGE
+    assert capsys.readouterr().err.startswith(f"{errors.E_USAGE_INVALID}: ")
 
 
 def test_an_empty_adapter_command_is_a_usage_error(cases_dir, capsys):
     code = cli.main(["run", "--adapter", " ", "--suite", str(ROOT), "--cases",
                      str(cases_dir(PASSING[0]))])
     assert code == errors.EXIT_USAGE
+    assert errors.E_USAGE_INVALID in capsys.readouterr().err
 
 
 def test_help_documents_exit_codes(capsys):

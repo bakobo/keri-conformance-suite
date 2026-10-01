@@ -20,14 +20,14 @@ HELLO = {
     "adapter": {"name": "fake-adapter", "version": "0.0.1"},
     "implementation": {"name": "fake-impl", "version": "1.0.0", "commit": "0123abc"},
     "operations": ["cesr.parse", "cesr.encode", "keri.process", "keri.emit"],
-    "features": ["cesr.genus-2.00", "kel.basic", "crypto.ed25519"],
+    "features": ["cesr.genus-2.00", "kel.basic", "crypto.ed25519", "keri.escrow"],
     "composes": ["keri.escrow"],
 }
 
 TABLE = [
     {"match": {"op": "cesr.parse", "stream": "2d4b"}, "result": {"reject": {"class": "truncated"}}},
     {"match": {"op": "cesr.parse"}, "result": {"items": [
-        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 0},
+        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 0, "group_end": 4},
     ]}},
     {"match": {"op": "cesr.encode"}, "result": {"encoded": "10"}},
     {"match": {"op": "keri.process"}, "result": {

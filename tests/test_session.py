@@ -41,7 +41,7 @@ def test_adapter_argv_splits_a_string_without_a_shell():
 def test_adapter_argv_refuses_unbalanced_quotes():
     with pytest.raises(errors.RunnerError) as info:
         adapter_argv("python 'unterminated")
-    assert info.value.code == errors.E_ADAPTER_COMMAND
+    assert info.value.code == errors.E_USAGE_INVALID
 
 
 def test_adapter_argv_passes_a_list_through():
@@ -51,7 +51,7 @@ def test_adapter_argv_passes_a_list_through():
 def test_adapter_argv_refuses_an_empty_command():
     with pytest.raises(errors.RunnerError) as info:
         adapter_argv("   ")
-    assert info.value.code == errors.E_ADAPTER_COMMAND
+    assert info.value.code == errors.E_USAGE_INVALID
     assert info.value.exit_code == errors.EXIT_USAGE
 
 
@@ -120,7 +120,7 @@ HELLO = {
     "adapter": {"name": "a", "version": "1"},
     "implementation": {"name": "i", "version": "1", "commit": "c"},
     "operations": ["cesr.parse"],
-    "features": ["kel.basic"],
+    "features": ["kel.basic", "keri.escrow"],
     "composes": ["keri.escrow"],
 }
 
@@ -152,6 +152,7 @@ def test_a_good_hello_has_no_problems(vocabulary):
         ({"features": [7]}, '"features"'),
         ({"composes": "keri.escrow"}, '"composes"'),
         ({"composes": ["kel.basic"]}, '"kel.basic" is not composable'),
+        ({"composes": ["kel.recovery"]}, 'which is not also listed in "features"'),
         ({"composes": ["keri.magic"]}, '"keri.magic"'),
         ({"composes": [None]}, '"composes"'),
         ({"extra": 1}, '"extra"'),
@@ -174,7 +175,8 @@ def test_a_hello_that_is_not_an_object_is_one_problem(vocabulary):
     [
         ("hello", {}),
         ("cesr.parse", {"items": []}),
-        ("cesr.parse", {"items": [{"kind": "counter", "start": 0, "end": 4}]}),
+        ("cesr.parse", {"items": [{"kind": "counter", "start": 0, "end": 4, "group_end": 4}]}),
+        ("cesr.parse", {"items": [{"kind": "primitive", "start": 0, "end": 4}]}),
         ("cesr.parse", {"reject": {"class": "truncated"}}),
         ("cesr.encode", {"encoded": "0aff"}),
         ("keri.process", {"dispositions": [{"initial": "pending", "final": "accepted"}],
@@ -198,6 +200,8 @@ def test_plausible_results_have_no_shape_problem(op, result):
         ("cesr.parse", {"items": [{"kind": 1, "start": 0, "end": 1}]}),
         ("cesr.parse", {"items": [{"kind": "counter", "start": True, "end": 1}]}),
         ("cesr.parse", {"items": [{"kind": "counter", "start": 0}]}),
+        ("cesr.parse", {"items": [{"kind": "counter", "start": 0, "end": 4}]}),
+        ("cesr.parse", {"items": [{"kind": "counter", "start": 0, "end": 4, "group_end": "8"}]}),
         ("cesr.parse", {"reject": "truncated"}),
         ("cesr.parse", {"reject": {"class": 3}}),
         ("cesr.encode", {"encoded": 3}),
