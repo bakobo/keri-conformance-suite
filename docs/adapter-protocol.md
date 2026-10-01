@@ -4,11 +4,13 @@
 
 An adapter is a program that connects one implementation to the runner. The runner starts it as a child process and talks to it over its standard input and output. This document is everything an adapter author needs.
 
+Two things check an adapter without running a single case: the message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Both are described under "Checking an adapter" in [`design.md`](design.md).
+
 ## Transport
 
 - The runner writes requests to the adapter's standard input, one JSON object per line, UTF-8, terminated by `\n`.
 - The adapter writes exactly one response per request to its standard output, one JSON object per line, in the same order.
-- Anything the adapter writes to standard error is captured into the result record as diagnostics and otherwise ignored. Logging belongs there, never on standard output.
+- Anything the adapter writes to standard error is captured into the conformance report as diagnostics and otherwise ignored. Logging belongs there, never on standard output.
 - Every stream travels as raw bytes, hex-encoded, whatever domain or serialization it contains. The adapter must hand those bytes to its implementation unchanged, so that the implementation does its own domain sniffing and framing. Other binary values, such as raw primitive values, are also hex.
 - The runner sends one request at a time and waits for its response. An adapter never has to handle concurrent requests.
 - Each request is independent. An adapter must start every request from empty state — no identifiers, keys or events left over from an earlier request. That is the most common way for an adapter to produce results that depend on case order.
@@ -49,12 +51,12 @@ The adapter answers with its protocol version and what it is:
   "adapter": {"name": "keriox-adapter", "version": "0.17.13-1"},
   "implementation": {"name": "keriox", "version": "0.17.13", "commit": "ddcd2aba..."},
   "operations": ["cesr.parse", "keri.process"],
-  "features": ["cesr.genus-2.00", "keri.legacy-1.x", "kel.delegation", "kel.multisig.weighted"],
+  "features": ["cesr.genus-2.00", "keri.version-1.x", "kel.basic", "kel.delegation", "kel.multisig.weighted"],
   "composes": ["keri.escrow"]
 }}
 ```
 
-`features` is drawn from the feature vocabulary in `profiles/features.json`. `composes` lists the behaviours, from the same vocabulary, that the adapter supplies itself rather than delegating to the implementation — for example, escrow and routing on top of a library that only verifies events. It is reported in every result record and every conformance claim, so that nobody credits the implementation with what the adapter did. The runner refuses to run an adapter whose protocol version it does not support.
+`features` is drawn from the feature vocabulary in `profiles/features.json`. `composes` lists the behaviours, from the same vocabulary, that the adapter supplies itself rather than delegating to the implementation — for example, escrow and routing on top of a library that only verifies events. It is reported in every conformance report and every conformance claim, so that nobody credits the implementation with what the adapter did. The runner refuses to run an adapter whose protocol version it does not support, whose `hello` is missing or malformed, or whose features or composed behaviours are not in the vocabulary. In each case it prints which field was wrong and what it expected, exits with a non-zero status, and runs no cases. These are runner-side refusals, not test failures, because no case was attempted.
 
 ## `cesr.parse`
 
@@ -130,7 +132,7 @@ Build and sign an event from raw keys and parameters.
 {"id": 4, "result": {"stream": "{\"v\":\"KERI10JSON...\"}-AAB..."}}
 ```
 
-The exact shape of `event` for each event type is defined by the case schema, `schema/case.schema.json`. The runner checks the event body byte for byte, checks that every signature verifies, and parses the attachments to check that they carry the right signatures with the right indexes. How the attachments are grouped is up to the implementation.
+The exact shape of `event` for each event type is defined by the case schema, `schema/case.schema.json`, which is added with the first KERI cases. The runner checks the event body byte for byte, checks that every signature verifies, and parses the attachments to check that they carry the right signatures with the right indexes. How the attachments are grouped is up to the implementation.
 
 ## `acdc.verify` and IPEX
 

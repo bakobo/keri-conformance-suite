@@ -2,13 +2,15 @@
 
 This document is the reference for how the suite works and why. It is written to stand on its own: the repository's `this.i` records the same decisions while the suite incubates at Bakobo, but `this.i` will be removed when the suite moves to the KERI Foundation, and this file will remain.
 
-The adapter wire protocol has its own document, [`adapter-protocol.md`](adapter-protocol.md).
+The adapter wire protocol has its own document, [`adapter-protocol.md`](adapter-protocol.md). Terms with a meaning specific to the suite are defined at the end of this document, under Terms.
+
+**Status.** This document describes the suite as designed. As of the first release candidate, what exists is the runner's skeleton and the feature vocabulary; the case schema, cases, runner commands, adapters and CI levels 2 and 3 are being built in that order.
 
 ## What the suite is for
 
 Implementations of CESR, KERI, ACDC and IPEX need a way to show that they are correct, and today they have none beyond agreeing with keripy on whatever inputs their authors thought to try. A survey of ten Rust codebases in September 2026 found defects that a shared corpus would have caught immediately — for example, CESR counters that count items where the CESR specification requires them to count quadlets, which made every stream unreadable to keripy and every keripy stream unreadable to them.
 
-The suite supplies that corpus. Each **case** is a fixed input together with a set of **assertions** about what an implementation must report for it. An implementation runs the cases through a small **adapter** and the **runner** checks each assertion against what the adapter reports. The result is a **result record**: a version-stamped, machine-readable account of which assertions held, which failed, and which did not apply.
+The suite supplies that corpus. Each **case** is a fixed input together with a set of **assertions** about what an implementation must report for it. An implementation runs the cases through a small **adapter** and the **runner** checks each assertion against what the adapter reports. The result is a **conformance report**: a version-stamped, machine-readable account of which assertions held, which failed, and which did not apply.
 
 ## Principles
 
@@ -20,15 +22,15 @@ These rules shape everything below. Each exists to prevent a specific failure.
 
 **Behaviour the specs do not define lives in named profiles.** keripy's escrow taxonomy, its error classes, its HTTP endpoints, the CESR 1.00 count-code table that keripy 1.x uses, and roles such as registrars and observers that have no specification yet are all real and all useful to test, but none of them is conformance. Cases for them belong to a clearly labelled non-normative profile, which reports interoperability with a named implementation and never claims more.
 
-**Published expectations never change.** A case id is permanent, and so is every assertion in it. If a case turns out to be wrong, it is deprecated and a corrected case is added under a new id that the old one points to. A result recorded against a suite release therefore never silently changes meaning, and an implementation that regresses between releases has changed, rather than the suite having moved under it.
+**Published expectations never change.** A case id is permanent, and so is every assertion in it. If a case turns out to be wrong, it is deprecated and a corrected case is added under a new id that the old one points to. A conformance reported against a suite release therefore never silently changes meaning, and an implementation that regresses between releases has changed, rather than the suite having moved under it.
 
 **Fixtures are generated, never hand-edited.** Cases are produced from small declarative scenario files by generators. CI regenerates every case in a pinned environment and fails if any byte differs. Editing an expected value to make an implementation pass is therefore not just forbidden but impossible to merge.
 
 **Anything but an answer is a failure.** An adapter declares the features its implementation supports when it starts, and the runner does not send a case that needs an undeclared feature; that case is recorded as `not-supported`. For every case the runner does send, the adapter must answer. A crash, a hang past the time limit, an oversized or malformed response, or an `unsupported` reply to a case it declared support for are all failures of every assertion in that case. This matters most for the cases that matter most: a parser that panics or loops on a hostile stream fails the must-reject cases built to catch it, instead of disappearing from the tally. The only outcome that is not scored is a fault on the runner's side, such as being unable to start the adapter at all, and the runner retries such a fault before recording it.
 
-**Results say whose logic was tested.** A library that verifies events but does not route, escrow or detect duplicity needs its adapter to supply that logic before it can run a KERI case. When an adapter does that, it declares which behaviours it composes, and the result record and any conformance claim say so: "conformant with the adapter composing escrow" is a different claim from "conformant". Otherwise a deployment of the bare library could be credited with behaviour only the adapter performs.
+**Results say whose logic was tested.** A library that verifies events but does not route, escrow or detect duplicity needs its adapter to supply that logic before it can run a KERI case. When an adapter does that, it declares which behaviours it composes, and the conformance report and any conformance claim say so: "conformant with the adapter composing escrow" is a different claim from "conformant". Otherwise a deployment of the bare library could be credited with behaviour only the adapter performs.
 
-**Shared defects are flagged.** When keripy both produced a case's expected values and is the implementation under test, a pass proves only that keripy agrees with itself. The result record marks such passes as self-agreement.
+**Shared defects are flagged.** When keripy both produced a case's expected values and is the implementation under test, a pass proves only that keripy agrees with itself. The conformance report marks such passes as self-agreement.
 
 ## Layers and verdicts
 
@@ -93,7 +95,7 @@ The IPEX exchange messages (apply, offer, agree, grant, admit, spurn) are specif
 
 ### Roles
 
-What a role must believe is tested through ordinary KERI cases taken from that role's perspective: witness thresholds and receipt validity under KAWA; duplicity detection and first-seen behaviour for a watcher given divergent KELs from different sources. How a role behaves as a running service depends on a transport the specifications do not define, so tests of that kind — a witness serving receipts over keripy's HTTP interface, for example — belong in a non-normative profile.
+What a role must believe is tested through ordinary KERI cases taken from that role's perspective: witness thresholds and receipt validity under KAWA (KERI's Algorithm for Witness Agreement, defined in the KERI specification); duplicity detection and first-seen behaviour for a watcher given divergent KELs from different sources. How a role behaves as a running service depends on a transport the specifications do not define, so tests of that kind — a witness serving receipts over keripy's HTTP interface, for example — belong in a non-normative profile.
 
 ## Cases
 
@@ -128,7 +130,7 @@ Some behaviour that many deployments depend on has no normative text: the CESR 1
 
 ## Versioning
 
-Three things are versioned, and every result record states all three.
+Three things are versioned, and every conformance report states all three.
 
 **The suite** uses semantic versioning. Adding cases is a minor release. Deprecating cases, or changing the adapter protocol incompatibly, is a major release. Changes to documentation and metadata are patches. Because assertions never change in place, a minor release can only add cases; it can make an implementation that previously passed everything fail a new case, but it cannot turn an old pass into a failure.
 
@@ -137,6 +139,21 @@ Three things are versioned, and every result record states all three.
 **An adapter** follows its implementation's release line, because that is what its users will pin, and reports the exact implementation commit it was built against.
 
 A conformance claim is therefore a tuple: suite version, profile, adapter version, implementation commit, and the list of behaviours the adapter composes, if any.
+
+## The runner
+
+The runner, `kcs`, is a Python package (Python 3.12 or later, managed with uv) with **no runtime dependencies**. That is deliberate. It must install wherever an adapter author works, whatever language their implementation is in, and it must never pull in an implementation under test, which is what would happen if it depended on keripy or on a CESR library. Generators, which do drive keripy, run in their own pinned environments and are not part of the runner.
+
+The runner treats every adapter as untrusted code, because adapters run implementation code against hostile inputs and a parser bug can be exploitable. On every platform it bounds each response's size and each request's time, reads responses line by line with a size cap rather than buffering until a newline that may never come, and kills the adapter's whole process group on a violation. On POSIX systems it also caps the adapter's memory and CPU time with resource limits, starts it with a scrubbed environment so it inherits no credentials, and refuses to run as root. Network isolation is not something the runner can impose portably; CI provides it by running adapters, and above all the nightly runs against development heads, in jobs that hold no secrets and no write token.
+
+### Checking an adapter
+
+An adapter is a contract that people outside this repository implement, in several languages, so they need a way to check their adapter before they ever run a case. The suite provides two:
+
+- **Message schemas.** `schema/adapter-protocol.schema.json` describes every request and response in JSON Schema, so an adapter author can validate their own messages in their own test suite, in any language.
+- **`kcs check-adapter`.** This runs a fixed set of probes against an adapter and reports each one: the handshake is well-formed and its features are in the vocabulary; responses echo request ids; a malformed request gets an error response rather than a crash; and two invariants the adapter protocol requires and the runner otherwise cannot see. **Statelessness:** the probe creates an identifier in one request and, in the next, delivers an event for that identifier that a fresh validator must not accept; an adapter that leaks state between requests accepts it. **Quiescence:** the probe delivers a sequence in which a later message's disposition depends on whether an escrowed event was promoted first, so an adapter that does not drain escrow after each message reports the wrong disposition.
+
+The runner also runs the statelessness probe at the start of every session, and can run a profile's cases in a shuffled order and compare the results with the ordered run, which catches state leaking between real cases.
 
 ## Adapters
 
@@ -148,14 +165,27 @@ Adapters start in this repository under `adapters/<name>/`, each self-contained 
 
 CI runs at three levels:
 
+Only the first level exists so far; the other two arrive with the first adapters.
+
 1. **On every pull request, cheaply:** the runner's own tests, validation of every case against the case schema, and regeneration of every case with a byte-for-byte comparison.
 2. **On every pull request, more slowly:** each adapter is built against its pinned implementation and run against the suite, and its results are compared with a baseline committed for that adapter. A regression fails the pull request. An improvement asks for the baseline to be updated in the same pull request.
-3. **Nightly, advisory:** each adapter is built against its implementation's latest development head and run, and the result records are kept as artifacts. Accumulated, those records are the compatibility matrix; nobody maintains one by hand.
+3. **Nightly, advisory:** each adapter is built against its implementation's latest development head and run, and the conformance reports are kept as artifacts. Accumulated, those records are the compatibility matrix; nobody maintains one by hand.
 
 ## Security
 
 A case that a released implementation handles unsafely is, in effect, a public proof of concept against that implementation. "Unsafely" means failing a MUST assertion in a way with a security consequence: accepting what must be rejected, retaining what must be dropped, or crashing or hanging. That includes keripy.
 
-Such a case is embargoed. It is held outside the public tree, in a private repository, until the affected project has been told privately and has had up to 90 days to ship a fix, as `SECURITY.md` describes. The embargo takes precedence over every other rule here, including the rule that a case keripy contradicts is published as disputed. While a case is embargoed, nothing derived from it is published either: not its scenario, not baseline changes it would cause, and not nightly results that include it. CI runs embargoed cases only in the private repository.
+Such a case is embargoed. It is held outside the public tree, in a private repository that mirrors the public one and adds the embargoed cases, until the affected project has been told privately and has had up to 90 days to ship a fix, as `SECURITY.md` describes. The embargo takes precedence over every other rule here, including the rule that a case keripy contradicts is published as disputed. While a case is embargoed, nothing derived from it is published either: not its scenario, not baseline changes it would cause, and not nightly results that include it. CI runs embargoed cases only in the private repository. Case ids are allocated in the private mirror, from the same sequence as every other case, so an embargoed case keeps its id when it is published; until then the public tree simply has a gap in its numbering. Gaps are normal and carry no meaning.
 
 The runner executes adapter programs, and adapters execute implementation code. The runner treats an adapter's output as untrusted: it bounds the size of every response, validates its shape before reading it, and enforces a time limit on every request.
+
+## Terms
+
+- **Case.** A fixed input and a set of assertions about it, in one file under `cases/`. Its id is permanent.
+- **Assertion.** One checkable claim about what an implementation must report for a case, with the clause it rests on and that clause's requirement level.
+- **Adapter.** A small standalone program that connects one implementation to the runner over the adapter protocol. Beyond translating requests, it owes two invariants — a fresh state for every request, and quiescence after every delivered message — and it must declare any behaviour it supplies itself rather than delegating to the implementation.
+- **Profile.** A named set of cases that an implementation can claim to pass, such as "passes every active MUST assertion in profile P". A profile's status comes from the maturity of the specification text its assertions cite. A non-normative profile reports interoperability with a named implementation and is never a conformance claim.
+- **Conformance report.** The machine-readable output of a run: suite version, profile, adapter and implementation identity, composed behaviours, and the outcome of every assertion.
+- **Disputed.** The status of a case whose expected values a cited clause contradicts, or about which two clauses conflict. A disputed case is excluded from conformance results until the specification working group settles it.
+- **Self-agreement.** A pass where keripy both produced the expected value and is the implementation under test. It shows only that keripy agrees with itself, and the conformance report marks it so.
+- **Embargoed.** The status of a case that would disclose an unfixed security defect in a released implementation; it is held in a private mirror until the affected project has had a chance to ship a fix.

@@ -8,9 +8,11 @@ Each test case is a fixed input together with an expected verdict that does not 
 
 **Status: incubating.** The case format, the adapter protocol and the first cases are being designed now. The suite is developed at [Bakobo](https://bakobo.com) with the intention of contributing it to the KERI Foundation.
 
-## Getting to passing tests
+## Who this is for
 
-The runner is a Python package with no runtime dependencies, managed with [uv](https://docs.astral.sh/uv/):
+**If you maintain an implementation** and want to show it conforms, you will write an adapter: a small program that lets the runner drive your implementation. Start with [`docs/adapter-protocol.md`](docs/adapter-protocol.md). The runner's `run` and `check-adapter` commands and the first cases are still being built, so there is not yet a conformance run to point an adapter at.
+
+**If you want to work on the suite itself** — the runner, the case generators, the documents — the runner is a Python package with no runtime dependencies, managed with [uv](https://docs.astral.sh/uv/):
 
 ```sh
 uv sync --dev

@@ -1,5 +1,10 @@
 name: CI
 
+# This is level 1 of the three CI levels in docs/design.md (runner tests and lint). Level 2
+# (adapters against pinned implementations, compared with committed baselines) and level 3
+# (nightly runs against development heads) are not built yet; they arrive with the first adapters.
+# Their absence here is the plan, not an omission.
+
 on:
   push:
     branches: [main]
