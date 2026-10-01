@@ -144,3 +144,21 @@ def test_main_routes_responses_to_stdout_and_everything_else_to_stderr(monkeypat
     assert main.main() == 0
     assert sys.stdout is sys.stderr
     assert json.loads(stdout.buffer.getvalue()) == {"id": 3, "result": {"encoded": "4d414543"}}
+
+
+# -- review round 1 (PR #6)
+
+def test_tracked_equality_is_bytearray_equality_and_it_is_unhashable():
+    assert measure.Tracked(b"ab", 5) == measure.Tracked(b"ab", 9) == b"ab"
+    assert measure.Tracked(b"ab", 5) != measure.Tracked(b"ac", 5)
+    with pytest.raises(TypeError):
+        hash(measure.Tracked(b"ab", 5))
+
+
+@pytest.mark.parametrize("key", [0, slice(1, 3), slice(0, 4, 2)])
+def test_a_refused_deletion_is_a_lookup_error_and_still_an_adapter_bug(key):
+    buf = measure.Tracked(b"abcdef", 0)
+    with pytest.raises(LookupError) as info:
+        del buf[key]
+    assert isinstance(info.value, errors.AdapterBug)
+    assert bytes(buf) == b"abcdef" and buf.base == 0

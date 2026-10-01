@@ -23,6 +23,11 @@ class AdapterBug(Exception):
     pass
 
 
+class BufferMisuse(AdapterBug, IndexError):
+    """keripy used the adapter's tracked buffer in a way the measurement does not expect. Raised
+    from a special method (__delitem__), so it is also a LookupError, as Python expects there."""
+
+
 def keri(fn, *args, **kwargs):
     """Call into keripy. Any exception keripy raises becomes a Rejection carrying its class name;
     an AdapterBug raised by adapter code running inside the call passes through unchanged."""

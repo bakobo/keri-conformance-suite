@@ -16,14 +16,21 @@ import inspect
 
 from keri import kering
 
-from kcs_adapter_keripy.errors import AdapterBug, Rejection, Unsupported, keri
+from kcs_adapter_keripy.errors import AdapterBug, BufferMisuse, Rejection, Unsupported, keri
 
 E_UNMEASURABLE = "e.feature.unsupported.group-extent.f"
 E_NATIVE = "e.feature.unsupported.native-body.f"
 
 
 class Tracked(bytearray):
-    """A bytearray that knows the stream offset of its first byte."""
+    """A bytearray that knows the stream offset of its first byte.
+
+    Equality is deliberately bytearray equality: keripy compares and slices these as plain bytes,
+    and the offset is bookkeeping, not content. Like bytearray, it is unhashable."""
+
+    __eq__ = bytearray.__eq__
+    __ne__ = bytearray.__ne__
+    __hash__ = None
 
     def __init__(self, data=b"", base=0, recorder=None):
         super().__init__(data)
@@ -40,11 +47,11 @@ class Tracked(bytearray):
 
     def __delitem__(self, key):
         if not isinstance(key, slice):
-            raise AdapterBug("e.self.unknown.buffer-delete.f: keripy deleted a single byte from its "
+            raise BufferMisuse("e.self.unknown.buffer-delete.f: keripy deleted a single byte from its "
                              "stream, which the adapter does not expect.")
         start, stop, step = key.indices(len(self))
         if step != 1 or start != 0:
-            raise AdapterBug("e.self.unknown.buffer-delete.f: keripy deleted bytes other than from "
+            raise BufferMisuse("e.self.unknown.buffer-delete.f: keripy deleted bytes other than from "
                              "the front of its stream, which the adapter does not expect.")
         data = bytes(super().__getitem__(slice(0, stop)))
         if self.recorder is not None:
