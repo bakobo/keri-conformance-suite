@@ -12,7 +12,7 @@ from fractions import Fraction
 from keri_conformance.errors import E_CHECK_NOT_IMPLEMENTED
 
 NUMERIC = re.compile(r"(?:0x)?[0-9a-fA-F]+")
-FRACTION = re.compile(r"[0-9]+(?:/[0-9]+)?")
+FRACTION = re.compile(r"[0-9]+(?:/[0-9]*[1-9][0-9]*)?")
 KEY_STATE_FIELDS = ("sn", "said", "keys", "kt", "ndigs", "nt", "wits", "bt", "delegator")
 CRYPTO_CHECKS = ("emitted_body", "signatures_verify", "attachments_equivalent")
 
@@ -46,11 +46,7 @@ def _numeric(value):
 def _fraction(value):
     if not (isinstance(value, str) and FRACTION.fullmatch(value)):
         return None
-    try:
-        fraction = Fraction(value)
-    except ZeroDivisionError:
-        return None
-    return str(fraction)
+    return str(Fraction(value))  # FRACTION admits no zero denominator
 
 
 def normalize_threshold(value):

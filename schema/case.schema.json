@@ -866,54 +866,194 @@
       }
     },
     "threshold": {
-      "description": "A threshold as the implementation holds it: a hexadecimal integer string (optional 0x prefix), as KERI encodes numeric thresholds, or weighted clauses as a list of fraction strings or a list of such lists. The runner normalizes before comparing.",
+      "description": "A threshold as the implementation holds it, exactly the forms the runner normalizes: a hexadecimal integer string with an optional 0x prefix, as KERI encodes numeric thresholds; or weighted clauses, either one clause as a non-empty list of fraction strings or several as a non-empty list of such lists, never mixed. A fraction string is a non-negative integer, optionally over a non-zero denominator, with no spaces or signs. The runner normalizes both sides before comparing.",
       "oneOf": [
         {
-          "type": "string"
+          "type": "string",
+          "pattern": "^(0x)?[0-9a-fA-F]+$"
         },
         {
           "type": "array",
+          "minItems": 1,
           "items": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            ]
+            "type": "string",
+            "pattern": "^[0-9]+(/[0-9]*[1-9][0-9]*)?$"
+          }
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9]+(/[0-9]*[1-9][0-9]*)?$"
+            }
           }
         }
       ]
     },
     "item": {
-      "type": "object",
-      "required": [
-        "kind",
-        "start",
-        "end"
-      ],
-      "properties": {
-        "kind": {
-          "enum": [
-            "primitive",
-            "indexed",
-            "counter",
-            "message"
-          ]
+      "description": "One decoded item, as the adapter protocol defines it for a cesr.parse result. Closed and kind-specific, and identical in the case schema and the adapter-protocol schema, so that every expected item a case states is one a conforming adapter can report.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "code",
+            "raw"
+          ],
+          "properties": {
+            "kind": {
+              "const": "primitive"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "code": {
+              "type": "string"
+            },
+            "raw": {
+              "type": "string",
+              "pattern": "^([0-9a-f]{2})*$"
+            }
+          }
         },
-        "start": {
-          "type": "integer",
-          "minimum": 0
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "code",
+            "raw",
+            "index"
+          ],
+          "properties": {
+            "kind": {
+              "const": "indexed"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "code": {
+              "type": "string"
+            },
+            "raw": {
+              "type": "string",
+              "pattern": "^([0-9a-f]{2})*$"
+            },
+            "index": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ondex": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
         },
-        "end": {
-          "type": "integer",
-          "minimum": 0
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "code",
+            "size",
+            "group_end"
+          ],
+          "properties": {
+            "kind": {
+              "const": "counter"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "code": {
+              "type": "string"
+            },
+            "size": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "genus": {
+              "type": "string"
+            },
+            "gvrsn": {
+              "type": "string"
+            },
+            "group_end": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "proto",
+            "version",
+            "serialization",
+            "size"
+          ],
+          "properties": {
+            "kind": {
+              "const": "message"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "proto": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "serialization": {
+              "enum": [
+                "JSON",
+                "CBOR",
+                "MGPK"
+              ]
+            },
+            "size": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
         }
-      }
+      ]
     }
   }
 }
