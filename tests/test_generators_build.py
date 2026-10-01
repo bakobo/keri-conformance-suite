@@ -532,3 +532,31 @@ def test_an_unknown_encode_domain_is_a_coded_scenario_error(domain):
     with pytest.raises(build.ScenarioError, match="domain") as e:
         build.build_case(T, "s", case, CLAUSES, None, None)
     assert e.value.code == "e.input.format.kcs-scenario.f"
+
+
+# --- Bounded reads of scenario files --------------------------------------------------------
+
+
+def test_an_oversized_scenario_file_is_refused_before_decoding(tree, monkeypatch):
+    monkeypatch.setattr(regenerate, "MAX_SCENARIO_BYTES", 64)
+    (tree / "scenarios" / "cesr" / "zz.json").write_text('{"cases": [' + " " * 100 + "]}")
+    decoded = []
+    monkeypatch.setattr(regenerate.json, "loads", lambda text: decoded.append(text))
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate._load_json(tree / "scenarios" / "cesr" / "zz.json")
+    assert e.value.code == "e.input.range.kcs-scenario-size.f" and "zz.json" in str(e.value)
+    assert decoded == []
+
+
+def test_an_oversized_clause_registry_is_refused(tree, monkeypatch):
+    monkeypatch.setattr(regenerate, "MAX_SCENARIO_BYTES", 64)
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate.generate(tree)
+    assert e.value.code == "e.input.range.kcs-scenario-size.f" and "clauses.json" in str(e.value)
+
+
+def test_a_scenario_file_at_the_limit_is_read(tree, monkeypatch):
+    path = tree / "scenarios" / "cesr" / "zz.json"
+    path.write_text('{"a": 1}')
+    monkeypatch.setattr(regenerate, "MAX_SCENARIO_BYTES", len('{"a": 1}'))
+    assert regenerate._load_json(path) == {"a": 1}

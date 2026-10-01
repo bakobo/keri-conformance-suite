@@ -11,7 +11,14 @@ import re
 
 from . import keripy1x, spec_source, tables
 from .build import build_case, resolve_clauses, resolve_records
-from .errors import E_CASE_ID, E_SCENARIO_JSON, E_SPEC_TABLE, GeneratorError, ScenarioError
+from .errors import (
+    E_CASE_ID,
+    E_SCENARIO_JSON,
+    E_SCENARIO_SIZE,
+    E_SPEC_TABLE,
+    GeneratorError,
+    ScenarioError,
+)
 
 # Failures of a case's content that the builder does not name itself: an unknown code or table
 # entry, a raw value of the wrong size, a missing scenario field, a quote not in the text.
@@ -20,6 +27,7 @@ BUILD_FAILURES = (KeyError, ValueError, LookupError, TypeError)
 SCENARIO_DIR = "scenarios/cesr"
 CASE_DIR = "cases/cesr"
 CLAUSES_FILE = "clauses.json"
+MAX_SCENARIO_BYTES = 1024 * 1024  # per scenario or registry file
 CASE_ID = re.compile(r"CESR-([0-9]{4})")  # always applied with fullmatch
 
 PROFILES = {
@@ -86,9 +94,19 @@ def dumps(obj) -> bytes:
 
 
 def _load_json(path: pathlib.Path):
+    """A scenario or registry file, read with a bound before it is decoded."""
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
+        with path.open("rb") as f:
+            data = f.read(MAX_SCENARIO_BYTES + 1)
+    except OSError as e:
+        raise ScenarioError(f"{path.name} could not be read as JSON: {e}.",
+                            E_SCENARIO_JSON) from None
+    if len(data) > MAX_SCENARIO_BYTES:
+        raise ScenarioError(f"{path.name} is larger than {MAX_SCENARIO_BYTES} bytes, the most the "
+                            f"generator reads from one scenario file.", E_SCENARIO_SIZE)
+    try:
+        return json.loads(data.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError) as e:
         raise ScenarioError(f"{path.name} could not be read as JSON: {e}.",
                             E_SCENARIO_JSON) from None
 

@@ -5,6 +5,8 @@ could help. ``scripts/regenerate`` prints the coded message and exits 3 for any 
 E_SCENARIO = "e.input.format.kcs-scenario.f"
 # A scenario or registry file that is not valid JSON.
 E_SCENARIO_JSON = "e.input.format.kcs-scenario-json.f"
+# A scenario or registry file larger than the generator will read.
+E_SCENARIO_SIZE = "e.input.range.kcs-scenario-size.f"
 # A case id that is not a CESR-NNNN id, refused before it is used to build a path.
 E_CASE_ID = "e.input.format.kcs-case-id.f"
 # The code tables could not be read from the pinned, hash-verified specification text. The text
