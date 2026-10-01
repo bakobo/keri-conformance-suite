@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from keri_conformance.errors import (
 )
 from keri_conformance.run import VERDICT_EXIT, human_summary, run_suite
 from keri_conformance.session import AdapterSession, Limits, load_vocabulary
+from keri_conformance.suite import read_suite_version
 
 EXIT_CODES = """\
 exit codes:
@@ -65,8 +67,9 @@ def _positive(kind):
             value = kind(text)
         except ValueError as exc:
             raise argparse.ArgumentTypeError(f"{text!r} is not a number") from exc
-        if value <= 0:
-            raise argparse.ArgumentTypeError(f"{text!r} must be greater than zero")
+        if not math.isfinite(value) or value <= 0:
+            raise argparse.ArgumentTypeError(f"{text!r} must be a finite number greater than "
+                                             "zero")
         return value
 
     return parse
@@ -119,11 +122,13 @@ def _session(args, command) -> AdapterSession:
 
 
 def _run(args) -> int:
+    suite_version = read_suite_version(args.suite)
     cases_dir = args.cases or str(Path(args.suite) / "cases")
     cases = load_cases(cases_dir)
     with _session(args, args.adapter) as session:
         session.open()
-        report = run_suite(session, cases, profile=args.profile, cases_dir=cases_dir)
+        report = run_suite(session, cases, profile=args.profile, cases_dir=cases_dir,
+                           suite_version=suite_version)
     if args.report:
         try:
             Path(args.report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

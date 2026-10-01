@@ -112,7 +112,7 @@ def summarize(entries: list[dict]) -> tuple[dict, str]:
 
 
 def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None,
-              cases_dir: str) -> dict:
+              cases_dir: str, suite_version: str) -> dict:
     """Run the cases (filtered by profile) and return the conformance report."""
     session_stderr = session.take_stderr()
     entries, aborted = [], None
@@ -132,7 +132,7 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
     return {
         "report_version": 1,
         "runner_version": __version__,
-        "suite_version": __version__,
+        "suite_version": suite_version,
         "protocol_version": PROTOCOL_VERSION,
         "supported_protocols": sorted(SUPPORTED_PROTOCOLS),
         "negotiated_protocol": hello["protocol"],
