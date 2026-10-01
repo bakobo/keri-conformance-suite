@@ -1,9 +1,9 @@
 name: CI
 
-# This is level 1 of the three CI levels in docs/design.md (runner tests and lint). Level 2
-# (adapters against pinned implementations, compared with committed baselines) and level 3
-# (nightly runs against development heads) are not built yet; they arrive with the first adapters.
-# Their absence here is the plan, not an omission.
+# Two of the three CI levels in docs/design.md. Job `test` is level 1 (runner tests and lint).
+# Job `keripy-adapter` is level 2 for the keripy adapter: it builds the adapter against its pinned
+# keripy and compares a cesr-1.0 run with the baseline committed beside it. Level 3 (nightly runs
+# against development heads) is not built yet; its absence here is the plan, not an omission.
 
 on:
   push:
@@ -44,3 +44,40 @@ jobs:
         env:
           KCS_REQUIRE_SPEC: "1"
         run: uv run pytest
+
+  keripy-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      # keripy signs and verifies through pysodium, which loads the system libsodium.
+      - name: Install libsodium
+        run: sudo apt-get update && sudo apt-get install -y libsodium23
+      - name: Sync the runner
+        run: uv sync --locked
+      # The adapter's own lockfile pins keripy main by commit; --locked refuses a stale lock.
+      - name: Build the keripy adapter at its pin
+        working-directory: adapters/keripy
+        run: uv sync --locked
+      - name: Adapter tests
+        working-directory: adapters/keripy
+        run: uv run pytest
+      - name: Probe the adapter
+        run: uv run kcs check-adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy"
+      # The verdict is not the gate here; the baseline is. A run that regresses any assertion
+      # fails, and so does one that improves, until the baseline is updated in the same change.
+      - name: Run cesr-1.0 and compare with the baseline
+        run: |
+          set +e
+          uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" \
+            --profile cesr-1.0 --report "$RUNNER_TEMP/keripy-main-cesr-1.0.json"
+          echo "kcs run exited $?"
+          set -e
+          adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare \
+            adapters/keripy/baseline-cesr-1.0.json "$RUNNER_TEMP/keripy-main-cesr-1.0.json"

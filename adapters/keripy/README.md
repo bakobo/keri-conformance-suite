@@ -38,6 +38,19 @@ cd adapters/keripy/keripy-1.2.14 && uv run pytest ../tests   # against keripy 1.
 
 Tests marked `main` or `onex` run only against that keripy generation. Branch coverage is 100% when the two runs are combined (`coverage combine`).
 
+## CI and the baseline
+
+CI level 2 (`docs/design.md`) for this adapter is the `keripy-adapter` job in `.github/workflows/ci.yml`. It builds the keripy-main instance from its lockfile and runs the adapter's tests and `kcs check-adapter`. Then it runs `kcs run --profile cesr-1.0` and compares the report with `baseline-cesr-1.0.json`, the outcome of every assertion as last recorded. The comparison is `python -m kcs_adapter_keripy.baseline compare`, and it fails in two cases:
+- **A regression:** an assertion whose outcome is no longer what the baseline says, an assertion that disappeared, or a different profile.
+- **An improvement:** a new pass, a new assertion, or a different keripy commit. This must be recorded in the same change:
+
+```
+uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile cesr-1.0 --report /tmp/r.json
+adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline write adapters/keripy/baseline-cesr-1.0.json /tmp/r.json
+```
+
+The committed baseline is keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, verdict conformant: every active assertion passes, and the two disputed cases, CESR-0022 and CESR-0031, fail.
+
 ## How a stream is parsed
 
 `cesr.parse` hands the stream to keripy's own `Parser.msgParsator`, one message (body plus attachments) per call. That is the same unit keripy's own parse loops (`allParsator`, `parsator`) use. The adapter calls it with `framed=True` until the stream is used up, using one fresh parser per request. keripy main is called as `msgParsator(ims, framed=True, piped=False, version=None)`, so a genus/version code at the top level carries over to later messages exactly as it does in keripy. keripy 1.2.14 is called as `msgParsator(ims, framed=True, pipeline=False)` with no KERI processors attached.
@@ -89,4 +102,4 @@ Which item kind an extraction becomes depends on the class keripy chose: a `Coun
 
 ## Errors
 
-`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when 1 is not offered. Request fields the adapter does not know are ignored. A line that is not a JSON object gets an error whose `id` is null. `keri.process` and `keri.emit` get an `unsupported` error. When keripy refuses to encode in `cesr.encode`, the response is an `unsupported` error naming keripy's exception class, because that operation has no rejection result. Every error message begins with a stable code (`e.input.format.request.f`, `e.input.range.unknown-op.f`, `e.feature.unsupported.undeclared-op.f`, `e.feature.unsupported.protocol-version.f`, `e.input.format.encode-refused.f`, `e.feature.unsupported.group-extent.f`, `e.feature.unsupported.native-body.f`, `e.self.unknown.f`, and `e.self.unknown.*` codes for each way keripy could step outside what the measurement expects. The codes follow the Bakobo error-code grammar `<sorter>.<descriptor>[.<sub>...].<disposition>`; every one ends in `f`, because retrying the same request gives the same answer). Each rejection is also explained on standard error, which the runner keeps in its report.
+`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when 1 is not offered. Request fields the adapter does not know are ignored. A line that is not a JSON object, or a request without a usable `id` (a non-negative integer), gets an error whose `id` is null. Every response the adapter writes is checked against `schema/adapter-protocol.schema.json` in `tests/test_schema.py`. `keri.process` and `keri.emit` get an `unsupported` error. When keripy refuses to encode in `cesr.encode`, the response is an `unsupported` error naming keripy's exception class, because that operation has no rejection result. Every error message begins with a stable code (`e.input.format.request.f`, `e.input.range.unknown-op.f`, `e.feature.unsupported.undeclared-op.f`, `e.feature.unsupported.protocol-version.f`, `e.input.format.encode-refused.f`, `e.feature.unsupported.group-extent.f`, `e.feature.unsupported.native-body.f`, `e.self.unknown.f`, and `e.self.unknown.*` codes for each way keripy could step outside what the measurement expects. The codes follow the Bakobo error-code grammar `<sorter>.<descriptor>[.<sub>...].<disposition>`; every one ends in `f`, because retrying the same request gives the same answer). Each rejection is also explained on standard error, which the runner keeps in its report.
