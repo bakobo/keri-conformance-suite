@@ -23,7 +23,7 @@ parses the stream back with the reference parser and requires the two to agree.
 import hashlib
 import json
 
-from . import GENERATOR_NAME, GENERATOR_VERSION, b64, encoding, spec_source
+from . import GENERATOR_NAME, GENERATOR_VERSION, b64, blake3, encoding, spec_source
 from .decoding import Legacy, Parser, Rejected
 from .tables import Tables
 
@@ -76,9 +76,12 @@ def resolve_clauses(registry: dict, spec_text: str) -> dict:
 
 
 class StreamBuilder:
-    def __init__(self, t: Tables, legacy: dict[str, Legacy] | None = None):
+    def __init__(self, t: Tables, legacy: dict[str, Legacy] | None = None,
+                 messages: dict | None = None, one_x: dict[str, Legacy] | None = None):
         self.t = t
         self.legacy = legacy
+        self.messages = messages or {}  # named message bodies a scenario defines once
+        self.one_x = one_x  # the table a 1.00 genus/version override selects
         self.features: set[str] = set()
         self.wire: set[str] = set()
 
@@ -127,27 +130,40 @@ class StreamBuilder:
             return text, [item]
         if "literal" in n:
             return n["literal"], []
+        if "datetime" in n:
+            # The master table's 1AAG is a "DateTime Base64 custom encoded 32 char ISO-8601"; the
+            # substitution of ':', '.' and '+' is keripy's, since the table does not define one.
+            text = "1AAG" + n["datetime"].translate(str.maketrans({":": "c", ".": "d", "+": "p"}))
+            return text, [{"kind": "primitive", "start": 0, "end": len(text), "code": "1AAG",
+                           "raw": b64.decode(text[4:]).hex()}]
         if "genus" in n:
             text = encoding.genus_version(n["genus"], n["major"], n["minor"])
-            gvrsn = f"{n['major']}.{n['minor']:02d}"
-            self.features.add(f"cesr.genus-{gvrsn}")
-            self.wire.add(f"CESR-{gvrsn}")
-            return text, [{"kind": "counter", "start": 0, "end": len(text), "code": "-_" + n["genus"],
-                           "size": 0, "group_end": len(text), "genus": n["genus"], "gvrsn": gvrsn}]
+            version = f"{n['major']}.{n['minor']:02d}"
+            self.features.add(f"cesr.genus-{version}")
+            self.wire.add(f"CESR-{version}")
+            return text, [{"kind": "genus", "start": 0, "end": len(text), "code": text,
+                           "genus": n["genus"], "version": version}]
         if "group" in n:
             return self.group(n)
         raise ScenarioError(f"Unknown stream element {sorted(n)}.")
 
     def group(self, n: dict) -> tuple[str, list[dict]]:
         code = n["group"]
+        outer = self.legacy
         body, items, units = "", [], 0
-        for child in n["items"]:
+        for position, child in enumerate(n["items"]):
             text, child_items = self.node(child)
+            if "genus" in child:
+                if position != 0 or code.lstrip("-") not in ("A", "B", "C") or outer is not None:
+                    raise ScenarioError(f"A genus/version code overrides only as the first "
+                                        f"element of a genus 2.00 -A, -B or -C group, not {code}.")
+                self.legacy = self.one_x if (child["major"], child["minor"]) == (1, 0) else None
             for it in child_items:
                 items.append(_shift(it, len(body)))
-            if child_items:
+            if child_items and "genus" not in child:
                 units += 1
             body += text
+        self.legacy = outer  # an override ends with its group
         if self.legacy is None:
             quadlets, natural = True, len(body) // 4
             self.features.add("cesr.genus-2.00")
@@ -168,8 +184,16 @@ class StreamBuilder:
         return head + body, [counter] + [_shift(it, shift) for it in items]
 
     def message(self, m: dict) -> tuple[bytes, dict]:
-        fields = {"v": ""}
-        fields.update(m["fields"])
+        """A KERI inception (`icp`) body, serialized as compact JSON with its fields in the order
+        the KERI specification requires (v1.0.1, "Inception Event Message Body": `[ v, t, d, i, s,
+        kt, k, nt, n, bt, b, c, a]`, all required), and with its self-addressing `d` and `i`
+        computed by the CESR specification's SAID protocol ("Generation and Verification
+        Protocols"): both fields hold 44 `#` while the Blake3-256 digest of the serialization is
+        taken, then both take the `E`-coded digest."""
+        if isinstance(m, str):
+            m = self.messages[m]
+        if m.get("ilk", "icp") != "icp":
+            raise ScenarioError(f"Only icp bodies are built; got {m['ilk']!r}.")
         major, minor = m["version"]
         if m.get("legacy"):
             def vs(size):
@@ -184,10 +208,29 @@ class StreamBuilder:
                         f"{b64.int_to_b64(size, 4)}.")
             self.features.add("keri.version-2.x")
         self.features.add("cesr.serialization.json")
-        fields["v"] = vs(0)
-        size = len(json.dumps(fields, separators=(",", ":"), ensure_ascii=False).encode("utf-8"))
-        fields["v"] = vs(size)
-        body = json.dumps(fields, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+        def key(label):
+            return encoding.primitive(self.t, "D", raw_bytes(label, 32))
+
+        dummy = "#" * 44
+        fields = {
+            "v": vs(0), "t": "icp", "d": dummy, "i": dummy, "s": "0",
+            "kt": m["kt"], "k": [key(x) for x in m["keys"]],
+            "nt": m["nt"],
+            "n": [encoding.primitive(self.t, "E", blake3.digest(key(x).encode()))
+                  for x in m["next"]],
+            "bt": m.get("bt", "0"),
+            "b": [encoding.primitive(self.t, "B", raw_bytes(x, 32)) for x in m.get("witnesses", [])],
+            "c": [], "a": [],
+        }
+
+        def ser():
+            return json.dumps(fields, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+        fields["v"] = vs(len(ser()))
+        said = encoding.primitive(self.t, "E", blake3.digest(ser()))
+        fields["d"] = fields["i"] = said
+        body = ser()
         self.wire.add(_wire_of(fields["v"], bool(m.get("legacy"))))
         item = {"kind": "message", "start": 0, "end": len(body), "proto": m["proto"],
                 "version": f"{major}.{minor}", "serialization": "JSON", "size": len(body)}
@@ -237,8 +280,9 @@ def _wire_of(version_string: str, legacy: bool) -> str:
 
 
 def build_case(t: Tables, scenario_path: str, case: dict, clauses: dict,
-               legacy: dict[str, Legacy] | None, reference: dict | None) -> dict:
-    sb = StreamBuilder(t, legacy)
+               legacy: dict[str, Legacy] | None, reference: dict | None,
+               messages: dict | None = None, one_x: dict[str, Legacy] | None = None) -> dict:
+    sb = StreamBuilder(t, legacy, messages, one_x)
     op = case["operation"]
     if op == "cesr.encode":
         code, domain = case["code"], case["domain"]
@@ -300,17 +344,18 @@ def build_case(t: Tables, scenario_path: str, case: dict, clauses: dict,
             "summary": d["summary"],
             "raised_at": d["raised_at"],
         }
-    check_case(t, result, legacy)
+    check_case(t, result, legacy, one_x)
     return result
 
 
-def check_case(t: Tables, case: dict, legacy: dict[str, Legacy] | None) -> None:
+def check_case(t: Tables, case: dict, legacy: dict[str, Legacy] | None,
+               one_x: dict[str, Legacy] | None = None) -> None:
     """Parse a built parse case back from its bytes and require agreement with its assertions."""
     if case["operation"] != "cesr.parse":
         return
     stream = bytes.fromhex(case["input"]["stream"])
     try:
-        got = Parser(t, legacy).parse(stream)
+        got = Parser(t, legacy, one_x).parse(stream)
         outcome = ("decoded", got)
     except Rejected as e:
         outcome = ("rejected", e.cls)

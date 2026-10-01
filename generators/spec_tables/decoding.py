@@ -44,10 +44,15 @@ class Legacy:
     per: int = 1
 
 
+OVERRIDEABLE = ("A", "B", "C")  # -A/-B/-C and their large forms: universal, allow override
+
+
 class Parser:
-    def __init__(self, t: Tables, legacy: dict[str, Legacy] | None = None):
+    def __init__(self, t: Tables, legacy: dict[str, Legacy] | None = None,
+                 one_x: dict[str, Legacy] | None = None):
         self.t = t
         self.legacy = legacy  # when set, count codes are read from this table, not genus 2.00
+        self.one_x = one_x  # the table a genus/version code selecting 1.00 switches to, if any
         self.genus_seen = legacy is not None
 
     # -- element text ------------------------------------------------------------------------
@@ -78,6 +83,9 @@ class Parser:
         head = self._text(s, i, 4, binary, limit)
         if head[0] != "-":
             raise Rejected("bad-frame-start", f"expected a count code at offset {i}.")
+        if head.startswith("-_"):
+            scheme = self.t.count_scheme("-_")
+            return None, scheme.hs, scheme.ss, None
         if self.legacy is not None:
             for hard, entry in self.legacy.items():
                 if head.startswith(hard):
@@ -97,15 +105,8 @@ class Parser:
         start, after = i, i + self._width(hs + ss, binary)
         if hard.startswith("-_"):
             if not top:
-                raise Rejected("unsupported", "a genus/version code inside a group.")
-            version = text[hs:]
-            major, minor = b64.b64_to_int(version[0]), b64.b64_to_int(version[1:])
-            if (hard, major, minor) != ("-_AAA", 2, 0):
-                raise Rejected("unsupported", f"genus/version {text!r} is not AAA 2.00.")
-            self.genus_seen = True
-            item = {"kind": "counter", "start": start, "end": after, "code": hard, "size": 0,
-                    "group_end": after, "genus": "AAA", "gvrsn": "2.00"}
-            return [item], after
+                raise Rejected("unsupported", "a genus/version code where it carries no override.")
+            return [self.genus(text, start, after)], after
         if not self.genus_seen:
             raise Rejected("unsupported", "a count code before any genus/version code.")
         if entry is None and hard not in self.t.count_codes:
@@ -131,11 +132,35 @@ class Parser:
         item["group_end"] = pos
         return [item, *items], pos
 
+    def genus(self, text: str, start: int, after: int) -> dict:
+        """Switch the count-code table to the one a genus/version code selects."""
+        genus, major, minor = text[2:5], b64.b64_to_int(text[5]), b64.b64_to_int(text[6:8])
+        if (genus, major, minor) == ("AAA", 2, 0):
+            self.legacy = None
+        elif (genus, major, minor) == ("AAA", 1, 0) and self.one_x is not None:
+            self.legacy = self.one_x
+        else:
+            raise Rejected("unsupported", f"genus/version {text!r} is not a supported table.")
+        self.genus_seen = True
+        return {"kind": "genus", "start": start, "end": after, "code": text, "genus": genus,
+                "version": f"{major}.{minor:02d}"}
+
     def _group_contents(self, s, i, end, binary, hard):
         items = []
         bare = hard.lstrip("-")
+        outer = self.legacy
+        overrideable = bare in OVERRIDEABLE and outer is None
+        first = True
         while i < end:
-            if bare in ("A", "B", "C") and self.legacy is None:
+            if (first and overrideable and self._starts_counter(s, i, binary)
+                    and self._text(s, i, 4, binary, end).startswith("-_")):
+                head = self._text(s, i, 8, binary, end)
+                after = i + self._width(8, binary)
+                items.append(self.genus(head, i, after))
+                i, first = after, False
+                continue
+            first = False
+            if bare in OVERRIDEABLE and self.legacy is None:
                 got, i = self.frame(s, i, end, top=False)
             elif bare in ("K", "L") and self.legacy is None:
                 got, i = self.indexed(s, i, binary, end)
@@ -146,6 +171,7 @@ class Parser:
                 got, i = self.primitive(s, i, binary, end)
                 got = [got]
             items.extend(got)
+        self.legacy = outer  # an override ends with its group
         return items, i
 
     def _starts_counter(self, s, i, binary):

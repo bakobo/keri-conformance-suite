@@ -4,20 +4,20 @@
       "check": "rejected",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "Codes in the small Count Code table MUST be each four characters long.",
+        "quote": "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error.",
         "section": "Small Count Code table",
         "spec": "cesr",
         "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#small-count-code-table"
       },
       "id": "a1",
       "level": "MUST",
-      "note": "Informative class: truncated."
+      "note": "inferred consumer obligation from producer MUST at line 601 (the clause calls the code 'an error' but does not state what a parser does with it); informative class: unknown-code"
     }
   ],
-  "description": "After the genus/version code the stream holds only -JA, three characters of a four-character count code. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "description": "After a KERI 2.0 inception, the attachment position holds the count code -0AB, whose second character is the numeral 0. The specification reserves numerals for other count code tables and genus 2.00 defines none, so the code is an error. (keripy 1.x used -0 as its big-count selector; genus 2.00 uses --.)",
   "id": "CESR-0037",
   "input": {
-    "stream": "2d5f4141414341412d4a41"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d30414241414141"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -27,17 +27,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/reject.json#reject-truncated-small-count-code"
+    "scenario": "scenarios/cesr/reject.json#reject-numeral-count-selector"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Reject a stream that ends inside a small count code"
+  "title": "Reject an attachment count code whose second character selects no defined table"
 }

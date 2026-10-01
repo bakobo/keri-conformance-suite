@@ -1,44 +1,40 @@
 {
   "assertions": [
     {
+      "basis": "Inference, not a clause: a parser that meets a code its genus 2.00 tables do not assign cannot know what the code means, so it should refuse the stream rather than skip the element by the size the code carries. The specification does not require this (line 599 only requires a small count code's type to be a letter; line 618 says old parsers 'will break' on new codes, which describes rather than requires). keripy main refuses such codes.",
       "check": "rejected",
-      "clause": {
-        "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
-        "section": "Code characters and lead bytes",
-        "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
-      },
       "id": "a1",
-      "level": "MUST",
-      "note": "Informative class: nonzero-pad."
+      "level": "INTEROP",
+      "note": "Informative class: unknown-code."
     }
   ],
-  "description": "A 0B signature in a binary-domain group whose four pad bits, between the code and the value, are not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "description": "Inside an attachments group, the count code -dAB: a letter type the genus 2.00 table does not assign, with a readable size of one quadlet, followed by that quadlet. A lenient parser could skip it by its size.",
   "id": "CESR-0043",
   "input": {
-    "stream": "fbf000002000f89016d018d4cde220cc58e4f78e94588926a6a6c3ea27760b6b06d5abf47a87ed5bb379d4dd2f3c9a99439a3736a158e747bcc74d8b97fcfc0f8998a3b502cc07f5252b72"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341432d64414241414141"
   },
   "operation": "cesr.parse",
-  "profile": "cesr-1.0",
+  "profile": "cesr-strict",
   "provenance": {
     "generator": {
       "name": "kcs-gen-spec-tables",
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/reject.json#reject-nonzero-pad-bits-binary"
+    "scenario": "scenarios/cesr/strict.json#strict-unassigned-count-code"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.domain.binary",
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Reject a binary-domain primitive whose pad bits are not zero"
+  "title": "Refuse an unassigned count code even though its size is readable"
 }

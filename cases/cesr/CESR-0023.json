@@ -11,41 +11,57 @@
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 477,
           "kind": "counter",
-          "size": 0,
-          "start": 0
+          "size": 41,
+          "start": 309
         },
         {
           "code": "-K",
-          "end": 12,
-          "group_end": 172,
+          "end": 317,
+          "group_end": 477,
           "kind": "counter",
           "size": 40,
-          "start": 8
+          "start": 313
         },
         {
           "code": "3A",
-          "end": 172,
+          "end": 477,
           "index": 4096,
           "kind": "indexed",
           "ondex": 5000,
-          "raw": "81b23f97e991855e900c5721d17a57f778b509e1e2a04c99bd844a364b05d5f1829e1f1d0c3acbeb4252402f1ad5b5758bbe24bf7b100410c2419dfe72376bf08554200f87f01c39d4f90879f665f31f9d8a5e64facc5da7a6a8ed66058706c81c309b2fb35007d6b4f37668cf01cdf30936",
-          "start": 12
+          "raw": "3ddb89ceaa6a24f94adc480bf238d0fd0fa924a3400d5c9340dc11a74bcfd4945b35f5b2ab87fe274110e823bbd0a9eafa92d6432be07de8f03336b1f6ec0b4c8c4409cb6ca5750c69656941d9a7fcca2858f84c9794740478e4249cf70f626ca528720e14bc382f9790b30ab01e60bfde64",
+          "start": 317
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103); spec-conflict: code 3A###### is 8 characters in the Annex indexed table (line 1086) and its format, but the body's indexed table gives selector 3 a code size of 6 (line 702)"
     }
   ],
   "description": "Code 3A###### (Ed448 indexed signature big dual): three-character index 4096 and ondex 5000, 160 characters.",
   "id": "CESR-0023",
   "input": {
-    "stream": "2d5f4141414341412d4b416f3341424141424f496762495f6c2d6d5268563651444663683058705839336931436548696f45795a7659524b4e6b7346316647436e6838644444724c36304a5351433861316256316937346b7633735142424443515a332d636a64723849565549412d483842773531506b4965665a6c38782d64696c356b2d7378647036616f3757594668776249484443624c374e514239613038335a6f7a77484e38776b32"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341702d4b416f3341424141424f495064754a7a7170714a506c4b3345674c386a6a515f512d704a4b4e4144567954514e775270307650314a52624e6657797134662d4a30455136434f37304b6e712d704c575179766766656a774d7a61783975774c54497845436374737058554d6157567051646d6e5f4d6f6f5750684d6c35523042486a6b4a4a7a3344324a7370536879446853384f432d586b4c4d4b734235677639356b"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -55,16 +71,19 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/indexed.json#indexed-ed448-big-dual"
+    "scenario": "scenarios/cesr/attachments.json#indexed-ed448-big-dual"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
   "title": "Parse a big dual-indexed Ed448 signature"

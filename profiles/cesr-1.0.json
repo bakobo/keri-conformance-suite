@@ -36,17 +36,12 @@
     "CESR-0033",
     "CESR-0034",
     "CESR-0035",
-    "CESR-0036",
     "CESR-0037",
     "CESR-0038",
     "CESR-0039",
     "CESR-0040",
     "CESR-0041",
-    "CESR-0042",
-    "CESR-0043",
-    "CESR-0044",
-    "CESR-0045",
-    "CESR-0046"
+    "CESR-0042"
   ],
   "name": "cesr-1.0",
   "normative": true,

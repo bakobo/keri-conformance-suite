@@ -1,67 +1,23 @@
 {
   "assertions": [
     {
-      "check": "decoded",
+      "check": "rejected",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
-        "section": "Version 2.XX string field format",
+        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
+        "section": "Count Code tables",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
       },
-      "expected": [
-        {
-          "code": "-_AAA",
-          "end": 8,
-          "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
-          "kind": "counter",
-          "size": 0,
-          "start": 0
-        },
-        {
-          "end": 128,
-          "kind": "message",
-          "proto": "KERI",
-          "serialization": "JSON",
-          "size": 120,
-          "start": 8,
-          "version": "2.0"
-        },
-        {
-          "code": "-C",
-          "end": 132,
-          "group_end": 224,
-          "kind": "counter",
-          "size": 23,
-          "start": 128
-        },
-        {
-          "code": "-K",
-          "end": 136,
-          "group_end": 224,
-          "kind": "counter",
-          "size": 22,
-          "start": 132
-        },
-        {
-          "code": "A",
-          "end": 224,
-          "index": 0,
-          "kind": "indexed",
-          "raw": "585aa4003277270f19dbe9d6130abe449e33c096e8439b137235c17ec215213cfef22f5fbc67d091b4b014fdbc0b5496e853956d8d5ab1dd63037b77be980d38",
-          "start": 136
-        }
-      ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "inferred consumer obligation from producer MUST at line 591; also relies on the harness end-of-input rule; informative class: truncated"
     }
   ],
-  "description": "A genus/version code, a JSON field map whose first field v is a 2.XX version string (protocol KERI, protocol version 2.0, genus version 2.00, kind JSON, size in four Base64 digits, terminator '.'), then an attachments group (-C) holding a controller signature group (-K) of one indexed signature. The parser must take the body's length from its version string to find where the attachments begin.",
+  "description": "A KERI 2.0 inception, then an attachments group holding a -K of one signature, with the last two bytes of the stream removed. The -C and -K sizes promise 22 quadlets of signature and the stream holds 21.5. The adapter protocol makes the end of the input final (a harness rule, not a specification claim), so a parser may not wait for more bytes. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates.",
   "id": "CESR-0032",
   "input": {
-    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414142342e222c2274223a22727079222c2264223a22222c226474223a22323032362d30312d30315430303a30303a30302e3030303030302b30303a3030222c2272223a222f6b63732f636573722f6d657373616765222c2261223a7b226e223a317d7d2d4341582d4b415741414259577151414d6e636e44786e6236645954437235456e6a50416c7568446d784e794e63462d77685568505037794c312d385a394352744c41555f62774c564a626f553556746a56717833574d446533652d6d413034"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414356572d6e4f57386670467658413844524b7768647a694b7a59656f41457562353159646d46787841592d5379547a4a5f646b3441475a6c476762684f49664e504971485537533949454e7672314e2d324a4c65"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -71,7 +27,7 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/messages.json#json-2x-with-attachments"
+    "scenario": "scenarios/cesr/reject.json#reject-stream-ends-inside-signature"
   },
   "schema_version": 1,
   "status": "active",
@@ -86,5 +42,5 @@
       "KERICAACAAJSON"
     ]
   },
-  "title": "Frame a JSON body by its 2.XX version string, then its attachments"
+  "title": "Reject a stream that ends inside a signature"
 }

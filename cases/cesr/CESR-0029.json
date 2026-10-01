@@ -4,75 +4,71 @@
       "check": "decoded",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
-        "section": "Count Code tables",
+        "quote": "Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code.",
+        "section": "Universal Code table genus/version codes that allow genus/version override",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#universal-code-table-genusversion-codes-that-allow-genusversion-override"
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 413,
           "kind": "counter",
-          "size": 0,
-          "start": 0
+          "size": 25,
+          "start": 309
         },
         {
-          "code": "-J",
-          "end": 12,
-          "group_end": 196,
+          "code": "-_AAACAA",
+          "end": 321,
+          "genus": "AAA",
+          "kind": "genus",
+          "start": 313,
+          "version": "2.00"
+        },
+        {
+          "code": "-K",
+          "end": 325,
+          "group_end": 413,
           "kind": "counter",
-          "size": 46,
-          "start": 8
+          "size": 22,
+          "start": 321
         },
         {
-          "code": "D",
-          "end": 56,
-          "kind": "primitive",
-          "raw": "5a1aa22a9b97c1366093f1850ccc259c4288f9d45343b449ac094c3792472eae",
-          "start": 12
-        },
-        {
-          "code": "-J",
-          "end": 60,
-          "group_end": 192,
-          "kind": "counter",
-          "size": 33,
-          "start": 56
-        },
-        {
-          "code": "E",
-          "end": 104,
-          "kind": "primitive",
-          "raw": "2388ab9514ce80496db966b3bb3a9c86095103da36dd97ad8cc53f61b6a1530c",
-          "start": 60
-        },
-        {
-          "code": "0B",
-          "end": 192,
-          "kind": "primitive",
-          "raw": "58f87c8d0c6ede29d12c08390cfc2bf4f41574b40d1cebe0228a8b17e76a2466f0ff9f611773781fd4f5e0509a7135d716b4bccfea667c4134407be5f8d246ec",
-          "start": 104
-        },
-        {
-          "code": "M",
-          "end": 196,
-          "kind": "primitive",
-          "raw": "0102",
-          "start": 192
+          "code": "A",
+          "end": 413,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "cdc7ecd012f736e5e620ccb0c5004ce6c183ca0e0b745bb727f4376ce49727f753ae7973bf8e9e2422d89708bb4d172e153ad5bac0b3da70ec937a87709f15a6",
+          "start": 325
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
-  "description": "A -J group holds a D key, a nested -J group (holding an E digest and a 0B signature, size 33) and an M short number. The outer size, 46, counts the nested group's count code and contents as well as the other primitives.",
+  "description": "An attachments group (-C) whose first element is the genus/version code -_AAACAA, then a -K of one signature. -C is one of the universal codes that allow a genus/version override, so the parser must take the code as switching tables for the group (here to the table already in force) and must not read it as a group member or a count.",
   "id": "CESR-0029",
   "input": {
-    "stream": "2d5f4141414341412d4a417544466f616f6971626c384532594a507868517a4d4a5a784369506e5555304f305361774a54446553527936752d4a416845434f49713555557a6f424a62626c6d733773366e49594a555150614e74325872597a46503247326f564d4d304242592d48794e444737654b64457343446b4d5f4376303942563074413063362d4169696f735835326f6b5a76445f6e3245586333676631505867554a70784e646357744c7a50366d5a3851545241652d5834306b62734d414543"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d43415a2d5f4141414341412d4b41574141444e782d7a5145766332356559677a4c444641457a6d7759504b446774305737636e39446473354a636e39314f7565584f5f6a70346b49746958434c744e467934564f745736774c5061634f7954656f64776e78576d"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -82,17 +78,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/framing.json#nested-groups"
+    "scenario": "scenarios/cesr/attachments.json#genus-override-same-table"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "A nested group's quadlets count toward its enclosing group"
+  "title": "A genus/version code may open an attachments group"
 }

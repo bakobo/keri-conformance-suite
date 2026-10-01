@@ -11,41 +11,57 @@
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 409,
           "kind": "counter",
-          "size": 0,
-          "start": 0
+          "size": 24,
+          "start": 309
         },
         {
           "code": "-K",
-          "end": 12,
-          "group_end": 104,
+          "end": 317,
+          "group_end": 409,
           "kind": "counter",
           "size": 23,
-          "start": 8
+          "start": 313
         },
         {
           "code": "2A",
-          "end": 104,
+          "end": 409,
           "index": 65,
           "kind": "indexed",
           "ondex": 70,
-          "raw": "a50254a6d2f428830513dd4fec0524e332cd31528d197b788d91037f794271eddcc2ee4988fa3fd348528a6b54097cd6684ef0219bd951e924772f8e9a890ec6",
-          "start": 12
+          "raw": "036923472055ef2999b63d2e09be103f167ee7b186d3988702229dfbf4575eb05df3e711948b8e39eea56fdd7899219c0148c909e91fb53aefd2f447ec67aab0",
+          "start": 317
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
-  "description": "Code 2A#### (Ed25519 indexed sig big dual): two-character index 65 and two-character ondex 70, 92 characters. Both values exceed what one Base64 digit holds.",
+  "description": "Code 2A#### (Ed25519 indexed sig big dual): two-character index 65 and two-character ondex 70, 92 characters.",
   "id": "CESR-0020",
   "input": {
-    "stream": "2d5f4141414341412d4b4158324142424247436c416c536d3076516f6777555433555f734253546a4d733078556f305a6533694e6b514e5f65554a7837647a43376b6d492d6a5f5453464b4b6131514a664e5a6f547641686d396c52365352334c34366169513747"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341592d4b4158324142424247414461534e48494658764b5a6d325053344a7668415f466e376e735962546d49634349703337394664657346337a3578475569343435377156763358695a495a7742534d6b4a36522d314f755f53394566735a367177"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -55,16 +71,19 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-big-dual"
+    "scenario": "scenarios/cesr/attachments.json#indexed-ed25519-big-dual"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
   "title": "Parse a big dual-indexed Ed25519 signature"

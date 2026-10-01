@@ -4,20 +4,20 @@
       "check": "rejected",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters.",
-        "section": "Conversions",
+        "quote": "Codes in the large Count Code table MUST be each 8 characters long.",
+        "section": "Large Count Code table",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#conversions"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#large-count-code-table"
       },
       "id": "a1",
       "level": "MUST",
-      "note": "Informative class: truncated."
+      "note": "inferred consumer obligation from producer MUST at line 605; also relies on the harness end-of-input rule; informative class: truncated"
     }
   ],
-  "description": "A -J group holding one D key, with the last two bytes of the stream removed, so the key is 42 characters, not a whole number of quadlets. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "description": "After a KERI 2.0 inception the stream holds only --CAAA, six characters of an eight-character count code. The adapter protocol makes the end of the input final (a harness rule, not a specification claim), so a parser may not wait for more bytes. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates.",
   "id": "CESR-0035",
   "input": {
-    "stream": "2d5f4141414341412d4a414c444a616f3147796e5a33445f472d35692d435f3975724d42446877377974766642525737364152327875"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d2d43414141"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -27,17 +27,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/reject.json#reject-truncated-primitive"
+    "scenario": "scenarios/cesr/reject.json#reject-truncated-large-count-code"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Reject a stream that ends inside a primitive"
+  "title": "Reject a stream that ends inside a large count code"
 }

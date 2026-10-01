@@ -4,20 +4,20 @@
       "check": "rejected",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
-        "section": "Code characters and lead bytes",
+        "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding.",
+        "section": "Stream parsing rules",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#stream-parsing-rules"
       },
       "id": "a1",
       "level": "MUST",
-      "note": "Informative class: nonzero-pad."
+      "note": "inferred consumer obligation from producer MUST at line 440; informative class: bad-frame-start"
     }
   ],
-  "description": "A D key whose second character carries a 1 in the two bits that come from the zero lead byte, so the mid-padding is not zero. The raw value bits are untouched. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "description": "After a KERI 2.0 inception and its attachments group, the stream continues with a D key and no count code. Its first byte, 'D', has the tritet 0b010, which the stream-start table reserves for a text-domain op code ('_'); 'D' is neither an op code nor a count code, and no field map or annotation starts with it, so the stream does not resume with any of the eight permitted frames. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates.",
   "id": "CESR-0041",
   "input": {
-    "stream": "2d5f4141414341412d4a414c447569663276534f7678786a626c62756f3244514348486252657344686173716f744f54725a6e534a6b6b35"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b41574141414765747474475f4c516d35315f6a72614b446a4c564434446c3548734b706761784e4f4b63786c30576d4b5234745a67457431622d5337535f6c30574c766362474533425f574f6e6c44316b39654c2d564268432d444454735045444c6b75784230526f555141364647784e30666f457579575075784958446464583530507673"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -27,17 +27,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/reject.json#reject-nonzero-pad-bits-text"
+    "scenario": "scenarios/cesr/reject.json#reject-bare-primitive-at-resumption"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Reject a primitive whose pad bits are not zero"
+  "title": "Reject a stream that resumes with a bare primitive"
 }

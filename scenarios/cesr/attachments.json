@@ -1,0 +1,1084 @@
+{
+  "about": "cesr.parse cases that a parser must accept, carried the way CESR carries them: a genus/version code, then KERI message bodies framed by their version strings, each followed by attachment groups in the attachments group (-C) the master table defines for them. The bodies are KERI inception events built to the KERI specification (v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569, 'Inception Event Message Body': fields [ v, t, d, i, s, kt, k, nt, n, bt, b, c, a], all required) with d and i computed by the CESR SAID protocol using Blake3-256; keys, digests and signatures are fixed SHAKE-256 bytes, so signatures do not verify and these cases say nothing about KERI validity beyond well-formed bodies. Every counter reports group_end, where the group it introduces ends.",
+  "profile": "cesr-1.0",
+  "messages": {
+    "alpha": {
+      "proto": "KERI",
+      "version": [
+        2,
+        0
+      ],
+      "genus_version": [
+        2,
+        0
+      ],
+      "keys": [
+        "kcs/cesr/alpha/k0",
+        "kcs/cesr/alpha/k1",
+        "kcs/cesr/alpha/k2"
+      ],
+      "kt": "2",
+      "next": [
+        "kcs/cesr/alpha/n0"
+      ],
+      "nt": "1",
+      "witnesses": [
+        "kcs/cesr/alpha/w0"
+      ],
+      "bt": "1"
+    },
+    "beta": {
+      "proto": "KERI",
+      "version": [
+        2,
+        0
+      ],
+      "genus_version": [
+        2,
+        0
+      ],
+      "keys": [
+        "kcs/cesr/beta/k0"
+      ],
+      "kt": "1",
+      "next": [
+        "kcs/cesr/beta/n0"
+      ],
+      "nt": "1"
+    },
+    "gamma": {
+      "proto": "KERI",
+      "version": [
+        1,
+        0
+      ],
+      "legacy": true,
+      "keys": [
+        "kcs/cesr/gamma/k0"
+      ],
+      "kt": "1",
+      "next": [
+        "kcs/cesr/gamma/n0"
+      ],
+      "nt": "1"
+    }
+  },
+  "cases": [
+    {
+      "id": "CESR-0012",
+      "key": "message-with-signatures",
+      "title": "Frame a KERI 2.0 JSON inception by its version string, then its signatures",
+      "description": "A genus/version code, a KERI 2.0 inception body (JSON, version string KERICAACAAJSON, SAIDs computed by the CESR SAID protocol), then an attachments group (-C) holding a controller signature group (-K) of two Ed25519 indexed signatures (code A#, index only). The parser must take the body's length from its version string to find where the attachments begin.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/m/s0",
+                  "index": 0
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/m/s1",
+                  "index": 1
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "version-string-extract",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0013",
+      "key": "legacy-message",
+      "title": "Frame a KERI 1.0 JSON inception by its legacy 1.XX version string",
+      "description": "A genus/version code, a KERI 1.0 inception body whose v field is a legacy 1.XX version string (KERI10JSON, size in six lowercase hex digits, terminator '_'), then a genus 2.00 attachments group holding one signature. Version 2.XX implementations must still support this version string format.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "gamma"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/legacy/s0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "version-string-legacy",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0014",
+      "key": "consecutive-messages",
+      "title": "Frame consecutive bodies, each by its own version string",
+      "description": "A KERI 2.0 inception with its attachments group, then a second KERI 2.0 inception with its own. Each body's end comes only from its own version string, and each attachments group's end only from its own size.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/c/s0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/c/s1",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "version-string-extract",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0015",
+      "key": "receipt-couples",
+      "title": "Parse nontransferable receipt couples (one- and two-character codes)",
+      "description": "After a KERI 2.0 inception, an attachments group holds a nontransferable receipt couples group (-M) of two couples, each a B prefix (one-character code, 44 characters) and a 0B signature (two-character code, 88 characters). -M's size is 66 quadlets for 2 couples.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/r/s0",
+                  "index": 0
+                }
+              ]
+            },
+            {
+              "group": "-M",
+              "items": [
+                {
+                  "primitive": "B",
+                  "raw": "kcs/cesr/r/w0"
+                },
+                {
+                  "primitive": "0B",
+                  "raw": "kcs/cesr/r/c0"
+                },
+                {
+                  "primitive": "B",
+                  "raw": "kcs/cesr/r/w1"
+                },
+                {
+                  "primitive": "0B",
+                  "raw": "kcs/cesr/r/c1"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "count-quadlets",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0016",
+      "key": "first-seen-replay",
+      "title": "Parse a first-seen replay couple (a four-character code)",
+      "description": "After a KERI 2.0 inception, an attachments group holds a first-seen replay couples group (-O) of one couple: a sequence number with code 0A (16 bytes, 24 characters) and a datetime with code 1AAG (a four-character code, 36 characters). The datetime's 32 characters are the ISO-8601 text with ':' written 'c', '.' written 'd' and '+' written 'p', keripy's rendering of the 'custom encoded' form the master table names but does not define; only its encoding as a primitive matters here.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/s0",
+                  "index": 0
+                }
+              ]
+            },
+            {
+              "group": "-O",
+              "items": [
+                {
+                  "primitive": "0A",
+                  "hex": "00000000000000000000000000000000"
+                },
+                {
+                  "datetime": "2026-01-01T00:00:00.000000+00:00"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "master-table",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0017",
+      "key": "indexed-ed448-dual",
+      "title": "Parse an Ed448 dual-indexed signature",
+      "description": "Code 0A## (Ed448 indexed signature, dual): a one-character index (3) and a one-character ondex (4), a 114-byte signature, 156 characters, in a -K group after a KERI 2.0 inception.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "0A",
+                  "raw": "kcs/cesr/i/0a",
+                  "index": 3,
+                  "ondex": 4
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "indexed-table",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0018",
+      "key": "indexed-current-only-small",
+      "title": "Parse current-only Ed25519 and secp256k1 indexed signatures",
+      "description": "Codes B# (Ed25519, current only) with index 5 and D# (ECDSA secp256k1, current only) with index 7. Both rows define a one-character index and no ondex field, so no ondex is reported.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "B",
+                  "raw": "kcs/cesr/i/b5",
+                  "index": 5
+                },
+                {
+                  "indexed": "D",
+                  "raw": "kcs/cesr/i/d7",
+                  "index": 7
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "indexed-table",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0019",
+      "key": "witness-signatures",
+      "title": "Parse witness indexed signatures after controller signatures",
+      "description": "An attachments group holding a controller signature group (-K, two signatures) and then a witness signature group (-L, one signature). Each group's end comes from its own size.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/w/s0",
+                  "index": 0
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/w/s1",
+                  "index": 1
+                }
+              ]
+            },
+            {
+              "group": "-L",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/w/w0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "count-quadlets",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0020",
+      "key": "indexed-ed25519-big-dual",
+      "title": "Parse a big dual-indexed Ed25519 signature",
+      "description": "Code 2A#### (Ed25519 indexed sig big dual): two-character index 65 and two-character ondex 70, 92 characters.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "2A",
+                  "raw": "kcs/cesr/i/2a",
+                  "index": 65,
+                  "ondex": 70
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "indexed-table",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0021",
+      "key": "indexed-ed25519-big-current-only-zero-ondex",
+      "title": "Parse a big current-only Ed25519 signature whose ondex field is zero",
+      "description": "Code 2B#### (Ed25519 indexed sig big current only). Its table row defines a two-character ondex field even though the signature is current only, so the ondex is reported as encoded: 0.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "2B",
+                  "raw": "kcs/cesr/i/2b",
+                  "index": 70,
+                  "ondex": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "indexed-table",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0022",
+      "key": "indexed-ed25519-big-current-only-nonzero-ondex",
+      "title": "Parse a big current-only Ed25519 signature whose ondex field is not zero",
+      "description": "Code 2B#### with index 70 and ondex 9. The table row defines a two-character ondex field for this current-only code and states no constraint on its value, so the decoded structure reports the ondex as encoded.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "2B",
+                  "raw": "kcs/cesr/i/2b-ondex",
+                  "index": 70,
+                  "ondex": 9
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "indexed-table",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "indexed-table"
+        ],
+        "summary": "The Annex indexed code table gives 2B#### (Ed25519 indexed sig big current only) an ondex field of two characters and states no constraint on its value, so a stream carrying ondex 9 decodes to index 70, ondex 9. keripy main (9a8b7aa7) rejects it: Indexer raises 'Invalid ondex=9 for code=2B' because keripy requires the ondex of every current-only code to be zero (src/keri/core/indexing.py, the IdxCrtSigDex checks in _exfil and _bexfil). The question has a KERI-layer dimension (review finding SEC-F4): neither the CESR nor the KERI specification says what an ondex on a current-only signature means, and keripy's own semantics exist only in its CESR layer, while its KERI-layer exposeds() indexes the prior next-key digests with whatever ondex a signature carries. An implementation that decodes the field as the table allows and reuses that KERI logic could count a current-only signature toward the prior-next threshold where keripy rejects the stream, so validators could disagree about one controller-signed event. The review's verifier judged this a controller-induced interop divergence rather than a way for an unauthorized key to gain weight. The specification should state whether a current-only code's ondex must be zero (making this a must-reject stream under a new case id) or what it means.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-01, and the KERI review panel of the CESR catalogue (finding SEC-F4); not yet raised with the CESR specification working group."
+      }
+    },
+    {
+      "id": "CESR-0023",
+      "key": "indexed-ed448-big-dual",
+      "title": "Parse a big dual-indexed Ed448 signature",
+      "description": "Code 3A###### (Ed448 indexed signature big dual): three-character index 4096 and ondex 5000, 160 characters.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "3A",
+                  "raw": "kcs/cesr/i/3a",
+                  "index": 4096,
+                  "ondex": 5000
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "indexed-table",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103); spec-conflict: code 3A###### is 8 characters in the Annex indexed table (line 1086) and its format, but the body's indexed table gives selector 3 a code size of 6 (line 702)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0024",
+      "key": "indexed-binary",
+      "title": "Parse indexed signatures in a binary-domain attachments group",
+      "description": "After a KERI 2.0 inception (JSON, which is the same in both domains), the attachments group is in the binary domain: -C and a -K of two A# signatures, indexes 1 and 2. The -K size, 44, counts triplets, so its signatures span 132 bytes.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0,
+          "domain": "binary"
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/b/s1",
+                  "index": 1
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/b/s2",
+                  "index": 2
+                }
+              ]
+            }
+          ],
+          "domain": "binary"
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "count-invariant",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0025",
+      "key": "founding-quadlets-not-items",
+      "title": "A signature group's size counts quadlets, not signatures",
+      "description": "The founding case of the suite. After a KERI 2.0 inception, an attachments group (-C) holds a controller signature group (-K) of three Ed25519 indexed signatures and then a witness signature group (-L) of one. -K has size 66 (3 x 22 quadlets), not 3; -L has size 22, not 1; -C has size 90. A second inception and its attachments follow. A parser that counts items reads 66 as 66 signatures, runs past -K and loses the stream. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/s0",
+                  "index": 0
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/s1",
+                  "index": 1
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/s2",
+                  "index": 2
+                }
+              ]
+            },
+            {
+              "group": "-L",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/w0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/b0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "count-quadlets",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0026",
+      "key": "trans-indexed-signature-groups",
+      "title": "A nested signature group's quadlets count toward its enclosing group",
+      "description": "The shape of the specification's own Examples (lines 1104-1116): a transferable indexed signature groups code (-X) whose group holds a prefix (E), a sequence number (0A), a digest (E) and a controller signature group (-K) of two signatures. -X's size, 73 (11 + 6 + 11 + 1 + 44), counts every quadlet including -K's code and contents; -K's is 44. The specification's example is built the same way: -XBf is 95 = 11 + 6 + 11 + 1 + 66. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-X",
+              "items": [
+                {
+                  "primitive": "E",
+                  "raw": "kcs/cesr/x/pre"
+                },
+                {
+                  "primitive": "0A",
+                  "hex": "00000000000000000000000000000000"
+                },
+                {
+                  "primitive": "E",
+                  "raw": "kcs/cesr/x/dig"
+                },
+                {
+                  "group": "-K",
+                  "items": [
+                    {
+                      "indexed": "A",
+                      "raw": "kcs/cesr/x/s0",
+                      "index": 0
+                    },
+                    {
+                      "indexed": "A",
+                      "raw": "kcs/cesr/x/s1",
+                      "index": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "count-quadlets",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0027",
+      "key": "founding-binary-triplets",
+      "title": "In the binary domain a signature group's size counts triplets, not signatures",
+      "description": "The stream of CESR-0025 with both attachments groups in the binary domain. The size digits are unchanged and now count 3-byte triplets, so -K ends 198 bytes after its count code. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0,
+          "domain": "binary"
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/s0",
+                  "index": 0
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/s1",
+                  "index": 1
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/s2",
+                  "index": 2
+                }
+              ]
+            },
+            {
+              "group": "-L",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/w0",
+                  "index": 0
+                }
+              ]
+            }
+          ],
+          "domain": "binary"
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/f/b0",
+                  "index": 0
+                }
+              ]
+            }
+          ],
+          "domain": "binary"
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "count-invariant",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0028",
+      "key": "large-count-code",
+      "title": "Parse a large (eight-character) attachments count code",
+      "description": "--C is the large form of the attachments group code: two selector characters, the type, and five size digits. Here it frames a -K of one signature, size 23, written --CAAAAX.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "--C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/l/s0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "large-count-eight-chars",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0029",
+      "key": "genus-override-same-table",
+      "title": "A genus/version code may open an attachments group",
+      "description": "An attachments group (-C) whose first element is the genus/version code -_AAACAA, then a -K of one signature. -C is one of the universal codes that allow a genus/version override, so the parser must take the code as switching tables for the group (here to the table already in force) and must not read it as a group member or a count.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "genus": "AAA",
+              "major": 2,
+              "minor": 0
+            },
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/o/s0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "genus-override-switch",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0030",
+      "key": "domain-switch-between-messages",
+      "title": "Switch attachments between the text and binary domains message by message",
+      "description": "A KERI 2.0 inception with a text-domain attachments group, then a second inception with a binary-domain attachments group. Each group's count code is the first thing at its boundary, so its first tritet (0b001 for text '-', 0b111 for binary) tells the parser which domain the group is in.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/d/s0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/d/s1",
+                  "index": 0
+                }
+              ]
+            }
+          ],
+          "domain": "binary"
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "stream-resume",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0031",
+      "key": "empty-attachments-group",
+      "title": "An empty attachments group has size zero and ends at its count code",
+      "description": "A KERI 2.0 inception followed by an attachments group of size 0, then a second inception with a non-empty attachments group.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": []
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/e/s0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "count-quadlets",
+          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "count-quadlets"
+        ],
+        "summary": "The specification lets a count code count zero quadlets (the small count code's two size characters provide 'counts from 0 to 4095', and the size MUST count the quadlets in the group, which here are none), so an attachments group of size 0 after a body is well formed and ends at its own count code. keripy main (9a8b7aa7) rejects it: after taking the empty -C, msgParsator peeks for a genus/version code inside the group and the empty substream raises ShortageError, reported as SizedGroupError (src/keri/core/parsing.py, the 'peek for version change' extraction after AttachmentGroup). keripy's own comment there says a message with no attachments MUST have at least an empty AttachmentGroup, so this looks like a keripy defect rather than a reading of the text; it rejects a stream, so it is not a security matter.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-01; not yet raised with keripy or the CESR specification working group."
+      }
+    }
+  ]
+}

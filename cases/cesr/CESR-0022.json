@@ -11,35 +11,51 @@
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 409,
           "kind": "counter",
-          "size": 0,
-          "start": 0
+          "size": 24,
+          "start": 309
         },
         {
           "code": "-K",
-          "end": 12,
-          "group_end": 104,
+          "end": 317,
+          "group_end": 409,
           "kind": "counter",
           "size": 23,
-          "start": 8
+          "start": 313
         },
         {
           "code": "2B",
-          "end": 104,
+          "end": 409,
           "index": 70,
           "kind": "indexed",
           "ondex": 9,
-          "raw": "5d7ccb95880f338b7a8f54032bd42ebf59b8b2a6ac655006487d668f33825ba9312b7e75d9fc6b90a112e1d4dac9d19e7ee83dbc46741510d73d1d93b0bed907",
-          "start": 12
+          "raw": "e9a21561c13502297b0c54a7bd3e91d701c371acd15a91c0b9b92c808163ee71bfd544addc114f98aa297f6afd0030e29561bb1c04262cc44a4f00049d68eeda",
+          "start": 317
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
   "description": "Code 2B#### with index 70 and ondex 9. The table row defines a two-character ondex field for this current-only code and states no constraint on its value, so the decoded structure reports the ondex as encoded.",
@@ -53,12 +69,12 @@
         "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#indexed-code-table-for-genusversion---aaacaa-keriacdc-protocol-stack-version-200"
       }
     ],
-    "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-01; not yet raised with the CESR specification working group.",
-    "summary": "The Annex indexed code table gives 2B#### (Ed25519 indexed sig big current only) an ondex field of two characters and states no constraint on its value, so a stream carrying ondex 9 decodes to index 70, ondex 9. keripy main (9a8b7aa7) rejects it: Indexer raises 'Invalid ondex=9 for code=2B' because keripy requires the ondex of every current-only code to be zero (src/keri/core/indexing.py, the IdxCrtSigDex checks in _exfil and _bexfil). The specification should either state that constraint, making this a must-reject stream, or confirm that the field is free."
+    "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-01, and the KERI review panel of the CESR catalogue (finding SEC-F4); not yet raised with the CESR specification working group.",
+    "summary": "The Annex indexed code table gives 2B#### (Ed25519 indexed sig big current only) an ondex field of two characters and states no constraint on its value, so a stream carrying ondex 9 decodes to index 70, ondex 9. keripy main (9a8b7aa7) rejects it: Indexer raises 'Invalid ondex=9 for code=2B' because keripy requires the ondex of every current-only code to be zero (src/keri/core/indexing.py, the IdxCrtSigDex checks in _exfil and _bexfil). The question has a KERI-layer dimension (review finding SEC-F4): neither the CESR nor the KERI specification says what an ondex on a current-only signature means, and keripy's own semantics exist only in its CESR layer, while its KERI-layer exposeds() indexes the prior next-key digests with whatever ondex a signature carries. An implementation that decodes the field as the table allows and reuses that KERI logic could count a current-only signature toward the prior-next threshold where keripy rejects the stream, so validators could disagree about one controller-signed event. The review's verifier judged this a controller-induced interop divergence rather than a way for an unauthorized key to gain weight. The specification should state whether a current-only code's ondex must be zero (making this a must-reject stream under a new case id) or what it means."
   },
   "id": "CESR-0022",
   "input": {
-    "stream": "2d5f4141414341412d4b415832424247414a4264664d75566941387a6933715056414d723143365f576269797071786c55415a49665761504d344a6271544572666e585a5f4775516f524c68314e724a305a352d36443238526e5156454e6339485a4f7776746b48"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341592d4b415832424247414a44706f685668775455434b58734d564b65395070485841634e78724e46616b634335755379416757507563625f56524b336345552d5971696c5f617630414d4f4b5659627363424359737845705041415364614f3761"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -68,16 +84,19 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-big-current-only-nonzero-ondex"
+    "scenario": "scenarios/cesr/attachments.json#indexed-ed25519-big-current-only-nonzero-ondex"
   },
   "schema_version": 1,
   "status": "disputed",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
   "title": "Parse a big current-only Ed25519 signature whose ondex field is not zero"

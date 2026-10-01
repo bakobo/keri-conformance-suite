@@ -6,31 +6,6 @@
       "level": "MUST",
       "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined."
     },
-    "value-right-aligned": {
-      "section": "Stable value encoding",
-      "level": "MUST",
-      "quote": "Therefore the value portion of any primitive MUST be right aligned."
-    },
-    "text-multiple-of-four": {
-      "section": "Conversions",
-      "level": "MUST",
-      "quote": "Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters."
-    },
-    "binary-multiple-of-three": {
-      "section": "Conversions",
-      "level": "MUST",
-      "quote": "This means that the length of any Primitive in the ‘B’ domain MUST be an integer multiple of three binary bytes with a minimum length of three binary bytes."
-    },
-    "code-size-from-pad-size": {
-      "section": "Text Code Size",
-      "level": "MUST",
-      "quote": "Thus, the size of the text code in Base64 characters MUST be a function of the equivalent pad size determined by the length `N mod 3` of the raw binary value."
-    },
-    "count-code-length": {
-      "section": "Count or Group Framing Codes",
-      "level": "MUST",
-      "quote": "A Count Code is its own composable Primitive, and its length, therefore, MUST be an integer multiple of four characters in the Text domain or, equivalently, an integer multiple of three bytes in the Binary domain."
-    },
     "count-invariant": {
       "section": "Count Code tables",
       "level": "MUST",
@@ -40,11 +15,6 @@
       "section": "Count Code tables",
       "level": "MUST",
       "quote": "The size component MUST count the Quadlets/triplets in its following group."
-    },
-    "group-element-aligned": {
-      "section": "Count Code tables",
-      "level": "MUST",
-      "quote": "Each element in content of a Count Code group MUST be aligned on a 24-bit boundary."
     },
     "small-count-four-chars": {
       "section": "Small Count Code table",
@@ -60,11 +30,6 @@
       "section": "Large Count Code table",
       "level": "MUST",
       "quote": "Codes in the large Count Code table MUST be each 8 characters long."
-    },
-    "genus-modifies": {
-      "section": "Protocol genus/version table",
-      "level": "MUST",
-      "quote": "A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets but MUST modify the protocol genus and Version of all the following Count Codes that either appear at the top level until another protocol and genus Count Code is provided or are inside a special enclosing Count Code group."
     },
     "stream-resume": {
       "section": "Stream parsing rules",
@@ -91,10 +56,10 @@
       "level": "MUST",
       "quote": "Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events."
     },
-    "parser-json-cbor-mgpk": {
-      "section": "Performant resynchronization with unique start bits",
+    "genus-override-switch": {
+      "section": "Universal Code table genus/version codes that allow genus/version override",
       "level": "MUST",
-      "quote": "A CESR Stream parser MUST support three specific interleaved serializations, namely, JSON, CBOR, and MGPK."
+      "quote": "Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code."
     }
   }
 }

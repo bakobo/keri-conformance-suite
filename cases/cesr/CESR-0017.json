@@ -11,40 +11,57 @@
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 473,
           "kind": "counter",
-          "size": 0,
-          "start": 0
+          "size": 40,
+          "start": 309
         },
         {
           "code": "-K",
-          "end": 12,
-          "group_end": 100,
+          "end": 317,
+          "group_end": 473,
           "kind": "counter",
-          "size": 22,
-          "start": 8
+          "size": 39,
+          "start": 313
         },
         {
-          "code": "A",
-          "end": 100,
-          "index": 0,
+          "code": "0A",
+          "end": 473,
+          "index": 3,
           "kind": "indexed",
-          "raw": "3403eb17e4dc7fd02c704f50e978acb8b3e23cfe486f7ce225149ec61feaf74cfbbc8b8c4204fef6827b98f246920c3f192ed571e3468892fa2f410a009a5ef3",
-          "start": 12
+          "ondex": 4,
+          "raw": "a09d9136552ba9433eb32981202df544875778c58f34fc2bcc66aeefc79557dbc1a8e14892fc045b51b71f6e3de1d0370566731cea27ce5f39a8bbfb4af3e6762e045d557e4cb21f009907722cc4fa5b77cb78c59eb202bdd0a7a82a08b2c8bbc4ccd3e952de72dcd494a7238c97074c1cfd",
+          "start": 317
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
-  "description": "Code A# (Ed25519 indexed signature, both same): a one-character index and no ondex field, 88 characters.",
+  "description": "Code 0A## (Ed448 indexed signature, dual): a one-character index (3) and a one-character ondex (4), a 114-byte signature, 156 characters, in a -K group after a KERI 2.0 inception.",
   "id": "CESR-0017",
   "input": {
-    "stream": "2d5f4141414341412d4b415741414130412d7358354e785f3043787754314470654b7934732d49385f6b6876664f496c464a3747482d7233545075386934784342503732676e7559386b61534444385a4c745678343061496b766f7651516f416d6c377a"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d43416f2d4b416e304144456f4a32524e6c557271554d2d73796d424943333152496458654d57504e5077727a4761753738655656397642714f46496b76774557314733483234393464413342575a7a484f6f6e7a6c3835714c76375376506d646934455856562d544c4966414a6b4863697a452d6c743379336a466e7249437664436e71436f4973736937784d7a5436564c6563747a556c4b636a6a4a634854427a39"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -54,17 +71,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-both-same"
+    "scenario": "scenarios/cesr/attachments.json#indexed-ed448-dual"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Parse an Ed25519 indexed signature with one index field"
+  "title": "Parse an Ed448 dual-indexed signature"
 }

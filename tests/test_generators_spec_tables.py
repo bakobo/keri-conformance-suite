@@ -414,3 +414,13 @@ def test_inconsistent_indexed_row_is_left_out_and_recorded():
     assert t2.count_codes == {"-A": "group"}
     assert t2.primitives["D"].fs == 44
     assert "X" not in t2.primitives
+
+
+def test_blake3_matches_the_spec_said_example_and_the_empty_vector():
+    from generators.spec_tables import blake3
+
+    assert blake3.digest(b"").hex() == (
+        "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262")
+    dummied = b"field_0_01234567" + b"#" * 44 + b"field_2_98765432"
+    assert encoding.primitive(tables.load(spec_text()), "E", blake3.digest(dummied)) == (
+        "ENI2bDYghiu1KYYkFrPofH8tJ5tNiNt8WrTIc4s_5IIH")

@@ -4,46 +4,71 @@
       "check": "decoded",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.",
-        "section": "Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)",
+        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
+        "section": "Version 2.XX string field format",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#master-code-table-for-genusversion--_aaacaa-keriacdc-protocol-stack-version-200"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
-          "kind": "counter",
-          "size": 0,
-          "start": 0
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
         },
         {
-          "code": "-J",
-          "end": 12,
-          "group_end": 56,
-          "kind": "counter",
-          "size": 11,
-          "start": 8
+          "end": 449,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 441,
+          "start": 8,
+          "version": "2.0"
         },
         {
-          "code": "D",
-          "end": 56,
-          "kind": "primitive",
-          "raw": "c04415d9f7a7c284034fe48c60e87b7bee25aa4a434bf6c86d5f300661a1944d",
-          "start": 12
+          "code": "-C",
+          "end": 453,
+          "group_end": 633,
+          "kind": "counter",
+          "size": 45,
+          "start": 449
+        },
+        {
+          "code": "-K",
+          "end": 457,
+          "group_end": 633,
+          "kind": "counter",
+          "size": 44,
+          "start": 453
+        },
+        {
+          "code": "A",
+          "end": 545,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "28c87793346a68b65809574dfb580414abe6d3e6b4bf35839bdb5d732d253a987b7326b402ef548511a268d406154a07bb0ec3b76940711c3521831b4fb413b7",
+          "start": 457
+        },
+        {
+          "code": "A",
+          "end": 633,
+          "index": 1,
+          "kind": "indexed",
+          "raw": "f8b08544be4feaf1f00b8ee5bea29c61394dbf1c549affc5d9f1e4a7020dc0808f93d8ce81d4472ce2993117ff22f3ad34af1082eb4cfe56bd88414352575be5",
+          "start": 545
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
-  "description": "A genus/version code, then a -J group of 11 quadlets holding one 44-character D primitive. The decoder must report the key's code and raw value at its offsets.",
+  "description": "A genus/version code, a KERI 2.0 inception body (JSON, version string KERICAACAAJSON, SAIDs computed by the CESR SAID protocol), then an attachments group (-C) holding a controller signature group (-K) of two Ed25519 indexed signatures (code A#, index only). The parser must take the body's length from its version string to find where the attachments begin.",
   "id": "CESR-0012",
   "input": {
-    "stream": "2d5f4141414341412d4a414c444d424546646e3370384b4541305f6b6a47446f653376754a61704b51307632794731664d415a686f5a524e"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414147352e222c2274223a22696370222c2264223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2269223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2273223a2230222c226b74223a2232222c226b223a5b22444358516c42303037556d4c73757044497a5f414443393857375a68635a614d6a746632545f2d6e644c5933222c2244504a2d7230792d494c7a53764b2d763466776257494a79476a41675a4b483335336a72454b4839506f725f222c22444e42373568385f4d454c64735053754172685a72397864765533587047635053374a5042454a7a68714c6e225d2c226e74223a2231222c226e223a5b22454f7a756e384f61316c4b714c5f772d4b55783270666d3659435f596d41793431674a663331476449505345225d2c226274223a2231222c2262223a5b2242426a4a45346d5454655f496c675a39426d4d724c6f684d47745443477073466b5033744449666d72736838225d2c2263223a5b5d2c2261223a5b5d7d2d4341742d4b41734141416f794865544e47706f746c674a5630333757415155712d62543572535f4e594f623231317a4c5355366d48747a4a7251433731534645614a6f314159565367653744734f3361554278484455686778745074424f334142443473495645766b5f713866414c6a75572d6f7078684f55325f484653615f38585a3865536e4167334167492d54324d36423145637334706b78465f3869383630307278434336307a2d5672324951554e535631766c"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -53,17 +78,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/primitives.json#parse-ed25519-key-text"
+    "scenario": "scenarios/cesr/attachments.json#message-with-signatures"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Parse one Ed25519 verification key in a list group"
+  "title": "Frame a KERI 2.0 JSON inception by its version string, then its signatures"
 }

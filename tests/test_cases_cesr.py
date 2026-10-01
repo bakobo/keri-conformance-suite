@@ -30,6 +30,7 @@ CASES = {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in CASE_FILES}
 HEX = re.compile(r"^([0-9a-f]{2})*$")
 NORMATIVE = "cesr-1.0"
 INTEROP = "keripy-1x-interop"
+STRICT = "cesr-strict"
 
 
 @pytest.fixture(scope="module")
@@ -103,6 +104,9 @@ def test_case_profile_level_and_provenance_agree(cid):
     if case["profile"] == NORMATIVE:
         assert levels <= {"MUST", "SHOULD", "MAY"}
         assert case["provenance"]["reference"] is None
+    elif case["profile"] == STRICT:
+        assert levels == {"INTEROP"}
+        assert case["provenance"]["reference"] is None
     else:
         assert case["profile"] == INTEROP
         assert levels == {"INTEROP"}
@@ -129,7 +133,7 @@ def test_disputed_cases_carry_a_dispute(cid):
     assert (case["status"] == "disputed") == ("dispute" in case)
 
 
-@pytest.mark.parametrize("name", [NORMATIVE, INTEROP])
+@pytest.mark.parametrize("name", [NORMATIVE, INTEROP, STRICT])
 def test_profile_lists_exactly_its_cases(name):
     profile = json.loads((ROOT / "profiles" / f"{name}.json").read_text(encoding="utf-8"))
     assert profile["name"] == name and profile["about"]
@@ -143,22 +147,42 @@ def test_normative_profile_cites_the_pinned_spec():
     assert profile["spec"]["commit"] == spec_source.SPEC_COMMIT
 
 
-def test_interop_profile_is_not_normative():
-    profile = json.loads((ROOT / "profiles" / f"{INTEROP}.json").read_text(encoding="utf-8"))
+@pytest.mark.parametrize("name", [INTEROP, STRICT])
+def test_non_normative_profiles_say_so(name):
+    profile = json.loads((ROOT / "profiles" / f"{name}.json").read_text(encoding="utf-8"))
     assert profile["normative"] is False
 
 
 def test_founding_case_counts_quadlets_not_items():
-    """The case the suite exists for: a group whose size in quadlets differs from its number of
-    primitives, followed by material an item-counting parser would misframe."""
+    """The case the suite exists for: a signature group whose size in quadlets differs from its
+    number of signatures, followed by another group an item-counting parser would misframe."""
     case = CASES["CESR-0025"]
     items = case["assertions"][0]["expected"]
-    group = items[1]
-    inside = [it for it in items[2:] if it["end"] <= group["group_end"]]
-    assert group["size"] != len(inside)
+    k = next(n for n, it in enumerate(items) if it.get("code") == "-K")
+    group = items[k]
+    inside = [it for it in items[k + 1:] if it["end"] <= group["group_end"]]
+    assert group["size"] == 66 and len(inside) == 3
     assert group["group_end"] == group["end"] + 4 * group["size"]
-    assert items[4]["start"] == group["group_end"]  # the next group starts where this one ends
+    assert items[k + 4]["code"] == "-L" and items[k + 4]["start"] == group["group_end"]
     assert items[-1]["end"] == len(bytes.fromhex(case["input"]["stream"]))
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
+def test_decoded_cases_carry_valid_keri_bodies_first(cid):
+    """Positive streams are what a parser must accept: a genus code or a message first, never a
+    bare group."""
+    for a in CASES[cid]["assertions"]:
+        if a["check"] == "decoded":
+            assert a["expected"][0]["kind"] in ("genus", "message")
+            assert any(it["kind"] == "message" for it in a["expected"])
+
+
+def test_every_genus_item_has_a_two_digit_minor():
+    for case in CASES.values():
+        for a in case["assertions"]:
+            for it in a.get("expected", []) if a["check"] == "decoded" else []:
+                if it["kind"] == "genus":
+                    assert re.match(r"^\d+\.\d{2,}$", it["version"]) and "size" not in it
 
 
 def test_regenerate_check_passes(spec):
@@ -205,3 +229,5 @@ def test_every_expected_counter_states_where_its_group_ends(cid):
         for item in a.get("expected", []) if a["check"] == "decoded" else []:
             if item["kind"] == "counter":
                 assert item["group_end"] >= item["end"] > item["start"]
+            if item["kind"] == "genus":
+                assert "group_end" not in item

@@ -1,44 +1,77 @@
 {
   "assertions": [
     {
-      "check": "rejected",
-      "clause": {
-        "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding.",
-        "section": "Stream parsing rules",
-        "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#stream-parsing-rules"
-      },
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0): -A ControllerIdxSigs counts indexed signatures.",
+      "check": "decoded",
+      "expected": [
+        {
+          "end": 299,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 299,
+          "start": 0,
+          "version": "1.0"
+        },
+        {
+          "code": "-A",
+          "end": 303,
+          "group_end": 479,
+          "kind": "counter",
+          "size": 2,
+          "start": 299
+        },
+        {
+          "code": "A",
+          "end": 391,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "5fd9c537f8aabcba8724a175b0ccb53af0613c33572f3add79df69a832ae5ac722275c3c50db4aeee40fc3da867d69bf6449190748e964458a48a426e2e71607",
+          "start": 303
+        },
+        {
+          "code": "A",
+          "end": 479,
+          "index": 1,
+          "kind": "indexed",
+          "raw": "bd3ea8261421e38f8997887319151d382c5c8b8b265597d7fb7f864655f9cf435190eb3f978e8037268a782aa0efe46c97eb532de148fc590f5d85c4c3849e3f",
+          "start": 391
+        }
+      ],
       "id": "a1",
-      "level": "MUST",
-      "note": "Informative class: bad-frame-start."
+      "level": "INTEROP"
     }
   ],
-  "description": "After a text -J group, the stream continues with the binary encoding of an E digest and no count code. Its first byte has the tritet 0b000, which announces annotated text, but the byte is not text. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "description": "A KERI 1.0 inception framed by its 1.XX version string, then a 1.00 -A (ControllerIdxSigs) group of two Ed25519 indexed signatures. In keripy 1.x its size is 2, the number of signatures.",
   "id": "CESR-0045",
   "input": {
-    "stream": "2d5f4141414341412d4a414c4443457973314436494b30715a5369644c43423572337665516b627551765f41415346304870735a37416c691013fbe275115d4c37dc6ba7f70a23abf8398d2f4d213eb5bdb17428a4a8c50ddf"
+    "stream": "7b2276223a224b45524931304a534f4e3030303132625f222c2274223a22696370222c2264223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2269223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2273223a2230222c226b74223a2231222c226b223a5b224450466b37356c425f54436c6c535158546a76366a6447485837777564732d4a4e66735648654a6452692d70225d2c226e74223a2231222c226e223a5b2245494d55677267456565394476457857714a547455422d672d4f69796266745866574e75714d4f2d46475851225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d41414341414266326355332d4b7138756f636b6f5857777a4c5536384745384d3163764f74313533326d6f4d7135617879496e584478513230727535415f44326f5a396162396b53526b48534f6c6b525970497043626935785948414243395071676d4643486a6a346d5869484d5a465230344c46794c69795a566c39663766345a4756666e5051314751367a2d586a6f41334a6f70344b7144763547795836314d7434556a385751396468635444684a345f"
   },
   "operation": "cesr.parse",
-  "profile": "cesr-1.0",
+  "profile": "keripy-1x-interop",
   "provenance": {
     "generator": {
       "name": "kcs-gen-spec-tables",
       "version": "0.1.0"
     },
-    "reference": null,
-    "scenario": "scenarios/cesr/reject.json#reject-domain-switch-without-count-code"
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-controller-sigs-count-items"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.domain.binary",
-      "cesr.genus-2.00"
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "keri.version-1.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-1.00",
+      "KERI10JSON"
     ]
   },
-  "title": "Reject a switch to the binary domain that does not start with a count code"
+  "title": "keripy 1.x: -A counts indexed signatures, not quadlets"
 }

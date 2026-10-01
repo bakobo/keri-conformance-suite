@@ -4,20 +4,20 @@
       "check": "rejected",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
-        "section": "Code characters and lead bytes",
+        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
+        "section": "Version 2.XX string field format",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
       },
       "id": "a1",
       "level": "MUST",
-      "note": "Informative class: nonzero-pad."
+      "note": "inferred consumer obligation: line 1129 requires a parser to extract a field map by its version string but does not state what it does with a short one; also relies on the harness end-of-input rule; informative class: truncated"
     }
   ],
-  "description": "An 8-byte string with code 5B carries one lead byte; here that byte is not zero. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates, so it cannot be decoded as a conforming stream. Any rejection satisfies the assertion; the class in the note is informative.",
+  "description": "A KERI 2.0 inception with the last five bytes of the stream removed, so the body is shorter than the size its version string declares. The adapter protocol makes the end of the input final (a harness rule, not a specification claim), so a parser may not wait for more bytes. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates.",
   "id": "CESR-0042",
   "input": {
-    "stream": "2d5f4141414341412d4a414535424144674276566f5f7a45686f7552"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -27,17 +27,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/reject.json#reject-nonzero-lead-byte"
+    "scenario": "scenarios/cesr/reject.json#reject-truncated-message"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Reject a variable-size primitive whose lead byte is not zero"
+  "title": "Reject a body shorter than its version string declares"
 }

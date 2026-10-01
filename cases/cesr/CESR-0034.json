@@ -1,42 +1,23 @@
 {
   "assertions": [
     {
-      "check": "decoded",
+      "check": "rejected",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.",
-        "section": "Version 2.XX string field format",
+        "quote": "Codes in the small Count Code table MUST be each four characters long.",
+        "section": "Small Count Code table",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#version-2xx-string-field-format"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#small-count-code-table"
       },
-      "expected": [
-        {
-          "end": 66,
-          "kind": "message",
-          "proto": "KERI",
-          "serialization": "JSON",
-          "size": 66,
-          "start": 0,
-          "version": "2.0"
-        },
-        {
-          "end": 131,
-          "kind": "message",
-          "proto": "KERI",
-          "serialization": "JSON",
-          "size": 65,
-          "start": 66,
-          "version": "1.0"
-        }
-      ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "inferred consumer obligation from producer MUST at line 599; also relies on the harness end-of-input rule; informative class: truncated"
     }
   ],
-  "description": "Two JSON field maps back to back with no count code between them: the first with a 2.XX version string, the second with a legacy 1.XX one. Each body's end comes only from its own version string.",
+  "description": "After a KERI 2.0 inception the stream holds only -CA, three characters of a four-character count code. The adapter protocol makes the end of the input final (a harness rule, not a specification claim), so a parser may not wait for more bytes. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates.",
   "id": "CESR-0034",
   "input": {
-    "stream": "7b2276223a224b4552494341414341414a534f4e414142432e222c2274223a22727079222c2264223a22222c2272223a222f6b63732f636573722f6669727374227d7b2276223a224b45524931304a534f4e3030303034315f222c2274223a22727079222c2264223a22222c2272223a222f6b63732f636573722f7365636f6e64227d"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -46,20 +27,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/messages.json#json-2x-then-1x"
+    "scenario": "scenarios/cesr/reject.json#reject-truncated-small-count-code"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
+      "cesr.genus-2.00",
       "cesr.serialization.json",
-      "keri.version-1.x",
       "keri.version-2.x"
     ],
     "wire": [
-      "KERI10JSON",
+      "CESR-2.00",
       "KERICAACAAJSON"
     ]
   },
-  "title": "Frame consecutive JSON bodies with 2.XX and 1.XX version strings"
+  "title": "Reject a stream that ends inside a small count code"
 }

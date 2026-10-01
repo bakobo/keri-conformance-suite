@@ -1,57 +1,238 @@
 {
-  "about": "Non-normative cases for interoperability with keripy 1.x, which frames attachments with the CESR 1.00 count-code table. No specification defines that table, so these cases cite no clause: every assertion is level INTEROP with a basis naming keripy 1.2.14 behaviour, and the expected values come from the table as keripy 1.2.14 defines it (src/keri/core/counting.py, CounterCodex_1_0 and Counter.Sizes[1][0]). keripy 1.x streams carry no genus/version code; the 1.00 table is the context. In that table most count codes count items rather than quadlets.",
+  "about": "Non-normative cases for interoperability with keripy 1.x, which frames attachments with the CESR 1.00 count-code table. No specification defines that table, so these cases cite no clause: every assertion is level INTEROP with a basis naming keripy 1.2.14 behaviour. The 1.x streams carry no genus/version code (keripy 1.x emits none); the 1.00 table is their context. Bodies are KERI 1.0 inception events with SAIDs computed by the CESR SAID protocol.",
   "profile": "keripy-1x-interop",
   "context": "keripy-1.2.14",
+  "messages": {
+    "alpha": {
+      "proto": "KERI",
+      "version": [
+        2,
+        0
+      ],
+      "genus_version": [
+        2,
+        0
+      ],
+      "keys": [
+        "kcs/cesr/alpha/k0",
+        "kcs/cesr/alpha/k1",
+        "kcs/cesr/alpha/k2"
+      ],
+      "kt": "2",
+      "next": [
+        "kcs/cesr/alpha/n0"
+      ],
+      "nt": "1",
+      "witnesses": [
+        "kcs/cesr/alpha/w0"
+      ],
+      "bt": "1"
+    },
+    "beta": {
+      "proto": "KERI",
+      "version": [
+        2,
+        0
+      ],
+      "genus_version": [
+        2,
+        0
+      ],
+      "keys": [
+        "kcs/cesr/beta/k0"
+      ],
+      "kt": "1",
+      "next": [
+        "kcs/cesr/beta/n0"
+      ],
+      "nt": "1"
+    },
+    "gamma": {
+      "proto": "KERI",
+      "version": [
+        1,
+        0
+      ],
+      "legacy": true,
+      "keys": [
+        "kcs/cesr/gamma/k0"
+      ],
+      "kt": "1",
+      "next": [
+        "kcs/cesr/gamma/n0"
+      ],
+      "nt": "1"
+    }
+  },
   "cases": [
     {
-      "id": "CESR-0047", "key": "keripy1x-controller-sigs-count-items",
+      "id": "CESR-0045",
+      "key": "keripy1x-controller-sigs-count-items",
       "title": "keripy 1.x: -A counts indexed signatures, not quadlets",
-      "description": "A 1.00 -A (ControllerIdxSigs) group of two Ed25519 indexed signatures. In keripy 1.x its size is 2, the number of signatures, and the group ends after them.",
+      "description": "A KERI 1.0 inception framed by its 1.XX version string, then a 1.00 -A (ControllerIdxSigs) group of two Ed25519 indexed signatures. In keripy 1.x its size is 2, the number of signatures.",
       "operation": "cesr.parse",
       "stream": [
-        {"group": "-A", "items": [
-          {"indexed": "A", "raw": "kcs/cesr/k1x/sig0", "index": 0},
-          {"indexed": "A", "raw": "kcs/cesr/k1x/sig1", "index": 1}
-        ]}
+        {
+          "message": "gamma"
+        },
+        {
+          "group": "-A",
+          "items": [
+            {
+              "indexed": "A",
+              "raw": "kcs/cesr/k1x/s0",
+              "index": 0
+            },
+            {
+              "indexed": "A",
+              "raw": "kcs/cesr/k1x/s1",
+              "index": 1
+            }
+          ]
+        }
       ],
-      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -A ControllerIdxSigs: the size counts indexed signatures (src/keri/core/counting.py, CounterCodex_1_0)."}]
+      "assertions": [
+        {
+          "check": "decoded",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0): -A ControllerIdxSigs counts indexed signatures."
+        }
+      ]
     },
     {
-      "id": "CESR-0048", "key": "keripy1x-nontrans-receipt-couples",
+      "id": "CESR-0046",
+      "key": "keripy1x-nontrans-receipt-couples",
       "title": "keripy 1.x: -C counts receipt couples",
-      "description": "A 1.00 -C (NonTransReceiptCouples) group of one couple: a B non-transferable prefix and a 0B signature. In keripy 1.x its size is 1, the number of couples.",
+      "description": "A KERI 1.0 inception with its 1.00 -A signature group (one signature), then a 1.00 -C (NonTransReceiptCouples) group of one couple: a B prefix and a 0B signature. In keripy 1.x the -C size is 1, the number of couples.",
       "operation": "cesr.parse",
       "stream": [
-        {"group": "-C", "items": [
-          {"primitive": "B", "raw": "kcs/cesr/k1x/witness"},
-          {"primitive": "0B", "raw": "kcs/cesr/k1x/receipt"}
-        ]}
+        {
+          "message": "gamma"
+        },
+        {
+          "group": "-A",
+          "items": [
+            {
+              "indexed": "A",
+              "raw": "kcs/cesr/k1x/rct-sig",
+              "index": 0
+            }
+          ]
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "primitive": "B",
+              "raw": "kcs/cesr/k1x/witness"
+            },
+            {
+              "primitive": "0B",
+              "raw": "kcs/cesr/k1x/receipt"
+            }
+          ]
+        }
       ],
-      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -C NonTransReceiptCouples: the size counts (prefix, signature) couples (src/keri/core/counting.py, CounterCodex_1_0)."}]
+      "assertions": [
+        {
+          "check": "decoded",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0): -C NonTransReceiptCouples counts (prefix, signature) couples."
+        }
+      ]
     },
     {
-      "id": "CESR-0049", "key": "keripy1x-attachment-group-quadlets",
+      "id": "CESR-0047",
+      "key": "keripy1x-attachment-group-quadlets",
       "title": "keripy 1.x: -V counts quadlets around an item-counted group",
-      "description": "A 1.00 -V (AttachmentGroup) holding an -A group of one indexed signature. -V counts quadlets (23: the -A code and one 88-character signature) while the -A inside it counts items (1).",
+      "description": "A KERI 1.0 inception, then a 1.00 -V (AttachmentGroup) holding an -A group of one indexed signature. -V counts quadlets (23) while the -A inside it counts items (1).",
       "operation": "cesr.parse",
       "stream": [
-        {"group": "-V", "items": [
-          {"group": "-A", "items": [{"indexed": "A", "raw": "kcs/cesr/k1x/attached", "index": 0}]}
-        ]}
+        {
+          "message": "gamma"
+        },
+        {
+          "group": "-V",
+          "items": [
+            {
+              "group": "-A",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/k1x/attached",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
       ],
-      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count code -V AttachmentGroup counts quadlets while -A ControllerIdxSigs counts signatures (src/keri/core/counting.py, CounterCodex_1_0)."}]
+      "assertions": [
+        {
+          "check": "decoded",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0): -V AttachmentGroup counts quadlets while -A ControllerIdxSigs counts signatures."
+        }
+      ]
     },
     {
-      "id": "CESR-0050", "key": "keripy1x-message-with-signature",
-      "title": "keripy 1.x: a 1.XX JSON body followed by a -A signature group",
-      "description": "The shape keripy 1.x emits: a JSON field map framed by a legacy KERI10JSON version string, then a -A group of one indexed signature with size 1.",
+      "id": "CESR-0048",
+      "key": "genus-override-scope",
+      "title": "A 1.00 genus/version override applies inside its attachments group and ends with it",
+      "description": "A genus 2.00 stream: a KERI 2.0 inception, then an attachments group (-C) whose first element is the genus/version code -_AAABAA, so its contents are read with the 1.00 table (an -A of one signature, size 1). After -C ends the 2.00 table is in force again, so the next inception's -C and -K are read as genus 2.00 codes. The scoping is the specification's (line 609: the code modifies the count codes 'inside a special enclosing Count Code group'; line 814: the parser MUST switch tables for the group), but the specification does not define the 1.00 table, so the inner items come from keripy 1.2.14's table and the case is non-normative. No normative case can test the reversion while genus 2.00 is the only table the specification defines.",
+      "context": "genus-2.00",
       "operation": "cesr.parse",
       "stream": [
-        {"message": {"proto": "KERI", "version": [1, 0], "legacy": true,
-                     "fields": {"t": "rpy", "d": "", "dt": "2026-01-01T00:00:00.000000+00:00", "r": "/kcs/cesr/k1x", "a": {}}}},
-        {"group": "-A", "items": [{"indexed": "A", "raw": "kcs/cesr/k1x/msg-sig", "index": 0}]}
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "genus": "AAA",
+              "major": 1,
+              "minor": 0
+            },
+            {
+              "group": "-A",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/ov/s0",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/ov/s1",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
       ],
-      "assertions": [{"check": "decoded", "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): a body framed by a 1.XX version string is followed by attachments in the CESR 1.00 count-code table, where -A counts indexed signatures (src/keri/core/counting.py, CounterCodex_1_0)."}]
+      "assertions": [
+        {
+          "check": "decoded",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0) inside the override; the override's scope from CESR v1.0 lines 609 and 814."
+        }
+      ]
     }
   ]
 }

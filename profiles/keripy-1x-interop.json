@@ -6,10 +6,10 @@
     "version": "1.2.14"
   },
   "cases": [
+    "CESR-0045",
+    "CESR-0046",
     "CESR-0047",
-    "CESR-0048",
-    "CESR-0049",
-    "CESR-0050"
+    "CESR-0048"
   ],
   "name": "keripy-1x-interop",
   "normative": false

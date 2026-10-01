@@ -11,79 +11,93 @@
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
-          "kind": "counter",
-          "size": 0,
-          "start": 0
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 449,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 441,
+          "start": 8,
+          "version": "2.0"
         },
         {
           "code": "-C",
-          "end": 12,
-          "group_end": 280,
+          "end": 453,
+          "group_end": 749,
           "kind": "counter",
-          "size": 67,
-          "start": 8
+          "size": 74,
+          "start": 449
         },
         {
-          "code": "-K",
-          "end": 16,
-          "group_end": 280,
+          "code": "-X",
+          "end": 457,
+          "group_end": 749,
           "kind": "counter",
-          "size": 66,
-          "start": 12
-        },
-        {
-          "code": "A",
-          "end": 104,
-          "index": 0,
-          "kind": "indexed",
-          "raw": "cdc11957ee0c88c3ad4ba4c4e4db78a43b580aa8351a971f6cd3e69ef4472d4eaaaa07d221eed5265ac53832c420510d8e1a426ca51de34133aa8ecc51075531",
-          "start": 16
-        },
-        {
-          "code": "A",
-          "end": 192,
-          "index": 1,
-          "kind": "indexed",
-          "raw": "c67f7c477bbce56ecf82eae369b123018419071f0af555d5b8a2bbe1e46f68701d7ae6d5a2357f2009a216fc5352bc3e6d85ddb100ce5f33cc18f34aeb0920d5",
-          "start": 104
-        },
-        {
-          "code": "A",
-          "end": 280,
-          "index": 2,
-          "kind": "indexed",
-          "raw": "e2c72dc102171c2c37278b7c07dad50cbdf9fa759c0a4e90b162553dd1258c580a7b2754883746d6902033e47f863bb9ece36996032d1bd0ad0b94291be53b8e",
-          "start": 192
-        },
-        {
-          "code": "-J",
-          "end": 284,
-          "group_end": 328,
-          "kind": "counter",
-          "size": 11,
-          "start": 280
+          "size": 73,
+          "start": 453
         },
         {
           "code": "E",
-          "end": 328,
+          "end": 501,
           "kind": "primitive",
-          "raw": "96e476731fbc2f738f87e0af3dd703eae98ee4ed9ef48607fde204e27169c65f",
-          "start": 284
+          "raw": "1d9f4f572cc4f8480f3a0bb8f06164e1966a53a5fc5628f77f9cb1b0af9feed6",
+          "start": 457
+        },
+        {
+          "code": "0A",
+          "end": 525,
+          "kind": "primitive",
+          "raw": "00000000000000000000000000000000",
+          "start": 501
+        },
+        {
+          "code": "E",
+          "end": 569,
+          "kind": "primitive",
+          "raw": "3f26e4b3ff7abcdeb93e192c83391dc0f052d73d63a144adbf0c56f97a91a7bd",
+          "start": 525
+        },
+        {
+          "code": "-K",
+          "end": 573,
+          "group_end": 749,
+          "kind": "counter",
+          "size": 44,
+          "start": 569
+        },
+        {
+          "code": "A",
+          "end": 661,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "26e2851efd520d4c21afb320b460d9b6ba8d4d02f6c5ec33fbbde6148567df3cb7dc37f9cadfaadbaade2ff1d5f4f2ed03c3110fd6465d6bc56185f78eba80d6",
+          "start": 573
+        },
+        {
+          "code": "A",
+          "end": 749,
+          "index": 1,
+          "kind": "indexed",
+          "raw": "e37f767853495d574755720fd12e9358e47aeba0f47a6e0b5c11ad9769e1b5bf31172572d469a612daae8a8b7df95f7cd77dc155da3d41ea2e93ed3c07da09c9",
+          "start": 661
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
-  "description": "An attachments group (-C) holds a controller indexed signature group (-K) of three Ed25519 indexed signatures. -K has size 66 (3 x 22 quadlets), not 3; -C has size 67. A digest group follows. This is the framing that made streams unreadable between keripy and the item-counting implementations. The symbol legends of the Encoding Scheme Symbols Table and the indexed-code symbol table say a count code's digits determine 'the count of the following Primitives or groups of Primitives'; this case rests on the explicit rule at the Count Code tables section instead, and the conflict between the two texts is noted, not resolved, here.",
+  "description": "The shape of the specification's own Examples (lines 1104-1116): a transferable indexed signature groups code (-X) whose group holds a prefix (E), a sequence number (0A), a digest (E) and a controller signature group (-K) of two signatures. -X's size, 73 (11 + 6 + 11 + 1 + 44), counts every quadlet including -K's code and contents; -K's is 44. The specification's example is built the same way: -XBf is 95 = 11 + 6 + 11 + 1 + 66. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
   "id": "CESR-0026",
   "input": {
-    "stream": "2d5f4141414341412d4342442d4b42434141444e77526c58376779497736314c704d546b3233696b4f31674b714455616c783973302d61653945637454717171423949683774556d577355344d7351675551324f476b4a737052336a51544f716a73785242315578414244476633784865377a6c62732d4336754e7073534d4268426b4848777231566457346f7276683547396f63423136357457694e583867436149575f464e537644357468643278414d35664d38775938307272435344564143446978793342416863634c44636e693377483274554d76666e36645a774b54704378596c55393053574d574170374a3153494e3062576b43417a35482d474f376e7334326d5741793062304b304c6c436b623554754f2d4a414c454a626b646e4d667643397a6a346667727a3358412d72706a7554746e765347425f3369424f4a7861635a66"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414147352e222c2274223a22696370222c2264223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2269223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2273223a2230222c226b74223a2232222c226b223a5b22444358516c42303037556d4c73757044497a5f414443393857375a68635a614d6a746632545f2d6e644c5933222c2244504a2d7230792d494c7a53764b2d763466776257494a79476a41675a4b483335336a72454b4839506f725f222c22444e42373568385f4d454c64735053754172685a72397864765533587047635053374a5042454a7a68714c6e225d2c226e74223a2231222c226e223a5b22454f7a756e384f61316c4b714c5f772d4b55783270666d3659435f596d41793431674a663331476449505345225d2c226274223a2231222c2262223a5b2242426a4a45346d5454655f496c675a39426d4d724c6f684d47745443477073466b5033744449666d72736838225d2c2263223a5b5d2c2261223a5b5d7d2d43424b2d58424a454232665431637378506849447a6f4c755042685a4f4757616c4f6c5f46596f39332d63736243766e2d37573041414141414141414141414141414141414141414141414544386d354c505f65727a657554345a4c494d354863447755746339593646457262384d56766c366b6165392d4b41734141416d346f55655f56494e5443477673794330594e6d32756f314e41766246374450377665595568576666504c66634e5f6e4b3336726271743476386458303875304477784550316b5a64613856686866654f756f44574142446a66335a3455306c645630645663675f524c704e59354872726f505236626774634561325861654731767a45584a584c55616159533271364b6933333558337a5866634656326a3142366936543754774832676e4a"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -93,17 +107,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/framing.json#founding-indexed-signatures"
+    "scenario": "scenarios/cesr/attachments.json#trans-indexed-signature-groups"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "A controller signature group's size counts quadlets, not signatures"
+  "title": "A nested signature group's quadlets count toward its enclosing group"
 }

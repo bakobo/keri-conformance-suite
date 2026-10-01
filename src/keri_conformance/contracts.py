@@ -32,7 +32,11 @@ ITEM = tagged("kind", {
     "indexed": obj({"kind": enum("indexed"), **_SPAN, "code": string(), "raw": HEX_STRING,
                     "index": OFFSET}, {"ondex": OFFSET}),
     "counter": obj({"kind": enum("counter"), **_SPAN, "code": string(), "size": OFFSET,
-                    "group_end": OFFSET}, {"genus": string(), "gvrsn": string()}),
+                    "group_end": OFFSET}),
+    # A genus/version code is no count: it has no size and introduces no group.
+    "genus": obj({"kind": enum("genus"), **_SPAN, "code": string("^-_[A-Za-z0-9_-]{6}$"),
+                  "genus": string("^[A-Za-z0-9_-]{3}$"),
+                  "version": string(r"^[0-9]+\.[0-9]{2,}$")}),
     "message": obj({"kind": enum("message"), **_SPAN, "proto": string(), "version": string(),
                     "serialization": enum("JSON", "CBOR", "MGPK"), "size": OFFSET}),
 })

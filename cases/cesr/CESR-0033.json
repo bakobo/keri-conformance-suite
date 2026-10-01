@@ -1,33 +1,23 @@
 {
   "assertions": [
     {
-      "check": "decoded",
+      "check": "rejected",
       "clause": {
         "commit": "037129608b9e6960858b752019ac273d40d7386c",
-        "quote": "Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events.",
-        "section": "Legacy Version 1.XX string field format",
+        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
+        "section": "Count Code tables",
         "spec": "cesr",
-        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#legacy-version-1xx-string-field-format"
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
       },
-      "expected": [
-        {
-          "end": 112,
-          "kind": "message",
-          "proto": "KERI",
-          "serialization": "JSON",
-          "size": 112,
-          "start": 0,
-          "version": "1.0"
-        }
-      ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "inferred consumer obligation from producer MUST at line 591; informative class: group-boundary"
     }
   ],
-  "description": "A JSON field map whose v field is a legacy 1.XX version string (protocol KERI, version 1.0 in two hex digits, kind JSON, size in six lowercase hex digits, terminator '_'). Version 2.XX implementations must still support this format.",
+  "description": "Inside an attachments group, a -K of size 21 holds an 88-character (22-quadlet) signature: -K ends four characters before the signature does, and those four characters then sit inside -C where no element can start. The specification has no sentence saying such a stream must be rejected; the assertion rests on the cited MUST, which this stream violates.",
   "id": "CESR-0033",
   "input": {
-    "stream": "7b2276223a224b45524931304a534f4e3030303037305f222c2274223a22727079222c2264223a22222c226474223a22323032362d30312d30315430303a30303a30302e3030303030302b30303a3030222c2272223a222f6b63732f636573722f6c6567616379222c2261223a7b7d7d"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b41564141417a546b6d73344334395942796f534f5559486e50484761626551364c62473544475f524b625f5f6e58734c52567a544b6b746342485f34586861614b37712d3933417749457a7073304267394131526f516a456d43"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -37,18 +27,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/messages.json#json-1x-legacy"
+    "scenario": "scenarios/cesr/reject.json#reject-group-ends-inside-signature"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
+      "cesr.genus-2.00",
       "cesr.serialization.json",
-      "keri.version-1.x"
+      "keri.version-2.x"
     ],
     "wire": [
-      "KERI10JSON"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Frame a JSON body by its legacy 1.XX version string"
+  "title": "Reject a signature group whose size ends it inside a signature"
 }

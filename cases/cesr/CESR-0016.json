@@ -11,39 +11,78 @@
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
-          "kind": "counter",
-          "size": 0,
-          "start": 0
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
         },
         {
-          "code": "-J",
-          "end": 12,
-          "group_end": 168,
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 469,
           "kind": "counter",
           "size": 39,
-          "start": 8
+          "start": 309
         },
         {
-          "code": "1AAE",
-          "end": 168,
+          "code": "-K",
+          "end": 317,
+          "group_end": 405,
+          "kind": "counter",
+          "size": 22,
+          "start": 313
+        },
+        {
+          "code": "A",
+          "end": 405,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "f41b99ddca94d48db7b8e92bf72391e7b049bebba0a3d0afa3e21cb50e04d095143c284ddc18d58892cf97e3adef941cfcf7d8a8f956b8ccddc200db8333485d",
+          "start": 317
+        },
+        {
+          "code": "-O",
+          "end": 409,
+          "group_end": 469,
+          "kind": "counter",
+          "size": 15,
+          "start": 405
+        },
+        {
+          "code": "0A",
+          "end": 433,
           "kind": "primitive",
-          "raw": "f78e3a700f60b31f17ada092bc7ff77652cf89a605e63ad002a8798980ead0153d8f09c882c6588515bb165148d67f56a70eaa5684485882d3e61b51dcdcbd1d156f09a4a9069c4c931174cd71d1a4457388d97da6afe6c253078dd647f002bf96e2eb985cf84d680c184ca058930d601faa",
-          "start": 12
+          "raw": "00000000000000000000000000000000",
+          "start": 409
+        },
+        {
+          "code": "1AAG",
+          "end": 469,
+          "kind": "primitive",
+          "raw": "db4dbafb4d7ed354f4d1cd34734d1dd34d34d34a74d1cd34",
+          "start": 433
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
-  "description": "Code 1AAE, a 114-byte signature with pad size 0, 156 characters, in a -J group of 39 quadlets.",
+  "description": "After a KERI 2.0 inception, an attachments group holds a first-seen replay couples group (-O) of one couple: a sequence number with code 0A (16 bytes, 24 characters) and a datetime with code 1AAG (a four-character code, 36 characters). The datetime's 32 characters are the ISO-8601 text with ':' written 'c', '.' written 'd' and '+' written 'p', keripy's rendering of the 'custom encoded' form the master table names but does not define; only its encoding as a primitive matters here.",
   "id": "CESR-0016",
   "input": {
-    "stream": "2d5f4141414341412d4a416e314141453934343663413967737838587261435376485f33646c4c5069615946356a72514171683569594471304255396a776e4967735a5968525737466c4649316e395770773671566f524957494c5435687452334e793948525676436153704270784d6b7846307a5848527045567a694e6c3970715f6d776c4d486a645a4838414b5f6c754c726d467a345457674d47457967574a4d4e59422d71"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d43416e2d4b41574141443047356e64797054556a626534365376334935486e73456d2d7536436a304b2d6a34687931446754516c5251384b453363474e57496b732d58343633766c427a383939696f2d5661347a4e3343414e75444d3068642d4f415030414141414141414141414141414141414141414141414131414147323032362d30312d303154303063303063303064303030303030703030633030"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -53,17 +92,20 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/primitives.json#parse-ed448-signature"
+    "scenario": "scenarios/cesr/attachments.json#first-seen-replay"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
-  "title": "Parse an Ed448 signature with a four-character code"
+  "title": "Parse a first-seen replay couple (a four-character code)"
 }

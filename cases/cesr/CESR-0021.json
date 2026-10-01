@@ -11,41 +11,57 @@
       },
       "expected": [
         {
-          "code": "-_AAA",
+          "code": "-_AAACAA",
           "end": 8,
           "genus": "AAA",
-          "group_end": 8,
-          "gvrsn": "2.00",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 409,
           "kind": "counter",
-          "size": 0,
-          "start": 0
+          "size": 24,
+          "start": 309
         },
         {
           "code": "-K",
-          "end": 12,
-          "group_end": 104,
+          "end": 317,
+          "group_end": 409,
           "kind": "counter",
           "size": 23,
-          "start": 8
+          "start": 313
         },
         {
           "code": "2B",
-          "end": 104,
+          "end": 409,
           "index": 70,
           "kind": "indexed",
           "ondex": 0,
-          "raw": "f77c2911e62ee9b72d3b2dad5b335f5f37ef8cf2af9ed7ee999bca054afbf88a5992dab67024d1cf8cc3159cffd751efc1996cc42594031b5ddecb44c42da153",
-          "start": 12
+          "raw": "47a475565276621fe40455c1dfc513be8ffa09f88b3a8c9c57f24aed44564e33902e7271520466bfe9f095595efd0d6abc3987e705273fdde1af0d9272d72463",
+          "start": 317
         }
       ],
       "id": "a1",
-      "level": "MUST"
+      "level": "MUST",
+      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
     }
   ],
-  "description": "Code 2B#### (Ed25519 indexed sig big current only). Its table row defines an ondex field of two characters even though the signature is current only, so the ondex is reported as encoded: 0.",
+  "description": "Code 2B#### (Ed25519 indexed sig big current only). Its table row defines a two-character ondex field even though the signature is current only, so the ondex is reported as encoded: 0.",
   "id": "CESR-0021",
   "input": {
-    "stream": "2d5f4141414341412d4b4158324242474141443366436b5235693770747930374c6131624d3139664e2d2d4d38712d65312d365a6d386f4653767634696c6d5332725a774a4e48506a4d4d566e505f5855655f426d577a454a5a514447313365793054454c614654"
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341592d4b4158324242474141424870485657556e5a69482d51455663486678524f2d6a5f6f4a2d4973366a4a7858386b727452465a4f4d354175636e46534247615f3666435657563739445771384f59666e4253635f33654776445a4a793179526a"
   },
   "operation": "cesr.parse",
   "profile": "cesr-1.0",
@@ -55,16 +71,19 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/cesr/indexed.json#indexed-ed25519-big-current-only-zero-ondex"
+    "scenario": "scenarios/cesr/attachments.json#indexed-ed25519-big-current-only-zero-ondex"
   },
   "schema_version": 1,
   "status": "active",
   "targets": {
     "features": [
-      "cesr.genus-2.00"
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
     ],
     "wire": [
-      "CESR-2.00"
+      "CESR-2.00",
+      "KERICAACAAJSON"
     ]
   },
   "title": "Parse a big current-only Ed25519 signature whose ondex field is zero"
