@@ -38,6 +38,7 @@ from keri_conformance.errors import (
     HelloRefused,
     RunnerError,
 )
+from keri_conformance.jsonfile import JsonFileError, read_json
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 
 OPERATIONS = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit")
@@ -47,6 +48,7 @@ FINAL_DISPOSITIONS = (*INITIAL_DISPOSITIONS, "superseded")
 HELLO_FIELDS = ("protocol", "adapter", "implementation", "operations", "features", "composes")
 HEX = re.compile(r"(?:[0-9a-f]{2})*")
 CHUNK = 65536
+MAX_VOCABULARY_BYTES = 1024 * 1024
 CLIP = 2000
 
 
@@ -129,18 +131,15 @@ def apply_limits(res, address_space: int, cpu_seconds: int) -> None:
     res.setrlimit(res.RLIMIT_CPU, (min(cpu_seconds, cpu_hard), cpu_hard))
 
 
-def load_vocabulary(suite) -> dict[str, bool]:
+def load_vocabulary(suite, max_bytes: int = MAX_VOCABULARY_BYTES) -> dict[str, bool]:
     """Read `profiles/features.json` under the suite root: feature name -> composable."""
     path = Path(suite) / "profiles" / "features.json"
     try:
-        doc = json.loads(path.read_text(encoding="utf-8"))
-    except FileNotFoundError as exc:
+        doc = read_json(path, max_bytes)
+    except JsonFileError as exc:
+        hint = "; pass --suite with the root of a suite checkout" if exc.kind == "missing" else ""
         raise RunnerError(E_VOCABULARY,
-                          f"The feature vocabulary {path} does not exist; pass --suite with the "
-                          "root of a suite checkout.") from exc
-    except (OSError, ValueError) as exc:
-        raise RunnerError(E_VOCABULARY, f"The feature vocabulary {path} could not be read as "
-                                        f"JSON: {exc}.") from exc
+                          f"The feature vocabulary {path} {exc.sentence}{hint}.") from exc
     features = doc.get("features") if isinstance(doc, dict) else None
     if not isinstance(features, dict) or not all(
             isinstance(entry, dict) and isinstance(entry.get("composable"), bool)

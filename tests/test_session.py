@@ -104,6 +104,32 @@ def test_load_vocabulary_names_a_missing_file(tmp_path):
     assert "features.json" in str(info.value)
 
 
+def test_load_vocabulary_bounds_its_read(tmp_path):
+    (tmp_path / "profiles").mkdir()
+    (tmp_path / "profiles" / "features.json").write_text('{"features": {}}' + " " * 100)
+    with pytest.raises(errors.RunnerError) as info:
+        load_vocabulary(tmp_path, max_bytes=50)
+    assert info.value.code == errors.E_VOCABULARY
+    assert "50 bytes" in str(info.value)
+
+
+@pytest.mark.parametrize("content", [b"[" * 100_000, b"\xff\xfe"], ids=["deep", "not-utf8"])
+def test_load_vocabulary_maps_deep_or_undecodable_json_to_its_code(tmp_path, content):
+    (tmp_path / "profiles").mkdir()
+    (tmp_path / "profiles" / "features.json").write_bytes(content)
+    with pytest.raises(errors.RunnerError) as info:
+        load_vocabulary(tmp_path)
+    assert info.value.code == errors.E_VOCABULARY
+
+
+def test_load_vocabulary_maps_an_unreadable_path_to_its_code(tmp_path):
+    (tmp_path / "profiles" / "features.json").mkdir(parents=True)
+    with pytest.raises(errors.RunnerError) as info:
+        load_vocabulary(tmp_path)
+    assert info.value.code == errors.E_VOCABULARY
+    assert "could not be read" in str(info.value)
+
+
 @pytest.mark.parametrize("text", ["not json", "[]", '{"features": []}',
                                   '{"features": {"a.b": {"composable": "yes"}}}',
                                   '{"features": {"a.b": 3}}'])

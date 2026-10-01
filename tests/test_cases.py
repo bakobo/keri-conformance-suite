@@ -169,6 +169,37 @@ def test_an_oversized_case_file_is_a_fault(cases_dir):
     assert "100 bytes" in str(info.value)
 
 
+def test_an_unreadable_case_file_is_a_final_fault(cases_dir):
+    directory = cases_dir(GOOD[0])
+    path = next(directory.rglob("*.json"))
+    path.chmod(0)
+    try:
+        with pytest.raises(errors.RunnerError) as info:
+            load_cases(directory)
+    finally:
+        path.chmod(0o644)
+    assert info.value.code == errors.E_CASE_READ
+    assert info.value.code.endswith(".f")
+    assert path.name in str(info.value)
+
+
+def test_a_transient_read_error_is_retryable(cases_dir, monkeypatch):
+    import errno
+    import pathlib
+
+    directory = cases_dir(GOOD[0])
+
+    def broken_open(self, *args, **kwargs):
+        raise OSError(errno.EIO, "Input/output error")
+
+    monkeypatch.setattr(pathlib.Path, "open", broken_open)
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory)
+    assert info.value.code == errors.E_CASE_READ_TRANSIENT
+    assert info.value.code.endswith(".r")
+    assert "Input/output error" in str(info.value)
+
+
 def test_duplicate_case_ids_are_a_fault(cases_dir):
     directory = cases_dir(GOOD[0])
     (directory / "copy.json").write_text(json.dumps(GOOD[0]))

@@ -6,12 +6,18 @@ it reads, so that a malformed case is a runner fault naming its file rather than
 an adapter failure.
 """
 
-import json
 import re
 from pathlib import Path
 
 from keri_conformance.assertions import KEY_STATE_FIELDS
-from keri_conformance.errors import E_CASE_FORMAT, E_CASES_MISSING, RunnerError
+from keri_conformance.errors import (
+    E_CASE_FORMAT,
+    E_CASE_READ,
+    E_CASE_READ_TRANSIENT,
+    E_CASES_MISSING,
+    RunnerError,
+)
+from keri_conformance.jsonfile import JsonFileError, read_json
 from keri_conformance.session import OPERATIONS
 
 MAX_CASE_BYTES = 32 * 1024 * 1024
@@ -102,16 +108,16 @@ def case_problem(case) -> str | None:
 
 
 def _read(path: Path, max_bytes: int):
-    with path.open("rb") as f:
-        data = f.read(max_bytes + 1)
-    if len(data) > max_bytes:
-        raise RunnerError(E_CASE_FORMAT, f"The case file {path} is larger than the {max_bytes} "
-                                         "bytes the runner will read.")
     try:
-        return json.loads(data.decode("utf-8"))
-    except (ValueError, RecursionError) as exc:
-        raise RunnerError(E_CASE_FORMAT,
-                          f"The case file {path} is not UTF-8 JSON: {exc}.") from exc
+        return read_json(path, max_bytes)
+    except JsonFileError as exc:
+        if exc.transient:
+            code = E_CASE_READ_TRANSIENT
+        elif exc.kind in ("missing", "io"):
+            code = E_CASE_READ
+        else:
+            code = E_CASE_FORMAT
+        raise RunnerError(code, f"The case file {path} {exc.sentence}.") from exc
 
 
 def load_cases(directory, max_bytes: int = MAX_CASE_BYTES) -> list[dict]:
