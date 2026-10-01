@@ -5,8 +5,8 @@
 
 compare exits 0 when every assertion has the outcome the baseline records. It exits 1 on a
 regression (an assertion whose outcome is no longer what the baseline says, a missing assertion,
-a different profile) and also on an improvement (a new pass, a new assertion, a different keripy
-commit), because an improvement must be recorded by updating the baseline in the same change.
+a different profile, a verdict other than the recorded one unless it is now conformant) and also on an improvement (a new pass, a new assertion, a different keripy
+commit, a verdict that became conformant), because an improvement must be recorded by updating the baseline in the same change.
 write records REPORT as the new baseline. Standard library only.
 """
 
@@ -37,6 +37,11 @@ def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
     regressions, improvements = [], []
     if now["profile"] != base["profile"]:
         regressions.append(f"profile: {base['profile']} -> {now['profile']}")
+    if now["verdict"] != base["verdict"]:
+        # An aborted or otherwise abnormal run must never satisfy the gate, even when every
+        # assertion it did record matches; only a move to conformant is an improvement.
+        line = f"verdict: {base['verdict']} -> {now['verdict']}"
+        (improvements if now["verdict"] == "conformant" else regressions).append(line)
     if now["implementation"]["commit"] != base["implementation"]["commit"]:
         improvements.append(f"implementation commit: {base['implementation']['commit']} -> "
                             f"{now['implementation']['commit']}")

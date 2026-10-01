@@ -116,3 +116,28 @@ def test_it_runs_as_a_module(monkeypatch, capsys):
     with pytest.raises(SystemExit) as info:
         runpy.run_module("kcs_adapter_keripy.baseline", run_name="__main__")
     assert info.value.code == 2
+
+
+def test_a_different_verdict_is_a_regression():
+    aborted = report(BASE)
+    aborted["verdict"] = "aborted"
+    regressions, improvements = baseline.compare(baseline.summarize(report(BASE)), aborted)
+    assert regressions == ["verdict: conformant -> aborted"]
+    assert improvements == []
+
+
+def test_a_verdict_that_becomes_conformant_is_an_improvement():
+    base = report(BASE)
+    base["verdict"] = "not-conformant"
+    regressions, improvements = baseline.compare(baseline.summarize(base), report(BASE))
+    assert regressions == []
+    assert improvements == ["verdict: not-conformant -> conformant"]
+
+
+def test_main_fails_an_aborted_run_even_when_every_recorded_assertion_matches(files, capsys):
+    base, rep = files
+    aborted = report(BASE)
+    aborted["verdict"] = "aborted"
+    rep.write_text(json.dumps(aborted))
+    assert baseline.main(["compare", str(base), str(rep)]) == 1
+    assert "verdict: conformant -> aborted" in capsys.readouterr().out

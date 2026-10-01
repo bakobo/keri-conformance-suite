@@ -41,8 +41,8 @@ Tests marked `main` or `onex` run only against that keripy generation. Branch co
 ## CI and the baseline
 
 CI level 2 (`docs/design.md`) for this adapter is the `keripy-adapter` job in `.github/workflows/ci.yml`. It builds the keripy-main instance from its lockfile and runs the adapter's tests and `kcs check-adapter`. Then it runs `kcs run --profile cesr-1.0` and compares the report with `baseline-cesr-1.0.json`, the outcome of every assertion as last recorded. The comparison is `python -m kcs_adapter_keripy.baseline compare`, and it fails in two cases:
-- **A regression:** an assertion whose outcome is no longer what the baseline says, an assertion that disappeared, or a different profile.
-- **An improvement:** a new pass, a new assertion, or a different keripy commit. This must be recorded in the same change:
+- **A regression:** an assertion whose outcome is no longer what the baseline says, an assertion that disappeared, a different profile, or a different verdict (so an aborted run cannot pass the gate).
+- **An improvement:** a new pass, a new assertion, a different keripy commit, or a verdict that became conformant. This must be recorded in the same change:
 
 ```
 uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile cesr-1.0 --report /tmp/r.json
