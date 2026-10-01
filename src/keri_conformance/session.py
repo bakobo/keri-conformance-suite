@@ -33,15 +33,17 @@ from keri_conformance.errors import (
     E_ADAPTER_HELLO,
     E_ADAPTER_HELLO_CHANGED,
     E_ADAPTER_START,
+    E_ADAPTER_START_TRANSIENT,
     E_PLATFORM,
     E_ROOT,
     E_USAGE_INVALID,
     E_VOCABULARY,
+    E_VOCABULARY_TRANSIENT,
     EXIT_USAGE,
     HelloRefused,
     RunnerError,
 )
-from keri_conformance.jsonfile import JsonFileError, loads, read_json
+from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, loads, read_json
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 
 OPERATIONS = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit")
@@ -138,7 +140,7 @@ def load_vocabulary(suite, max_bytes: int = MAX_VOCABULARY_BYTES) -> dict[str, b
         doc = read_json(path, max_bytes)
     except JsonFileError as exc:
         hint = "; pass --suite with the root of a suite checkout" if exc.kind == "missing" else ""
-        raise RunnerError(E_VOCABULARY,
+        raise RunnerError(E_VOCABULARY_TRANSIENT if exc.transient else E_VOCABULARY,
                           f"The feature vocabulary {path} {exc.sentence}{hint}.") from exc
     features = doc.get("features") if isinstance(doc, dict) else None
     if not isinstance(features, dict) or not all(
@@ -441,7 +443,8 @@ class AdapterSession:
             self._selector.register(proc.stderr, selectors.EVENT_READ, "err")
             self._proc = proc
             return
-        raise RunnerError(E_ADAPTER_START,
+        transient = getattr(error, "errno", None) in TRANSIENT_ERRNOS
+        raise RunnerError(E_ADAPTER_START_TRANSIENT if transient else E_ADAPTER_START,
                           f"The adapter command {shlex.join(self.argv)} could not be started "
                           f"after {self._attempts} attempts: {error}.")
 

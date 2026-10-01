@@ -8,7 +8,8 @@ checkout with --suite. The suite version is `[project].version` in the suite roo
 import tomllib
 from pathlib import Path
 
-from keri_conformance.errors import E_SUITE_VERSION, RunnerError
+from keri_conformance.errors import E_SUITE_VERSION, E_SUITE_VERSION_TRANSIENT, RunnerError
+from keri_conformance.jsonfile import TRANSIENT_ERRNOS
 
 MAX_PYPROJECT_BYTES = 1024 * 1024
 
@@ -17,17 +18,18 @@ def read_suite_version(suite, max_bytes: int = MAX_PYPROJECT_BYTES) -> str:
     """`[project].version` from `<suite>/pyproject.toml`, or a coded refusal."""
     path = Path(suite) / "pyproject.toml"
 
-    def refuse(why: str) -> RunnerError:
-        return RunnerError(E_SUITE_VERSION, f"The suite version could not be read from {path}: "
-                                            f"{why}. A conformance report must name the suite "
-                                            "version, so pass --suite with the root of a suite "
-                                            "checkout.")
+    def refuse(why: str, code: str = E_SUITE_VERSION) -> RunnerError:
+        return RunnerError(code, f"The suite version could not be read from {path}: {why}. A "
+                                 "conformance report must name the suite version, so pass "
+                                 "--suite with the root of a suite checkout.")
 
     try:
         with path.open("rb") as f:
             data = f.read(max_bytes + 1)
     except OSError as exc:
-        raise refuse(exc.strerror or str(exc)) from exc
+        transient = exc.errno in TRANSIENT_ERRNOS
+        raise refuse(exc.strerror or str(exc),
+                     E_SUITE_VERSION_TRANSIENT if transient else E_SUITE_VERSION) from exc
     if len(data) > max_bytes:
         raise refuse(f"the file is larger than {max_bytes} bytes")
     try:

@@ -11,12 +11,14 @@ from keri_conformance.cases import load_cases
 from keri_conformance.check import check_adapter, exit_code, render
 from keri_conformance.errors import (
     E_REPORT_WRITE,
+    E_REPORT_WRITE_TRANSIENT,
     E_USAGE_INVALID,
     E_USAGE_MISSING,
     EXIT_USAGE,
     HelloRefused,
     RunnerError,
 )
+from keri_conformance.jsonfile import TRANSIENT_ERRNOS
 from keri_conformance.run import VERDICT_EXIT, human_summary, run_suite
 from keri_conformance.session import AdapterSession, Limits, load_vocabulary
 from keri_conformance.suite import read_suite_version
@@ -133,7 +135,8 @@ def _run(args) -> int:
         try:
             Path(args.report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
         except OSError as exc:
-            raise RunnerError(E_REPORT_WRITE, f"The report could not be written to "
+            code = E_REPORT_WRITE_TRANSIENT if exc.errno in TRANSIENT_ERRNOS else E_REPORT_WRITE
+            raise RunnerError(code, f"The report could not be written to "
                                               f"{args.report}: {exc}.") from exc
     print(human_summary(report, args.report))
     aborted = report["aborted"]
