@@ -64,6 +64,14 @@ def cache_path() -> pathlib.Path:
     return cache_dir() / f"cesr-spec-body-{SPEC_COMMIT}.md"
 
 
+def _bounded(data: bytes, origin: str) -> bytes:
+    """Refuse more than MAX_SPEC_BYTES before anything else reads or hashes the bytes."""
+    if len(data) > MAX_SPEC_BYTES:
+        raise SpecUnavailable(E_OVERSIZE, f"The specification text from {origin} is larger than "
+                                          f"{MAX_SPEC_BYTES} bytes and was not used.")
+    return data
+
+
 def _verified(data: bytes, origin: str) -> bytes:
     digest = hashlib.sha256(data).hexdigest()
     if digest != SPEC_SHA256:
@@ -87,10 +95,7 @@ def fetch() -> bytes:
             f"The CESR specification text could not be fetched from {SPEC_RAW_URL} ({e}). "
             f"Retry when the network is available, or place the file at {cache_path()}.",
         ) from None
-    if len(data) > MAX_SPEC_BYTES:
-        raise SpecUnavailable(E_OVERSIZE, f"The response from {SPEC_RAW_URL} is larger than "
-                                        f"{MAX_SPEC_BYTES} bytes and was not used.")
-    _verified(data, SPEC_RAW_URL)
+    _verified(_bounded(data, SPEC_RAW_URL), SPEC_RAW_URL)
     path = cache_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
@@ -104,7 +109,8 @@ def load_spec(allow_fetch: bool = True) -> str:
     and ``allow_fetch`` is true. Raises ``SpecUnavailable`` rather than return anything else."""
     path = cache_path()
     if path.exists():
-        data = _verified(path.read_bytes(), str(path))
+        with path.open("rb") as f:  # the same bounded read as the network path
+            data = _verified(_bounded(f.read(MAX_SPEC_BYTES + 1), str(path)), str(path))
     elif allow_fetch:
         data = fetch()
     else:

@@ -109,6 +109,25 @@ def test_oversized_response_is_refused(cache, monkeypatch):
     assert e.value.code == "e.env.kcs-spec.oversize.f"
 
 
+def test_oversized_cache_file_is_refused_before_hashing(cache, monkeypatch):
+    monkeypatch.setattr(spec_source, "MAX_SPEC_BYTES", 8)
+    spec_source.cache_path().write_bytes(b"x" * 9)
+    _serve(monkeypatch, error=AssertionError("must not fetch"))
+    hashed = []
+    monkeypatch.setattr(spec_source, "_verified", lambda data, origin: hashed.append(data))
+    with pytest.raises(spec_source.SpecUnavailable, match="larger than") as e:
+        spec_source.load_spec()
+    assert e.value.code == "e.env.kcs-spec.oversize.f"
+    assert hashed == []
+
+
+def test_cache_file_at_the_limit_is_read_whole(cache, monkeypatch):
+    monkeypatch.setattr(spec_source, "MAX_SPEC_BYTES", len(FAKE))
+    monkeypatch.setattr(spec_source, "SPEC_SHA256", hashlib.sha256(FAKE).hexdigest())
+    spec_source.cache_path().write_bytes(FAKE)
+    assert spec_source.load_spec() == FAKE.decode()
+
+
 def test_offline_fetch_is_a_retryable_coded_error(cache, monkeypatch):
     _serve(monkeypatch, error=urllib.error.URLError("no route"))
     with pytest.raises(spec_source.SpecUnavailable) as e:
