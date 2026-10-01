@@ -574,3 +574,14 @@ def test_the_script_is_a_thin_entry_point_to_the_package():
     result = subprocess.run([sys.executable, str(ROOT / "scripts" / "regenerate"), "--help"],
                             capture_output=True, text=True, check=False)
     assert result.returncode == 0 and "--check" in result.stdout
+
+
+def test_a_scenario_value_of_the_wrong_type_is_a_coded_error(tree):
+    path = tree / "scenarios" / "cesr" / "zz.json"
+    path.write_text(json.dumps({"profile": "cesr-1.0", "cases": [
+        {"id": "CESR-0099", "title": "t", "description": "d", "operation": "cesr.encode",
+         "code": "E", "raw": 1, "domain": "text",
+         "assertions": [{"check": "encoded", "clause": "version-string-extract"}]}]}))
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate.generate(tree)
+    assert e.value.code.startswith("e.input.format.kcs-scenario")

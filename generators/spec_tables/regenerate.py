@@ -22,7 +22,7 @@ from .errors import (
 
 # Failures of a case's content that the builder does not name itself: an unknown code or table
 # entry, a raw value of the wrong size, a missing scenario field, a quote not in the text.
-BUILD_FAILURES = (KeyError, ValueError, LookupError, TypeError)
+BUILD_FAILURES = (KeyError, ValueError, LookupError, TypeError, AttributeError)
 
 SCENARIO_DIR = "scenarios/cesr"
 CASE_DIR = "cases/cesr"
