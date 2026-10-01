@@ -57,6 +57,8 @@ The suite's policy (decided 2026-10-01):
 - **The specification should state** that a parser MUST reject a body shorter than the size its version string declares, once the input is known to be complete.
 - **Re-issued at MUST if stated:** CESR-0042.
 
+## Spec-internal conflicts (cases stay MUST and active)
+
 ### C1. What a count code's size counts (line 591 against lines 674, 714 and 1103)
 
 - **The rule the cases follow.** Line 591: "The size component MUST count the Quadlets/triplets in its following group." The same paragraph adds that a count code "always counts the number of quadlets/triplets in the group not the number of primitives".
