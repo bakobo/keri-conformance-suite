@@ -126,8 +126,8 @@ def load_vocabulary(suite) -> dict[str, bool]:
                           f"The feature vocabulary {path} does not exist; pass --suite with the "
                           "root of a suite checkout.") from exc
     except (OSError, ValueError) as exc:
-        raise RunnerError(E_VOCABULARY,
-                          f"The feature vocabulary {path} could not be read as JSON: {exc}.") from exc
+        raise RunnerError(E_VOCABULARY, f"The feature vocabulary {path} could not be read as "
+                                        f"JSON: {exc}.") from exc
     features = doc.get("features") if isinstance(doc, dict) else None
     if not isinstance(features, dict) or not all(
             isinstance(entry, dict) and isinstance(entry.get("composable"), bool)
@@ -205,7 +205,8 @@ def _shape_parse(result):
         for n, item in enumerate(items):
             if not (isinstance(item, dict) and isinstance(item.get("kind"), str)
                     and _is_int(item.get("start")) and _is_int(item.get("end"))):
-                return f'Item {n} is not an object with a string "kind" and integer "start" and "end".'
+                return (f'Item {n} is not an object with a string "kind" and integer "start" '
+                        'and "end".')
         return None
     if set(result) == {"reject"}:
         reject = result["reject"]

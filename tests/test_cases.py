@@ -1,0 +1,178 @@
+"""Loading cases: every *.json under the cases directory, lightly checked at runtime, sorted by id.
+A malformed case is a runner fault naming its file, never an adapter failure."""
+
+import copy
+import json
+
+import pytest
+from conftest import ROOT, assertion, make_case
+from jsonschema import Draft202012Validator
+
+from keri_conformance import errors
+from keri_conformance.cases import case_problem, load_cases
+
+SCHEMA = Draft202012Validator(
+    json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8")))
+
+STATE = {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1", "ndigs": ["EGhi"], "nt": "1",
+         "wits": [], "bt": "0", "delegator": None}
+
+GOOD = [
+    make_case("CESR-0001", "cesr.parse", {"stream": "2d4b"}, [assertion("rejected")]),
+    make_case("CESR-0002", "cesr.parse", {"stream": "00"}, [assertion("decoded", expected=[])]),
+    make_case("CESR-0003", "cesr.encode", {"code": "E", "raw": "00", "domain": "text"},
+              [assertion("encoded", expected="10")]),
+    make_case("KERI-0001", "keri.process",
+              {"perspective": {"role": "validator"},
+               "messages": [{"stream": "7b7d", "source": "controller"}]},
+              [assertion("disposition", message=0, phase="initial", expected="accepted"),
+               assertion("key_state", name="a2", level="SHOULD", aid="EAbc", expected=STATE)],
+              reference={"implementation": "keripy", "commit": "9a8b7aa"}),
+    make_case("KERI-0002", "keri.emit", {"event": {"t": "icp"}, "seeds": {"DAbc": "00"}},
+              [assertion("emitted_body", expected="7b7d"),
+               assertion("signatures_verify", name="a2"),
+               assertion("attachments_equivalent", name="a3", expected=[])]),
+    make_case("CESR-0004", "cesr.parse", {"stream": ""}, [assertion("rejected")],
+              status="deprecated"),
+    make_case("CESR-0005", "cesr.parse", {"stream": ""},
+              [{"id": "a1", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x"}],
+              status="disputed"),
+]
+
+
+@pytest.mark.parametrize("case", GOOD, ids=[c["id"] for c in GOOD])
+def test_hand_built_cases_satisfy_the_schema_and_the_runtime_check(case):
+    assert list(SCHEMA.iter_errors(case)) == []
+    assert case_problem(case) is None
+
+
+def broken(mutate):
+    case = copy.deepcopy(GOOD[3])
+    mutate(case)
+    return case
+
+
+def set_(path, value):
+    def mutate(case):
+        target = case
+        for key in path[:-1]:
+            target = target[key]
+        target[path[-1]] = value
+    return mutate
+
+
+def delete(path):
+    def mutate(case):
+        target = case
+        for key in path[:-1]:
+            target = target[key]
+        del target[path[-1]]
+    return mutate
+
+
+BROKEN = {
+    "not an object": lambda case: case.clear(),
+    "missing id": delete(["id"]),
+    "schema version": set_(["schema_version"], 2),
+    "schema version bool": set_(["schema_version"], True),
+    "bad id": set_(["id"], "KERI-1"),
+    "bad status": set_(["status"], "retired"),
+    "bad profile": set_(["profile"], 3),
+    "targets not object": set_(["targets"], []),
+    "features not list": set_(["targets", "features"], "kel.basic"),
+    "feature not string": set_(["targets", "features"], [1]),
+    "bad operation": set_(["operation"], "keri.fly"),
+    "input not object": set_(["input"], []),
+    "input carries id": set_(["input", "id"], 5),
+    "input carries op": set_(["input", "op"], "hello"),
+    "assertions empty": set_(["assertions"], []),
+    "assertions not list": set_(["assertions"], {}),
+    "assertion not object": set_(["assertions", 0], "a1"),
+    "assertion id": set_(["assertions", 0, "id"], 1),
+    "assertion check": set_(["assertions", 0, "check"], "vibes"),
+    "assertion level": set_(["assertions", 0, "level"], "MIGHT"),
+    "assertion missing field": delete(["assertions", 0, "phase"]),
+    "message not int": set_(["assertions", 0, "message"], "0"),
+    "message negative": set_(["assertions", 0, "message"], -1),
+    "message bool": set_(["assertions", 0, "message"], True),
+    "phase": set_(["assertions", 0, "phase"], "middle"),
+    "key state not object": set_(["assertions", 1, "expected"], []),
+    "key state missing field": delete(["assertions", 1, "expected", "bt"]),
+    "aid not string": set_(["assertions", 1, "aid"], 3),
+    "duplicate assertion id": set_(["assertions", 1, "id"], "a1"),
+    "provenance not object": set_(["provenance"], None),
+    "reference not object": set_(["provenance", "reference"], "keripy"),
+    "reference implementation": set_(["provenance", "reference", "implementation"], 3),
+}
+
+
+@pytest.mark.parametrize("name", list(BROKEN))
+def test_each_malformation_is_described(name):
+    case = broken(BROKEN[name])
+    problem = case_problem(case)
+    assert isinstance(problem, str) and problem.endswith("."), name
+
+
+def test_every_check_the_runner_knows_is_loadable():
+    from keri_conformance.assertions import CHECKS, CRYPTO_CHECKS
+    from keri_conformance.cases import CHECK_FIELDS
+
+    assert set(CHECK_FIELDS) == set(CHECKS) | set(CRYPTO_CHECKS)
+
+
+def test_an_unhashable_check_is_described():
+    case = broken(set_(["assertions", 0, "check"], ["decoded"]))
+    assert "check" in case_problem(case)
+
+
+def test_a_case_that_is_not_an_object_is_described():
+    assert case_problem(["x"]) == "It is not a JSON object."
+
+
+def test_load_cases_reads_recursively_and_sorts_by_id(cases_dir):
+    directory = cases_dir(*reversed(GOOD))
+    (directory / "README.txt").write_text("not a case")
+    loaded = load_cases(directory)
+    assert [c["id"] for c in loaded] == sorted(c["id"] for c in GOOD)
+
+
+def test_a_missing_cases_directory_is_a_fault(tmp_path):
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(tmp_path / "nope")
+    assert info.value.code == errors.E_CASES_MISSING
+    assert info.value.exit_code == errors.EXIT_FAULT
+
+
+def test_a_malformed_case_names_its_file(cases_dir):
+    directory = cases_dir(GOOD[0], broken(set_(["status"], "retired")))
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory)
+    assert info.value.code == errors.E_CASE_FORMAT
+    assert "KERI-0001.json" in str(info.value)
+    assert "status" in str(info.value)
+
+
+@pytest.mark.parametrize("content", [b"{not json", b"\xff\xfe", b"[" * 100000])
+def test_unparseable_case_files_are_faults(cases_dir, content):
+    directory = cases_dir()
+    (directory / "bad.json").write_bytes(content)
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory)
+    assert info.value.code == errors.E_CASE_FORMAT
+    assert "bad.json" in str(info.value)
+
+
+def test_an_oversized_case_file_is_a_fault(cases_dir):
+    directory = cases_dir(GOOD[0])
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory, max_bytes=100)
+    assert "100 bytes" in str(info.value)
+
+
+def test_duplicate_case_ids_are_a_fault(cases_dir):
+    directory = cases_dir(GOOD[0])
+    (directory / "copy.json").write_text(json.dumps(GOOD[0]))
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory)
+    assert "CESR-0001" in str(info.value)
+    assert "copy.json" in str(info.value)
