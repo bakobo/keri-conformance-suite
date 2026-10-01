@@ -33,7 +33,8 @@ def test_hello_features_follow_the_keripy_generation():
     common = {"cesr.domain.binary", "cesr.serialization.json", "cesr.serialization.cbor",
               "cesr.serialization.mgpk", "keri.version-1.x"}
     if GENERATION == "main":
-        assert set(features) == common | {"cesr.genus-2.00", "keri.version-2.x"}
+        assert set(features) == common | {"cesr.genus-1.00", "cesr.genus-2.00",
+                                          "keri.version-2.x"}
     else:
         assert set(features) == common | {"cesr.genus-1.00"}
 

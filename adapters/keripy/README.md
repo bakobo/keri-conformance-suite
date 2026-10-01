@@ -1,6 +1,6 @@
 # keripy adapter
 
-Connects keripy to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse` and `cesr.encode` and declares only those operations. It composes nothing: `composes` is empty, and every value it reports is produced by keripy, as the tables below say value by value.
+Connects keripy to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse` and `cesr.encode` and declares only those operations. It composes nothing: `composes` is empty, and every value it reports either comes from keripy or is measured from what keripy's own parser consumed. The tables below say which, value by value.
 
 The adapter does not read, reuse or import anything from `generators/`. keripy generated or cross-checked many of the cases, so an adapter that shared code with that generator would test the generator against itself.
 
@@ -27,7 +27,7 @@ Point the runner at the console script inside the instance's `.venv` rather than
 
 `hello` reports the installed keripy, not the pin in `pyproject.toml`: `implementation.version` is the installed `keri` distribution's version and `implementation.commit` is the commit recorded in its PEP 610 `direct_url.json`.
 
-Declared features. keripy main: `cesr.genus-2.00`, `cesr.domain.binary`, `cesr.serialization.json`, `cesr.serialization.cbor`, `cesr.serialization.mgpk`, `keri.version-1.x`, `keri.version-2.x`. keripy 1.2.14: `cesr.genus-1.00`, `cesr.domain.binary`, the three serializations, `keri.version-1.x`. keripy main can read 1.00 count codes, but only after a genus-version code selects that table; the 1.x interoperability streams carry none, so the main instance does not declare `cesr.genus-1.00`. keripy 1.2.14's parser never reads 2.00 count codes, so that instance does not declare `cesr.genus-2.00`.
+Declared features. keripy main: `cesr.genus-1.00`, `cesr.genus-2.00`, `cesr.domain.binary`, `cesr.serialization.json`, `cesr.serialization.cbor`, `cesr.serialization.mgpk`, `keri.version-1.x`, `keri.version-2.x`. keripy main reads 1.00 count codes once a genus/version code selects that table, so it declares `cesr.genus-1.00`. It does not read the genus-less 1.x streams of the interoperability profile as 1.x does, and those cases fail rather than being skipped. keripy 1.2.14: `cesr.genus-1.00`, `cesr.domain.binary`, the three serializations, `keri.version-1.x`. Its parser accepts a genus/version code but never switches tables, so it does not declare `cesr.genus-2.00`.
 
 ## Tests
 
@@ -38,44 +38,55 @@ cd adapters/keripy/keripy-1.2.14 && uv run pytest ../tests   # against keripy 1.
 
 Tests marked `main` or `onex` run only against that keripy generation. Branch coverage is 100% when the two runs are combined (`coverage combine`).
 
+## How a stream is parsed
+
+`cesr.parse` hands the stream to keripy's own `Parser.msgParsator`, one message (body plus attachments) per call. That is the same unit keripy's own parse loops (`allParsator`, `parsator`) use. The adapter calls it with `framed=True` until the stream is used up, using one fresh parser per request. keripy main is called as `msgParsator(ims, framed=True, piped=False, version=None)`, so a genus/version code at the top level carries over to later messages exactly as it does in keripy. keripy 1.2.14 is called as `msgParsator(ims, framed=True, pipeline=False)` with no KERI processors attached.
+
+No keripy code is modified. keripy's parser returns objects, not offsets, so two things let the adapter see where keripy was:
+
+- **`Tracked`** (`src/kcs_adapter_keripy/measure.py`) is the `bytearray` the stream is handed over in. It knows the stream offset of its first byte. When keripy strips bytes from its front (`del ims[:n]`), it tells the recorder and advances. When keripy cuts a substream (`ims[:n]`), the substream is also a `Tracked` and knows its own offset.
+- **A subclass of keripy's `Parser`** overrides `_extractor` and `extract`, the two methods through which keripy takes every primitive, indexed signature and count code from the stream. Each override records what keripy extracted and where its buffer stood before and after, then returns keripy's result unchanged. The subclass also wraps the helper generators keripy hands a whole group to. On keripy main these are every method named in `Parser.Methods`; on 1.2.14 they are `_nonTransReceiptCouples`, `_transIdxSigGroups` and `_sadPathSigGroup`. Each wrapper records where keripy's buffer stood when the helper returned.
+
+**End of input.** If keripy's parser yields, asking for more bytes, the stream is complete (adapter protocol, "End of input"), so the adapter rejects with keripy's `ShortageError`. This happens on keripy 1.2.14, which waits rather than raising when a body or an item is cut short, and which also waits for attachments after any message. On 1.2.14 a final message with no attachments is therefore a rejection.
+
+**Rejections.** Any exception keripy's parser raises is a rejection, with keripy's exception class as the class. On keripy main a failure inside an enclosed attachments group arrives as keripy's own `SizedGroupError`. There is one exception. keripy 1.2.14's `msgParsator` dispatches the finished message to its KERI processors, and with none attached that dispatch raises (`ValidationError: No kevery to process...`). keripy's own parse loop classes such errors as non-extraction errors and resumes. The adapter treats an exception as this post-extraction kind only when every one of these holds:
+- the call consumed a whole message;
+- the exception was not raised inside an extraction;
+- the exception is not an `ExtractionError`;
+- keripy's buffer stands at the end of the stream or at the start of the next message.
+
+## Measured, not sourced
+
+The protocol needs offsets, and keripy's parser does not expose them. Every offset below is measured from what keripy consumed. None is computed from a count, a size or a code table.
+
+| Value | Measured as |
+|---|---|
+| `start` of every item | The stream offset of keripy's buffer when keripy began taking the item |
+| `end` of a primitive, indexed signature or count code that keripy extracted with stripping | The offset of keripy's buffer after the extraction returned |
+| `end` of a count code keripy peeked at and then stripped itself (keripy main: `del ims[:ctr.byteSize(cold)]`) | The end of that deletion. The adapter checks that the deletion is exactly the code (`Counter.byteSize`). If keripy also took the group's contents in the same deletion, as it does for a native CESR body, the adapter answers `unsupported` |
+| `end` and `size` of a message | The end and length of keripy's deletion of the body (`Serder` stripping it). `proto`, `version` and `serialization` come from keripy's `smell` of those same bytes. The adapter checks that `smell`'s declared size equals the length keripy consumed |
+| `group_end`, when keripy cuts the group out as a substream (`eims = ims[:eags]; del ims[:eags]`, `gims = ims[:gs]; del ims[:gs]`, 1.2.14's `pims = ims[:pags]; del ims[:pags]`) | The end of that deletion, which is the first deletion keripy makes from the same buffer after taking the count code |
+| `group_end`, when keripy hands the group to a helper method (main's `Parser.Methods`; 1.2.14's `_nonTransReceiptCouples`, `_transIdxSigGroups`) | Where keripy's buffer stood when the helper returned. On main this is the same offset as the substream cut for 2.00 codes; for 1.00 item-counted codes (`_ControllerIdxSigs1` and so on) it is the end of the last item keripy took |
+| `group_end`, when keripy 1.2.14 consumes the group inline in `msgParsator` (`-A`, `-B`, `-D`, `-E`, `-G`, `-I`, `-Z`) | Where keripy's buffer stood when keripy took the next count code from the same buffer at the same nesting, or when it finished the message |
+
+Not measurable, answered `unsupported` (`e.parse.group.unmeasurable.p`): keripy 1.2.14's `-H` (TransLastIdxSigGroups) and `-J` (SadPathSigGroups). keripy consumes both inline in `msgParsator`, together with a nested count code taken the same way. Nothing it does separates the end of the outer group from the start of the nested one.
+
 ## Where each value comes from
 
-`cesr.parse` walks the stream frame by frame. Each keripy call is made through one function, `errors.keri()`, which turns any exception keripy raises into a rejection carrying keripy's exception class. An exception raised anywhere else is an adapter bug and becomes a `harness` error. Every request starts from a fresh keripy `Parser`, so nothing carries over between requests.
+| Reported value | Source |
+|---|---|
+| Item boundaries | Measured; see above |
+| Counter `code`, `size` | keripy's `Counter.code` and `Counter.count` for the code keripy extracted |
+| Genus item `code`, `genus`, `version` | The code keripy extracted when `Counter.code` is `KERIACDCGenusVersion`. `code` is keripy's `Counter.qb64`; `genus` is the code without its `-_` selector; `version` is `Counter.b64ToVer(ctr.countToB64(l=3))`, written with a two-digit minor as keripy's `streaming.annot` writes it. Whether the table then changes is keripy's own business: main switches, 1.2.14 does not |
+| Message `proto`, `version`, `serialization` | `kering.smell` of the bytes keripy consumed as the body; `version` is the protocol version, minor unpadded |
+| Primitive `code`, `raw` | `Matter.code`, `Matter.raw` of the object keripy extracted (its own class: `Verfer`, `Cigar`, `Seqner` and so on) |
+| Indexed `code`, `raw`, `index` | `Indexer.code`, `.raw`, `.index` of the `Siger` keripy extracted |
+| Indexed `ondex` | Reported only when keripy's `Indexer.Sizes[code].os > 0`. The value is `Indexer.ondex`. For current-only codes keripy checks that the field is zero and then stores `None`; for those the field is read back from keripy's own `Indexer.qb64`, at the offsets of `Indexer.Sizes`, decoded with keripy's `b64ToInt` |
+| Rejection `class` | The class name of the exception keripy raised, or `ShortageError` when keripy asked for bytes after the end of the stream |
+| `cesr.encode` | `Matter(raw=raw, code=code).qb64b` or `.qb2` |
 
-| Reported value | keripy main | keripy 1.2.14 |
-|---|---|---|
-| What starts at a top-level frame boundary | `kering.sniff` (`msg`, `txt`, `bny`; `ano` reaches `Parser._extractor`, which raises `ColdStartError`) | `kering.sniff` (raises `ColdStartError` itself) |
-| Message `proto`, `version`, `serialization`, `size` | `kering.smell`: proto, protocol version as `major.minor`, kind, size | same |
-| Message `end` | `start + size` from `smell` | same |
-| Any item's `end` | The item's keripy class extracted through `Parser._extractor(ims, klas, cold, abort=True)` from a copy of the stream that stops at the enclosing group's end; `end` is `start` plus the bytes keripy stripped | `Parser._extractor(..., abort=True, gvrsn=...)`, same |
-| Counter `code`, `size` | `Counter.code`, `Counter.count` | same |
-| Genus-version counter | `code == KERIACDCGenusVersion`; keripy's parser consumes only the counter, so `size` 0 and `group_end` = `end`; `gvrsn` = `Counter.b64ToVer(ctr.countToB64(l=3))`, written `major.minor` with two minor digits as keripy's `streaming.annot` writes it; `genus` = the code without its `-_` selector. The parser then switches to that table (`Parser.version` setter, which refuses versions keripy does not support) | Same values. keripy 1.2.14's parser discards the counter without switching tables, and so does the adapter |
-| Counter `group_end` | If `Parser.methods[ctr.name]` names an extraction method, that keripy method run with `abort=True` on the rest of the enclosing frame; `group_end` is the counter's end plus the bytes it consumed. Otherwise `Counter.byteCount(cold)`, which keripy's parser uses for every 2.00 group and every 1.00 quadlet-counted (`QTDex_1_0`) group | Transcribed from `Parser.msgParsator`; see below |
-| Kind of item inside a group | A nested group when its first code character is `-` (keripy's own test in `keri.core.mapping`; in the binary domain the character comes from `codeB2ToB64`). Otherwise `Siger` when the group's parser method is `_ControllerIdxSigs*` or `_WitnessIdxSigs*`, and `Matter` for everything else | The class sequence transcribed from `msgParsator`; see below |
-| Primitive `code`, `raw` | `Matter.code`, `Matter.raw` | same |
-| Indexed `code`, `raw`, `index` | `Indexer.code`, `.raw`, `.index` | same |
-| Indexed `ondex` | Reported only when `Indexer.Sizes[code].os > 0`, meaning the code's table entry defines an ondex field. The value is `Indexer.ondex`. For current-only codes keripy checks that the field is zero and then stores `None`; for those the adapter reads the field back from keripy's own re-serialization (`Indexer.qb64` at the offsets of `Indexer.Sizes`, decoded with keripy's `b64ToInt`) | same |
-| Rejection `class` | The class name of the exception keripy raised | same |
-| `cesr.encode` | `Matter(raw=raw, code=code).qb64b` or `.qb2` | same |
-
-## What the adapter decides rather than keripy
-
-These are the places where the adapter does more than call keripy. Each mirrors something keripy does inline, so there was no keripy callable to use instead.
-
-1. **The walk itself.** keripy's `Parser` routes whole messages to KERI processors and does not report items or offsets, and it does not accept a bare count code such as `-J` at the top level of a stream. The adapter therefore drives the walk itself, using keripy for every boundary and value. The cases in `cesr-1.0` are CESR framing tests, so this is the only way to put them to keripy at all.
-2. **Shortage checks.** Where a body's declared size, or a group's `byteCount`, runs past the end of the stream or of the enclosing group, the adapter rejects with keripy's `ShortageError`. keripy makes the same comparison inline, in `Serder._inhale` (`len(raw) < size`) and in its group methods under `abort=True`. Where keripy main has a group method, keripy's own method raises this, not the adapter.
-3. **keripy 1.2.14 group extents and contents (the weakest-sourced values).** keripy 1.2.14 has no `Counter.byteCount` and no per-code extraction methods. Its `Parser.msgParsator` consumes each attachment group inline (`src/keri/core/parsing.py`, lines 752 to 982 at 1.2.14), and only after a message body, so it cannot be called on these streams. The adapter transcribes that loop: for each count, it extracts the same classes in the same order through keripy's `Parser._extractor`, so each item's boundary is still keripy's:
-   - `-A` ControllerIdxSigs and `-B` WitnessIdxSigs: one `Siger` per count.
-   - `-C` NonTransReceiptCouples: `Verfer`, `Cigar`. `-D` TransReceiptQuadruples: `Prefixer`, `Seqner`, `Saider`, `Siger`.
-   - `-E` FirstSeenReplayCouples: `Seqner`, `Dater`. `-G` SealSourceCouples: `Seqner`, `Saider`. `-I` SealSourceTriples: `Prefixer`, `Seqner`, `Saider`.
-   - `-F` TransIdxSigGroups: `Prefixer`, `Seqner`, `Saider`, then a nested `-A` group. `-H` TransLastIdxSigGroups: `Prefixer`, then a nested `-A` group. Any other nested code is rejected with `UnexpectedCountCodeError`, as keripy does.
-   - `-Z` ESSRPayloadGroup: one `Matter` per count.
-   - `-V` and `-0V` AttachmentGroup: `count * 4` bytes in text, `count * 3` in binary (keripy's own expression, `parsing.py` line 762), holding count codes only.
-   - `-J` SadPathSigGroups, `-K` RootSadPathSigGroups, `-L` and `-0L` PathedMaterialGroup are not transcribed. A stream that uses them gets an `unsupported` error rather than a guess.
-4. **Wire ondex of current-only codes.** See the `ondex` row above.
-
-No composable feature in `profiles/features.json` describes any of this. None of it is protocol behaviour composed on top of keripy. Each item mirrors framing that keripy performs inline.
+Which item kind an extraction becomes depends on the class keripy chose: a `Counter` is a count code or genus item, an `Indexer` is an indexed signature, and any other `Matter` is a primitive. The adapter never chooses a class itself.
 
 ## Errors
 
-`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when 1 is not offered. Request fields the adapter does not know are ignored. A line that is not a JSON object gets an error whose `id` is null. `keri.process` and `keri.emit` get an `unsupported` error. When keripy refuses to encode in `cesr.encode`, the response is an `unsupported` error naming keripy's exception class, because that operation has no rejection result. Every error message begins with a stable code (`e.request.malformed.p`, `e.request.op.unknown.p`, `e.request.op.undeclared.p`, `e.protocol.version.unsupported.p`, `e.encode.refused.p`, `e.parse.group.untranscribed.p`, `e.adapter.internal.p`, `e.adapter.extractor.yielded.p`). Each rejection is also explained on standard error, which the runner keeps in its report.
+`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when 1 is not offered. Request fields the adapter does not know are ignored. A line that is not a JSON object gets an error whose `id` is null. `keri.process` and `keri.emit` get an `unsupported` error. When keripy refuses to encode in `cesr.encode`, the response is an `unsupported` error naming keripy's exception class, because that operation has no rejection result. Every error message begins with a stable code (`e.request.malformed.p`, `e.request.op.unknown.p`, `e.request.op.undeclared.p`, `e.protocol.version.unsupported.p`, `e.encode.refused.p`, `e.parse.group.unmeasurable.p`, `e.parse.native.unsupported.p`, `e.adapter.internal.p`, and `e.adapter.*` codes for each way keripy could step outside what the measurement expects). Each rejection is also explained on standard error, which the runner keeps in its report.
