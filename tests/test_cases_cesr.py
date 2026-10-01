@@ -40,7 +40,7 @@ def spec():
     except spec_source.SpecUnavailable as e:
         if os.environ.get("KCS_REQUIRE_SPEC") == "1":
             raise
-        pytest.skip(f"the pinned CESR specification text is unavailable: {e}")
+        return pytest.skip(f"the pinned CESR specification text is unavailable: {e}")
 
 
 def _scenario_gaps() -> set[int]:

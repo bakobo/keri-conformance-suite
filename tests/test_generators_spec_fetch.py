@@ -53,7 +53,8 @@ def test_spec_text_is_available_when_required():
         if os.environ.get("KCS_REQUIRE_SPEC") == "1":
             pytest.fail(f"KCS_REQUIRE_SPEC=1 but the specification text is unavailable: {e}")
         pytest.skip(f"the pinned CESR specification text is unavailable: {e}")
-    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == spec_source.SPEC_SHA256
+    else:
+        assert hashlib.sha256(text.encode("utf-8")).hexdigest() == spec_source.SPEC_SHA256
 
 
 def test_cache_defaults_under_the_home_directory(monkeypatch):

@@ -26,7 +26,7 @@ def spec_text() -> str:
     except spec_source.SpecUnavailable as e:
         if os.environ.get("KCS_REQUIRE_SPEC") == "1":
             raise
-        pytest.skip(f"the pinned CESR specification text is unavailable: {e}")
+        return pytest.skip(f"the pinned CESR specification text is unavailable: {e}")
 
 # --- Base64 integers and the URL-safe alphabet -------------------------------------------------
 
