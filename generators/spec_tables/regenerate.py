@@ -147,6 +147,11 @@ def differences(want: dict[str, bytes], have: dict[str, bytes]) -> list[str]:
 
 
 def write(root: pathlib.Path, files: dict[str, bytes]) -> None:
+    """Make the generated files under ``root`` exactly ``files``: first remove every owned file
+    (a case under cases/cesr, or a profile) that is no longer generated, as after a scenario is
+    deleted or a case renumbered, then write each file."""
+    for path in sorted(set(committed(root)) - set(files)):
+        (root / path).unlink()
     for path, data in files.items():
         target = root / path
         target.parent.mkdir(parents=True, exist_ok=True)

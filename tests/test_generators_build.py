@@ -304,6 +304,27 @@ def test_differences_names_missing_extra_and_differing_files():
     ]
 
 
+def test_write_removes_owned_files_that_are_no_longer_generated(tmp_path):
+    regenerate.write(tmp_path, {"cases/cesr/CESR-0001.json": b"{}\n",
+                                "cases/cesr/CESR-0002.json": b"{}\n",
+                                "profiles/cesr-1.0.json": b"[]\n",
+                                "profiles/features.json": b"{}\n"})
+    regenerate.write(tmp_path, {"cases/cesr/CESR-0001.json": b"{}\n"})
+    assert regenerate.committed(tmp_path) == {"cases/cesr/CESR-0001.json": b"{}\n"}
+    # A file the generator does not own is left alone.
+    assert (tmp_path / "profiles" / "features.json").exists()
+
+
+def test_regenerating_after_a_scenario_is_deleted_leaves_a_clean_tree(tree):
+    for name in ("strict.json", "keripy1x.json"):
+        (tree / "scenarios" / "cesr" / name).unlink()
+    regenerate.write(tree, regenerate.generate(ROOT))  # the full catalogue, as committed
+    files = regenerate.generate(tree)
+    regenerate.write(tree, files)
+    assert regenerate.differences(files, regenerate.committed(tree)) == []
+    assert not (tree / "cases" / "cesr" / "CESR-0043.json").exists()
+
+
 def test_write_and_committed_round_trip(tmp_path):
     files = {"cases/cesr/CESR-0001.json": b"{}\n", "profiles/cesr-1.0.json": b"[]\n"}
     regenerate.write(tmp_path, files)
