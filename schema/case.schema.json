@@ -1,0 +1,1161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/bakobo/keri-conformance-suite/schema/case.schema.json",
+  "title": "Conformance case",
+  "description": "One case: a fixed input and the assertions an implementation's report must satisfy. See docs/design.md, Cases.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "description",
+    "status",
+    "profile",
+    "targets",
+    "operation",
+    "input",
+    "assertions",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "active",
+        "draft",
+        "disputed",
+        "deprecated"
+      ]
+    },
+    "profile": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*$"
+    },
+    "targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wire",
+        "features"
+      ],
+      "properties": {
+        "wire": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+          }
+        }
+      }
+    },
+    "operation": {
+      "enum": [
+        "cesr.parse",
+        "cesr.encode",
+        "keri.process",
+        "keri.emit"
+      ]
+    },
+    "input": {
+      "type": "object"
+    },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "allOf": [
+          {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "decoded"
+                  },
+                  "expected": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/item"
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "rejected"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "encoded"
+                  },
+                  "expected": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "message",
+                  "phase",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "disposition"
+                  },
+                  "message": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "phase": {
+                    "enum": [
+                      "initial",
+                      "final"
+                    ]
+                  },
+                  "expected": {
+                    "enum": [
+                      "accepted",
+                      "not-accepted",
+                      "pending",
+                      "rejected",
+                      "duplicitous",
+                      "superseded"
+                    ]
+                  }
+                },
+                "if": {
+                  "properties": {
+                    "expected": {
+                      "const": "superseded"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "phase": {
+                      "const": "final"
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "aid",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "key_state"
+                  },
+                  "aid": {
+                    "type": "string"
+                  },
+                  "expected": {
+                    "$ref": "#/$defs/key_state"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "emitted_body"
+                  },
+                  "expected": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "signatures_verify"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "attachments_equivalent"
+                  },
+                  "expected": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "level": {
+                      "enum": [
+                        "MUST",
+                        "SHOULD",
+                        "MAY"
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "clause"
+                  ],
+                  "not": {
+                    "required": [
+                      "basis"
+                    ]
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "level": {
+                      "const": "INTEROP"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "basis"
+                  ],
+                  "not": {
+                    "required": [
+                      "clause"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenario",
+        "generator",
+        "reference"
+      ],
+      "properties": {
+        "scenario": {
+          "type": "string"
+        },
+        "generator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "reference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "implementation",
+                "commit"
+              ],
+              "properties": {
+                "implementation": {
+                  "type": "string"
+                },
+                "commit": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{7,40}$"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "dispute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clauses",
+        "summary",
+        "raised_at"
+      ],
+      "properties": {
+        "clauses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/clause"
+          }
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raised_at": {
+          "type": "string"
+        }
+      }
+    },
+    "superseded_by": {
+      "type": "string",
+      "pattern": "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "cesr.parse"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stream"
+            ],
+            "properties": {
+              "stream": {
+                "type": "string",
+                "pattern": "^([0-9a-f]{2})*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "cesr.encode"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "raw",
+              "domain"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "raw": {
+                "type": "string",
+                "pattern": "^([0-9a-f]{2})*$"
+              },
+              "domain": {
+                "enum": [
+                  "text",
+                  "binary"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "keri.process"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "perspective",
+              "messages"
+            ],
+            "properties": {
+              "perspective": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "role"
+                ],
+                "properties": {
+                  "role": {
+                    "const": "validator"
+                  }
+                }
+              },
+              "messages": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "stream",
+                    "source"
+                  ],
+                  "properties": {
+                    "stream": {
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{2})*$"
+                    },
+                    "source": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "keri.emit"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "event",
+              "seeds"
+            ],
+            "properties": {
+              "event": {
+                "type": "object"
+              },
+              "seeds": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string",
+                  "pattern": "^([0-9a-f]{2})*$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "disputed"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "dispute"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "deprecated"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "superseded_by"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "cesr.parse"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "decoded",
+                    "rejected"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "cesr.encode"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "encoded"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "keri.process"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "disposition",
+                    "key_state"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "keri.emit"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "emitted_body",
+                    "signatures_verify",
+                    "attachments_equivalent"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "clause": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spec",
+        "section",
+        "url",
+        "commit"
+      ],
+      "properties": {
+        "spec": {
+          "enum": [
+            "cesr",
+            "keri",
+            "acdc",
+            "ipex"
+          ]
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,40}$"
+        },
+        "quote": {
+          "type": "string",
+          "description": "The sentence of the clause the assertion rests on, verbatim."
+        }
+      }
+    },
+    "key_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sn",
+        "said",
+        "keys",
+        "kt",
+        "ndigs",
+        "nt",
+        "wits",
+        "bt",
+        "delegator"
+      ],
+      "properties": {
+        "sn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "said": {
+          "type": "string"
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "kt": {
+          "$ref": "#/$defs/threshold"
+        },
+        "ndigs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nt": {
+          "$ref": "#/$defs/threshold"
+        },
+        "wits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bt": {
+          "type": "string",
+          "pattern": "^(0x)?[0-9a-f]{1,64}$"
+        },
+        "delegator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "threshold": {
+      "description": "A threshold as the implementation holds it, exactly the forms the runner normalizes: a hexadecimal integer string with an optional 0x prefix, as KERI encodes numeric thresholds; or weighted clauses, either one clause as a non-empty list of fraction strings or several as a non-empty list of such lists, never mixed. A fraction string is a non-negative integer of at most 64 digits, optionally over a non-zero denominator of at most 64 digits, with no spaces or signs. The runner normalizes both sides before comparing.",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^(0x)?[0-9a-fA-F]{1,64}$"
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{1,64}(/(?=[0-9]{1,64}$)[0-9]*[1-9][0-9]*)?$"
+          }
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9]{1,64}(/(?=[0-9]{1,64}$)[0-9]*[1-9][0-9]*)?$"
+            }
+          }
+        }
+      ]
+    },
+    "item": {
+      "description": "One decoded item, as the adapter protocol defines it for a cesr.parse result. Closed and kind-specific, and identical in the case schema and the adapter-protocol schema, so that every expected item a case states is one a conforming adapter can report.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "code",
+            "raw"
+          ],
+          "properties": {
+            "kind": {
+              "const": "primitive"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "code": {
+              "type": "string"
+            },
+            "raw": {
+              "type": "string",
+              "pattern": "^([0-9a-f]{2})*$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "code",
+            "raw",
+            "index"
+          ],
+          "properties": {
+            "kind": {
+              "const": "indexed"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "code": {
+              "type": "string"
+            },
+            "raw": {
+              "type": "string",
+              "pattern": "^([0-9a-f]{2})*$"
+            },
+            "index": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ondex": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "code",
+            "size",
+            "group_end"
+          ],
+          "properties": {
+            "kind": {
+              "const": "counter"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "code": {
+              "type": "string"
+            },
+            "size": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "genus": {
+              "type": "string"
+            },
+            "gvrsn": {
+              "type": "string"
+            },
+            "group_end": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "start",
+            "end",
+            "proto",
+            "version",
+            "serialization",
+            "size"
+          ],
+          "properties": {
+            "kind": {
+              "const": "message"
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "proto": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "serialization": {
+              "enum": [
+                "JSON",
+                "CBOR",
+                "MGPK"
+              ]
+            },
+            "size": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      ]
+    }
+  }
+}

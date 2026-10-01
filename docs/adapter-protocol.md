@@ -43,7 +43,7 @@ The first request of every session.
 {"id": 0, "op": "hello", "protocol": 1, "supported": [1]}
 ```
 
-`supported` lists every protocol version the runner can speak, and `protocol` is the highest of them. The adapter chooses the highest version in `supported` that it also implements, and answers with that version in `protocol`; the rest of the session uses it. An adapter that implements none of them answers with an `error` response, and the runner stops. This is how a version-1 adapter keeps working with a runner that has moved on to version 2.
+`supported` lists every protocol version the runner can speak, and `protocol` is the highest of them. The adapter chooses the highest version in `supported` that it also implements, and answers with that version in `protocol`; the rest of the session uses it. An adapter that implements none of them answers with an `error` response, and the runner stops. Two rules, binding from version 1 on, are what make that work: an adapter ignores any request field it does not recognise, and it never rejects a `hello` because `protocol` is higher than the versions it implements — it negotiates from `supported` instead. Together they let a version-1 adapter keep working with a runner that has moved on to version 2.
 
 The adapter answers with the protocol version it chose and what it is:
 
