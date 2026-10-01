@@ -1,33 +1,4 @@
-<!--
-REFERENCE COPY — not used by this repo.
-
-Copy this to `CONTRIBUTING.md` — **drop the `oss-` prefix** — in a public Bakobo repo, and fill
-the placeholders below. The prefix exists only so these files sit inertly in `bakobo/template`
-without being mistaken for that repo's own; it is never part of the published filename, and
-GitHub's Community Standards check looks for the unprefixed name.
-
-It deliberately does NOT live at `CONTRIBUTING.md` here, because `bakobo/template` is private
-and seeds private repos, which have no outside contributors to address.
-
-Its siblings, same rule: `oss-SECURITY.md`, `oss-CODE_OF_CONDUCT.md`, and `oss-codeql.yml`
-(which becomes `.github/workflows/codeql.yml`). The checklist they all serve is
-`dev/standards/oss-posture.md`; audit a repo against it with `dev/oss-posture`.
-
-Placeholders, all marked `((LIKE THIS))`:
-
-  ((REPO))          the repo name, e.g. witness
-  ((BUILD+TEST))    the fresh-clone-to-passing-tests commands for this repo's toolchain
-  ((CHECKS))        the required status checks by name, e.g. `test` and `image`
-
-Ship `SECURITY.md` alongside this file — copy `oss-SECURITY.md` from the same directory. The
-vulnerability section below points at it and reads wrong without it.
-
-Keep it self-contained. A contributor cannot read `bakobo/dev`, so never link a standard there —
-restate what they need. If a rule below does not apply to a repo, delete that section rather than
-softening it into something nobody can act on.
--->
-
-# Contributing to ((REPO))
+# Contributing to keri-conformance-suite
 
 Thanks for considering it. This document is what you need to make a change here land; it stands on its own and assumes no access to anything private.
 
@@ -36,14 +7,15 @@ Before a large change, open an issue and describe what you want to do. Small fix
 ## Getting to passing tests
 
 ```sh
-((BUILD+TEST))
+uv sync --dev
+uv run pytest
 ```
 
 Every dependency is public. If a step asks you for a credential, that is a bug in our setup and we want to hear about it.
 
 ## How a change lands
 
-Branch, push the branch, open a pull request against `main`. ((CHECKS)) must pass. Maintainers merge with a **merge commit or a rebase, never a squash** — the individual commits are the record, and collapsing them loses the per-commit history and the sign-off chain.
+Branch, push the branch, open a pull request against `main`. The `test` check must pass. Maintainers merge with a **merge commit or a rebase, never a squash** — the individual commits are the record, and collapsing them loses the per-commit history and the sign-off chain.
 
 Direct pushes to `main` are blocked by a repository ruleset. Organization admins can bypass it, and that exists for the case where the process itself is broken, not as a shortcut.
 
@@ -80,6 +52,14 @@ If you want to read it, `this.i` is plain YAML and the `why` fields are prose. I
 Every error this software raises carries a stable symbolic code, says whether retrying could help, and reads as a complete plain sentence. Codes look like `e.state.conflict.r` or `e.input.range.f`: a sorter, a descriptor, and a trailing disposition token where `.r` means retrying could help and `.f` means it will not. They are classified by *what the obstacle was*, never by which component raised it, so a caller can prefix-match a whole branch of meaning.
 
 Practically: if you add a failure path, give it a code in the existing style rather than raising a bare exception, and write the message as a sentence a user could act on. "Something went wrong" is not an error message.
+
+## Adding or changing a conformance case
+
+Cases are generated, never hand-edited. A case's input and expected verdict come from a scenario file and a generator, and CI regenerates every fixture and fails if anything differs. To add a case, add or extend a scenario and regenerate.
+
+A published case's expected verdict never changes. If a case turns out to be wrong, it is deprecated and a corrected case is added under a new id, so that no implementation's result silently flips between suite releases. Every case cites the normative spec clause it tests; behaviour that no spec clause requires belongs in a non-normative profile, not in the conformance cases.
+
+If you believe a case contradicts the spec, open an issue citing the clause. Do not change the case in the same pull request that makes your implementation pass it.
 
 ## Using AI to write your contribution
 

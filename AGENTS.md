@@ -1,41 +1,16 @@
-## Starting a repo from this template
+## This repository
 
-*This section documents bootstrapping a **new** repo from `bakobo/template`. Once your repo is set
-up, delete this section — like the Testing/CI/README stanzas below, it is self-removing.* Two ways
-to start; both end at the same per-clone setup.
+`keri-conformance-suite` is a conformance suite for implementations of CESR, KERI, ACDC and IPEX: fixed test cases with implementation-neutral expected verdicts, a runner, and adapters that connect implementations to the runner. It is incubating at Bakobo and is intended to be offered to the KERI Foundation.
 
-**A. Canonical — GitHub template (preferred).** Create the repo straight from the template so the
-scaffolding arrives automatically:
+Rules specific to this repo, on top of the standards below:
 
-```sh
-gh repo create bakobo/<name> --template bakobo/template --private
-```
-
-**B. Vendor into an existing / hand-made repo.** When the target repo already exists (you ran
-`git init` yourself, or you are retrofitting an older repo), copy **only** the template's tracked
-scaffolding into it — `AGENTS.md CLAUDE.md GEMINI.md .cursorrules .gitignore this.i.seed .github/`.
-Do **not** copy `.git/` or `.tick/` (the tick ledger is per-clone; see below).
-
-**The `oss-*` files are deliberately not on that list.** `oss-CONTRIBUTING.md`, `oss-SECURITY.md`,
-`oss-CODE_OF_CONDUCT.md` and `oss-codeql.yml` are for a repo that becomes **public**, which happens
-later than creation and usually never. Copy them then, dropping the `oss-` prefix, and follow the
-rest of the checklist in [`dev/standards/oss-posture.md`](../dev/standards/oss-posture.md) — the
-GitHub settings matter as much as the files, and `dev/oss-posture` audits both.
-
-**Per-clone setup (run in every fresh clone, both paths):**
-
-1. **`tick init`** — connect the clone to the task ledger (adopts the remote ledger if a colleague
-   already made one, else creates it). Not tracked on `main`; it is an orphan `tick` branch plus a
-   gitignored `.tick/` store. Once the repo has a remote, `git config tick.remote origin` and push
-   the `tick` branch so the ledger is backed up.
-2. **Intent (`this.i`).** If anyone will later need to know *why* this repo is built the way it is,
-   adopt intent: `cp this.i.seed this.i`, rewrite the root goal to this repo's real purpose (the
-   rebuttal-surface standard), give it a fresh opaque id, and delete `this.i.seed`. A pure
-   content/asset/config repo may instead just delete `this.i.seed` — its absence is the opt-out.
-3. **Docs, README, CI.** Follow the repo-layout convention — design/architecture docs under `docs/`
-   (the **Repo layout** rule in the engineering-standards block below;
-   [`dev/standards/repo-layout.md`](../dev/standards/repo-layout.md)). Add a `README.md` (fresh-clone
-   → passing tests, with a clickable CI badge) and CI once the repo gains code, per the stanzas below.
+- **Cases are generated, never hand-edited.** Fixtures under `cases/` come from scenario files and generators; CI regenerates them and fails on any difference. Never edit a fixture or an expected verdict to make an implementation pass.
+- **A published case's expected verdict never changes.** Correcting one means a new case id and a deprecated old one.
+- **Every case cites a normative spec clause.** Behaviour only an implementation defines goes into a labelled non-normative profile, not into conformance cases.
+- **Work on an adapter never touches `cases/`, and work on cases never touches `adapters/`.** Keeping those file sets disjoint is how a mismatch gets reported instead of papered over.
+- **The spec text is the authority.** Where keripy's output contradicts the spec, the case is marked `disputed`; it is not resolved here.
+- **This repo is public.** Review-panel output never lands in this tree; it goes to the private `bakobo/reviews` repo.
+- **Bakobo methodology is incubation-only.** `this.i`, the `tick` ledger and the Bakobo standards block below will be removed when the suite is contributed to the KERI Foundation. Everything a future maintainer needs must therefore also be stated in plain prose under `docs/`; `this.i` may record why, but it must never be the only place a rule lives.
 
 <!-- >>> bakobo standards >>> (managed by dev/sync-tier1) -->
 

@@ -1,0 +1,4 @@
+Prove that KERI-family implementations agree = goal:
+  nid: 26kmlhsh
+  why: >-
+    Implementations of CESR, KERI, ACDC and IPEX outside keripy have no way to show they are correct; a 2026-09 survey of ten Rust codebases found the same defects (for example, CESR 2.0 counters that count items where keripy counts quadlets) that a shared corpus would have caught on day one. Chose a standalone suite of fixed cases with implementation-neutral expected verdicts over adding tests to each spec or each implementation, because the interesting cases cross specs (a KEL case is also a CESR case) and test data churns at a different rate from spec prose. Tradeoff: a separate artifact to govern and keep in step with the specs, and a risk of enshrining keripy's behaviour as law, which the case-provenance and disputed-case rules exist to contain.

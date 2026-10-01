@@ -1,14 +1,3 @@
-<!--
-REFERENCE COPY — not used by this repo. Copy to `CODE_OF_CONDUCT.md` (drop the `oss-` prefix) in a
-public Bakobo repo. Verbatim Contributor Covenant 2.1, fetched from the canonical source; the only
-edit is the reporting contact, which replaces the upstream `[INSERT CONTACT METHOD]` placeholder.
-
-Do not reword the covenant. Its value is that it is the same document thousands of projects use, and
-a locally-improved version is just a document nobody recognizes. If Bakobo needs to say something
-additional, say it in CONTRIBUTING.md.
--->
-
-
 # Contributor Covenant Code of Conduct
 
 ## Our Pledge

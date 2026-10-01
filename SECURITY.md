@@ -1,30 +1,3 @@
-<!--
-REFERENCE COPY — not used by this repo.
-
-Copy this to `SECURITY.md` — **drop the `oss-` prefix** — in a public Bakobo repo, and fill the
-placeholders. The prefix only keeps the file inert here; it is never part of the published name.
-It does not live at `SECURITY.md` here, because `bakobo/template` is private and seeds private
-repos. Checklist: `dev/standards/oss-posture.md`; audit with `dev/oss-posture`.
-
-Placeholders, all marked `((LIKE THIS))`:
-
-  ((REPO))       the repo name, e.g. witness
-  ((SCOPE))      what this repo is responsible for, and what belongs upstream — see the note below
-  ((KNOWN))      OPTIONAL: accepted risks a reporter would otherwise spend time rediscovering.
-                 Delete the section if there are none. Only state what is already public.
-
-((SCOPE)) is the section worth thinking about rather than pasting. Most of these repos sit on
-keripy, and a reporter cannot tell from the outside where our code stops. Say it explicitly, and
-name the upstream so a real finding reaches the people who can fix it instead of dying in our
-inbox. For example, for `witness`: the operator layer is ours, the witness itself is keripy's.
-
-Before publishing this file, turn on GitHub private vulnerability reporting for the repo:
-
-  gh api -X PUT repos/bakobo/((REPO))/private-vulnerability-reporting
-
-The "Report a vulnerability" button does not exist until you do, and this file points at it.
--->
-
 # Security Policy
 
 ## Reporting a vulnerability
@@ -52,7 +25,11 @@ Bakobo is a small company. These are commitments about *responsiveness*, not a g
 
 ## Scope
 
-((SCOPE))
+This repository is responsible for the conformance runner, the case generators, the adapters it hosts, and the correctness of the cases themselves. A case that wrongly passes an unsafe implementation, or a runner that can be made to report a pass it did not observe, is in scope here.
+
+A vulnerability in an implementation under test — keripy, keriox, affinidi-keri-rs, signify-ts, KERIA or any other — belongs to that project. Report it to them, not to us.
+
+**Cases can disclose vulnerabilities.** A must-reject case that an implementation wrongly accepts is, in effect, a public proof of concept against that implementation. If you are contributing a case that exposes an unpatched security defect in a released implementation, report it to that project privately first, and to us through the channels above. We hold such a case out of the public tree until the affected project has had a chance to ship a fix, on the same 90-day default described below.
 
 A vulnerability in a dependency should go to that project, not to us. If you are not sure which side of the line something falls on, report it here and we will route it — that is our job, not yours.
 
@@ -67,10 +44,6 @@ If a vulnerability is being actively exploited, tell us that up front and we wil
 We will not pursue or support legal action against anyone who reports a vulnerability in good faith through the channels above, and who does not access, modify or destroy data belonging to anyone else, degrade a service other people are relying on, or use the finding for anything except the report. Testing against your own deployment is always fine.
 
 There is no bug bounty. We are not able to pay for reports, and we would rather say so plainly than imply otherwise.
-
-## Known accepted risks
-
-((KNOWN))
 
 ## This repository's licence carries no warranty
 
