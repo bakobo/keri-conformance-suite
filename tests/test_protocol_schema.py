@@ -154,3 +154,8 @@ def test_counter_reports_group_end():
 
 def test_hello_request_carries_supported_versions():
     assert list(REQUEST.iter_errors({"id": 0, "op": "hello", "protocol": 1}))
+
+
+def test_requests_tolerate_unknown_fields():
+    assert list(REQUEST.iter_errors({"id": 0, "op": "hello", "protocol": 2, "supported": [1, 2],
+                                      "future": True})) == []

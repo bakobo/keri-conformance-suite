@@ -8,7 +8,6 @@
       "oneOf": [
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [
             "id",
             "op",
@@ -40,7 +39,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [
             "id",
             "op",
@@ -62,7 +60,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [
             "id",
             "op",
@@ -96,7 +93,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [
             "id",
             "op",
@@ -148,7 +144,6 @@
         },
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [
             "id",
             "op",
@@ -175,7 +170,8 @@
             }
           }
         }
-      ]
+      ],
+      "description": "Requests are open: an adapter must ignore fields it does not recognise, so later protocol versions can add fields without breaking version-1 adapters."
     },
     "response": {
       "oneOf": [
