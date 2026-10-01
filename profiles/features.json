@@ -1,0 +1,102 @@
+{
+  "about": "The feature vocabulary for the adapter protocol. An adapter's hello lists the features its implementation supports, and the runner sends only cases whose required features are all listed. Features marked composable may also appear in hello's composes list, meaning the adapter supplies that behaviour itself rather than the implementation. Names are permanent once released; a feature is retired, never renamed.",
+  "vocabulary_version": 1,
+  "features": {
+    "cesr.domain.binary": {
+      "description": "Handles the binary domain (qb2) and switches between text and binary domains within a stream.",
+      "composable": false
+    },
+    "cesr.genus-1.00": {
+      "description": "Reads and writes the count codes of genus AAA version 1.00, as keripy 1.x uses them. No specification defines this table; cases using it belong to the keripy-1.x interoperability profile.",
+      "composable": false
+    },
+    "cesr.genus-2.00": {
+      "description": "Reads and writes the count codes of genus AAA version 2.00, as defined by the CESR specification's master code table.",
+      "composable": false
+    },
+    "cesr.native": {
+      "description": "Parses message bodies encoded natively in CESR.",
+      "composable": false
+    },
+    "cesr.serialization.cbor": {
+      "description": "Frames and parses CBOR message bodies located by their version string.",
+      "composable": false
+    },
+    "cesr.serialization.json": {
+      "description": "Frames and parses JSON message bodies located by their version string.",
+      "composable": false
+    },
+    "cesr.serialization.mgpk": {
+      "description": "Frames and parses MessagePack message bodies located by their version string.",
+      "composable": false
+    },
+    "crypto.ed25519": {
+      "description": "Verifies and produces Ed25519 signatures and keys.",
+      "composable": false
+    },
+    "crypto.ed448": {
+      "description": "Verifies and produces Ed448 signatures and keys.",
+      "composable": false
+    },
+    "crypto.secp256k1": {
+      "description": "Verifies and produces ECDSA secp256k1 signatures and keys.",
+      "composable": false
+    },
+    "crypto.secp256r1": {
+      "description": "Verifies and produces ECDSA secp256r1 signatures and keys.",
+      "composable": false
+    },
+    "kel.basic": {
+      "description": "Validates inception, rotation and interaction events for a single-signature transferable identifier.",
+      "composable": false
+    },
+    "kel.delegation": {
+      "description": "Validates delegated inception and rotation against the delegator's anchoring seal.",
+      "composable": false
+    },
+    "kel.multisig.numeric": {
+      "description": "Validates numeric signing and next thresholds over several keys.",
+      "composable": false
+    },
+    "kel.multisig.weighted": {
+      "description": "Validates fractionally weighted signing and next thresholds, including multiple clauses.",
+      "composable": false
+    },
+    "kel.nontransferable": {
+      "description": "Validates inception of non-transferable identifiers.",
+      "composable": false
+    },
+    "kel.partial-rotation": {
+      "description": "Validates partial and reserve rotation, including dual-indexed signatures.",
+      "composable": false
+    },
+    "kel.recovery": {
+      "description": "Applies the superseding recovery rule.",
+      "composable": true
+    },
+    "kel.witness": {
+      "description": "Validates witness receipts and witness thresholds, including witness rotation.",
+      "composable": false
+    },
+    "keri.duplicity": {
+      "description": "Records a conflicting event as duplicitous rather than only declining it.",
+      "composable": true
+    },
+    "keri.escrow": {
+      "description": "Holds events that are valid but not yet acceptable, and accepts them when what they wait for arrives.",
+      "composable": true
+    },
+    "keri.routing": {
+      "description": "Routes each incoming message to the processing it needs (key event, receipt, reply) and drives the implementation to quiescence after each delivery.",
+      "composable": true
+    },
+    "keri.version-1.x": {
+      "description": "Accepts KERI message bodies carrying the legacy 1.XX version string.",
+      "composable": false
+    },
+    "keri.version-2.x": {
+      "description": "Accepts KERI message bodies carrying the 2.XX version string.",
+      "composable": false
+    }
+  }
+}

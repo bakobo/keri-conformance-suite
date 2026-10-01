@@ -93,37 +93,13 @@ If this repo has no `this.i` yet and warrants one, see [`dev/methodology.md`](..
 §2 and the shipped `this.i.seed`. A trivial repo (pure content/assets/config, where no one will
 later need to know *why*) may skip intent entirely — just delete `this.i.seed`.
 
-## Testing Protocol
+## Testing and CI
 
-This repository appears to have no test suite yet. Before writing feature code
-or fixing bugs, propose an appropriate testing framework for this project type
-and add a single trivially-passing test to confirm the setup works. In the
-same commit, propose to change AGENTS.md to replace this instruction with one
-that instructs agents to follow strict TDD from now on: write failing tests
-that capture happy path and edge cases/unhappy paths for each requirement,
-observe them fail, implement until tests pass, never checkin without proving
-that all tests pass, aim for 100% of all new code, and always leave existing
-code better tested than it was before you touched it.
+Follow strict TDD: for each requirement, write failing tests that capture the happy path and the unhappy paths, run them and observe them fail, then implement until they pass. Never commit without proving the whole suite passes. New code needs 100% branch coverage, and CI enforces it.
 
-## CI and Documentation
-
-This repo appears to have no CI workflows yet. Until it does, any time you make
-code changes to the user, propose an appropriate set of GitHub actions (e.g.,
-`.github/workflows/ci.yml`) that builds and runs tests on every push and
-pull request. Propose to remove this instruction from AGENTS.md on the
-same commit.
-
-This repository has no README. As long is this is the case, any time you
-make code changes for the user, propose to add a `README.md` that explains how
-to get from a fresh clone to passing tests, with a clickable CI status
-badge at the top for each active workflow. Propose to remove this
-instruction from AGENTS.md on the same commit.
-
-When writing or modifying GitHub Actions workflows, always use the latest
-stable release of each action. Avoid versions pinned to Node.js 16 or
-Node.js 20 (both deprecated by GitHub). In 2026, this meant to prefer Node.js
-24-compatible versions, but the standard may evolve over time. Check the GitHub
-Marketplace for each action's current release.
+- Set up and test: `uv sync --dev && uv run pytest` (the coverage gate is in `pyproject.toml`).
+- Lint: `uv run ruff check .`
+- CI is `.github/workflows/ci.yml` (required check: `test`) plus CodeQL. Pin every action by full commit SHA with the version in a trailing comment, and use node24-runtime versions; verify with `curl -sL https://raw.githubusercontent.com/<org>/<action>/<sha>/action.yml | grep using:`.
 
 <!-- >>> tick stanza >>> (managed by `tick init`) -->
 
