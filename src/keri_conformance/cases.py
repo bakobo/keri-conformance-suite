@@ -6,6 +6,7 @@ tests/test_schema_agreement.py proves the two agree. A schema-invalid case is th
 fault naming its file, never a case that gets scored.
 """
 
+import os
 from pathlib import Path
 
 from keri_conformance.contracts import HEX_STRING, ITEM, KEY_STATE
@@ -13,10 +14,12 @@ from keri_conformance.errors import (
     E_CASE_FORMAT,
     E_CASE_READ,
     E_CASE_READ_TRANSIENT,
+    E_CASES_BYTES,
+    E_CASES_COUNT,
     E_CASES_MISSING,
     RunnerError,
 )
-from keri_conformance.jsonfile import JsonFileError, read_json
+from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, read_json
 from keri_conformance.session import OPERATIONS
 from keri_conformance.shapes import (
     Check,
@@ -32,6 +35,8 @@ from keri_conformance.shapes import (
 )
 
 MAX_CASE_BYTES = 32 * 1024 * 1024
+MAX_CASE_FILES = 10_000
+MAX_CASES_BYTES = 256 * 1024 * 1024
 CASE_ID = "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
 COMMIT = "^[0-9a-f]{7,40}$"
 FEATURE = r"^[a-z0-9]+(\.[a-z0-9-]+)+$"
@@ -145,10 +150,11 @@ def case_problem(case) -> str | None:
     problem = CASE(case, "") or _cross_field_problem(case)
     if problem:
         return f"It does not satisfy the case schema: {problem}."
-    ids = [a["id"] for a in case["assertions"]]
-    for assertion_id in ids:
-        if ids.count(assertion_id) > 1:
-            return f'Its assertion id "{assertion_id}" is used twice.'
+    seen = set()
+    for assertion in case["assertions"]:
+        if assertion["id"] in seen:
+            return f'Its assertion id "{assertion["id"]}" is used twice.'
+        seen.add(assertion["id"])
     return None
 
 
@@ -165,14 +171,38 @@ def _read(path: Path, max_bytes: int):
         raise RunnerError(code, f"The case file {path} {exc.sentence}.") from exc
 
 
-def load_cases(directory, max_bytes: int = MAX_CASE_BYTES) -> list[dict]:
+def _discover(directory: Path, max_files: int, max_total_bytes: int) -> list[Path]:
+    """The case files under `directory`, refusing during the walk, before any file is read, once
+    there are more than `max_files` of them or they add up to more than `max_total_bytes`."""
+    paths, total = [], 0
+    for path in directory.rglob("*.json"):
+        if len(paths) == max_files:
+            raise RunnerError(E_CASES_COUNT, f"The cases directory {directory} holds more than "
+                                             f"{max_files} case files, the most the runner will "
+                                             "load in one run.")
+        try:
+            total += os.path.getsize(path)
+        except OSError as exc:
+            code = E_CASE_READ_TRANSIENT if exc.errno in TRANSIENT_ERRNOS else E_CASE_READ
+            raise RunnerError(code, f"The case file {path} could not be sized: "
+                                    f"{exc.strerror or exc}.") from exc
+        if total > max_total_bytes:
+            raise RunnerError(E_CASES_BYTES, f"The case files under {directory} add up to more "
+                                             f"than {max_total_bytes} bytes, the most the runner "
+                                             "will load in one run.")
+        paths.append(path)
+    return sorted(paths)
+
+
+def load_cases(directory, max_bytes: int = MAX_CASE_BYTES, *, max_files: int = MAX_CASE_FILES,
+               max_total_bytes: int = MAX_CASES_BYTES) -> list[dict]:
     """Every case under `directory`, recursively, sorted by id."""
     directory = Path(directory)
     if not directory.is_dir():
         raise RunnerError(E_CASES_MISSING, f"The cases directory {directory} does not exist; pass "
                                            "--cases, or --suite with the root of a suite checkout.")
     cases, origin = [], {}
-    for path in sorted(directory.rglob("*.json")):
+    for path in _discover(directory, max_files, max_total_bytes):
         case = _read(path, max_bytes)
         problem = case_problem(case)
         if problem:

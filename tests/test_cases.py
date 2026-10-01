@@ -218,3 +218,54 @@ def test_duplicate_case_ids_are_a_fault(cases_dir):
         load_cases(directory)
     assert "CESR-0001" in str(info.value)
     assert "copy.json" in str(info.value)
+
+
+# --- bounded discovery ----------------------------------------------------------------------------
+
+
+def test_case_discovery_stops_at_the_file_count_limit(cases_dir):
+    directory = cases_dir(GOOD[0], GOOD[1], GOOD[2])
+    assert len(load_cases(directory, max_files=3)) == 3
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory, max_files=2)
+    assert info.value.code == errors.E_CASES_COUNT
+    assert "2" in str(info.value)
+
+
+def test_case_discovery_stops_at_the_byte_limit_before_reading(cases_dir):
+    directory = cases_dir(GOOD[0], GOOD[1])
+    (directory / "zz-broken.json").write_text("{not json")  # never read: the limit trips first
+    total = sum(p.stat().st_size for p in directory.rglob("*.json"))
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory, max_total_bytes=total - 1)
+    assert info.value.code == errors.E_CASES_BYTES
+    assert str(total - 1) in str(info.value)
+
+
+def test_the_count_limit_also_trips_before_reading(cases_dir):
+    directory = cases_dir(GOOD[0])
+    (directory / "a-broken.json").write_text("{not json")
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory, max_files=1)
+    assert info.value.code == errors.E_CASES_COUNT
+
+
+@pytest.mark.parametrize(("number", "code"), [(5, "E_CASE_READ_TRANSIENT"), (13, "E_CASE_READ")])
+def test_a_failure_to_size_a_case_file_is_coded(cases_dir, monkeypatch, number, code):
+    from keri_conformance import cases as cases_module
+
+    directory = cases_dir(GOOD[0])
+
+    def broken(_path):
+        raise OSError(number, "cannot stat")
+
+    monkeypatch.setattr(cases_module.os.path, "getsize", broken)
+    with pytest.raises(errors.RunnerError) as info:
+        load_cases(directory)
+    assert info.value.code == getattr(errors, code)
+
+
+def test_duplicate_assertion_ids_are_found_wherever_they_are():
+    case = copy.deepcopy(GOOD[4])
+    case["assertions"][2]["id"] = "a1"
+    assert case_problem(case) == 'Its assertion id "a1" is used twice.'
