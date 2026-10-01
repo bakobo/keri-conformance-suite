@@ -1,0 +1,52 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error.",
+        "section": "Small Count Code table",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#small-count-code-table"
+      },
+      "id": "a1",
+      "inferred_from": {
+        "inference": "A parser should reject a count code whose second character is a numeral selecting no table the genus defines; the clause calls such a code an error but does not say what a parser does with it.",
+        "line": 601,
+        "quote": "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error.",
+        "section": "Small Count Code table"
+      },
+      "level": "SHOULD",
+      "note": "Informative class: unknown-code."
+    }
+  ],
+  "description": "After a KERI 2.0 inception, the attachment position holds the count code -0AB, whose second character is the numeral 0. The specification reserves numerals for other count code tables and genus 2.00 defines none, so the code is an error. (keripy 1.x used -0 as its big-count selector; genus 2.00 uses --.) The clause calls the code an error but does not say what a parser does with it, so the assertion that a parser rejects the stream is graded SHOULD on the inference recorded in inferred_from.",
+  "id": "CESR-0037",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d30414241414141"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-numeral-count-selector"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Reject an attachment count code whose second character selects no defined table"
+}

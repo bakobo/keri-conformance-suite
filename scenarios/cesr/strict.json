@@ -1,0 +1,141 @@
+{
+  "about": "cesr.parse cases for behaviour no clause of the CESR specification states, in the non-normative profile cesr-strict. Each assertion is level INTEROP with a basis naming the inference it rests on.",
+  "profile": "cesr-strict",
+  "messages": {
+    "alpha": {
+      "proto": "KERI",
+      "version": [
+        2,
+        0
+      ],
+      "genus_version": [
+        2,
+        0
+      ],
+      "keys": [
+        "kcs/cesr/alpha/k0",
+        "kcs/cesr/alpha/k1",
+        "kcs/cesr/alpha/k2"
+      ],
+      "kt": "2",
+      "next": [
+        "kcs/cesr/alpha/n0"
+      ],
+      "nt": "1",
+      "witnesses": [
+        "kcs/cesr/alpha/w0"
+      ],
+      "bt": "1"
+    },
+    "beta": {
+      "proto": "KERI",
+      "version": [
+        2,
+        0
+      ],
+      "genus_version": [
+        2,
+        0
+      ],
+      "keys": [
+        "kcs/cesr/beta/k0"
+      ],
+      "kt": "1",
+      "next": [
+        "kcs/cesr/beta/n0"
+      ],
+      "nt": "1"
+    },
+    "gamma": {
+      "proto": "KERI",
+      "version": [
+        1,
+        0
+      ],
+      "legacy": true,
+      "keys": [
+        "kcs/cesr/gamma/k0"
+      ],
+      "kt": "1",
+      "next": [
+        "kcs/cesr/gamma/n0"
+      ],
+      "nt": "1"
+    }
+  },
+  "cases": [
+    {
+      "id": "CESR-0043",
+      "key": "strict-unassigned-count-code",
+      "title": "Refuse an unassigned count code even though its size is readable",
+      "description": "Inside an attachments group, the count code -dAB: a letter type the genus 2.00 table does not assign, with a readable size of one quadlet, followed by that quadlet. A lenient parser could skip it by its size.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "literal": "-dABAAAA"
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "basis": "Inference, not a clause: a parser that meets a code its genus 2.00 tables do not assign cannot know what the code means, so it should refuse the stream rather than skip the element by the size the code carries. The specification does not require this (line 599 only requires a small count code's type to be a letter; line 618 says old parsers 'will break' on new codes, which describes rather than requires). keripy main refuses such codes.",
+          "note": "Informative class: unknown-code."
+        }
+      ]
+    },
+    {
+      "id": "CESR-0044",
+      "key": "strict-unassigned-variable-primitive",
+      "title": "Refuse an unassigned variable-size primitive code even though its size is readable",
+      "description": "In the prefix position of a nontransferable receipt couple, the code 4ZAB: selector 4 (variable size, no lead bytes) with the type Z, which the master table does not assign, and a size of one quadlet. A lenient parser could skip it by its size.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-M",
+              "items": [
+                {
+                  "literal": "4ZABAAAA"
+                },
+                {
+                  "primitive": "0B",
+                  "raw": "kcs/cesr/s/cig"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "basis": "Inference, not a clause: a parser that meets a code its genus 2.00 tables do not assign cannot know what the code means, so it should refuse the stream rather than skip the element by the size the code carries. The specification does not require this (line 599 only requires a small count code's type to be a letter; line 618 says old parsers 'will break' on new codes, which describes rather than requires). keripy main refuses such codes.",
+          "note": "Informative class: unknown-code."
+        }
+      ]
+    }
+  ]
+}

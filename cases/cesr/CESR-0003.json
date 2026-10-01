@@ -1,0 +1,45 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "4544774b6b496d537a4c3951565978354c474f746150694249547933344c4f6c66626233365934496551634a",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code E, a 32-byte digest, pad size 1, one-character code.",
+  "id": "CESR-0003",
+  "input": {
+    "code": "E",
+    "domain": "text",
+    "raw": "3c0a908992ccbf50558c792c63ad68f881213cb7e0b3a57db6f7e98e08790709"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-blake3-digest-text"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode a Blake3-256 digest in the text domain"
+}

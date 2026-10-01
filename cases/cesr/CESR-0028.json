@@ -1,0 +1,108 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Codes in the large Count Code table MUST be each 8 characters long.",
+        "section": "Large Count Code table",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#large-count-code-table"
+      },
+      "expected": [
+        {
+          "code": "-_AAACAA",
+          "end": 8,
+          "genus": "AAA",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "--C",
+          "end": 317,
+          "group_end": 409,
+          "kind": "counter",
+          "size": 23,
+          "start": 309
+        },
+        {
+          "code": "-K",
+          "end": 321,
+          "group_end": 409,
+          "kind": "counter",
+          "size": 22,
+          "start": 317
+        },
+        {
+          "code": "A",
+          "end": 409,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "ec434c6ce8394d7f13d5333c5dd67c83cdc8627a562ce7beb53f304735df8f0396bc84a053b68cd5da386df1ad2b76fff04e8c2fe33aea831407fc54ac084e74",
+          "start": 321
+        }
+      ],
+      "id": "a1",
+      "level": "MUST",
+      "spec_conflicts": [
+        {
+          "line": 674,
+          "quote": "When part of a Count Code determines the count of the following Primitives or groups of Primitives",
+          "section": "Encoding Scheme Symbols Table",
+          "why": "The legend for the # symbol in the Encoding Scheme Table says a count code's digits count primitives or groups, where line 591 says the size MUST count quadlets/triplets, not primitives."
+        },
+        {
+          "line": 714,
+          "quote": "When part of a Count Code determines the count of following Primitives or groups of Primitives",
+          "section": "Encoding scheme format symbol table",
+          "why": "The same legend under the indexed code table repeats the item-count reading that line 591 rules out."
+        },
+        {
+          "line": 1103,
+          "quote": "where `##` is replaced by the two-character Base64 count of the number of complex groups",
+          "section": "Examples",
+          "why": "The worked example's prose calls -X's digits a count of complex groups, though its own values (-XBf = 95 quadlets for one group) follow line 591."
+        }
+      ]
+    }
+  ],
+  "description": "--C is the large form of the attachments group code: two selector characters, the type, and five size digits. Here it frames a -K of one signature, size 23, written --CAAAAX.",
+  "id": "CESR-0028",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d2d4341414141582d4b4157414144735130787336446c4e667850564d7a7864316e79447a636869656c597335373631507a42484e642d5041356138684b4254746f7a56326a68743861307264765f77546f7776347a7271677851485f46537343453530"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/attachments.json#large-count-code"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Parse a large (eight-character) attachments count code"
+}

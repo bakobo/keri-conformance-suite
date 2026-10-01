@@ -1,0 +1,91 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0): -C NonTransReceiptCouples counts (prefix, signature) couples.",
+      "check": "decoded",
+      "expected": [
+        {
+          "end": 299,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 299,
+          "start": 0,
+          "version": "1.0"
+        },
+        {
+          "code": "-A",
+          "end": 303,
+          "group_end": 391,
+          "kind": "counter",
+          "size": 1,
+          "start": 299
+        },
+        {
+          "code": "A",
+          "end": 391,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "e8c24e7026a0dae4912ac0ce9d6d555f6cc5c6872d818e3970003c16153bfd7e31bfdd2d5c21d2028f982e370ccf87d63acc3d90b89a529153cdeb21edca71eb",
+          "start": 303
+        },
+        {
+          "code": "-C",
+          "end": 395,
+          "group_end": 527,
+          "kind": "counter",
+          "size": 1,
+          "start": 391
+        },
+        {
+          "code": "B",
+          "end": 439,
+          "kind": "primitive",
+          "raw": "65659f21428eea925fb0e7ccbc396f5ebfb7619acc7b258b91b918d4d95794f9",
+          "start": 395
+        },
+        {
+          "code": "0B",
+          "end": 527,
+          "kind": "primitive",
+          "raw": "849361b829ae967450d5542b3c9ed3b34ebe65750b4cedbd7c51da018f70c5d062f57da1428a45dd2994a4369878d0603332a2126e68f8c7225fd297c0f0e8fa",
+          "start": 439
+        }
+      ],
+      "id": "a1",
+      "level": "INTEROP"
+    }
+  ],
+  "description": "A KERI 1.0 inception with its 1.00 -A signature group (one signature), then a 1.00 -C (NonTransReceiptCouples) group of one couple: a B prefix and a 0B signature. In keripy 1.x the -C size is 1, the number of couples.",
+  "id": "CESR-0046",
+  "input": {
+    "stream": "7b2276223a224b45524931304a534f4e3030303132625f222c2274223a22696370222c2264223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2269223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2273223a2230222c226b74223a2231222c226b223a5b224450466b37356c425f54436c6c535158546a76366a6447485837777564732d4a4e66735648654a6452692d70225d2c226e74223a2231222c226e223a5b2245494d55677267456565394476457857714a547455422d672d4f69796266745866574e75714d4f2d46475851225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4141424141446f776b35774a714461354a4571774d366462565666624d5847687932426a6a6c774144775746547639666a475f33533163496449436a3567754e777a50683959367a443251754a70536b56504e36794874796e48722d4341424247566c6e7946436a7571535837446e7a4c77356231365f743247617a48736c69354735474e545a56355435304243456b3247344b61365764464456564373386e744f7a5472356c6451744d3762313855646f426a33444630474c3166614643696b58644b5a536b4e7068343047417a4d714953626d6a3478794a6630706641384f6a36"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-nontrans-receipt-couples"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: -C counts receipt couples"
+}

@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""Regenerate every case under cases/ and the profiles that list them, from scenarios/. The logic,
+usage and exit statuses are in generators/spec_tables/cli.py, where the tests measure them."""
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
+from generators.spec_tables.cli import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())

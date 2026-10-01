@@ -92,7 +92,24 @@ ITEMS = [
     ({"kind": "indexed", "start": 0, "end": 88, "code": "A", "raw": "00"}, False),
     ({"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 1, "group_end": 92}, True),
     ({"kind": "counter", "start": 0, "end": 8, "code": "-_AAA", "size": 1, "group_end": 8,
-      "genus": "AAA", "gvrsn": "CAA"}, True),
+      "genus": "AAA", "gvrsn": "CAA"}, False),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA",
+      "version": "2.00"}, True),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA",
+      "version": "2.16"}, True),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA",
+      "version": "2.0"}, False),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA",
+      "version": "2.00\n"}, False),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA",
+      "version": "2.00", "size": 0}, False),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA",
+      "version": "2.00", "group_end": 8}, False),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAA", "genus": "AAA",
+      "version": "2.00"}, False),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAAA",
+      "version": "2.00"}, False),
+    ({"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "version": "2.00"}, False),
     ({"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 1}, False),
     ({"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 1, "group_end": 4,
       "raw": "00"}, False),
@@ -217,6 +234,15 @@ BASE_CASES = [
                assertion("attachments_equivalent", name="a3", expected=[{"i": 0}])]),
 ]
 BASE_CASES[0]["assertions"][0]["clause"] = {**CLAUSE, "quote": "A stream MUST ..."}
+# A consumer obligation inferred from a producer-side MUST, graded SHOULD (inferred_from), and a
+# decoded assertion recording conflicting text elsewhere in the specification (spec_conflicts).
+BASE_CASES[0]["assertions"][0]["level"] = "SHOULD"
+BASE_CASES[0]["assertions"][0]["inferred_from"] = {
+    "quote": "A stream MUST ...", "section": "Count codes", "line": 591,
+    "inference": "A parser should reject a stream that breaks it."}
+BASE_CASES[1]["assertions"][0]["spec_conflicts"] = [
+    {"quote": "the count of the following Primitives", "section": "Legend", "line": 674,
+     "why": "It says items where line 591 says quadlets."}]
 
 
 def test_the_base_cases_are_valid_in_both():
@@ -306,7 +332,9 @@ BASE_RESULTS = [
         {"kind": "indexed", "start": 44, "end": 132, "code": "A", "raw": "00", "index": 0,
          "ondex": 0},
         {"kind": "counter", "start": 132, "end": 136, "code": "-K", "size": 1,
-         "group_end": 224, "genus": "AAA", "gvrsn": "CAA"},
+         "group_end": 224},
+        {"kind": "genus", "start": 136, "end": 144, "code": "-_AAACAA", "genus": "AAA",
+         "version": "2.00"},
         {"kind": "message", "start": 224, "end": 567, "proto": "KERI", "version": "2.0",
          "serialization": "CBOR", "size": 343}]}),
     ("cesr.parse", {"reject": {"class": "truncated"}}),
@@ -378,6 +406,15 @@ def test_an_assertion_check_must_fit_the_operation(base, check):
     assert (case_problem(case) is None) == fits
     if not fits:
         assert "operation" in case_problem(case)
+
+
+@pytest.mark.parametrize("level", ["MUST", "MAY", "SHOULD"])
+def test_an_inferred_obligation_is_graded_should_in_both(level):
+    case = _replace(BASE_CASES[0], ("assertions", 0, "level"), level)
+    assert CASE_VALIDATOR.is_valid(case) == (level == "SHOULD")
+    assert (case_problem(case) is None) == (level == "SHOULD")
+    if level != "SHOULD":
+        assert "inferred_from" in case_problem(case)
 
 
 def test_cesr_encode_needs_a_non_empty_code():

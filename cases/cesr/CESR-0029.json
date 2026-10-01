@@ -1,0 +1,116 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code.",
+        "section": "Universal Code table genus/version codes that allow genus/version override",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#universal-code-table-genusversion-codes-that-allow-genusversion-override"
+      },
+      "expected": [
+        {
+          "code": "-_AAACAA",
+          "end": 8,
+          "genus": "AAA",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 413,
+          "kind": "counter",
+          "size": 25,
+          "start": 309
+        },
+        {
+          "code": "-_AAACAA",
+          "end": 321,
+          "genus": "AAA",
+          "kind": "genus",
+          "start": 313,
+          "version": "2.00"
+        },
+        {
+          "code": "-K",
+          "end": 325,
+          "group_end": 413,
+          "kind": "counter",
+          "size": 22,
+          "start": 321
+        },
+        {
+          "code": "A",
+          "end": 413,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "cdc7ecd012f736e5e620ccb0c5004ce6c183ca0e0b745bb727f4376ce49727f753ae7973bf8e9e2422d89708bb4d172e153ad5bac0b3da70ec937a87709f15a6",
+          "start": 325
+        }
+      ],
+      "id": "a1",
+      "level": "MUST",
+      "spec_conflicts": [
+        {
+          "line": 674,
+          "quote": "When part of a Count Code determines the count of the following Primitives or groups of Primitives",
+          "section": "Encoding Scheme Symbols Table",
+          "why": "The legend for the # symbol in the Encoding Scheme Table says a count code's digits count primitives or groups, where line 591 says the size MUST count quadlets/triplets, not primitives."
+        },
+        {
+          "line": 714,
+          "quote": "When part of a Count Code determines the count of following Primitives or groups of Primitives",
+          "section": "Encoding scheme format symbol table",
+          "why": "The same legend under the indexed code table repeats the item-count reading that line 591 rules out."
+        },
+        {
+          "line": 1103,
+          "quote": "where `##` is replaced by the two-character Base64 count of the number of complex groups",
+          "section": "Examples",
+          "why": "The worked example's prose calls -X's digits a count of complex groups, though its own values (-XBf = 95 quadlets for one group) follow line 591."
+        }
+      ]
+    }
+  ],
+  "description": "An attachments group (-C) whose first element is the genus/version code -_AAACAA, then a -K of one signature. -C is one of the universal codes that allow a genus/version override, so the parser must take the code as switching tables for the group (here to the table already in force) and must not read it as a group member or a count.",
+  "id": "CESR-0029",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d43415a2d5f4141414341412d4b41574141444e782d7a5145766332356559677a4c444641457a6d7759504b446774305737636e39446473354a636e39314f7565584f5f6a70346b49746958434c744e467934564f745736774c5061634f7954656f64776e78576d"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/attachments.json#genus-override-same-table"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "A genus/version code may open an attachments group"
+}

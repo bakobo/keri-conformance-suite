@@ -1,0 +1,46 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "d40001059740adbcf5b275d2e95a811e76df7102b53f575120ceae53c5a532403549813c",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "The same code and raw value as CESR-0007 in the binary domain: 36 bytes, of which the first three are the code.",
+  "id": "CESR-0008",
+  "input": {
+    "code": "1AAB",
+    "domain": "binary",
+    "raw": "059740adbcf5b275d2e95a811e76df7102b53f575120ceae53c5a532403549813c"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-secp256k1-key-binary"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode an ECDSA secp256k1 verification key in the binary domain"
+}

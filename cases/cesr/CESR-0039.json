@@ -1,0 +1,52 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "id": "a1",
+      "inferred_from": {
+        "inference": "A parser should reject a primitive whose pad bits or lead bytes are not zero.",
+        "line": 234,
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes"
+      },
+      "level": "SHOULD",
+      "note": "Informative class: nonzero-pad."
+    }
+  ],
+  "description": "A nontransferable receipt couple whose B prefix carries a 1 in the two bits that come from its zero lead byte. The specification states no parser-side rule for this stream; the stream breaks the cited MUST, and the assertion that a parser rejects it is graded SHOULD on the inference recorded in inferred_from.",
+  "id": "CESR-0039",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414147352e222c2274223a22696370222c2264223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2269223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2273223a2230222c226b74223a2232222c226b223a5b22444358516c42303037556d4c73757044497a5f414443393857375a68635a614d6a746632545f2d6e644c5933222c2244504a2d7230792d494c7a53764b2d763466776257494a79476a41675a4b483335336a72454b4839506f725f222c22444e42373568385f4d454c64735053754172685a72397864765533587047635053374a5042454a7a68714c6e225d2c226e74223a2231222c226e223a5b22454f7a756e384f61316c4b714c5f772d4b55783270666d3659435f596d41793431674a663331476449505345225d2c226274223a2231222c2262223a5b2242426a4a45346d5454655f496c675a39426d4d724c6f684d47745443477073466b5033744449666d72736838225d2c2263223a5b5d2c2261223a5b5d7d2d4341692d4d4168426b37494f6a6a5a354663337363626d434e61306935437347526b616a79516233774570697665704c6643713042435037623141485330424657422d366549307837726679656e4570492d3565786a574c6a597834336245744345557a534d464b66386c334b3941756d615557675a77474c4e3051337649594a70463668587570614e65"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-nonzero-pad-bits-primitive"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Reject a primitive whose pad bits are not zero"
+}

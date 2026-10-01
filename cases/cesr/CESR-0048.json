@@ -1,0 +1,128 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0) inside the override; the override's scope from CESR v1.0 lines 609 and 814.",
+      "check": "decoded",
+      "expected": [
+        {
+          "code": "-_AAACAA",
+          "end": 8,
+          "genus": "AAA",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 309,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 313,
+          "group_end": 413,
+          "kind": "counter",
+          "size": 25,
+          "start": 309
+        },
+        {
+          "code": "-_AAABAA",
+          "end": 321,
+          "genus": "AAA",
+          "kind": "genus",
+          "start": 313,
+          "version": "1.00"
+        },
+        {
+          "code": "-A",
+          "end": 325,
+          "group_end": 413,
+          "kind": "counter",
+          "size": 1,
+          "start": 321
+        },
+        {
+          "code": "A",
+          "end": 413,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "3d92cdd3d2567e2cb5a9a49eea88a0e8272c2eab283ec31df5220bef3ca37cd86f5d5da1fdf7799cf71c8a14133fa40ef921daa78940f3633da5e98d0d304bc0",
+          "start": 325
+        },
+        {
+          "end": 714,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 413,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 718,
+          "group_end": 810,
+          "kind": "counter",
+          "size": 23,
+          "start": 714
+        },
+        {
+          "code": "-K",
+          "end": 722,
+          "group_end": 810,
+          "kind": "counter",
+          "size": 22,
+          "start": 718
+        },
+        {
+          "code": "A",
+          "end": 810,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "b1cea07ce6e98797855d2f281fa1b9e13f5152fadb839dc21b99e24b3fbb26f1283b940e26dd1481df9b130954ca3465fb9c99090ce84b32434135bff52a653c",
+          "start": 722
+        }
+      ],
+      "id": "a1",
+      "level": "INTEROP"
+    }
+  ],
+  "description": "A genus 2.00 stream: a KERI 2.0 inception, then an attachments group (-C) whose first element is the genus/version code -_AAABAA, so its contents are read with the 1.00 table (an -A of one signature, size 1). After -C ends the 2.00 table is in force again, so the next inception's -C and -K are read as genus 2.00 codes. The scoping is the specification's (line 609: the code modifies the count codes 'inside a special enclosing Count Code group'; line 814: the parser MUST switch tables for the group), but the specification does not define the 1.00 table, so the inner items come from keripy 1.2.14's table and the case is non-normative. No normative case can test the reversion while genus 2.00 is the only table the specification defines.",
+  "id": "CESR-0048",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d43415a2d5f4141414241412d414142414141396b733354306c5a2d4c4c5770704a3771694b446f4a7977757179672d7778333149677676504b4e38324739645861483939336d633978794b46424d5f704137354964716e6955447a597a326c3659304e4d4576417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414143787a71423835756d486c3456644c7967666f626e68503146532d7475446e6349626d654a4c5037736d385367376c41346d33525342333573544356544b4e4758376e4a6b4a444f684c4d6b4e424e625f314b6d5538"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#genus-override-scope"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "A 1.00 genus/version override applies inside its attachments group and ends with it"
+}

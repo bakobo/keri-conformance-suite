@@ -1,0 +1,46 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "d01013bd82ccccf884f5b973b0f4ac844adb042570d166aa0d31d1f24211e61b768d3f2fe55d504a1e8c6db58b23aac004ed392ff6af7eeff29a76085b792a13e52d",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "The same code and raw value as CESR-0004 in the binary domain: 66 bytes.",
+  "id": "CESR-0005",
+  "input": {
+    "code": "0B",
+    "domain": "binary",
+    "raw": "13bd82ccccf884f5b973b0f4ac844adb042570d166aa0d31d1f24211e61b768d3f2fe55d504a1e8c6db58b23aac004ed392ff6af7eeff29a76085b792a13e52d"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-ed25519-signature-binary"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.domain.binary",
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode an Ed25519 signature in the binary domain"
+}

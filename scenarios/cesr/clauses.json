@@ -1,0 +1,124 @@
+{
+  "about": "The specification clauses CESR scenarios cite, keyed by a short name. Each entry gives the heading the sentence sits under, the sentence verbatim, and the requirement level that sentence states. The generator checks every entry against the text of the CESR specification at tag v1.0 (commit 037129608b9e6960858b752019ac273d40d7386c), which it downloads from that commit into a local cache and uses only if its SHA-256 matches the digest pinned in generators/spec_tables/spec_source.py; the text is not kept in this repository. the quote must appear exactly once, under the named heading, and must contain its level keyword. 'conflicts' lists table rows, legends and examples elsewhere in the text that state a different rule from a cited clause; an assertion names the ones that bear on it in spec_conflicts. 'inferences' lists the producer-side clauses from which a consumer obligation the specification does not state is inferred; an assertion resting on one is graded SHOULD and names it in inferred_from.",
+  "clauses": {
+    "mid-padding": {
+      "section": "Code characters and lead bytes",
+      "level": "MUST",
+      "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined."
+    },
+    "count-invariant": {
+      "section": "Count Code tables",
+      "level": "MUST",
+      "quote": "Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain."
+    },
+    "count-quadlets": {
+      "section": "Count Code tables",
+      "level": "MUST",
+      "quote": "The size component MUST count the Quadlets/triplets in its following group."
+    },
+    "small-count-four-chars": {
+      "section": "Small Count Code table",
+      "level": "MUST",
+      "quote": "Codes in the small Count Code table MUST be each four characters long."
+    },
+    "count-numeral-selector": {
+      "section": "Small Count Code table",
+      "level": "MUST",
+      "quote": "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error."
+    },
+    "large-count-eight-chars": {
+      "section": "Large Count Code table",
+      "level": "MUST",
+      "quote": "Codes in the large Count Code table MUST be each 8 characters long."
+    },
+    "stream-resume": {
+      "section": "Stream parsing rules",
+      "level": "MUST",
+      "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding."
+    },
+    "master-table": {
+      "section": "Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)",
+      "level": "MUST",
+      "quote": "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables."
+    },
+    "indexed-table": {
+      "section": "Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)",
+      "level": "MUST",
+      "quote": "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table."
+    },
+    "version-string-extract": {
+      "section": "Version 2.XX string field format",
+      "level": "MUST",
+      "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps."
+    },
+    "version-string-legacy": {
+      "section": "Legacy Version 1.XX string field format",
+      "level": "MUST",
+      "quote": "Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events."
+    },
+    "genus-override-switch": {
+      "section": "Universal Code table genus/version codes that allow genus/version override",
+      "level": "MUST",
+      "quote": "Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code."
+    }
+  },
+  "conflicts": {
+    "count-legend-674": {
+      "section": "Encoding Scheme Symbols Table",
+      "quote": "When part of a Count Code determines the count of the following Primitives or groups of Primitives",
+      "why": "The legend for the # symbol in the Encoding Scheme Table says a count code's digits count primitives or groups, where line 591 says the size MUST count quadlets/triplets, not primitives."
+    },
+    "count-legend-714": {
+      "section": "Encoding scheme format symbol table",
+      "quote": "When part of a Count Code determines the count of following Primitives or groups of Primitives",
+      "why": "The same legend under the indexed code table repeats the item-count reading that line 591 rules out."
+    },
+    "count-example-1103": {
+      "section": "Examples",
+      "quote": "where `##` is replaced by the two-character Base64 count of the number of complex groups",
+      "why": "The worked example's prose calls -X's digits a count of complex groups, though its own values (-XBf = 95 quadlets for one group) follow line 591."
+    },
+    "indexed-3-code-size": {
+      "section": "Indexed code table",
+      "quote": "|     `3`   |   1        |     3       |      3      |      6    |",
+      "why": "The body's indexed code table gives selector 3 a code size of 6, while its own format column (3$######&&&&) and the Annex table give 8, and a 114-byte signature with pad size 0 needs a code that is a multiple of four characters."
+    }
+  },
+  "inferences": {
+    "count-quadlets": {
+      "inference": "A parser should reject a stream in which a count code's group ends inside an element or runs past the end of the stream, since such a size does not count the quadlets of its group.",
+      "section": "Count Code tables",
+      "quote": "The size component MUST count the Quadlets/triplets in its following group."
+    },
+    "small-count-four-chars": {
+      "inference": "A parser should reject a stream that ends inside a small count code.",
+      "section": "Small Count Code table",
+      "quote": "Codes in the small Count Code table MUST be each four characters long."
+    },
+    "large-count-eight-chars": {
+      "inference": "A parser should reject a stream that ends inside a large count code.",
+      "section": "Large Count Code table",
+      "quote": "Codes in the large Count Code table MUST be each 8 characters long."
+    },
+    "count-numeral-selector": {
+      "inference": "A parser should reject a count code whose second character is a numeral selecting no table the genus defines; the clause calls such a code an error but does not say what a parser does with it.",
+      "section": "Small Count Code table",
+      "quote": "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error."
+    },
+    "mid-padding": {
+      "inference": "A parser should reject a primitive whose pad bits or lead bytes are not zero.",
+      "section": "Code characters and lead bytes",
+      "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined."
+    },
+    "stream-resume": {
+      "inference": "A parser should reject a stream that resumes with a byte that starts none of the eight permitted frames.",
+      "section": "Stream parsing rules",
+      "quote": "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding."
+    },
+    "version-string-extract": {
+      "inference": "A parser should reject a stream whose message body is shorter than the size its version string declares, since it cannot extract and deserialize that field map; the clause states the capability, not what to do with a short body.",
+      "section": "Version 2.XX string field format",
+      "quote": "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps."
+    }
+  }
+}

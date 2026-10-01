@@ -152,6 +152,16 @@ def test_counter_reports_group_end():
     assert list(RESPONSE.iter_errors(message))
 
 
+def test_genus_item_carries_no_size_and_a_two_digit_minor():
+    good = {"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA",
+            "version": "2.00"}
+    assert list(RESPONSE.iter_errors({"id": 1, "result": {"items": [good]}})) == []
+    for bad in ({**good, "size": 8192}, {**good, "version": "2.0"}, {**good, "group_end": 8},
+                {"kind": "counter", "start": 0, "end": 8, "code": "-_AAA", "size": 0,
+                 "group_end": 8, "genus": "AAA"}):
+        assert list(RESPONSE.iter_errors({"id": 1, "result": {"items": [bad]}})), bad
+
+
 def test_hello_request_carries_supported_versions():
     assert list(REQUEST.iter_errors({"id": 0, "op": "hello", "protocol": 1}))
 

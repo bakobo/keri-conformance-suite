@@ -72,14 +72,28 @@ The stream is hex-encoded bytes and may be in either domain or mix them. The res
 
 ```json
 {"id": 1, "result": {"items": [
-  {"kind": "message", "start": 0, "end": 343, "proto": "KERI", "version": "2.0", "serialization": "JSON", "size": 343},
-  {"kind": "counter", "start": 343, "end": 347, "code": "-K", "size": 22, "group_end": 435},
-  {"kind": "indexed", "start": 347, "end": 435, "code": "A", "index": 0, "raw": "9c1f..."}
+  {"kind": "genus", "start": 0, "end": 8, "code": "-_AAACAA", "genus": "AAA", "version": "2.00"},
+  {"kind": "message", "start": 8, "end": 351, "proto": "KERI", "version": "2.0", "serialization": "JSON", "size": 343},
+  {"kind": "counter", "start": 351, "end": 355, "code": "-C", "size": 23, "group_end": 447},
+  {"kind": "counter", "start": 355, "end": 359, "code": "-K", "size": 22, "group_end": 447},
+  {"kind": "indexed", "start": 359, "end": 447, "code": "A", "index": 0, "raw": "9c1f..."}
 ]}}
 {"id": 1, "result": {"reject": {"class": "truncated"}}}
 ```
 
-`start` and `end` are byte offsets into the stream. Report what is on the wire, not what your implementation infers: an indexed item has exactly the index fields its code's table entry defines; a counter's `size` is the value of its size field as encoded, its `group_end` is the offset at which the implementation ended the group the counter introduces, and it carries its genus and version where the code carries them; a message item is reported only for a body framed by a version string, and a native CESR body is reported as its count code and primitives. The runner checks framing from the offsets, so a group whose size was misread ends in the wrong place.
+`start` and `end` are byte offsets into the stream, and `end` is where the item's own encoding ends. Report what is on the wire, not what your implementation infers. Items are reported in stream order, and a group's members follow its count code. There are five kinds:
+
+- **`genus`**: a genus/version code such as `-_AAACAA`. `code` is the whole eight-character code, `genus` its three genus characters, and `version` the version it selects. It has no size and introduces no group: the specification says such a code "MUST NOT provide a count".
+- **`counter`**: any other count code. `code` is its hard part (`-K`, `--C`), `size` the value of its size digits as encoded, and `group_end` the offset at which your implementation ended the group the code introduces. The runner compares `group_end` with the case, so a size read as a number of items rather than quadlets or triplets ends the group in the wrong place even when `size` is right.
+- **`primitive`**: `code` is the hard part of the code (for a variable-size code, without its size digits, e.g. `6B`) and `raw` the raw value in hex, without lead bytes.
+- **`indexed`**: an indexed signature with `code`, `raw`, and exactly the index fields its row of the indexed code table defines: `index` always, and `ondex` only when the row gives it a nonzero ondex length, reported as encoded.
+- **`message`**: a body framed by a version string. A native CESR body is reported as its count code and primitives.
+
+Versions are rendered in decimal as major, a full stop, and minor. A message's `version` is the protocol version from its version string with the minor unpadded (`CAA` is `2.0`, `CAQ` is `2.16`, legacy `10` is `1.0`). A genus item's `version` is the code table version with the minor as at least two digits (`CAA` is `2.00`, `BAA` is `1.00`, `CAQ` is `2.16`), the form the specification uses for code tables ("Version 2.00").
+
+The runner compares the reported items with the expected items exactly: the same items in the same order, each with exactly the fields this section gives it and the same values.
+
+**End of input.** The stream in a `cesr.parse` request is complete. This is a rule of this protocol, not of the CESR specification, which also describes live streams where a parser waits for more bytes. An adapter must treat the end of the stream as final: an item, count code, group or body that the stream ends inside is a rejection, never a reason to wait. An adapter that waits fails the case by timing out.
 
 ## `cesr.encode`
 

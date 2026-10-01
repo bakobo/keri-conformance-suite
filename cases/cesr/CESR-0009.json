@@ -1,0 +1,45 @@
+{
+  "assertions": [
+    {
+      "check": "encoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.",
+        "section": "Code characters and lead bytes",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#code-characters-and-lead-bytes"
+      },
+      "expected": "314141447a6f76423361586d36614b6242637352426174467075377a71596c2d4436336745686c4655374e66684f646e364346355630394f4e7374756976453346384d6467394e627a4158617a7a4f77",
+      "id": "a1",
+      "level": "MUST"
+    }
+  ],
+  "description": "Code 1AAD, a 57-byte key, pad size 0, four-character code prepended, 80 characters.",
+  "id": "CESR-0009",
+  "input": {
+    "code": "1AAD",
+    "domain": "text",
+    "raw": "ce8bc1dda5e6e9a29b05cb1105ab45a6eef3a9897e0fade012194553b35f84e767e82179574f4e36cb6e8af13717c31d83d35bcc05dacf33b0"
+  },
+  "operation": "cesr.encode",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/encode.json#encode-ed448-key-text"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00"
+    ],
+    "wire": [
+      "CESR-2.00"
+    ]
+  },
+  "title": "Encode an Ed448 verification key in the text domain"
+}

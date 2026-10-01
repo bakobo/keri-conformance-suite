@@ -1,0 +1,173 @@
+{
+  "assertions": [
+    {
+      "check": "decoded",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The size component MUST count the Quadlets/triplets in its following group.",
+        "section": "Count Code tables",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#count-code-tables"
+      },
+      "expected": [
+        {
+          "code": "-_AAACAA",
+          "end": 8,
+          "genus": "AAA",
+          "kind": "genus",
+          "start": 0,
+          "version": "2.00"
+        },
+        {
+          "end": 449,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 441,
+          "start": 8,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 453,
+          "group_end": 813,
+          "kind": "counter",
+          "size": 90,
+          "start": 449
+        },
+        {
+          "code": "-K",
+          "end": 457,
+          "group_end": 721,
+          "kind": "counter",
+          "size": 66,
+          "start": 453
+        },
+        {
+          "code": "A",
+          "end": 545,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "f41b99ddca94d48db7b8e92bf72391e7b049bebba0a3d0afa3e21cb50e04d095143c284ddc18d58892cf97e3adef941cfcf7d8a8f956b8ccddc200db8333485d",
+          "start": 457
+        },
+        {
+          "code": "A",
+          "end": 633,
+          "index": 1,
+          "kind": "indexed",
+          "raw": "bf688af1f50287e5b6a126ae5ceb6e5315d957832c2896f1c91cef8a2cfebc6113007d40b27247fc7b01f53a0cd1356d740e3c6e8b19695b0bd698d5f83757eb",
+          "start": 545
+        },
+        {
+          "code": "A",
+          "end": 721,
+          "index": 2,
+          "kind": "indexed",
+          "raw": "7737945e88515d3d343dc7191a1695c5f816823d71525b6aa7c5fe7c63978578ae6035c328f012b85446a62e8d271822f9f46e40ed59958d326952454b1c6081",
+          "start": 633
+        },
+        {
+          "code": "-L",
+          "end": 725,
+          "group_end": 813,
+          "kind": "counter",
+          "size": 22,
+          "start": 721
+        },
+        {
+          "code": "A",
+          "end": 813,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "1b38889b07a06be89e23b8f17f80783fd5d7d0ea0722ca04170794594710613b7fb563566e2e7ad4f25a4bba81cd3608737fe91bc8d98c4f02ed49bc3507b8f9",
+          "start": 725
+        },
+        {
+          "end": 1114,
+          "kind": "message",
+          "proto": "KERI",
+          "serialization": "JSON",
+          "size": 301,
+          "start": 813,
+          "version": "2.0"
+        },
+        {
+          "code": "-C",
+          "end": 1118,
+          "group_end": 1210,
+          "kind": "counter",
+          "size": 23,
+          "start": 1114
+        },
+        {
+          "code": "-K",
+          "end": 1122,
+          "group_end": 1210,
+          "kind": "counter",
+          "size": 22,
+          "start": 1118
+        },
+        {
+          "code": "A",
+          "end": 1210,
+          "index": 0,
+          "kind": "indexed",
+          "raw": "80671e807942007ad595e13e3a12075e0e7d9cdfdf69e1f08ca7543dda1ed23b0c0b22fd1e6a106c0f7b2861e0976c124afd94c9fea2436ac43221a863b6c4a6",
+          "start": 1122
+        }
+      ],
+      "id": "a1",
+      "level": "MUST",
+      "spec_conflicts": [
+        {
+          "line": 674,
+          "quote": "When part of a Count Code determines the count of the following Primitives or groups of Primitives",
+          "section": "Encoding Scheme Symbols Table",
+          "why": "The legend for the # symbol in the Encoding Scheme Table says a count code's digits count primitives or groups, where line 591 says the size MUST count quadlets/triplets, not primitives."
+        },
+        {
+          "line": 714,
+          "quote": "When part of a Count Code determines the count of following Primitives or groups of Primitives",
+          "section": "Encoding scheme format symbol table",
+          "why": "The same legend under the indexed code table repeats the item-count reading that line 591 rules out."
+        },
+        {
+          "line": 1103,
+          "quote": "where `##` is replaced by the two-character Base64 count of the number of complex groups",
+          "section": "Examples",
+          "why": "The worked example's prose calls -X's digits a count of complex groups, though its own values (-XBf = 95 quadlets for one group) follow line 591."
+        }
+      ]
+    }
+  ],
+  "description": "The founding case of the suite. After a KERI 2.0 inception, an attachments group (-C) holds a controller signature group (-K) of three Ed25519 indexed signatures and then a witness signature group (-L) of one. -K has size 66 (3 x 22 quadlets), not 3; -L has size 22, not 1; -C has size 90. A second inception and its attachments follow. A parser that counts items reads 66 as 66 signatures, runs past -K and loses the stream. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead and records the others in spec_conflicts.",
+  "id": "CESR-0025",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414147352e222c2274223a22696370222c2264223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2269223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2273223a2230222c226b74223a2232222c226b223a5b22444358516c42303037556d4c73757044497a5f414443393857375a68635a614d6a746632545f2d6e644c5933222c2244504a2d7230792d494c7a53764b2d763466776257494a79476a41675a4b483335336a72454b4839506f725f222c22444e42373568385f4d454c64735053754172685a72397864765533587047635053374a5042454a7a68714c6e225d2c226e74223a2231222c226e223a5b22454f7a756e384f61316c4b714c5f772d4b55783270666d3659435f596d41793431674a663331476449505345225d2c226274223a2231222c2262223a5b2242426a4a45346d5454655f496c675a39426d4d724c6f684d47745443477073466b5033744449666d72736838225d2c2263223a5b5d2c2261223a5b5d7d2d4342612d4b42434141443047356e64797054556a626534365376334935486e73456d2d7536436a304b2d6a34687931446754516c5251384b453363474e57496b732d58343633766c427a383939696f2d5661347a4e3343414e75444d3068644142435f6149727839514b48356261684a7135633632355446646c586779776f6c76484a484f2d4b4c50363859524d4166554379636b6638657748314f677a524e573130446a787569786c70577776576d4e58344e316672414342334e355265694646645054513978786b61467058462d426143505846535732716e7866353859356546654b35674e634d6f38424b345645616d4c6f306e47434c353947354137566d566a544a70556b564c484743422d4c4157414141624f49696242364272364a346a7550465f6748675f3164665136676369796751584235525a527842684f332d3159315a754c6e7255386c704c756f484e4e67687a662d6b62794e6d4d54774c745362773142376a357b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2269223a22454d76436636396949394e4568546b6134684678586939642d3032747930615a66696d7851393239436a767a222c2273223a2230222c226b74223a2231222c226b223a5b22444f4e684b347233344c77584775564a3464765f56536448746f58384e68536d587861384378534e38363764225d2c226e74223a2231222c226e223a5b22454a4c33366d74456b36484f44725167306464517138444c314f3839736252774137774372564a5333733678225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414143415a78364165554941657457563454343645676465446e3263333939703466434d70315139326837534f77774c49763065616842734433736f5965435862424a4b5f5a544a5f714a44617351794961686a7473536d"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/attachments.json#founding-quadlets-not-items"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "A signature group's size counts quadlets, not signatures"
+}

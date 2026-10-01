@@ -30,5 +30,17 @@ jobs:
         run: uv sync --locked
       - name: Lint
         run: uv run ruff check .
+      # The generators read the pinned CESR specification text, which is not in this repository
+      # (its licence differs); they fetch it into a cache and verify its SHA-256. CI requires it,
+      # so a test that needs the text fails here instead of skipping. Neither step needs keripy:
+      # the generators use only the standard library, and the keripy cross-checks under
+      # generators/keripy_check and generators/keripy1x_check run by hand in their own
+      # environments.
+      - name: Regenerate every case and compare with the committed ones
+        env:
+          KCS_REQUIRE_SPEC: "1"
+        run: uv run python scripts/regenerate --check
       - name: Run tests (100% branch coverage gate)
+        env:
+          KCS_REQUIRE_SPEC: "1"
         run: uv run pytest
