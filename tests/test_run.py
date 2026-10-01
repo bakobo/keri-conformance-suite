@@ -221,13 +221,18 @@ def test_default_cases_dir_is_under_the_suite(tmp_path, cases_dir, capsys):
     assert json.loads(report.read_text())["filters"]["cases_dir"] == str(tmp_path / "cases")
 
 
-def test_default_report_path_is_the_working_directory(cases_dir, tmp_path, monkeypatch):
+def test_no_report_is_written_unless_asked_for(cases_dir, tmp_path, monkeypatch, capsys):
     cases = cases_dir(PASSING[0])
-    monkeypatch.chdir(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    monkeypatch.chdir(work)
     code = cli.main(["run", "--adapter", shlex.join(good()), "--suite", str(ROOT),
                      "--cases", str(cases)])
     assert code == errors.EXIT_CONFORMANT
-    assert (tmp_path / "kcs-report.json").exists()
+    assert list(work.iterdir()) == []
+    out = capsys.readouterr().out
+    assert "verdict: conformant" in out
+    assert "report:" not in out
 
 
 def test_an_unwritable_report_is_a_runner_fault(cases_dir, tmp_path, capsys):
@@ -257,8 +262,62 @@ def test_a_changed_hello_on_restart_aborts(cases_dir, tmp_path, write_json, caps
     code, report = run(good("--hello", path, "--table", table),
                        cases_dir(PASSING[0], {**PASSING[0], "id": "CESR-0007"}), tmp_path)
     assert code == errors.EXIT_REFUSED
-    assert report is None
+    assert report["verdict"] == "aborted"
+    assert report["aborted"]["code"] == errors.E_ADAPTER_HELLO_CHANGED
+    assert "differs" in report["aborted"]["reason"]
+    assert [c["id"] for c in report["cases"]] == ["CESR-0001"]
     assert errors.E_ADAPTER_HELLO_CHANGED in capsys.readouterr().err
+
+
+def test_a_refused_hello_on_restart_aborts_with_a_partial_report(cases_dir, tmp_path, write_json,
+                                                                  capsys, monkeypatch):
+    path = write_json("hello.json", HELLO)
+    table = write_json("table.json", [{"match": {"op": "cesr.parse"},
+                                       "error": {"kind": "harness", "message": "x"}}])
+    real_start = session_module.AdapterSession._start
+    starts = []
+
+    def start(self):
+        starts.append(1)
+        if len(starts) == 2:
+            write_json("hello.json", {"protocol": 1})
+        return real_start(self)
+
+    monkeypatch.setattr(session_module.AdapterSession, "_start", start)
+    cases = cases_dir(PASSING[0], {**PASSING[0], "id": "CESR-0007"},
+                      {**PASSING[0], "id": "CESR-0008"})
+    code, report = run(good("--hello", path, "--table", table), cases, tmp_path)
+    assert code == errors.EXIT_REFUSED
+    assert report["verdict"] == "aborted"
+    assert report["aborted"]["code"] == errors.E_ADAPTER_HELLO
+    assert [c["id"] for c in report["cases"]] == ["CESR-0001"]
+    assert '"features" is missing.' in capsys.readouterr().err
+
+
+def test_an_aborted_run_without_report_still_exits_3(cases_dir, tmp_path, write_json, capsys,
+                                                     monkeypatch):
+    path = write_json("hello.json", HELLO)
+    table = write_json("table.json", [{"match": {"op": "cesr.parse"},
+                                       "error": {"kind": "harness", "message": "x"}}])
+    real_start = session_module.AdapterSession._start
+    starts = []
+
+    def start(self):
+        starts.append(1)
+        if len(starts) == 2:
+            write_json("hello.json", {**HELLO, "adapter": {"name": "y", "version": "2"}})
+        return real_start(self)
+
+    monkeypatch.setattr(session_module.AdapterSession, "_start", start)
+    work = tmp_path / "work"
+    work.mkdir()
+    monkeypatch.chdir(work)
+    code = cli.main(["run", "--adapter", shlex.join(good("--hello", path, "--table", table)),
+                     "--suite", str(ROOT), "--cases",
+                     str(cases_dir(PASSING[0], {**PASSING[0], "id": "CESR-0007"}))])
+    assert code == errors.EXIT_REFUSED
+    assert list(work.iterdir()) == []
+    assert "verdict: aborted" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("value", ["0", "-1", "x"])
@@ -283,5 +342,28 @@ def test_help_documents_exit_codes(capsys):
     with pytest.raises(SystemExit):
         cli.main(["run", "--help"])
     out = capsys.readouterr().out
-    for code in ("0", "1", "2", "3", "4"):
+    for code in ("0", "1", "2", "3", "4", "5"):
         assert f"  {code}  " in out
+    assert "incomplete" in out
+    assert "no-evidence" in out
+    assert "aborted" in out
+
+
+def test_a_run_with_no_active_must_evidence_is_no_evidence(cases_dir, tmp_path, capsys):
+    should_only = make_case("CESR-0020", "cesr.parse", {"stream": "2d4b"},
+                            [assertion("rejected", level="SHOULD")])
+    code, report = run(good(), cases_dir(should_only, NOT_SUPPORTED, DRAFT_FAIL), tmp_path)
+    assert code == errors.EXIT_NO_EVIDENCE == 5
+    assert report["verdict"] == "no-evidence"
+    assert "verdict: no-evidence" in capsys.readouterr().out
+
+
+def test_an_empty_cases_directory_is_no_evidence(cases_dir, tmp_path):
+    code, report = run(good(), cases_dir(), tmp_path)
+    assert code == errors.EXIT_NO_EVIDENCE
+    assert report["cases"] == []
+
+
+def test_the_skipped_statelessness_probe_is_reported(cases_dir, tmp_path):
+    _code, report = run(good(), cases_dir(PASSING[0]), tmp_path)
+    assert report["probes"] == {"statelessness": "not-yet-available"}

@@ -22,12 +22,16 @@ from keri_conformance.session import AdapterSession, Limits, load_vocabulary
 EXIT_CODES = """\
 exit codes:
   0  conformant: every MUST assertion in every active case that was run passed
-  1  at least one MUST assertion in an active case failed
+  1  not-conformant: at least one MUST assertion in an active case failed
   2  usage error
-  3  the adapter's hello was refused; no case was run
+  3  the adapter's hello was refused: at the start (no case was run), or aborted after a
+     restart in which it refused hello or changed it (the report, if --report was given,
+     holds the cases completed before that)
   4  runner fault: the adapter could not be started, a case is malformed, the runner is
-     running as root, the report could not be written, or an active MUST assertion uses a
-     check this runner version cannot evaluate
+     running as root or off POSIX, or the report could not be written; also the verdict
+     incomplete: no MUST assertion failed, but an active one uses a check this runner
+     version cannot evaluate
+  5  no-evidence: no active MUST assertion was evaluated, so nothing was shown
 """
 
 CHECK_EXIT_CODES = """\
@@ -35,7 +39,8 @@ exit codes:
   0  every available probe passed
   1  at least one probe failed
   2  usage error
-  4  runner fault: the adapter could not be started, or the runner is running as root
+  4  runner fault: the adapter could not be started, or the runner is running as root or
+     off POSIX
 """
 
 
@@ -94,8 +99,8 @@ def _parser() -> argparse.ArgumentParser:
                           "but never run through a shell")
     run.add_argument("--cases", help="directory of cases (default: SUITE/cases)")
     run.add_argument("--profile", help="run only the cases in this profile")
-    run.add_argument("--report", default="kcs-report.json",
-                     help="where to write the JSON report (default: kcs-report.json)")
+    run.add_argument("--report", help="write the JSON conformance report here (default: no "
+                                      "report is written)")
     _adapter_options(run)
     run.set_defaults(handler=_run)
     check = commands.add_parser("check-adapter", help="probe an adapter's protocol behaviour",
@@ -119,12 +124,18 @@ def _run(args) -> int:
     with _session(args, args.adapter) as session:
         session.open()
         report = run_suite(session, cases, profile=args.profile, cases_dir=cases_dir)
-    try:
-        Path(args.report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    except OSError as exc:
-        raise RunnerError(E_REPORT_WRITE, f"The report could not be written to {args.report}: "
-                                          f"{exc}.") from exc
+    if args.report:
+        try:
+            Path(args.report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        except OSError as exc:
+            raise RunnerError(E_REPORT_WRITE, f"The report could not be written to "
+                                              f"{args.report}: {exc}.") from exc
     print(human_summary(report, args.report))
+    aborted = report["aborted"]
+    if aborted:
+        print(f"kcs: {aborted['code']}: {aborted['reason']}", file=sys.stderr)
+        for problem in aborted["problems"]:
+            print(f"  - {problem}", file=sys.stderr)
     return VERDICT_EXIT[report["verdict"]]
 
 

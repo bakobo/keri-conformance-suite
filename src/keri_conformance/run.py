@@ -7,15 +7,22 @@ none failed but one could not be evaluated, pass otherwise, or not-supported/ski
 
 Only MUST assertions in active cases decide the verdict. Draft and disputed cases are run and
 reported but never decide it, and not-supported cases are listed: the claim is scoped to the
-features the adapter declared.
+features the adapter declared. A run in which no active MUST assertion passed or failed is
+no-evidence, never conformant; a run cut short because a restarted adapter refused hello or
+changed it is aborted, and its report holds the cases completed before that.
 """
 
 from keri_conformance import __version__
 from keri_conformance.assertions import evaluate
+from keri_conformance.errors import HelloRefused
 from keri_conformance.protocol import PROTOCOL_VERSION
 from keri_conformance.session import AdapterSession, Failure
 
-VERDICT_EXIT = {"conformant": 0, "not-conformant": 1, "incomplete": 4}
+VERDICT_EXIT = {"conformant": 0, "not-conformant": 1, "aborted": 3, "incomplete": 4,
+                "no-evidence": 5}
+# Session probes the design calls for that this runner cannot perform yet; listed in every report
+# so that their absence is visible.
+PROBES = {"statelessness": "not-yet-available"}
 
 
 def _record(assertion, outcome, actual=None, detail=None, self_agreement=False):
@@ -90,6 +97,8 @@ def summarize(entries: list[dict]) -> tuple[dict, str]:
         verdict = "not-conformant"
     elif must.get("not-implemented"):
         verdict = "incomplete"
+    elif not must.get("pass"):
+        verdict = "no-evidence"
     else:
         verdict = "conformant"
     summary = {
@@ -106,9 +115,19 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
               cases_dir: str) -> dict:
     """Run the cases (filtered by profile) and return the conformance report."""
     session_stderr = session.take_stderr()
-    entries = [run_case(session, case) for case in cases
-               if profile is None or case["profile"] == profile]
+    entries, aborted = [], None
+    for case in cases:
+        if profile is not None and case["profile"] != profile:
+            continue
+        try:
+            entries.append(run_case(session, case))
+        except HelloRefused as refusal:
+            aborted = {"code": refusal.code, "reason": refusal.message,
+                       "problems": refusal.problems, "at_case": case["id"]}
+            break
     summary, verdict = summarize(entries)
+    if aborted:
+        verdict = "aborted"
     hello = session.hello
     return {
         "report_version": 1,
@@ -121,12 +140,14 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
         "filters": {"profile": profile, "cases_dir": cases_dir},
         "session_stderr": session_stderr,
         "verdict": verdict,
+        "aborted": aborted,
+        "probes": dict(PROBES),
         "summary": summary,
         "cases": entries,
     }
 
 
-def human_summary(report: dict, report_path: str) -> str:
+def human_summary(report: dict, report_path: str | None) -> str:
     """A few lines for a person reading the terminal."""
     hello = report["hello"]
     adapter, impl = hello["adapter"], hello["implementation"]
@@ -143,6 +164,7 @@ def human_summary(report: dict, report_path: str) -> str:
         "active MUST assertions: "
         + (", ".join(f"{n} {k}" for k, n in sorted(must.items())) or "none"),
         f"verdict: {report['verdict']}",
-        f"report: {report_path}",
     ]
+    if report_path:
+        lines.append(f"report: {report_path}")
     return "\n".join(lines)
