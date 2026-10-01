@@ -1,0 +1,11 @@
+[project]
+name = "kcs-keripy1x-check"
+version = "0.1.0"
+description = "Cross-checks the keripy-1x-interop CESR cases against keripy 1.2.14 (tag 1.2.14, commit bab95c16e949b61398129a3e41a8f68bad84c94f). Not part of the runner."
+requires-python = ">=3.12.2,<3.13"
+dependencies = [
+    "keri @ git+https://github.com/WebOfTrust/keripy@bab95c16e949b61398129a3e41a8f68bad84c94f",
+]
+
+[tool.uv]
+package = false
