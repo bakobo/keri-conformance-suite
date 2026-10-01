@@ -12,6 +12,7 @@ import hashlib
 import os
 import pathlib
 import re
+import sys
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -33,6 +34,8 @@ MAX_SPEC_BYTES = 4 * 1024 * 1024
 E_FETCH = "e.env.kcs-spec.fetch.r"
 E_DIGEST = "e.proof.kcs-spec.digest.f"
 E_OVERSIZE = "e.env.kcs-spec.oversize.f"
+# Not an error: the verified text is used, but it could not be stored for the next run.
+W_CACHE = "w.env.kcs-spec.cache.f"
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 
@@ -97,10 +100,15 @@ def fetch() -> bytes:
         ) from None
     _verified(_bounded(data, SPEC_RAW_URL), SPEC_RAW_URL)
     path = cache_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".tmp")
-    tmp.write_bytes(data)
-    tmp.replace(path)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".tmp")
+        tmp.write_bytes(data)
+        tmp.replace(path)
+    except OSError as e:
+        # A read-only or missing cache must not stop regeneration: the bytes are verified.
+        print(f"{W_CACHE}: The verified CESR specification text was used but not cached at "
+              f"{path} ({e}); the next run will download it again.", file=sys.stderr)
     return data
 
 

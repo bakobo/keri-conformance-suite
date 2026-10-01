@@ -128,6 +128,31 @@ def test_cache_file_at_the_limit_is_read_whole(cache, monkeypatch):
     assert spec_source.load_spec() == FAKE.decode()
 
 
+def test_fetch_still_returns_the_verified_text_when_the_cache_is_a_file(
+        tmp_path, fake_pin, monkeypatch, capsys):
+    blocker = tmp_path / "not-a-dir"
+    blocker.write_text("x")
+    monkeypatch.setenv(spec_source.CACHE_ENV, str(blocker / "specs"))
+    _serve(monkeypatch, FAKE)
+    assert spec_source.load_spec() == FAKE.decode()
+    err = capsys.readouterr().err
+    assert err.startswith("w.env.kcs-spec.cache.f: ") and "not cached" in err
+
+
+@pytest.mark.skipif(hasattr(os, "geteuid") and os.geteuid() == 0,
+                    reason="root ignores directory permissions, so the cache stays writable")
+def test_fetch_still_returns_the_verified_text_with_a_read_only_cache(
+        cache, fake_pin, monkeypatch, capsys):
+    cache.chmod(0o500)
+    try:
+        _serve(monkeypatch, FAKE)
+        assert spec_source.load_spec() == FAKE.decode()
+        assert not spec_source.cache_path().exists()
+        assert "w.env.kcs-spec.cache.f" in capsys.readouterr().err
+    finally:
+        cache.chmod(0o700)
+
+
 def test_offline_fetch_is_a_retryable_coded_error(cache, monkeypatch):
     _serve(monkeypatch, error=urllib.error.URLError("no route"))
     with pytest.raises(spec_source.SpecUnavailable) as e:
