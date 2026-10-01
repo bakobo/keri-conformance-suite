@@ -5,13 +5,15 @@ shared corpus and fail on any disagreement, so a schema-valid case or response i
 runner reads the same way.
 """
 
+import copy
 import json
 
 import pytest
-from conftest import ROOT
+from conftest import CLAUSE, ROOT, assertion, make_case
 from jsonschema import Draft202012Validator
 
 from keri_conformance.assertions import normalize_threshold
+from keri_conformance.cases import case_problem
 
 CASE = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
 PROTOCOL = json.loads((ROOT / "schema" / "adapter-protocol.schema.json").read_text(
@@ -23,15 +25,18 @@ def validator(schema, ref):
     return Draft202012Validator({"$defs": schema["$defs"], "$ref": ref})
 
 
+CASE_VALIDATOR = Draft202012Validator(CASE)
+
+
 # --- thresholds ---------------------------------------------------------------------------------
 
 THRESHOLDS = [
     # numeric
     "1", "0", "0x1", "0xA", "a", "ff", "0x1f", "10", "01", "", "0x", "0X1", "-1", "1.5", "g", " 1",
-    "1 ", "0x-1",
+    "1 ", "0x-1", "1\n", "1\n\n",
     # one weighted clause
     ["1/2", "1/2"], ["1"], ["0"], ["2/4", "1/1"], ["1/0"], ["1/00"], ["0/1"], ["1/10"], [],
-    ["x/2"], ["1 / 2"], ["-1/2"], ["0.5"], ["1/2/3"], [1], [None], ["/2"], ["1/"],
+    ["x/2"], ["1 / 2"], ["-1/2"], ["0.5"], ["1/2/3"], [1], [None], ["/2"], ["1/"], ["1/2\n"],
     # several clauses
     [["1/2"], ["1/3", "2/3"]], [["1"]], [[]], [["1/2"], []], [["1/2", 3]], [["1/0"]],
     [[["1/2"]]],
@@ -94,3 +99,142 @@ def test_the_item_definition_is_identical_in_both_schemas():
     assert decoded == {"$ref": "#/$defs/item"}
     expected = CASE["$defs"]
     assert expected["item"]["oneOf"]
+
+
+# --- mutation corpus ----------------------------------------------------------------------------
+#
+# Every node of each well-formed document is deleted, replaced by each probe value, and (for an
+# object) given an unexpected extra field. The runner's check and the schema must agree on every
+# one of the resulting documents.
+
+PROBES = [None, True, 1, -1, 1.5, "", "x", "0a", "0a\n", [], {}, ["x"]]
+
+
+def _paths(node, path=()):
+    yield path
+    if isinstance(node, dict):
+        for key, value in node.items():
+            yield from _paths(value, (*path, key))
+    elif isinstance(node, list):
+        for index, value in enumerate(node):
+            yield from _paths(value, (*path, index))
+
+
+def _replace(doc, path, value):
+    doc = copy.deepcopy(doc)
+    if not path:
+        return value
+    target = doc
+    for key in path[:-1]:
+        target = target[key]
+    target[path[-1]] = value
+    return doc
+
+
+def _delete(doc, path):
+    doc = copy.deepcopy(doc)
+    target = doc
+    for key in path[:-1]:
+        target = target[key]
+    del target[path[-1]]
+    return doc
+
+
+def mutations(doc):
+    for path in _paths(doc):
+        for probe in PROBES:
+            yield _replace(doc, path, probe)
+        target = doc
+        for key in path:
+            target = target[key]
+        if path and isinstance(path[-1], str):
+            yield _delete(doc, path)
+        if isinstance(target, dict):
+            yield _replace(doc, path, {**target, "zz": 1})
+        if isinstance(target, list) and target:
+            yield _replace(doc, path, [])
+
+
+def disagreements(documents, ours, schema_validator):
+    found = []
+    for doc in documents:
+        mine = ours(doc) is None
+        theirs = schema_validator.is_valid(doc)
+        if mine != theirs:
+            found.append((mine, theirs, doc))
+    return found
+
+
+# --- cases (E) ----------------------------------------------------------------------------------
+
+STATE = {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1", "ndigs": ["EGhi"],
+         "nt": ["1/2", "1/2"], "wits": [], "bt": "0", "delegator": None}
+INTEROP = {"id": "a9", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x"}
+
+BASE_CASES = [
+    make_case("CESR-0001", "cesr.parse", {"stream": "2d4b"}, [assertion("rejected"), INTEROP],
+              features=["cesr.genus-2.00"]),
+    make_case("CESR-0002", "cesr.parse", {"stream": "00"}, [assertion("decoded", expected=[
+        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 1, "group_end": 4},
+        {"kind": "indexed", "start": 4, "end": 92, "code": "A", "raw": "00", "index": 0}])],
+        status="draft", reference={"implementation": "keripy", "commit": "9a8b7aa"}),
+    make_case("CESR-0003", "cesr.encode", {"code": "E", "raw": "00", "domain": "text"},
+              [assertion("encoded", expected="10", note="n")], status="deprecated"),
+    make_case("KERI-0001", "keri.process",
+              {"perspective": {"role": "validator"},
+               "messages": [{"stream": "7b7d", "source": "controller"}]},
+              [assertion("disposition", message=0, phase="final", expected="superseded"),
+               assertion("key_state", name="a2", level="SHOULD", aid="EAbc", expected=STATE)],
+              status="disputed"),
+    make_case("KERI-0002", "keri.emit", {"event": {"t": "icp"}, "seeds": {"DAbc": "00"}},
+              [assertion("emitted_body", expected="7b7d"),
+               assertion("signatures_verify", name="a2", level="MAY"),
+               assertion("attachments_equivalent", name="a3", expected=[{"i": 0}])]),
+]
+BASE_CASES[0]["assertions"][0]["clause"] = {**CLAUSE, "quote": "A stream MUST ..."}
+
+
+def test_the_base_cases_are_valid_in_both():
+    for case in BASE_CASES:
+        assert CASE_VALIDATOR.is_valid(case), case["id"]
+        assert case_problem(case) is None, case["id"]
+
+
+@pytest.mark.parametrize("base", BASE_CASES, ids=[c["id"] for c in BASE_CASES])
+def test_case_checks_agree_with_the_case_schema(base):
+    found = disagreements(mutations(base), case_problem, CASE_VALIDATOR)
+    assert found == [], found[:3]
+
+
+SEMANTIC = [
+    ("status", "disputed"), ("status", "deprecated"), ("operation", "cesr.encode"),
+    ("operation", "keri.process"), ("operation", "keri.emit"), ("operation", "cesr.parse"),
+]
+
+
+@pytest.mark.parametrize("base", BASE_CASES, ids=[c["id"] for c in BASE_CASES])
+def test_cross_field_rules_agree_with_the_case_schema(base):
+    documents = [_replace(base, (field,), value) for field, value in SEMANTIC]
+    for a, assertion_ in enumerate(base["assertions"]):
+        for level in ("MUST", "INTEROP"):
+            documents.append(_replace(base, ("assertions", a, "level"), level))
+        documents.append(_replace(base, ("assertions", a, "basis"), "b"))
+        if assertion_["check"] == "disposition":
+            documents.append(_replace(base, ("assertions", a, "phase"), "initial"))
+            documents.append(_replace(base, ("assertions", a, "expected"), "accepted"))
+    found = disagreements(documents, case_problem, CASE_VALIDATOR)
+    assert found == [], found[:3]
+
+
+def test_runtime_integers_are_stricter_than_the_schema():
+    # Python's jsonschema counts 1.0 as an integer; the runner indexes with these values, so it
+    # requires a JSON integer. This is the one deliberate divergence, in the safe direction.
+    case = _replace(BASE_CASES[3], ("assertions", 0, "message"), 0.0)
+    assert CASE_VALIDATOR.is_valid(case)
+    assert "message" in case_problem(case)
+
+
+def test_duplicate_assertion_ids_are_a_runtime_rule_beyond_the_schema():
+    case = _replace(BASE_CASES[4], ("assertions", 1, "id"), "a1")
+    assert CASE_VALIDATOR.is_valid(case)
+    assert "twice" in case_problem(case)

@@ -115,9 +115,9 @@ def test_each_malformation_is_described(name):
 
 def test_every_check_the_runner_knows_is_loadable():
     from keri_conformance.assertions import CHECKS, CRYPTO_CHECKS
-    from keri_conformance.cases import CHECK_FIELDS
+    from keri_conformance.cases import CHECK_FORMS
 
-    assert set(CHECK_FIELDS) == set(CHECKS) | set(CRYPTO_CHECKS)
+    assert set(CHECK_FORMS) == set(CHECKS) | set(CRYPTO_CHECKS)
 
 
 def test_an_unhashable_check_is_described():

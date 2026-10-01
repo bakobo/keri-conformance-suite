@@ -1,15 +1,14 @@
-"""Loading cases from disk, with the light structural checks the runner needs at runtime.
+"""Loading cases from disk, checked against a hand-written mirror of the case schema.
 
-The full contract is `schema/case.schema.json`, which CI enforces on every case in this repository.
-The runner has no runtime dependencies, so it cannot run that schema; instead it checks every field
-it reads, so that a malformed case is a runner fault naming its file rather than a crash or, worse,
-an adapter failure.
+The contract is `schema/case.schema.json`. The runner has no runtime dependencies, so it cannot
+run that schema; CASE below mirrors it with the combinators in shapes.py, and
+tests/test_schema_agreement.py proves the two agree. A schema-invalid case is therefore a runner
+fault naming its file, never a case that gets scored.
 """
 
-import re
 from pathlib import Path
 
-from keri_conformance.assertions import KEY_STATE_FIELDS
+from keri_conformance.contracts import HEX_STRING, ITEM, KEY_STATE
 from keri_conformance.errors import (
     E_CASE_FORMAT,
     E_CASE_READ,
@@ -19,91 +18,124 @@ from keri_conformance.errors import (
 )
 from keri_conformance.jsonfile import JsonFileError, read_json
 from keri_conformance.session import OPERATIONS
+from keri_conformance.shapes import (
+    Check,
+    any_of,
+    anything_object,
+    array,
+    enum,
+    integer,
+    mapping,
+    null,
+    obj,
+    string,
+    tagged,
+)
 
 MAX_CASE_BYTES = 32 * 1024 * 1024
-CASE_ID = re.compile(r"(CESR|KERI|ACDC|IPEX)-[0-9]{4}")
+CASE_ID = "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
+COMMIT = "^[0-9a-f]{7,40}$"
+FEATURE = r"^[a-z0-9]+(\.[a-z0-9-]+)+$"
 STATUSES = ("active", "draft", "disputed", "deprecated")
-LEVELS = ("MUST", "SHOULD", "MAY", "INTEROP")
-PHASES = ("initial", "final")
-REQUIRED = ("schema_version", "id", "title", "description", "status", "profile", "targets",
-            "operation", "input", "assertions", "provenance")
-CHECK_FIELDS = {
-    "decoded": ("expected",),
-    "rejected": (),
-    "encoded": ("expected",),
-    "disposition": ("message", "phase", "expected"),
-    "key_state": ("aid", "expected"),
-    "emitted_body": ("expected",),
-    "signatures_verify": (),
-    "attachments_equivalent": ("expected",),
+NORMATIVE = ("MUST", "SHOULD", "MAY")
+LEVELS = (*NORMATIVE, "INTEROP")
+EXPECTED_DISPOSITIONS = ("accepted", "not-accepted", "pending", "rejected", "duplicitous",
+                         "superseded")
+
+CLAUSE = obj({"spec": enum("cesr", "keri", "acdc", "ipex"), "section": string(min_length=1),
+              "url": string("^https://"), "commit": string(COMMIT)},
+             {"quote": string()})
+
+
+def _assertion(check: str, **fields) -> Check:
+    return obj({"id": string("^a[0-9]+$"), "check": enum(check), "level": enum(*LEVELS),
+                **fields},
+               {"clause": CLAUSE, "basis": string(min_length=1), "note": string()})
+
+
+CHECK_FORMS = {
+    "decoded": _assertion("decoded", expected=array(ITEM)),
+    "rejected": _assertion("rejected"),
+    "encoded": _assertion("encoded", expected=HEX_STRING),
+    "disposition": _assertion("disposition", message=integer(minimum=0),
+                              phase=enum("initial", "final"),
+                              expected=enum(*EXPECTED_DISPOSITIONS)),
+    "key_state": _assertion("key_state", aid=string(), expected=KEY_STATE),
+    "emitted_body": _assertion("emitted_body", expected=HEX_STRING),
+    "signatures_verify": _assertion("signatures_verify"),
+    "attachments_equivalent": _assertion("attachments_equivalent",
+                                         expected=array(anything_object)),
 }
 
+INPUTS = {
+    "cesr.parse": obj({"stream": HEX_STRING}),
+    "cesr.encode": obj({"code": string(), "raw": HEX_STRING, "domain": enum("text", "binary")}),
+    "keri.process": obj({
+        "perspective": obj({"role": enum("validator")}),
+        "messages": array(obj({"stream": HEX_STRING, "source": string()}), min_items=1),
+    }),
+    "keri.emit": obj({"event": anything_object, "seeds": mapping(HEX_STRING)}),
+}
 
-def _strings(value) -> bool:
-    return isinstance(value, list) and all(isinstance(v, str) for v in value)
-
-
-def _reference_ok(reference) -> bool:
-    return reference is None or (isinstance(reference, dict)
-                                 and isinstance(reference.get("implementation"), str))
-
-
-CASE_RULES = (
-    (lambda c: c["schema_version"] == 1 and type(c["schema_version"]) is int,
-     '"schema_version" must be 1'),
-    (lambda c: isinstance(c["id"], str) and CASE_ID.fullmatch(c["id"]),
-     '"id" must look like CESR-0001'),
-    (lambda c: c["status"] in STATUSES, f'"status" must be one of {", ".join(STATUSES)}'),
-    (lambda c: isinstance(c["profile"], str), '"profile" must be a string'),
-    (lambda c: isinstance(c["targets"], dict) and _strings(c["targets"].get("features")),
-     '"targets.features" must be a list of strings'),
-    (lambda c: c["operation"] in OPERATIONS, f'"operation" must be one of {", ".join(OPERATIONS)}'),
-    (lambda c: isinstance(c["input"], dict) and not {"id", "op"} & set(c["input"]),
-     '"input" must be an object that does not carry "id" or "op"'),
-    (lambda c: isinstance(c["assertions"], list) and c["assertions"],
-     '"assertions" must be a non-empty list'),
-    (lambda c: isinstance(c["provenance"], dict)
-     and _reference_ok(c["provenance"].get("reference")),
-     '"provenance.reference" must be null or an object with a string "implementation"'),
+CASE = obj(
+    {
+        "schema_version": enum(1),
+        "id": string(CASE_ID),
+        "title": string(min_length=1),
+        "description": string(min_length=1),
+        "status": enum(*STATUSES),
+        "profile": string("^[a-z0-9][a-z0-9.-]*$"),
+        "targets": obj({"wire": array(string(), min_items=1),
+                        "features": array(string(FEATURE))}),
+        "operation": enum(*OPERATIONS),
+        "input": anything_object,
+        "assertions": array(tagged("check", CHECK_FORMS), min_items=1),
+        "provenance": obj({
+            "scenario": string(),
+            "generator": obj({"name": string(), "version": string()}),
+            "reference": any_of(null, obj({"implementation": string(),
+                                           "commit": string(COMMIT)})),
+        }),
+    },
+    {
+        "dispute": obj({"clauses": array(CLAUSE, min_items=1), "summary": string(min_length=1),
+                        "raised_at": string()}),
+        "superseded_by": string(CASE_ID),
+    },
 )
 
-ASSERTION_RULES = (
-    (lambda a: isinstance(a.get("id"), str), '"id" must be a string'),
-    (lambda a: a.get("check") in tuple(CHECK_FIELDS),
-     f'"check" must be one of {", ".join(CHECK_FIELDS)}'),
-    (lambda a: a.get("level") in LEVELS, f'"level" must be one of {", ".join(LEVELS)}'),
-    (lambda a: all(f in a for f in CHECK_FIELDS[a["check"]]),
-     "it lacks a field its check requires"),
-    (lambda a: a["check"] != "disposition"
-     or (type(a["message"]) is int and a["message"] >= 0 and a["phase"] in PHASES),
-     'a disposition needs a non-negative integer "message" and a "phase" of initial or final'),
-    (lambda a: a["check"] != "key_state"
-     or (isinstance(a["aid"], str) and isinstance(a["expected"], dict)
-         and all(f in a["expected"] for f in KEY_STATE_FIELDS)),
-     f'a key_state needs a string "aid" and an "expected" with {", ".join(KEY_STATE_FIELDS)}'),
-)
+
+def _cross_field_problem(case: dict) -> str | None:
+    """The schema's if/then rules, which tie one field's value to another's presence."""
+    problem = INPUTS[case["operation"]](case["input"], "input")
+    if problem:
+        return problem
+    for status, field in (("disputed", "dispute"), ("deprecated", "superseded_by")):
+        if case["status"] == status and field not in case:
+            return f'a {status} case needs "{field}"'
+    for n, assertion in enumerate(case["assertions"]):
+        needs, forbids = (("clause", "basis") if assertion["level"] in NORMATIVE
+                          else ("basis", "clause"))
+        if needs not in assertion or forbids in assertion:
+            return (f'assertions[{n}] at level {assertion["level"]} needs "{needs}" and must '
+                    f'not carry "{forbids}"')
+        if assertion.get("expected") == "superseded" and assertion.get("phase") != "final":
+            return f"assertions[{n}] expects superseded, which is a final disposition only"
+    return None
 
 
 def case_problem(case) -> str | None:
-    """None if the runner can read this case, else a sentence saying what is wrong."""
+    """None if the case satisfies the case schema (and the runner's own rule that assertion ids
+    are unique), else a sentence saying what is wrong."""
     if not isinstance(case, dict):
         return "It is not a JSON object."
-    missing = [key for key in REQUIRED if key not in case]
-    if missing:
-        return f'It lacks the required field "{missing[0]}".'
-    for rule, message in CASE_RULES:
-        if not rule(case):
-            return f"Its {message}."
-    seen = set()
-    for n, assertion in enumerate(case["assertions"]):
-        if not isinstance(assertion, dict):
-            return f"Its assertion {n} is not an object."
-        for rule, message in ASSERTION_RULES:
-            if not rule(assertion):
-                return f"In its assertion {n}, {message}."
-        if assertion["id"] in seen:
-            return f'Its assertion id "{assertion["id"]}" is used twice.'
-        seen.add(assertion["id"])
+    problem = CASE(case, "") or _cross_field_problem(case)
+    if problem:
+        return f"It does not satisfy the case schema: {problem}."
+    ids = [a["id"] for a in case["assertions"]]
+    for assertion_id in ids:
+        if ids.count(assertion_id) > 1:
+            return f'Its assertion id "{assertion_id}" is used twice.'
     return None
 
 
