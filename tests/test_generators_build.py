@@ -487,3 +487,12 @@ def test_script_prints_a_coded_generator_error_and_exits_3(monkeypatch, capsys):
     monkeypatch.setattr(script["regenerate"], "generate", fail)
     assert script["main"](["--check"]) == 3
     assert capsys.readouterr().err.strip() == "e.input.format.kcs-scenario.f: broken scenario"
+
+
+@pytest.mark.parametrize("bad_id", ["../../etc/CESR-0049", "CESR-0049/../../x", "CESR-0049\n",
+                                    "CESR-49", "KERI-0049", "CESR-٠٠٤٩", None, 49])
+def test_a_case_id_that_is_not_cesr_nnnn_is_refused_before_any_path_is_built(tree, bad_id):
+    _scenario(tree, "zz.json", [_case(id=bad_id)])
+    with pytest.raises(build.ScenarioError) as e:
+        regenerate.generate(tree)
+    assert e.value.code == "e.input.format.kcs-case-id.f"

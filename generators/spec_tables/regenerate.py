@@ -11,7 +11,7 @@ import re
 
 from . import keripy1x, spec_source, tables
 from .build import build_case, resolve_clauses, resolve_records
-from .errors import E_SCENARIO_JSON, E_SPEC_TABLE, GeneratorError, ScenarioError
+from .errors import E_CASE_ID, E_SCENARIO_JSON, E_SPEC_TABLE, GeneratorError, ScenarioError
 
 # Failures of a case's content that the builder does not name itself: an unknown code or table
 # entry, a raw value of the wrong size, a missing scenario field, a quote not in the text.
@@ -20,7 +20,7 @@ BUILD_FAILURES = (KeyError, ValueError, LookupError, TypeError)
 SCENARIO_DIR = "scenarios/cesr"
 CASE_DIR = "cases/cesr"
 CLAUSES_FILE = "clauses.json"
-CASE_ID = re.compile(r"^CESR-(\d{4})$")
+CASE_ID = re.compile(r"CESR-([0-9]{4})")  # always applied with fullmatch
 
 PROFILES = {
     "cesr-1.0": {
@@ -119,6 +119,12 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
         allowed.update(gap["number"] for gap in scenario.get("id_gaps", []))
         for case in scenario["cases"]:
             case = {"profile": scenario["profile"], **case}
+            case_id = case.get("id")
+            if not isinstance(case_id, str) or not CASE_ID.fullmatch(case_id):
+                # Checked before the id becomes part of a path, so no id can name a file
+                # outside cases/cesr.
+                raise ScenarioError(f"{rel}: {case_id!r} is not a case id of the form CESR-NNNN.",
+                                    E_CASE_ID)
             context = case.get("context", scenario.get("context"))
             legacy = keripy1x.TABLE if context == "keripy-1.2.14" else None
             reference = keripy1x.REFERENCE if case["profile"] == "keripy-1x-interop" else None
@@ -135,7 +141,7 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
             files[out] = dumps(built)
             members[case["profile"]].append(case["id"])
 
-    numbers = sorted(int(CASE_ID.match(p.split("/")[-1][:-5]).group(1)) for p in files)
+    numbers = sorted(int(CASE_ID.fullmatch(p.split("/")[-1][:-5]).group(1)) for p in files)
     gaps = set(range(1, numbers[-1] + 1)) - set(numbers) if numbers else set()
     if gaps - allowed:
         raise ScenarioError(f"Case ids have undocumented gaps: {sorted(gaps - allowed)}.")
