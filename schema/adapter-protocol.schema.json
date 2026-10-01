@@ -491,7 +491,8 @@
           }
         },
         "bt": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^(0x)?[0-9a-f]+$"
         },
         "delegator": {
           "type": [
