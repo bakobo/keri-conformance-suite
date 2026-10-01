@@ -284,7 +284,8 @@ def test_good_adapter_says_hello_and_answers(vocabulary):
         tail = s.take_stderr()
         assert "handling cesr.parse" in tail
         assert "answered cesr.parse" in tail
-        assert s.take_stderr() == ""
+        again = s.take_stderr()
+        assert again == ""
 
 
 def test_close_and_kill_are_idempotent_and_safe_before_open(vocabulary):
@@ -301,8 +302,10 @@ def test_exchange_can_read_without_writing(vocabulary):
     with session(good(), vocabulary) as s:
         s.open()
         two = b'{"id": 7, "op": "cesr.parse", "stream": ""}\n{"id": 8, "op": "cesr.parse", "stream": ""}\n'
-        assert json.loads(s.exchange(two))["id"] == 7
-        assert json.loads(s.exchange(b""))["id"] == 8
+        first = s.exchange(two)
+        second = s.exchange(b"")
+        assert json.loads(first)["id"] == 7
+        assert json.loads(second)["id"] == 8
 
 
 def test_refuses_to_run_as_root(vocabulary):
@@ -378,7 +381,8 @@ def test_hello_offers_every_supported_version_and_asks_for_the_highest(vocabular
 
     dump = tmp_path / "hello.json"
     with session(good("--hello-dump", dump), vocabulary) as s:
-        assert s.open()["protocol"] == 1
+        hello = s.open()
+        assert hello["protocol"] == 1
     request = json.loads(dump.read_text())
     assert request == {"id": 0, "op": "hello", "protocol": max(SUPPORTED_PROTOCOLS),
                        "supported": sorted(SUPPORTED_PROTOCOLS)}
@@ -461,7 +465,8 @@ def test_crash_stderr_is_captured(vocabulary):
     with session(bad("crash"), vocabulary) as s:
         s.open()
         s.request("cesr.parse", {"stream": ""})
-        assert "boom: the parser panicked" in s.take_stderr()
+        tail = s.take_stderr()
+        assert "boom: the parser panicked" in tail
 
 
 @pytest.mark.parametrize("mode", ["hang", "no-newline"])
@@ -492,9 +497,10 @@ def test_an_adapter_that_closes_its_input_is_an_exit(vocabulary):
 def test_an_adapter_that_closes_stderr_still_works(vocabulary):
     with session(bad("close-stderr"), vocabulary) as s:
         s.open()
-        assert s.request("cesr.encode", {"code": "E", "raw": "", "domain": "text"}) == Reply(
-            {"encoded": "10"})
-        assert s.take_stderr() == ""
+        outcome = s.request("cesr.encode", {"code": "E", "raw": "", "domain": "text"})
+        tail = s.take_stderr()
+        assert outcome == Reply({"encoded": "10"})
+        assert tail == ""
 
 
 def test_an_answer_before_the_request_is_written_is_malformed(vocabulary):
@@ -509,8 +515,8 @@ def test_stderr_is_bounded_to_its_tail(vocabulary):
     with session(bad("stderr-flood"), vocabulary,
                  limits=Limits(timeout=5.0, stderr_tail=1000)) as s:
         s.open()
-        assert isinstance(s.request("cesr.encode", {"code": "E", "raw": "", "domain": "text"}),
-                          Reply)
+        outcome = s.request("cesr.encode", {"code": "E", "raw": "", "domain": "text"})
+        assert isinstance(outcome, Reply)
         tail = s.take_stderr()
         assert len(tail) <= 1000
         assert tail.endswith("END")
@@ -522,7 +528,8 @@ def test_memory_limit_applies(vocabulary):
         s.open()
         outcome = s.request("cesr.parse", {"stream": ""})
         assert outcome.kind == "exited"
-        assert "MemoryError" in s.take_stderr()
+        tail = s.take_stderr()
+        assert "MemoryError" in tail
 
 
 def test_cpu_limit_applies(vocabulary):
@@ -548,7 +555,8 @@ def test_the_whole_process_group_is_killed(vocabulary, tmp_path):
     pidfile = tmp_path / "grandchild.pid"
     with session(bad("grandchild", pidfile), vocabulary, limits=Limits(timeout=1.0)) as s:
         s.open()
-        assert s.request("cesr.parse", {"stream": ""}).kind == "timeout"
+        outcome = s.request("cesr.parse", {"stream": ""})
+        assert outcome.kind == "timeout"
     grandchild = int(pidfile.read_text())
     deadline = time.monotonic() + 5
     while _alive(grandchild) and time.monotonic() < deadline:
@@ -571,8 +579,8 @@ def test_restart_with_a_different_hello_is_refused(vocabulary, tmp_path, write_j
 def test_request_ids_increase(vocabulary):
     with session(good(), vocabulary) as s:
         s.open()
-        assert s.next_id() == 1
-        assert s.next_id() == 2
+        first, second = s.next_id(), s.next_id()
+        assert (first, second) == (1, 2)
 
 
 def test_adapter_exits_cleanly_on_eof(vocabulary):

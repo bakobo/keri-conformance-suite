@@ -131,32 +131,37 @@ def check(argv, *extra):
 
 
 def test_cli_exit_0_when_every_available_probe_passes(capsys):
-    assert check(good()) == 0
+    code = check(good())
+    assert code == 0
     out = capsys.readouterr().out
     assert "pass  hello" in out
     assert "not-yet-available  statelessness" in out
 
 
 def test_cli_exit_1_when_a_probe_fails(capsys):
-    assert check(bad("wrong-id"), "--timeout", "2") == 1
+    code = check(bad("wrong-id"), "--timeout", "2")
+    assert code == 1
     assert "fail  id-echo" in capsys.readouterr().out
 
 
 def test_cli_runner_fault_when_the_adapter_cannot_start(tmp_path, capsys):
-    assert check([str(tmp_path / "missing")]) == errors.EXIT_FAULT
+    code = check([str(tmp_path / "missing")])
+    assert code == errors.EXIT_FAULT
     assert errors.E_ADAPTER_START in capsys.readouterr().err
 
 
 def test_cli_refuses_off_posix(monkeypatch, capsys):
     monkeypatch.setattr(session_module, "is_posix", lambda: False)
-    assert check(good()) == errors.EXIT_FAULT
+    code = check(good())
+    assert code == errors.EXIT_FAULT
     assert errors.E_PLATFORM in capsys.readouterr().err
 
 
 def test_cli_passes_environment_through(tmp_path, monkeypatch):
     monkeypatch.setenv("KCS_CHECK_PASS", "1")
     dump = tmp_path / "env.json"
-    assert check(good("--env-dump", dump), "--pass-env", "KCS_CHECK_PASS") == 0
+    code = check(good("--env-dump", dump), "--pass-env", "KCS_CHECK_PASS")
+    assert code == 0
     assert json.loads(dump.read_text())["KCS_CHECK_PASS"] == "1"
 
 

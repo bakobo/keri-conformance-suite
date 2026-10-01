@@ -331,12 +331,14 @@ def test_an_aborted_run_without_report_still_exits_3(cases_dir, tmp_path, write_
 
 @pytest.mark.parametrize("value", ["0", "-1", "x"])
 def test_bad_limits_are_coded_usage_errors(value, capsys):
-    assert cli.main(["run", "--adapter", "x", "--timeout", value]) == errors.EXIT_USAGE
+    code = cli.main(["run", "--adapter", "x", "--timeout", value])
+    assert code == errors.EXIT_USAGE
     assert capsys.readouterr().err.startswith(f"{errors.E_USAGE_INVALID}: ")
 
 
 def test_a_missing_adapter_option_is_a_coded_usage_error(capsys):
-    assert cli.main(["run"]) == errors.EXIT_USAGE
+    code = cli.main(["run"])
+    assert code == errors.EXIT_USAGE
     assert capsys.readouterr().err.startswith(f"{errors.E_USAGE_INVALID}: ")
 
 

@@ -50,64 +50,69 @@ def hello():
     send({"id": request["id"], "result": HELLO})
 
 
+def encoded(rid, **extra):
+    return json.dumps({"id": rid, "result": {"encoded": "10"}, **extra}).encode() + b"\n"
+
+
+def error(rid, kind, message):
+    return json.dumps({"id": rid, "error": {"kind": kind, "message": message}}).encode() + b"\n"
+
+
+# Modes that answer each request with one fixed line, as a function of the request id.
+LINES = {
+    "wrong-id": lambda rid: encoded(rid + 1),
+    "bool-id": lambda rid: b'{"id": true, "result": {"encoded": "10"}}\n',
+    "junk": lambda rid: b"this is not json\n",
+    "not-utf8": lambda rid: b"\xff\xfe\n",
+    "not-object": lambda rid: b"[1, 2]\n",
+    "both": lambda rid: json.dumps({"id": rid, "result": {},
+                                    "error": {"kind": "harness", "message": "x"}}).encode() + b"\n",
+    "neither": lambda rid: json.dumps({"id": rid}).encode() + b"\n",
+    "extra-key": lambda rid: encoded(rid, extra=1),
+    "error-harness": lambda rid: error(rid, "harness", "glue raised"),
+    "error-unsupported": lambda rid: error(rid, "unsupported", "cannot"),
+    "error-bad-kind": lambda rid: error(rid, "oops", "x"),
+    "error-not-object": lambda rid: json.dumps({"id": rid, "error": "x"}).encode() + b"\n",
+    "answer-all": encoded,
+}
+
+
 def behave(request):
     rid = request["id"]
-    if MODE == "crash":
+    if MODE in LINES:
+        write(LINES[MODE](rid))
+    elif MODE == "crash":
         print("boom: the parser panicked", file=sys.stderr, flush=True)
         sys.exit(3)
-    if MODE == "hang":
+    elif MODE == "hang":
         hang()
-    if MODE == "oversize":
+    elif MODE == "oversize":
         write(b'{"id": %d, "result": {"encoded": "' % rid + b"a" * int(ARG) + b'"}}\n')
         hang()
-    if MODE == "no-newline":
+    elif MODE == "no-newline":
         write(b'{"id": ')
         hang()
-    if MODE == "flood":
+    elif MODE == "flood":
         while True:
             write(b"a" * 65536)
-    if MODE == "wrong-id":
-        return send({"id": rid + 1, "result": {"encoded": "10"}})
-    if MODE == "bool-id":
-        return write(b'{"id": true, "result": {"encoded": "10"}}\n')
-    if MODE == "junk":
-        return write(b"this is not json\n")
-    if MODE == "not-utf8":
-        return write(b"\xff\xfe\n")
-    if MODE == "not-object":
-        return write(b"[1, 2]\n")
-    if MODE == "both":
-        return send({"id": rid, "result": {}, "error": {"kind": "harness", "message": "x"}})
-    if MODE == "neither":
-        return send({"id": rid})
-    if MODE == "extra-key":
-        return send({"id": rid, "result": {"encoded": "10"}, "extra": 1})
-    if MODE == "error-harness":
-        return send({"id": rid, "error": {"kind": "harness", "message": "glue raised"}})
-    if MODE == "error-unsupported":
-        return send({"id": rid, "error": {"kind": "unsupported", "message": "cannot"}})
-    if MODE == "error-bad-kind":
-        return send({"id": rid, "error": {"kind": "oops", "message": "x"}})
-    if MODE == "error-not-object":
-        return send({"id": rid, "error": "x"})
-    if MODE == "memory":
-        block = bytearray(int(ARG))
-        return send({"id": rid, "result": {"encoded": f"{len(block[:1]):02x}"}})
-    if MODE == "cpu":
+    elif MODE == "memory":
+        block = bytearray(int(ARG))  # fails under a small enough address-space limit
+        del block
+        write(encoded(rid))
+    elif MODE == "cpu":
         while True:
             pass
-    if MODE == "grandchild":
+    elif MODE == "grandchild":
         child = subprocess.Popen(["sleep", "60"])
         with open(ARG, "w", encoding="utf-8") as f:
             f.write(str(child.pid))
         hang()
-    if MODE == "stderr-flood":
+    elif MODE == "stderr-flood":
         sys.stderr.write("x" * 200_000 + "END")
         sys.stderr.flush()
-        return send({"id": rid, "result": {"encoded": "10"}})
-    if MODE == "answer-all":
-        return send({"id": rid, "result": {"encoded": "10"}})
-    raise SystemExit(f"unknown mode {MODE}")
+        write(encoded(rid))
+    else:
+        raise SystemExit(f"unknown mode {MODE}")
 
 
 def main():
@@ -117,8 +122,9 @@ def main():
         hang()
     if MODE == "hello-error":
         request = read_request()
-        return send({"id": request["id"],
-                     "error": {"kind": "harness", "message": "the hello handler is broken"}})
+        send({"id": request["id"],
+              "error": {"kind": "harness", "message": "the hello handler is broken"}})
+        return
     if MODE == "hello-version":
         request = read_request()
         send({"id": request["id"], "result": {**HELLO, "protocol": max(request["supported"]) + 1}})
@@ -157,7 +163,7 @@ def main():
                 send({"id": request["id"], "error": {"kind": "harness", "message": "op"}})
             else:
                 send({"id": request["id"], "result": {"items": []}})
-        return None
+        return
     if MODE == "leak":
         hello()
         for seen, line in enumerate(sys.stdin.buffer):
@@ -165,7 +171,7 @@ def main():
             state = "accepted" if seen == 0 else "duplicitous"
             send({"id": request["id"], "result": {
                 "dispositions": [{"initial": state, "final": state}], "key_states": {}}})
-        return None
+        return
     hello()
     while True:
         behave(read_request())

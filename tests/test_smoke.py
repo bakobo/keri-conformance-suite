@@ -6,15 +6,14 @@ import sys
 
 import pytest
 
-import keri_conformance
-from keri_conformance import cli, protocol
+from keri_conformance import __version__, cli, protocol
 
 # PEP 440 public version, the subset this project uses (release segment plus optional pre/dev).
 PEP440 = re.compile(r"^\d+(\.\d+)*((a|b|rc)\d+)?(\.dev\d+)?$")
 
 
 def test_version_is_a_pep440_release():
-    assert PEP440.match(keri_conformance.__version__)
+    assert PEP440.match(__version__)
 
 
 def test_protocol_version_is_current_and_supported():
@@ -29,19 +28,22 @@ def test_supported_protocols_are_current_and_previous_only():
 
 
 def test_cli_prints_version(capsys):
-    assert cli.main(["--version"]) == 0
-    assert capsys.readouterr().out.strip() == f"kcs {keri_conformance.__version__}"
+    code = cli.main(["--version"])
+    assert code == 0
+    assert capsys.readouterr().out.strip() == f"kcs {__version__}"
 
 
 def test_cli_without_arguments_reports_a_coded_error(capsys):
-    assert cli.main([]) == 2
+    code = cli.main([])
+    assert code == 2
     err = capsys.readouterr().err
     assert err.startswith("e.input.missing.f: ")
     assert "usage" in err.lower()
 
 
 def test_cli_unknown_argument_reports_a_coded_error(capsys):
-    assert cli.main(["--no-such-flag"]) == 2
+    code = cli.main(["--no-such-flag"])
+    assert code == 2
     err = capsys.readouterr().err
     assert err.startswith("e.input.format.f: ")
     assert "usage" in err.lower()
