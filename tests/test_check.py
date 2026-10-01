@@ -56,6 +56,14 @@ def test_an_unanswered_echo_probe_fails(vocabulary, mode):
     assert result["id-echo"].status == "fail"
 
 
+@pytest.mark.parametrize("mode", ["error-bad-kind", "error-not-object"])
+def test_a_malformed_error_body_fails_the_echo_and_unknown_op_probes(vocabulary, mode):
+    result = probes(bad(mode), vocabulary)
+    assert result["id-echo"].status == "fail"
+    assert result["unknown-op"].status == "fail"
+    assert "error" in result["id-echo"].reason
+
+
 def test_an_error_reply_still_echoes_the_id(vocabulary):
     result = probes(bad("error-harness"), vocabulary)
     assert result["id-echo"].status == "pass"
@@ -76,6 +84,10 @@ def test_answering_an_unknown_op_with_a_result_fails(vocabulary):
         (b'{"id": 3, "error": {"kind": "harness", "message": "bad json"}}', None, "fail"),
         (b'{"id": null, "result": {}}', None, "fail"),
         (b"[]", None, "fail"),
+        (b'{"id": null, "error": {"kind": "oops", "message": "bad json"}}', None, "fail"),
+        (b'{"id": null, "error": {"kind": "harness"}}', None, "fail"),
+        (b'{"id": null, "error": {"kind": "harness", "message": 3}}', None, "fail"),
+        (b'{"id": null, "error": {"kind": "harness", "message": "m", "extra": 1}}', None, "fail"),
         (b"garbage", None, "fail"),
         (b'{"id": null, "error": {"kind": "harness", "message": "bad json"}}', b"EXIT", "fail"),
         (b'{"id": null, "error": {"kind": "harness", "message": "bad json"}}', b"junk", "fail"),

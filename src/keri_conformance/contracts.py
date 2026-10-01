@@ -8,12 +8,12 @@ schemas share them.
 from keri_conformance.assertions import normalize_threshold
 from keri_conformance.shapes import (
     HEX,
-    any_of,
     array,
     enum,
     integer,
+    keyed,
     mapping,
-    null,
+    nullable,
     obj,
     predicate,
     string,
@@ -43,12 +43,14 @@ THRESHOLD = predicate(lambda value: normalize_threshold(value) is not None,
 KEY_STATE = obj({
     "sn": OFFSET, "said": string(), "keys": array(string()), "kt": THRESHOLD,
     "ndigs": array(string()), "nt": THRESHOLD, "wits": array(string()), "bt": string(),
-    "delegator": any_of(string(), null),
+    "delegator": nullable(string()),
 })
 
+ERROR = obj({"kind": enum("harness", "unsupported"), "message": string()})
+
 RESULTS = {
-    "cesr.parse": any_of(obj({"items": array(ITEM)}),
-                         obj({"reject": obj({"class": string()})})),
+    "cesr.parse": keyed({"items": obj({"items": array(ITEM)}),
+                         "reject": obj({"reject": obj({"class": string()})})}),
     "cesr.encode": obj({"encoded": HEX_STRING}),
     "keri.process": obj({
         "dispositions": array(obj({"initial": enum(*INITIAL_DISPOSITIONS),

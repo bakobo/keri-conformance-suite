@@ -10,6 +10,7 @@ available rather than faked.
 import json
 from dataclasses import dataclass
 
+from keri_conformance.contracts import ERROR
 from keri_conformance.errors import HelloRefused
 from keri_conformance.session import AdapterSession, Failure, parse_response
 
@@ -53,7 +54,7 @@ def _null_id_error(line: bytes) -> bool:
     except (ValueError, RecursionError):
         return False
     return (isinstance(message, dict) and set(message) == {"id", "error"}
-            and message["id"] is None and isinstance(message["error"], dict))
+            and message["id"] is None and ERROR(message["error"], "error") is None)
 
 
 def _probe_malformed(session: AdapterSession) -> tuple[bool, str]:

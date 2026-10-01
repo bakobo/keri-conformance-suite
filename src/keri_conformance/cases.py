@@ -20,13 +20,12 @@ from keri_conformance.jsonfile import JsonFileError, read_json
 from keri_conformance.session import OPERATIONS
 from keri_conformance.shapes import (
     Check,
-    any_of,
     anything_object,
     array,
     enum,
     integer,
     mapping,
-    null,
+    nullable,
     obj,
     string,
     tagged,
@@ -93,8 +92,8 @@ CASE = obj(
         "provenance": obj({
             "scenario": string(),
             "generator": obj({"name": string(), "version": string()}),
-            "reference": any_of(null, obj({"implementation": string(),
-                                           "commit": string(COMMIT)})),
+            "reference": nullable(obj({"implementation": string(),
+                                       "commit": string(COMMIT)})),
         }),
     },
     {

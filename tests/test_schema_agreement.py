@@ -14,6 +14,7 @@ from jsonschema import Draft202012Validator
 
 from keri_conformance.assertions import normalize_threshold
 from keri_conformance.cases import case_problem
+from keri_conformance.session import check_result_shape
 
 CASE = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
 PROTOCOL = json.loads((ROOT / "schema" / "adapter-protocol.schema.json").read_text(
@@ -238,3 +239,54 @@ def test_duplicate_assertion_ids_are_a_runtime_rule_beyond_the_schema():
     case = _replace(BASE_CASES[4], ("assertions", 1, "id"), "a1")
     assert CASE_VALIDATOR.is_valid(case)
     assert "twice" in case_problem(case)
+
+
+# --- adapter results (J) ------------------------------------------------------------------------
+
+RESULT_DEFS = {
+    "cesr.parse": {"oneOf": [{"$ref": "#/$defs/result_decoded"},
+                             {"$ref": "#/$defs/result_rejected"}]},
+    "cesr.encode": {"$ref": "#/$defs/result_encoded"},
+    "keri.process": {"$ref": "#/$defs/result_processed"},
+    "keri.emit": {"$ref": "#/$defs/result_emitted"},
+}
+
+BASE_RESULTS = [
+    ("cesr.parse", {"items": [
+        {"kind": "primitive", "start": 0, "end": 44, "code": "E", "raw": "00"},
+        {"kind": "indexed", "start": 44, "end": 132, "code": "A", "raw": "00", "index": 0,
+         "ondex": 0},
+        {"kind": "counter", "start": 132, "end": 136, "code": "-K", "size": 1,
+         "group_end": 224, "genus": "AAA", "gvrsn": "CAA"},
+        {"kind": "message", "start": 224, "end": 567, "proto": "KERI", "version": "2.0",
+         "serialization": "CBOR", "size": 343}]}),
+    ("cesr.parse", {"reject": {"class": "truncated"}}),
+    ("cesr.encode", {"encoded": "0aff"}),
+    ("keri.process", {"dispositions": [{"initial": "pending", "final": "superseded",
+                                        "reason": "out-of-order"}],
+                      "key_states": {"EAbc": {**STATE, "delegator": "EDel"}}}),
+    ("keri.emit", {"stream": "7b7d"}),
+]
+
+
+@pytest.mark.parametrize(("op", "result"), BASE_RESULTS,
+                         ids=[f"{op}-{n}" for n, (op, _) in enumerate(BASE_RESULTS)])
+def test_result_checks_agree_with_the_protocol_schema(op, result):
+    schema = Draft202012Validator({"$defs": PROTOCOL["$defs"], **RESULT_DEFS[op]})
+    assert schema.is_valid(result)
+    assert check_result_shape(op, result) is None
+    found = disagreements(mutations(result), lambda r: check_result_shape(op, r), schema)
+    assert found == [], found[:3]
+
+
+def test_every_operation_has_a_result_check():
+    from keri_conformance.session import OPERATIONS
+
+    assert set(RESULT_DEFS) == set(OPERATIONS)
+
+
+def test_keyed_refuses_a_non_object_on_its_own():
+    # Results reach it only after an object check, but the combinator does not rely on that.
+    from keri_conformance.shapes import keyed, string
+
+    assert keyed({"a": string()})(["a"], "x") == "x must be an object"

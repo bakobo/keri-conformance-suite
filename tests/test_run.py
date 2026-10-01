@@ -148,6 +148,17 @@ def test_a_crashing_adapter_fails_every_assertion_and_is_restarted(cases_dir, tm
         assert all(a["outcome"] == "fail" and a["actual"] is None for a in case["assertions"])
 
 
+def test_a_partial_result_shape_fails_every_assertion(cases_dir, tmp_path, write_json):
+    table = write_json("table.json", [{"match": {"op": "cesr.parse"}, "result": {"items": [
+        {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 0}]}}])
+    code, report = run(good("--table", table), cases_dir(PASSING[1]), tmp_path)
+    case = report["cases"][0]
+    assert code == errors.EXIT_FAILED
+    assert case["failure"]["kind"] == "malformed"
+    assert "group_end" in case["failure"]["detail"]
+    assert [a["outcome"] for a in case["assertions"]] == ["fail"]
+
+
 def test_a_hanging_adapter_times_out(cases_dir, tmp_path):
     _code, report = run(bad("hang"), cases_dir(PASSING[0]), tmp_path, "--timeout", "0.5")
     assert report["cases"][0]["failure"]["kind"] == "timeout"

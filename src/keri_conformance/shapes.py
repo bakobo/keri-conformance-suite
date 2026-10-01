@@ -70,10 +70,6 @@ def enum(*values) -> Check:
     return check
 
 
-def null(value, path):
-    return None if value is None else f"{_name(path)} must be null"
-
-
 def anything_object(value, path):
     return None if isinstance(value, dict) else f"{_name(path)} must be an object"
 
@@ -130,15 +126,26 @@ def obj(required: dict[str, Check], optional: dict[str, Check] | None = None) ->
     return check
 
 
-def any_of(*checks: Check) -> Check:
-    """At least one form holds. Used only where the forms are mutually exclusive, so it is the
-    schema's oneOf; a value fitting none is reported by the closest form's complaint."""
+def nullable(form: Check) -> Check:
+    """null, or `form` (the schema's oneOf of null and one other type)."""
 
     def check(value, path):
-        problems = [c(value, path) for c in checks]
-        if None in problems:
-            return None
-        return min(problems, key=len)
+        return None if value is None else form(value, path)
+
+    return check
+
+
+def keyed(forms: dict[str, Check]) -> Check:
+    """One of several closed objects told apart by which required key is present, as a oneOf whose
+    branches each require a different key. Dispatching on the key keeps the complaint specific."""
+
+    def check(value, path):
+        if not isinstance(value, dict):
+            return f"{_name(path)} must be an object"
+        for key, form in forms.items():
+            if key in value:
+                return form(value, path)
+        return f"{_name(path)} must have one of {_describe(forms)}"
 
     return check
 

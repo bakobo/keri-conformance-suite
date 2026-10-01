@@ -16,7 +16,6 @@ import functools
 import itertools
 import json
 import os
-import re
 import selectors
 import shlex
 import signal
@@ -26,6 +25,10 @@ from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 
+from keri_conformance.contracts import (
+    ERROR,
+    RESULTS,
+)
 from keri_conformance.errors import (
     E_ADAPTER_HELLO,
     E_ADAPTER_HELLO_CHANGED,
@@ -43,10 +46,7 @@ from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 
 OPERATIONS = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit")
 ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "SYSTEMROOT")
-INITIAL_DISPOSITIONS = ("accepted", "pending", "rejected", "duplicitous")
-FINAL_DISPOSITIONS = (*INITIAL_DISPOSITIONS, "superseded")
 HELLO_FIELDS = ("protocol", "adapter", "implementation", "operations", "features", "composes")
-HEX = re.compile(r"(?:[0-9a-f]{2})*")
 CHUNK = 65536
 MAX_VOCABULARY_BYTES = 1024 * 1024
 CLIP = 2000
@@ -213,64 +213,16 @@ def _is_int(value) -> bool:
     return type(value) is int
 
 
-def _shape_parse(result):
-    if set(result) == {"items"}:
-        items = result["items"]
-        if not isinstance(items, list):
-            return '"items" is not a list.'
-        for n, item in enumerate(items):
-            if not (isinstance(item, dict) and isinstance(item.get("kind"), str)
-                    and _is_int(item.get("start")) and _is_int(item.get("end"))):
-                return (f'Item {n} is not an object with a string "kind" and integer "start" '
-                        'and "end".')
-            if item["kind"] == "counter" and not _is_int(item.get("group_end")):
-                return f'Item {n} is a counter without an integer "group_end".'
-        return None
-    if set(result) == {"reject"}:
-        reject = result["reject"]
-        if isinstance(reject, dict) and isinstance(reject.get("class"), str):
-            return None
-        return 'The rejection is not an object with a string "class".'
-    return 'A cesr.parse result must have exactly one of "items" or "reject".'
-
-
-def _hex_field(result, field, op):
-    value = result.get(field)
-    if set(result) == {field} and isinstance(value, str) and HEX.fullmatch(value):
-        return None
-    return f'A {op} result must be exactly {{"{field}": <lowercase hex string>}}.'
-
-
-def _shape_process(result):
-    if set(result) != {"dispositions", "key_states"}:
-        return 'A keri.process result must have exactly "dispositions" and "key_states".'
-    dispositions = result["dispositions"]
-    if not isinstance(dispositions, list):
-        return '"dispositions" is not a list.'
-    for n, entry in enumerate(dispositions):
-        if not (isinstance(entry, dict) and entry.get("initial") in INITIAL_DISPOSITIONS
-                and entry.get("final") in FINAL_DISPOSITIONS):
-            return f'Disposition {n} is not an object with a valid "initial" and "final".'
-    key_states = result["key_states"]
-    if isinstance(key_states, dict) and all(isinstance(v, dict) for v in key_states.values()):
-        return None
-    return '"key_states" is not an object whose values are key-state objects.'
-
-
-_SHAPES = {
-    "cesr.parse": _shape_parse,
-    "cesr.encode": functools.partial(_hex_field, field="encoded", op="cesr.encode"),
-    "keri.process": _shape_process,
-    "keri.emit": functools.partial(_hex_field, field="stream", op="keri.emit"),
-}
-
-
 def check_result_shape(op: str, result) -> str | None:
-    """None if `result` is plausible for `op`, else a sentence saying what is wrong."""
+    """None if `result` is a complete protocol-v1 result for `op`, else a sentence saying what is
+    wrong. The checks mirror schema/adapter-protocol.schema.json (see contracts.py). A hello result
+    is checked field by field in validate_hello; an op the runner does not know is checked only
+    for being an object, since the runner never reads its result."""
     if not isinstance(result, dict):
         return "The result is not a JSON object."
-    check = _SHAPES.get(op)
-    return check(result) if check else None
+    check = RESULTS.get(op)
+    problem = check(result, "result") if check else None
+    return f"{problem[0].upper()}{problem[1:]}." if problem else None
 
 
 def parse_response(line: bytes, request_id: int, op: str) -> Reply | Failure:
@@ -293,10 +245,11 @@ def parse_response(line: bytes, request_id: int, op: str) -> Reply | Failure:
         return Reply(message["result"])
     if keys == {"error"}:
         error = message["error"]
-        if not (isinstance(error, dict) and error.get("kind") in ("harness", "unsupported")
-                and isinstance(error.get("message"), str)):
-            return Failure("malformed", 'The adapter\'s error is not an object with "kind" '
-                                        '"harness" or "unsupported" and a string "message".')
+        problem = ERROR(error, "error")
+        if problem:
+            return Failure("malformed", f"The adapter's error response is malformed: {problem}; "
+                                        'it must be exactly {"kind": "harness" or "unsupported", '
+                                        '"message": <string>}.')
         return Failure(f"error-{error['kind']}",
                        _clip(f"The adapter answered with a {error['kind']} error: "
                              f"{error['message']}"))
