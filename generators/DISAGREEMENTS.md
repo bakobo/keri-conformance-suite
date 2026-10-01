@@ -54,7 +54,7 @@ These came from comparing the specification's tables with keripy main's entry by
 
 ## Specification text issues noticed while building the cases
 
-Not disagreements with keripy. The assertions that depend on the first three carry a `note` beginning `spec-conflict:`; whether such cases should instead be disputed is an open policy question.
+Not disagreements with keripy. Under the suite's policy, assertions affected by the first three record the conflicting text in `spec_conflicts` and keep their clause's level; `generators/SPEC-ISSUES.md` is the full list for the working group, including the consumer obligations the cases infer and grade SHOULD.
 
 - **What a count code's size counts.** "Count Code tables" (line 591) says "The size component MUST count the Quadlets/triplets in its following group." and that it "always counts the number of quadlets/triplets in the group not the number of primitives." The symbol legends say a `#` digit in a count code determines "the count of the following Primitives or groups of Primitives" (line 674) or "the count of following Primitives or groups of Primitives" (line 714), and the Examples (line 1103) speak of "the count of the number of complex groups". The cases follow line 591; the specification's own example `-XBf` (95 = 11 + 6 + 11 + 1 + 66 quadlets) and `-KBC` (66) agree with it.
 - **Indexed code table, body versus Annex.** The body's table gives selector `3` a code size of 6 (line 702); its format and the Annex (line 1086) give 8. The cases use the Annex.
