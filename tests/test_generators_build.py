@@ -512,3 +512,23 @@ def test_a_scenario_of_the_wrong_shape_is_a_coded_error(tree, content):
     with pytest.raises(build.ScenarioError) as e:
         regenerate.generate(tree)
     assert e.value.code.startswith("e.input.format.kcs-scenario") and "zz.json" in str(e.value)
+
+
+# --- Frame and encoding domains -------------------------------------------------------------
+
+
+@pytest.mark.parametrize("domain", ["Binary", "b64", "", None, 1])
+def test_an_unknown_frame_domain_is_a_coded_scenario_error(domain):
+    with pytest.raises(build.ScenarioError) as e:
+        build.StreamBuilder(T).stream([{"genus": "AAA", "major": 2, "minor": 0,
+                                        "domain": domain}])
+    assert e.value.code == "e.input.format.kcs-scenario.f" and "domain" in str(e.value)
+
+
+@pytest.mark.parametrize("domain", ["Binary", "qb2", None])
+def test_an_unknown_encode_domain_is_a_coded_scenario_error(domain):
+    case = _case(operation="cesr.encode", code="D", raw="x", domain=domain,
+                 assertions=[{"check": "encoded", "clause": "mid-padding"}])
+    with pytest.raises(build.ScenarioError, match="domain") as e:
+        build.build_case(T, "s", case, CLAUSES, None, None)
+    assert e.value.code == "e.input.format.kcs-scenario.f"

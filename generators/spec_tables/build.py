@@ -29,6 +29,7 @@ from .errors import ScenarioError
 from .tables import Tables
 
 SCHEMA_VERSION = 1
+DOMAINS = ("text", "binary")  # the only frame and encoding domains a scenario may name
 LEVELS = ("MUST", "SHOULD", "MAY")
 
 
@@ -255,7 +256,10 @@ class StreamBuilder:
                 data, item = self.message(f["message"])
                 found = [item]
             else:
-                binary = f.get("domain", "text") == "binary"
+                domain = f.get("domain", "text")
+                if domain not in DOMAINS:
+                    raise ScenarioError(f"Frame domain {domain!r} is not one of {DOMAINS}.")
+                binary = domain == "binary"
                 text, found = self.node(f.get("bare", f))
                 if binary:
                     self.features.add("cesr.domain.binary")
@@ -299,6 +303,9 @@ def build_case(t: Tables, scenario_path: str, case: dict, clauses: dict,
     op = case["operation"]
     if op == "cesr.encode":
         code, domain = case["code"], case["domain"]
+        if domain not in DOMAINS:
+            raise ScenarioError(f"{case['id']}: encoding domain {domain!r} is not one of "
+                                f"{DOMAINS}.")
         raw = bytes.fromhex(case["hex"]) if "hex" in case else raw_bytes(case["raw"], t.raw_size(code))
         text = encoding.primitive(t, code, raw)
         encoded = text.encode("ascii") if domain == "text" else encoding.to_binary(text)
