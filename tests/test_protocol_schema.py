@@ -27,7 +27,7 @@ HELLO_RESULT = {
 }
 
 GOOD_REQUESTS = [
-    {"id": 0, "op": "hello", "protocol": 1},
+    {"id": 0, "op": "hello", "protocol": 1, "supported": [1]},
     {"id": 1, "op": "cesr.parse", "stream": "2d4b"},
     {"id": 2, "op": "cesr.encode", "code": "E", "raw": "4b2a", "domain": "text"},
     {"id": 3, "op": "keri.process", "perspective": {"role": "validator"},
@@ -150,3 +150,7 @@ def test_counter_reports_group_end():
     message = copy.deepcopy(GOOD_RESPONSES[1])
     del message["result"]["items"][0]["group_end"]
     assert list(RESPONSE.iter_errors(message))
+
+
+def test_hello_request_carries_supported_versions():
+    assert list(REQUEST.iter_errors({"id": 0, "op": "hello", "protocol": 1}))
