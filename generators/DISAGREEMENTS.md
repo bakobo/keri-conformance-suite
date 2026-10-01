@@ -4,7 +4,7 @@ The CESR cases take their expected values from the CESR specification, v1.0 (tag
 
 How the cross-checks were run, from the repository root:
 
-```
+```sh
 cd generators/keripy_check   && uv run python check.py --report /tmp/keripy-main-report.json
 cd generators/keripy1x_check && uv run python check.py --report /tmp/keripy1x-report.json
 ```
