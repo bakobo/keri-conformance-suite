@@ -234,6 +234,15 @@ BASE_CASES = [
                assertion("attachments_equivalent", name="a3", expected=[{"i": 0}])]),
 ]
 BASE_CASES[0]["assertions"][0]["clause"] = {**CLAUSE, "quote": "A stream MUST ..."}
+# A consumer obligation inferred from a producer-side MUST, graded SHOULD (inferred_from), and a
+# decoded assertion recording conflicting text elsewhere in the specification (spec_conflicts).
+BASE_CASES[0]["assertions"][0]["level"] = "SHOULD"
+BASE_CASES[0]["assertions"][0]["inferred_from"] = {
+    "quote": "A stream MUST ...", "section": "Count codes", "line": 591,
+    "inference": "A parser should reject a stream that breaks it."}
+BASE_CASES[1]["assertions"][0]["spec_conflicts"] = [
+    {"quote": "the count of the following Primitives", "section": "Legend", "line": 674,
+     "why": "It says items where line 591 says quadlets."}]
 
 
 def test_the_base_cases_are_valid_in_both():
@@ -397,6 +406,15 @@ def test_an_assertion_check_must_fit_the_operation(base, check):
     assert (case_problem(case) is None) == fits
     if not fits:
         assert "operation" in case_problem(case)
+
+
+@pytest.mark.parametrize("level", ["MUST", "MAY", "SHOULD"])
+def test_an_inferred_obligation_is_graded_should_in_both(level):
+    case = _replace(BASE_CASES[0], ("assertions", 0, "level"), level)
+    assert CASE_VALIDATOR.is_valid(case) == (level == "SHOULD")
+    assert (case_problem(case) is None) == (level == "SHOULD")
+    if level != "SHOULD":
+        assert "inferred_from" in case_problem(case)
 
 
 def test_cesr_encode_needs_a_non_empty_code():

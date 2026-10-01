@@ -55,7 +55,32 @@
       ],
       "id": "a1",
       "level": "MUST",
-      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103); spec-conflict: code 3A###### is 8 characters in the Annex indexed table (line 1086) and its format, but the body's indexed table gives selector 3 a code size of 6 (line 702)"
+      "spec_conflicts": [
+        {
+          "line": 674,
+          "quote": "When part of a Count Code determines the count of the following Primitives or groups of Primitives",
+          "section": "Encoding Scheme Symbols Table",
+          "why": "The legend for the # symbol in the Encoding Scheme Table says a count code's digits count primitives or groups, where line 591 says the size MUST count quadlets/triplets, not primitives."
+        },
+        {
+          "line": 714,
+          "quote": "When part of a Count Code determines the count of following Primitives or groups of Primitives",
+          "section": "Encoding scheme format symbol table",
+          "why": "The same legend under the indexed code table repeats the item-count reading that line 591 rules out."
+        },
+        {
+          "line": 1103,
+          "quote": "where `##` is replaced by the two-character Base64 count of the number of complex groups",
+          "section": "Examples",
+          "why": "The worked example's prose calls -X's digits a count of complex groups, though its own values (-XBf = 95 quadlets for one group) follow line 591."
+        },
+        {
+          "line": 702,
+          "quote": "|     `3`   |   1        |     3       |      3      |      6    |",
+          "section": "Indexed code table",
+          "why": "The body's indexed code table gives selector 3 a code size of 6, while its own format column (3$######&&&&) and the Annex table give 8, and a 114-byte signature with pad size 0 needs a code that is a multiple of four characters."
+        }
+      ]
     }
   ],
   "description": "Code 3A###### (Ed448 indexed signature big dual): three-character index 4096 and ondex 5000, 160 characters.",

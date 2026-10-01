@@ -91,10 +91,29 @@
       ],
       "id": "a1",
       "level": "MUST",
-      "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+      "spec_conflicts": [
+        {
+          "line": 674,
+          "quote": "When part of a Count Code determines the count of the following Primitives or groups of Primitives",
+          "section": "Encoding Scheme Symbols Table",
+          "why": "The legend for the # symbol in the Encoding Scheme Table says a count code's digits count primitives or groups, where line 591 says the size MUST count quadlets/triplets, not primitives."
+        },
+        {
+          "line": 714,
+          "quote": "When part of a Count Code determines the count of following Primitives or groups of Primitives",
+          "section": "Encoding scheme format symbol table",
+          "why": "The same legend under the indexed code table repeats the item-count reading that line 591 rules out."
+        },
+        {
+          "line": 1103,
+          "quote": "where `##` is replaced by the two-character Base64 count of the number of complex groups",
+          "section": "Examples",
+          "why": "The worked example's prose calls -X's digits a count of complex groups, though its own values (-XBf = 95 quadlets for one group) follow line 591."
+        }
+      ]
     }
   ],
-  "description": "The shape of the specification's own Examples (lines 1104-1116): a transferable indexed signature groups code (-X) whose group holds a prefix (E), a sequence number (0A), a digest (E) and a controller signature group (-K) of two signatures. -X's size, 73 (11 + 6 + 11 + 1 + 44), counts every quadlet including -K's code and contents; -K's is 44. The specification's example is built the same way: -XBf is 95 = 11 + 6 + 11 + 1 + 66. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
+  "description": "The shape of the specification's own Examples (lines 1104-1116): a transferable indexed signature groups code (-X) whose group holds a prefix (E), a sequence number (0A), a digest (E) and a controller signature group (-K) of two signatures. -X's size, 73 (11 + 6 + 11 + 1 + 44), counts every quadlet including -K's code and contents; -K's is 44. The specification's example is built the same way: -XBf is 95 = 11 + 6 + 11 + 1 + 66. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead and records the others in spec_conflicts.",
   "id": "CESR-0026",
   "input": {
     "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414147352e222c2274223a22696370222c2264223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2269223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2273223a2230222c226b74223a2232222c226b223a5b22444358516c42303037556d4c73757044497a5f414443393857375a68635a614d6a746632545f2d6e644c5933222c2244504a2d7230792d494c7a53764b2d763466776257494a79476a41675a4b483335336a72454b4839506f725f222c22444e42373568385f4d454c64735053754172685a72397864765533587047635053374a5042454a7a68714c6e225d2c226e74223a2231222c226e223a5b22454f7a756e384f61316c4b714c5f772d4b55783270666d3659435f596d41793431674a663331476449505345225d2c226274223a2231222c2262223a5b2242426a4a45346d5454655f496c675a39426d4d724c6f684d47745443477073466b5033744449666d72736838225d2c2263223a5b5d2c2261223a5b5d7d2d43424b2d58424a454232665431637378506849447a6f4c755042685a4f4757616c4f6c5f46596f39332d63736243766e2d37573041414141414141414141414141414141414141414141414544386d354c505f65727a657554345a4c494d354863447755746339593646457262384d56766c366b6165392d4b41734141416d346f55655f56494e5443477673794330594e6d32756f314e41766246374450377665595568576666504c66634e5f6e4b3336726271743476386458303875304477784550316b5a64613856686866654f756f44574142446a66335a3455306c645630645663675f524c704e59354872726f505236626774634561325861654731767a45584a584c55616159533271364b6933333558337a5866634656326a3142366936543754774832676e4a"

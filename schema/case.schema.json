@@ -129,6 +129,18 @@
                     "items": {
                       "$ref": "#/$defs/item"
                     }
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
               },
@@ -166,6 +178,18 @@
                   },
                   "check": {
                     "const": "rejected"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
               },
@@ -208,6 +232,18 @@
                   "expected": {
                     "type": "string",
                     "pattern": "^([0-9a-f]{2})*$"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
               },
@@ -268,6 +304,18 @@
                       "duplicitous",
                       "superseded"
                     ]
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 },
                 "if": {
@@ -327,6 +375,18 @@
                   },
                   "expected": {
                     "$ref": "#/$defs/key_state"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
               },
@@ -369,6 +429,18 @@
                   "expected": {
                     "type": "string",
                     "pattern": "^([0-9a-f]{2})*$"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
               },
@@ -406,6 +478,18 @@
                   },
                   "check": {
                     "const": "signatures_verify"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
               },
@@ -450,6 +534,18 @@
                     "items": {
                       "type": "object"
                     }
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
               }
@@ -500,6 +596,20 @@
                 }
               }
             ]
+          },
+          {
+            "if": {
+              "required": [
+                "inferred_from"
+              ]
+            },
+            "then": {
+              "properties": {
+                "level": {
+                  "const": "SHOULD"
+                }
+              }
+            }
           }
         ]
       }
@@ -1187,6 +1297,62 @@
           }
         }
       ]
+    },
+    "spec_conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quote",
+        "section",
+        "line",
+        "why"
+      ],
+      "properties": {
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "why": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "inference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quote",
+        "section",
+        "line",
+        "inference"
+      ],
+      "properties": {
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "inference": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   }
 }

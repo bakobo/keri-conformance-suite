@@ -389,3 +389,23 @@ def test_variable_size_element_reports_its_hard_code_and_raw_without_lead_bytes(
     text, items = build.StreamBuilder(T).node({"variable": "B", "raw": "v", "length": 7})
     assert text.startswith("6BAD") and len(text) == 16
     assert items[0]["code"] == "6B" and len(bytes.fromhex(items[0]["raw"])) == 7
+
+
+def test_a_level_below_the_clause_needs_an_inference():
+    case = _case(assertions=[{"check": "decoded", "clause": "count-quadlets", "level": "SHOULD"}])
+    with pytest.raises(build.ScenarioError, match="without an inference"):
+        build.build_case(T, "s", case, CLAUSES, None, None)
+
+
+def test_an_inference_must_be_graded_should():
+    case = _case(assertions=[{"check": "decoded", "clause": "count-quadlets",
+                              "inferred_from": "count-quadlets"}])
+    with pytest.raises(build.ScenarioError, match="graded SHOULD"):
+        build.build_case(T, "s", case, CLAUSES, None, None)
+
+
+def test_conflict_record_under_the_wrong_heading_is_refused():
+    record = {"section": "Text Code Size", "why": "w",
+              "quote": "The size component MUST count the Quadlets/triplets in its following group."}
+    with pytest.raises(build.ScenarioError, match="not 'Text Code Size'"):
+        build.resolve_records({"x": record}, SPEC, "why")

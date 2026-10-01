@@ -90,7 +90,19 @@ def test_normative_assertion_quotes_the_pinned_spec_verbatim(cid, a, spec):
     heading = spec_source.section_of_line(spec, line)
     assert clause["section"] == heading.text
     assert clause["url"] == spec_source.file_url(heading.anchor)
-    assert a["level"] in clause["quote"]
+    if "inferred_from" in a:
+        # A consumer obligation inferred from a producer-side MUST is graded SHOULD.
+        assert a["level"] == "SHOULD" and "MUST" in clause["quote"]
+        assert a["inferred_from"]["quote"] == clause["quote"]
+    else:
+        assert a["level"] in clause["quote"]
+    records = [*a.get("spec_conflicts", [])]
+    if "inferred_from" in a:
+        records.append(a["inferred_from"])
+    for record in records:
+        line = spec_source.find_quote(spec, record["quote"])
+        assert record["line"] == line
+        assert record["section"] == spec_source.section_of_line(spec, line).text
 
 
 def test_the_cached_spec_is_the_pinned_text(spec):
@@ -231,3 +243,30 @@ def test_every_expected_counter_states_where_its_group_ends(cid):
                 assert item["group_end"] >= item["end"] > item["start"]
             if item["kind"] == "genus":
                 assert "group_end" not in item
+
+
+def test_policy_only_keripy_disagreements_are_disputed():
+    """Spec-internal conflicts do not make a case disputed (they are recorded in spec_conflicts);
+    only a contradiction between keripy and a cited clause does."""
+    disputed = sorted(cid for cid, c in CASES.items() if c["status"] == "disputed")
+    assert disputed == ["CESR-0022", "CESR-0031"]
+
+
+@pytest.mark.parametrize(("cid", "a"), list(_assertions()))
+def test_no_temporary_policy_notes_remain(cid, a):
+    note = a.get("note", "")
+    assert not note.startswith(("spec-conflict", "inferred consumer obligation"))
+
+
+def test_case_schema_accepts_and_checks_the_policy_fields():
+    case = json.loads((CASE_DIR / "CESR-0038.json").read_text(encoding="utf-8"))
+    assert not list(VALIDATOR.iter_errors(case))
+    must = json.loads(json.dumps(case))
+    must["assertions"][0]["level"] = "MUST"
+    assert list(VALIDATOR.iter_errors(must)), "inferred_from requires SHOULD"
+    bad = json.loads(json.dumps(case))
+    del bad["assertions"][0]["inferred_from"]["line"]
+    assert list(VALIDATOR.iter_errors(bad))
+    conflict = json.loads((CASE_DIR / "CESR-0025.json").read_text(encoding="utf-8"))
+    conflict["assertions"][0]["spec_conflicts"][0]["extra"] = 1
+    assert list(VALIDATOR.iter_errors(conflict))

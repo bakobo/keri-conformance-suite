@@ -10,7 +10,7 @@ import pathlib
 import re
 
 from . import keripy1x, spec_source, tables
-from .build import ScenarioError, build_case, resolve_clauses
+from .build import ScenarioError, build_case, resolve_clauses, resolve_records
 
 SCENARIO_DIR = "scenarios/cesr"
 CASE_DIR = "cases/cesr"
@@ -86,6 +86,8 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
     spec_text = spec_source.load_spec()
     registry = json.loads((scen_dir / CLAUSES_FILE).read_text(encoding="utf-8"))
     clauses = resolve_clauses(registry["clauses"], spec_text)
+    conflicts = resolve_records(registry.get("conflicts", {}), spec_text, "why")
+    inferences = resolve_records(registry.get("inferences", {}), spec_text, "inference")
 
     files: dict[str, bytes] = {}
     allowed: set[int] = set()
@@ -107,7 +109,8 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
             if case["profile"] not in members:
                 raise ScenarioError(f"{case['id']}: unknown profile {case['profile']!r}.")
             files[out] = dumps(build_case(t, rel, case, clauses, legacy, reference,
-                                          scenario.get("messages"), keripy1x.TABLE))
+                                          scenario.get("messages"), keripy1x.TABLE,
+                                          conflicts, inferences))
             members[case["profile"]].append(case["id"])
 
     numbers = sorted(int(CASE_ID.match(p.split("/")[-1][:-5]).group(1)) for p in files)

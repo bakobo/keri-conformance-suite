@@ -104,7 +104,11 @@
         {
           "check": "decoded",
           "clause": "version-string-extract",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -143,7 +147,11 @@
         {
           "check": "decoded",
           "clause": "version-string-legacy",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -200,7 +208,11 @@
         {
           "check": "decoded",
           "clause": "version-string-extract",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -260,7 +272,11 @@
         {
           "check": "decoded",
           "clause": "count-quadlets",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -311,7 +327,11 @@
         {
           "check": "decoded",
           "clause": "master-table",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -351,7 +371,11 @@
         {
           "check": "decoded",
           "clause": "indexed-table",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -395,7 +419,11 @@
         {
           "check": "decoded",
           "clause": "indexed-table",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -449,7 +477,11 @@
         {
           "check": "decoded",
           "clause": "count-quadlets",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -489,7 +521,11 @@
         {
           "check": "decoded",
           "clause": "indexed-table",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -529,7 +565,11 @@
         {
           "check": "decoded",
           "clause": "indexed-table",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -569,7 +609,11 @@
         {
           "check": "decoded",
           "clause": "indexed-table",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ],
       "status": "disputed",
@@ -617,7 +661,12 @@
         {
           "check": "decoded",
           "clause": "indexed-table",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103); spec-conflict: code 3A###### is 8 characters in the Annex indexed table (line 1086) and its format, but the body's indexed table gives selector 3 a code size of 6 (line 702)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103",
+            "indexed-3-code-size"
+          ]
         }
       ]
     },
@@ -663,7 +712,11 @@
         {
           "check": "decoded",
           "clause": "count-invariant",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -671,7 +724,7 @@
       "id": "CESR-0025",
       "key": "founding-quadlets-not-items",
       "title": "A signature group's size counts quadlets, not signatures",
-      "description": "The founding case of the suite. After a KERI 2.0 inception, an attachments group (-C) holds a controller signature group (-K) of three Ed25519 indexed signatures and then a witness signature group (-L) of one. -K has size 66 (3 x 22 quadlets), not 3; -L has size 22, not 1; -C has size 90. A second inception and its attachments follow. A parser that counts items reads 66 as 66 signatures, runs past -K and loses the stream. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
+      "description": "The founding case of the suite. After a KERI 2.0 inception, an attachments group (-C) holds a controller signature group (-K) of three Ed25519 indexed signatures and then a witness signature group (-L) of one. -K has size 66 (3 x 22 quadlets), not 3; -L has size 22, not 1; -C has size 90. A second inception and its attachments follow. A parser that counts items reads 66 as 66 signatures, runs past -K and loses the stream. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead and records the others in spec_conflicts.",
       "operation": "cesr.parse",
       "stream": [
         {
@@ -740,7 +793,11 @@
         {
           "check": "decoded",
           "clause": "count-quadlets",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -748,7 +805,7 @@
       "id": "CESR-0026",
       "key": "trans-indexed-signature-groups",
       "title": "A nested signature group's quadlets count toward its enclosing group",
-      "description": "The shape of the specification's own Examples (lines 1104-1116): a transferable indexed signature groups code (-X) whose group holds a prefix (E), a sequence number (0A), a digest (E) and a controller signature group (-K) of two signatures. -X's size, 73 (11 + 6 + 11 + 1 + 44), counts every quadlet including -K's code and contents; -K's is 44. The specification's example is built the same way: -XBf is 95 = 11 + 6 + 11 + 1 + 66. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
+      "description": "The shape of the specification's own Examples (lines 1104-1116): a transferable indexed signature groups code (-X) whose group holds a prefix (E), a sequence number (0A), a digest (E) and a controller signature group (-K) of two signatures. -X's size, 73 (11 + 6 + 11 + 1 + 44), counts every quadlet including -K's code and contents; -K's is 44. The specification's example is built the same way: -XBf is 95 = 11 + 6 + 11 + 1 + 66. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead and records the others in spec_conflicts.",
       "operation": "cesr.parse",
       "stream": [
         {
@@ -801,7 +858,11 @@
         {
           "check": "decoded",
           "clause": "count-quadlets",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -809,7 +870,7 @@
       "id": "CESR-0027",
       "key": "founding-binary-triplets",
       "title": "In the binary domain a signature group's size counts triplets, not signatures",
-      "description": "The stream of CESR-0025 with both attachments groups in the binary domain. The size digits are unchanged and now count 3-byte triplets, so -K ends 198 bytes after its count code. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead.",
+      "description": "The stream of CESR-0025 with both attachments groups in the binary domain. The size digits are unchanged and now count 3-byte triplets, so -K ends 198 bytes after its count code. The symbol legends of the Encoding Scheme Symbols Table (line 674) and the indexed-code symbol table (line 714), and the Examples text at line 1103, say a count code's digits count 'Primitives or groups'; this case rests on the explicit rule at line 591 instead and records the others in spec_conflicts.",
       "operation": "cesr.parse",
       "stream": [
         {
@@ -881,7 +942,11 @@
         {
           "check": "decoded",
           "clause": "count-invariant",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -920,7 +985,11 @@
         {
           "check": "decoded",
           "clause": "large-count-eight-chars",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -964,7 +1033,11 @@
         {
           "check": "decoded",
           "clause": "genus-override-switch",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -1022,7 +1095,11 @@
         {
           "check": "decoded",
           "clause": "stream-resume",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ]
     },
@@ -1068,7 +1145,11 @@
         {
           "check": "decoded",
           "clause": "count-quadlets",
-          "note": "spec-conflict: count-code size counts quadlets/triplets (line 591) vs 'count of the following Primitives or groups' (legends at lines 674 and 714, Examples at line 1103)"
+          "spec_conflicts": [
+            "count-legend-674",
+            "count-legend-714",
+            "count-example-1103"
+          ]
         }
       ],
       "status": "disputed",

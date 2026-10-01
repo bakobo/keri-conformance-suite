@@ -51,10 +51,18 @@ CLAUSE = obj({"spec": enum("cesr", "keri", "acdc", "ipex"), "section": string(mi
              {"quote": string()})
 
 
+SPEC_CONFLICT = obj({"quote": string(min_length=1), "section": string(min_length=1),
+                     "line": integer(minimum=1), "why": string(min_length=1)})
+INFERENCE = obj({"quote": string(min_length=1), "section": string(min_length=1),
+                 "line": integer(minimum=1), "inference": string(min_length=1)})
+
+
 def _assertion(check: str, **fields) -> Check:
     return obj({"id": string("^a[0-9]+$"), "check": enum(check), "level": enum(*LEVELS),
                 **fields},
-               {"clause": CLAUSE, "basis": string(min_length=1), "note": string()})
+               {"clause": CLAUSE, "basis": string(min_length=1), "note": string(),
+                "spec_conflicts": array(SPEC_CONFLICT, min_items=1),
+                "inferred_from": INFERENCE})
 
 
 CHECK_FORMS = {
@@ -137,6 +145,9 @@ def _cross_field_problem(case: dict) -> str | None:
         if needs not in assertion or forbids in assertion:
             return (f'assertions[{n}] at level {assertion["level"]} needs "{needs}" and must '
                     f'not carry "{forbids}"')
+        if "inferred_from" in assertion and assertion["level"] != "SHOULD":
+            return (f'assertions[{n}] carries "inferred_from", so its level must be SHOULD, '
+                    f'not {assertion["level"]}')
         if assertion.get("expected") == "superseded" and assertion.get("phase") != "final":
             return f"assertions[{n}] expects superseded, which is a final disposition only"
     return None

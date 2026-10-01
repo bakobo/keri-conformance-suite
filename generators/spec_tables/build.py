@@ -72,6 +72,21 @@ def resolve_clauses(registry: dict, spec_text: str) -> dict:
     return out
 
 
+def resolve_records(registry: dict, spec_text: str, extra: str) -> dict:
+    """Check each conflict or inference record against the pinned text and return its case-file
+    form: the quote, the heading it sits under, its 1-based line, and ``extra`` (``why`` or
+    ``inference``)."""
+    out = {}
+    for key, r in sorted(registry.items()):
+        line = spec_source.find_quote(spec_text, r["quote"])
+        heading = spec_source.section_of_line(spec_text, line)
+        if heading.text != r["section"]:
+            raise ScenarioError(f"Record {key!r} quotes line {line}, which is under "
+                                f"{heading.text!r}, not {r['section']!r}.")
+        out[key] = {"quote": r["quote"], "section": heading.text, "line": line, extra: r[extra]}
+    return out
+
+
 # -- streams ---------------------------------------------------------------------------------
 
 
@@ -281,7 +296,8 @@ def _wire_of(version_string: str, legacy: bool) -> str:
 
 def build_case(t: Tables, scenario_path: str, case: dict, clauses: dict,
                legacy: dict[str, Legacy] | None, reference: dict | None,
-               messages: dict | None = None, one_x: dict[str, Legacy] | None = None) -> dict:
+               messages: dict | None = None, one_x: dict[str, Legacy] | None = None,
+               conflicts: dict | None = None, inferences: dict | None = None) -> dict:
     sb = StreamBuilder(t, legacy, messages, one_x)
     op = case["operation"]
     if op == "cesr.encode":
@@ -307,8 +323,17 @@ def build_case(t: Tables, scenario_path: str, case: dict, clauses: dict,
         out = {"id": f"a{n}", "check": a["check"]}
         if "clause" in a:
             level, clause = clauses[a["clause"]]
-            out["level"] = level
+            out["level"] = a.get("level", level)
             out["clause"] = clause
+            if "inferred_from" in a:
+                if out["level"] != "SHOULD":
+                    raise ScenarioError(f"{case['id']}: an inferred obligation is graded SHOULD.")
+                out["inferred_from"] = (inferences or {})[a["inferred_from"]]
+            elif out["level"] != level:
+                raise ScenarioError(f"{case['id']}: level {out['level']} differs from its "
+                                    f"clause's {level} without an inference to justify it.")
+            if "spec_conflicts" in a:
+                out["spec_conflicts"] = [(conflicts or {})[k] for k in a["spec_conflicts"]]
         else:
             out["level"] = "INTEROP"
             out["basis"] = a["basis"]
