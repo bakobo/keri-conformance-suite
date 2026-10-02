@@ -13,7 +13,7 @@ The adapter does not read, reuse or import anything from `generators/`. keripy g
 
 Both are uv projects with their own lockfiles. The package lives in `adapters/keripy/`; its keripy-main pin carries the marker `python_version >= '3.14'`, so it applies only in the main instance's Python 3.14 environment. The 1.2.14 project installs the same package by path on Python 3.12, where that marker drops the main pin, and pins keripy 1.2.14 itself. To pin a different keripy, change the commit in the relevant `pyproject.toml` and run `uv lock`.
 
-```
+```sh
 cd adapters/keripy && uv sync                    # keripy main
 cd adapters/keripy/keripy-1.2.14 && uv sync      # keripy 1.2.14
 
@@ -31,14 +31,14 @@ Declared features. keripy main: `cesr.genus-1.00`, `cesr.genus-2.00`, `cesr.doma
 
 ## Tests
 
-```
+```sh
 cd adapters/keripy && uv run pytest                          # against keripy main
 cd adapters/keripy/keripy-1.2.14 && uv run pytest ../tests   # against keripy 1.2.14
 ```
 
 Tests marked `main` or `onex` run only against that keripy generation. Branch coverage is 100% when the two runs are combined, and CI enforces it:
 
-```
+```sh
 cd adapters/keripy
 COVERAGE_FILE=$PWD/.coverage.main uv run pytest --cov=kcs_adapter_keripy --cov-branch --cov-report=
 (cd keripy-1.2.14 && COVERAGE_FILE=$PWD/../.coverage.onex uv run pytest ../tests --cov=kcs_adapter_keripy --cov-branch --cov-report=)
@@ -51,7 +51,7 @@ CI level 2 (`docs/design.md`) for this adapter is the `keripy-adapter` job in `.
 - **A regression:** an assertion whose outcome is no longer what the baseline says, an assertion that disappeared, a different profile, or a different verdict (so an aborted run cannot pass the gate).
 - **An improvement:** a new pass, a new assertion, a different keripy commit, or a verdict that became conformant. This must be recorded in the same change:
 
-```
+```sh
 uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile cesr-1.0 --report /tmp/r.json
 adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline write adapters/keripy/baseline-cesr-1.0.json /tmp/r.json
 ```
