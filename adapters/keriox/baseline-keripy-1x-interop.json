@@ -1,0 +1,40 @@
+{
+  "format": 2,
+  "profile": "keripy-1x-interop",
+  "implementation": {
+    "commit": "40840948fb669424a0b7629979291ee0c777bb0e (said a385e69028fa2d9bd8fda31a9401ad0a630e1361)",
+    "name": "cesrox",
+    "version": "0.1.8 (said 0.4.3)"
+  },
+  "verdict": "no-evidence",
+  "cases": {
+    "CESR-0045": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0046": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0047": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0048": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    }
+  }
+}
