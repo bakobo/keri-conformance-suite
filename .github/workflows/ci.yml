@@ -1,8 +1,11 @@
 name: CI
 
 # Two of the three CI levels in docs/design.md. Job `test` is level 1 (runner tests and lint).
-# Job `keripy-adapter` is level 2 for the keripy adapter: it builds the adapter against its pinned
-# keripy and compares a cesr-1.0 run with the baseline committed beside it. Level 3 (nightly runs
+# Job `keripy-adapter` is level 2 for the keripy adapter. It builds both instances at their pins
+# (Python 3.14 with keripy main; Python 3.12 with keripy 1.2.14), runs the adapter's tests in each
+# and gates their combined branch coverage at 100%, then compares two runs with the baselines
+# committed beside the adapter: cesr-1.0 on keripy main with baseline-cesr-1.0.json, and
+# keripy-1x-interop on keripy 1.2.14 with baseline-keripy-1x-interop.json. Level 3 (nightly runs
 # against development heads) is not built yet; its absence here is the plan, not an omission.
 
 on:
