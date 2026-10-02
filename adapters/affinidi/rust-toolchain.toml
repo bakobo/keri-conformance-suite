@@ -1,0 +1,4 @@
+[toolchain]
+# affinidi-keri-core 0.4.0 and affinidi-cesr 0.1.3 declare rust-version 1.95.0.
+channel = "1.95.0"
+profile = "minimal"
