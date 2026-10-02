@@ -36,3 +36,25 @@ def test_an_unreadable_file_is_a_coded_error(files, capsys, tmp_path):
     base, _ = files
     assert run("compare", base, tmp_path) == 2  # a directory
     assert "e.env.filesystem.read.r" in capsys.readouterr().err
+
+
+# -- bounded reads (N)
+
+def test_the_file_bound_is_64_mib():
+    assert baseline.MAX_FILE_BYTES == 64 * 1024 * 1024
+
+
+@pytest.mark.parametrize("which", ["baseline", "report"])
+def test_a_file_over_the_bound_is_a_coded_size_error(files, capsys, monkeypatch, which):
+    base, rep = files
+    path = base if which == "baseline" else rep
+    monkeypatch.setattr(baseline, "MAX_FILE_BYTES", path.stat().st_size - 1)
+    assert run("compare", base, rep) == 2
+    assert "e.input.range.file-size.f" in capsys.readouterr().err
+
+
+def test_a_file_of_exactly_the_bound_is_read(files, monkeypatch):
+    base, rep = files
+    monkeypatch.setattr(baseline, "MAX_FILE_BYTES",
+                        max(base.stat().st_size, rep.stat().st_size))
+    assert run("compare", base, rep) == 0

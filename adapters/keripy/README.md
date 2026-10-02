@@ -56,6 +56,8 @@ uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --p
 adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline write adapters/keripy/baseline-cesr-1.0.json /tmp/r.json
 ```
 
+The tool reads at most 64 MiB of a report or baseline (`baseline.MAX_FILE_BYTES`). A larger file is refused with `e.input.range.file-size.f`; a cesr-1.0 report is well under 1 MiB.
+
 The committed baseline is keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, verdict conformant: every active assertion passes, and the two disputed cases, CESR-0022 and CESR-0031, fail.
 
 ## How a stream is parsed

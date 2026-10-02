@@ -28,11 +28,14 @@ E_USAGE = "e.input.format.usage.f"
 E_ABORTED = "e.input.range.aborted-report.f"
 E_MISSING_FILE = "e.input.missing.file.f"
 E_READ = "e.env.filesystem.read.r"
+E_FILE_SIZE = "e.input.range.file-size.f"
 E_REPORT_FORMAT = "e.input.format.report.f"
 E_BASELINE_FORMAT = "e.input.format.baseline.f"
 
 
 FORMAT = 2
+# The largest report or baseline this tool reads. A cesr-1.0 report is well under 1 MiB.
+MAX_FILE_BYTES = 64 * 1024 * 1024
 ABORTED = "aborted"
 NONE = "none"  # how a missing failure kind is written in a comparison line
 
@@ -103,15 +106,22 @@ def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
 
 def _load(path, what, malformed):
     try:
-        text = Path(path).read_text(encoding="utf-8")
+        with open(path, "rb") as handle:
+            data = handle.read(MAX_FILE_BYTES + 1)
     except FileNotFoundError as exc:
         raise InputError(f"{E_MISSING_FILE}: The {what} {path} does not exist; check the path, "
                          "or produce it first.") from exc
-    except UnicodeDecodeError as exc:
-        raise InputError(f"{malformed}: The {what} {path} is not UTF-8 text.") from exc
     except OSError as exc:
         raise InputError(f"{E_READ}: The {what} {path} could not be read ({exc}); check that it "
                          "is a readable file and try again.") from exc
+    if len(data) > MAX_FILE_BYTES:
+        raise InputError(f"{E_FILE_SIZE}: The {what} {path} is larger than {MAX_FILE_BYTES} "
+                         "bytes, the most this tool reads; it is not a report or baseline of a "
+                         "profile this suite has.")
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise InputError(f"{malformed}: The {what} {path} is not UTF-8 text.") from exc
     try:
         return json.loads(text)
     except ValueError as exc:
