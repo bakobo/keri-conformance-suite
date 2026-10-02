@@ -18,6 +18,14 @@ E_REGRESSION = "e.state.conflict.baseline-regression.f"
 E_STALE = "e.state.conflict.baseline-stale.f"
 E_USAGE = "e.input.format.usage.f"
 E_ABORTED = "e.input.range.aborted-report.f"
+E_MISSING_FILE = "e.input.missing.file.f"
+E_READ = "e.env.filesystem.read.r"
+E_REPORT_FORMAT = "e.input.format.report.f"
+E_BASELINE_FORMAT = "e.input.format.baseline.f"
+
+
+class InputError(Exception):
+    """A file the tool was given cannot be used; the message starts with its code."""
 
 ABORTED = "aborted"
 
@@ -64,8 +72,44 @@ def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
     return regressions, improvements
 
 
-def _load(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+def _load(path, what, malformed):
+    try:
+        text = Path(path).read_text(encoding="utf-8")
+    except FileNotFoundError as exc:
+        raise InputError(f"{E_MISSING_FILE}: The {what} {path} does not exist; check the path, "
+                         "or produce it first.") from exc
+    except UnicodeDecodeError as exc:
+        raise InputError(f"{malformed}: The {what} {path} is not UTF-8 text.") from exc
+    except OSError as exc:
+        raise InputError(f"{E_READ}: The {what} {path} could not be read ({exc}); check that it "
+                         "is a readable file and try again.") from exc
+    try:
+        return json.loads(text)
+    except ValueError as exc:
+        raise InputError(f"{malformed}: The {what} {path} is not JSON ({exc}).") from exc
+
+
+def _report(path):
+    report = _load(path, "report", E_REPORT_FORMAT)
+    try:
+        summarize(report)
+    except (KeyError, TypeError, AttributeError) as exc:
+        raise InputError(f"{E_REPORT_FORMAT}: The report {path} is not a kcs conformance report "
+                         f"(it lacks or misshapes {exc}); pass the file kcs run --report wrote."
+                         ) from exc
+    return report
+
+
+def _baseline(path):
+    base = _load(path, "baseline", E_BASELINE_FORMAT)
+    shaped = (isinstance(base, dict) and {"profile", "implementation", "verdict",
+                                          "assertions"} <= set(base)
+              and isinstance(base["implementation"], dict) and "commit" in base["implementation"]
+              and isinstance(base["assertions"], dict))
+    if not shaped:
+        raise InputError(f"{E_BASELINE_FORMAT}: The baseline {path} is not one this tool wrote; "
+                         "regenerate it with `write`.")
+    return base
 
 
 def main(argv=None) -> int:
@@ -75,7 +119,12 @@ def main(argv=None) -> int:
               "BASELINE REPORT", file=sys.stderr)
         return 2
     command, base_path, report_path = argv
-    report = _load(report_path)
+    try:
+        report = _report(report_path)
+        base = None if command == "write" else _baseline(base_path)
+    except InputError as exc:
+        print(exc, file=sys.stderr)
+        return 2
     if command == "write":
         if report.get("verdict") == ABORTED:
             print(f"{E_ABORTED}: {report_path} is the report of an aborted run, which cannot be "
@@ -86,7 +135,7 @@ def main(argv=None) -> int:
                                    encoding="utf-8")
         print(f"Wrote the baseline {base_path} from {report_path}.")
         return 0
-    regressions, improvements = compare(_load(base_path), report)
+    regressions, improvements = compare(base, report)
     for line in regressions:
         print(f"{E_REGRESSION}: {line}")
     for line in improvements:
