@@ -23,10 +23,11 @@ uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affini
 
 ## Declared features
 
-Declared: `cesr.genus-1.00`, `cesr.serialization.json`, `keri.version-1.x`. These describe what Affinidi's parser does: it frames JSON bodies by a legacy `KERI10JSON…_` version string and reads the 1.00 count codes `-A`, `-B`, `-C`, `-E`, `-F`, `-G` and `-V`, with `-0X` as their big forms (`affinidi_keri_core::counter_table`). Its 1.00 support is partial: `-D` is modelled but refused, and other 1.00 codes are unknown to it.
+A feature is a claim about what the implementation and this adapter can do together, not about the implementation alone. Declared: `cesr.serialization.json` and `keri.version-1.x`. Affinidi frames JSON bodies by a legacy `KERI10JSON…_` version string, and the adapter reports those messages in full.
 
 Not declared, and why:
 
+- `cesr.genus-1.00`. Affinidi's parser does read 1.00 count codes: `-A`, `-B`, `-C`, `-E`, `-F`, `-G` and `-V`, with `-0X` as their big forms (`affinidi_keri_core::counter_table`); `-D` is modelled but refused, and other 1.00 codes are unknown to it. But every 1.00 stream it accepts with attachments comes back `unsupported`, because the item extents cannot be reported (see "How a stream is parsed"). The pair therefore cannot answer a 1.00 case, and declaring the feature would turn each one into a failure that says nothing about Affinidi. The gap is tracked separately as a protocol change.
 - `cesr.genus-2.00`. Affinidi has no genus/version codes, so a stream that opens with `-_AAACAA` is rejected at its first byte. Its `CounterTable::V2` is not the CESR 2.00 master table (it maps `-A` to attached material and `-B` to controller signatures), and no 2.x version string parses (`Version::parse_str` accepts only the 17-character 1.x form). Every case in the `cesr-1.0` profile requires this feature, so none of them is sent.
 - `keri.version-2.x`, `cesr.native`: no 2.x version strings and no native CESR bodies (`parser::parse_next` refuses a stream that does not start with `{` or a CBOR/MessagePack map byte).
 - `cesr.domain.binary`: the parser rejects non-ASCII attachment bytes, so it reads attachments in the text domain only. `Matter` can encode qb2, but a feature is a claim about the whole implementation.
@@ -78,4 +79,4 @@ PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline writ
 
 The committed baseline is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
 
-In the `keripy-1x-interop` profile, which CI does not run for this adapter, CESR-0045, CESR-0046 and CESR-0047 are sent and fail with the `item-extent` error: Affinidi accepts each stream and consumes exactly the bytes keripy 1.x would (479, 527 and 395), but the items cannot be reported. CESR-0048 needs `cesr.genus-2.00` and is not sent.
+With no genus feature declared, no case in `keripy-1x-interop` or `cesr-strict` is sent either. Before `cesr.genus-1.00` was withdrawn, CESR-0045, CESR-0046 and CESR-0047 were sent and failed with the `item-extent` error: Affinidi accepted each stream and consumed exactly the bytes keripy 1.x would (479, 527 and 395), but the items could not be reported.

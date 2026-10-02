@@ -45,11 +45,7 @@ fn hello_negotiates_the_highest_version_both_speak_from_supported() {
     assert_eq!(result["operations"], json!(["cesr.parse", "cesr.encode"]));
     assert_eq!(
         result["features"],
-        json!([
-            "cesr.genus-1.00",
-            "cesr.serialization.json",
-            "keri.version-1.x"
-        ])
+        json!(["cesr.serialization.json", "keri.version-1.x"])
     );
     assert_eq!(result["composes"], json!([]));
 }

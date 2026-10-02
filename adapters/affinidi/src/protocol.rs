@@ -23,13 +23,9 @@ pub const IMPLEMENTATION_COMMIT: &str = "6277ae866c5761edb5cfa807a5f7ac83ebf3700
 pub const CESR_CRATE_VERSION: &str = "0.1.3";
 pub const CESR_CRATE_COMMIT: &str = "b970cb01bdd1acd0530137b67460579e4624ab47";
 
-/// Features from profiles/features.json that Affinidi's parser supports. See README.md for why
-/// each of the others is not declared.
-pub const FEATURES: [&str; 3] = [
-    "cesr.genus-1.00",
-    "cesr.serialization.json",
-    "keri.version-1.x",
-];
+/// Features from profiles/features.json that Affinidi and this adapter together support. See
+/// README.md for why each of the others, cesr.genus-1.00 included, is not declared.
+pub const FEATURES: [&str; 2] = ["cesr.serialization.json", "keri.version-1.x"];
 
 /// The longest request line the adapter reads, in bytes, not counting its newline. A longer line
 /// is answered with an error whose id is null and is skipped without being held in memory.
