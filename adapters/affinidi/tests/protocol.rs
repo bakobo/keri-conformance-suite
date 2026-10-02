@@ -39,8 +39,8 @@ fn hello_negotiates_the_highest_version_both_speak_from_supported() {
     );
     assert_eq!(
         result["implementation"],
-        json!({"name": "affinidi-keri-core", "version": "0.4.0",
-               "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c"})
+        json!({"name": "affinidi-keri-core", "version": "0.4.0 (affinidi-cesr 0.1.3)",
+               "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c (affinidi-cesr b970cb01bdd1acd0530137b67460579e4624ab47)"})
     );
     assert_eq!(result["operations"], json!(["cesr.parse", "cesr.encode"]));
     assert_eq!(

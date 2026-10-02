@@ -104,6 +104,16 @@ fn hex_field(request: &Map<String, Value>, field: &str) -> Result<Vec<u8>, OpErr
         .collect())
 }
 
+/// The implementation identity: both pinned crates, so that moving either pin changes the identity
+/// the CI baseline gate compares.
+pub fn implementation() -> Value {
+    json!({
+        "name": IMPLEMENTATION_NAME,
+        "version": format!("{IMPLEMENTATION_VERSION} (affinidi-cesr {CESR_CRATE_VERSION})"),
+        "commit": format!("{IMPLEMENTATION_COMMIT} (affinidi-cesr {CESR_CRATE_COMMIT})"),
+    })
+}
+
 fn hello(request: &Map<String, Value>) -> Result<Value, OpError> {
     let offered: Vec<Value> = match request.get("supported") {
         Some(Value::Array(list)) => list.clone(),
@@ -122,11 +132,7 @@ fn hello(request: &Map<String, Value>) -> Result<Value, OpError> {
     Ok(json!({
         "protocol": PROTOCOL,
         "adapter": {"name": ADAPTER_NAME, "version": ADAPTER_VERSION},
-        "implementation": {
-            "name": IMPLEMENTATION_NAME,
-            "version": IMPLEMENTATION_VERSION,
-            "commit": IMPLEMENTATION_COMMIT,
-        },
+        "implementation": implementation(),
         "operations": OPERATIONS,
         "features": FEATURES,
         "composes": [],

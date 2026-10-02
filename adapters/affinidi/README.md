@@ -6,10 +6,10 @@ Connects Affinidi's Rust CESR/KERI crates to the conformance runner over adapter
 
 | Crate | Version | Source commit (from the crate's `.cargo_vcs_info.json`) | Role |
 |---|---|---|---|
-| `affinidi-keri-core` | `=0.4.0` | `6277ae866c5761edb5cfa807a5f7ac83ebf3700c` (affinidi/affinidi-keri-rs) | Stream parser and message framing; reported in `hello` as the implementation |
-| `affinidi-cesr` | `=0.1.3` | `b970cb01bdd1acd0530137b67460579e4624ab47` (affinidi/affinidi-tdk-rs) | Primitives (`Matter`), used by `cesr.encode` and by the parser |
+| `affinidi-keri-core` | `=0.4.0` | `6277ae866c5761edb5cfa807a5f7ac83ebf3700c` (affinidi/affinidi-keri-rs) | Stream parser and message framing; names the implementation in `hello` |
+| `affinidi-cesr` | `=0.1.3` | `b970cb01bdd1acd0530137b67460579e4624ab47` (affinidi/affinidi-tdk-rs) | Primitives (`Matter`), used by `cesr.encode` and by the parser; its version and commit are part of `hello`'s implementation identity |
 
-Both are the latest releases on crates.io as of 2026-10-02, pinned exactly in `Cargo.toml` and locked in `Cargo.lock`. The adapter uses only their public API and patches nothing. `hello` reports `affinidi-keri-core`, version `0.4.0`, commit `6277ae86…`; `tests/pins.rs` fails if those constants in `src/protocol.rs` drift from `Cargo.lock` or from the commits crates.io published. To move a pin, change it in `Cargo.toml`, run `cargo update -p <crate> --precise <version>`, update the constants, and re-record the baseline.
+Both are the latest releases on crates.io as of 2026-10-02, pinned exactly in `Cargo.toml` and locked in `Cargo.lock`. The adapter uses only their public API and patches nothing. `hello` reports name `affinidi-keri-core`, version `0.4.0 (affinidi-cesr 0.1.3)` and commit `6277ae86… (affinidi-cesr b970cb01…)`, so moving either pin changes the identity the baseline gate compares. `tests/pins.rs` fails if those constants in `src/protocol.rs` drift from `Cargo.lock` or from the commits crates.io published. To move a pin, change it in `Cargo.toml`, run `cargo update -p <crate> --precise <version>`, update the constants, and re-record the baseline.
 
 The toolchain is Rust 1.95.0 (`rust-toolchain.toml`), the `rust-version` both crates declare.
 
@@ -76,6 +76,6 @@ uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affini
 PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-cesr-1.0.json /tmp/r.json
 ```
 
-The committed baseline is `affinidi-keri-core` 0.4.0 at `6277ae86…`, verdict `no-evidence`: all 41 `cesr-1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
+The committed baseline is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
 
 In the `keripy-1x-interop` profile, which CI does not run for this adapter, CESR-0045, CESR-0046 and CESR-0047 are sent and fail with the `item-extent` error: Affinidi accepts each stream and consumes exactly the bytes keripy 1.x would (479, 527 and 395), but the items cannot be reported. CESR-0048 needs `cesr.genus-2.00` and is not sent.
