@@ -76,14 +76,14 @@ OPS = {"hello": hello, "cesr.parse": _parse, "cesr.encode": _encode}
 def handle(request):
     rid = request.get("id")
     op = request.get("op")
+    if not isinstance(op, str):  # checked first: a list or object cannot be a dictionary key
+        return _error(rid, "harness", f'{E_MALFORMED}: The request has no string "op".')
     try:
         if op in OPS:
             return {"id": rid, "result": OPS[op](request)}
         if op in ("keri.process", "keri.emit"):
             return _error(rid, "unsupported", f"{E_UNDECLARED_OP}: This adapter does not "
                                               f"implement {op} and did not declare it in hello.")
-        if not isinstance(op, str):
-            return _error(rid, "harness", f'{E_MALFORMED}: The request has no string "op".')
         return _error(rid, "harness", f"{E_UNKNOWN_OP}: {op!r} is not an operation of adapter "
                                       f"protocol version {PROTOCOL}.")
     except Malformed as exc:

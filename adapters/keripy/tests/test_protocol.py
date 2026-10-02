@@ -181,3 +181,10 @@ def test_handle_line_also_refuses_an_oversize_line(monkeypatch):
     response = json.loads(protocol.handle_line(b'{"id": 1, "op": "hello"}'))
     assert response["id"] is None
     assert "e.input.range.request-size.f" in response["error"]["message"]
+
+
+@pytest.mark.parametrize("op", [[], {}, 7, None])
+def test_a_non_string_op_is_the_malformed_request_error(op):
+    response = handle({"id": 3, "op": op})
+    assert response["id"] == 3 and response["error"]["kind"] == "harness"
+    assert response["error"]["message"].startswith("e.input.format.request.f")
