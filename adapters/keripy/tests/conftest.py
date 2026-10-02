@@ -58,7 +58,8 @@ def entry_point():
 
 
 def run_adapter(entry_point, lines, timeout=60):
-    """Start the adapter, send these request lines, close stdin, and return (stdout lines, rc)."""
+    """Start the adapter, send these request lines and close its stdin; return (the stdout
+    lines, the exit code, the stderr bytes)."""
     proc = subprocess.run([entry_point], input=b"".join(lines), capture_output=True,
                           timeout=timeout, check=False)
     return proc.stdout.splitlines(), proc.returncode, proc.stderr
