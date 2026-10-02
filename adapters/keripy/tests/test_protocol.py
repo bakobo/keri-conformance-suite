@@ -126,9 +126,9 @@ def test_the_stdio_loop_answers_in_order_and_exits_zero_at_eof(entry_point):
     out, rc, _ = run_adapter(entry_point, lines)
     assert rc == 0
     responses = [json.loads(line) for line in out]
-    assert [r["id"] for r in responses] == [0, None, 1, 2]
+    assert [r["id"] for r in responses] == [0, None, 1, None, 2]  # a blank line is not JSON
     assert responses[2]["result"] == {"encoded": "4d414543"}
-    assert "reject" in responses[3]["result"]
+    assert "reject" in responses[4]["result"]
 
 
 

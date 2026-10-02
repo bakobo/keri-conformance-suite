@@ -122,14 +122,16 @@ def test_main_a_native_body_is_unsupported():
 
 # -- the stdio loop
 
-def test_serve_skips_blank_lines_and_answers_each_request():
+def test_serve_answers_a_blank_line_with_a_null_id_error_and_each_request():
     stdin = io.BytesIO(b'{"id":0,"op":"hello","protocol":1}\n\n'
                        b'{"id":1,"op":"cesr.parse","stream":""}\n')
     stdout = io.BytesIO()
     protocol.serve(stdin, stdout)
     responses = [json.loads(line) for line in stdout.getvalue().splitlines()]
-    assert [r["id"] for r in responses] == [0, 1]
-    assert responses[1] == {"id": 1, "result": {"items": []}}
+    assert [r["id"] for r in responses] == [0, None, 1]
+    assert responses[1]["error"]["kind"] == "harness"
+    assert "e.input.format.request.f" in responses[1]["error"]["message"]
+    assert responses[2] == {"id": 1, "result": {"items": []}}
 
 
 def test_main_routes_responses_to_stdout_and_everything_else_to_stderr(monkeypatch):
@@ -162,3 +164,4 @@ def test_a_refused_deletion_is_a_lookup_error_and_still_an_adapter_bug(key):
         del buf[key]
     assert isinstance(info.value, errors.AdapterBug)
     assert bytes(buf) == b"abcdef" and buf.base == 0
+

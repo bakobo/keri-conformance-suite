@@ -125,7 +125,8 @@ def handle_line(line: bytes) -> bytes:
 
 
 def serve(stdin, stdout):
-    """Answer each non-blank request line until end of file. A line is read at most
+    """Answer each request line until end of file. A blank line is not JSON, so it is answered
+    like any other unreadable request, with an error whose id is null. A line is read at most
     MAX_REQUEST_LINE bytes (plus its newline) at a time, so an oversize line is never held whole."""
     while True:
         line = stdin.readline(MAX_REQUEST_LINE + 1)
@@ -135,8 +136,6 @@ def serve(stdin, stdout):
             while line and not line.endswith(b"\n"):  # skip the rest of the oversize line
                 line = stdin.readline(_DISCARD_CHUNK)
             response = _oversize()
-        elif not line.strip():
-            continue
         else:
             response = handle_line(line)
         stdout.write(response + b"\n")
