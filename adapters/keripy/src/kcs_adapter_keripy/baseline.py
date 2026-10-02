@@ -3,10 +3,18 @@
     python -m kcs_adapter_keripy.baseline compare BASELINE REPORT
     python -m kcs_adapter_keripy.baseline write BASELINE REPORT
 
-compare exits 0 when every assertion has the outcome the baseline records. It exits 1 on a
-regression (an assertion whose outcome is no longer what the baseline says, a missing assertion,
-a different profile, a verdict other than the recorded one unless it is now conformant) and also on an improvement (a new pass, a new assertion, a different keripy
-commit, a verdict that became conformant), because an improvement must be recorded by updating the baseline in the same change.
+The baseline records the run's verdict, every case's outcome and failure kind (how the adapter
+failed to answer, if it did: timeout, exited, malformed, ...), and every assertion's outcome.
+compare exits 0 when the run matches it exactly. It exits 1 on a regression and also on an
+improvement, because an improvement must be recorded by updating the baseline in the same change.
+
+- Regressions: a different profile; an aborted run; a verdict change other than to conformant; a
+  case outcome or assertion outcome that changed to anything but pass; a failure kind that
+  appeared or changed (a case that starts crashing, though it still fails); a case or assertion
+  that disappeared.
+- Improvements: a verdict that became conformant; a new pass; a failure kind that went away; a
+  new case or assertion; a different keripy commit.
+
 write records REPORT as the new baseline. Standard library only.
 """
 
@@ -24,22 +32,46 @@ E_REPORT_FORMAT = "e.input.format.report.f"
 E_BASELINE_FORMAT = "e.input.format.baseline.f"
 
 
+FORMAT = 2
+ABORTED = "aborted"
+NONE = "none"  # how a missing failure kind is written in a comparison line
+
+
 class InputError(Exception):
     """A file the tool was given cannot be used; the message starts with its code."""
-
-ABORTED = "aborted"
 
 
 def summarize(report: dict) -> dict:
     """The part of a conformance report the baseline keeps."""
-    assertions = {}
-    for case in report["cases"]:
-        for assertion in case["assertions"]:
-            assertions[f"{case['id']}/{assertion['id']}"] = assertion["outcome"]
-    return {"profile": report["filters"]["profile"],
+    cases = {}
+    for entry in report["cases"]:
+        failure = entry.get("failure")
+        cases[entry["id"]] = {
+            "outcome": entry["outcome"],
+            "failure": None if failure is None else failure["kind"],
+            "assertions": dict(sorted((a["id"], a["outcome"]) for a in entry["assertions"])),
+        }
+    return {"format": FORMAT,
+            "profile": report["filters"]["profile"],
             "implementation": report["hello"]["implementation"],
             "verdict": report["verdict"],
-            "assertions": dict(sorted(assertions.items()))}
+            "cases": dict(sorted(cases.items()))}
+
+
+def _compare_case(cid, was, now, regressions, improvements):
+    if was["outcome"] != now["outcome"]:
+        line = f"{cid}: outcome {was['outcome']} -> {now['outcome']}"
+        (improvements if now["outcome"] == "pass" else regressions).append(line)
+    if was["failure"] != now["failure"]:
+        line = f"{cid}: failure {was['failure'] or NONE} -> {now['failure'] or NONE}"
+        (improvements if now["failure"] is None else regressions).append(line)
+    for aid in sorted(set(was["assertions"]) | set(now["assertions"])):
+        before = was["assertions"].get(aid, "absent")
+        after = now["assertions"].get(aid, "absent")
+        if before == after:
+            continue
+        line = f"{cid}/{aid}: {before} -> {after}"
+        (improvements if before == "absent" or after == "pass" else regressions).append(line)
 
 
 def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
@@ -59,16 +91,13 @@ def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
     if now["implementation"]["commit"] != base["implementation"]["commit"]:
         improvements.append(f"implementation commit: {base['implementation']['commit']} -> "
                             f"{now['implementation']['commit']}")
-    for key in sorted(set(base["assertions"]) | set(now["assertions"])):
-        was = base["assertions"].get(key, "absent")
-        is_ = now["assertions"].get(key, "absent")
-        if was == is_:
-            continue
-        line = f"{key}: {was} -> {is_}"
-        if was == "absent" or (is_ == "pass"):
-            improvements.append(line)
+    for cid in sorted(set(base["cases"]) | set(now["cases"])):
+        if cid not in now["cases"]:
+            regressions.append(f"{cid}: absent from the run")
+        elif cid not in base["cases"]:
+            improvements.append(f"{cid}: new case")
         else:
-            regressions.append(line)
+            _compare_case(cid, base["cases"][cid], now["cases"][cid], regressions, improvements)
     return regressions, improvements
 
 
@@ -102,10 +131,12 @@ def _report(path):
 
 def _baseline(path):
     base = _load(path, "baseline", E_BASELINE_FORMAT)
-    shaped = (isinstance(base, dict) and {"profile", "implementation", "verdict",
-                                          "assertions"} <= set(base)
+    shaped = (isinstance(base, dict) and base.get("format") == FORMAT
+              and {"profile", "implementation", "verdict", "cases"} <= set(base)
               and isinstance(base["implementation"], dict) and "commit" in base["implementation"]
-              and isinstance(base["assertions"], dict))
+              and isinstance(base["cases"], dict)
+              and all(isinstance(c, dict) and {"outcome", "failure", "assertions"} <= set(c)
+                      for c in base["cases"].values()))
     if not shaped:
         raise InputError(f"{E_BASELINE_FORMAT}: The baseline {path} is not one this tool wrote; "
                          "regenerate it with `write`.")

@@ -1,4 +1,5 @@
 {
+  "format": 2,
   "profile": "keripy-1x-interop",
   "implementation": {
     "name": "keripy",
@@ -6,10 +7,34 @@
     "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f"
   },
   "verdict": "no-evidence",
-  "assertions": {
-    "CESR-0045/a1": "pass",
-    "CESR-0046/a1": "pass",
-    "CESR-0047/a1": "pass",
-    "CESR-0048/a1": "not-supported"
+  "cases": {
+    "CESR-0045": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0046": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0047": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0048": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    }
   }
 }
