@@ -38,12 +38,23 @@ def keri_dist():
     return importlib.metadata.distribution("keri")
 
 
+def locate_entry_point(executable, which=shutil.which):
+    """The adapter's console script: the one beside the interpreter if it exists, else the one
+    found on PATH (resolved). Fails the test explicitly when neither exists."""
+    beside = Path(executable).with_name("kcs-adapter-keripy")
+    if beside.exists():
+        return str(beside)
+    found = which("kcs-adapter-keripy")
+    if found:
+        return str(Path(found).resolve())
+    pytest.fail(f"kcs-adapter-keripy is neither beside {executable} nor on PATH; install the "
+                "adapter (uv sync) before running these tests.")
+
+
 @pytest.fixture
 def entry_point():
     """The installed console script of this environment."""
-    path = Path(sys.executable).with_name("kcs-adapter-keripy")
-    assert path.exists() or shutil.which("kcs-adapter-keripy")
-    return str(path)
+    return locate_entry_point(sys.executable)
 
 
 def run_adapter(entry_point, lines, timeout=60):
