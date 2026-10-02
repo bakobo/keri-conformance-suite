@@ -47,8 +47,10 @@ def locate_entry_point(executable, which=shutil.which):
     found = which("kcs-adapter-keripy")
     if found:
         return str(Path(found).resolve())
-    pytest.fail(f"kcs-adapter-keripy is neither beside {executable} nor on PATH; install the "
-                "adapter (uv sync) before running these tests.")
+    # Raised explicitly (pytest.fail's own exception) so that every path returns or raises.
+    raise pytest.fail.Exception(f"kcs-adapter-keripy is neither beside {executable} nor on "
+                                "PATH; install the adapter (uv sync) before running these tests.",
+                                pytrace=False)
 
 
 @pytest.fixture
