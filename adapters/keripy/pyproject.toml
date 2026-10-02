@@ -1,0 +1,38 @@
+[project]
+name = "kcs-adapter-keripy"
+version = "0.1.0"
+description = "Adapter connecting keripy to the KERI conformance suite runner (adapter protocol v1)."
+readme = "README.md"
+# The adapter code runs on 3.12 and later. This project's own environment is Python 3.14
+# (.python-version), which keripy main requires.
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Bakobo LLC" }]
+# keripy main, pinned by full commit. The marker confines this pin to Python 3.14, which keripy
+# main requires; the keripy-1.2.14/ project beside this file installs this same package on
+# Python 3.12, where the marker drops this pin, and supplies its own pin of keripy 1.2.14.
+dependencies = [
+    "keri @ git+https://github.com/WebOfTrust/keripy@9a8b7aa70960f16fe7acffd8cf7901941ac912a1 ; python_version >= '3.14'",
+]
+
+[project.scripts]
+kcs-adapter-keripy = "kcs_adapter_keripy.main:main"
+
+[dependency-groups]
+dev = ["jsonschema>=4.23", "pytest>=8", "pytest-cov>=5"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kcs_adapter_keripy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
