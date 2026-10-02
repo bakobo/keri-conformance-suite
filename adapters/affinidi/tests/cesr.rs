@@ -182,7 +182,9 @@ fn encode_refusals_are_unsupported_errors_naming_affinidis_error() {
         assert_eq!(response["error"]["kind"], "unsupported", "{response}");
         let message = response["error"]["message"].as_str().unwrap();
         assert!(
-            message.starts_with(cesr::E_ENCODE_REFUSED) && message.contains("CesrError::"),
+            message.starts_with(cesr::E_ENCODE_REFUSED)
+                && message.contains("CesrError::")
+                && message.ends_with('.'),
             "{message}"
         );
     }

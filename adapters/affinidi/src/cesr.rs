@@ -96,7 +96,7 @@ pub fn parse(stream: &[u8]) -> Result<Value, OpError> {
         let (message, consumed) = parser::parse_next(&stream[offset..]).map_err(|error| {
             OpError::Harness(format!(
                 "{E_INCONSISTENT}: parse_all accepted the stream but parse_next rejected the \
-                 message at offset {offset}: {error}"
+                 message at offset {offset}: {error}."
             ))
         })?;
         if consumed == 0 {
@@ -129,7 +129,7 @@ pub fn encode(code: &str, raw: Vec<u8>, binary: bool) -> Result<Value, OpError> 
     match encoded {
         Ok(bytes) => Ok(json!({"encoded": hex(&bytes)})),
         Err(error) => Err(OpError::Unsupported(format!(
-            "{E_ENCODE_REFUSED}: Affinidi refused to encode code {}: {}: {error}",
+            "{E_ENCODE_REFUSED}: Affinidi refused to encode code {}: {}: {error}.",
             Value::String(code.to_string()),
             class_of("CesrError", &error)
         ))),
