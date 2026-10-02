@@ -18,6 +18,7 @@ improvement, because an improvement must be recorded by updating the baseline in
 write records REPORT as the new baseline. Standard library only.
 """
 
+import errno
 import json
 import sys
 from pathlib import Path
@@ -28,11 +29,16 @@ E_USAGE = "e.input.format.usage.f"
 E_ABORTED = "e.input.range.aborted-report.f"
 E_MISSING_FILE = "e.input.missing.file.f"
 E_READ = "e.env.filesystem.read.r"
+E_WRITE_TRANSIENT = "e.env.filesystem.write.r"
+E_WRITE = "e.env.filesystem.write.f"
 E_FILE_SIZE = "e.input.range.file-size.f"
 E_REPORT_FORMAT = "e.input.format.report.f"
 E_BASELINE_FORMAT = "e.input.format.baseline.f"
 
 
+# Write failures that may clear on their own; retrying the write could succeed.
+TRANSIENT_ERRNOS = frozenset({errno.EAGAIN, errno.EWOULDBLOCK, errno.EINTR, errno.EBUSY,
+                              errno.ENOSPC, errno.EDQUOT, errno.EIO, errno.ETIMEDOUT})
 FORMAT = 2
 # The largest report or baseline this tool reads. A cesr-1.0 report is well under 1 MiB.
 MAX_FILE_BYTES = 64 * 1024 * 1024
@@ -262,8 +268,17 @@ def main(argv=None) -> int:
                   "a baseline; rerun to completion and write the baseline from that report.",
                   file=sys.stderr)
             return 1
-        Path(base_path).write_text(json.dumps(summarize(report), indent=2) + "\n",
-                                   encoding="utf-8")
+        try:
+            Path(base_path).write_text(json.dumps(summarize(report), indent=2) + "\n",
+                                       encoding="utf-8")
+        except OSError as exc:
+            transient = exc.errno in TRANSIENT_ERRNOS
+            code = E_WRITE_TRANSIENT if transient else E_WRITE
+            advice = ("this may clear; try again" if transient
+                      else "check that the directory exists and is writable")
+            print(f"{code}: The baseline {base_path} could not be written ({exc}); {advice}.",
+                  file=sys.stderr)
+            return 2
         print(f"Wrote the baseline {base_path} from {report_path}.")
         return 0
     regressions, improvements = compare(base, report)

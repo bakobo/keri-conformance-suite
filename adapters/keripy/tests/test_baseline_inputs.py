@@ -2,7 +2,9 @@
 with a non-zero exit, never a traceback, and write never emits an unusable baseline."""
 
 import copy
+import errno
 import json
+from pathlib import Path
 
 import pytest
 from test_baseline import base_report, case, report, summary
@@ -147,3 +149,23 @@ def test_a_malformed_or_old_baseline_is_a_coded_error(files, capsys, content):
     base.write_text(content)
     assert run("compare", base, rep) == 2
     assert "e.input.format.baseline.f" in capsys.readouterr().err
+
+
+# -- failed writes (P)
+
+def test_a_write_into_a_missing_directory_is_a_final_coded_error(files, capsys, tmp_path):
+    _, rep = files
+    assert run("write", tmp_path / "no" / "such" / "dir.json", rep) == 2
+    assert "e.env.filesystem.write.f" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("code", [errno.ENOSPC, errno.EAGAIN, errno.EINTR, errno.EBUSY])
+def test_a_transient_write_failure_is_a_retryable_coded_error(files, capsys, monkeypatch, code):
+    base, rep = files
+
+    def fail(self, *args, **kwargs):
+        raise OSError(code, "simulated")
+
+    monkeypatch.setattr(Path, "write_text", fail)
+    assert run("write", base, rep) == 2
+    assert "e.env.filesystem.write.r" in capsys.readouterr().err
