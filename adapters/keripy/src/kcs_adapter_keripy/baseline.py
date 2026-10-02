@@ -17,6 +17,9 @@ from pathlib import Path
 E_REGRESSION = "e.state.conflict.baseline-regression.f"
 E_STALE = "e.state.conflict.baseline-stale.f"
 E_USAGE = "e.input.format.usage.f"
+E_ABORTED = "e.input.range.aborted-report.f"
+
+ABORTED = "aborted"
 
 
 def summarize(report: dict) -> dict:
@@ -37,9 +40,12 @@ def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
     regressions, improvements = [], []
     if now["profile"] != base["profile"]:
         regressions.append(f"profile: {base['profile']} -> {now['profile']}")
-    if now["verdict"] != base["verdict"]:
-        # An aborted or otherwise abnormal run must never satisfy the gate, even when every
-        # assertion it did record matches; only a move to conformant is an improvement.
+    if now["verdict"] == ABORTED:
+        # An aborted run is never accepted, whatever the baseline records.
+        regressions.append(f"verdict: {ABORTED} (an aborted run never satisfies the baseline)")
+    elif now["verdict"] != base["verdict"]:
+        # Any other change of verdict is a regression unless the run is now conformant, so an
+        # abnormal run cannot satisfy the gate even when every assertion it recorded matches.
         line = f"verdict: {base['verdict']} -> {now['verdict']}"
         (improvements if now["verdict"] == "conformant" else regressions).append(line)
     if now["implementation"]["commit"] != base["implementation"]["commit"]:
@@ -71,6 +77,11 @@ def main(argv=None) -> int:
     command, base_path, report_path = argv
     report = _load(report_path)
     if command == "write":
+        if report.get("verdict") == ABORTED:
+            print(f"{E_ABORTED}: {report_path} is the report of an aborted run, which cannot be "
+                  "a baseline; rerun to completion and write the baseline from that report.",
+                  file=sys.stderr)
+            return 1
         Path(base_path).write_text(json.dumps(summarize(report), indent=2) + "\n",
                                    encoding="utf-8")
         print(f"Wrote the baseline {base_path} from {report_path}.")

@@ -119,10 +119,10 @@ def test_it_runs_as_a_module(monkeypatch, capsys):
 
 
 def test_a_different_verdict_is_a_regression():
-    aborted = report(BASE)
-    aborted["verdict"] = "aborted"
-    regressions, improvements = baseline.compare(baseline.summarize(report(BASE)), aborted)
-    assert regressions == ["verdict: conformant -> aborted"]
+    worse = report(BASE)
+    worse["verdict"] = "no-evidence"
+    regressions, improvements = baseline.compare(baseline.summarize(report(BASE)), worse)
+    assert regressions == ["verdict: conformant -> no-evidence"]
     assert improvements == []
 
 
@@ -140,4 +140,25 @@ def test_main_fails_an_aborted_run_even_when_every_recorded_assertion_matches(fi
     aborted["verdict"] = "aborted"
     rep.write_text(json.dumps(aborted))
     assert baseline.main(["compare", str(base), str(rep)]) == 1
-    assert "verdict: conformant -> aborted" in capsys.readouterr().out
+    assert "verdict: aborted (an aborted run never satisfies" in capsys.readouterr().out
+
+
+# -- aborted reports (PR #6 round 2, F)
+
+def test_an_aborted_run_is_a_regression_even_against_an_aborted_baseline():
+    aborted = report(BASE)
+    aborted["verdict"] = "aborted"
+    regressions, _ = baseline.compare(baseline.summarize(aborted), aborted)
+    assert regressions == ["verdict: aborted (an aborted run never satisfies the baseline)"]
+
+
+def test_write_refuses_to_record_an_aborted_report(files, capsys):
+    base, rep = files
+    before = base.read_text()
+    aborted = report(BASE)
+    aborted["verdict"] = "aborted"
+    rep.write_text(json.dumps(aborted))
+    assert baseline.main(["write", str(base), str(rep)]) == 1
+    assert "e.input.range.aborted-report.f" in capsys.readouterr().err
+    assert base.read_text() == before
+
