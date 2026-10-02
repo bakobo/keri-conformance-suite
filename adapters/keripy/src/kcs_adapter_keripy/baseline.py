@@ -39,6 +39,14 @@ MAX_FILE_BYTES = 64 * 1024 * 1024
 ABORTED = "aborted"
 NONE = "none"  # how a missing failure kind is written in a comparison line
 
+# The values a kcs conformance report can hold (src/keri_conformance/run.py and session.py). A
+# value outside these sets makes the report malformed: the tool fails closed rather than guess.
+VERDICTS = frozenset({"conformant", "not-conformant", "aborted", "incomplete", "no-evidence"})
+CASE_OUTCOMES = frozenset({"pass", "fail", "incomplete", "not-supported", "skipped"})
+ASSERTION_OUTCOMES = frozenset({"pass", "fail", "not-implemented", "not-supported", "skipped"})
+FAILURE_KINDS = frozenset({"timeout", "oversize", "exited", "malformed", "error-harness",
+                           "error-unsupported"})
+
 
 class InputError(Exception):
     """A file the tool was given cannot be used; the message starts with its code."""
@@ -128,28 +136,110 @@ def _load(path, what, malformed):
         raise InputError(f"{malformed}: The {what} {path} is not JSON ({exc}).") from exc
 
 
+def _is_str(value):
+    return isinstance(value, str)
+
+
+def _implementation_problem(implementation):
+    if not isinstance(implementation, dict):
+        return "the implementation is not an object"
+    for field in ("name", "version", "commit"):
+        if not _is_str(implementation.get(field)):
+            return f"the implementation {field} is not a string"
+    return None
+
+
+def _assertions_problem(where, assertions):
+    if not isinstance(assertions, list):
+        return f"{where}'s assertions are not a list"
+    seen = set()
+    for assertion in assertions:
+        if not isinstance(assertion, dict) or not _is_str(assertion.get("id")):
+            return f"{where} has an assertion that is not an object with a string id"
+        if assertion["id"] in seen:
+            return f"{where} has the assertion {assertion['id']} twice"
+        seen.add(assertion["id"])
+        if assertion.get("outcome") not in ASSERTION_OUTCOMES:
+            return f"{where}/{assertion['id']} has an unknown outcome"
+    return None
+
+
+def _case_problem(entry, seen):
+    if not isinstance(entry, dict) or not _is_str(entry.get("id")):
+        return "a case is not an object with a string id"
+    cid = entry["id"]
+    if cid in seen:
+        return f"the case {cid} appears twice"
+    seen.add(cid)
+    if entry.get("outcome") not in CASE_OUTCOMES:
+        return f"the case {cid} has an unknown outcome"
+    failure = entry.get("failure")
+    if failure is not None and (not isinstance(failure, dict)
+                                or failure.get("kind") not in FAILURE_KINDS):
+        return f"the case {cid} has a failure that is not an object with a known kind"
+    return _assertions_problem(cid, entry.get("assertions"))
+
+
+def report_problem(report):
+    """None if report is a well-formed kcs conformance report, else what is wrong with it."""
+    if not isinstance(report, dict):
+        return "it is not a JSON object"
+    filters, hello = report.get("filters"), report.get("hello")
+    if not isinstance(filters, dict) or not _is_str(filters.get("profile")):
+        return "it has no string filters.profile"
+    if not isinstance(hello, dict):
+        return "its hello is not an object"
+    problem = _implementation_problem(hello.get("implementation"))
+    if problem:
+        return problem
+    if report.get("verdict") not in VERDICTS:
+        return "its verdict is not one kcs reports"
+    if not isinstance(report.get("cases"), list):
+        return "its cases are not a list"
+    seen = set()
+    for entry in report["cases"]:
+        problem = _case_problem(entry, seen)
+        if problem:
+            return problem
+    return None
+
+
+def baseline_problem(base):
+    """None if base is a well-formed baseline of the current format, else what is wrong."""
+    if not isinstance(base, dict) or base.get("format") != FORMAT:
+        return f"it is not a format-{FORMAT} baseline"
+    if not _is_str(base.get("profile")) or base.get("verdict") not in VERDICTS:
+        return "its profile or verdict is missing or unknown"
+    problem = _implementation_problem(base.get("implementation"))
+    if problem:
+        return problem
+    if not isinstance(base.get("cases"), dict):
+        return "its cases are not an object"
+    for cid, entry in base["cases"].items():
+        if (not isinstance(entry, dict) or entry.get("outcome") not in CASE_OUTCOMES
+                or (entry.get("failure") is not None
+                    and entry.get("failure") not in FAILURE_KINDS)
+                or not isinstance(entry.get("assertions"), dict)
+                or not all(o in ASSERTION_OUTCOMES for o in entry["assertions"].values())):
+            return f"its entry for {cid} is malformed"
+    return None
+
+
 def _report(path):
     report = _load(path, "report", E_REPORT_FORMAT)
-    try:
-        summarize(report)
-    except (KeyError, TypeError, AttributeError) as exc:
+    problem = report_problem(report)
+    if problem:
         raise InputError(f"{E_REPORT_FORMAT}: The report {path} is not a kcs conformance report "
-                         f"(it lacks or misshapes {exc}); pass the file kcs run --report wrote."
-                         ) from exc
+                         f"({problem}); pass the file kcs run --report wrote.")
     return report
 
 
 def _baseline(path):
     base = _load(path, "baseline", E_BASELINE_FORMAT)
-    shaped = (isinstance(base, dict) and base.get("format") == FORMAT
-              and {"profile", "implementation", "verdict", "cases"} <= set(base)
-              and isinstance(base["implementation"], dict) and "commit" in base["implementation"]
-              and isinstance(base["cases"], dict)
-              and all(isinstance(c, dict) and {"outcome", "failure", "assertions"} <= set(c)
-                      for c in base["cases"].values()))
-    if not shaped:
-        raise InputError(f"{E_BASELINE_FORMAT}: The baseline {path} is not one this tool wrote; "
-                         "regenerate it with `write`.")
+    problem = baseline_problem(base)
+    if problem:
+        raise InputError(f"{E_BASELINE_FORMAT}: The baseline {path} is not one this tool wrote "
+                         f"({problem}); regenerate it with `write`.")
     return base
 
 
