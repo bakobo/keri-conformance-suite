@@ -43,8 +43,7 @@ FEATURE = r"^[a-z0-9]+(\.[a-z0-9-]+)+$"
 STATUSES = ("active", "draft", "disputed", "deprecated")
 NORMATIVE = ("MUST", "SHOULD", "MAY")
 LEVELS = (*NORMATIVE, "INTEROP")
-EXPECTED_DISPOSITIONS = ("accepted", "not-accepted", "pending", "rejected", "duplicitous",
-                         "superseded")
+EXPECTED_READINGS = ("seen", "not-seen", "pending", "rejected", "duplicitous")
 
 CLAUSE = obj({"spec": enum("cesr", "keri", "acdc", "ipex"), "section": string(min_length=1),
               "url": string("^https://"), "commit": string(COMMIT)},
@@ -71,8 +70,10 @@ CHECK_FORMS = {
     "encoded": _assertion("encoded", expected=HEX_STRING),
     "disposition": _assertion("disposition", message=integer(minimum=0),
                               phase=enum("initial", "final"),
-                              expected=enum(*EXPECTED_DISPOSITIONS)),
-    "key_state": _assertion("key_state", aid=string(), expected=KEY_STATE),
+                              expected=enum(*EXPECTED_READINGS)),
+    "trunk": _assertion("trunk", message=integer(minimum=0), expected=enum(True, False)),
+    "key_state": _assertion("key_state", if_seen=integer(minimum=0), aid=string(),
+                            expected=KEY_STATE),
     "emitted_body": _assertion("emitted_body", expected=HEX_STRING),
     "signatures_verify": _assertion("signatures_verify"),
     "attachments_equivalent": _assertion("attachments_equivalent",
@@ -83,7 +84,7 @@ CHECK_FORMS = {
 OPERATION_CHECKS = {
     "cesr.parse": ("decoded", "rejected"),
     "cesr.encode": ("encoded",),
-    "keri.process": ("disposition", "key_state"),
+    "keri.process": ("disposition", "trunk", "key_state"),
     "keri.emit": ("emitted_body", "signatures_verify", "attachments_equivalent"),
 }
 
@@ -148,8 +149,6 @@ def _cross_field_problem(case: dict) -> str | None:
         if "inferred_from" in assertion and assertion["level"] != "SHOULD":
             return (f'assertions[{n}] carries "inferred_from", so its level must be SHOULD, '
                     f'not {assertion["level"]}')
-        if assertion.get("expected") == "superseded" and assertion.get("phase") != "final":
-            return f"assertions[{n}] expects superseded, which is a final disposition only"
     return None
 
 
@@ -167,11 +166,12 @@ def case_problem(case) -> str | None:
             return f'Its assertion id "{assertion["id"]}" is used twice.'
         seen.add(assertion["id"])
         # Beyond the schema, which cannot relate an index to a list's length.
-        if assertion["check"] == "disposition":
+        index = assertion.get("if_seen", assertion.get("message"))
+        if index is not None:
             delivered = len(case["input"]["messages"])
-            if assertion["message"] >= delivered:
-                return (f'Its assertion "{assertion["id"]}" names message '
-                        f'{assertion["message"]}, but the case delivers only {delivered} '
+            if index >= delivered:
+                return (f'Its assertion "{assertion["id"]}" names message {index}, but the '
+                        f'case delivers only {delivered} '
                         f'message{"" if delivered == 1 else "s"}.')
     return None
 

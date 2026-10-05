@@ -48,7 +48,10 @@ GOOD_RESPONSES = [
     {"id": 2, "result": {"encoded": "45457371"}},
     {"id": 1, "result": {"accepted": {"consumed": 479}}},
     {"id": 3, "result": {
-        "dispositions": [{"initial": "pending", "final": "accepted", "reason": "out-of-order"}],
+        "dispositions": [{"initial": "pending", "final": "seen", "trunk": True,
+                          "reason": "partially signed"},
+                         {"initial": "seen", "final": "seen", "trunk": False},
+                         {"initial": "rejected", "final": "rejected", "trunk": False}],
         "key_states": {"EAbc": {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1",
                                 "ndigs": [], "nt": "0", "wits": [], "bt": "0", "delegator": None}},
     }},
@@ -111,17 +114,40 @@ def test_unknown_disposition_is_refused():
     assert list(RESPONSE.iter_errors(message))
 
 
-def test_not_accepted_is_a_case_projection_not_a_report_value():
-    # Adapters report what their implementation did; "not-accepted" is how cases grade it.
+@pytest.mark.parametrize("value", ["seen", "pending", "rejected", "duplicitous"])
+@pytest.mark.parametrize("phase", ["initial", "final"])
+def test_each_reading_is_seen_or_a_refinement_of_not_seen(phase, value):
     message = copy.deepcopy(GOOD_RESPONSES[5])
-    message["result"]["dispositions"][0]["initial"] = "not-accepted"
+    message["result"]["dispositions"][1][phase] = value
+    message["result"]["dispositions"][1]["trunk"] = False
+    assert list(RESPONSE.iter_errors(message)) == []
+
+
+@pytest.mark.parametrize("value", ["not-accepted", "not-seen", "accepted", "superseded"])
+@pytest.mark.parametrize("phase", ["initial", "final"])
+def test_case_projections_and_retired_values_are_not_report_values(phase, value):
+    # Adapters report what their implementation did; "not-seen" is how cases grade it, and
+    # "accepted" and "superseded" were replaced by the seen and trunk readings.
+    message = copy.deepcopy(GOOD_RESPONSES[5])
+    message["result"]["dispositions"][0][phase] = value
     assert list(RESPONSE.iter_errors(message))
 
 
-def test_superseded_is_final_only():
+def test_trunk_is_required_and_boolean():
     message = copy.deepcopy(GOOD_RESPONSES[5])
-    message["result"]["dispositions"][0]["initial"] = "superseded"
+    del message["result"]["dispositions"][0]["trunk"]
     assert list(RESPONSE.iter_errors(message))
+    message["result"]["dispositions"][0]["trunk"] = "yes"
+    assert list(RESPONSE.iter_errors(message))
+
+
+@pytest.mark.parametrize("final", ["pending", "rejected", "duplicitous"])
+def test_only_a_finally_seen_message_can_be_on_the_trunk(final):
+    message = copy.deepcopy(GOOD_RESPONSES[5])
+    message["result"]["dispositions"][0]["final"] = final
+    assert list(RESPONSE.iter_errors(message))
+    message["result"]["dispositions"][0]["trunk"] = False
+    assert list(RESPONSE.iter_errors(message)) == []
 
 
 def test_items_need_offsets():

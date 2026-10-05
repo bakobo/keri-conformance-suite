@@ -22,7 +22,7 @@ CASES = [
     make_case("KERI-0001", "keri.process",
               {"perspective": {"role": "validator"},
                "messages": [{"stream": "7b7d", "source": "controller"}]},
-              [assertion("disposition", message=0, phase="initial", expected="accepted")],
+              [assertion("disposition", message=0, phase="initial", expected="seen")],
               features=["kel.basic"]),
 ]
 

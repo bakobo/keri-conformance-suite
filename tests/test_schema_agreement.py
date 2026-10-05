@@ -225,8 +225,10 @@ BASE_CASES = [
               {"perspective": {"role": "validator"},
                "messages": [{"stream": "7b7d", "source": "controller"},
                             {"stream": "7b7d", "source": "witness"}]},
-              [assertion("disposition", message=0, phase="final", expected="superseded"),
-               assertion("key_state", name="a2", level="SHOULD", aid="EAbc", expected=STATE)],
+              [assertion("disposition", message=0, phase="final", expected="seen"),
+               assertion("key_state", name="a2", level="SHOULD", if_seen=1, aid="EAbc",
+                         expected=STATE),
+               assertion("trunk", name="a3", message=0, expected=False)],
               status="disputed"),
     make_case("KERI-0002", "keri.emit", {"event": {"t": "icp"}, "seeds": {"DAbc": "00"}},
               [assertion("emitted_body", expected="7b7d"),
@@ -272,7 +274,11 @@ def test_cross_field_rules_agree_with_the_case_schema(base):
         documents.append(_replace(base, ("assertions", a, "basis"), "b"))
         if assertion_["check"] == "disposition":
             documents.append(_replace(base, ("assertions", a, "phase"), "initial"))
-            documents.append(_replace(base, ("assertions", a, "expected"), "accepted"))
+            for retired in ("accepted", "not-accepted", "superseded"):
+                documents.append(_replace(base, ("assertions", a, "expected"), retired))
+        if assertion_["check"] == "trunk":
+            documents.append(_replace(base, ("assertions", a, "expected"), True))
+            documents.append(_replace(base, ("assertions", a, "phase"), "final"))
     found = disagreements(documents, case_problem, CASE_VALIDATOR)
     assert found == [], found[:3]
 
@@ -310,6 +316,14 @@ def test_a_disposition_message_index_past_the_messages_is_a_runtime_rule_beyond_
     assert case_problem(_replace(BASE_CASES[3], ("assertions", 0, "message"), 1)) is None
 
 
+@pytest.mark.parametrize(("a", "field"), [(1, "if_seen"), (2, "message")])
+def test_trunk_and_condition_indexes_past_the_messages_are_runtime_rules_beyond_the_schema(a, field):
+    case = _replace(BASE_CASES[3], ("assertions", a, field), 2)  # it delivers two
+    assert CASE_VALIDATOR.is_valid(case)
+    assert "message 2" in case_problem(case)
+    assert case_problem(_replace(BASE_CASES[3], ("assertions", a, field), 1)) is None
+
+
 def test_duplicate_assertion_ids_are_a_runtime_rule_beyond_the_schema():
     case = _replace(BASE_CASES[4], ("assertions", 1, "id"), "a1")
     assert CASE_VALIDATOR.is_valid(case)
@@ -341,8 +355,9 @@ BASE_RESULTS = [
     ("cesr.parse", {"reject": {"class": "truncated"}}),
     ("cesr.parse", {"accepted": {"consumed": 479}}),
     ("cesr.encode", {"encoded": "0aff"}),
-    ("keri.process", {"dispositions": [{"initial": "pending", "final": "superseded",
-                                        "reason": "out-of-order"}],
+    ("keri.process", {"dispositions": [{"initial": "pending", "final": "seen", "trunk": True,
+                                        "reason": "partially signed"},
+                                       {"initial": "seen", "final": "seen", "trunk": False}],
                       "key_states": {"EAbc": {**STATE, "delegator": "EDel"}}}),
     ("keri.emit", {"stream": "7b7d"}),
 ]
@@ -356,6 +371,17 @@ def test_result_checks_agree_with_the_protocol_schema(op, result):
     assert check_result_shape(op, result) is None
     found = disagreements(mutations(result), lambda r: check_result_shape(op, r), schema)
     assert found == [], found[:3]
+
+
+@pytest.mark.parametrize("final", ["seen", "pending", "rejected", "duplicitous", "superseded"])
+@pytest.mark.parametrize("trunk", [True, False])
+def test_the_trunk_reading_needs_a_final_seen_reading_in_both(final, trunk):
+    schema = Draft202012Validator({"$defs": PROTOCOL["$defs"], **RESULT_DEFS["keri.process"]})
+    result = {"dispositions": [{"initial": "seen", "final": final, "trunk": trunk}],
+              "key_states": {}}
+    valid = final != "superseded" and (final == "seen" or not trunk)
+    assert schema.is_valid(result) == valid
+    assert (check_result_shape("keri.process", result) is None) == valid
 
 
 def test_every_operation_has_a_result_check():
@@ -390,7 +416,7 @@ SAMPLE_ASSERTIONS = {a["check"]: a for case in BASE_CASES for a in case["asserti
 OPERATION_CHECKS = {
     "cesr.parse": {"decoded", "rejected"},
     "cesr.encode": {"encoded"},
-    "keri.process": {"disposition", "key_state"},
+    "keri.process": {"disposition", "trunk", "key_state"},
     "keri.emit": {"emitted_body", "signatures_verify", "attachments_equivalent"},
 }
 

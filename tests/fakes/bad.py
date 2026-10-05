@@ -75,7 +75,7 @@ LINES = {
     "error-not-object": lambda rid: json.dumps({"id": rid, "error": "x"}).encode() + b"\n",
     "answer-all": encoded,
     "few-dispositions": lambda rid: json.dumps({"id": rid, "result": {
-        "dispositions": [{"initial": "accepted", "final": "accepted"}],
+        "dispositions": [{"initial": "seen", "final": "seen", "trunk": True}],
         "key_states": {}}}).encode() + b"\n",
 }
 
@@ -171,9 +171,10 @@ def main():
         hello()
         for seen, line in enumerate(sys.stdin.buffer):
             request = json.loads(line)
-            state = "accepted" if seen == 0 else "duplicitous"
+            state = "seen" if seen == 0 else "duplicitous"
             send({"id": request["id"], "result": {
-                "dispositions": [{"initial": state, "final": state}], "key_states": {}}})
+                "dispositions": [{"initial": state, "final": state, "trunk": seen == 0}],
+                "key_states": {}}})
         return
     hello()
     while True:

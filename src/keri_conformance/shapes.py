@@ -174,6 +174,20 @@ def tagged(tag: str, forms: dict[str, Check]) -> Check:
     return check
 
 
+def all_of(*checks: Check) -> Check:
+    """Every check in turn, reporting the first problem (allOf, or a schema's if/then beside the
+    form it constrains)."""
+
+    def check(value, path):
+        for each in checks:
+            problem = each(value, path)
+            if problem:
+                return problem
+        return None
+
+    return check
+
+
 def predicate(test: Callable[[object], bool], expected: str) -> Check:
     def check(value, path):
         return None if test(value) else f"{_name(path)} must be {expected}"
