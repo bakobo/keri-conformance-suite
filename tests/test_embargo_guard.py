@@ -118,3 +118,25 @@ def test_default_patterns_path_is_beside_the_main_checkout(tmp_path):
     want = bakobo / "reviews" / "keri-conformance-suite" / "embargoed" / "patterns.txt"
     assert guard.default_patterns(main_repo) == want
     assert guard.default_patterns(worktree) == want
+
+
+def test_one_of_range_or_hook_is_required(repo, patterns, capsys):
+    with pytest.raises(SystemExit) as e:
+        guard.main(["--repo", str(repo), "--patterns", str(patterns)])
+    assert e.value.code == 2
+
+
+def test_a_three_dot_range_is_accepted_as_given(repo, patterns):
+    start = base(repo)
+    commit(repo, "b.txt", "CESR-0099\n")
+    assert guard.main(["--repo", str(repo), "--patterns", str(patterns), "--range",
+                       f"{start}...HEAD"]) == 1
+
+
+def test_default_patterns_follow_the_repository_name(tmp_path):
+    bakobo = tmp_path / "bakobo"
+    renamed = bakobo / "renamed-suite"
+    renamed.mkdir(parents=True)
+    git(renamed, "init", "-q", "-b", "main")
+    assert guard.default_patterns(renamed) == (
+        bakobo / "reviews" / "renamed-suite" / "embargoed" / "patterns.txt")

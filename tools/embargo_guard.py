@@ -25,7 +25,8 @@ def default_patterns(repo: pathlib.Path) -> pathlib.Path:
     main checkout, found through git's common directory so a worktree resolves to the same place."""
     common = pathlib.Path(_git(repo, "rev-parse", "--path-format=absolute",
                                "--git-common-dir").strip())
-    return common.parent.parent / "reviews" / "keri-conformance-suite" / "embargoed" / "patterns.txt"
+    main_checkout = common.parent
+    return main_checkout.parent / "reviews" / main_checkout.name / "embargoed" / "patterns.txt"
 
 
 def load_patterns(path: pathlib.Path) -> list[re.Pattern]:
@@ -63,7 +64,8 @@ def findings(repo: pathlib.Path, rng: str, patterns: list[re.Pattern]) -> list[s
         if any(p.search(body) for p in patterns):
             found.append(f"the commit message of {sha[:12]}")
     current = None
-    for line in _git(repo, "diff", "--unified=0", rng.replace("..", "...", 1)).splitlines():
+    diff_range = rng if "..." in rng else rng.replace("..", "...", 1)  # changes since the base
+    for line in _git(repo, "diff", "--unified=0", diff_range).splitlines():
         if line.startswith("+++ "):
             current = line[6:] if line.startswith("+++ b/") else line[4:]
         elif line.startswith("+") and any(p.search(line[1:]) for p in patterns):
@@ -75,8 +77,9 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--repo", type=pathlib.Path, default=pathlib.Path.cwd())
     parser.add_argument("--patterns", type=pathlib.Path, default=None)
-    parser.add_argument("--range", dest="rng", default=None, help="a range such as main..HEAD")
-    parser.add_argument("--hook", action="store_true", help="read ranges from pre-push input")
+    which = parser.add_mutually_exclusive_group(required=True)
+    which.add_argument("--range", dest="rng", help="a range such as main..HEAD or main...HEAD")
+    which.add_argument("--hook", action="store_true", help="read ranges from pre-push input")
     parser.add_argument("--base", default="origin/main", help="base for a newly pushed branch")
     args = parser.parse_args(argv)
     repo = args.repo.resolve()
