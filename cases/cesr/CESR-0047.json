@@ -65,6 +65,7 @@
   "targets": {
     "features": [
       "cesr.genus-1.00",
+      "cesr.item-extents",
       "cesr.serialization.json",
       "keri.version-1.x"
     ],

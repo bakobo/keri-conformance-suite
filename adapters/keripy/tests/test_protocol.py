@@ -33,10 +33,25 @@ def test_hello_features_follow_the_keripy_generation():
     common = {"cesr.domain.binary", "cesr.serialization.json", "cesr.serialization.cbor",
               "cesr.serialization.mgpk", "keri.version-1.x"}
     if GENERATION == "main":
+        # keripy main itemizes every stream it accepts, except native bodies (cesr.native,
+        # which it does not declare), so it keeps cesr.item-extents.
         assert set(features) == common | {"cesr.genus-1.00", "cesr.genus-2.00",
-                                          "keri.version-2.x"}
+                                          "cesr.item-extents", "keri.version-2.x"}
     else:
+        # keripy 1.2.14 cannot itemize -H and -J groups, so it does not promise items.
         assert set(features) == common | {"cesr.genus-1.00"}
+
+
+def test_cesr_item_extents_is_declared_only_where_every_gap_is_an_undeclared_feature():
+    from kcs_adapter_keripy import keripy_api, measure
+    main, onex = keripy_api.Main, keripy_api.OneX
+    # keripy main's only path to an unsupported cesr.parse is a native body (E_NATIVE), and it
+    # does not declare cesr.native; it has no unmeasurable groups.
+    assert main.UNMEASURABLE == ()
+    assert "cesr.native" not in main.features and "cesr.item-extents" in main.features
+    assert measure.E_NATIVE.startswith("e.feature.unsupported.")
+    # keripy 1.2.14 has groups it cannot measure (-H, -J) and so must not declare it.
+    assert onex.UNMEASURABLE and "cesr.item-extents" not in onex.features
 
 
 def test_hello_negotiates_from_supported():

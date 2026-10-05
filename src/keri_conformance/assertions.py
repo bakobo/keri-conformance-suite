@@ -96,6 +96,10 @@ def _decoded(assertion, result):
 def _rejected(assertion, result):
     if "reject" in result:
         return Evaluation("pass", result)
+    if "accepted" in result:
+        return _fail(result, f"The implementation accepted the stream, consuming "
+                             f"{result['accepted'].get('consumed')} bytes of it, where it must "
+                             "have rejected it.")
     return _fail(result, "The adapter did not reject the stream.")
 
 

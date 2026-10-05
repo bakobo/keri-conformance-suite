@@ -45,7 +45,11 @@ fn hello_negotiates_the_highest_version_both_speak_from_supported() {
     assert_eq!(result["operations"], json!(["cesr.parse", "cesr.encode"]));
     assert_eq!(
         result["features"],
-        json!(["cesr.serialization.json", "keri.version-1.x"])
+        json!([
+            "cesr.genus-1.00",
+            "cesr.serialization.json",
+            "keri.version-1.x"
+        ])
     );
     assert_eq!(result["composes"], json!([]));
 }
@@ -87,7 +91,10 @@ fn unknown_request_fields_are_ignored() {
         ask(json!({"id": 5, "op": "hello", "protocol": 1, "supported": [1], "x": {"y": 1}}));
     assert_eq!(response["result"]["protocol"], 1);
     let response = ask(json!({"id": 6, "op": "cesr.parse", "stream": "", "future": [1, 2]}));
-    assert_eq!(response, json!({"id": 6, "result": {"items": []}}));
+    assert_eq!(
+        response,
+        json!({"id": 6, "result": {"accepted": {"consumed": 0}}})
+    );
 }
 
 #[test]
@@ -214,7 +221,10 @@ fn serve_answers_every_line_in_order_and_stops_at_end_of_file() {
     assert_eq!(responses[0]["result"]["protocol"], 1);
     assert_null_id_error(&responses[1], protocol::E_MALFORMED);
     assert_null_id_error(&responses[2], protocol::E_MALFORMED);
-    assert_eq!(responses[3], json!({"id": 2, "result": {"items": []}}));
+    assert_eq!(
+        responses[3],
+        json!({"id": 2, "result": {"accepted": {"consumed": 0}}})
+    );
     assert!(serve_lines(b"", 1024).is_empty());
 }
 
@@ -228,7 +238,10 @@ fn an_oversize_line_is_skipped_and_the_next_request_is_answered() {
     let responses = serve_lines(input.as_bytes(), 64);
     assert_eq!(responses.len(), 3);
     assert_null_id_error(&responses[0], protocol::E_OVERSIZE);
-    assert_eq!(responses[1], json!({"id": 3, "result": {"items": []}}));
+    assert_eq!(
+        responses[1],
+        json!({"id": 3, "result": {"accepted": {"consumed": 0}}})
+    );
     assert_null_id_error(&responses[2], protocol::E_OVERSIZE);
 }
 
@@ -236,7 +249,10 @@ fn an_oversize_line_is_skipped_and_the_next_request_is_answered() {
 fn a_line_exactly_at_the_limit_is_read() {
     let line = br#"{"id":4,"op":"cesr.parse","stream":""}"#;
     let responses = serve_lines(&[&line[..], b"\n"].concat(), line.len());
-    assert_eq!(responses, vec![json!({"id": 4, "result": {"items": []}})]);
+    assert_eq!(
+        responses,
+        vec![json!({"id": 4, "result": {"accepted": {"consumed": 0}}})]
+    );
     let responses = serve_lines(&[&line[..], b"\n"].concat(), line.len() - 1);
     assert_null_id_error(&responses[0], protocol::E_OVERSIZE);
 }
@@ -270,6 +286,9 @@ fn lines_split_across_reads_are_reassembled() {
         .filter(|l| !l.is_empty())
         .map(|l| serde_json::from_slice(l).unwrap())
         .collect();
-    assert_eq!(lines[0], json!({"id": 5, "result": {"items": []}}));
+    assert_eq!(
+        lines[0],
+        json!({"id": 5, "result": {"accepted": {"consumed": 0}}})
+    );
     assert_null_id_error(&lines[1], protocol::E_OVERSIZE);
 }

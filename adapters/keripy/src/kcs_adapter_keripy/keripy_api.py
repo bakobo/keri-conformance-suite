@@ -79,7 +79,9 @@ class Main(_Common):
     """keripy main (2.x)."""
 
     generation = "main"
-    features = ("cesr.domain.binary", "cesr.genus-1.00", "cesr.genus-2.00",
+    # cesr.item-extents: keripy main itemizes every stream it accepts except a native CESR body
+    # (measure.E_NATIVE), which is cesr.native, a feature this adapter does not declare.
+    features = ("cesr.domain.binary", "cesr.genus-1.00", "cesr.genus-2.00", "cesr.item-extents",
                 "cesr.serialization.cbor", "cesr.serialization.json", "cesr.serialization.mgpk",
                 "keri.version-1.x", "keri.version-2.x")
     # Every method name in keripy main's Parser.Methods dispatch table.
@@ -96,6 +98,8 @@ class OneX(_Common):
     """keripy 1.x (1.2.14)."""
 
     generation = "1.x"
+    # Not cesr.item-extents: that promises the decoded items of every stream keripy accepts, and
+    # the adapter cannot measure -H and -J groups on this generation (UNMEASURABLE below).
     features = ("cesr.domain.binary", "cesr.genus-1.00", "cesr.serialization.cbor",
                 "cesr.serialization.json", "cesr.serialization.mgpk", "keri.version-1.x")
     GROUP_METHODS = ("_nonTransReceiptCouples", "_transIdxSigGroups", "_sadPathSigGroup")

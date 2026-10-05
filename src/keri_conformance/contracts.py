@@ -53,8 +53,11 @@ KEY_STATE = obj({
 ERROR = obj({"kind": enum("harness", "unsupported"), "message": string()})
 
 RESULTS = {
+    # "accepted" is the summary an adapter without cesr.item-extents gives for a stream its
+    # implementation accepted; the runner also bounds "consumed" by the stream (session.py).
     "cesr.parse": keyed({"items": obj({"items": array(ITEM)}),
-                         "reject": obj({"reject": obj({"class": string()})})}),
+                         "reject": obj({"reject": obj({"class": string()})}),
+                         "accepted": obj({"accepted": obj({"consumed": OFFSET})})}),
     "cesr.encode": obj({"encoded": HEX_STRING}),
     "keri.process": obj({
         "dispositions": array(obj({"initial": enum(*INITIAL_DISPOSITIONS),

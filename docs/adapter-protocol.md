@@ -68,7 +68,7 @@ Decode a stream.
 {"id": 1, "op": "cesr.parse", "stream": "7b2276223a..."}
 ```
 
-The stream is hex-encoded bytes and may be in either domain or mix them. The result is either the decoded items or a rejection:
+The stream is hex-encoded bytes and may be in either domain or mix them. The result is the decoded items, a rejection, or a summary of an accepted stream:
 
 ```json
 {"id": 1, "result": {"items": [
@@ -79,7 +79,15 @@ The stream is hex-encoded bytes and may be in either domain or mix them. The res
   {"kind": "indexed", "start": 359, "end": 447, "code": "A", "index": 0, "raw": "9c1f..."}
 ]}}
 {"id": 1, "result": {"reject": {"class": "truncated"}}}
+{"id": 1, "result": {"accepted": {"consumed": 447}}}
 ```
+
+**Items, or a summary.** Reporting items needs to know where each one starts and ends, and some implementations parse a stream correctly without ever saying where anything was. An adapter must not work the offsets out itself — from counts, code tables or a parser of its own — because then the adapter's parser is what gets tested. So the protocol separates the two:
+
+- An adapter that declares the feature `cesr.item-extents` reports the decoded items of every stream its implementation accepts. Only such an adapter is sent a case with a `decoded` assertion.
+- Any adapter may instead answer an accepted stream with a summary: `{"accepted": {"consumed": n}}`, where `n` is the number of bytes the implementation consumed, a non-negative integer no larger than the stream. An adapter that cannot report items should answer this way rather than with an `unsupported` error, because a summary is evidence and an error is not.
+
+A case whose assertions are all rejections does not need `cesr.item-extents`, so it is sent to every adapter that declares the case's other features. A rejection passes it; a summary fails it, because the implementation accepted a stream it must reject. A summary given to a case with a `decoded` assertion fails the whole case as malformed, as does a summary whose `consumed` is larger than the stream.
 
 `start` and `end` are byte offsets into the stream, and `end` is where the item's own encoding ends. Report what is on the wire, not what your implementation infers. Items are reported in stream order, and a group's members follow its count code. There are five kinds:
 
@@ -93,7 +101,7 @@ Versions are rendered in decimal as major, a full stop, and minor. A message's `
 
 The runner compares the reported items with the expected items exactly: the same items in the same order, each with exactly the fields this section gives it and the same values.
 
-**End of input.** The stream in a `cesr.parse` request is complete. This is a rule of this protocol, not of the CESR specification, which also describes live streams where a parser waits for more bytes. An adapter must treat the end of the stream as final: an item, count code, group or body that the stream ends inside is a rejection, never a reason to wait. An adapter that waits fails the case by timing out.
+**End of input.** The stream in a `cesr.parse` request is complete. This is a rule of this protocol, not of the CESR specification, which also describes live streams where a parser waits for more bytes. An adapter must treat the end of the stream as final: an item, count code, group or body that the stream ends inside is a rejection, never a reason to wait, and a summary's `consumed` never counts bytes beyond the stream. An adapter that waits fails the case by timing out.
 
 ## `cesr.encode`
 

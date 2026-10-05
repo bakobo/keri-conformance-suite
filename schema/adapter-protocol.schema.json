@@ -197,6 +197,9 @@
                   "$ref": "#/$defs/result_rejected"
                 },
                 {
+                  "$ref": "#/$defs/result_accepted"
+                },
+                {
                   "$ref": "#/$defs/result_encoded"
                 },
                 {
@@ -362,6 +365,29 @@
           "properties": {
             "class": {
               "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "result_accepted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accepted"
+      ],
+      "description": "A cesr.parse summary: the implementation accepted the stream and consumed this many bytes of it, without item detail. It is a complete answer to a case whose assertions are all rejections. A case with a decoded assertion is sent only to an adapter that declares cesr.item-extents, and a summary given to such a case fails it as malformed. The runner also requires consumed to be no larger than the request's stream, which this schema cannot express.",
+      "properties": {
+        "accepted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "consumed"
+          ],
+          "properties": {
+            "consumed": {
+              "type": "integer",
+              "minimum": 0
             }
           }
         }

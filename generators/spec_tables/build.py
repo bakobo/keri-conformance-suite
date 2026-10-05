@@ -348,6 +348,10 @@ def build_case(t: Tables, scenario_path: str, case: dict, clauses: dict,
         if "note" in a:
             out["note"] = a["note"]
         assertions.append(out)
+    if any(a["check"] == "decoded" for a in assertions):
+        # Grading decoded items needs their extents; a case with only rejections does not, so it
+        # also reaches adapters that answer an accepted stream with a summary.
+        sb.features.add("cesr.item-extents")
 
     result = {
         "schema_version": SCHEMA_VERSION,

@@ -474,3 +474,74 @@ def test_an_empty_cases_directory_is_no_evidence(cases_dir, tmp_path):
 def test_the_skipped_statelessness_probe_is_reported(cases_dir, tmp_path):
     _code, report = run(good(), cases_dir(PASSING[0]), tmp_path)
     assert report["probes"] == {"statelessness": "not-yet-available"}
+
+
+# --- the accepted summary -----------------------------------------------------------------------
+
+
+def _summary_table(write_json, consumed):
+    return write_json("summary.json", [{"match": {"op": "cesr.parse"},
+                                        "result": {"accepted": {"consumed": consumed}}}])
+
+
+def test_a_summary_fails_a_must_reject_case_with_evidence(cases_dir, tmp_path, write_json):
+    # The stream 2d4b is two bytes; the implementation accepted all of it.
+    code, report = run(good("--table", _summary_table(write_json, 2)), cases_dir(PASSING[0]),
+                       tmp_path)
+    case = report["cases"][0]
+    assert code == errors.EXIT_FAILED
+    assert report["verdict"] == "not-conformant"
+    assert case["failure"] is None
+    assert case["outcome"] == "fail"
+    [record] = case["assertions"]
+    assert record["outcome"] == "fail"
+    assert record["actual"] == {"accepted": {"consumed": 2}}
+
+
+def test_a_summary_consuming_part_of_the_stream_still_fails_a_must_reject(cases_dir, tmp_path,
+                                                                         write_json):
+    code, report = run(good("--table", _summary_table(write_json, 0)), cases_dir(PASSING[0]),
+                       tmp_path)
+    assert code == errors.EXIT_FAILED
+    assert report["cases"][0]["failure"] is None
+    assert report["cases"][0]["assertions"][0]["outcome"] == "fail"
+
+
+def test_a_summary_consuming_more_than_the_stream_is_malformed(cases_dir, tmp_path, write_json):
+    code, report = run(good("--table", _summary_table(write_json, 3)), cases_dir(PASSING[0]),
+                       tmp_path)
+    case = report["cases"][0]
+    assert code == errors.EXIT_FAILED
+    assert case["failure"]["kind"] == "malformed"
+    assert "3 bytes" in case["failure"]["detail"] and "2-byte" in case["failure"]["detail"]
+    assert [a["outcome"] for a in case["assertions"]] == ["fail"]
+
+
+def test_a_summary_answering_a_decoded_case_is_malformed(cases_dir, tmp_path, write_json):
+    # The runner sends a decoded case only to an adapter that declares cesr.item-extents, which
+    # reports items; a summary there is out of protocol and fails the whole case as malformed.
+    code, report = run(good("--table", _summary_table(write_json, 1)), cases_dir(PASSING[1]),
+                       tmp_path)
+    case = report["cases"][0]
+    assert code == errors.EXIT_FAILED
+    assert case["failure"]["kind"] == "malformed"
+    assert "cesr.item-extents" in case["failure"]["detail"]
+    assert [a["outcome"] for a in case["assertions"]] == ["fail"]
+
+
+def test_a_summary_answering_a_decoded_case_restarts_the_adapter(cases_dir, tmp_path, write_json,
+                                                                 monkeypatch):
+    # Like every other out-of-protocol answer, it kills the adapter at once, so no state carries
+    # into a later case: by the time the run closes the session, there is no process left.
+    from keri_conformance import session as session_module
+
+    alive_at_close = []
+    real_close = session_module.AdapterSession.close
+
+    def recording_close(self):
+        alive_at_close.append(self._proc is not None)
+        real_close(self)
+
+    monkeypatch.setattr(session_module.AdapterSession, "close", recording_close)
+    run(good("--table", _summary_table(write_json, 1)), cases_dir(PASSING[1]), tmp_path)
+    assert alive_at_close == [False]

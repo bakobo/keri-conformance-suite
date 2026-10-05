@@ -242,6 +242,31 @@ def test_builder_and_reference_parser_must_agree():
         build.check_case(T, built, None)
 
 
+def test_a_decoded_assertion_requires_item_extents():
+    # Only an adapter that reports item extents can be graded on decoded items
+    # (docs/adapter-protocol.md, "Items, or a summary").
+    built = build.build_case(T, "s", _case(), CLAUSES, None, None)
+    assert "cesr.item-extents" in built["targets"]["features"]
+    interop = _case(assertions=[{"check": "decoded", "basis": "keripy 1.x"}])
+    built = build.build_case(T, "s", interop, CLAUSES, None, None)
+    assert "cesr.item-extents" in built["targets"]["features"]
+
+
+def test_a_case_with_only_rejections_does_not_require_item_extents():
+    case = _case(truncate=1, assertions=[{"check": "rejected", "clause": "count-quadlets"},
+                                         {"check": "rejected", "basis": "keripy 1.x"}])
+    built = build.build_case(T, "s", case, CLAUSES, None, None)
+    assert "cesr.item-extents" not in built["targets"]["features"]
+    assert "cesr.genus-2.00" in built["targets"]["features"]
+
+
+def test_an_encoding_case_does_not_require_item_extents():
+    case = _case(operation="cesr.encode", code="E", raw="x", domain="text",
+                 assertions=[{"check": "encoded", "clause": "count-quadlets"}])
+    built = build.build_case(T, "s", case, CLAUSES, None, None)
+    assert "cesr.item-extents" not in built["targets"]["features"]
+
+
 def test_raw_values_are_shake256_of_the_label():
     import hashlib
 

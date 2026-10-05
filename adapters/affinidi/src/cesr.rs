@@ -1,21 +1,17 @@
 //! `cesr.parse` and `cesr.encode`, answered from Affinidi's public API only.
 //!
-//! Every reported value is Affinidi's own: the accept/reject verdict is `parse_all`'s, message
-//! boundaries are the bytes `parse_next` says it consumed and the body size its `Serder` holds, and
-//! the message fields come from the `Version` Affinidi parsed. Affinidi's parser does not expose
-//! where it found each attachment, nor the count codes it read, so a stream it accepts with any
-//! attachment is answered `unsupported` rather than reconstructed by the adapter. README.md lists
-//! every value and its source.
+//! The accept/reject verdict is `parse_all`'s. Affinidi's parser does not expose where it found
+//! each item, nor the count codes it read, so the adapter does not declare `cesr.item-extents`
+//! and answers every stream Affinidi accepts with the protocol's summary: the bytes Affinidi
+//! consumed, measured as the sum of what `parse_next` says it consumed for each message. It
+//! never reconstructs items. README.md lists every value and its source.
 
 use affinidi_cesr::Matter;
-use affinidi_keri_core::parser::{self, ParsedMessage};
+use affinidi_keri_core::parser;
 use serde_json::{Value, json};
 
 use crate::protocol::OpError;
 
-pub const E_ITEM_EXTENT: &str = "e.feature.unsupported.item-extent.f";
-pub const E_SKIPPED_BYTES: &str = "e.feature.unsupported.skipped-bytes.f";
-pub const E_NO_VERSION: &str = "e.feature.unsupported.message-version.f";
 pub const E_ENCODE_REFUSED: &str = "e.input.format.encode-refused.f";
 pub const E_INCONSISTENT: &str = "e.self.unknown.measurement.f";
 
@@ -32,42 +28,8 @@ fn reject(class: String) -> Value {
     json!({"reject": {"class": class}})
 }
 
-/// The message item for one message Affinidi parsed at `start`, or why it cannot be reported.
-fn message_item(start: usize, message: &ParsedMessage, consumed: usize) -> Result<Value, OpError> {
-    let body = message.serder.size();
-    if !message.attachments.is_empty() || consumed != body {
-        return Err(OpError::Unsupported(format!(
-            "{E_ITEM_EXTENT}: Affinidi accepted the stream. The message at offset {start} has a \
-             {body}-byte body and Affinidi consumed {consumed} bytes for it, so {} bytes of \
-             attachments, which it decoded into {} group(s). Its public parser reports neither \
-             where each attachment item lies nor the count codes it read, so the adapter cannot \
-             report the items without parsing them itself, which it does not do.",
-            consumed - body.min(consumed),
-            message.attachments.len()
-        )));
-    }
-    let Some(version) = message.serder.version.as_ref() else {
-        return Err(OpError::Unsupported(format!(
-            "{E_NO_VERSION}: Affinidi accepted the stream, but for the message at offset {start} \
-             it found no version string, so it holds no protocol, version or declared size to report."
-        )));
-    };
-    if version.size != body {
-        return Err(OpError::Harness(format!(
-            "{E_INCONSISTENT}: Affinidi framed a {body}-byte body at offset {start} but holds a \
-             declared size of {}; the adapter does not report a message it cannot account for.",
-            version.size
-        )));
-    }
-    Ok(json!({
-        "kind": "message",
-        "start": start,
-        "end": start + body,
-        "proto": version.protocol,
-        "version": format!("{}.{}", version.major, version.minor),
-        "serialization": version.kind.tag(),
-        "size": version.size,
-    }))
+fn inconsistent(why: String) -> OpError {
+    OpError::Harness(format!("{E_INCONSISTENT}: {why}"))
 }
 
 /// Decode a stream with Affinidi's strict parser.
@@ -80,41 +42,38 @@ pub fn parse(stream: &[u8]) -> Result<Value, OpError> {
             return Ok(reject(class_of("CoreError", &error)));
         }
     };
-    // parse_all accepted it. Walk it again one message at a time with parse_next, the function
-    // parse_all calls, to learn where each message starts: the end of the bytes Affinidi says it
-    // consumed for the one before.
-    let mut items = Vec::with_capacity(messages.len());
+    // parse_all accepted it. Walk it again as parse_all does, skipping the whitespace it skips
+    // between messages and calling parse_next once per message, to measure how many bytes
+    // Affinidi consumed from what parse_next says it consumed.
     let mut offset = 0;
+    let mut found = 0;
     while offset < stream.len() {
         if stream[offset].is_ascii_whitespace() {
-            return Err(OpError::Unsupported(format!(
-                "{E_SKIPPED_BYTES}: Affinidi accepted the stream, skipping whitespace at offset \
-                 {offset} between messages (parse_all does this); the protocol has no item for \
-                 bytes a parser skips."
-            )));
+            offset += 1;
+            continue;
         }
-        let (message, consumed) = parser::parse_next(&stream[offset..]).map_err(|error| {
-            OpError::Harness(format!(
-                "{E_INCONSISTENT}: parse_all accepted the stream but parse_next rejected the \
-                 message at offset {offset}: {error}."
+        let (_, consumed) = parser::parse_next(&stream[offset..]).map_err(|error| {
+            inconsistent(format!(
+                "parse_all accepted the stream but parse_next rejected the message at offset \
+                 {offset}: {error}."
             ))
         })?;
-        if consumed == 0 {
-            return Err(OpError::Harness(format!(
-                "{E_INCONSISTENT}: parse_next consumed no bytes at offset {offset}."
+        if consumed == 0 || consumed > stream.len() - offset {
+            return Err(inconsistent(format!(
+                "parse_next said it consumed {consumed} bytes of the {} left at offset {offset}.",
+                stream.len() - offset
             )));
         }
-        items.push(message_item(offset, &message, consumed)?);
         offset += consumed;
+        found += 1;
     }
-    if items.len() != messages.len() {
-        return Err(OpError::Harness(format!(
-            "{E_INCONSISTENT}: parse_all found {} messages but parse_next found {}.",
-            messages.len(),
-            items.len()
+    if found != messages.len() {
+        return Err(inconsistent(format!(
+            "parse_all found {} messages but parse_next found {found}.",
+            messages.len()
         )));
     }
-    Ok(json!({"items": items}))
+    Ok(json!({"accepted": {"consumed": offset}}))
 }
 
 /// Encode a primitive with Affinidi's `Matter`.

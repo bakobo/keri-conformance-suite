@@ -23,7 +23,7 @@ from keri_conformance.errors import (
     RunnerError,
 )
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
-from keri_conformance.session import AdapterSession, Failure
+from keri_conformance.session import AdapterSession, Failure, Reply
 
 # The most adapter output, in response-line bytes, one run will read and keep in its report.
 MAX_RETAINED_BYTES = 512 * 1024 * 1024
@@ -76,6 +76,16 @@ def run_case(session: AdapterSession, case: dict) -> dict:
         return entry
 
     outcome = session.request(case["operation"], case["input"])
+    if (isinstance(outcome, Reply) and "accepted" in outcome.result
+            and any(a["check"] == "decoded" for a in case["assertions"])):
+        session.kill()  # out of protocol, so restart it as for any other malformed answer
+        # A decoded case goes only to adapters declaring cesr.item-extents, which report items;
+        # a summary is no answer to it (docs/adapter-protocol.md, cesr.parse).
+        outcome = Failure("malformed", "The adapter answered a case with a decoded assertion "
+                                       "with an accepted summary, which reports no items. Such "
+                                       "a case is sent only to an adapter that declares "
+                                       "cesr.item-extents, and it must answer with the decoded "
+                                       "items or a rejection.")
     entry["stderr"] = session.take_stderr()
     if isinstance(outcome, Failure):
         entry["failure"] = {"kind": outcome.kind, "detail": outcome.detail}
