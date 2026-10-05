@@ -527,3 +527,21 @@ def test_a_summary_answering_a_decoded_case_is_malformed(cases_dir, tmp_path, wr
     assert case["failure"]["kind"] == "malformed"
     assert "cesr.item-extents" in case["failure"]["detail"]
     assert [a["outcome"] for a in case["assertions"]] == ["fail"]
+
+
+def test_a_summary_answering_a_decoded_case_restarts_the_adapter(cases_dir, tmp_path, write_json,
+                                                                 monkeypatch):
+    # Like every other out-of-protocol answer, it kills the adapter at once, so no state carries
+    # into a later case: by the time the run closes the session, there is no process left.
+    from keri_conformance import session as session_module
+
+    alive_at_close = []
+    real_close = session_module.AdapterSession.close
+
+    def recording_close(self):
+        alive_at_close.append(self._proc is not None)
+        real_close(self)
+
+    monkeypatch.setattr(session_module.AdapterSession, "close", recording_close)
+    run(good("--table", _summary_table(write_json, 1)), cases_dir(PASSING[1]), tmp_path)
+    assert alive_at_close == [False]
