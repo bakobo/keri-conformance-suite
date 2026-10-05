@@ -20,9 +20,8 @@ fn parse(stream: &[u8]) -> Value {
     )
 }
 
-fn message(start: usize) -> Value {
-    json!({"kind": "message", "start": start, "end": start + 299, "proto": "KERI",
-           "version": "1.0", "serialization": "JSON", "size": 299})
+fn summary(consumed: usize) -> Value {
+    json!({"id": 1, "result": {"accepted": {"consumed": consumed}}})
 }
 
 fn rejection_class(response: &Value) -> String {
@@ -32,59 +31,46 @@ fn rejection_class(response: &Value) -> String {
         .to_string()
 }
 
+// The adapter does not declare cesr.item-extents: Affinidi's parser does not say where each item
+// lay, so every stream it accepts is answered with the protocol's summary, never with items.
+
 #[test]
-fn an_empty_stream_has_no_items() {
-    assert_eq!(parse(b""), json!({"id": 1, "result": {"items": []}}));
+fn an_empty_stream_is_accepted_with_nothing_consumed() {
+    assert_eq!(parse(b""), summary(0));
 }
 
 #[test]
-fn a_bare_body_is_reported_from_affinidis_serder() {
-    assert_eq!(
-        parse(ICP.as_bytes()),
-        json!({"id": 1, "result": {"items": [message(0)]}})
-    );
+fn a_bare_body_is_accepted_whole() {
+    assert_eq!(parse(ICP.as_bytes()), summary(299));
 }
 
 #[test]
-fn consecutive_bodies_are_each_framed_by_their_own_version_string() {
-    let stream = format!("{ICP}{ICP}{ICP}");
-    assert_eq!(
-        parse(stream.as_bytes())["result"]["items"],
-        json!([message(0), message(299), message(598)])
-    );
+fn consecutive_bodies_are_consumed_one_after_another() {
+    assert_eq!(parse(format!("{ICP}{ICP}{ICP}").as_bytes()), summary(897));
 }
 
 #[test]
-fn a_stream_affinidi_accepts_with_attachments_is_unsupported_and_says_it_was_accepted() {
-    let response = parse(format!("{ICP}{SIGS}").as_bytes());
-    assert_eq!(response["error"]["kind"], "unsupported", "{response}");
-    let message = response["error"]["message"].as_str().unwrap();
-    assert!(message.starts_with(cesr::E_ITEM_EXTENT), "{message}");
-    assert!(
-        message.contains("Affinidi accepted the stream"),
-        "{message}"
-    );
-    assert!(message.contains("offset 0"), "{message}");
+fn a_stream_affinidi_accepts_with_attachments_is_summarized_not_unsupported() {
+    let stream = format!("{ICP}{SIGS}");
+    assert_eq!(parse(stream.as_bytes()), summary(stream.len()));
 }
 
 #[test]
-fn attachments_on_a_later_message_are_unsupported_at_that_message() {
-    let response = parse(format!("{ICP}{ICP}{SIGS}").as_bytes());
-    let message = response["error"]["message"].as_str().unwrap();
-    assert!(
-        message.starts_with(cesr::E_ITEM_EXTENT) && message.contains("offset 299"),
-        "{message}"
-    );
+fn attachments_on_a_later_message_are_summarized_too() {
+    let stream = format!("{ICP}{ICP}{SIGS}");
+    assert_eq!(parse(stream.as_bytes()), summary(stream.len()));
 }
 
 #[test]
-fn an_empty_quadlet_group_is_still_an_attachment() {
+fn an_empty_quadlet_group_is_consumed() {
     // -VAA: a 1.00 attachment group of zero quadlets. Affinidi consumes it but decodes no group.
-    let response = parse(format!("{ICP}-VAA").as_bytes());
-    let message = response["error"]["message"]
-        .as_str()
-        .unwrap_or_else(|| panic!("{response}"));
-    assert!(message.starts_with(cesr::E_ITEM_EXTENT), "{message}");
+    assert_eq!(parse(format!("{ICP}-VAA").as_bytes()), summary(303));
+}
+
+#[test]
+fn whitespace_affinidi_skips_between_messages_counts_as_consumed() {
+    assert_eq!(parse(format!("{ICP} {ICP}").as_bytes()), summary(599));
+    assert_eq!(parse(format!("{ICP}\n").as_bytes()), summary(300));
 }
 
 #[test]
@@ -117,18 +103,6 @@ fn a_reject_anywhere_in_the_stream_wins_over_earlier_unreportable_messages() {
     assert_eq!(
         rejection_class(&parse(stream.as_bytes())),
         "CoreError::ParseError"
-    );
-}
-
-#[test]
-fn whitespace_affinidi_skips_between_messages_is_unsupported() {
-    let response = parse(format!("{ICP} {ICP}").as_bytes());
-    let message = response["error"]["message"]
-        .as_str()
-        .unwrap_or_else(|| panic!("{response}"));
-    assert!(
-        message.starts_with(cesr::E_SKIPPED_BYTES) && message.contains("offset 299"),
-        "{message}"
     );
 }
 
@@ -192,7 +166,10 @@ fn encode_refusals_are_unsupported_errors_naming_affinidis_error() {
 
 #[test]
 fn the_operations_can_be_called_directly() {
-    assert_eq!(cesr::parse(b"").unwrap(), json!({"items": []}));
+    assert_eq!(
+        cesr::parse(b"").unwrap(),
+        json!({"accepted": {"consumed": 0}})
+    );
     assert!(matches!(
         cesr::encode("D", vec![0], false),
         Err(OpError::Unsupported(_))
