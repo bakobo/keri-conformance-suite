@@ -95,8 +95,9 @@ def main(argv=None):
         case = json.loads(path.read_text(encoding="utf-8"))
         if case["profile"] != "keripy-1x-interop":
             continue
-        if any(it["kind"] == "genus" for a in case["assertions"]
-               for it in a.get("expected", [])):
+        # keripy 1.2.14 cannot read genus 2.00; decide from the case's targets, since a rejected
+        # assertion has no expected items to inspect.
+        if "cesr.genus-2.00" in case["targets"]["features"]:
             results.append({"id": case["id"], "verdicts": ["skipped-genus-2.00-stream"]})
             continue
         try:
