@@ -132,3 +132,18 @@ Prove that KERI-family implementations agree = goal:
       stage-status: planned
       why: >-
         The runner's report and printed summary carry the counts of active SHOULD assertions by outcome beside the MUST verdict, and say explicitly when any failed; a conformance claim states them too. Chosen after the keri-catalogue review panel (SKP-F3): with liveness at SHOULD and key state conditional, a validator that accepts nothing passes every KERI MUST assertion, and a bare MUST claim from it would read the same as a working validator's. Rejected raising liveness to MUST, which no keyword sentence supports, and rejected a separate liveness verdict, which would need a liveness tag the case schema does not carry. Tradeoff: the claim is longer, and the runner cannot tell a failed liveness SHOULD from a failed inferred-rejection SHOULD, so it reports both together.
+    KERI case bytes come from the specification = decision:
+      nid: 0mhgn74x
+      stage-status: done
+      why: >-
+        The KERI generator builds event bodies from the specification's field rules (field order, version string L265, SAID by the CESR SAID protocol) and signs them with a standard-library Ed25519 checked against RFC 8032 and a BLAKE3 checked against its official vectors; keripy main, in a pinned side environment, cross-checks by rebuilding every untampered body byte for byte, verifying every signature and replaying each case, and a disagreement is recorded in generators/DISAGREEMENTS.md without changing an expected value. Chosen because regenerate --check runs in CI without keripy, and because bytes keripy produced could not show keripy wrong about bytes. Rejected driving keripy's builders, the first plan, for that reason. Tradeoff: the suite carries its own Ed25519 and BLAKE3, which are slow and must never be used outside generation.
+    KERI expectations are checked under three keep policies = decision:
+      nid: 6wvyl5ft
+      stage-status: done
+      why: >-
+        The generator runs a model validator, the design's decision procedure steps 1 to 6, over the delivered bytes three times: keeping every not-yet-acceptable event, keeping only threshold shortfalls (the one SHOULD-escrow, L1266), and keeping nothing. Each scenario names the step it expects each message to reach, and a mismatch is a generation error; an assertion whose expected value would differ between policies is refused, because the specification lets a validator choose its policy and a MUST cannot depend on that choice. Rejected stating expected readings directly in scenarios, which would let a hand error become a published expectation. Tradeoff: some useful checks cannot be written, because they hold only under one policy; those go to the keri-escrow profile at INTEROP.
+    KERI key-state MUST survives a feature gate = decision:
+      nid: 2zkmdxm8
+      stage-status: done
+      why: >-
+        In cases gated by keri.escrow or kel.recovery, the conditional key-state assertion keeps its MUST level. Its condition, that a named event was seen, can hold only for an implementation that has the feature, so the gate removes no implementation the assertion could grade, and the ungated safety half of each such scenario is a separate normative case. This is a stated exception to the rule that a MUST is never gated, made by the KERI cases batch on 2026-10-05 and not yet reviewed by Daniel. Rejected demoting these key-state assertions to SHOULD, which would understate L1737 (a verifier MUST first determine the controlling key set). Tradeoff: the never-gated rule now has an exception that the review panel must check.
