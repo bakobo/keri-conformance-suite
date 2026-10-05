@@ -16,8 +16,9 @@ pub const ADAPTER_NAME: &str = "kcs-adapter-keriox";
 pub const ADAPTER_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const OPERATIONS: [&str; 2] = ["cesr.parse", "cesr.encode"];
 /// Drawn from profiles/features.json; README.md says why each is or is not declared.
-pub const FEATURES: [&str; 3] = [
+pub const FEATURES: [&str; 4] = [
     "cesr.genus-1.00",
+    "cesr.item-extents",
     "cesr.serialization.json",
     "keri.version-1.x",
 ];

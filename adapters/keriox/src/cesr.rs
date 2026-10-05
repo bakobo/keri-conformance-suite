@@ -5,7 +5,10 @@
 //! public cesrox parser functions that cesrox's `parse` and `parse_group` call, on the same bytes,
 //! records the offsets each one consumed, and checks that every replayed value and every end
 //! equals what cesrox's own call returned. Nothing is computed from a count or a code table. See
-//! README.md, "Measured, not sourced".
+//! README.md, "Measured, not sourced". Where cesrox does not retain what an item needs (a
+//! first-seen couple's timestamp, a pathed-material group), the walk steps over that group to
+//! the end cesrox's own `parse_group` gave it, and an accepted stream is answered with the
+//! protocol's summary instead of items.
 
 use std::str::FromStr;
 use std::sync::mpsc;
@@ -34,8 +37,6 @@ pub enum OpError {
 }
 
 pub const E_REPLAY: &str = "e.self.unknown.replay-mismatch.f";
-pub const E_RAW_NOT_RETAINED: &str = "e.feature.unsupported.raw-not-retained.f";
-pub const E_PATHED: &str = "e.feature.unsupported.pathed-material.f";
 pub const E_SERIALIZATION: &str = "e.feature.unsupported.serialization.f";
 pub const E_BINARY: &str = "e.feature.unsupported.binary-domain.f";
 pub const E_CODE: &str = "e.feature.unsupported.code.f";
@@ -84,6 +85,7 @@ pub fn parse(stream: &[u8]) -> Result<Value, OpError> {
     let mut walker = Walker {
         stream,
         items: Vec::new(),
+        unitemized: None,
     };
     let mut at = 0;
     for message in &messages {
@@ -100,6 +102,10 @@ pub fn parse(stream: &[u8]) -> Result<Value, OpError> {
             "cesrox accepted the whole stream, but the replay ended at offset {at} of {}",
             stream.len()
         )));
+    }
+    if let Some(why) = walker.unitemized {
+        eprintln!("kcs-adapter-keriox: cesrox accepted the stream; answering a summary: {why}");
+        return Ok(json!({"accepted": {"consumed": at}}));
     }
     Ok(json!({"items": walker.items}))
 }
@@ -118,6 +124,8 @@ fn truncate(s: &str) -> String {
 struct Walker<'a> {
     stream: &'a [u8],
     items: Vec<Value>,
+    /// Why the stream cannot be itemized, once a group cesrox does not itemize has been seen.
+    unitemized: Option<String>,
 }
 
 impl<'a> Walker<'a> {
@@ -330,11 +338,11 @@ impl<'a> Walker<'a> {
                 }
             }
             Group::FirstSeenReplyCouples(_) => {
-                return Err(OpError::Unsupported(format!(
-                    "{E_RAW_NOT_RETAINED}: cesrox reads a first-seen couple's timestamp (1AAG) as \
-                     text and never decodes its raw value, so the adapter has no raw value from \
-                     cesrox to report."
-                )))
+                self.unitemized.get_or_insert(format!(
+                    "cesrox reads the timestamp (1AAG) of the first-seen couples in the group \
+                     ending at offset {group_end} as text and never decodes its raw value."
+                ));
+                return Ok(group_end);
             }
             Group::TransIndexedSigGroups(groups) => {
                 for (prefix, sn, digest, sigs) in groups {
@@ -372,10 +380,11 @@ impl<'a> Walker<'a> {
                 }
             }
             Group::PathedMaterialQuadruplet(..) => {
-                return Err(OpError::Unsupported(format!(
-                    "{E_PATHED}: cesrox's -L pathed material group keeps its path in private \
-                     fields and its contents without offsets, so the adapter does not itemize it."
-                )))
+                self.unitemized.get_or_insert(format!(
+                    "cesrox keeps the path of the -L pathed-material group ending at offset \
+                     {group_end} in private fields and its contents without offsets."
+                ));
+                return Ok(group_end);
             }
         }
         Ok(self.offset(s))

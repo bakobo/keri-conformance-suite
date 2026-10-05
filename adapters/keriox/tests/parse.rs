@@ -180,16 +180,44 @@ fn a_body_without_a_version_string_is_rejected_by_said() {
     assert_eq!(rejected(br#"{"t":"icp"}"#)["class"], "VersionString");
 }
 
+const FIRST_SEEN: &str = "-EAB0AAAAAAAAAAAAAAAAAAAAAAA1AAG2022-10-25T12c04c30d175309p00c00";
+
+fn summary(stream: &str) -> Value {
+    let result = parse(stream.as_bytes()).expect("a result");
+    assert_eq!(result.as_object().unwrap().len(), 1, "{result}");
+    result["accepted"].clone()
+}
+
 #[test]
-fn first_seen_couples_are_unsupported_because_cesrox_keeps_no_timestamp_raw() {
-    let stream = format!("{BODY}-EAB0AAAAAAAAAAAAAAAAAAAAAAA1AAG2022-10-25T12c04c30d175309p00c00");
-    match parse(stream.as_bytes()) {
-        Err(OpError::Unsupported(m)) => assert!(
-            m.starts_with("e.feature.unsupported.raw-not-retained.f"),
-            "{m}"
-        ),
-        other => panic!("{other:?}"),
-    }
+fn first_seen_couples_are_summarized_because_cesrox_keeps_no_timestamp_raw() {
+    // cesrox accepts the stream but never decodes the timestamp's raw value, so the adapter
+    // cannot itemize it; it answers with the protocol's summary, not an unsupported error.
+    let stream = format!("{BODY}{FIRST_SEEN}");
+    assert_eq!(summary(&stream), json!({"consumed": stream.len()}));
+}
+
+#[test]
+fn first_seen_couples_inside_a_frame_are_summarized_too() {
+    // -VAQ: a frame of 16 quadlets (64 bytes), exactly the -E group.
+    assert_eq!(FIRST_SEEN.len(), 64);
+    let stream = format!("{BODY}-VAQ{FIRST_SEEN}");
+    assert_eq!(summary(&stream), json!({"consumed": stream.len()}));
+}
+
+#[test]
+fn pathed_material_is_summarized_because_cesrox_keeps_its_path_private() {
+    // cesrox's own -L test vector: path "-a" and one -A group of one signature.
+    let pathed = "-LAZ5AABAA-a-AABAAFjjD99-xy7J0LGmCkSE_zYceED5uPF4q7l8J23nNQ64U-oWWulHI5dh3cFDWT4eICuEQCALdh8BO5ps-qx0qBA";
+    let stream = format!("{BODY}{pathed}");
+    assert_eq!(summary(&stream), json!({"consumed": stream.len()}));
+}
+
+#[test]
+fn a_later_rejection_wins_over_an_earlier_unitemized_group() {
+    // The walk goes on past a group it cannot itemize, so said's verdict on a later body still
+    // decides: this one has no version string.
+    let stream = format!("{BODY}{FIRST_SEEN}{}", r#"{"t":"icp"}"#);
+    assert_eq!(rejected(stream.as_bytes())["class"], "VersionString");
 }
 
 #[test]

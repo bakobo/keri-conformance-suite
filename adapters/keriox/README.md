@@ -34,7 +34,7 @@ The adapter is built in the debug profile, but `Cargo.toml` gives every dependen
 
 ## Declared features, and the results that follow
 
-Declared: `cesr.genus-1.00`, `cesr.serialization.json`, `keri.version-1.x`. Not declared, and why:
+Declared: `cesr.genus-1.00`, `cesr.item-extents`, `cesr.serialization.json`, `keri.version-1.x`. Not declared, and why:
 
 - `cesr.genus-2.00`. cesrox 0.1.8 has only the genus 1.00 count-code table (`-A` controller signatures, `-B`, `-C`, `-E`, `-F`, `-G`, `-H`, `-V`, and `-L` with `cesr-proof`), item-counted except `-V`. It has no genus/version code and rejects a stream that starts with one.
 - `cesr.domain.binary`. cesrox reads every code as UTF-8 text.
@@ -43,13 +43,17 @@ Declared: `cesr.genus-1.00`, `cesr.serialization.json`, `keri.version-1.x`. Not 
 
 `cesr.genus-1.00` is declared because the 1.00 codes cesrox has behave as keripy 1.x's do. cesrox lacks some 1.00 codes (`-I`, `-J`, `-K` and the big counters, among others), so a case that uses one of them fails rather than being skipped.
 
-Every case in `cesr-1.0` targets `cesr.genus-2.00`, so the runner sends none of them: 41 cases not-supported, verdict `no-evidence`. In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 pass, and CESR-0048 is not-supported because it also needs `cesr.genus-2.00`. Those assertions are at level INTEROP, so that verdict is `no-evidence` as well.
+`cesr.item-extents` is declared because the adapter measures every item's offsets from what cesrox consumed (see "Measured, not sourced") for every stream cesrox accepts, except two kinds of group cesrox does not itemize: first-seen couples (`-E`) and pathed material (`-L`). A stream with either is answered with the protocol's accepted summary instead, so a decoded case that contains one fails, as it would have with an `unsupported` error, and a case that must be rejected still gets cesrox's verdict. This is the same trade as `cesr.genus-1.00`: declaring a feature cesrox mostly supports lets its gaps fail visibly rather than hiding its passes.
+
+Every case in `cesr-1.0` targets `cesr.genus-2.00`, so the runner sends none of them: 41 cases not-supported, verdict `no-evidence`. In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 pass, and CESR-0048 is not-supported because it also needs `cesr.genus-2.00`. Those assertions are at level INTEROP, so that verdict is `no-evidence` as well. Both `cesr-strict` cases need `cesr.genus-2.00` too. Every case that must be rejected today is a 2.00 case, so none reaches this adapter yet.
 
 ## How a stream is parsed
 
 The verdict is cesrox's: the adapter hands the whole stream to `cesrox::parse_and_send`, cesrox's own loop that calls `cesrox::parse` (one body and its attachment groups) until the stream is used up, and fails when `parse` cannot continue on a non-empty remainder. That failure is a rejection with class `ParsingError`. Because cesrox reads only from the bytes it is given and never waits for more, the protocol's end-of-input rule needs nothing further.
 
 cesrox returns values, not offsets. To report where each item lay, the adapter replays the public cesrox functions that `parse` and `parse_group` themselves call (`payload::parse_payload`, `group::parsers::parse_group` and `group_code`, `primitives::parsers::parse_primitive::<C>`, `identifier`, `serial_number_parser`), in the order cesrox calls them, on the same bytes, and records what each one consumed. It replays exactly as many items as cesrox's own result holds and checks every replayed value, and every group's end, against what cesrox returned. If anything differs it answers a `harness` error (`e.self.unknown.replay-mismatch.f`) rather than an offset it cannot vouch for.
+
+A first-seen couples group (`-E`) or a pathed-material group (`-L`) is not replayed item by item, because cesrox does not retain what its items would need (see "What it answers with a summary"). The walk steps over such a group to the end cesrox's own `parse_group` gave it and goes on, so a later body whose version string said cannot read is still a rejection. If cesrox and said accept the whole stream, the answer is `{"accepted": {"consumed": n}}`, where `n` is where the walk ended, the end of the stream.
 
 Each request runs on its own worker thread. A panic inside cesrox or said is caught there and answered as a `harness` error (`e.self.unknown.panic.f`); the panic message and location go to standard error, and the adapter goes on to the next request. A panic is never reported as a rejection, because the library did not reject the stream; it failed to answer.
 
@@ -78,10 +82,13 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 | Indexed `ondex` | Reported only for cesrox's `Index::Dual` and `Index::BigDual`, from `prev_next()`. cesrox's current-only variants carry no ondex, so none is reported for them, even for codes whose table row defines an ondex field. A case that expects one fails, and that failure is cesrox's |
 | `cesr.encode` | `CesrPrimitive::to_str()` on `(code, raw)`, with the code from the first of cesrox's `Basic`, `SelfAddressing` and `SelfSigning` whose `FromStr` accepts it and whose `to_str()` gives it back exactly |
 
+## What it answers with a summary
+
+- A stream with a first-seen couple (`-E`): cesrox reads the timestamp's characters as text and never decodes a raw value.
+- A stream with a pathed-material group (`-L`, from `cesr-proof`): cesrox keeps the path in private fields and the contents without offsets.
+
 ## What it answers `unsupported`
 
-- A first-seen couple (`-E`): cesrox reads the timestamp's characters as text and never decodes a raw value (`e.feature.unsupported.raw-not-retained.f`).
-- A pathed-material group (`-L`, from `cesr-proof`): cesrox keeps the path in private fields and the contents without offsets (`e.feature.unsupported.pathed-material.f`).
 - A CBOR or MessagePack body (`e.feature.unsupported.serialization.f`).
 - `cesr.encode` in the binary domain (`e.feature.unsupported.binary-domain.f`), and a code cesrox has no encoder for, such as `0A` or `M` (`e.feature.unsupported.code.f`).
 - `keri.process` and `keri.emit` (`e.feature.unsupported.undeclared-op.f`).
