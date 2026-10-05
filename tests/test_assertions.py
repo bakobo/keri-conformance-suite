@@ -179,6 +179,13 @@ def test_a_message_seen_on_arrival_cannot_finally_be_unseen(expected):
     assert "always seen" in evaluation.detail
 
 
+def test_a_final_seen_assertion_is_not_credited_from_the_initial_reading():
+    # Permanence closes the escape from a not-seen MUST; it does not hand out a liveness pass to an
+    # adapter that reports the message finally dropped. The final seen assertion is graded against
+    # the reported final reading.
+    assert evaluate(disposition(0, "final", "seen"), UNSEEN).outcome == "fail"
+
+
 def test_disposition_records_the_reported_value():
     assert evaluate(disposition(1, "initial", "seen"), PROCESSED).actual == "pending"
 
