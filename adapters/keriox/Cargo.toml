@@ -17,7 +17,7 @@ path = "src/main.rs"
 # Pinned exactly to the line keri-core 0.17.13 ships: keriox_core/Cargo.toml at tag v0.17.13
 # requires cesrox ^0.1.8 with the cesr-proof feature and said ^0.4.0 (0.4.3 is the newest 0.4.x).
 cesrox = { version = "=0.1.8", features = ["cesr-proof"] }
-said = { version = "=0.4.3" }
+said = { version = "=0.5.2" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
