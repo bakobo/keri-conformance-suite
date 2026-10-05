@@ -293,23 +293,31 @@ def test_generate_refuses_a_duplicate_case_id(tree):
         regenerate.generate(tree)
 
 
+# The first id after the committed catalogue, so these tests do not collide with new cases.
+NEXT = 1 + max(int(p.stem.split("-")[1]) for p in (ROOT / "cases" / "cesr").glob("*.json"))
+
+
+def _id(n: int) -> str:
+    return f"CESR-{n:04d}"
+
+
 def test_generate_refuses_an_unknown_profile(tree):
-    _scenario(tree, "zz.json", [_case(id="CESR-0051", profile="nope")])
+    _scenario(tree, "zz.json", [_case(id=_id(NEXT), profile="nope")])
     with pytest.raises(build.ScenarioError, match="unknown profile"):
         regenerate.generate(tree)
 
 
 def test_generate_refuses_an_undocumented_gap(tree):
-    _scenario(tree, "zz.json", [_case(id="CESR-0053")])
+    _scenario(tree, "zz.json", [_case(id=_id(NEXT + 2))])
     with pytest.raises(build.ScenarioError, match="undocumented gaps"):
         regenerate.generate(tree)
 
 
 def test_generate_accepts_a_documented_gap(tree):
-    _scenario(tree, "zz.json", [_case(id="CESR-0053")],
-              id_gaps=[{"number": n, "reason": "test"} for n in range(49, 53)])
+    _scenario(tree, "zz.json", [_case(id=_id(NEXT + 2))],
+              id_gaps=[{"number": n, "reason": "test"} for n in (NEXT, NEXT + 1)])
     files = regenerate.generate(tree)
-    assert "cases/cesr/CESR-0053.json" in files
+    assert f"cases/cesr/{_id(NEXT + 2)}.json" in files
 
 
 def test_generate_with_no_scenarios_produces_only_empty_profiles(tmp_path):
@@ -473,13 +481,13 @@ def test_a_scenario_file_that_is_not_json_is_a_coded_error(tree):
 
 
 def test_a_case_the_tables_cannot_build_is_a_coded_scenario_error(tree):
-    bad = _case(id="CESR-0049", stream=[{"genus": "AAA", "major": 2, "minor": 0},
+    bad = _case(id=_id(NEXT), stream=[{"genus": "AAA", "major": 2, "minor": 0},
                                         {"group": "-J", "items": [{"primitive": "b", "raw": "x"}]}])
     _scenario(tree, "zz.json", [bad])
     with pytest.raises(build.ScenarioError) as e:
         regenerate.generate(tree)
     assert e.value.code == "e.input.format.kcs-scenario.f"
-    assert "CESR-0049: KeyError" in str(e.value)
+    assert f"{_id(NEXT)}: KeyError" in str(e.value)
 
 
 def test_a_clause_quote_not_in_the_text_is_a_coded_scenario_error(tree):
@@ -610,3 +618,10 @@ def test_a_scenario_value_of_the_wrong_type_is_a_coded_error(tree):
     with pytest.raises(build.ScenarioError) as e:
         regenerate.generate(tree)
     assert e.value.code.startswith("e.input.format.kcs-scenario")
+
+
+def test_a_case_in_the_1_00_context_names_genus_1_00_even_without_a_count_code():
+    case = _case(stream=[{"literal": "-AA"}], assertions=[{"check": "rejected", "basis": "b"}])
+    built = build.build_case(T, "s", case, CLAUSES, keripy1x.TABLE, None)
+    assert "cesr.genus-1.00" in built["targets"]["features"]
+    assert "CESR-1.00" in built["targets"]["wire"]
