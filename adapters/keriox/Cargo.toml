@@ -1,0 +1,32 @@
+[package]
+name = "kcs-adapter-keriox"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+description = "Connects keriox's CESR layer (cesrox, said) to the KERI conformance suite runner over adapter protocol v1."
+
+# A standalone crate, never a member of an enclosing workspace.
+[workspace]
+
+[[bin]]
+name = "kcs-adapter-keriox"
+path = "src/main.rs"
+
+[dependencies]
+# Pinned exactly to the line keri-core 0.17.13 ships: keriox_core/Cargo.toml at tag v0.17.13
+# requires cesrox ^0.1.8 with the cesr-proof feature and said ^0.4.0 (0.4.3 is the newest 0.4.x).
+cesrox = { version = "=0.1.8", features = ["cesr-proof"] }
+said = { version = "=0.4.3" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.dev]
+# Panics inside cesrox are caught and reported; they must unwind, never abort.
+panic = "unwind"
+
+# Dependencies keep the arithmetic and debug-assertion semantics of a release build, which is how
+# keri-core ships them, while the adapter itself stays a quick debug build.
+[profile.dev.package."*"]
+overflow-checks = false
+debug-assertions = false

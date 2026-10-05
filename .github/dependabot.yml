@@ -8,3 +8,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "cargo"
+    directory: "/adapters/keriox"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "cargo"
+    directory: "/adapters/affinidi"
+    schedule:
+      interval: "weekly"
