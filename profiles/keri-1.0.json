@@ -44,7 +44,9 @@
     "KERI-0045",
     "KERI-0046",
     "KERI-0047",
-    "KERI-0050"
+    "KERI-0050",
+    "KERI-0054",
+    "KERI-0055"
   ],
   "name": "keri-1.0",
   "normative": true,

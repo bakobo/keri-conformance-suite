@@ -28,6 +28,7 @@ scenario asks for; it never decides whether the result is acceptable. That is th
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass, field
 from functools import cache
 
@@ -103,6 +104,16 @@ def sized(fields: dict) -> bytes:
     fields["v"] = version_string(0)
     fields["v"] = version_string(len(serialize(fields)))
     return serialize(fields)
+
+
+def corrupt(raw: bytes, label: str) -> bytes:
+    """The body with one character of the first qualified primitive under a field changed, and
+    every other byte, the claimed SAID included, as it was: a copy anyone can make of an event
+    without its keys."""
+    start = raw.index(f'"{label}":'.encode()) + len(label) + 3
+    at = re.compile(rb'"[A-Za-z0-9_-]{8,}"').search(raw, start).start() + 2
+    swapped = b"B" if raw[at:at + 1] == b"A" else b"A"
+    return raw[:at] + swapped + raw[at + 1:]
 
 
 @dataclass
@@ -373,6 +384,8 @@ class EventBuilder:
         else:
             ev = self.event(delivery["event"])
             body = ev.raw
+            if "corrupt" in delivery:
+                body = corrupt(body, delivery["corrupt"])
             source = delivery.get("source", "controller")
         stream = GENUS_CODE.encode() + body + self.attachments(ev, delivery).encode()
         return Message(stream=stream, source=source, event=ev, receipt="receipt" in delivery)

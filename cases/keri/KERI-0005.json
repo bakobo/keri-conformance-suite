@@ -77,42 +77,9 @@
       "level": "SHOULD",
       "message": 1,
       "note": "Decision procedure step 6 (accepted)."
-    },
-    {
-      "aid": "EDZcg50S8AwkkiOCoh0S1Tzi9M5ssOeqdzHrkovTiZFy",
-      "check": "key_state",
-      "clause": {
-        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
-        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
-        "section": "Verifier",
-        "spec": "keri",
-        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
-      },
-      "expected": {
-        "bt": "0",
-        "delegator": null,
-        "keys": [
-          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
-          "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
-          "DBTo3WdgBSxcWOotGGO1O8uLd-CS_aLJowjJePl-aCn_"
-        ],
-        "kt": "2",
-        "ndigs": [
-          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
-          "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy",
-          "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
-        ],
-        "nt": "2",
-        "said": "EDZcg50S8AwkkiOCoh0S1Tzi9M5ssOeqdzHrkovTiZFy",
-        "sn": 0,
-        "wits": []
-      },
-      "id": "a6",
-      "if_seen": 0,
-      "level": "MUST"
     }
   ],
-  "description": "The inception of KS-05 arrives signed by one key, then again signed by another. Together the two copies satisfy the threshold, so a validator that kept the first copy, as line 1266 says it should, accepts the event. The safety half, that the first copy alone is not accepted, is KS-05's case.",
+  "description": "The inception of KS-05 arrives signed by one key, then again signed by another. Together the two copies satisfy the threshold, so a validator that kept the first copy, as line 1266 says it should, accepts the event. The safety half, graded at MUST without keri.escrow, is the companion case KS-06s.",
   "id": "KERI-0005",
   "input": {
     "messages": [

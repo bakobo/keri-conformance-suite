@@ -242,7 +242,13 @@
       },
       "id": "a11",
       "if_seen": 4,
-      "level": "MUST"
+      "inferred_from": {
+        "inference": "Rule A0 uses a lowercase \"may\". A validator that accepts a rotation A0 permits keeps the displaced interaction and everything after it as seen but off the trunk (\"All the already-seen but superseded events in the superseded fork still remain in the KEL\"). Accepting the rotation, and the resulting trunk, are graded SHOULD as liveness.",
+        "line": 1806,
+        "quote": "A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.",
+        "section": "Superseding Rules for Recovery at a given location, SN (sequence number)."
+      },
+      "level": "SHOULD"
     }
   ],
   "description": "An inception and two interactions, then a rotation at sequence number 1 that supersedes both (rule A0), then a new interaction at 2 that follows the rotation. A validator should accept the rotation and the new interaction, and keep both old interactions as seen but off the trunk.",

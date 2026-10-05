@@ -66,13 +66,7 @@
             "5/conflict"
           ]
         }
-      ],
-      "key_state": {
-        "A": {
-          "clause": "one-kel",
-          "inferred_from": "first-seen"
-        }
-      }
+      ]
     },
     {
       "id": "KERI-0044",
@@ -126,13 +120,7 @@
             "5/conflict"
           ]
         }
-      ],
-      "key_state": {
-        "A": {
-          "clause": "one-kel",
-          "inferred_from": "first-seen"
-        }
-      }
+      ]
     },
     {
       "id": "KERI-0045",
@@ -215,13 +203,7 @@
             "5/conflict"
           ]
         }
-      ],
-      "key_state": {
-        "A": {
-          "clause": "one-kel",
-          "inferred_from": "first-seen"
-        }
-      }
+      ]
     },
     {
       "id": "KERI-0046",
@@ -476,13 +458,7 @@
             "5/conflict"
           ]
         }
-      ],
-      "key_state": {
-        "A": {
-          "clause": "one-kel",
-          "inferred_from": "first-seen"
-        }
-      }
+      ]
     }
   ],
   "id_gaps": [

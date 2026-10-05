@@ -4,14 +4,14 @@
       "check": "disposition",
       "clause": {
         "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
-        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
+        "quote": "A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid.",
         "section": "Indexed Signatures",
         "spec": "keri",
         "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
       },
-      "expected": "pending",
+      "expected": "not-seen",
       "id": "a1",
-      "level": "SHOULD",
+      "level": "MUST",
       "message": 0,
       "note": "Decision procedure step 4 (witness-threshold).",
       "phase": "initial",
@@ -25,43 +25,37 @@
       ]
     },
     {
-      "check": "disposition",
+      "aid": "EEUo2neGr18zoYs-xl5soZLZ7EOsYjxAvYCrZGazWYMc",
+      "check": "key_state",
       "clause": {
         "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
-        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
-        "section": "Indexed Signatures",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
         "spec": "keri",
-        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
       },
-      "expected": "seen",
+      "expected": {
+        "bt": "2",
+        "delegator": null,
+        "keys": [
+          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+        ],
+        "nt": "1",
+        "said": "EEUo2neGr18zoYs-xl5soZLZ7EOsYjxAvYCrZGazWYMc",
+        "sn": 0,
+        "wits": [
+          "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu",
+          "BDroKcRej4JT42Uh8jiY8vsarKrsLrsonekX087RDi7g",
+          "BFu9vwmb6QYkBGeuPlqifJ2FedM322xunANRMyso9Mpd"
+        ]
+      },
       "id": "a2",
-      "level": "SHOULD",
-      "message": 0,
-      "note": "Decision procedure step 6 (accepted).",
-      "phase": "final",
-      "spec_conflicts": [
-        {
-          "line": 1266,
-          "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
-          "section": "Indexed Signatures",
-          "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
-        }
-      ]
-    },
-    {
-      "check": "trunk",
-      "clause": {
-        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
-        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
-        "section": "Indexed Signatures",
-        "spec": "keri",
-        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
-      },
-      "expected": true,
-      "id": "a3",
-      "level": "SHOULD",
-      "message": 0,
-      "note": "Decision procedure step 6 (accepted).",
+      "if_seen": 0,
+      "level": "MUST",
       "spec_conflicts": [
         {
           "line": 1266,
@@ -72,8 +66,8 @@
       ]
     }
   ],
-  "description": "The inception of KS-45 with no witness signatures, then receipts from two of its witnesses. A validator that kept the inception, as line 1266 says it should, accepts it once the receipts satisfy the threshold. The safety half, graded at MUST without keri.escrow, is the companion case KS-47s.",
-  "id": "KERI-0038",
+  "description": "KS-47's deliveries, graded only at MUST and without needing keri.escrow: the inception must not be accepted before its witness threshold is met, and if it is accepted its key state is the inception's.",
+  "id": "KERI-0055",
   "input": {
     "messages": [
       {
@@ -101,7 +95,7 @@
       "version": "0.1.0"
     },
     "reference": null,
-    "scenario": "scenarios/keri/witnesses.json#KS-47"
+    "scenario": "scenarios/keri/witnesses.json#KS-47s"
   },
   "schema_version": 1,
   "status": "active",
@@ -112,7 +106,6 @@
       "crypto.ed25519",
       "kel.basic",
       "kel.witness",
-      "keri.escrow",
       "keri.routing",
       "keri.version-2.x"
     ],
@@ -121,5 +114,5 @@
       "KERICAACAAJSON"
     ]
   },
-  "title": "Witness threshold completed by receipts"
+  "title": "Witness threshold completed by receipts: safety half"
 }

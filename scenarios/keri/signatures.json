@@ -193,7 +193,7 @@
       "id": "KERI-0005",
       "key": "KS-06",
       "title": "Signing threshold completed by a second copy",
-      "description": "The inception of KS-05 arrives signed by one key, then again signed by another. Together the two copies satisfy the threshold, so a validator that kept the first copy, as line 1266 says it should, accepts the event. The safety half, that the first copy alone is not accepted, is KS-05's case.",
+      "description": "The inception of KS-05 arrives signed by one key, then again signed by another. Together the two copies satisfy the threshold, so a validator that kept the first copy, as line 1266 says it should, accepts the event. The safety half, graded at MUST without keri.escrow, is the companion case KS-06s.",
       "events": [
         {
           "name": "icp",
@@ -235,7 +235,12 @@
           ]
         }
       ],
-      "liveness_only": true
+      "companion": {
+        "id": "KERI-0054",
+        "key": "KS-06s",
+        "title": "Signing threshold completed by a second copy: safety half",
+        "description": "KS-06's deliveries, graded only at MUST and without needing keri.escrow: the first copy alone must not be accepted, and if the event is accepted its key state is the inception's."
+      }
     },
     {
       "id": "KERI-0006",

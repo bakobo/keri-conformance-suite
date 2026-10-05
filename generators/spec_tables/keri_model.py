@@ -44,7 +44,10 @@ from .tables import Tables
 
 POLICIES = ("all", "thresholds", "none")
 THRESHOLD_REASONS = ("signing-threshold", "witness-threshold")
-VERSION_STEPS = (1, 3, 5)
+# Steps 3 and 5 judge an event version whose SAID step 1 has verified, so their refusal covers
+# every copy of it. A step-1 failure names no version: its claimed SAID is the thing that failed.
+VERSION_STEPS = (3, 5)
+BASIC_CODES = ("D", "B")  # transferable and non-transferable Ed25519 prefixes
 
 
 @cache
@@ -155,6 +158,15 @@ def parse(t: Tables, stream: bytes) -> Parsed:
     return p
 
 
+def _code(t: Tables, text: str) -> str:
+    """The derivation code of a qualified primitive, by the master table's selector rules."""
+    return text[:2] if text[:1].isdigit() else text[:1]
+
+
+def digest_codes(t: Tables) -> set[str]:
+    return {c for c, prim in t.primitives.items() if "Digest" in prim.description}
+
+
 def intrinsic(t: Tables, p: Parsed) -> str | None:
     """Step 1: the reason the message fails in itself, or None."""
     if p.error:
@@ -162,16 +174,30 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
     ilk = p.ilk
     if ilk not in FIELDS or tuple(p.body) != FIELDS[ilk]:
         return "fields"
+    if sized(dict(p.body)) != p.raw:
+        # A body that is not its own compact serialization (whitespace, escapes, a repeated
+        # label) may still carry a correct SAID; whether it is valid is K-I4, so no case grades it.
+        raise ScenarioError("A body that is not its own compact JSON serialization is not "
+                            "modelled (K-I4).")
     if ilk == "rct":
         return None
-    self_addressing = ilk in INCEPTIONS and p.pre.startswith("E")
+    self_addressing = False
+    if ilk in INCEPTIONS:
+        code = _code(t, p.pre)
+        if code in digest_codes(t):
+            self_addressing = True
+        elif code not in BASIC_CODES:
+            raise ScenarioError(f"An inception prefix with code {code!r} is not modelled.")
+        elif p.body["k"][:1] != [p.pre]:
+            raise ScenarioError("A basic prefix that is not the inception's only key is not "
+                                "modelled (K-I3).")
     if self_addressing and p.said != p.pre:
         return "d-i"
     fields = dict(p.body)
     fields["d"] = DUMMY
     if self_addressing:
         fields["i"] = DUMMY
-    if digest(t, sized(fields)) != p.said or sized(dict(p.body)) != p.raw:
+    if digest(t, sized(fields)) != p.said:
         return "said"
     if ilk in INCEPTIONS and p.sn != 0:
         return "inception-sn"
@@ -215,11 +241,19 @@ class Outcome:
 
 
 class Model:
-    def __init__(self, t: Tables, policy: str):
+    """``order`` lists message indices in the order kept messages are re-evaluated at each
+    quiescence (unlisted ones follow in delivery order). ``recovery`` is whether the validator
+    accepts a superseding rotation that rule A0 permits: accepting one is only SHOULD, so a
+    validator that declines is a validator the MUST assertions must also hold for."""
+
+    def __init__(self, t: Tables, policy: str, order: tuple[int, ...] = (),
+                 recovery: bool = True):
         if policy not in POLICIES:
             raise ScenarioError(f"Unknown keep policy {policy!r}.")
         self.t = t
         self.policy = policy
+        self.order = tuple(order)
+        self.recovery = recovery
         self.kels: dict[str, Kel] = {}
         self.parsed: list[Parsed] = []
         self.state: list[str] = []  # per message: seen, kept, dropped
@@ -263,9 +297,12 @@ class Model:
                 if p.ilk == "rct" and p.said == said and self.state[i] in ("seen", "kept")]
 
     def _delegator(self, p: Parsed, kel: Kel | None) -> str | None:
+        """The delegator whose seal an event needs. A delegation seals establishment events
+        only, "Either an inception or rotation" (line 1616), so a delegatee's interaction has
+        none."""
         if p.ilk == "dip":
             return p.body["di"]
-        if kel and kel.trunk and kel.trunk[0].ilk == "dip":
+        if p.ilk == "drt" and kel and kel.trunk and kel.trunk[0].ilk == "dip":
             return kel.trunk[0].body["di"]
         return None
 
@@ -298,6 +335,12 @@ class Model:
         forbidden = self._forbidden(p, kel)
         if forbidden:
             return Outcome("dropped", 3, forbidden)
+        # Step 5, the part that needs no signatures: a rotation at a location the trunk already
+        # holds, which rule A0 does not permit to supersede, is discarded (line 1823) however
+        # it is signed, so it never waits as a threshold shortfall.
+        if (p.ilk in ROTATIONS and kel and p.sn < len(kel.trunk)
+                and kel.trunk[p.sn].said != p.said and not self._may_supersede(p, kel)):
+            return Outcome("dropped", 5, "supersede-refused")
         # Step 4.
         waiting = self._not_yet(p, kel, keys, verified, pool)
         if waiting:
@@ -312,12 +355,26 @@ class Model:
         return Outcome("seen", 6, "accepted")
 
     def _keys(self, p: Parsed, kel: Kel | None) -> list[str] | None:
-        """The signing keys a signature on ``p`` indexes into, if the validator holds them."""
+        """The signing keys a signature on ``p`` indexes into, if the validator holds them. An
+        establishment event's signatures index into its own keys. An interaction's index into
+        the keys of the latest establishment event on its own prior chain, "when the event was
+        issued" (line 1737), whether or not that chain is the trunk; if its prior has not been
+        seen, the validator does not hold that state."""
         if p.ilk in ESTABLISHMENT:
             return p.body["k"]
-        if kel and len(kel.trunk) >= p.sn:
-            return kel.est_before(p.sn).body["k"]
-        return None
+        prior = kel.seen.get(p.body["p"]) if kel else None
+        if prior is None or prior.sn != p.sn - 1:
+            return None
+        while prior.ilk not in ESTABLISHMENT:
+            prior = kel.seen[prior.body["p"]]  # a seen event's prior is always seen
+        return prior.body["k"]
+
+    def _may_supersede(self, p: Parsed, kel: Kel) -> bool:
+        """Rule A0: a rotation may supersede an interaction that lies before no other rotation.
+        Rules B and C, for a delegated rotation superseding one, are not modelled."""
+        if p.ilk == "drt" and kel.trunk[p.sn].ilk == "drt":
+            raise ScenarioError("Superseding a delegated rotation (rules B, C) is not modelled.")
+        return all(r.ilk == "ixn" for r in kel.trunk[p.sn:])
 
     def _forbidden(self, p: Parsed, kel: Kel | None) -> str | None:
         if kel and kel.trunk and p.ilk not in INCEPTIONS:
@@ -384,15 +441,11 @@ class Model:
         return None
 
     def _conflict(self, p: Parsed, kel: Kel) -> Outcome:
-        there = kel.trunk[p.sn]
-        if p.ilk in ROTATIONS:
-            if p.ilk == "drt" and there.ilk == "drt":
-                raise ScenarioError("Superseding a delegated rotation (rules B, C) is not "
-                                    "modelled.")
-            if all(r.ilk == "ixn" for r in kel.trunk[p.sn:]):
-                self._accept(p, kel)
-                return Outcome("seen", 5, "supersedes")
-            return Outcome("dropped", 5, "supersede-refused")
+        if p.ilk in ROTATIONS:  # one A0 permits: refusals were decided before step 4
+            if not self.recovery:
+                return Outcome("dropped", 5, "recovery-declined")
+            self._accept(p, kel)
+            return Outcome("seen", 5, "supersedes")
         return Outcome("dropped", 5, "conflict")
 
     def _accept(self, p: Parsed, kel: Kel | None) -> None:
@@ -441,10 +494,12 @@ class Model:
         return (out.state, out.tag) != before
 
     def _quiesce(self) -> None:
+        n = len(self.parsed)
+        sequence = [i for i in self.order if i < n] + [i for i in range(n) if i not in self.order]
         changed = True
         while changed:
             changed = False
-            for i in range(len(self.parsed)):
+            for i in sequence:
                 if self.state[i] == "kept" and self._settle(i):
                     changed = True
 
@@ -465,8 +520,9 @@ class Model:
                 "bt": est.body["bt"], "delegator": kel.trunk[0].body.get("di")}
 
 
-def run(t: Tables, streams: list[bytes], policy: str) -> Model:
-    model = Model(t, policy)
+def run(t: Tables, streams: list[bytes], policy: str, order: tuple[int, ...] = (),
+        recovery: bool = True) -> Model:
+    model = Model(t, policy, order, recovery)
     for s in streams:
         model.deliver(s)
     return model

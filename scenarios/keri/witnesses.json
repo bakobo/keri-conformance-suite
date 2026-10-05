@@ -86,7 +86,7 @@
       "id": "KERI-0038",
       "key": "KS-47",
       "title": "Witness threshold completed by receipts",
-      "description": "The inception of KS-45 with no witness signatures, then receipts from two of its witnesses. A validator that kept the inception, as line 1266 says it should, accepts it once the receipts satisfy the threshold. The safety half is KS-46's case.",
+      "description": "The inception of KS-45 with no witness signatures, then receipts from two of its witnesses. A validator that kept the inception, as line 1266 says it should, accepts it once the receipts satisfy the threshold. The safety half, graded at MUST without keri.escrow, is the companion case KS-47s.",
       "events": [
         {
           "name": "icp",
@@ -140,7 +140,12 @@
           "source": "witness-w2"
         }
       ],
-      "liveness_only": true
+      "companion": {
+        "id": "KERI-0055",
+        "key": "KS-47s",
+        "title": "Witness threshold completed by receipts: safety half",
+        "description": "KS-47's deliveries, graded only at MUST and without needing keri.escrow: the inception must not be accepted before its witness threshold is met, and if it is accepted its key state is the inception's."
+      }
     },
     {
       "id": "KERI-0039",

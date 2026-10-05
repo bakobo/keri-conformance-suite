@@ -263,9 +263,6 @@ def _generate_keri(root: pathlib.Path, files: dict[str, bytes],
             if not match:
                 raise ScenarioError(f"{rel}: {case_id!r} is not a case id of the form KERI-NNNN.",
                                     E_CASE_ID)
-            out = f"{KERI_CASE_DIR}/{case_id}.json"
-            if out in files:
-                raise ScenarioError(f"Case id {case_id} is used twice.")
             profile = PROFILES.get(case["profile"])
             if profile is None or not case["profile"].startswith("keri-"):
                 raise ScenarioError(f"{case_id}: unknown KERI profile {case['profile']!r}.")
@@ -274,9 +271,17 @@ def _generate_keri(root: pathlib.Path, files: dict[str, bytes],
                                         profile["normative"])
             except BUILD_FAILURES as e:
                 raise ScenarioError(f"{rel}, {case_id}: {type(e).__name__}: {e}") from None
-            files[out] = dumps(built)
-            members[case["profile"]].append(case_id)
-            numbers.append(int(match.group(1)))
+            for one in built:
+                match = KERI_CASE_ID.fullmatch(one["id"])
+                if not match:
+                    raise ScenarioError(f"{rel}: {one['id']!r} is not a case id of the form "
+                                        f"KERI-NNNN.", E_CASE_ID)
+                out = f"{KERI_CASE_DIR}/{one['id']}.json"
+                if out in files:
+                    raise ScenarioError(f"Case id {one['id']} is used twice.")
+                files[out] = dumps(one)
+                members[one["profile"]].append(one["id"])
+                numbers.append(int(match.group(1)))
     gaps = set(range(1, max(numbers) + 1)) - set(numbers) if numbers else set()
     if gaps - allowed:
         raise ScenarioError(f"KERI case ids have undocumented gaps: {sorted(gaps - allowed)}.")
