@@ -125,6 +125,11 @@ def _disposition(assertion, result):
     if entry is None:
         return _fail(None, f"The adapter reported no disposition for message {message}.")
     actual = entry.get(phase)
+    if phase == "final" and expected != "seen" and entry.get("initial") == "seen":
+        # "Once an event has been first seen, it is always seen and can't be unseen" (KERI spec
+        # line 1788), so a message seen on arrival was accepted, whatever is reported later.
+        return _fail(actual, f"Message {message} was seen on arrival, and a seen message is always "
+                             f"seen, so its final reading cannot be {expected}.")
     holds = actual != "seen" if expected == "not-seen" else actual == expected
     if holds:
         return Evaluation("pass", actual)
@@ -152,10 +157,12 @@ def _key_state(assertion, result):
     if entry is None:
         return _fail(None, f"The adapter reported no disposition for message {condition}, on "
                            "whose acceptance this key-state assertion is conditioned.")
-    if entry.get("final") != "seen":
+    # A message seen on arrival stays seen (line 1788), so reporting it unseen later does not
+    # take the key state out of the assertion's reach.
+    if entry.get("final") != "seen" and entry.get("initial") != "seen":
         return Evaluation("not-applicable", entry.get("final"),
-                          f"The assertion applies only if message {condition} was finally seen, "
-                          f"and its final reading is {entry.get('final')}.")
+                          f"The assertion applies only if message {condition} was seen, and its "
+                          f"readings are {entry.get('initial')} and {entry.get('final')}.")
     states = result.get("key_states")
     if not isinstance(states, dict) or aid not in states:
         return _fail(None, f"The adapter reported no key state for {aid}.")

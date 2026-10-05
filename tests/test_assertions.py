@@ -166,6 +166,19 @@ def test_disposition(message, phase, expected, outcome):
     assert evaluation.outcome == outcome
 
 
+# An adapter that reports a message seen on arrival and unseen at the end has reported an
+# acceptance: "first seen, always seen, never unseen" (KERI spec line 1788).
+UNSEEN = {"dispositions": [{"initial": "seen", "final": "rejected", "trunk": False}],
+          "key_states": {}}
+
+
+@pytest.mark.parametrize("expected", ["not-seen", "rejected", "pending", "duplicitous"])
+def test_a_message_seen_on_arrival_cannot_finally_be_unseen(expected):
+    evaluation = evaluate(disposition(0, "final", expected), UNSEEN)
+    assert evaluation.outcome == "fail"
+    assert "always seen" in evaluation.detail
+
+
 def test_disposition_records_the_reported_value():
     assert evaluate(disposition(1, "initial", "seen"), PROCESSED).actual == "pending"
 
@@ -372,6 +385,13 @@ def test_key_state_does_not_apply_when_its_message_was_not_finally_seen(final):
 def test_key_state_applies_when_its_message_was_finally_seen_even_off_the_trunk():
     # A superseded event is still seen; the identifier's state must then be the recovered one.
     result = {"dispositions": [{"initial": "seen", "final": "seen", "trunk": False}],
+              "key_states": {"EAbc": {**STATE, "sn": 9}}}
+    assert evaluate(key_state(STATE), result).outcome == "fail"
+
+
+def test_key_state_applies_when_its_message_was_seen_on_arrival_and_reported_unseen_later():
+    # Seen is permanent (line 1788), so a later unseen report does not make the assertion moot.
+    result = {"dispositions": [{"initial": "seen", "final": "rejected", "trunk": False}],
               "key_states": {"EAbc": {**STATE, "sn": 9}}}
     assert evaluate(key_state(STATE), result).outcome == "fail"
 
