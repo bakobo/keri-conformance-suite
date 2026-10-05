@@ -7,12 +7,15 @@ import json
 import re
 import sys
 
-from kcs_adapter_keripy import cesr, keripy_api
+from kcs_adapter_keripy import cesr, kel, keripy_api
 from kcs_adapter_keripy.errors import Unsupported
 
 PROTOCOL = 1
 ADAPTER = {"name": "kcs-adapter-keripy", "version": "0.1.0"}
 OPERATIONS = ["cesr.parse", "cesr.encode"]
+# keri.process is declared only where keripy validates the KERI bodies the cases carry (2.XX):
+# keripy main. keripy 1.2.14 reads only 1.XX bodies.
+KEL_GENERATIONS = ("main",)
 HEX = re.compile(r"(?:[0-9a-f]{2})*")
 
 # The longest request line the adapter reads, in bytes, not counting its newline. A longer line
@@ -51,9 +54,13 @@ def hello(request):
         raise Unsupported(f"{E_VERSION}: This adapter implements adapter protocol version "
                           f"{PROTOCOL} only, and the runner offered {supported}.")
     keripy = cesr.api()
+    operations, features = list(OPERATIONS), list(keripy.features)
+    if keripy.generation in KEL_GENERATIONS:
+        operations.append("keri.process")
+        features += [f for f in kel.FEATURES if f not in features]
     return {"protocol": PROTOCOL, "adapter": dict(ADAPTER),
-            "implementation": keripy_api.implementation(), "operations": list(OPERATIONS),
-            "features": list(keripy.features), "composes": []}
+            "implementation": keripy_api.implementation(), "operations": operations,
+            "features": features, "composes": []}
 
 
 def _parse(request):
@@ -70,7 +77,17 @@ def _encode(request):
     return cesr.encode(code, raw.hex(), domain)
 
 
-OPS = {"hello": hello, "cesr.parse": _parse, "cesr.encode": _encode}
+def _process(request):
+    if cesr.api().generation not in KEL_GENERATIONS:
+        raise Undeclared(request.get("op"))
+    return kel.process(request)
+
+
+class Undeclared(Exception):
+    pass
+
+
+OPS = {"hello": hello, "cesr.parse": _parse, "cesr.encode": _encode, "keri.process": _process}
 
 
 def handle(request):
@@ -81,12 +98,14 @@ def handle(request):
     try:
         if op in OPS:
             return {"id": rid, "result": OPS[op](request)}
-        if op in ("keri.process", "keri.emit"):
-            return _error(rid, "unsupported", f"{E_UNDECLARED_OP}: This adapter does not "
-                                              f"implement {op} and did not declare it in hello.")
+        if op == "keri.emit":
+            raise Undeclared(op)
         return _error(rid, "harness", f"{E_UNKNOWN_OP}: {op!r} is not an operation of adapter "
                                       f"protocol version {PROTOCOL}.")
-    except Malformed as exc:
+    except Undeclared:
+        return _error(rid, "unsupported", f"{E_UNDECLARED_OP}: This adapter does not "
+                                          f"implement {op} and did not declare it in hello.")
+    except (Malformed, kel.Malformed, kel.NotQuiescent) as exc:
         return _error(rid, "harness", str(exc))
     except Unsupported as exc:
         return _error(rid, "unsupported", str(exc))

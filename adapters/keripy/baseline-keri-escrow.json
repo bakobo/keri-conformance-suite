@@ -1,0 +1,46 @@
+{
+  "format": 2,
+  "profile": "keri-escrow",
+  "implementation": {
+    "name": "keripy",
+    "version": "2.1.0.dev1",
+    "commit": "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
+  },
+  "verdict": "no-evidence",
+  "cases": {
+    "KERI-0017": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass"
+      }
+    },
+    "KERI-0019": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0032": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    }
+  }
+}
