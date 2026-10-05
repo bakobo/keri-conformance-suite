@@ -1,0 +1,151 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "When the Next, `n` field value in an Inception or Delegated Inception event is an empty list, then the associated AID MUST be deemed non-transferable, and no more key events MUST be allowed in that KEL.",
+        "section": "Next key digest list field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#next-key-digest-list-field"
+      },
+      "expected": "not-seen",
+      "id": "a3",
+      "level": "MUST",
+      "message": 1,
+      "note": "Decision procedure step 3 (nontransferable).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "When the Next, `n` field value in an Inception or Delegated Inception event is an empty list, then the associated AID MUST be deemed non-transferable, and no more key events MUST be allowed in that KEL.",
+        "section": "Next key digest list field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#next-key-digest-list-field"
+      },
+      "expected": "not-seen",
+      "id": "a4",
+      "level": "MUST",
+      "message": 1,
+      "note": "Decision procedure step 3 (nontransferable).",
+      "phase": "final"
+    },
+    {
+      "aid": "BAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "BAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+        ],
+        "kt": "1",
+        "ndigs": [],
+        "nt": "0",
+        "said": "EL00smMts21qVLIgwMVN38MXKikqXZLE-wi1T46_WlzA",
+        "sn": 0,
+        "wits": []
+      },
+      "id": "a5",
+      "if_seen": 0,
+      "level": "MUST"
+    }
+  ],
+  "description": "A non-transferable inception (empty next keys, basic non-transferable prefix), then a rotation of the same identifier, signed by its own key. No more key events are allowed after a non-transferable inception (line 340), so a validator must not accept the rotation.",
+  "id": "KERI-0024",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141445f2e222c2274223a22696370222c2264223a22454c3030736d4d7473323171564c4967774d564e33384d584b696b71585a4c452d7769315434365f576c7a41222c2269223a224241616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834222c2273223a2230222c226b74223a2231222c226b223a5b224241616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2230222c226e223a5b5d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414141545f6859686c494a6a74494c37476459465768467a6670624c783767797068647a56684369377871426647475a704f33584d5a6c454c4e676c4d5a38454d5759494c2d6370354d4d6935475173464c383265323042"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146702e222c2274223a22726f74222c2264223a2245427a3157366e34714c4a343268675f7435446b4f456f667448647445445f6f71646775323367325661564d222c2269223a224241616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834222c2273223a2231222c2270223a22454c3030736d4d7473323171564c4967774d564e33384d584b696b71585a4c452d7769315434365f576c7a41222c226b74223a2231222c226b223a5b2244464b3274346f6d4f713074337369476734304e30365455355535755076336175706d743063373465526931225d2c226e74223a2231222c226e223a5b2245455237616154752d4c7a6149715670426671322d487547324a4f79655645564a49356a5067795a74646b74225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b41574241416f4d4f50443549322d6a4c6465777046694962707a3369506a6936354d37524172586556464b4f5855717a484979774e4b7363715a45786b7858694d4353755366702d584858336771347757786b6f57716f4d3449"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/prerotation.json#KS-31"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Rotation after a non-transferable inception"
+}

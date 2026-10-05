@@ -1,0 +1,514 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0042",
+      "key": "KS-59",
+      "title": "Conflicting interaction, validly signed",
+      "description": "An inception and an interaction, then a different interaction at the same sequence number, also signed by the current key. A second interaction cannot supersede the first (rule A2), so a validator should not accept it, and its key state stays at the first interaction.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn1b",
+          "aid": "A",
+          "t": "ixn",
+          "prior": "icp",
+          "a": [
+            {
+              "event": "icp"
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1b",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "5/conflict",
+            "5/conflict"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "one-kel",
+          "inferred_from": "first-seen"
+        }
+      }
+    },
+    {
+      "id": "KERI-0044",
+      "key": "KS-61",
+      "title": "Conflicting inception of a basic prefix",
+      "description": "A transferable basic-prefix inception, then a different inception of the same prefix (another next-key commitment), also signed by its key. A validator should not accept the second.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "prefix": "basic"
+        },
+        {
+          "name": "icp2",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "b1"
+          ],
+          "prefix": "basic"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "icp2",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "5/conflict",
+            "5/conflict"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "one-kel",
+          "inferred_from": "first-seen"
+        }
+      }
+    },
+    {
+      "id": "KERI-0045",
+      "key": "KS-62",
+      "title": "A pending event is not first seen",
+      "description": "An inception with two keys and threshold 2. An interaction arrives signed by one key and is kept; a different interaction at the same sequence number arrives fully signed and is accepted; then the first interaction's second signature arrives. First seen means first accepted (line 1788), so a validator should not accept the first interaction even once it is fully signed.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn1b",
+          "aid": "A",
+          "t": "ixn",
+          "prior": "icp",
+          "a": [
+            {
+              "event": "icp"
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "b0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "5/conflict"
+          ]
+        },
+        {
+          "event": "ixn1b",
+          "sigs": [
+            "a0",
+            "b0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "b0"
+          ],
+          "expect": [
+            "5/conflict",
+            "5/conflict"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "one-kel",
+          "inferred_from": "first-seen"
+        }
+      }
+    },
+    {
+      "id": "KERI-0046",
+      "key": "KS-63",
+      "title": "Superseding recovery of one interaction",
+      "description": "An inception and an interaction signed by the current key, then a rotation at sequence number 1, signed by the pre-rotated key, that supersedes the interaction (rule A0). A validator should accept the rotation and keep the interaction as seen but off the trunk.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "prior": "icp",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "5/supersedes",
+            "5/supersedes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0047",
+      "key": "KS-64",
+      "title": "Superseding recovery over two interactions",
+      "description": "An inception and two interactions, then a rotation at sequence number 1 that supersedes both (rule A0), then a new interaction at 2 that follows the rotation. A validator should accept the rotation and the new interaction, and keep both old interactions as seen but off the trunk.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "prior": "icp",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        },
+        {
+          "name": "ixn2b",
+          "aid": "A",
+          "t": "ixn",
+          "prior": "rot1"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "5/supersedes",
+            "5/supersedes"
+          ]
+        },
+        {
+          "event": "ixn2b",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0050",
+      "key": "KS-66b",
+      "title": "Retrograde interaction signed by a rotated-out key",
+      "description": "An inception, an interaction and a rotation, then a different interaction at sequence number 1 signed by the inception's key, which the rotation retired. An interaction may not supersede any event (rule A2), so a validator should not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot2",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        },
+        {
+          "name": "ixn1b",
+          "aid": "A",
+          "t": "ixn",
+          "prior": "icp",
+          "a": [
+            {
+              "event": "icp"
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot2",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1b",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "5/conflict",
+            "5/conflict"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "one-kel",
+          "inferred_from": "first-seen"
+        }
+      }
+    }
+  ],
+  "id_gaps": [
+    {
+      "number": 43,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 48,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 49,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 51,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 52,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 53,
+      "reason": "Allocated; not in this tree."
+    }
+  ]
+}

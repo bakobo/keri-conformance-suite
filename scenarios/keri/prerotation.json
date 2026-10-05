@@ -1,0 +1,365 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0021",
+      "key": "KS-25",
+      "title": "Rotation that breaks the pre-rotation commitment",
+      "description": "An accepted inception committing to the digest of a1, then a rotation to an unrelated key x, signed by x. The rotation's keys include no subset of the prior next keys, so a validator must not accept it (lines 1262 and 1494), and its key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "x"
+          ],
+          "next": [
+            "x2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            {
+              "key": "x",
+              "code": "A"
+            }
+          ],
+          "expect": [
+            "4/pre-rotation",
+            "4/pre-rotation"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "prerotation"
+        }
+      }
+    },
+    {
+      "id": "KERI-0022",
+      "key": "KS-26",
+      "title": "Rotation signature that names the wrong prior next digest",
+      "description": "An inception committing to the digests of a1 and b1 with next threshold 1, then a rotation to [a1, b1] signed only by a1 with a dual-indexed signature whose prior-next index (ondex) is 1, the position of b1's digest. That signature does not satisfy the prior next threshold, so a validator must not accept the rotation; as a threshold shortfall it should keep it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1",
+            "b1"
+          ],
+          "nt": "1"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "b1"
+          ],
+          "kt": "1",
+          "next": [
+            "a2",
+            "b2"
+          ],
+          "nt": "1"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            {
+              "key": "a1",
+              "ondex": 1
+            }
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "prerotation"
+        }
+      }
+    },
+    {
+      "id": "KERI-0023",
+      "key": "KS-27",
+      "title": "Partial rotation holding a key in reserve",
+      "description": "An inception with keys [a0, b0, c0], threshold 2, committing to a1, b1 and c1 with next threshold 2. The rotation exposes only a1 and b1, signed by both, and commits to c1 again in its own next keys. A validator should accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "b1"
+          ],
+          "kt": "2",
+          "next": [
+            "a2",
+            "b2",
+            "c1"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "b0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1",
+            "b1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0024",
+      "key": "KS-31",
+      "title": "Rotation after a non-transferable inception",
+      "description": "A non-transferable inception (empty next keys, basic non-transferable prefix), then a rotation of the same identifier, signed by its own key. No more key events are allowed after a non-transferable inception (line 340), so a validator must not accept the rotation.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [],
+          "nt": "0",
+          "prefix": "nontransferable"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "x"
+          ],
+          "next": [
+            "x2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "x"
+          ],
+          "expect": [
+            "3/nontransferable",
+            "3/nontransferable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0025",
+      "key": "KS-31b",
+      "title": "Rotation after a self-addressing inception with no next keys",
+      "description": "A self-addressing inception whose next keys are empty, which makes the identifier non-transferable (line 340) although its prefix is a digest, then a rotation of the same identifier, signed by its own key. A validator must not accept the rotation.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [],
+          "nt": "0"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "x"
+          ],
+          "next": [
+            "x2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "x"
+          ],
+          "expect": [
+            "3/nontransferable",
+            "3/nontransferable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0026",
+      "key": "KS-32",
+      "title": "Interaction after an abandoning rotation",
+      "description": "An inception, then a rotation with empty next keys, which abandons the identifier, then an interaction signed by the rotation's key. No more key events are allowed after an abandoning rotation (line 340), so a validator must not accept the interaction.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [],
+          "nt": "0"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "3/abandoned",
+            "3/abandoned"
+          ]
+        }
+      ]
+    }
+  ]
+}

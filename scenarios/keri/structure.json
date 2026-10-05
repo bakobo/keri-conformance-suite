@@ -1,0 +1,271 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0010",
+      "key": "KS-16",
+      "title": "Inception whose d differs from its digest-type i",
+      "description": "A signed inception whose prefix i is a Blake3-256 digest but not the inception's own SAID, while d is the SAID computed over the event. Line 1381 says d must then equal i, so the inception is invalid and a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "tamper": {
+            "i": "other-prefix"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/d-i",
+            "1/d-i"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0011",
+      "key": "KS-17",
+      "title": "Interaction whose SAID does not match its content",
+      "description": "An accepted inception, then an interaction whose d is not the digest of its body, signed by the current key. Verifying an event's structure includes its SAID (line 1737), so a validator must not accept the interaction.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn",
+          "tamper": {
+            "d": "not-this-event"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/said",
+            "1/said"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0012",
+      "key": "KS-20",
+      "title": "Interaction whose prior digest names no event",
+      "description": "An accepted inception, then an interaction at sequence number 1 whose p is not the inception's SAID, signed by the current key. A validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn",
+          "tamper": {
+            "p": "no-such-prior"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/prior-digest",
+            "4/prior-digest"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0013",
+      "key": "KS-21",
+      "title": "Sequence gap that is never filled",
+      "description": "An accepted inception, then an interaction at sequence number 2 whose prior, the interaction at 1, never arrives. Without the complete sequence a validator cannot establish the controlling keys (line 1737), so it must not accept the event.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/out-of-order",
+            "4/out-of-order"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0014",
+      "key": "KS-21b",
+      "title": "Interaction for an identifier whose inception never arrives",
+      "description": "An interaction at sequence number 1 of an identifier whose inception the validator never receives. It must not be accepted.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/out-of-order",
+            "4/out-of-order"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0015",
+      "key": "KS-21c",
+      "title": "Interaction with a wrong sequence number",
+      "description": "An accepted inception, then an interaction whose p names the inception but whose s is 2, not 1. Its prior at sequence number 1 does not exist, so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn",
+          "s": 2
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/out-of-order",
+            "4/out-of-order"
+          ]
+        }
+      ]
+    }
+  ]
+}

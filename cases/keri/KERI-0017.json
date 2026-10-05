@@ -1,0 +1,104 @@
+{
+  "assertions": [
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "pending",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 4 (out-of-order).",
+      "phase": "initial"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "seen",
+      "id": "a2",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "final"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "trunk",
+      "expected": true,
+      "id": "a3",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "aid": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+        ],
+        "nt": "1",
+        "said": "ENBQTivaMv3HMfTcuw42n9YY51UHqOxZLNs_nN_Qi1WC",
+        "sn": 2,
+        "wits": []
+      },
+      "id": "a4",
+      "if_seen": 1,
+      "level": "INTEROP"
+    }
+  ],
+  "description": "The deliveries of KS-22. A validator that keeps the early interaction accepts it once its prior arrives, and ends with sequence number 2.",
+  "id": "KERI-0017",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414134354a76747a5f43547044354a4c7a444b67666e326b75316f7738624d465f412d58387a65314f51567164494d37376630365368715731735537375245486d7776584368774a54686f6f6b50394742464272623443"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a22454e4251546976614d7633484d665463757734326e39595935315548714f785a4c4e735f6e4e5f5169315743222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2232222c2270223a22454d64566d3362346832526a33742d763557516c366e564246424877684462492d316968397a44624137324c222c2261223a5b5d7d2d4341582d4b4157414144526c4c695054624831675a445171313078334b477346486458535137674d59627a5f37536877354851515a67517a61674435596e706179394e486d6e66795f6d7771524b637938363744526b4c476754496f57514b"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a22454d64566d3362346832526a33742d763557516c366e564246424877684462492d316968397a44624137324c222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2231222c2270223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2261223a5b5d7d2d4341582d4b41574141436e75635a584245374333437a61514d6e597a596c4870395973756241485574416b78366271396e65516953322d7554655642663863645558625230306e466f5a5846792d6e79613133724f56742d4d5f63506b7745"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-escrow",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/escrow.json#KS-22L"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.escrow",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "One event early: kept and accepted later"
+}

@@ -1,0 +1,304 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a3",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": false,
+      "id": "a4",
+      "inferred_from": {
+        "inference": "Rule A0 uses a lowercase \"may\". A validator that accepts a rotation A0 permits keeps the displaced interaction and everything after it as seen but off the trunk (\"All the already-seen but superseded events in the superseded fork still remain in the KEL\"). Accepting the rotation, and the resulting trunk, are graded SHOULD as liveness.",
+        "line": 1806,
+        "quote": "A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.",
+        "section": "Superseding Rules for Recovery at a given location, SN (sequence number)."
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a5",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 2,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": false,
+      "id": "a6",
+      "inferred_from": {
+        "inference": "Rule A0 uses a lowercase \"may\". A validator that accepts a rotation A0 permits keeps the displaced interaction and everything after it as seen but off the trunk (\"All the already-seen but superseded events in the superseded fork still remain in the KEL\"). Accepting the rotation, and the resulting trunk, are graded SHOULD as liveness.",
+        "line": 1806,
+        "quote": "A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.",
+        "section": "Superseding Rules for Recovery at a given location, SN (sequence number)."
+      },
+      "level": "SHOULD",
+      "message": 2,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a7",
+      "inferred_from": {
+        "inference": "Rule A0 uses a lowercase \"may\". A validator that accepts a rotation A0 permits keeps the displaced interaction and everything after it as seen but off the trunk (\"All the already-seen but superseded events in the superseded fork still remain in the KEL\"). Accepting the rotation, and the resulting trunk, are graded SHOULD as liveness.",
+        "line": 1806,
+        "quote": "A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.",
+        "section": "Superseding Rules for Recovery at a given location, SN (sequence number)."
+      },
+      "level": "SHOULD",
+      "message": 3,
+      "note": "Decision procedure step 5 (supersedes).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a8",
+      "inferred_from": {
+        "inference": "Rule A0 uses a lowercase \"may\". A validator that accepts a rotation A0 permits keeps the displaced interaction and everything after it as seen but off the trunk (\"All the already-seen but superseded events in the superseded fork still remain in the KEL\"). Accepting the rotation, and the resulting trunk, are graded SHOULD as liveness.",
+        "line": 1806,
+        "quote": "A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.",
+        "section": "Superseding Rules for Recovery at a given location, SN (sequence number)."
+      },
+      "level": "SHOULD",
+      "message": 3,
+      "note": "Decision procedure step 5 (supersedes)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a9",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 4,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a10",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 4,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "aid": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+        ],
+        "nt": "1",
+        "said": "ENIm_Ps4QsYsfBTTPVoGBKRxLDAEJD1j6gCGS-KMwAR8",
+        "sn": 2,
+        "wits": []
+      },
+      "id": "a11",
+      "if_seen": 4,
+      "level": "MUST"
+    }
+  ],
+  "description": "An inception and two interactions, then a rotation at sequence number 1 that supersedes both (rule A0), then a new interaction at 2 that follows the rotation. A validator should accept the rotation and the new interaction, and keep both old interactions as seen but off the trunk.",
+  "id": "KERI-0047",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414134354a76747a5f43547044354a4c7a444b67666e326b75316f7738624d465f412d58387a65314f51567164494d37376630365368715731735537375245486d7776584368774a54686f6f6b50394742464272623443"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a22454d64566d3362346832526a33742d763557516c366e564246424877684462492d316968397a44624137324c222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2231222c2270223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2261223a5b5d7d2d4341582d4b41574141436e75635a584245374333437a61514d6e597a596c4870395973756241485574416b78366271396e65516953322d7554655642663863645558625230306e466f5a5846792d6e79613133724f56742d4d5f63506b7745"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a22454e4251546976614d7633484d665463757734326e39595935315548714f785a4c4e735f6e4e5f5169315743222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2232222c2270223a22454d64566d3362346832526a33742d763557516c366e564246424877684462492d316968397a44624137324c222c2261223a5b5d7d2d4341582d4b4157414144526c4c695054624831675a445171313078334b477346486458535137674d59627a5f37536877354851515a67517a61674435596e706179394e486d6e66795f6d7771524b637938363744526b4c476754496f57514b"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146702e222c2274223a22726f74222c2264223a22454466366450354d626b4b327163566d6b5044485f525367485f34545873476a625f496a374b58724e4d7663222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2231222c2270223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c226b74223a2231222c226b223a5b22444d6e46536d30754950563876796665665935765a6d4a7679635071356844774346486257734c2d36463274225d2c226e74223a2231222c226e223a5b2245425a394d3039584633396d6e417258464a79626c502d766b6f5758356e7679525477387264465a486a6e6a225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414369733351446b5f6f59616f5a766a5435496d705f7a3063534353766869697a62335a6f4155414c4e524745626a79647a596846495f594c5a6c654247557645414c67666d716f594b6d773074664b77426c6b79344d"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a22454e496d5f507334517359736642545450566f47424b52784c4441454a44316a36674347532d4b4d77415238222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2232222c2270223a22454466366450354d626b4b327163566d6b5044485f525367485f34545873476a625f496a374b58724e4d7663222c2261223a5b5d7d2d4341582d4b415741414237595a4d454355474f6d4d796f513172516374483747585776636e4d32415a4e57656e4d4b7a6838367931616f5768744b4c4768366f4847317a68644c7172744c38795f706c614170684d6d437a4550494e733849"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/duplicity.json#KS-64"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.recovery",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Superseding recovery over two interactions"
+}

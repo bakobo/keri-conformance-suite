@@ -1,0 +1,197 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0016",
+      "key": "KS-22",
+      "title": "One event early: not accepted on arrival",
+      "description": "An inception, then the interaction at sequence number 2, then the one at 1. The early interaction cannot be accepted when it arrives, because its prior has not been seen. Whether it is accepted later depends on escrow the specification does not require, so this case grades only its arrival; KS-22's escrow half is in the keri-escrow profile.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/out-of-order",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0018",
+      "key": "KS-23",
+      "title": "KEL delivered in reverse: not accepted on arrival",
+      "description": "An interaction at sequence number 2, then the rotation at 1, then the inception. Neither early event can be accepted on arrival. Whether they are accepted once the inception arrives depends on escrow the specification does not require; that half is in the keri-escrow profile.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "4/out-of-order",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "4/out-of-order",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0020",
+      "key": "KS-24",
+      "title": "Early event with a forged signature",
+      "description": "An inception, then an interaction at sequence number 2 whose signature was not made by the current key, then the interaction at 1. The early event cannot be verified when it arrives, but once its prior is accepted the validator holds the key it should have been signed with. It must never accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            {
+              "key": "a0",
+              "forged": true
+            }
+          ],
+          "expect": [
+            "4/out-of-order",
+            "2/unverified"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    }
+  ]
+}

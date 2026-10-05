@@ -1,0 +1,75 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Validation of an Inception event requires examining the `i` field's derivation code and if it is a digest-type then the `d` field MUST be identical otherwise the Inception event is invalid.",
+        "section": "Inception event pre-rotation",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#inception-event-pre-rotation"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (d-i).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Validation of an Inception event requires examining the `i` field's derivation code and if it is a digest-type then the `d` field MUST be identical otherwise the Inception event is invalid.",
+        "section": "Inception event pre-rotation",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#inception-event-pre-rotation"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (d-i).",
+      "phase": "final"
+    }
+  ],
+  "description": "A signed inception whose prefix i is a Blake3-256 digest but not the inception's own SAID, while d is the SAID computed over the event. Line 1381 says d must then equal i, so the inception is invalid and a validator must not accept it.",
+  "id": "KERI-0010",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454d756d4a6966306a2d6e4255334e4847676b676b796e336e754f7941357077724749593956514d74785f47222c2269223a22454463685f676459324e5f7a6d367463556568756b745a52346e6c38545564664c717a53574956415948574f222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414143414f6d4a304d6e6863455a6378593038614f6c43504d64373066624650627a3131464e7172324467776d4a434a324851336749526a5350564965477855766d4f364251506e326c56574c502d36512d476f5146674a"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/structure.json#KS-16"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Inception whose d differs from its digest-type i"
+}

@@ -1,0 +1,133 @@
+{
+  "assertions": [
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "pending",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 4 (out-of-order).",
+      "phase": "initial"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "seen",
+      "id": "a2",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "final"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "trunk",
+      "expected": true,
+      "id": "a3",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "pending",
+      "id": "a4",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 4 (out-of-order).",
+      "phase": "initial"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "seen",
+      "id": "a5",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "final"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "trunk",
+      "expected": true,
+      "id": "a6",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "aid": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+        ],
+        "nt": "1",
+        "said": "ENIm_Ps4QsYsfBTTPVoGBKRxLDAEJD1j6gCGS-KMwAR8",
+        "sn": 2,
+        "wits": []
+      },
+      "id": "a7",
+      "if_seen": 0,
+      "level": "INTEROP"
+    }
+  ],
+  "description": "The deliveries of KS-23. A validator that keeps both early events accepts them once the inception arrives, which takes more than one pass over what it kept.",
+  "id": "KERI-0019",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a22454e496d5f507334517359736642545450566f47424b52784c4441454a44316a36674347532d4b4d77415238222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2232222c2270223a22454466366450354d626b4b327163566d6b5044485f525367485f34545873476a625f496a374b58724e4d7663222c2261223a5b5d7d2d4341582d4b415741414237595a4d454355474f6d4d796f513172516374483747585776636e4d32415a4e57656e4d4b7a6838367931616f5768744b4c4768366f4847317a68644c7172744c38795f706c614170684d6d437a4550494e733849"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146702e222c2274223a22726f74222c2264223a22454466366450354d626b4b327163566d6b5044485f525367485f34545873476a625f496a374b58724e4d7663222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2231222c2270223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c226b74223a2231222c226b223a5b22444d6e46536d30754950563876796665665935765a6d4a7679635071356844774346486257734c2d36463274225d2c226e74223a2231222c226e223a5b2245425a394d3039584633396d6e417258464a79626c502d766b6f5758356e7679525477387264465a486a6e6a225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414369733351446b5f6f59616f5a766a5435496d705f7a3063534353766869697a62335a6f4155414c4e524745626a79647a596846495f594c5a6c654247557645414c67666d716f594b6d773074664b77426c6b79344d"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414134354a76747a5f43547044354a4c7a444b67666e326b75316f7738624d465f412d58387a65314f51567164494d37376630365368715731735537375245486d7776584368774a54686f6f6b50394742464272623443"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-escrow",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/escrow.json#KS-23L"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.escrow",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "KEL delivered in reverse: kept and accepted later"
+}

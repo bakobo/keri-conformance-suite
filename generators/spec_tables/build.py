@@ -40,10 +40,12 @@ def raw_bytes(label: str, size: int) -> bytes:
 # -- clauses ---------------------------------------------------------------------------------
 
 
-def resolve_clauses(registry: dict, spec_text: str) -> dict:
+def resolve_clauses(registry: dict, spec_text: str, pin: spec_source.Pin | None = None) -> dict:
     """Check every clause in the registry against the pinned text and return the case-file form
     of each, with its level. A quote must appear verbatim exactly once, under the heading the
-    registry names, and must itself state the level the registry gives."""
+    registry names, and must itself state the level the registry gives. ``pin`` names the
+    specification the text is (the CESR pin by default)."""
+    pin = pin or spec_source.cesr_pin()
     out = {}
     for key, c in sorted(registry.items()):
         if c["level"] not in LEVELS:
@@ -60,10 +62,10 @@ def resolve_clauses(registry: dict, spec_text: str) -> dict:
         out[key] = (
             c["level"],
             {
-                "spec": "cesr",
+                "spec": pin.label,
                 "section": heading.text,
-                "url": spec_source.file_url(heading.anchor),
-                "commit": spec_source.SPEC_COMMIT,
+                "url": spec_source.file_url(heading.anchor, pin),
+                "commit": pin.commit,
                 "quote": c["quote"],
             },
         )

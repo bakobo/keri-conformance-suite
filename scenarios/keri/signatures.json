@@ -1,0 +1,440 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0001",
+      "key": "KS-01",
+      "title": "Single-key inception",
+      "description": "A self-addressing, single-key inception with no witnesses, signed by its one key. A validator should accept it and hold its key state.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0002",
+      "key": "KS-02",
+      "title": "In-order KEL: inception, interaction, rotation, interaction",
+      "description": "Four events of one identifier delivered in order, each properly signed. The rotation exposes the pre-rotated key a1 and commits to a2, and the last interaction is signed by a1. A validator should accept all four and end with the rotation's keys.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot2",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        },
+        {
+          "name": "ixn3",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot2",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn3",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0003",
+      "key": "KS-04",
+      "title": "Multi-key inception, signing threshold met",
+      "description": "An inception with three keys and signing threshold 2, signed by the first and third keys. A validator should accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "c0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0004",
+      "key": "KS-05",
+      "title": "Multi-key inception under its signing threshold",
+      "description": "An inception with three keys and signing threshold 2, signed by one key only. A validator must not accept it, and should keep it in case the missing signature arrives (line 1266).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0005",
+      "key": "KS-06",
+      "title": "Signing threshold completed by a second copy",
+      "description": "The inception of KS-05 arrives signed by one key, then again signed by another. Together the two copies satisfy the threshold, so a validator that kept the first copy, as line 1266 says it should, accepts the event. The safety half, that the first copy alone is not accepted, is KS-05's case.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "6/already-seen"
+          ]
+        },
+        {
+          "event": "icp",
+          "sigs": [
+            "c0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ],
+      "liveness_only": true
+    },
+    {
+      "id": "KERI-0006",
+      "key": "KS-07",
+      "title": "Inception with a forged signature",
+      "description": "A single-key inception whose only signature was made by a key other than the one it lists. The validator holds everything it needs to verify the signature, so it must drop the event.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            {
+              "key": "a0",
+              "forged": true
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0007",
+      "key": "KS-08",
+      "title": "Unsigned inception",
+      "description": "A single-key inception delivered with no attachments at all. A validator must drop a key event with no controller signature.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [],
+          "expect": [
+            "2/unsigned",
+            "2/unsigned"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0008",
+      "key": "KS-11",
+      "title": "Weighted threshold, one clause",
+      "description": "An inception with three keys and the weighted threshold [1/2, 1/2, 1/2], signed by keys 0 and 2, whose weights sum to 1. Then an interaction signed by key 1 alone, whose weight is 1/2. A validator should accept the inception and must not accept the interaction.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "c0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "b0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0009",
+      "key": "KS-11b",
+      "title": "Weighted threshold, two clauses",
+      "description": "An inception with four keys and the two-clause weighted threshold [[1/2, 1/2], [1, 1]], signed by keys 0, 1 and 3, which satisfies both clauses. Then an interaction signed by keys 0 and 2, which satisfies the second clause but not the first. Every clause must be satisfied (line 1419), so a validator should accept the inception and must not accept the interaction.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0",
+            "d0"
+          ],
+          "kt": [
+            [
+              "1/2",
+              "1/2"
+            ],
+            [
+              "1",
+              "1"
+            ]
+          ],
+          "next": [
+            "a1",
+            "b1",
+            "c1",
+            "d1"
+          ],
+          "nt": [
+            [
+              "1/2",
+              "1/2"
+            ],
+            [
+              "1",
+              "1"
+            ]
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "b0",
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0",
+            "c0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    }
+  ]
+}

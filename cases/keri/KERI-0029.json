@@ -1,0 +1,199 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a3",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a4",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A Validator MUST invalidate, i.e., drop any delegated events whose Delegator has this configuration trait.",
+        "section": "Configuration traits field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#configuration-traits-field"
+      },
+      "expected": "rejected",
+      "id": "a5",
+      "level": "MUST",
+      "message": 2,
+      "note": "Decision procedure step 3 (do-not-delegate).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A Validator MUST invalidate, i.e., drop any delegated events whose Delegator has this configuration trait.",
+        "section": "Configuration traits field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#configuration-traits-field"
+      },
+      "expected": "not-seen",
+      "id": "a6",
+      "level": "MUST",
+      "message": 2,
+      "note": "Decision procedure step 3 (do-not-delegate).",
+      "phase": "final"
+    },
+    {
+      "aid": "EEvfLtPe4teGJH7dAyiD-KvH1hkOyFI3NKDgZmZcse3M",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
+        ],
+        "nt": "1",
+        "said": "EJhaZYSMSOnxtY98iA9ass8qziX3979f_m579X8NlioY",
+        "sn": 1,
+        "wits": []
+      },
+      "id": "a7",
+      "if_seen": 1,
+      "level": "MUST"
+    }
+  ],
+  "description": "A delegator incepted with the DND trait anchors a delegated inception in an interaction. The validator holds the delegator's KEL when the delegated inception arrives, so it must drop it (line 379).",
+  "id": "KERI-0029",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145792e222c2274223a22696370222c2264223a22454576664c745065347465474a483764417969442d4b764831686b4f794649334e4b44675a6d5a637365334d222c2269223a22454576664c745065347465474a483764417969442d4b764831686b4f794649334e4b44675a6d5a637365334d222c2273223a2230222c226b74223a2231222c226b223a5b2244454f6e4a53364770422d57625437524f62714371773776395566347a4c32677265435f694a3568714c7542225d2c226e74223a2231222c226e223a5b22454f6d78695030476b75506a30335555346c6a674b452d665a574732557a73766735534b5a3471694e7a3642225d2c226274223a2230222c2262223a5b5d2c2263223a5b22444e44225d2c2261223a5b5d7d2d4341582d4b41574141417a564e795049464e3434413045486d68775265516e586f4135354a593465644b416b4d5236374c59306c4d326c36304e664447734e524133545647735335553230536351566c5f61765a3139714734456f5339634a"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145382e222c2274223a2269786e222c2264223a22454a68615a59534d534f6e787459393869413961737338717a695833393739665f6d35373958384e6c696f59222c2269223a22454576664c745065347465474a483764417969442d4b764831686b4f794649334e4b44675a6d5a637365334d222c2273223a2231222c2270223a22454576664c745065347465474a483764417969442d4b764831686b4f794649334e4b44675a6d5a637365334d222c2261223a5b7b2269223a22454145535f6d693478427a563531495952555f6474534230525555655142662d5945787755475161504a4d44222c2273223a2230222c2264223a22454145535f6d693478427a563531495952555f6474534230525555655142662d5945787755475161504a4d44227d5d7d2d4341582d4b4157414141317641654a69334e6b3069454578586859386f58384c5133474f486c34343935652d51434f66363757304972675048575362722d48767379333953376157344e35515231705739464338756d31464d537653313050"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146682e222c2274223a22646970222c2264223a22454145535f6d693478427a563531495952555f6474534230525555655142662d5945787755475161504a4d44222c2269223a22454145535f6d693478427a563531495952555f6474534230525555655142662d5945787755475161504a4d44222c2273223a2230222c226b74223a2231222c226b223a5b22444b73514c6146746c75325975527451324638566561314b6a6b6c47386341747561444255735f336377644d225d2c226e74223a2231222c226e223a5b22454942635f2d366f716b6c69774b4776586c4c773530485f765851523269744c47397a6f32656859634d4b4b225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d2c226469223a22454576664c745065347465474a483764417969442d4b764831686b4f794649334e4b44675a6d5a637365334d227d2d4341702d4b415741414441477170565061624d394637395074647739594d6d57705a5568526b326954717a3278734a422d316f4a4b544156386a7433354a375a7139564b4d677741694967674d4b5f4f7a6f443230674255586648305867452d534152304141414141414141414141414141414141414141414142454a68615a59534d534f6e787459393869413961737338717a695833393739665f6d35373958384e6c696f59"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/traits.json#KS-35"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Delegation from a do-not-delegate delegator"
+}

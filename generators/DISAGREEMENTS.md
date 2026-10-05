@@ -62,3 +62,34 @@ Not disagreements with keripy. Under the suite's policy, assertions affected by 
 - **Genus/version code in headings.** The Annex indexed table is headed "for genus/version `--AAACAA`"; everywhere else the code is `-_AAACAA`.
 - **Version rendering.** The version-string section renders `CAQ` as `2.16` (line 1142) and, for the genus version, as `1.16` (line 1144). The adapter protocol pins its own rendering.
 - **Version label.** The commit tagged `v1.0` carries "Specification Status: v1.1" in `spec/spec-head.md`.
+
+# Disagreements between the KERI cases and keripy
+
+The KERI cases (`cases/keri/`) take their expected values from the decision procedure in `docs/design.md` ("KERI"), applied by `generators/spec_tables/keri_model.py` to the exact bytes each case delivers, and grade them against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb33cd29a5f50894fafc569`). The event bytes are built by `generators/spec_tables/keri_events.py` from the specification's field rules with the standard library only (SAIDs by the CESR SAID protocol over Blake3-256, Ed25519 signatures per RFC 8032), so keripy is not in the provenance of any KERI case. It is used afterwards to cross-check, never as the authority.
+
+How the cross-check was run, from the repository root:
+
+```sh
+cd generators/keripy_keri_check && uv run python check.py --report /tmp/keripy-main-keri-report.json
+```
+
+`generators/keripy_keri_check` pins keripy main at `9a8b7aa70960f16fe7acffd8cf7901941ac912a1` (Python 3.14), the same commit as the keripy adapter. It checks two things for every case in `cases/keri/`:
+
+- **Bytes.** keripy's `SerderKERI(sad=..., makify=True)` rebuilds each key event from its field values, recomputing the version string, the SAID and any self-addressing prefix, and must produce the case's body byte for byte; a body whose SAID or prefix a scenario tampered with on purpose must not be reproduced. keripy's `Verfer` must verify every controller and witness signature the scenario made and refuse every one it forged.
+- **Dispositions.** The messages go, in order, through keripy's `Parser` into a fresh `Kevery(lax=False, local=False)`, with `Kevery.processEscrows()` run after each delivery until keripy's tables stop changing. Each reading comes from keripy's state (first-seen ordinals, its escrow tables, the last event at each sequence number), and the case's assertions are evaluated with the runner's own evaluator. The check does not share code with the keripy adapter.
+
+Last run: 2026-10-05, all cases in `cases/keri/`.
+
+## Results
+
+Every assertion of every KERI case agrees with keripy main, at every level, including the `keri-escrow` profile. keripy rebuilds every untampered body byte for byte, refuses to rebuild or parse the bodies whose SAID or prefix the scenarios tampered with, and verifies or refuses each signature exactly as the scenarios made it. No case is disputed.
+
+Two conventions the cases share with keripy, which the specification does not pin down (both are in `generators/SPEC-ISSUES.md`): a next-key digest is the Blake3-256 digest of the qualified public key's text (K-I1), and each stream starts with the genus/version code `-_AAACAA` (K-G6). keripy main reads streams with or without that code the same way.
+
+keripy 1.2.14 was not run. It implements KERI 1.x bodies only, and every case so far carries 2.XX bodies.
+
+## Where keripy agrees for a different reason (not a case disagreement)
+
+- **KERI-0024, a rotation after a non-transferable inception.** The decision procedure refuses the rotation at step 3, because line 340 allows no more key events after a non-transferable inception. keripy refuses it earlier, when it parses the body: `ValidationError: ... Non-transferable code = B with non-empty nxt`. keripy treats any event of a basic non-transferable prefix that carries next keys as malformed, a rule of its own about basic prefixes (catalogue gap G15), and for the same reason its `SerderKERI` will not build that rotation at all, so the byte check cannot reproduce it. Both readings are "not seen", which is all the case grades. KERI-0025 tests the same rule with a self-addressing prefix, which keripy refuses by state, as the procedure does.
+- **Conflicting events that are not rotations** (KERI-0042, KERI-0044, KERI-0045 and KERI-0050). keripy reports the refused event as `duplicitous`. The cases grade only not seen there, at SHOULD, since the design treats duplicitous as informative for a validator.
+- **Readings the cases do not grade.** keripy keeps an event whose pre-rotation commitment is broken (KERI-0021) or whose delegating seal is missing (KERI-0028, KERI-0033, KERI-0034) as pending. The specification says only that such an event is not accepted, so the cases grade only not seen.
