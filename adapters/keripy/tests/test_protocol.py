@@ -30,8 +30,9 @@ def test_hello_answers_protocol_1_with_identity(keri_dist):
 
 def test_hello_features_follow_the_keripy_generation():
     features = handle({"id": 0, "op": "hello", "protocol": 1})["result"]["features"]
-    common = {"cesr.domain.binary", "cesr.serialization.json", "cesr.serialization.cbor",
-              "cesr.serialization.mgpk", "keri.version-1.x"}
+    # keripy reports item extents, as measure.py measures them, for both generations.
+    common = {"cesr.domain.binary", "cesr.item-extents", "cesr.serialization.json",
+              "cesr.serialization.cbor", "cesr.serialization.mgpk", "keri.version-1.x"}
     if GENERATION == "main":
         assert set(features) == common | {"cesr.genus-1.00", "cesr.genus-2.00",
                                           "keri.version-2.x"}
