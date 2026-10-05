@@ -51,8 +51,9 @@ def ranges_from_hook(lines, default_base: str) -> list[str]:
 
 
 def _git(repo: pathlib.Path, *args) -> str:
-    return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True,
-                          text=True).stdout
+    # Plain, machine-readable output whatever the user's git configuration says.
+    return subprocess.run(["git", "-C", str(repo), "-c", "color.ui=false", "-c", "core.pager=cat",
+                           *args], check=True, capture_output=True, text=True).stdout
 
 
 def findings(repo: pathlib.Path, rng: str, patterns: list[re.Pattern]) -> list[str]:
@@ -65,11 +66,12 @@ def findings(repo: pathlib.Path, rng: str, patterns: list[re.Pattern]) -> list[s
             found.append(f"the commit message of {sha[:12]}")
     current = None
     diff_range = rng if "..." in rng else rng.replace("..", "...", 1)  # changes since the base
-    for line in _git(repo, "diff", "--unified=0", diff_range).splitlines():
+    for line in _git(repo, "diff", "--no-ext-diff", "--no-color", "--no-textconv", "--unified=0",
+                     diff_range).splitlines():
         if line.startswith("+++ "):
             current = line[6:] if line.startswith("+++ b/") else line[4:]
         elif line.startswith("+") and any(p.search(line[1:]) for p in patterns):
-            found.append(f"an added line in {current}")
+            found.append(f"an added line in {current or '(unknown file)'}")
     return found
 
 
@@ -83,9 +85,13 @@ def main(argv=None) -> int:
     parser.add_argument("--base", default="origin/main", help="base for a newly pushed branch")
     args = parser.parse_args(argv)
     repo = args.repo.resolve()
-    path = args.patterns or default_patterns(repo)
-    if not path.is_file():
-        print(f"{W_NO_PATTERNS}: The private embargo list was not found at {path}, so this "
+    try:
+        path = args.patterns or default_patterns(repo)
+    except (subprocess.CalledProcessError, OSError):
+        path = None
+    if path is None or not path.is_file():
+        where = f"at {path}" if path is not None else "(not a git checkout in the usual layout)"
+        print(f"{W_NO_PATTERNS}: The private embargo list was not found {where}, so this "
               "push was not checked against it.", file=sys.stderr)
         return 0
     patterns = load_patterns(path)
@@ -99,9 +105,10 @@ def main(argv=None) -> int:
                   "Fetch the remote and try again.", file=sys.stderr)
             return 2
     if found:
+        places = "; ".join(found)
         print(f"{E_EMBARGO}: This push mentions something on the private embargo list, in "
-              + "; ".join(found) + ". Remove it from the files and rewrite the commit messages "
-              "before pushing; do not push embargoed details to this public repository.",
+              f"{places}. Remove it from the files and rewrite the commit messages before "
+              "pushing; do not push embargoed details to this public repository.",
               file=sys.stderr)
         return 1
     return 0

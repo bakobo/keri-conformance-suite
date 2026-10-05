@@ -43,7 +43,7 @@ def base(repo):
     return git(repo, "rev-parse", "HEAD").strip()
 
 
-def test_clean_changes_pass(repo, patterns, capsys):
+def test_clean_changes_pass(repo, patterns):
     start = base(repo)
     commit(repo, "b.txt", "nothing to see\n")
     assert guard.main(["--repo", str(repo), "--patterns", str(patterns), "--range",
@@ -140,3 +140,16 @@ def test_default_patterns_follow_the_repository_name(tmp_path):
     git(renamed, "init", "-q", "-b", "main")
     assert guard.default_patterns(renamed) == (
         bakobo / "reviews" / "renamed-suite" / "embargoed" / "patterns.txt")
+
+
+def test_outside_a_git_repository_the_guard_warns_and_passes(tmp_path, capsys):
+    assert guard.main(["--repo", str(tmp_path), "--range", "a..b"]) == 0
+    assert "w.rule.embargo.patterns-missing.f" in capsys.readouterr().err
+
+
+def test_an_external_diff_driver_does_not_hide_a_match(repo, patterns):
+    git(repo, "config", "diff.external", "false")
+    start = base(repo)
+    commit(repo, "b.txt", "CESR-0099\n")
+    assert guard.main(["--repo", str(repo), "--patterns", str(patterns), "--range",
+                       f"{start}..HEAD"]) == 1
