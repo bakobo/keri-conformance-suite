@@ -78,7 +78,7 @@ cd generators/keripy_keri_check && uv run python check.py --report /tmp/keripy-m
 - **Bytes.** keripy's `SerderKERI(sad=..., makify=True)` rebuilds each key event from its field values, recomputing the version string, the SAID and any self-addressing prefix, and must produce the case's body byte for byte; a body whose SAID or prefix a scenario tampered with on purpose must not be reproduced. keripy's `Verfer` must verify every controller and witness signature the scenario made and refuse every one it forged.
 - **Dispositions.** The messages go, in order, through keripy's `Parser` into a fresh `Kevery(lax=False, local=False)`, with `Kevery.processEscrows()` run after each delivery until keripy's tables stop changing. Each reading comes from keripy's state (first-seen ordinals, its escrow tables, the last event at each sequence number), and the case's assertions are evaluated with the runner's own evaluator. The check does not share code with the keripy adapter.
 
-Last run: 2026-10-05, all cases in `cases/keri/`.
+Last run: 2026-10-05 (batch-1 revision), all cases in `cases/keri/`.
 
 ## Results
 
@@ -86,7 +86,9 @@ Every assertion of every KERI case agrees with keripy main, at every level, incl
 
 Two conventions the cases share with keripy, which the specification does not pin down (both are in `generators/SPEC-ISSUES.md`): a next-key digest is the Blake3-256 digest of the qualified public key's text (K-I1), and each stream starts with the genus/version code `-_AAACAA` (K-G6). keripy main reads streams with or without that code the same way.
 
-keripy 1.2.14 was not run. It implements KERI 1.x bodies only, and every case so far carries 2.XX bodies.
+keripy 1.2.14 was not run through the full cross-check. It implements KERI 1.x bodies only, and every case carries 2.XX bodies. It was probed by hand for this batch's published duplicate-signature cases and agrees with keripy main.
+
+The second batch (KERI-0054 onward) adds companion safety cases, duplicate-signature and witness-threshold cases, delegated-rotation seal cases, a delegatee interaction, a corrupt-copy case and a post-recovery disputed-branch case. Every assertion of every published case agrees with keripy main. A few additional safety cases in this area are held out of the public tree under the embargo policy (`docs/design.md`, Security) and are not described here.
 
 ## Where keripy agrees for a different reason (not a case disagreement)
 

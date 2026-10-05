@@ -206,6 +206,89 @@
       ]
     },
     {
+      "id": "KERI-0066",
+      "key": "KS-62b",
+      "title": "A corrupt copy does not evict a kept event",
+      "description": "An inception with two keys and threshold 2; an interaction signed by one key, which a validator should keep; a copy of it with one character of its seal changed and its SAID left as claimed, which anyone can make without a key; then the interaction's second signature. The corrupt copy fails its SAID and is refused on its own (line 1737). A validator that kept the first copy accepts the interaction.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "icp"
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "b0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "6/already-seen"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/said",
+            "1/said"
+          ],
+          "corrupt": "a"
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "b0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ],
+      "companion": {
+        "id": "KERI-0065",
+        "key": "KS-62bs",
+        "title": "A corrupt copy does not evict a kept event: safety half",
+        "description": "KS-62b's deliveries, graded only at MUST and without needing keri.escrow: the corrupt copy and the half-signed copy must not be accepted, and if the interaction is accepted its key state is that interaction's."
+      }
+    },
+    {
       "id": "KERI-0046",
       "key": "KS-63",
       "title": "Superseding recovery of one interaction",
@@ -373,6 +456,121 @@
       ]
     },
     {
+      "id": "KERI-0067",
+      "key": "KS-64b",
+      "title": "After recovery, the disputed branch cannot be extended",
+      "description": "KS-64's recovery, then an interaction whose prior is the superseded interaction at sequence number 2, signed by the key that branch was issued under, as whoever holds the compromised key could make. Its signature verifies against its own chain, but its prior is not on the trunk, so a validator that performed the recovery should not accept it. A validator that declined the recovery still holds the disputed branch as its trunk and accepts it, so this is graded SHOULD with the recovery.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "prior": "icp",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        },
+        {
+          "name": "ixn2b",
+          "aid": "A",
+          "t": "ixn",
+          "prior": "rot1"
+        },
+        {
+          "name": "ixn3",
+          "aid": "A",
+          "t": "ixn",
+          "prior": "ixn2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "5/supersedes",
+            "5/supersedes"
+          ]
+        },
+        {
+          "event": "ixn2b",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn3",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/prior-digest",
+            "4/prior-digest"
+          ]
+        }
+      ]
+    },
+    {
       "id": "KERI-0050",
       "key": "KS-66b",
       "title": "Retrograde interaction signed by a rotated-out key",
@@ -484,6 +682,10 @@
     },
     {
       "number": 53,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 57,
       "reason": "Allocated; not in this tree."
     }
   ]

@@ -83,6 +83,172 @@
       ]
     },
     {
+      "id": "KERI-0059",
+      "key": "KS-46b",
+      "title": "Witness threshold met only by counting one witness twice",
+      "description": "A witnessed inception with witness threshold 2 carrying the first witness's signature twice. One witness has signed (line 1264), so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1",
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0060",
+      "key": "KS-46c",
+      "title": "Rotation under its witness threshold",
+      "description": "KS-45's witnessed inception, then a rotation that keeps the witnesses and witness threshold 2 but carries only one witness signature. Line 1264 applies to rotations too, so a validator must not accept it, and should keep it for the missing signature.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0061",
+      "key": "KS-46d",
+      "title": "Interaction under its witness threshold",
+      "description": "KS-45's witnessed inception, then an interaction carrying only one witness signature against the inception's witness threshold 2. Line 1264 applies to interactions, so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
       "id": "KERI-0038",
       "key": "KS-47",
       "title": "Witness threshold completed by receipts",

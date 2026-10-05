@@ -190,6 +190,84 @@
       ]
     },
     {
+      "id": "KERI-0056",
+      "key": "KS-05b",
+      "title": "Signing threshold met only by counting one signature twice",
+      "description": "An inception with keys [a0, b0] and signing threshold 2, carrying a0's signature twice at index 0, byte for byte. The threshold counts distinct signers (line 1258), so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "a0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0058",
+      "key": "KS-05d",
+      "title": "Signing threshold met only by one key claiming two indices",
+      "description": "The inception of KS-05b carrying a0's signature at index 0 and again at index 1, b0's position. Only the first verifies, so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            {
+              "key": "a0",
+              "index": 0
+            },
+            {
+              "key": "a0",
+              "index": 1
+            }
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
       "id": "KERI-0005",
       "key": "KS-06",
       "title": "Signing threshold completed by a second copy",

@@ -160,14 +160,21 @@ Against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb
 - **Effect.** Every KERI case's stream starts with the genus/version code `-_AAACAA`, so its attachments are unambiguous under the CESR specification.
 - **The specification should state** whether the version string's genus version governs the message's attachments.
 
+### K-G7. A signer that meets a threshold through two encodings of one signature
+
+- **Text.** L1258, L1262 and L1264 say "A set of controller-indexed signatures ... MUST at least satisfy the current signing threshold". A signature's index names its signer, so the threshold counts distinct indices. The CESR specification gives one signature more than one indexed encoding (for example code `A` and the big dual code `2A` at the same index), which are different bytes carrying the same raw signature.
+- **Gap.** Nothing says a validator must collapse the two encodings to one signer before counting. A validator that counts distinct wire strings lets one key of a multi-signature group satisfy the whole threshold.
+- **The specification should state** that threshold satisfaction counts distinct verified signer indices, independent of a signature's encoding.
+- **Effect.** The duplicate-at-one-index cases KS-05b and KS-05d are published (KERI-0056, KERI-0058), because keripy counts them as one signer. The two-encoding case is held (allocated as a gap), because keripy counts it as two and accepts the event; see the private candidates note.
+
 ## Inferred or interpreted text
 
 ### K-I1. What a next-key digest digests (lines 340, 1325)
 
 - **Text.** Line 340: the `n` field holds "a fully qualified digest of a public key". Line 1325: "each public key from the set of pre-rotated keypairs MUST be hidden as a qualified cryptographic digest of that public key."
-- **Gap.** Neither says whether the digest is over the public key's raw bytes or over its qualified (CESR text) form. The two give different digests, so validators that read it differently reject every rotation the other accepts.
-- **Effect.** The cases digest the qualified public key's text, as keripy does.
-- **The specification should state** the digest's input.
+- **Gap.** Neither keyworded sentence says whether the digest is over the public key's raw bytes or over its qualified (CESR text) form. The two give different digests, so validators that read it differently reject every rotation the other accepts.
+- **Corroboration.** The `icp` example's next keys (L610-617) digest, as Blake3-256 over their qualified qb64 text, to exactly the example's `n` values (L577-582); the cases use the same convention. So the example pins the reading the keywords leave open. Under the "keyword governs" rule it stays inferred, but it is the specification's own convention, not only keripy's.
+- **The specification should state** the digest's input in a keyworded sentence.
 
 ### K-I2. Line 1823 for a non-delegated KEL
 
@@ -178,8 +185,15 @@ Against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb
 ### K-I3. A non-transferable identifier's key and prefix (lines 340, 353; catalogue G15)
 
 - **Text.** Line 340 makes an inception with empty next keys non-transferable. Nothing states what code its prefix or its key must carry, or whether a basic prefix must equal its single key.
-- **Effect.** KERI-0024 uses a basic non-transferable prefix whose key is qualified as non-transferable too; KERI-0025 uses a self-addressing prefix with empty next keys. Both must refuse a later rotation under line 340. keripy refuses the first while parsing, by its own basic-prefix rules (`DISAGREEMENTS.md`).
-- **The specification should state** the rules for basic prefixes.
+- **Effect.** KERI-0024 uses a basic non-transferable prefix whose key is qualified as non-transferable too; KERI-0025 uses a self-addressing prefix with empty next keys. Both must refuse a later rotation under line 340. keripy refuses the first while parsing, by its own basic-prefix rules (`DISAGREEMENTS.md`). The model derives a prefix's kind from its derivation code: any digest code (the master table's `E`, `F`, `0D` and the rest) is self-addressing and its `d` must equal `i`; a basic code (`D`, `B`) must equal the inception's only key; any other prefix code, or a basic prefix that is not the single key, is refused as not modelled rather than passed.
+- **The specification should state** the rules for basic prefixes: which codes a prefix may carry, and that a basic prefix MUST equal the inception's single key.
+
+### K-I4. Whether a non-canonical JSON body is valid
+
+- **Text.** The CESR SAID protocol fixes the SAID over "the serialization" of the body. KERI message bodies are shown as compact JSON (no whitespace), for example at L596-607, but no keyworded sentence says a validator must reject a body that carries the right SAID over bytes that are not the compact serialization: extra whitespace, a `\u` escape, or a repeated label.
+- **Gap.** A body that is self-consistent (its SAID is correct over its own bytes) but not compact has an unclear status. Duplicate top-level labels (CSR-F2) are the case with a safety consequence: two validators parsing `{...,"k":[A],...,"k":[B],...}` first-wins and last-wins derive different key states from one signed, same-SAID body, with no second KEL anyone can hold up as evidence of duplicity.
+- **The specification should state** that a validator MUST reject a KERI body that is not the canonical (compact, unique-label) serialization its SAID is taken over.
+- **Effect.** The generator's model refuses such a body as not modelled rather than grading it (`keri_model.intrinsic`), so no case depends on the reading, and no duplicate-label case is built. The duplicate-label divergence is a reason to rule L253's field-order obligation (K-I-field-order) a validator rule.
 
 ## The specification against itself
 

@@ -136,7 +136,9 @@ Which item kind an extraction becomes depends on the class keripy chose: a `Coun
 
 Initial readings are taken at quiescence after each message's own delivery, final readings and `trunk` at quiescence after the last.
 
-**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, `keri-1.0` is conformant: all 44 cases pass, with 92 active MUST and 153 active SHOULD assertions passing and none failing. `keri-escrow`'s 3 cases pass; its verdict is `no-evidence`, because its assertions are INTEROP. The baselines are `baseline-keri-1.0.json` and `baseline-keri-escrow.json`, written with the baseline tool from fresh runs. CI does not compare them yet: the `keripy-adapter` job in `.github/workflows/ci.yml` compares only `cesr-1.0` and `keripy-1x-interop`.
+The adapter's `reading` returns `rejected` for a message it finds in neither keripy's seen state nor any escrow table, so a pass on a `rejected` assertion shows that keripy kept the message nowhere, not which rule dropped it; that is what the case grades, as with the self-agreement note.
+
+**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, `keri-1.0` is conformant: every case passes, with every active MUST and SHOULD assertion passing and none failing. `keri-escrow`'s 3 cases pass; its verdict is `no-evidence`, because its assertions are INTEROP. The baselines are `baseline-keri-1.0.json` and `baseline-keri-escrow.json`, written with the baseline tool from fresh runs, and are re-recorded whenever the cases move. The `keripy-adapter` job in `.github/workflows/ci.yml` compares both against fresh runs, as it does `cesr-1.0` and `keripy-1x-interop`.
 
 ```sh
 uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile keri-1.0 --report /tmp/r.json

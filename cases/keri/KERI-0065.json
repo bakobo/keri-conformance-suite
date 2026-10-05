@@ -1,0 +1,135 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "MUST",
+      "message": 1,
+      "note": "Decision procedure step 4 (signing-threshold).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures.",
+        "section": "Validator",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validator"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "level": "MUST",
+      "message": 2,
+      "note": "Decision procedure step 1 (said).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures.",
+        "section": "Validator",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validator"
+      },
+      "expected": "not-seen",
+      "id": "a3",
+      "level": "MUST",
+      "message": 2,
+      "note": "Decision procedure step 1 (said).",
+      "phase": "final"
+    },
+    {
+      "aid": "EGqPakoSrcYFu7a0Wi_fjGtv2n95uF2ZtpecZIwKePMc",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+          "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq"
+        ],
+        "kt": "2",
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
+          "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy"
+        ],
+        "nt": "2",
+        "said": "EAyMIxLJjQ0G4MY3df2g0QfzMiLuY0uhG8qsA5VgUUHn",
+        "sn": 1,
+        "wits": []
+      },
+      "id": "a4",
+      "if_seen": 1,
+      "level": "MUST"
+    }
+  ],
+  "description": "KS-62b's deliveries, graded only at MUST and without needing keri.escrow: the corrupt copy and the half-signed copy must not be accepted, and if the interaction is accepted its key state is that interaction's.",
+  "id": "KERI-0065",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141474c2e222c2274223a22696370222c2264223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2269223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2273223a2230222c226b74223a2232222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834222c22444f7874536a4168484638757267487055647939416e436648576b3965365a35525a786b4c6977555f547371225d2c226e74223a2232222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564222c22454a62775379705a3436544e4b4a5a7a2d666130744f5565706b4c774974685f324c555066475f6751427379225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341742d4b4173414142665f6441646d48546236315f64484473686f552d313474784d334935334458334a4a4b474c6270684a304f52772d6f4359652d70734d5349346b54306874433756646b456d59555f68516e524b76306553366149434142425a54355a65635f2d472d59537a4b6e363130454f5045465161313055596156464154394b5144695237726d37785772764e316853564a476b70484f49626a4630663567554b736d75436850725a5f78575f41574945"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145382e222c2274223a2269786e222c2264223a224541794d49784c4a6a513047344d5933646632673051667a4d694c755930756847387173413556675555486e222c2269223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2273223a2231222c2270223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2261223a5b7b2269223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2273223a2230222c2264223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63227d5d7d2d4341582d4b4157414142546e77794b4c372d62634353496d2d5255624b30764d726f6870736f4c6477524a494c69552d6579426b4d796c7a6442696c44686d71375a3335655759376c48566a5a6b46344b656f43394b6c7242764562643846"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145382e222c2274223a2269786e222c2264223a224541794d49784c4a6a513047344d5933646632673051667a4d694c755930756847387173413556675555486e222c2269223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2273223a2231222c2270223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2261223a5b7b2269223a2245417150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2273223a2230222c2264223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63227d5d7d2d4341582d4b4157414142546e77794b4c372d62634353496d2d5255624b30764d726f6870736f4c6477524a494c69552d6579426b4d796c7a6442696c44686d71375a3335655759376c48566a5a6b46344b656f43394b6c7242764562643846"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145382e222c2274223a2269786e222c2264223a224541794d49784c4a6a513047344d5933646632673051667a4d694c755930756847387173413556675555486e222c2269223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2273223a2231222c2270223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2261223a5b7b2269223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63222c2273223a2230222c2264223a2245477150616b6f53726359467537613057695f666a477476326e39357546325a747065635a49774b65504d63227d5d7d2d4341582d4b415741424342616377496765677869316b4943613873347767764e5a6c645969414b507143514c78476b387976476b5a6f5262515256413969526a45645a502d4b426d69674757596a4c4e374e4f33576131723168486157344e"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/duplicity.json#KS-62bs"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.multisig.numeric",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "A corrupt copy does not evict a kept event: safety half"
+}

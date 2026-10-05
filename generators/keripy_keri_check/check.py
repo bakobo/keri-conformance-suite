@@ -75,7 +75,9 @@ def body_of(stream: bytes) -> tuple[dict, bytes]:
 def scenario_of(case) -> dict:
     path, key = case["provenance"]["scenario"].split("#")
     scenario = json.loads((ROOT / path).read_text())
-    return next(c for c in scenario["cases"] if c["key"] == key)
+    # A companion case (the ungated MUST half of a scenario) has its parent's deliveries.
+    return next(c for c in scenario["cases"]
+                if key in (c["key"], c.get("companion", {}).get("key")))
 
 
 def extract(stream: bytes):
@@ -101,6 +103,8 @@ def check_bytes(case) -> list[str]:
         stream = bytes.fromhex(m["stream"])
         body, raw = body_of(stream)
         name = d.get("event") or d.get("receipt")
+        if "event" in d and "corrupt" in d:
+            continue  # a corrupt copy: keripy must refuse it, which the dispositions check
         if "event" in d:
             try:
                 same = serdering.SerderKERI(sad=dict(body), makify=True).raw == raw
@@ -122,12 +126,13 @@ def check_bytes(case) -> list[str]:
         keys = body.get("k") if "event" in d and body["t"] != "ixn" else None
         forged = [isinstance(s, dict) and s.get("forged") for s in d.get("sigs", [])]
         if keys is not None:
+            # A genuine (non-forged) signature verifies against one of the event's keys, whatever
+            # index it is attached at; a forged one against none. The index is keripy's business.
             for siger, bad in zip(exts.sigers, forged, strict=True):
-                ok = siger.index < len(keys) and Verfer(qb64=keys[siger.index]).verify(
-                    siger.raw, signed)
+                ok = any(Verfer(qb64=k).verify(siger.raw, signed) for k in keys)
                 if ok == bool(bad):
                     notes.append(f"message {i} ({name}): keripy's Verfer says signature "
-                                 f"{siger.index} {'verifies' if ok else 'does not verify'}")
+                                 f"at index {siger.index} {'verifies' if ok else 'does not'}")
         wits = ev.get("wits")
         wforged = [isinstance(w, dict) and w.get("forged") for w in d.get("wigs", [])]
         if wits and exts.wigers:
@@ -203,6 +208,8 @@ def key_state(kever) -> dict:
 
 def run_case(case) -> dict:
     messages = [bytes.fromhex(m["stream"]) for m in case["input"]["messages"]]
+    spec = scenario_of(case)
+    corrupt = [bool(d.get("corrupt")) for d in spec["messages"]]
     idents = []
     for s in messages:
         body, _ = body_of(s)
@@ -223,12 +230,19 @@ def run_case(case) -> dict:
                 if now == before:
                     break
                 before = now
-            if idents[i][0] == "rct":
+            if corrupt[i]:
+                # A copy whose SAID does not match its body is dropped; it shares the genuine
+                # event's claimed SAID, so it cannot be read by (pre, sn, said).
+                result["dispositions"][i] = {"initial": "rejected"}
+            elif idents[i][0] == "rct":
                 result["dispositions"][i] = {"initial": "seen", "final": "seen", "trunk": False}
             else:
                 state, _ = readings(db, kvy, idents[i])
                 result["dispositions"][i] = {"initial": state}
         for i, ident in enumerate(idents):
+            if corrupt[i]:
+                result["dispositions"][i].update({"final": "rejected", "trunk": False})
+                continue
             if ident[0] == "rct":
                 continue
             state, trunk = readings(db, kvy, ident)
