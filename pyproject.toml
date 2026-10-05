@@ -33,7 +33,7 @@ packages = ["src/keri_conformance"]
 # The gate measures the runner and the stdlib case generators (scripts/regenerate is a one-line
 # entry point to generators/spec_tables/cli.py). The keripy cross-checks under generators/keripy*
 # need keripy, run by hand in their own environments, and are not imported here.
-addopts = "--cov=keri_conformance --cov=generators.spec_tables --cov-branch --cov-report=term-missing --cov-fail-under=100"
+addopts = "--cov=keri_conformance --cov=generators.spec_tables --cov=tools --cov-branch --cov-report=term-missing --cov-fail-under=100"
 testpaths = ["tests"]
 
 [tool.ruff]
