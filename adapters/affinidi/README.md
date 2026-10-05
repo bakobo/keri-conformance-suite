@@ -63,13 +63,15 @@ This is the central limitation. Affinidi's parser returns attachments as decoded
 
 ## CI and the baseline
 
-CI level 2 (`docs/design.md`) for this adapter is the `affinidi-adapter` job in `.github/workflows/ci.yml`. It installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, runs `kcs check-adapter`, and then runs `kcs run --profile cesr-1.0` and compares the report with `baseline-cesr-1.0.json`. The comparison is the keripy adapter's tool, run from source with `PYTHONPATH=adapters/keripy/src`; it uses only the standard library, so keripy is not installed. Its rules are the keripy job's: a regression fails, and so does an improvement until the baseline is updated in the same change.
+CI level 2 (`docs/design.md`) for this adapter is the `affinidi-adapter` job in `.github/workflows/ci.yml`. It installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, runs `kcs check-adapter`, and then runs `kcs run` for `cesr-1.0` and for `keripy-1x-interop` and compares each report with its baseline, `baseline-cesr-1.0.json` and `baseline-keripy-1x-interop.json`. The comparison is the keripy adapter's tool, run from source with `PYTHONPATH=adapters/keripy/src`; it uses only the standard library, so keripy is not installed. Its rules are the keripy job's: a regression fails, and so does an improvement until the baseline is updated in the same change.
 
 ```sh
 uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile cesr-1.0 --report /tmp/r.json
 PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-cesr-1.0.json /tmp/r.json
+uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile keripy-1x-interop --report /tmp/i.json
+PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-keripy-1x-interop.json /tmp/i.json
 ```
 
 The committed baseline is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
 
-In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 need `cesr.item-extents` and CESR-0048 also needs `cesr.genus-2.00`, so none is sent; in `cesr-strict`, both cases need `cesr.genus-2.00`. Every case that must be rejected today is a 2.00 case, so the accepted summary does not yet produce evidence for Affinidi; it will once there are must-reject cases on 1.00 streams.
+In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 need `cesr.item-extents` and CESR-0048 also needs `cesr.genus-2.00`, so none is sent; in `cesr-strict`, both cases need `cesr.genus-2.00`. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, need no item extents, so they are sent; Affinidi rejects all five, as keripy 1.2.14 does, and they pass. The `keripy-1x-interop` baseline records those five passes and the four cases not sent; its verdict is `no-evidence`, because INTEROP assertions never make a conformance claim.

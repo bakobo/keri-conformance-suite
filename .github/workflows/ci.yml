@@ -174,9 +174,9 @@ jobs:
 
   # Level 2 for the Affinidi adapter (adapters/affinidi/README.md). It builds the adapter against
   # its exact crates.io pins from Cargo.lock with the toolchain rust-toolchain.toml names, runs
-  # the adapter's own lint and tests, probes it, and compares a cesr-1.0 run with
-  # baseline-cesr-1.0.json using the keripy adapter's baseline tool (standard library only, so it
-  # runs from source without keripy installed). rustup is preinstalled on ubuntu-latest, so no
+  # the adapter's own lint and tests, probes it, and compares a cesr-1.0 run and a
+  # keripy-1x-interop run with their committed baselines using the keripy adapter's baseline
+  # tool (standard library only, so it runs from source without keripy installed). rustup is preinstalled on ubuntu-latest, so no
   # third-party action is needed for the toolchain.
   affinidi-adapter:
     runs-on: ubuntu-latest
@@ -216,3 +216,12 @@ jobs:
           set -e
           PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
             adapters/affinidi/baseline-cesr-1.0.json "$RUNNER_TEMP/affinidi-cesr-1.0.json"
+      - name: Run keripy-1x-interop on Affinidi and compare with its baseline
+        run: |
+          set +e
+          uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" \
+            --profile keripy-1x-interop --report "$RUNNER_TEMP/affinidi-interop.json"
+          echo "kcs run exited $?"
+          set -e
+          PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
+            adapters/affinidi/baseline-keripy-1x-interop.json "$RUNNER_TEMP/affinidi-interop.json"
