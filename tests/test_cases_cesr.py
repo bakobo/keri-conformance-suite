@@ -279,3 +279,34 @@ def test_case_schema_accepts_and_checks_the_policy_fields():
     conflict = json.loads((CASE_DIR / "CESR-0025.json").read_text(encoding="utf-8"))
     conflict["assertions"][0]["spec_conflicts"][0]["extra"] = 1
     assert list(VALIDATOR.iter_errors(conflict))
+
+
+# --- keripy-1x-interop must-reject cases ----------------------------------------------------
+
+INTEROP_REJECT_FAMILIES = (
+    "truncated-primitive", "truncated-count-code", "count-overruns-stream",
+    "unknown-primitive-code", "truncated-message",
+)
+
+
+def _interop_rejects():
+    return {c["provenance"]["scenario"].split("#keripy1x-reject-")[-1]: c
+            for c in CASES.values()
+            if c["profile"] == INTEROP and "#keripy1x-reject-" in c["provenance"]["scenario"]}
+
+
+def test_interop_profile_has_a_must_reject_case_for_each_family():
+    found = _interop_rejects()
+    for family in INTEROP_REJECT_FAMILIES:
+        assert any(key.startswith(family) for key in found), family
+
+
+def test_interop_must_reject_cases_need_no_item_extents_and_name_genus_1_00():
+    """Summary-only adapters that read only the 1.00 table must be sent every one of them."""
+    for key, case in _interop_rejects().items():
+        assert {a["check"] for a in case["assertions"]} == {"rejected"}, key
+        assert {a["level"] for a in case["assertions"]} == {"INTEROP"}, key
+        assert "keripy 1.2.14" in case["assertions"][0]["basis"], key
+        features = case["targets"]["features"]
+        assert "cesr.item-extents" not in features, key
+        assert "cesr.genus-1.00" in features and "cesr.genus-2.00" not in features, key

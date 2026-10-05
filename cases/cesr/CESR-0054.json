@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): its Matter refuses the code 4Z with UnexpectedCodeError (Unsupported code =4Z) when it extracts the receipt couple's prefix.",
+      "check": "rejected",
+      "id": "a1",
+      "level": "INTEROP",
+      "note": "Informative class: unknown-code."
+    }
+  ],
+  "description": "A KERI 1.0 inception with its -A signature group, then a 1.00 -C receipt couple whose prefix is 4ZAB plus one quadlet: selector 4 with the unassigned type Z.",
+  "id": "CESR-0054",
+  "input": {
+    "stream": "7b2276223a224b45524931304a534f4e3030303132625f222c2274223a22696370222c2264223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2269223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2273223a2230222c226b74223a2231222c226b223a5b224450466b37356c425f54436c6c535158546a76366a6447485837777564732d4a4e66735648654a6452692d70225d2c226e74223a2231222c226e223a5b2245494d55677267456565394476457857714a547455422d672d4f69796266745866574e75714d4f2d46475851225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d41414241414338616246466a56594f586733513250634c666b775a58594547725a4331637737492d6a4658757674555f686d74746143376d5f69444352367630547354484d67696b53687159686375304f617a5066426e54466c302d434142345a41424141414130424354674535466a4e57555565557a7962755a4e4f573830363161415965676537666f504c567371753849636957747650316c6e7267775756335653616f4e7a652d69517072716e3967386633584b7444487230345867"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-reject-unknown-primitive-code"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: reject a receipt couple whose prefix has an unassigned code"
+}
