@@ -61,6 +61,15 @@ def test_there_are_cases():
 
 
 @pytest.mark.parametrize("cid", sorted(CASES))
+def test_exactly_the_cases_with_a_decoded_assertion_require_item_extents(cid):
+    # A summary-only adapter is sent every case with only rejections, and none with a decoded
+    # assertion (docs/adapter-protocol.md, "Items, or a summary").
+    case = CASES[cid]
+    decoded = any(a["check"] == "decoded" for a in case["assertions"])
+    assert ("cesr.item-extents" in case["targets"]["features"]) == decoded
+
+
+@pytest.mark.parametrize("cid", sorted(CASES))
 def test_case_validates_against_the_case_schema(cid):
     errors = sorted(VALIDATOR.iter_errors(CASES[cid]), key=lambda e: list(e.path))
     assert not errors, [f"{list(e.path)}: {e.message}" for e in errors]
