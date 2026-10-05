@@ -55,7 +55,6 @@ fn hello_answers_protocol_one_and_declares_what_it_implements() {
         result["features"],
         json!([
             "cesr.genus-1.00",
-            "cesr.item-extents",
             "cesr.serialization.json",
             "keri.version-1.x"
         ])

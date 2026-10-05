@@ -9,24 +9,24 @@
   "verdict": "no-evidence",
   "cases": {
     "CESR-0045": {
-      "outcome": "pass",
+      "outcome": "not-supported",
       "failure": null,
       "assertions": {
-        "a1": "pass"
+        "a1": "not-supported"
       }
     },
     "CESR-0046": {
-      "outcome": "pass",
+      "outcome": "not-supported",
       "failure": null,
       "assertions": {
-        "a1": "pass"
+        "a1": "not-supported"
       }
     },
     "CESR-0047": {
-      "outcome": "pass",
+      "outcome": "not-supported",
       "failure": null,
       "assertions": {
-        "a1": "pass"
+        "a1": "not-supported"
       }
     },
     "CESR-0048": {

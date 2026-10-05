@@ -34,7 +34,7 @@ The adapter is built in the debug profile, but `Cargo.toml` gives every dependen
 
 ## Declared features, and the results that follow
 
-Declared: `cesr.genus-1.00`, `cesr.item-extents`, `cesr.serialization.json`, `keri.version-1.x`. Not declared, and why:
+Declared: `cesr.genus-1.00`, `cesr.serialization.json`, `keri.version-1.x`. Not declared, and why:
 
 - `cesr.genus-2.00`. cesrox 0.1.8 has only the genus 1.00 count-code table (`-A` controller signatures, `-B`, `-C`, `-E`, `-F`, `-G`, `-H`, `-V`, and `-L` with `cesr-proof`), item-counted except `-V`. It has no genus/version code and rejects a stream that starts with one.
 - `cesr.domain.binary`. cesrox reads every code as UTF-8 text.
@@ -43,9 +43,9 @@ Declared: `cesr.genus-1.00`, `cesr.item-extents`, `cesr.serialization.json`, `ke
 
 `cesr.genus-1.00` is declared because the 1.00 codes cesrox has behave as keripy 1.x's do. cesrox lacks some 1.00 codes (`-I`, `-J`, `-K` and the big counters, among others), so a case that uses one of them fails rather than being skipped.
 
-`cesr.item-extents` is declared because the adapter measures every item's offsets from what cesrox consumed (see "Measured, not sourced") for every stream cesrox accepts, except two kinds of group cesrox does not itemize: first-seen couples (`-E`) and pathed material (`-L`). A stream with either is answered with the protocol's accepted summary instead, so a decoded case that contains one fails, as it would have with an `unsupported` error, and a case that must be rejected still gets cesrox's verdict. This is the same trade as `cesr.genus-1.00`: declaring a feature cesrox mostly supports lets its gaps fail visibly rather than hiding its passes.
+`cesr.item-extents` is not declared. That feature promises the decoded items of every stream the implementation accepts (docs/adapter-protocol.md, `cesr.parse`), and this adapter knowingly cannot keep that promise: it measures every item's offsets from what cesrox consumed (see "Measured, not sourced") except inside two kinds of group cesrox does not itemize, first-seen couples (`-E`) and pathed material (`-L`). A stream with either is answered with the protocol's accepted summary. Declaring the feature would make the runner send decoded cases the adapter cannot answer, so no case with a `decoded` assertion is sent to it; those are not-supported. The adapter still reports items for every other accepted stream, and a case whose assertions are all rejections is still sent and still gets cesrox's verdict.
 
-Every case in `cesr-1.0` targets `cesr.genus-2.00`, so the runner sends none of them: 41 cases not-supported, verdict `no-evidence`. In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 pass, and CESR-0048 is not-supported because it also needs `cesr.genus-2.00`. Those assertions are at level INTEROP, so that verdict is `no-evidence` as well. Both `cesr-strict` cases need `cesr.genus-2.00` too. Every case that must be rejected today is a 2.00 case, so none reaches this adapter yet.
+Every case in `cesr-1.0` targets `cesr.genus-2.00`, so the runner sends none of them: 41 cases not-supported, verdict `no-evidence`. In `keripy-1x-interop`, all four cases have a `decoded` assertion, so all four are not-supported (CESR-0048 also needs `cesr.genus-2.00`), and that verdict is `no-evidence` as well. cesrox's output for CESR-0045, CESR-0046 and CESR-0047 does match the expected items exactly, which the adapter's own tests check. Both `cesr-strict` cases need `cesr.genus-2.00` too. Every case that must be rejected today is a 2.00 case, so none reaches this adapter yet.
 
 ## How a stream is parsed
 
