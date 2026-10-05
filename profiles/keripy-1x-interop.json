@@ -9,7 +9,12 @@
     "CESR-0045",
     "CESR-0046",
     "CESR-0047",
-    "CESR-0048"
+    "CESR-0048",
+    "CESR-0049",
+    "CESR-0050",
+    "CESR-0052",
+    "CESR-0054",
+    "CESR-0057"
   ],
   "name": "keripy-1x-interop",
   "normative": false

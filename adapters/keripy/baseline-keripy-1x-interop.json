@@ -35,6 +35,41 @@
       "assertions": {
         "a1": "not-supported"
       }
+    },
+    "CESR-0049": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0050": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0052": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0054": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0057": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
     }
   }
 }

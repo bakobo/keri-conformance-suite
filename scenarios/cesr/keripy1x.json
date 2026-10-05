@@ -1,5 +1,5 @@
 {
-  "about": "Non-normative cases for interoperability with keripy 1.x, which frames attachments with the CESR 1.00 count-code table. No specification defines that table, so these cases cite no clause: every assertion is level INTEROP with a basis naming keripy 1.2.14 behaviour. The 1.x streams carry no genus/version code (keripy 1.x emits none); the 1.00 table is their context. Bodies are KERI 1.0 inception events with SAIDs computed by the CESR SAID protocol.",
+  "about": "Non-normative cases for interoperability with keripy 1.x, which frames attachments with the CESR 1.00 count-code table. No specification defines that table, so these cases cite no clause: every assertion is level INTEROP with a basis naming keripy 1.2.14 behaviour. The 1.x streams carry no genus/version code (keripy 1.x emits none); the 1.00 table is their context. Bodies are KERI 1.0 inception events with SAIDs computed by the CESR SAID protocol. CESR-0049 onward are must-reject streams in the families the cesr-1.0 rejections cover, translated to the 1.00 table and KERI 1.0 bodies; each expects what keripy 1.2.14 does with the stream, which is a rejection.",
   "profile": "keripy-1x-interop",
   "context": "keripy-1.2.14",
   "messages": {
@@ -233,6 +233,173 @@
           "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f), CESR 1.00 count-code table (src/keri/core/counting.py, CounterCodex_1_0) inside the override; the override's scope from CESR v1.0 lines 609 and 814."
         }
       ]
+    },
+    {
+      "id": "CESR-0049",
+      "key": "keripy1x-reject-truncated-primitive",
+      "title": "keripy 1.x: reject a stream that ends inside a signature",
+      "description": "A KERI 1.0 inception framed by its 1.XX version string, then a 1.00 -A group of one Ed25519 indexed signature, with the last two bytes of the stream removed. The adapter protocol makes the end of the input final, so an implementation may not wait for more bytes.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "message": "gamma"
+        },
+        {
+          "group": "-A",
+          "items": [
+            {
+              "indexed": "A",
+              "raw": "kcs/cesr/k1x-reject/trunc",
+              "index": 0
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): its Parser.msgParsator, given this framed stream, yields for more bytes because the -A group's one signature is cut short; under the adapter protocol's end-of-input rule that is a rejection, not a wait.",
+          "note": "Informative class: truncated."
+        }
+      ],
+      "truncate": 2
+    },
+    {
+      "id": "CESR-0050",
+      "key": "keripy1x-reject-truncated-count-code",
+      "title": "keripy 1.x: reject a stream that ends inside a count code",
+      "description": "A KERI 1.0 inception, then only -AA, three characters of a four-character 1.00 count code. The adapter protocol makes the end of the input final, so an implementation may not wait for more bytes.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "message": "gamma"
+        },
+        {
+          "literal": "-AA"
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): its Parser.msgParsator, given this framed stream, yields for more bytes because the stream ends inside the count code; under the adapter protocol's end-of-input rule that is a rejection, not a wait.",
+          "note": "Informative class: truncated."
+        }
+      ]
+    },
+    {
+      "id": "CESR-0052",
+      "key": "keripy1x-reject-count-overruns-stream-quadlets",
+      "title": "keripy 1.x: reject an attachment group that runs past the stream",
+      "description": "A KERI 1.0 inception, then a 1.00 -V attachment group of size 30 quadlets holding 23 (an -A of one signature), at the end of the stream. In the 1.00 table -V counts quadlets. The adapter protocol makes the end of the input final, so an implementation may not wait for more bytes.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "message": "gamma"
+        },
+        {
+          "group": "-V",
+          "size": 30,
+          "items": [
+            {
+              "group": "-A",
+              "items": [
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/k1x-reject/v-overrun",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): its Parser.msgParsator, given this framed stream, yields for more bytes because the -V attachment group's quadlet count runs past the stream (src/keri/core/parsing.py, 'while len(ims) < pags: yield'); under the adapter protocol's end-of-input rule that is a rejection, not a wait.",
+          "note": "Informative class: count-overrun."
+        }
+      ]
+    },
+    {
+      "id": "CESR-0054",
+      "key": "keripy1x-reject-unknown-primitive-code",
+      "title": "keripy 1.x: reject a receipt couple whose prefix has an unassigned code",
+      "description": "A KERI 1.0 inception with its -A signature group, then a 1.00 -C receipt couple whose prefix is 4ZAB plus one quadlet: selector 4 with the unassigned type Z.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "message": "gamma"
+        },
+        {
+          "group": "-A",
+          "items": [
+            {
+              "indexed": "A",
+              "raw": "kcs/cesr/k1x-reject/unknown-prim",
+              "index": 0
+            }
+          ]
+        },
+        {
+          "group": "-C",
+          "size": 1,
+          "items": [
+            {
+              "literal": "4ZABAAAA"
+            },
+            {
+              "primitive": "0B",
+              "raw": "kcs/cesr/k1x-reject/cig"
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): its Matter refuses the code 4Z with UnexpectedCodeError (Unsupported code =4Z) when it extracts the receipt couple's prefix.",
+          "note": "Informative class: unknown-code."
+        }
+      ]
+    },
+    {
+      "id": "CESR-0057",
+      "key": "keripy1x-reject-truncated-message",
+      "title": "keripy 1.x: reject a body shorter than its 1.XX version string declares",
+      "description": "A KERI 1.0 inception with the last five bytes removed, so the body is shorter than the size its version string declares. The adapter protocol makes the end of the input final, so an implementation may not wait for more bytes.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "message": "gamma"
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): its Parser.msgParsator, given this framed stream, yields for more bytes because the body is shorter than its version string declares; under the adapter protocol's end-of-input rule that is a rejection, not a wait.",
+          "note": "Informative class: truncated."
+        }
+      ],
+      "truncate": 5
+    }
+  ],
+  "id_gaps": [
+    {
+      "number": 51,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 53,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 55,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 56,
+      "reason": "Allocated; not in this tree."
     }
   ]
 }

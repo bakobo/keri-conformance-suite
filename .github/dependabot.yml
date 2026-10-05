@@ -12,6 +12,12 @@ updates:
     directory: "/adapters/keriox"
     schedule:
       interval: "weekly"
+    # The adapter deliberately pins the cesrox and said versions keri-core 0.17.13 ships
+    # (adapters/keriox/README.md); moving either is a change to what is being tested, made by
+    # hand with a re-recorded baseline, not a routine bump.
+    ignore:
+      - dependency-name: "cesrox"
+      - dependency-name: "said"
   - package-ecosystem: "cargo"
     directory: "/adapters/affinidi"
     schedule:

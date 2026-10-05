@@ -95,15 +95,24 @@ def main(argv=None):
         case = json.loads(path.read_text(encoding="utf-8"))
         if case["profile"] != "keripy-1x-interop":
             continue
-        if any(it["kind"] == "genus" for a in case["assertions"] for it in a["expected"]):
+        # keripy 1.2.14 cannot read genus 2.00; decide from the case's targets, since a rejected
+        # assertion has no expected items to inspect.
+        if "cesr.genus-2.00" in case["targets"]["features"]:
             results.append({"id": case["id"], "verdicts": ["skipped-genus-2.00-stream"]})
             continue
         try:
             outcome = {"parsed": keripy_view(bytes.fromhex(case["input"]["stream"]))}
         except Exception as e:  # noqa: BLE001 - any exception is keripy 1.2.14 refusing it
             outcome = {"rejected": f"{type(e).__name__}: {e}"}
-        verdicts = ["agree" if outcome.get("parsed") == expected_view(a["expected"])
-                    else "keripy-1.2.14-differs" for a in case["assertions"]]
+        verdicts = []
+        for a in case["assertions"]:
+            if a["check"] == "rejected":
+                # A yield for more bytes on complete input is a rejection under the adapter
+                # protocol's end-of-input rule; keripy_view raises on it.
+                verdicts.append("agree" if "rejected" in outcome else "keripy-1.2.14-accepts")
+            else:
+                verdicts.append("agree" if outcome.get("parsed") == expected_view(a["expected"])
+                                else "keripy-1.2.14-differs")
         results.append({"id": case["id"], "keripy": outcome, "verdicts": verdicts})
     report = {"keripy_version": keri.__version__, "keripy_commit": KERIPY_COMMIT,
               "path": "Parser.msgParsator with a recording Kevery", "cases": results}

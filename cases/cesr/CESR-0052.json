@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "basis": "keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f): its Parser.msgParsator, given this framed stream, yields for more bytes because the -V attachment group's quadlet count runs past the stream (src/keri/core/parsing.py, 'while len(ims) < pags: yield'); under the adapter protocol's end-of-input rule that is a rejection, not a wait.",
+      "check": "rejected",
+      "id": "a1",
+      "level": "INTEROP",
+      "note": "Informative class: count-overrun."
+    }
+  ],
+  "description": "A KERI 1.0 inception, then a 1.00 -V attachment group of size 30 quadlets holding 23 (an -A of one signature), at the end of the stream. In the 1.00 table -V counts quadlets. The adapter protocol makes the end of the input final, so an implementation may not wait for more bytes.",
+  "id": "CESR-0052",
+  "input": {
+    "stream": "7b2276223a224b45524931304a534f4e3030303132625f222c2274223a22696370222c2264223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2269223a22454a7a4e735f306f542d43796a54676b55326243774556596951723758496d4a4347326435583554306d6655222c2273223a2230222c226b74223a2231222c226b223a5b224450466b37356c425f54436c6c535158546a76366a6447485837777564732d4a4e66735648654a6452692d70225d2c226e74223a2231222c226e223a5b2245494d55677267456565394476457857714a547455422d672d4f69796266745866574e75714d4f2d46475851225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d5641652d414142414143675561527159666c4767313478552d58706e6b2d716a5f764669705246686f686b3853773365644b6562394a6e73545a704c756e6c6c646f744f68794b584a5f58566e483035746a50583749356a387a6d30616935"
+  },
+  "operation": "cesr.parse",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": {
+      "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f",
+      "implementation": "keripy"
+    },
+    "scenario": "scenarios/cesr/keripy1x.json#keripy1x-reject-count-overruns-stream-quadlets"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: reject an attachment group that runs past the stream"
+}

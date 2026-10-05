@@ -352,6 +352,11 @@ def build_case(t: Tables, scenario_path: str, case: dict, clauses: dict,
         # Grading decoded items needs their extents; a case with only rejections does not, so it
         # also reaches adapters that answer an accepted stream with a summary.
         sb.features.add("cesr.item-extents")
+    if legacy is not None:
+        # The 1.00 table is the context of every count code in the stream, and of any the stream
+        # cuts short, so the case needs it even when no complete count code appears.
+        sb.features.add("cesr.genus-1.00")
+        sb.wire.add("CESR-1.00")
 
     result = {
         "schema_version": SCHEMA_VERSION,
