@@ -320,7 +320,8 @@ def test_duplicate_assertion_ids_are_a_runtime_rule_beyond_the_schema():
 
 RESULT_DEFS = {
     "cesr.parse": {"oneOf": [{"$ref": "#/$defs/result_decoded"},
-                             {"$ref": "#/$defs/result_rejected"}]},
+                             {"$ref": "#/$defs/result_rejected"},
+                             {"$ref": "#/$defs/result_accepted"}]},
     "cesr.encode": {"$ref": "#/$defs/result_encoded"},
     "keri.process": {"$ref": "#/$defs/result_processed"},
     "keri.emit": {"$ref": "#/$defs/result_emitted"},
@@ -338,6 +339,7 @@ BASE_RESULTS = [
         {"kind": "message", "start": 224, "end": 567, "proto": "KERI", "version": "2.0",
          "serialization": "CBOR", "size": 343}]}),
     ("cesr.parse", {"reject": {"class": "truncated"}}),
+    ("cesr.parse", {"accepted": {"consumed": 479}}),
     ("cesr.encode", {"encoded": "0aff"}),
     ("keri.process", {"dispositions": [{"initial": "pending", "final": "superseded",
                                         "reason": "out-of-order"}],

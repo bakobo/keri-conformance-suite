@@ -75,6 +75,14 @@ def test_decoded_fails_on_a_rejection():
     assert evaluation.actual == {"reject": {"class": "truncated"}}
 
 
+def test_decoded_fails_on_an_accepted_summary():
+    # The runner never sends a decoded case to an adapter that has not declared
+    # cesr.item-extents, so a summary here is out of protocol; it fails, never passes.
+    evaluation = evaluate(decoded(ITEMS), {"accepted": {"consumed": 92}})
+    assert evaluation.outcome == "fail"
+    assert evaluation.actual == {"accepted": {"consumed": 92}}
+
+
 # --- rejected -----------------------------------------------------------------------------------
 
 
@@ -87,6 +95,16 @@ def test_rejected_holds_whatever_the_class():
 def test_rejected_fails_on_decoded_items():
     evaluation = evaluate({"id": "a1", "check": "rejected", "level": "MUST"}, {"items": ITEMS})
     assert evaluation.outcome == "fail"
+
+
+def test_rejected_fails_on_an_accepted_summary():
+    # A summary says the implementation accepted the stream; that is evidence against a stream
+    # that must be rejected, not an absence of evidence.
+    summary = {"accepted": {"consumed": 2}}
+    evaluation = evaluate({"id": "a1", "check": "rejected", "level": "MUST"}, summary)
+    assert evaluation.outcome == "fail"
+    assert evaluation.actual == summary
+    assert "accepted" in evaluation.detail and "2 bytes" in evaluation.detail
 
 
 # --- encoded ------------------------------------------------------------------------------------

@@ -14,6 +14,10 @@
       "description": "Reads and writes the count codes of genus AAA version 2.00, as defined by the CESR specification's master code table.",
       "composable": false
     },
+    "cesr.item-extents": {
+      "description": "Reports each decoded item's byte extents and group ends.",
+      "composable": false
+    },
     "cesr.native": {
       "description": "Parses message bodies encoded natively in CESR.",
       "composable": false

@@ -46,6 +46,7 @@ GOOD_RESPONSES = [
     ]}},
     {"id": 1, "result": {"reject": {"class": "truncated"}}},
     {"id": 2, "result": {"encoded": "45457371"}},
+    {"id": 1, "result": {"accepted": {"consumed": 479}}},
     {"id": 3, "result": {
         "dispositions": [{"initial": "pending", "final": "accepted", "reason": "out-of-order"}],
         "key_states": {"EAbc": {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1",
@@ -105,20 +106,20 @@ def test_hello_composes_is_optional():
 
 
 def test_unknown_disposition_is_refused():
-    message = copy.deepcopy(GOOD_RESPONSES[4])
+    message = copy.deepcopy(GOOD_RESPONSES[5])
     message["result"]["dispositions"][0]["initial"] = "escrowed"
     assert list(RESPONSE.iter_errors(message))
 
 
 def test_not_accepted_is_a_case_projection_not_a_report_value():
     # Adapters report what their implementation did; "not-accepted" is how cases grade it.
-    message = copy.deepcopy(GOOD_RESPONSES[4])
+    message = copy.deepcopy(GOOD_RESPONSES[5])
     message["result"]["dispositions"][0]["initial"] = "not-accepted"
     assert list(RESPONSE.iter_errors(message))
 
 
 def test_superseded_is_final_only():
-    message = copy.deepcopy(GOOD_RESPONSES[4])
+    message = copy.deepcopy(GOOD_RESPONSES[5])
     message["result"]["dispositions"][0]["initial"] = "superseded"
     assert list(RESPONSE.iter_errors(message))
 
@@ -193,3 +194,13 @@ def test_no_request_object_is_closed():
     for node in _walk(SCHEMA["$defs"]["request"]):
         if isinstance(node, dict):
             assert node.get("additionalProperties") is not False
+
+
+def test_an_accepted_summary_carries_only_a_non_negative_integer_consumed():
+    good = {"id": 1, "result": {"accepted": {"consumed": 0}}}
+    assert list(RESPONSE.iter_errors(good)) == []
+    for bad in ({"consumed": -1}, {"consumed": 1.5}, {"consumed": "4"}, {"consumed": True},
+                {}, {"consumed": 4, "items": []}, 4):
+        assert list(RESPONSE.iter_errors({"id": 1, "result": {"accepted": bad}})), bad
+    both = {"id": 1, "result": {"accepted": {"consumed": 4}, "items": []}}
+    assert list(RESPONSE.iter_errors(both))

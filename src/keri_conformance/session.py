@@ -343,6 +343,13 @@ class AdapterSession:
                 outcome = Failure("malformed", f"The adapter reported {got} disposition"
                                                f"{'' if got == 1 else 's'} for {sent} messages; "
                                                "a keri.process result has one per message.")
+        if op == "cesr.parse" and isinstance(outcome, Reply) and "accepted" in outcome.result:
+            # Beyond the schema, which cannot relate the summary to the request's stream.
+            length, consumed = len(fields["stream"]) // 2, outcome.result["accepted"]["consumed"]
+            if consumed > length:
+                outcome = Failure("malformed", f"The adapter's summary says the implementation "
+                                               f"consumed {consumed} bytes of a {length}-byte "
+                                               "stream.")
         if isinstance(outcome, Failure):
             self.kill()
         return outcome
