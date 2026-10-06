@@ -421,12 +421,14 @@
             "additionalProperties": false,
             "required": [
               "initial",
-              "final"
+              "final",
+              "trunk"
             ],
+            "description": "A message's readings, defined in docs/design.md under KERI: initial and final are seen, or the most specific refinement of not seen, at quiescence after its own delivery and after the last message; trunk is whether it is a key event on the trunk at the end, which only a finally seen message can be.",
             "properties": {
               "initial": {
                 "enum": [
-                  "accepted",
+                  "seen",
                   "pending",
                   "rejected",
                   "duplicitous"
@@ -434,15 +436,31 @@
               },
               "final": {
                 "enum": [
-                  "accepted",
+                  "seen",
                   "pending",
                   "rejected",
-                  "duplicitous",
-                  "superseded"
+                  "duplicitous"
                 ]
+              },
+              "trunk": {
+                "type": "boolean"
               },
               "reason": {
                 "type": "string"
+              }
+            },
+            "if": {
+              "properties": {
+                "trunk": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "final": {
+                  "const": "seen"
+                }
               }
             }
           }

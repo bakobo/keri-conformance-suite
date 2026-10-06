@@ -8,6 +8,7 @@ schemas share them.
 from keri_conformance.assertions import normalize_threshold
 from keri_conformance.shapes import (
     HEX,
+    all_of,
     array,
     enum,
     integer,
@@ -20,8 +21,9 @@ from keri_conformance.shapes import (
     tagged,
 )
 
-INITIAL_DISPOSITIONS = ("accepted", "pending", "rejected", "duplicitous")
-FINAL_DISPOSITIONS = (*INITIAL_DISPOSITIONS, "superseded")
+# A message's initial and final readings: seen (accepted into the validator's KEL), or the most
+# specific refinement of not seen that the implementation knows (docs/design.md, KERI).
+READINGS = ("seen", "pending", "rejected", "duplicitous")
 
 HEX_STRING = string(HEX)
 OFFSET = integer(minimum=0)
@@ -50,6 +52,14 @@ KEY_STATE = obj({
     "delegator": nullable(string()),
 })
 
+DISPOSITION = all_of(
+    obj({"initial": enum(*READINGS), "final": enum(*READINGS), "trunk": enum(True, False)},
+        {"reason": string()}),
+    # The trunk is a path through the KEL's events, so only a finally seen message is on it.
+    predicate(lambda value: value["trunk"] is False or value["final"] == "seen",
+              'off the trunk ("trunk": false) unless its final reading is "seen"'),
+)
+
 ERROR = obj({"kind": enum("harness", "unsupported"), "message": string()})
 
 RESULTS = {
@@ -60,9 +70,7 @@ RESULTS = {
                          "accepted": obj({"accepted": obj({"consumed": OFFSET})})}),
     "cesr.encode": obj({"encoded": HEX_STRING}),
     "keri.process": obj({
-        "dispositions": array(obj({"initial": enum(*INITIAL_DISPOSITIONS),
-                                   "final": enum(*FINAL_DISPOSITIONS)},
-                                  {"reason": string()})),
+        "dispositions": array(DISPOSITION),
         "key_states": mapping(KEY_STATE),
     }),
     "keri.emit": obj({"stream": HEX_STRING}),

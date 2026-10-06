@@ -45,18 +45,27 @@ KERI_CASE = {
             "check": "disposition",
             "message": 1,
             "phase": "initial",
-            "expected": "not-accepted",
+            "expected": "not-seen",
             "level": "MUST",
             "clause": CLAUSE,
         },
         {
             "id": "a2",
             "check": "key_state",
+            "if_seen": 1,
             "aid": "EAbc",
             "expected": {
                 "sn": 2, "said": "EDef", "keys": ["DAbc"], "kt": "1",
                 "ndigs": ["EGhi"], "nt": "1", "wits": [], "bt": "0", "delegator": None,
             },
+            "level": "SHOULD",
+            "clause": CLAUSE,
+        },
+        {
+            "id": "a3",
+            "check": "trunk",
+            "message": 1,
+            "expected": True,
             "level": "SHOULD",
             "clause": CLAUSE,
         },
@@ -168,27 +177,54 @@ def test_clause_must_pin_a_commit():
     assert errors(case)
 
 
-@pytest.mark.parametrize(
-    "expected", ["not-accepted", "accepted", "pending", "rejected", "duplicitous", "superseded"]
-)
-def test_disposition_values(expected):
+@pytest.mark.parametrize("phase", ["initial", "final"])
+@pytest.mark.parametrize("expected", ["seen", "not-seen", "pending", "rejected", "duplicitous"])
+def test_disposition_values(expected, phase):
     case = copy.deepcopy(KERI_CASE)
     case["assertions"][0]["expected"] = expected
-    case["assertions"][0]["phase"] = "final"
+    case["assertions"][0]["phase"] = phase
     assert errors(case) == []
 
 
-def test_unknown_disposition_is_rejected():
+@pytest.mark.parametrize("expected", ["escrowed", "accepted", "not-accepted", "superseded"])
+def test_unknown_or_retired_disposition_is_rejected(expected):
+    # Superseded is now a final seen reading with a false trunk reading, not a value of its own.
     case = copy.deepcopy(KERI_CASE)
-    case["assertions"][0]["expected"] = "escrowed"
+    case["assertions"][0]["expected"] = expected
     assert errors(case)
 
 
-def test_superseded_is_only_a_final_disposition():
+def test_trunk_assertion_names_a_message_and_a_boolean():
+    for field in ("message", "expected"):
+        case = copy.deepcopy(KERI_CASE)
+        del case["assertions"][2][field]
+        assert errors(case), field
+    for bad in ("true", 1, None):
+        case = copy.deepcopy(KERI_CASE)
+        case["assertions"][2]["expected"] = bad
+        assert errors(case), bad
+
+
+def test_trunk_is_read_once_so_it_has_no_phase():
     case = copy.deepcopy(KERI_CASE)
-    case["assertions"][0]["expected"] = "superseded"
-    case["assertions"][0]["phase"] = "initial"
+    case["assertions"][2]["phase"] = "final"
     assert errors(case)
+
+
+def test_trunk_is_a_keri_process_check():
+    case = copy.deepcopy(CESR_CASE)
+    case["assertions"] = [{"id": "a1", "check": "trunk", "message": 0, "expected": False,
+                           "level": "MUST", "clause": CLAUSE}]
+    assert errors(case)
+
+
+def test_key_state_is_conditional_on_a_message_being_seen():
+    case = copy.deepcopy(KERI_CASE)
+    del case["assertions"][1]["if_seen"]
+    assert errors(case)
+    for bad in (-1, "1", 1.5, None):
+        case["assertions"][1]["if_seen"] = bad
+        assert errors(case), bad
 
 
 def test_disposition_assertion_needs_message_and_phase():

@@ -34,7 +34,7 @@ TABLE = [
     ]}},
     {"match": {"op": "cesr.encode"}, "result": {"encoded": "10"}},
     {"match": {"op": "keri.process"}, "result": {
-        "dispositions": [{"initial": "accepted", "final": "accepted"}],
+        "dispositions": [{"initial": "seen", "final": "seen", "trunk": True}],
         "key_states": {"EAbc": {
             "sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1", "ndigs": ["EGhi"], "nt": "1",
             "wits": [], "bt": "0", "delegator": None,

@@ -25,8 +25,10 @@ GOOD = [
     make_case("KERI-0001", "keri.process",
               {"perspective": {"role": "validator"},
                "messages": [{"stream": "7b7d", "source": "controller"}]},
-              [assertion("disposition", message=0, phase="initial", expected="accepted"),
-               assertion("key_state", name="a2", level="SHOULD", aid="EAbc", expected=STATE)],
+              [assertion("disposition", message=0, phase="initial", expected="seen"),
+               assertion("key_state", name="a2", level="SHOULD", if_seen=0, aid="EAbc",
+                         expected=STATE),
+               assertion("trunk", name="a3", message=0, expected=True)],
               reference={"implementation": "keripy", "commit": "9a8b7aa"}),
     make_case("KERI-0002", "keri.emit", {"event": {"t": "icp"}, "seeds": {"DAbc": "00"}},
               [assertion("emitted_body", expected="7b7d"),
@@ -265,9 +267,10 @@ def test_a_failure_to_size_a_case_file_is_coded(cases_dir, monkeypatch, number, 
     assert info.value.code == getattr(errors, code)
 
 
-def test_a_disposition_past_the_last_message_is_a_malformed_case(cases_dir):
+@pytest.mark.parametrize(("a", "field"), [(0, "message"), (1, "if_seen"), (2, "message")])
+def test_a_message_index_past_the_last_message_is_a_malformed_case(cases_dir, a, field):
     case = copy.deepcopy(GOOD[3])
-    case["assertions"][0]["message"] = 1  # the case delivers one message
+    case["assertions"][a][field] = 1  # the case delivers one message
     with pytest.raises(errors.RunnerError) as info:
         load_cases(cases_dir(case))
     assert info.value.code == errors.E_CASE_FORMAT

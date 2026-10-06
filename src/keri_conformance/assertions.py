@@ -20,7 +20,8 @@ CRYPTO_CHECKS = ("emitted_body", "signatures_verify", "attachments_equivalent")
 
 @dataclass(frozen=True)
 class Evaluation:
-    """`outcome` is pass, fail or not-implemented; `actual` is what the adapter reported."""
+    """`outcome` is pass, fail, not-applicable (a conditional assertion whose condition does not
+    hold) or not-implemented; `actual` is what the adapter reported."""
 
     outcome: str
     actual: object
@@ -110,24 +111,58 @@ def _encoded(assertion, result):
     return _fail(encoded, "The encoding differs from the expected encoding.")
 
 
-def _disposition(assertion, result):
+def _reading(result, message):
+    """The adapter's entry for one message, or None if it reported none."""
     dispositions = result.get("dispositions")
-    message, phase, expected = assertion["message"], assertion["phase"], assertion["expected"]
     if not isinstance(dispositions, list) or message >= len(dispositions):
+        return None
+    return dispositions[message]
+
+
+def _disposition(assertion, result):
+    message, phase, expected = assertion["message"], assertion["phase"], assertion["expected"]
+    entry = _reading(result, message)
+    if entry is None:
         return _fail(None, f"The adapter reported no disposition for message {message}.")
-    actual = dispositions[message].get(phase)
-    if expected == "not-accepted":
-        excluded = ("accepted", "superseded") if phase == "final" else ("accepted",)
-        holds = actual not in excluded
-    else:
-        holds = actual == expected
+    actual = entry.get(phase)
+    if phase == "final" and expected != "seen" and entry.get("initial") == "seen":
+        # "Once an event has been first seen, it is always seen and can't be unseen" (KERI spec
+        # line 1788), so a message seen on arrival was accepted, whatever is reported later.
+        return _fail(actual, f"Message {message} was seen on arrival, and a seen message is always "
+                             f"seen, so its final reading cannot be {expected}.")
+    holds = actual != "seen" if expected == "not-seen" else actual == expected
     if holds:
         return Evaluation("pass", actual)
-    return _fail(actual, f"Message {message}'s {phase} disposition is {actual}, not {expected}.")
+    return _fail(actual, f"Message {message}'s {phase} reading is {actual}, not {expected}.")
+
+
+def _trunk(assertion, result):
+    message, expected = assertion["message"], assertion["expected"]
+    entry = _reading(result, message)
+    if entry is None:
+        return _fail(None, f"The adapter reported no disposition for message {message}.")
+    actual = entry.get("trunk")
+    if strict_equal(actual, expected):
+        return Evaluation("pass", actual)
+    def where(on):
+        return "on the trunk" if on is True else "off the trunk"
+
+    return _fail(actual, f"Message {message} is {where(actual)} at the end, where it should be "
+                         f"{where(expected)}.")
 
 
 def _key_state(assertion, result):
-    aid, expected = assertion["aid"], assertion["expected"]
+    aid, expected, condition = assertion["aid"], assertion["expected"], assertion["if_seen"]
+    entry = _reading(result, condition)
+    if entry is None:
+        return _fail(None, f"The adapter reported no disposition for message {condition}, on "
+                           "whose acceptance this key-state assertion is conditioned.")
+    # A message seen on arrival stays seen (line 1788), so reporting it unseen later does not
+    # take the key state out of the assertion's reach.
+    if entry.get("final") != "seen" and entry.get("initial") != "seen":
+        return Evaluation("not-applicable", entry.get("final"),
+                          f"The assertion applies only if message {condition} was seen, and its "
+                          f"readings are {entry.get('initial')} and {entry.get('final')}.")
     states = result.get("key_states")
     if not isinstance(states, dict) or aid not in states:
         return _fail(None, f"The adapter reported no key state for {aid}.")
@@ -156,6 +191,7 @@ CHECKS = {
     "rejected": _rejected,
     "encoded": _encoded,
     "disposition": _disposition,
+    "trunk": _trunk,
     "key_state": _key_state,
 }
 

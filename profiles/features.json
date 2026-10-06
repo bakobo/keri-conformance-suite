@@ -75,7 +75,7 @@
       "composable": false
     },
     "kel.recovery": {
-      "description": "Applies the superseding recovery rule.",
+      "description": "Accepts a rotation that the superseding rules permit, and keeps the events it displaces as seen but off the trunk. Only the assertions that such a rotation is accepted require this feature; refusing a rotation the rules do not permit is required of every validator, so cases that check it never require it.",
       "composable": true
     },
     "kel.witness": {
@@ -87,7 +87,7 @@
       "composable": true
     },
     "keri.escrow": {
-      "description": "Holds events that are valid but not yet acceptable, and accepts them when what they wait for arrives.",
+      "description": "Holds events that are valid but not yet acceptable, and accepts them when what they wait for arrives. Only the assertions that a held event is later accepted require this feature; that such an event is not accepted on arrival is required of every validator, so cases that check it never require it.",
       "composable": true
     },
     "keri.routing": {

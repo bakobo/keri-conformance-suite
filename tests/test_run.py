@@ -36,8 +36,9 @@ PASSING = [
     make_case("KERI-0001", "keri.process",
               {"perspective": {"role": "validator"},
                "messages": [{"stream": "7b7d", "source": "controller"}]},
-              [assertion("disposition", message=0, phase="final", expected="accepted"),
-               assertion("key_state", name="a2", level="SHOULD", aid="EAbc", expected=STATE)],
+              [assertion("disposition", message=0, phase="final", expected="seen"),
+               assertion("key_state", name="a2", level="SHOULD", if_seen=0, aid="EAbc",
+                         expected=STATE)],
               features=["kel.basic"], reference={"implementation": "fake-impl", "commit": "0123abc"},
               profile="keri-1.0"),
 ]
@@ -99,9 +100,52 @@ def test_a_conformant_run(cases_dir, tmp_path, capsys):
     assert counts["disputed"]["MUST"] == {"fail": 1}
     assert counts["deprecated"]["MUST"] == {"skipped": 1}
     assert report["summary"]["not_supported_active"] == ["KERI-0002"]
+    # A claim states its SHOULD results beside the MUST verdict (docs/design.md, Versioning).
+    assert report["summary"]["should"] == {"pass": 1, "fail": 1}
+    assert report["summary"]["should_failed"] == 1
     out = capsys.readouterr().out
     assert "conformant" in out
     assert "fake-adapter" in out
+    assert "active SHOULD assertions: 1 fail, 1 pass" in out
+    assert "1 active SHOULD assertion failed" in out
+    assert "1 active SHOULD assertion failed" in report["summary"]["should_warning"]
+
+
+def test_a_run_whose_should_assertions_all_pass_says_nothing_more(cases_dir, tmp_path, capsys):
+    _code, report = run(good(), cases_dir(*PASSING[:2]), tmp_path)
+    assert report["summary"]["should"] == {}
+    assert report["summary"]["should_failed"] == 0
+    assert report["summary"]["should_warning"] is None
+    out = capsys.readouterr().out
+    assert "active SHOULD assertions: none" in out
+    assert "SHOULD assertion failed" not in out
+
+
+NOT_SEEN = [{"match": {"op": "keri.process"}, "result": {
+    "dispositions": [{"initial": "pending", "final": "pending", "trunk": False}],
+    "key_states": {}}}]
+
+
+def test_a_conditional_key_state_whose_message_was_not_seen_does_not_apply(cases_dir, tmp_path,
+                                                                           write_json):
+    case = make_case("KERI-0006", "keri.process", PASSING[3]["input"],
+                     [assertion("disposition", message=0, phase="final", expected="not-seen"),
+                      assertion("key_state", name="a2", if_seen=0, aid="EAbc", expected=STATE)])
+    code, report = run(good("--table", write_json("t.json", NOT_SEEN)), cases_dir(case),
+                       tmp_path)
+    entry = report["cases"][0]
+    assert [a["outcome"] for a in entry["assertions"]] == ["pass", "not-applicable"]
+    assert entry["outcome"] == "pass"
+    assert report["summary"]["counts"]["active"]["MUST"] == {"pass": 1, "not-applicable": 1}
+    assert (code, report["verdict"]) == (errors.EXIT_CONFORMANT, "conformant")
+
+
+def test_not_applicable_is_not_evidence(cases_dir, tmp_path, write_json):
+    case = make_case("KERI-0007", "keri.process", PASSING[3]["input"],
+                     [assertion("key_state", if_seen=0, aid="EAbc", expected=STATE)])
+    code, report = run(good("--table", write_json("t.json", NOT_SEEN)), cases_dir(case),
+                       tmp_path)
+    assert (code, report["verdict"]) == (errors.EXIT_NO_EVIDENCE, "no-evidence")
 
 
 def test_self_agreement_marks_passes_when_the_reference_is_under_test(cases_dir, tmp_path):
@@ -167,7 +211,7 @@ def test_too_few_dispositions_fail_the_case_end_to_end(cases_dir, tmp_path):
     two = make_case("KERI-0009", "keri.process",
                     {"perspective": {"role": "validator"},
                      "messages": [{"stream": "7b7d", "source": "controller"}] * 2},
-                    [assertion("disposition", message=0, phase="final", expected="accepted")])
+                    [assertion("disposition", message=0, phase="final", expected="seen")])
     code, report = run(bad("few-dispositions"), cases_dir(two), tmp_path)
     case = report["cases"][0]
     assert code == errors.EXIT_FAILED
@@ -228,7 +272,7 @@ def test_an_error_reply_fails_the_case(cases_dir, tmp_path):
 
 def test_state_leaking_between_requests_shows_up_in_results(cases_dir, tmp_path):
     first = make_case("KERI-0004", "keri.process", PASSING[3]["input"],
-                      [assertion("disposition", message=0, phase="final", expected="accepted")])
+                      [assertion("disposition", message=0, phase="final", expected="seen")])
     second = {**first, "id": "KERI-0005"}
     _code, report = run(bad("leak"), cases_dir(first, second), tmp_path)
     assert [c["outcome"] for c in report["cases"]] == ["pass", "fail"]

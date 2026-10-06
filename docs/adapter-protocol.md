@@ -127,13 +127,15 @@ Deliver a sequence of messages, in order, to a fresh validator, and report what 
 
 Each message is a hex-encoded stream: a serialized message with its attachments, in whatever domain and serialization the case uses. `source` is a label for diagnostics and for cases about multiple sources, such as duplicity; it has no protocol meaning. `perspective` states who the validator is. Protocol version 1 defines only `{"role": "validator"}`, an ordinary validator with no special relationship to the identifiers involved; further roles will be added as cases need them.
 
-After delivering each message, the adapter must drive its implementation to quiescence: process everything it can, including anything held in escrow that the new message unblocks, until nothing further changes. A message's `initial` disposition is its state at quiescence after its own delivery; its `final` disposition is its state at quiescence after the last message. If an implementation's escrow processing is timer-driven, the adapter must trigger it directly rather than wait.
+After delivering each message, the adapter must drive its implementation to quiescence: process everything it can, including anything held in escrow that the new message unblocks, until nothing further changes. If an implementation's escrow processing is timer-driven, the adapter must trigger it directly rather than wait.
 
 ```json
 {"id": 3, "result": {
   "dispositions": [
-    {"initial": "accepted", "final": "accepted"},
-    {"initial": "pending", "final": "accepted", "reason": "out-of-order"}
+    {"initial": "seen", "final": "seen", "trunk": true},
+    {"initial": "seen", "final": "seen", "trunk": false},
+    {"initial": "pending", "final": "seen", "trunk": true, "reason": "partially signed"},
+    {"initial": "rejected", "final": "rejected", "trunk": false, "reason": "no verified signature"}
   ],
   "key_states": {
     "EAbc...": {
@@ -147,7 +149,14 @@ After delivering each message, the adapter must drive its implementation to quie
 }}
 ```
 
-`dispositions` has one entry per message, in order. Each disposition is `accepted`, `pending`, `rejected`, `duplicitous` or, for a final disposition only, `superseded`, as defined in [`design.md`](design.md). Report the most specific one your implementation knows; an implementation that does not distinguish pending from rejected may report `rejected` for both, and is graded accordingly. `reason` is optional and informative. `key_states` has one entry for every identifier the validator ends up holding accepted state for. Report thresholds as your implementation holds them, as a string or as nested lists of fraction strings; the runner normalizes both sides before comparing.
+`dispositions` has one entry per message, in order, and each entry gives three readings, defined in [`design.md`](design.md) under KERI:
+
+- `initial` is the message's state at quiescence after its own delivery, and `final` its state at quiescence after the last message. Each is `seen` if the implementation has accepted the message into its copy of the KEL ("first seen"). Otherwise it is the most specific of `pending` (held, to be accepted later if what it waits for arrives), `rejected` (dropped) and `duplicitous` (recorded as conflicting with an event already seen) that your implementation knows. An implementation that does not distinguish these may report `rejected` for any message it has not accepted, and is graded accordingly.
+- `trunk` is `true` if, at quiescence after the last message, the message is a key event on the trunk of its KEL, the undisputed path. It can be `true` only when `final` is `seen`. An event that a superseding rotation displaced is reported with `final` `seen` and `trunk` `false`: it is still in the KEL, but off the trunk. For a key event, an implementation without superseding recovery reports `trunk` equal to whether `final` is `seen`; a receipt is never on the trunk, as the next paragraph says.
+
+A receipt is reported in the same terms: `seen` if the implementation attached its signatures to its copy of the event, `pending` if it holds the receipt, `rejected` if it dropped it, and `trunk` always `false`, because a receipt is not a key event. `reason` is optional and informative. Report what the implementation holds, even where it contradicts an earlier reading; the cases grade it. Because a seen message is always seen (KERI spec line 1788), a message reported `seen` on arrival cannot shed that by a later contradictory reading: a final `not-seen` assertion still fails it, and a key-state assertion conditioned on it still applies. This is a safety rule, not a liveness one — it closes the escape from a MUST, and does not run the other way. A `final seen` assertion is still graded against the reported final reading, so an adapter that reports the message finally dropped earns no acceptance credit from the earlier `seen`.
+
+`key_states` has one entry for every identifier the implementation ends up holding seen events for, describing the key state at the end of its trunk. Report thresholds as your implementation holds them, as a string or as nested lists of fraction strings; the runner normalizes both sides before comparing.
 
 ## `keri.emit`
 

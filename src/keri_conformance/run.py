@@ -1,14 +1,17 @@
 """`kcs run`: send every case to the adapter, evaluate its assertions, and build the report.
 
-Outcomes, per assertion: pass, fail, not-implemented (this runner version cannot evaluate the
-check), not-supported (the adapter did not declare what the case needs, so nothing was sent), or
+Outcomes, per assertion: pass, fail, not-applicable (a conditional assertion whose condition
+does not hold), not-implemented (this runner version cannot evaluate the check), not-supported (the adapter did not declare what the case needs, so nothing was sent), or
 skipped (the case is deprecated). A case's outcome is fail if any assertion failed, incomplete if
 none failed but one could not be evaluated, pass otherwise, or not-supported/skipped.
 
 Only MUST assertions in active cases decide the verdict. Draft and disputed cases are run and
 reported but never decide it, and not-supported cases are listed: the claim is scoped to the
 features the adapter declared. A run in which no active MUST assertion passed or failed is
-no-evidence, never conformant; a run cut short because a restarted adapter refused hello or
+no-evidence, never conformant. The report and the printed summary also carry the active SHOULD
+results and say when any failed, because a claim states them beside the verdict: in the KERI
+layer, accepting a valid event is a SHOULD, so a validator that accepts nothing passes every MUST
+(docs/design.md, Versioning). A run cut short because a restarted adapter refused hello or
 changed it is aborted, and its report holds the cases completed before that.
 """
 
@@ -121,8 +124,16 @@ def summarize(entries: list[dict]) -> tuple[dict, str]:
         verdict = "no-evidence"
     else:
         verdict = "conformant"
+    should = counts.get("active", {}).get("SHOULD", {})
+    failed = should.get("fail", 0)
     summary = {
         "counts": counts,
+        "should": should,
+        "should_failed": failed,
+        "should_warning": (None if not failed else
+                           f"{failed} active SHOULD assertion{'' if failed == 1 else 's'} "
+                           "failed. A conformance claim from this run must state its SHOULD "
+                           "results beside the verdict."),
         "not_supported_active": [e["id"] for e in entries
                                  if e["status"] == "active" and e["outcome"] == "not-supported"],
         "self_agreement_passes": sum(r["self_agreement"] for e in entries
@@ -201,8 +212,13 @@ def human_summary(report: dict, report_path: str | None) -> str:
         "cases: " + (", ".join(f"{n} {k}" for k, n in sorted(outcomes.items())) or "none"),
         "active MUST assertions: "
         + (", ".join(f"{n} {k}" for k, n in sorted(must.items())) or "none"),
+        "active SHOULD assertions: "
+        + (", ".join(f"{n} {k}" for k, n in sorted(report["summary"]["should"].items()))
+           or "none"),
         f"verdict: {report['verdict']}",
     ]
+    if report["summary"]["should_warning"]:
+        lines.append(f"warning: {report['summary']['should_warning']}")
     if report_path:
         lines.append(f"report: {report_path}")
     return "\n".join(lines)

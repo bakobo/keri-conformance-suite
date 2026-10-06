@@ -128,10 +128,11 @@ def disposition(message, phase, expected):
 
 PROCESSED = {
     "dispositions": [
-        {"initial": "accepted", "final": "accepted"},
-        {"initial": "pending", "final": "accepted"},
-        {"initial": "accepted", "final": "superseded"},
-        {"initial": "duplicitous", "final": "duplicitous"},
+        {"initial": "seen", "final": "seen", "trunk": True},
+        {"initial": "pending", "final": "seen", "trunk": True},
+        {"initial": "seen", "final": "seen", "trunk": False},  # superseded
+        {"initial": "duplicitous", "final": "duplicitous", "trunk": False},
+        {"initial": "rejected", "final": "rejected", "trunk": False},
     ],
     "key_states": {},
 }
@@ -140,20 +141,24 @@ PROCESSED = {
 @pytest.mark.parametrize(
     ("message", "phase", "expected", "outcome"),
     [
-        (0, "initial", "accepted", "pass"),
-        (1, "initial", "not-accepted", "pass"),
+        (0, "initial", "seen", "pass"),
+        (0, "initial", "not-seen", "fail"),
+        (1, "initial", "not-seen", "pass"),
         (1, "initial", "pending", "pass"),
         (1, "initial", "rejected", "fail"),
-        (1, "final", "accepted", "pass"),
-        (1, "final", "not-accepted", "fail"),
-        (0, "initial", "not-accepted", "fail"),
-        (2, "final", "not-accepted", "fail"),
-        (2, "final", "superseded", "pass"),
-        (2, "initial", "not-accepted", "fail"),
-        (3, "initial", "not-accepted", "pass"),
-        (3, "final", "not-accepted", "pass"),
+        (1, "initial", "seen", "fail"),
+        (1, "final", "seen", "pass"),
+        (1, "final", "not-seen", "fail"),
+        # A superseded event is still seen: "first seen, always seen, never unseen".
+        (2, "final", "seen", "pass"),
+        (2, "final", "not-seen", "fail"),
+        (3, "initial", "not-seen", "pass"),
+        (3, "final", "not-seen", "pass"),
         (3, "final", "duplicitous", "pass"),
-        (4, "initial", "accepted", "fail"),
+        (3, "final", "rejected", "fail"),
+        (4, "final", "rejected", "pass"),
+        (4, "final", "pending", "fail"),
+        (5, "initial", "seen", "fail"),
     ],
 )
 def test_disposition(message, phase, expected, outcome):
@@ -161,19 +166,79 @@ def test_disposition(message, phase, expected, outcome):
     assert evaluation.outcome == outcome
 
 
+# An adapter that reports a message seen on arrival and unseen at the end has reported an
+# acceptance: "first seen, always seen, never unseen" (KERI spec line 1788).
+UNSEEN = {"dispositions": [{"initial": "seen", "final": "rejected", "trunk": False}],
+          "key_states": {}}
+
+
+@pytest.mark.parametrize("expected", ["not-seen", "rejected", "pending", "duplicitous"])
+def test_a_message_seen_on_arrival_cannot_finally_be_unseen(expected):
+    evaluation = evaluate(disposition(0, "final", expected), UNSEEN)
+    assert evaluation.outcome == "fail"
+    assert "always seen" in evaluation.detail
+
+
+def test_a_final_seen_assertion_is_not_credited_from_the_initial_reading():
+    # Permanence closes the escape from a not-seen MUST; it does not hand out a liveness pass to an
+    # adapter that reports the message finally dropped. The final seen assertion is graded against
+    # the reported final reading.
+    assert evaluate(disposition(0, "final", "seen"), UNSEEN).outcome == "fail"
+
+
 def test_disposition_records_the_reported_value():
-    assert evaluate(disposition(1, "initial", "accepted"), PROCESSED).actual == "pending"
+    assert evaluate(disposition(1, "initial", "seen"), PROCESSED).actual == "pending"
 
 
 def test_a_missing_message_index_fails_with_a_reason():
-    evaluation = evaluate(disposition(9, "final", "accepted"), PROCESSED)
+    evaluation = evaluate(disposition(9, "final", "seen"), PROCESSED)
     assert evaluation.outcome == "fail"
     assert evaluation.actual is None
     assert "9" in evaluation.detail
 
 
 def test_disposition_against_a_non_process_result_fails():
-    assert evaluate(disposition(0, "final", "accepted"), {"encoded": "00"}).outcome == "fail"
+    assert evaluate(disposition(0, "final", "seen"), {"encoded": "00"}).outcome == "fail"
+
+
+# --- trunk --------------------------------------------------------------------------------------
+
+
+def trunk(message, expected):
+    return {"id": "a3", "check": "trunk", "level": "SHOULD", "message": message,
+            "expected": expected}
+
+
+@pytest.mark.parametrize(
+    ("message", "expected", "outcome"),
+    [
+        (0, True, "pass"),
+        (0, False, "fail"),
+        (2, False, "pass"),
+        (2, True, "fail"),
+        (3, False, "pass"),
+        (5, False, "fail"),
+    ],
+)
+def test_trunk(message, expected, outcome):
+    assert evaluate(trunk(message, expected), PROCESSED).outcome == outcome
+
+
+def test_trunk_records_the_reported_value_and_says_what_differs():
+    evaluation = evaluate(trunk(2, True), PROCESSED)
+    assert evaluation.actual is False
+    assert "off the trunk" in evaluation.detail
+    assert "on the trunk" in evaluate(trunk(0, False), PROCESSED).detail
+
+
+def test_a_missing_trunk_index_fails_with_a_reason():
+    evaluation = evaluate(trunk(9, False), PROCESSED)
+    assert (evaluation.outcome, evaluation.actual) == ("fail", None)
+    assert "9" in evaluation.detail
+
+
+def test_trunk_against_a_non_process_result_fails():
+    assert evaluate(trunk(0, True), {"encoded": "00"}).outcome == "fail"
 
 
 # --- thresholds ---------------------------------------------------------------------------------
@@ -248,12 +313,14 @@ STATE = {"sn": 2, "said": "EDef", "keys": ["DAbc"], "kt": "1", "ndigs": ["EGhi"]
          "wits": ["BWit"], "bt": "1", "delegator": None}
 
 
-def key_state(expected, aid="EAbc"):
-    return {"id": "a2", "check": "key_state", "level": "SHOULD", "aid": aid, "expected": expected}
+def key_state(expected, aid="EAbc", if_seen=0):
+    return {"id": "a2", "check": "key_state", "level": "MUST", "if_seen": if_seen, "aid": aid,
+            "expected": expected}
 
 
-def processed(states):
-    return {"dispositions": [], "key_states": states}
+def processed(states, final="seen"):
+    return {"dispositions": [{"initial": final, "final": final, "trunk": final == "seen"}],
+            "key_states": states}
 
 
 def test_key_state_holds_on_equal_state_with_normalized_thresholds():
@@ -309,6 +376,37 @@ def test_key_state_for_an_identifier_not_reported_fails():
     assert evaluation.outcome == "fail"
     assert evaluation.actual is None
     assert "EZzz" in evaluation.detail
+
+
+@pytest.mark.parametrize("final", ["pending", "rejected", "duplicitous"])
+def test_key_state_does_not_apply_when_its_message_was_not_finally_seen(final):
+    # "If this event was accepted, the key state is ...": a validator that accepted nothing, or
+    # held a wrong state while not accepting the event, neither passes nor fails it.
+    for states in ({}, {"EAbc": STATE}, {"EAbc": {**STATE, "sn": 9}}):
+        evaluation = evaluate(key_state(STATE), processed(states, final))
+        assert evaluation.outcome == "not-applicable"
+        assert evaluation.actual == final
+        assert "message 0" in evaluation.detail
+
+
+def test_key_state_applies_when_its_message_was_finally_seen_even_off_the_trunk():
+    # A superseded event is still seen; the identifier's state must then be the recovered one.
+    result = {"dispositions": [{"initial": "seen", "final": "seen", "trunk": False}],
+              "key_states": {"EAbc": {**STATE, "sn": 9}}}
+    assert evaluate(key_state(STATE), result).outcome == "fail"
+
+
+def test_key_state_applies_when_its_message_was_seen_on_arrival_and_reported_unseen_later():
+    # Seen is permanent (line 1788), so a later unseen report does not make the assertion moot.
+    result = {"dispositions": [{"initial": "seen", "final": "rejected", "trunk": False}],
+              "key_states": {"EAbc": {**STATE, "sn": 9}}}
+    assert evaluate(key_state(STATE), result).outcome == "fail"
+
+
+def test_key_state_whose_condition_was_not_reported_fails():
+    evaluation = evaluate(key_state(STATE, if_seen=3), processed({"EAbc": STATE}))
+    assert (evaluation.outcome, evaluation.actual) == ("fail", None)
+    assert "message 3" in evaluation.detail
 
 
 def test_key_state_against_a_non_process_result_fails():
