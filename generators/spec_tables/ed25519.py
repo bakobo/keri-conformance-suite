@@ -40,7 +40,7 @@ def _scalar_mult(s, point):
 def _recover_x(y, sign):
     if y >= P:
         return None
-    x2 = (y * y - 1) * pow(D * y * y + 1, P - 2, P)
+    x2 = (y * y - 1) * pow(D * y * y + 1, P - 2, P) % P
     if x2 == 0:
         return None if sign else 0
     x = pow(x2, (P + 3) // 8, P)

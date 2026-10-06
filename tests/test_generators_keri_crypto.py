@@ -91,6 +91,12 @@ def test_ed25519_refuses_a_negative_zero_x():
     assert ed25519._decode_point(((1 << 255) | 1).to_bytes(32, "little")) is None
 
 
+def test_ed25519_refuses_a_negative_zero_x_at_y_equal_p_minus_1():
+    # y = P - 1 also gives x**2 == 0, but only once x**2 is reduced modulo P; the sign bit must
+    # still be refused, not decode to x = P.
+    assert ed25519._decode_point(((1 << 255) | (ed25519.P - 1)).to_bytes(32, "little")) is None
+
+
 def test_ed25519_seeds_are_32_bytes():
     with pytest.raises(ValueError, match="32 bytes"):
         ed25519.public_key(bytes(31))
