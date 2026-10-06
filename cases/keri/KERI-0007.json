@@ -1,0 +1,91 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "rejected",
+      "id": "a1",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 2 (unsigned).",
+      "phase": "initial",
+      "spec_conflicts": [
+        {
+          "line": 541,
+          "quote": "A Validator MAY drop any provided key event message body that does not have at least one attached signature from the current controlling key state of the AID of the associated [[ref: KEL]].",
+          "section": "Key event messages",
+          "why": "Line 541 makes dropping an unsigned key event a MAY; line 1266 makes it a MUST. The cases follow line 1266, the later and more specific sentence."
+        }
+      ]
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 2 (unsigned).",
+      "phase": "final",
+      "spec_conflicts": [
+        {
+          "line": 541,
+          "quote": "A Validator MAY drop any provided key event message body that does not have at least one attached signature from the current controlling key state of the AID of the associated [[ref: KEL]].",
+          "section": "Key event messages",
+          "why": "Line 541 makes dropping an unsigned key event a MAY; line 1266 makes it a MUST. The cases follow line 1266, the later and more specific sentence."
+        }
+      ]
+    }
+  ],
+  "description": "A single-key inception delivered with no attachments at all. A validator must drop a key event with no controller signature.",
+  "id": "KERI-0007",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/signatures.json#KS-08"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Unsigned inception"
+}

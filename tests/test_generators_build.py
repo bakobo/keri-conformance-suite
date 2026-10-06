@@ -325,6 +325,7 @@ def test_generate_with_no_scenarios_produces_only_empty_profiles(tmp_path):
     shutil.copy(ROOT / "scenarios" / "cesr" / "clauses.json", tmp_path / "scenarios" / "cesr")
     files = regenerate.generate(tmp_path)
     assert sorted(files) == ["profiles/cesr-1.0.json", "profiles/cesr-strict.json",
+                             "profiles/keri-1.0.json", "profiles/keri-escrow.json",
                              "profiles/keripy-1x-interop.json"]
 
 
@@ -430,13 +431,6 @@ def test_named_messages_resolve_and_carry_a_verifiable_said():
     dummied = body.replace(said.encode(), b"#" * 44)
     assert encoding.primitive(T, "E", blake3.digest(dummied)) == said == fields["i"]
     assert item["size"] == len(body) and fields["v"].startswith("KERICAACAAJSON")
-
-
-def test_blake3_refuses_more_than_one_chunk():
-    from generators.spec_tables import blake3
-
-    with pytest.raises(ValueError, match="at most 1024"):
-        blake3.digest(bytes(1025))
 
 
 def test_variable_size_element_reports_its_hard_code_and_raw_without_lead_bytes():

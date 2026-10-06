@@ -1,0 +1,230 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0027",
+      "key": "KS-33",
+      "title": "Establishment-only KEL",
+      "description": "An inception with the EO trait, then an interaction, then a rotation at sequence number 1. A validator must drop the interaction (line 377) and should accept the rotation.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "c": [
+            "EO"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "prior": "icp",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "3/establishment-only",
+            "3/establishment-only"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0028",
+      "key": "KS-34",
+      "title": "Establishment-only delegator anchoring in an interaction",
+      "description": "A delegator incepted with the EO trait anchors a delegated inception in an interaction. A validator must drop the interaction, so the delegating seal is never seen and it must not accept the delegated inception (line 1612).",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ],
+          "c": [
+            "EO"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "3/establishment-only",
+            "3/establishment-only"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "4/delegation",
+            "4/delegation"
+          ],
+          "source_seal": "Dixn1"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0029",
+      "key": "KS-35",
+      "title": "Delegation from a do-not-delegate delegator",
+      "description": "A delegator incepted with the DND trait anchors a delegated inception in an interaction. The validator holds the delegator's KEL when the delegated inception arrives, so it must drop it (line 379).",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ],
+          "c": [
+            "DND"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "3/do-not-delegate",
+            "3/do-not-delegate"
+          ],
+          "source_seal": "Dixn1"
+        }
+      ]
+    }
+  ]
+}

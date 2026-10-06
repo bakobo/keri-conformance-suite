@@ -1,0 +1,516 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0036",
+      "key": "KS-45",
+      "title": "Witnessed inception with its witness signatures attached",
+      "description": "An inception with three witnesses and witness threshold 2, carrying the controller's signature and witness-indexed signatures from the first and third witnesses. A validator should accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0037",
+      "key": "KS-46",
+      "title": "Witnessed inception under its witness threshold",
+      "description": "The inception of KS-45 with only one witness signature. A validator must not accept it (line 1264), and should keep it for the missing witness signature (line 1266).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0059",
+      "key": "KS-46b",
+      "title": "Witness threshold met only by counting one witness twice",
+      "description": "A witnessed inception with witness threshold 2 carrying the first witness's signature twice. One witness has signed (line 1264), so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1",
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0060",
+      "key": "KS-46c",
+      "title": "Rotation under its witness threshold",
+      "description": "KS-45's witnessed inception, then a rotation that keeps the witnesses and witness threshold 2 but carries only one witness signature. Line 1264 applies to rotations too, so a validator must not accept it, and should keep it for the missing signature.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0061",
+      "key": "KS-46d",
+      "title": "Interaction under its witness threshold",
+      "description": "KS-45's witnessed inception, then an interaction carrying only one witness signature against the inception's witness threshold 2. Line 1264 applies to interactions, so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0038",
+      "key": "KS-47",
+      "title": "Witness threshold completed by receipts",
+      "description": "The inception of KS-45 with no witness signatures, then receipts from two of its witnesses. A validator that kept the inception, as line 1266 says it should, accepts it once the receipts satisfy the threshold. The safety half, graded at MUST without keri.escrow, is the companion case KS-47s.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "6/accepted"
+          ]
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "6/receipt"
+          ],
+          "wigs": [
+            "w1"
+          ],
+          "source": "witness-w1"
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "6/receipt",
+            "6/receipt"
+          ],
+          "wigs": [
+            "w2"
+          ],
+          "source": "witness-w2"
+        }
+      ],
+      "companion": {
+        "id": "KERI-0055",
+        "key": "KS-47s",
+        "title": "Witness threshold completed by receipts: safety half",
+        "description": "KS-47's deliveries, graded only at MUST and without needing keri.escrow: the inception must not be accepted before its witness threshold is met, and if it is accepted its key state is the inception's."
+      }
+    },
+    {
+      "id": "KERI-0039",
+      "key": "KS-48",
+      "title": "Receipt with a forged witness signature",
+      "description": "The inception of KS-45 with no witness signatures, a receipt from the first witness, and a receipt whose signature, indexed to the second witness, was not made by it. Only one witness signature verifies, so a validator must not accept the inception.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ]
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "4/receipt"
+          ],
+          "wigs": [
+            "w1"
+          ],
+          "source": "witness-w1"
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "4/receipt"
+          ],
+          "wigs": [
+            {
+              "key": "w2",
+              "forged": true
+            }
+          ],
+          "source": "witness-w2"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0040",
+      "key": "KS-50",
+      "title": "Receipt from a non-witness",
+      "description": "The inception of KS-45 with no witness signatures, a receipt from the first witness, and a receipt couple from w9, which is not one of its witnesses. Only one witness has signed, so a validator must not accept the inception.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ]
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "4/receipt"
+          ],
+          "wigs": [
+            "w1"
+          ],
+          "source": "witness-w1"
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "4/receipt"
+          ],
+          "couples": [
+            "w9"
+          ],
+          "source": "non-witness-w9"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0041",
+      "key": "KS-52",
+      "title": "Witness rotation",
+      "description": "KS-45's inception, then a rotation that removes w3, adds w4 and keeps witness threshold 2, signed by w1 and w2, which sit at the same positions in the old and new witness lists. A validator should accept the rotation, and its witness list is [w1, w2, w4]: removals first, then additions appended in order (lines 358 and 362).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "br": [
+            "w3"
+          ],
+          "ba": [
+            "w4"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w2"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "wit-list-order"
+        }
+      }
+    }
+  ]
+}

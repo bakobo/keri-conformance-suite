@@ -1,0 +1,678 @@
+{
+  "format": 2,
+  "profile": "keri-1.0",
+  "implementation": {
+    "name": "keripy",
+    "version": "2.1.0.dev1",
+    "commit": "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
+  },
+  "verdict": "conformant",
+  "cases": {
+    "KERI-0001": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0002": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0003": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0004": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0005": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0006": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0007": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0008": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0009": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0010": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0011": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0012": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0013": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0014": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0015": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0016": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0018": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0020": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0021": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0022": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0023": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0024": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0025": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0026": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0027": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0028": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0029": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0030": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass"
+      }
+    },
+    "KERI-0031": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0033": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0034": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0035": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a12": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0036": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0037": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0038": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0039": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0040": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0041": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0042": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0044": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0045": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0046": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0047": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0050": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0054": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0055": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0056": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0058": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0059": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0060": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0061": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0062": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0063": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a12": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0064": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0065": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass"
+      }
+    },
+    "KERI-0066": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0067": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a12": "pass",
+        "a13": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    }
+  }
+}

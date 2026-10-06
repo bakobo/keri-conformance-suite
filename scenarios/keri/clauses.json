@@ -1,0 +1,124 @@
+{
+  "about": "The clauses, inferences and spec conflicts the KERI cases cite, from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569, spec/spec-body.md). Each quote must appear verbatim exactly once in the pinned text, under the named heading; a clause's quote must contain its level's keyword. The generator checks all of this before it writes a case.",
+  "clauses": {
+    "accept-precondition": {
+      "section": "Validation Rules",
+      "level": "MUST",
+      "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL."
+    },
+    "act-as-verifier": {
+      "section": "Validator",
+      "level": "MUST",
+      "quote": "Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures."
+    },
+    "controlling-keys": {
+      "section": "Verifier",
+      "level": "MUST",
+      "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued."
+    },
+    "delegation-seal": {
+      "section": "Cooperative Delegation",
+      "level": "MUST",
+      "quote": "A [[ref: Validator]] MUST be given or find the delegating seal in the delegator’s KEL before the event may be accepted as valid."
+    },
+    "dnd-drop": {
+      "section": "Configuration traits field",
+      "level": "MUST",
+      "quote": "A Validator MUST invalidate, i.e., drop any delegated events whose Delegator has this configuration trait."
+    },
+    "drop-unsigned": {
+      "section": "Indexed Signatures",
+      "level": "MUST",
+      "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it)."
+    },
+    "eo-drop": {
+      "section": "Configuration traits field",
+      "level": "MUST",
+      "quote": "A Validator MUST invalidate, i.e., drop any non-establishment events."
+    },
+    "escrow-thresholds": {
+      "section": "Indexed Signatures",
+      "level": "SHOULD",
+      "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section)."
+    },
+    "inception-d-i": {
+      "section": "Inception event pre-rotation",
+      "level": "MUST",
+      "quote": "Validation of an Inception event requires examining the `i` field's derivation code and if it is a digest-type then the `d` field MUST be identical otherwise the Inception event is invalid."
+    },
+    "no-events-abandoned": {
+      "section": "Next key digest list field",
+      "level": "MUST",
+      "quote": "When the Next, `n` field value in a Rotation or Delegated Rotation Event event is an empty list, then the associated AID MUST be deemed abandoned, and no more key events MUST be allowed in its KEL."
+    },
+    "no-events-nontransferable": {
+      "section": "Next key digest list field",
+      "level": "MUST",
+      "quote": "When the Next, `n` field value in an Inception or Delegated Inception event is an empty list, then the associated AID MUST be deemed non-transferable, and no more key events MUST be allowed in that KEL."
+    },
+    "one-kel": {
+      "section": "Tetrad bindings",
+      "level": "MUST",
+      "quote": "In KERI, there MUST be at most one valid KEL for any identifier or none at all."
+    },
+    "prerotation": {
+      "section": "General Pre-rotation",
+      "level": "MUST",
+      "quote": "A Validator, therefore, MUST confirm that the set of keys in the current key list truly includes a satisfiable subset of the prior next key list and that the current key list is satisfiable with respect to both the current and [[xref: keri1, prio-next-threshold, prior next threshold]]s."
+    },
+    "sig-threshold-icp-ixn": {
+      "section": "Indexed Signatures",
+      "level": "MUST",
+      "quote": "A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid."
+    },
+    "sig-threshold-rot": {
+      "section": "Indexed Signatures",
+      "level": "MUST",
+      "quote": "A set of controller-indexed signatures on a rotation event (delegated or not) MUST at least satisfy both the current signing threshold and the prior next rotation threshold in order for that event to be accepted as valid."
+    },
+    "supersede-discard": {
+      "section": "Superseding Rules for Recovery at a given location, SN (sequence number).",
+      "level": "MUST",
+      "quote": "The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B. MUST be satisfied, or else the superseding rotation MUST be discarded."
+    },
+    "wit-list-order": {
+      "section": "Backer remove list",
+      "level": "MUST",
+      "quote": "The AIDs in the Backer Remove, `br` list MUST be removed before any AIDs in the Backer Add, `ba` list are appended."
+    },
+    "wit-threshold": {
+      "section": "Indexed Signatures",
+      "level": "MUST",
+      "quote": "A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid."
+    }
+  },
+  "inferences": {
+    "liveness": {
+      "section": "Validation Rules",
+      "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+      "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here)."
+    },
+    "first-seen": {
+      "section": "Superseding Recovery",
+      "quote": "Notably, an event that may not supersede, according to the rules below, another event at the same location cannot be first seen at all by that KEL.",
+      "inference": "With rule A2 (\"An interaction event may not supersede any event.\"), this says a validator should not accept an event that is not a rotation where a different event already lies on the trunk. Neither sentence carries a keyword, so refusing it is graded SHOULD, and the state it leaves is graded at the same level."
+    },
+    "recovery": {
+      "section": "Superseding Rules for Recovery at a given location, SN (sequence number).",
+      "quote": "A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.",
+      "inference": "Rule A0 uses a lowercase \"may\". A validator that accepts a rotation A0 permits keeps the displaced interaction and everything after it as seen but off the trunk (\"All the already-seen but superseded events in the superseded fork still remain in the KEL\"). Accepting the rotation, and the resulting trunk, are graded SHOULD as liveness."
+    }
+  },
+  "conflicts": {
+    "unsigned-may": {
+      "section": "Key event messages",
+      "quote": "A Validator MAY drop any provided key event message body that does not have at least one attached signature from the current controlling key state of the AID of the associated [[ref: KEL]].",
+      "why": "Line 541 makes dropping an unsigned key event a MAY; line 1266 makes it a MUST. The cases follow line 1266, the later and more specific sentence."
+    },
+    "receipt-drop": {
+      "section": "Indexed Signatures",
+      "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+      "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
+    }
+  }
+}

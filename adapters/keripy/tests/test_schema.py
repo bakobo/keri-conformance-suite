@@ -108,3 +108,19 @@ def test_a_request_without_a_usable_id_gets_an_error_with_a_null_id(line):
     response = valid(json.loads(protocol.handle_line(line)))
     assert response["id"] is None
     assert response["error"]["kind"] == "harness"
+
+
+@pytest.mark.main
+def test_keri_process_results_validate():
+    import test_kel as tk
+
+    i = tk.icp(keys=[tk.A0, tk.B0], isith=["1/2", "1/2"], nxt=[tk.A1, tk.B1],
+               nsith=["1/2", "1/2"], wits=[tk.W1], toad=1)
+    x1 = tk.ixn(i, 1)
+    message = {"id": 5, "op": "keri.process", "perspective": {"role": "validator"},
+               "messages": [{"stream": s.hex(), "source": "t"} for s in (
+                   tk.signed(i, [tk.A0, tk.B0], wits=[(0, tk.W1)]), tk.signed(x1, [tk.A0]),
+                   tk.receipt(i, [(0, tk.W1)]), b"junk")]}
+    response = valid(respond(message))
+    state = next(iter(response["result"]["key_states"].values()))
+    assert state["kt"] == ["1/2", "1/2"] and state["wits"] == [tk.W1.verfer.qb64]

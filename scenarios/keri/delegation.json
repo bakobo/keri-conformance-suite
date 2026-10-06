@@ -1,0 +1,704 @@
+{
+  "profile": "keri-1.0",
+  "cases": [
+    {
+      "id": "KERI-0030",
+      "key": "KS-37",
+      "title": "Delegated inception, anchor first",
+      "description": "A delegator's inception, then its interaction anchoring the delegated inception's seal, then the delegated inception with a seal source couple naming that interaction. A validator should accept all three.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0064",
+      "key": "KS-37b",
+      "title": "Delegatee interaction needs no delegating seal",
+      "description": "KS-37's delegation, then an interaction of the delegatee that no delegator event seals. A delegation seals establishment events only (line 1616), so a validator should accept it.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        },
+        {
+          "name": "Eixn1",
+          "aid": "E",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        },
+        {
+          "event": "Eixn1",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0031",
+      "key": "KS-39",
+      "title": "Delegated inception before its delegator: not accepted on arrival",
+      "description": "The delegated inception of KS-37 arrives before the delegator's KEL. A validator must not accept it until it has seen the delegating seal (line 1612). Whether it is accepted once the anchor arrives depends on escrow the specification does not require; that half is in the keri-escrow profile.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "4/delegation",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        },
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0033",
+      "key": "KS-40",
+      "title": "Delegated inception with no anchor",
+      "description": "A delegator's inception, then a delegated inception naming it as delegator, with no delegating seal anywhere. A validator must not accept the delegated inception.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "4/delegation",
+            "4/delegation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0034",
+      "key": "KS-41",
+      "title": "Delegating seal names the wrong SAID",
+      "description": "A delegator's interaction carries a seal with the delegated identifier and sequence number 0 but a digest that is not the delegated inception's SAID. A validator must not accept the delegated inception.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip",
+              "wrong_said": "not-the-dip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "4/delegation",
+            "4/delegation"
+          ],
+          "source_seal": "Dixn1"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0035",
+      "key": "KS-42",
+      "title": "Delegated rotation anchored in the delegator's rotation",
+      "description": "KS-37's delegation, then a delegator rotation anchoring a delegated rotation, then the delegated rotation. A validator should accept all five, and the delegatee's key state is its rotation's, with its delegator.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        },
+        {
+          "name": "Drot2",
+          "aid": "D",
+          "t": "rot",
+          "keys": [
+            "d1"
+          ],
+          "next": [
+            "d2"
+          ],
+          "a": [
+            {
+              "event": "Edrt1"
+            }
+          ]
+        },
+        {
+          "name": "Edrt1",
+          "aid": "E",
+          "t": "drt",
+          "keys": [
+            "e1"
+          ],
+          "next": [
+            "e2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        },
+        {
+          "event": "Drot2",
+          "sigs": [
+            "d1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edrt1",
+          "sigs": [
+            "e1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Drot2"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0062",
+      "key": "KS-42b",
+      "title": "Delegated rotation with no delegating seal",
+      "description": "KS-37's delegation, then a delegated rotation, signed by the delegatee's pre-rotated key, that no event of the delegator anchors. A validator must not accept it (line 1612), and the delegatee's key state stays its inception's.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        },
+        {
+          "name": "Edrt1",
+          "aid": "E",
+          "t": "drt",
+          "keys": [
+            "e1"
+          ],
+          "next": [
+            "e2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        },
+        {
+          "event": "Edrt1",
+          "sigs": [
+            "e1"
+          ],
+          "expect": [
+            "4/delegation",
+            "4/delegation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0063",
+      "key": "KS-42c",
+      "title": "Delegated rotation whose seal names the wrong SAID",
+      "description": "KS-37's delegation, then a delegator interaction sealing the delegatee at sequence number 1 with a digest that is not the delegated rotation's SAID, then that rotation with a seal source couple naming the interaction. A validator must not accept it.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        },
+        {
+          "name": "Dixn2",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edrt1",
+              "wrong_said": "not-the-drt"
+            }
+          ]
+        },
+        {
+          "name": "Edrt1",
+          "aid": "E",
+          "t": "drt",
+          "keys": [
+            "e1"
+          ],
+          "next": [
+            "e2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        },
+        {
+          "event": "Dixn2",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edrt1",
+          "sigs": [
+            "e1"
+          ],
+          "expect": [
+            "4/delegation",
+            "4/delegation"
+          ],
+          "source_seal": "Dixn2"
+        }
+      ]
+    }
+  ]
+}

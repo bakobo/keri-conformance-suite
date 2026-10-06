@@ -241,7 +241,9 @@ def test_case_loads_through_the_runner(cid):
 def test_the_runner_loads_the_whole_cases_directory():
     from keri_conformance.cases import load_cases
 
-    assert [c["id"] for c in load_cases(ROOT / "cases")] == sorted(CASES)
+    every = sorted(p.stem for p in (ROOT / "cases").glob("*/*.json"))
+    assert set(CASES) < set(every)
+    assert [c["id"] for c in load_cases(ROOT / "cases")] == every
 
 
 @pytest.mark.parametrize("cid", sorted(CASES))

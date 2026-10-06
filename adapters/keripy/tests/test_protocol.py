@@ -5,7 +5,7 @@ import json
 import pytest
 from conftest import GENERATION, run_adapter
 
-from kcs_adapter_keripy import protocol
+from kcs_adapter_keripy import kel, protocol
 
 
 def handle(message):
@@ -24,7 +24,8 @@ def test_hello_answers_protocol_1_with_identity(keri_dist):
     commit = json.loads(keri_dist.read_text("direct_url.json"))["vcs_info"]["commit_id"]
     assert implementation["commit"] == commit
     assert len(commit) == 40
-    assert result["operations"] == ["cesr.parse", "cesr.encode"]
+    assert result["operations"][:2] == ["cesr.parse", "cesr.encode"]
+    assert result["operations"][2:] == (["keri.process"] if GENERATION == "main" else [])
     assert result["composes"] == []
 
 
@@ -36,7 +37,8 @@ def test_hello_features_follow_the_keripy_generation():
         # keripy main itemizes every stream it accepts, except native bodies (cesr.native,
         # which it does not declare), so it keeps cesr.item-extents.
         assert set(features) == common | {"cesr.genus-1.00", "cesr.genus-2.00",
-                                          "cesr.item-extents", "keri.version-2.x"}
+                                          "cesr.item-extents", "keri.version-2.x",
+                                          *kel.FEATURES}
     else:
         # keripy 1.2.14 cannot itemize -H and -J groups, so it does not promise items.
         assert set(features) == common | {"cesr.genus-1.00"}
@@ -97,7 +99,7 @@ def test_unknown_op_is_a_harness_error_echoing_the_id():
     assert "e.input.range.unknown-op.f" in response["error"]["message"]
 
 
-@pytest.mark.parametrize("op", ["keri.process", "keri.emit"])
+@pytest.mark.parametrize("op", ["keri.emit"] + (["keri.process"] if GENERATION == "1.x" else []))
 def test_undeclared_protocol_ops_are_unsupported(op):
     response = handle({"id": 2, "op": op})
     assert response["error"]["kind"] == "unsupported"

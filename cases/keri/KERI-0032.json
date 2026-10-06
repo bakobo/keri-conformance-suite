@@ -1,0 +1,128 @@
+{
+  "assertions": [
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "pending",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 4 (delegation).",
+      "phase": "initial"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "disposition",
+      "expected": "seen",
+      "id": "a2",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "final"
+    },
+    {
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "trunk",
+      "expected": true,
+      "id": "a3",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "aid": "EBZQ3CM85_8PUt58vLf_iVW7z_B4mbjJEL3i_V6Gey4x",
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": "ECCqvSFRysAQ-cCfVyS7WOV77FSglAl4LN1PKJ30VwyS",
+        "keys": [
+          "DKsQLaFtlu2YuRtQ2F8Vea1KjklG8cAtuaDBUs_3cwdM"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EIBc_-6oqkliwKGvXlLw50H_vXQR2itLG9zo2ehYcMKK"
+        ],
+        "nt": "1",
+        "said": "EBZQ3CM85_8PUt58vLf_iVW7z_B4mbjJEL3i_V6Gey4x",
+        "sn": 0,
+        "wits": []
+      },
+      "id": "a4",
+      "if_seen": 0,
+      "level": "INTEROP"
+    },
+    {
+      "aid": "ECCqvSFRysAQ-cCfVyS7WOV77FSglAl4LN1PKJ30VwyS",
+      "basis": "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569): an event that cannot be accepted yet because an earlier event of its KEL, or its delegating seal, has not been seen becomes acceptable when that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause states this; the specification's only escrow obligation is for threshold shortfalls (line 1266). keripy keeps such events in its escrows.",
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
+        ],
+        "nt": "1",
+        "said": "EHr2YLeAURVaXjuoaJFzFekCLwbwg4c39GZbDEw_Vrjo",
+        "sn": 1,
+        "wits": []
+      },
+      "id": "a5",
+      "if_seen": 2,
+      "level": "INTEROP"
+    }
+  ],
+  "description": "The deliveries of KS-39. A validator that keeps the delegated inception accepts it once the delegating interaction arrives.",
+  "id": "KERI-0032",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146682e222c2274223a22646970222c2264223a2245425a5133434d38355f385055743538764c665f695657377a5f42346d626a4a454c33695f56364765793478222c2269223a2245425a5133434d38355f385055743538764c665f695657377a5f42346d626a4a454c33695f56364765793478222c2273223a2230222c226b74223a2231222c226b223a5b22444b73514c6146746c75325975527451324638566561314b6a6b6c47386341747561444255735f336377644d225d2c226e74223a2231222c226e223a5b22454942635f2d366f716b6c69774b4776586c4c773530485f765851523269744c47397a6f32656859634d4b4b225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d2c226469223a224543437176534652797341512d63436656795337574f5637374653676c416c344c4e31504b4a333056777953227d2d4341702d4b41574141445653746a6669524243745648336e6f354337434f7a424d736d6e302d495871696e33485344464f516276626b305a3967544b37526a5f557238346a4d502d6c5f71316e4c4b68553566514e4e47667758794834734f2d53415230414141414141414141414141414141414141414141414245487232594c654155525661586a756f614a467a46656b434c7762776734633339475a624445775f56726a6f"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a224543437176534652797341512d63436656795337574f5637374653676c416c344c4e31504b4a333056777953222c2269223a224543437176534652797341512d63436656795337574f5637374653676c416c344c4e31504b4a333056777953222c2273223a2230222c226b74223a2231222c226b223a5b2244454f6e4a53364770422d57625437524f62714371773776395566347a4c32677265435f694a3568714c7542225d2c226e74223a2231222c226e223a5b22454f6d78695030476b75506a30335555346c6a674b452d665a574732557a73766735534b5a3471694e7a3642225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b41574141416e646c364b6f6f4b71666e71513774735774626c666b557072306f4b394275626e4c464f646f5f6b5a4d6b6c413459706364696e67615962726b645057636a7142656642394d41616f3554754f5763587830677350"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145382e222c2274223a2269786e222c2264223a2245487232594c654155525661586a756f614a467a46656b434c7762776734633339475a624445775f56726a6f222c2269223a224543437176534652797341512d63436656795337574f5637374653676c416c344c4e31504b4a333056777953222c2273223a2231222c2270223a224543437176534652797341512d63436656795337574f5637374653676c416c344c4e31504b4a333056777953222c2261223a5b7b2269223a2245425a5133434d38355f385055743538764c665f695657377a5f42346d626a4a454c33695f56364765793478222c2273223a2230222c2264223a2245425a5133434d38355f385055743538764c665f695657377a5f42346d626a4a454c33695f56364765793478227d5d7d2d4341582d4b41574141447a667961486366654749485878546e4b746866586e586a6d6c6a534b52614e586e397531677255644456505472342d6f476e4349665a7057395a5a49393775527a31796c773039674762366c78624959744b6d414f"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-escrow",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/escrow.json#KS-39L"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "keri.escrow",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Delegated inception before its delegator: kept and accepted later"
+}
