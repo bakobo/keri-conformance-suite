@@ -7,9 +7,11 @@ to quiescence and reads keripy's database. README.md, "keri.process", says which
 backs each reported value.
 """
 
+import hashlib
 import sys
 
 from keri.core import eventing, parsing
+from keri.core.coring import Number, NumDex
 from keri.db import basing
 
 from kcs_adapter_keripy import keripy_api
@@ -41,13 +43,20 @@ class NotQuiescent(Exception):
 
 
 def fingerprint(db):
-    """How many entries each table in TABLES holds."""
-    counts = []
+    """A digest of the contents of every table in TABLES. A digest, not entry counts, because a
+    pass that replaces one escrow entry with another leaves the counts equal while the state has
+    moved, and counting that as quiescence would stop escrow processing a pass too early."""
+    h = hashlib.blake2b(digest_size=16)
     for name in TABLES:
         sdb = getattr(db, name).sdb
-        with db.env.begin(db=sdb) as txn:
-            counts.append(txn.stat(sdb)["entries"])
-    return tuple(counts)
+        h.update(name.encode())
+        with db.env.begin(db=sdb) as txn, txn.cursor(sdb) as cur:
+            for key, val in cur:
+                h.update(key)
+                h.update(b"\x00")
+                h.update(val)
+                h.update(b"\x01")
+    return h.digest()
 
 
 def quiesce(kvy, db):
@@ -96,6 +105,14 @@ def _receipt_reading(db, ident):
         return "seen"
     held = [tuple(_strings(v)) for v in db.uwes.get(keys=pre, on=sn)]
     if any(entry == (said, w) for entry in held for w in ident["wigers"]):
+        return "pending"
+    # A non-witness receipt couple for an event keripy has not accepted waits in the unverified
+    # receipt escrow (ures), keyed by prefix and a huge-coded sequence number; keripy reports it
+    # held, not dropped.
+    couples = db.ures.get(keys=(pre, Number(num=sn, code=NumDex.Huge).qb64))
+    receipt_sigs = [sig for _verfer, sig in ident["cigars"]]
+    if any(diger.qb64 == said and cigar.qb64 in receipt_sigs
+           for diger, _prefixer, cigar in couples):
         return "pending"
     return "rejected"
 

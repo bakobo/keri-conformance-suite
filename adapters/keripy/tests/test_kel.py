@@ -68,6 +68,12 @@ def receipt(serder, wits):
     return bytes(eventing.messagize(rct, wigers=wigers))
 
 
+def couple_receipt(serder, nontrans):
+    """A non-witness receipt couple: a nontransferable signer over the receipted event."""
+    rct = eventing.receipt(pre=serder.pre, sn=serder.sn, said=serder.said, **common())
+    return bytes(eventing.messagize(rct, cigars=[nontrans.sign(ser=serder.raw)]))
+
+
 def process(*messages, perspective=None):
     request = {"id": 5, "op": "keri.process",
                "perspective": perspective or {"role": "validator"},
@@ -172,6 +178,26 @@ def test_receipts_are_reported_by_what_keripy_did_with_their_signatures():
 def test_a_receipt_for_an_event_keripy_never_received_is_held_as_pending():
     serder = icp(wits=[W1], toad=1)
     assert readings(process(receipt(serder, [(0, W1)]))) == [("pending", "pending", False)]
+
+
+def test_a_couple_receipt_for_an_unseen_event_is_held_as_pending():
+    # A non-witness receipt couple for an event keripy has not accepted waits in the unverified
+    # receipt escrow (ures); keripy holds it, so the adapter reports pending, not rejected.
+    serder = icp()
+    receiptor = signer(41, transferable=False)
+    assert readings(process(couple_receipt(serder, receiptor))) == [("pending", "pending", False)]
+
+
+def test_fingerprint_detects_an_escrow_swap_at_an_unchanged_entry_count():
+    # Quiescence is detected by the contents of keripy's tables, not their entry counts: replacing
+    # one likely-duplicitous escrow entry with another leaves the count equal but is not quiescence.
+    from keri.db import basing
+    with basing.openDB(name="fp-swap", temp=True) as db:
+        db.ldes.add(keys="EPRE", on=0, val=dig(A0))
+        before = kel.fingerprint(db)
+        db.ldes.rem(keys="EPRE", on=0, val=dig(A0))
+        db.ldes.add(keys="EPRE", on=0, val=dig(A1))
+        assert kel.fingerprint(db) != before
 
 
 def test_a_delegated_inception_reports_its_delegator():
