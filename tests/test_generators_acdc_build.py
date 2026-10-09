@@ -601,3 +601,21 @@ def test_a_seal_that_names_nothing_the_builder_knows_is_refused():
     resolved = keri_events.EventBuilder(T, [icp("I", "i0"), ixn("x", "I", [{"acdc": "A1"}])],
                                         seal_resolver=lambda seal: {"d": "E" + "A" * 43})
     assert resolved.event("x").body["a"] == [{"d": "E" + "A" * 43}]
+
+
+def test_a_schema_marked_unsaided_is_delivered_as_written():
+    """A schema that stands at a non-local reference's URI is not a SAD, so its $id is the URI and
+    nothing is computed (the decoy for a schema that refers outside itself)."""
+    lei = {"$id": "https://example.com/lei.json", "type": "string"}
+    frag = direct(schemas=[{"name": "S1", "schema": S1},
+                           {"name": "LEI", "schema": lei, "said": False}])
+    b = ab.build_bundle(T, frag)
+    assert json.loads(bytes.fromhex(b.request["schemas"][1])) == lei
+    assert b.saids["LEI"] == lei["$id"]
+
+
+def test_an_unsaided_schema_needs_an_id():
+    frag = direct(schemas=[{"name": "S1", "schema": S1},
+                           {"name": "LEI", "schema": {"type": "string"}, "said": False}])
+    with pytest.raises(ScenarioError, match="LEI"):
+        ab.build_bundle(T, frag)

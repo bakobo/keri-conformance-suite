@@ -349,6 +349,18 @@ def test_a_forged_cycle_grades_only_the_edge_into_it_and_lists_no_cycle():
     assert runner_cases.case_problem(comp) is None
 
 
+def test_a_non_local_reference_resolves_from_the_bundle_to_a_schema_the_acdc_satisfies():
+    # So that only refusing the reference passes: an implementation that resolves it, from the
+    # bundle, accepts (SEC-F6).
+    c = one(scenario("schema"), "KS-15")
+    ev = ac.build(T, scenario("schema")["fixtures"], c)
+    schemas = [json.loads(bytes.fromhex(h)) for h in ev.bundle.request["schemas"]]
+    assert {"$id": "https://example.com/lei.json", "type": "string"} in schemas
+    assert isinstance(ev.result.presented.body["a"], dict)
+    [case] = grade(scenario("schema"), "KS-15", pairs={"KS-02": ("ACDC-0002", False)})
+    assert [(a["level"], a["expected"]) for a in case["assertions"]] == [("SHOULD", "not-valid")]
+
+
 def test_found_names_an_unnamed_presented_acdc_by_its_role():
     result = am.Result(am.Node({"d": "Ex"}, [am.Failure(1, "said")]), {}, [])
     assert ac.found(result, {}) == ["presented 1/said"]

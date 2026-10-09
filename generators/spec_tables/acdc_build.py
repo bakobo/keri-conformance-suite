@@ -7,7 +7,8 @@ docs/design.md fixes, through ``acdc_saids``:
 - **ACDCs** have their top-level fields in the order of line 32, ``[v, t, d, u, i, rd, s, a, A,
   e, r]``, with ``t`` = ``acm`` unless the scenario omits it, and ``d`` the most compact SAID.
   Every block in a scenario that carries ``"d": ""`` is a SAIDed block whose SAID is computed;
-  an ``A`` section is a list of blinded attribute blocks, prefixed with its AGID. Each ACDC is
+  an ``A`` section is a list of blinded attribute blocks, prefixed with its AGID. A schema marked
+  ``"said": false`` is not a SAD: it is delivered as written, its ``$id`` the URI it stands at. Each ACDC is
   presented in the form its scenario names (``compact``, the default; ``expanded``; or a map
   naming dotted paths to ``compact`` and, for ``A``, the block indices to ``disclose``), with its
   version string sized to that form, unless the scenario names ``declared_size`` (``compact``:
@@ -201,6 +202,15 @@ class _Builder:
     def schema_said(self, name: str) -> str:
         if name not in self.schemas:
             raise ScenarioError(f"No schema is named {name!r}.")
+        if name not in self.schema_bodies and self.schemas[name].get("said", True) is False:
+            # A document that stands at a non-local reference's URI: not a SAD, so its $id is
+            # that URI and it is delivered as written.
+            schema = self.schemas[name]["schema"]
+            if not isinstance(schema.get("$id"), str) or not schema["$id"]:
+                raise ScenarioError(f"The unsaided schema {name!r} needs the URI it stands at "
+                                    f"as its $id.")
+            js.check(schema, allow_nonlocal=True)
+            self.saids[name], self.schema_bodies[name] = schema["$id"], schema
         if name not in self.schema_bodies:
             schema = self.schemas[name]["schema"]
             js.check(schema, allow_nonlocal=True)

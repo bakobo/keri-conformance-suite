@@ -398,7 +398,7 @@
       "id": "ACDC-0014",
       "key": "KS-15",
       "title": "Schema with a non-local reference",
-      "description": "The schema refers outside itself for the lei attribute, by a URL. Line 206 forbids such references in a schema, a rule for schema authors.",
+      "description": "The schema refers outside itself for the lei attribute, by a URL, and the ACDC is presented expanded, so the reference is on the path its attributes are validated along. Line 206 forbids such references in a schema, a rule for schema authors. The bundle also holds a document whose $id is that URL and which the lei value satisfies, so an implementation that resolves the reference from what it is given accepts the ACDC and fails the case; only refusing the reference passes. An adapter fetches nothing (docs/adapter-protocol.md, acdc.verify).",
       "base": "direct",
       "patch": {
         "schemas": {
@@ -497,12 +497,29 @@
               }
             }
           }
+        },
+        "acdcs": {
+          "A1": {
+            "form": "expanded"
+          }
         }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "LEI",
+            "said": false,
+            "schema": {
+              "$id": "https://example.com/lei.json",
+              "type": "string"
+            }
+          }
+        ]
       },
       "expect": [
         "A1 2/schema-nonlocal"
       ],
-      "pair": "KS-01"
+      "pair": "KS-02"
     },
     {
       "id": "ACDC-0015",
