@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import { E_COMMIT, describe } from './errors.ts';
+import { E_COMMIT, OpError, describe } from './errors.ts';
 
 const ROOT = new URL('..', import.meta.url);
 // npm's hidden lockfile records how each installed package was resolved.
@@ -17,6 +17,7 @@ export interface Implementation {
     commit: string;
 }
 
+/** Throws a harness OpError, so hello's error carries E_COMMIT as its own code. */
 export function implementation(lockPath = INSTALLED_LOCK, packagePath = INSTALLED_PACKAGE): Implementation {
     let resolved: unknown;
     let version: unknown;
@@ -24,11 +25,12 @@ export function implementation(lockPath = INSTALLED_LOCK, packagePath = INSTALLE
         resolved = JSON.parse(readFileSync(lockPath, 'utf8')).packages?.['node_modules/signify-ts']?.resolved;
         version = JSON.parse(readFileSync(packagePath, 'utf8')).version;
     } catch (err) {
-        throw new Error(`${E_COMMIT}: The installed signify-ts could not be identified: ${describe(err)}`);
+        throw new OpError('harness', `${E_COMMIT}: The installed signify-ts could not be identified: ${describe(err)}`);
     }
     const commit = typeof resolved === 'string' ? /#([0-9a-f]{40})$/.exec(resolved)?.[1] : undefined;
     if (commit === undefined) {
-        throw new Error(
+        throw new OpError(
+            'harness',
             `${E_COMMIT}: npm did not record a git commit for the installed signify-ts, so the ` +
                 'adapter cannot say which code it is testing. Install it from the git pin in ' +
                 'package.json with npm ci.',

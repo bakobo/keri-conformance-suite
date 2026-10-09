@@ -4,6 +4,7 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { OpError } from '../src/errors.ts';
 import { implementation } from '../src/identity.ts';
 
 const root = new URL('..', import.meta.url);
@@ -42,6 +43,7 @@ describe('implementation identity', () => {
     it('refuses to guess when the installed lockfile has no commit for signify-ts', () => {
         const { lockPath, pkgPath } = fixture({ packages: { 'node_modules/signify-ts': { resolved: 'https://registry.npmjs.org/signify-ts/-/signify-ts-0.4.0.tgz' } } });
         expect(() => implementation(lockPath, pkgPath)).toThrowError(/^e\.env\.dependency\.signify-commit\.f: /);
+        expect(() => implementation(lockPath, pkgPath)).toThrowError(OpError);
     });
 
     it('refuses when signify-ts is missing from the installed lockfile', () => {
@@ -53,6 +55,7 @@ describe('implementation identity', () => {
         expect(() => implementation('/nonexistent/lock.json', '/nonexistent/package.json')).toThrowError(
             /^e\.env\.dependency\.signify-commit\.f: /,
         );
+        expect(() => implementation('/nonexistent/lock.json', '/nonexistent/package.json')).toThrowError(OpError);
     });
 
     it('reads a fixture lockfile', () => {

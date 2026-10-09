@@ -3,6 +3,7 @@ import { Readable } from 'node:stream';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { ready } from 'signify-ts';
 
+import { implementation as installedImplementation } from '../src/identity.ts';
 import { DEFAULT_DEPS, FEATURES, OPERATIONS, PROTOCOL, handleLine, serve } from '../src/protocol.ts';
 import { bytes, sigA, v1Body } from './vectors.ts';
 
@@ -39,6 +40,13 @@ describe('hello', () => {
 
     it('does not take true for version 1', () => {
         expect(ask({ id: 3, op: 'hello', supported: [true] }).error.kind).toBe('unsupported');
+    });
+
+    it('keeps the identity failure\'s own code as the response\'s code', () => {
+        const implementation = () => installedImplementation('/nonexistent/lock.json', '/nonexistent/package.json');
+        const response = ask({ id: 4, op: 'hello', supported: [1] }, { ...DEFAULT_DEPS, implementation });
+        expect(response.error.kind).toBe('harness');
+        expect(response.error.message).toMatch(/^e\.env\.dependency\.signify-commit\.f: /);
     });
 
     it('answers a hello whose implementation cannot be identified with a harness error', () => {
