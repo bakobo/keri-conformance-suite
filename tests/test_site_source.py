@@ -276,3 +276,108 @@ def test_the_real_repository_assembles(tmp_path):
     assert S.main(["--repo", str(ROOT), "--out", str(tmp_path / "out")]) == 0
     assert (tmp_path / "out" / "index.md").exists()
     assert (tmp_path / "out" / "design.md").exists()
+
+
+def test_headings_carry_only_path_segments():
+    # Zensical 0.0.69 copies a page's first heading into <title> with its entities decoded, so a
+    # heading must never hold result text, however well it is escaped. Path segments are slugs.
+    doc = result(report(name="</title><script>x</script>", version="1 (beta)"), SUBMITTED)
+    pages = S.render_results(loaded(doc))
+    headings = [line for path, page in pages.items() if path.endswith(".md")
+                for line in page.splitlines() if line.startswith("# ")]
+    assert sorted(headings) == ["# Results", "# title\\-script\\-x\\-script",
+                                "# title\\-script\\-x\\-script 1\\-beta, profile cesr\\-1\\.0"]
+    detail = pages["results/title-script-x-script/1-beta/cesr-1.0-submitted.md"]
+    assert "&lt;/title&gt;&lt;script&gt;x&lt;/script&gt;" in detail
+
+
+def test_a_cell_gives_interop_results_and_unsupported_cases_when_there_are_any():
+    interop = case("CESR-0001", records=[record(level="INTEROP")], profile="keripy-1x-interop")
+    unsupported = case("CESR-0002", outcome="not-supported", profile="keripy-1x-interop",
+                       records=[record(level="INTEROP", outcome="not-supported")])
+    doc = result(report([interop, unsupported], profile="keripy-1x-interop"), REPRODUCED)
+    index = S.render_results(loaded(doc))["results/index.md"]
+    assert ("[no\\-evidence](keripy/2.1.0.dev1/keripy-1x-interop-reproduced.md) · MUST 0 pass, "
+            "0 fail · SHOULD 0 pass, 0 fail · INTEROP 1 pass, 0 fail · 1 active case not "
+            "supported |") in index
+    detail = S.render_results(loaded(doc))[
+        "results/keripy/2.1.0.dev1/keripy-1x-interop-reproduced.md"]
+    assert "| Active INTEROP assertions | 1 passed, 0 failed (1 not\\-supported, 1 pass) |" in detail
+    assert "INTEROP" not in S.render_results(loaded(result()))[
+        "results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
+
+
+# --- hostile input ------------------------------------------------------------------------------
+
+HOSTILE = "<x onerror=1>\"'|*_`[a](javascript:alert(1))</x>\n# h"
+
+
+def _string_paths(value, path=()):
+    if isinstance(value, str):
+        yield path
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            yield from _string_paths(item, (*path, key))
+    elif isinstance(value, list):
+        for n, item in enumerate(value):
+            yield from _string_paths(item, (*path, n))
+
+
+def _rich_docs():
+    failing = case("CESR-0002", outcome="fail",
+                   records=[record("a1", outcome="fail", detail="d"),
+                            record("a2", level="SHOULD", self_agreement=True)])
+    failing["failure"] = {"kind": "timeout", "detail": "no answer"}
+    unsupported = case("CESR-0003", outcome="not-supported",
+                       records=[record(outcome="not-supported")])
+    unsupported["missing_features"] = ["cesr.native"]
+    unsupported["missing_operation"] = "cesr.encode"
+    aborted = {"code": "e.x.f", "reason": "r", "problems": ["p"], "at_case": "CESR-0003",
+               "exit_code": 3}
+    rep = report([case(), failing, unsupported], composes=["keri.escrow"], aborted=aborted)
+    rep["summary"]["not_supported_active"] = ["CESR-0003"]
+    return [result(rep, SUBMITTED), result(report(), REPRODUCED)]
+
+
+def test_every_string_field_is_refused_or_rendered_inert():
+    from tools.results import result_problem
+
+    rendered = refused = 0
+    for doc in _rich_docs():
+        for path in _string_paths(doc):
+            mutant = json.loads(json.dumps(doc))
+            target = mutant
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = HOSTILE
+            if result_problem(mutant) is not None:
+                refused += 1
+                continue
+            rendered += 1
+            for name, page in S.render_results(loaded(mutant)).items():
+                if name.endswith(".md"):
+                    assert "<x" not in page and "</x>" not in page, (path, name)
+                    assert "](javascript" not in page, (path, name)
+                    assert "\n# h" not in page, (path, name)
+    assert rendered > 20 and refused > 20
+
+
+@pytest.mark.parametrize("field,value", [
+    ("pull_request", "javascript:alert(1)"),
+    ("pull_request", "https://github.com/a/b/pull/1)<x>"),
+    ("submitter", ""),
+])
+def test_render_refuses_a_result_that_did_not_pass_the_door(field, value):
+    doc = result()
+    doc["provenance"][field] = value
+    with pytest.raises(RunnerError) as exc:
+        S.render_results([Result(result_path(result()), doc)])
+    assert exc.value.code == "e.input.format.result.f"
+
+
+def test_render_refuses_a_result_whose_path_is_not_its_own():
+    from pathlib import Path
+
+    with pytest.raises(RunnerError) as exc:
+        S.render_results([Result(Path("..", "..", "evil.json"), result())])
+    assert exc.value.code == "e.input.format.result-path.f"

@@ -24,7 +24,14 @@ from collections import defaultdict
 from pathlib import Path
 
 from keri_conformance.errors import E_USAGE_INVALID, EXIT_FAULT, EXIT_USAGE, RunnerError
-from tools.results import Result, load_results
+from tools.results import (
+    E_RESULT_FORMAT,
+    E_RESULT_PATH,
+    Result,
+    load_results,
+    result_path,
+    result_problem,
+)
 
 REPO_URL = "https://github.com/bakobo/keri-conformance-suite"
 MARKER = ".kcs-site-source"
@@ -118,15 +125,29 @@ def _sort_key(result: Result):
             KIND_ORDER[result.doc["provenance"]["kind"]], result.path.name)
 
 
-def _tally(report: dict, level: str) -> tuple[int, int]:
+def _n(value: int) -> str:
+    """A number from a result, shown through the same escaping as its text."""
+    return text(str(value))
+
+
+def _tally(report: dict, level: str) -> tuple[str, str]:
     counts = report["summary"]["counts"].get("active", {}).get(level, {})
-    return counts.get("pass", 0), counts.get("fail", 0)
+    return _n(counts.get("pass", 0)), _n(counts.get("fail", 0))
 
 
 def _cell(report: dict, link: str) -> str:
     must, should = _tally(report, "MUST"), _tally(report, "SHOULD")
-    return (f"[{text(report['verdict'])}]({link}) · MUST {must[0]} pass, {must[1]} fail · "
+    cell = (f"[{text(report['verdict'])}]({link}) · MUST {must[0]} pass, {must[1]} fail · "
             f"SHOULD {should[0]} pass, {should[1]} fail")
+    # A non-normative profile's assertions are INTEROP, so its verdict is always no-evidence and
+    # these counts are its whole result.
+    if "INTEROP" in report["summary"]["counts"].get("active", {}):
+        interop = _tally(report, "INTEROP")
+        cell += f" · INTEROP {interop[0]} pass, {interop[1]} fail"
+    unsupported = len(report["summary"]["not_supported_active"])
+    if unsupported:
+        cell += f" · {_n(unsupported)} active case{'' if unsupported == 1 else 's'} not supported"
+    return cell
 
 
 def _row_label(result: Result, link: str) -> str:
@@ -201,8 +222,11 @@ def _index(results: list[Result]) -> str:
 
 
 def _implementation_page(results: list[Result]) -> str:
-    name = _impl(min(results, key=_sort_key))["name"]
-    lines = [f"# {text(name, 80)}", "",
+    # Headings hold only path segments: Zensical 0.0.69 copies a page's first heading into <title>
+    # with its entities decoded, so result text in a heading would reach the page unescaped.
+    first = min(results, key=_sort_key)
+    lines = [f"# {text(first.path.parts[0])}", "",
+             f"Implementation name as reported: {text(_impl(first)['name'], 80)}.", "",
              ("Every published result for this implementation, by the suite version it ran "
              "against. The labels are explained on the [results page](../index.md)."), ""]
     for version, group in _by_suite_version(results):
@@ -219,7 +243,7 @@ def _provenance_block(provenance: dict) -> list[str]:
     if kind == "reproduced":
         lines.append(f"    This repository's CI produced this result in [run]({provenance['run']}) "
                      f"on {text(provenance['date'])}, from suite commit "
-                     f"`{provenance['commit']}`.")
+                     f"{text(provenance['commit'])}.")
     else:
         lines.append(f"    {text(provenance['submitter'])} submitted this result in "
                      f"[a pull request]({provenance['pull_request']}), for a run on "
@@ -230,7 +254,7 @@ def _provenance_block(provenance: dict) -> list[str]:
 
 def _outcome_counts(report: dict, level: str) -> str:
     counts = report["summary"]["counts"].get("active", {}).get(level, {})
-    return ", ".join(f"{n} {text(k)}" for k, n in sorted(counts.items())) or "none"
+    return ", ".join(f"{_n(n)} {text(k)}" for k, n in sorted(counts.items())) or "none"
 
 
 def _case_notes(entry: dict) -> str:
@@ -257,8 +281,8 @@ def _detail_page(result: Result) -> str:
     report = doc["report"]
     impl, adapter = report["hello"]["implementation"], report["hello"]["adapter"]
     must, should = _tally(report, "MUST"), _tally(report, "SHOULD")
-    lines = [(f"# {text(impl['name'], 80)} {text(impl['version'], 80)}, profile "
-             f"{text(report['filters']['profile'])}"), ""]
+    lines = [(f"# {text(result.path.parts[0])} {text(result.path.parts[1])}, profile "
+              f"{text(report['filters']['profile'])}"), ""]
     lines += _provenance_block(doc["provenance"])
     lines += [
         "| | |", "|---|---|",
@@ -269,13 +293,19 @@ def _detail_page(result: Result) -> str:
         f"({_outcome_counts(report, 'MUST')}) |"),
         (f"| Active SHOULD assertions | {should[0]} passed, {should[1]} failed "
         f"({_outcome_counts(report, 'SHOULD')}) |"),
+    ]
+    if "INTEROP" in report["summary"]["counts"].get("active", {}):
+        interop = _tally(report, "INTEROP")
+        lines.append(f"| Active INTEROP assertions | {interop[0]} passed, {interop[1]} failed "
+                     f"({_outcome_counts(report, 'INTEROP')}) |")
+    lines += [
         (f"| Implementation | {text(impl['name'], 80)} {text(impl['version'], 80)}, commit "
         f"{text(impl['commit'])} |"),
         f"| Adapter | {text(adapter['name'], 80)} {text(adapter['version'], 80)} |",
         f"| Composes | {_composes(report)} |",
         f"| Self-agreement | {_self_agreement(report)} |",
         (f"| Runner | {text(report['runner_version'])}, adapter protocol "
-        f"{report['negotiated_protocol']} |"),
+        f"{_n(report['negotiated_protocol'])} |"),
         "| Active cases not supported | "
         + (text(", ".join(report["summary"]["not_supported_active"]))
            if report["summary"]["not_supported_active"] else "none") + " |",
@@ -296,7 +326,17 @@ def _detail_page(result: Result) -> str:
 
 def render_results(results: list[Result]) -> dict[str, str]:
     """Every results page, keyed by its path in the site source, with each result's file beside
-    its page so a reader can check the page against it."""
+    its page so a reader can check the page against it. Every result must have come through
+    load_results; each is checked again here, so the links built from its provenance and its path
+    rest on the patterns that door enforces rather than on the caller."""
+    for result in results:
+        problem = result_problem(result.doc)
+        if problem:
+            raise RunnerError(E_RESULT_FORMAT, f"The result for {result.path.as_posix()[:200]} "
+                                               f"cannot be published: {problem}.")
+        if result.path != result_path(result.doc):
+            raise RunnerError(E_RESULT_PATH, f"The result at {result.path.as_posix()[:200]} "
+                                             "is not at the path its report implies.")
     pages = {f"{RESULTS_DIR}/index.md": _index(results)}
     by_impl: dict[str, list[Result]] = defaultdict(list)
     for result in results:
