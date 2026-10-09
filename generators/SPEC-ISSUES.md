@@ -217,3 +217,139 @@ Against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb
 - Line 1813 says "under either of the following conditions" and then lists three.
 - Line 358 writes "MUST not" in lowercase.
 - The commit tagged `v1.0.1` says "Specification Status: v1.1" in `spec/spec-head.md`.
+
+# ACDC specification issues found while designing the conformance cases
+
+Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b0daaf48400f4005c2`, file `spec/spec-body.md`; line numbers are that file's). "KERI line" and "CESR line" refer to the pins above. The ACDC cases are designed but not yet generated, so no entry names a case id; each says what the cases will do. The grading rules are in `docs/design.md`, under ACDC, "How levels are derived". Entries are numbered A-G (gaps), A-B (bytes the text leaves open) and A-C (the specification against itself).
+
+## Gaps the ACDC cases depend on
+
+### A-G1. No sentence obliges a validator to refuse an ACDC its issuer never committed to (lines 1663, 1669, 1843)
+
+- Text. Line 1663 says the issuer "must anchor an *issuance* proof digest seal", in lowercase. Line 1843, "The Issuer MUST provide a signature or seal on the SAID of the most compact form variant", binds the issuer and sits in the IPEX section, which line 1797 declares non-normative. Lines 1669 and 1922 bind the issuer to anchor registry events. Line 1671 says that "A verifiable presentation of the ACDC requires the validator to have knowledge of the ACDC state proof", without a keyword.
+- Effect. Refusing an ACDC with no issuer commitment, with its only seal in another identifier's KEL, with an attached seal reference naming an event that does not carry the seal, or whose registry was incepted or updated without the issuer's seal, is graded SHOULD, inferred.
+- The specification should state that a validator MUST NOT treat an ACDC as valid unless its most compact SAID is committed by a seal in its issuer's KEL, directly or through a registry chain, and that a validator MUST find the seal in the issuer's KEL rather than trust an attached reference to it. Those cases would then be re-issued at MUST.
+
+### A-G2. Revocation has no normative meaning (lines 2041, 2092)
+
+- Text. The transaction state values are examples: "the state values for an issuance/revocation registry may be `issued` or `revoked`".
+- Effect. There is no `revoked` verdict. Registry state is graded as facts, and what a revocation means for validity is graded only in a non-normative profile.
+- The specification should state the state values of an issuance and revocation registry, and that a validator MUST NOT treat as valid an ACDC whose verified registry head is revoked.
+
+### A-G3. Whether a signature alone commits an issuer, and with which key state (line 1843; KERI line 1260)
+
+- Text. Line 1843 allows "a signature or seal", in a non-normative section. Normative text says the opposite: "ACDCs are not directly signed by the Issuer and are bound to the Issuer's Key State" (line 1673). KERI line 1260 checks a signature against the establishment event its attachment names, "which MAY or MAY NOT be the current signing threshold".
+- Gap. The two texts disagree on whether a signature alone commits an issuer, and if it does, nothing says which of the issuer's establishment events the signature must name.
+- Effect. Signature-only issuance is not tested.
+- The specification should state whether signature-only issuance is valid, and if it is, that the referenced establishment event must be the issuer's latest at a point the validator can establish.
+
+### A-G4. The IPEX section is non-normative but contains keywords (line 1797)
+
+- Text. "This section is non-normative" (line 1797) is followed by MUST and SHOULD sentences (lines 1807, 1822, 1828 and 1843). Line 1822, which says to verify a SAID against its content before trusting a signature on the SAID, is needed outside IPEX.
+- Effect. No case cites the IPEX section. IPEX messages are graded as KERI exchange messages, in `keri-1.0`.
+- The specification should say which of those sentences are normative, and move the ones that are out of the non-normative section.
+
+### A-G5. Line 68's scope: what "support the old Version String format" covers
+
+- Text. Line 68: "Compliant ACDC version 2.XX implementations MUST support the old ACDC version 1.x Version String format to properly verify Message bodies created with 1.x format events." Nothing defines a 1.x body: its field set (`ri` rather than `rd`), its SAID computation (over the expanded form) and its registry (`vcp`, `iss`, `rev`) have no keyword anywhere.
+- Gap. The sentence could mean that an implementation must frame a body declared with a 1.x version string, or that it must also judge it. It does not say what a validator does with a 1.x version string over a body that carries 2.00 fields.
+- Effect. Line 68 is graded as framing only: a case presents a 1.x version string over bytes on which the 1.x and 2.00 rules agree, and its MUST assertion is that the implementation answers rather than errs. Everything else about 1.x is in the non-normative `acdc-keripy-1x-interop` profile.
+- The specification should define the 1.x body, or say that line 68 requires framing only, and say whether a version string that contradicts its body's field set makes the body invalid.
+
+### A-G6. Registry duplicity (lines 2023, 2027)
+
+- Text. Nothing says what a validator does with two anchored updates at one sequence number.
+- Effect. Not graded in `acdc-1.0`.
+- The specification should state it, as KERI's first-seen rule does for key events.
+
+### A-G7. Whether an edge's failure propagates (lines 1114, 1116, 1211)
+
+- Text. Line 1114: "When any node in a provenance chain is invalid, an Edge pointing to that node MAY also be invalid. If a node has an invalid Edge, then the node MAY also be invalid." The same paragraph continues: "Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid." Line 1116 says the same of trees. Line 1211's `NOT` operator inverts a far node's validity.
+- Gap. A MUST inside "Typically, in a given EGF" binds no one in particular, and the MAYs leave both propagations, from a far node to its edge and from an edge to its near node, to the reader.
+- Effect. Each edge is graded at MUST on the checks lines 1174, 1178, 1199, 1201 and 1205 require of it. Propagation is informative in `acdc-1.0`, and the reading in which a chain must be wholly valid is graded in the non-normative profile `acdc-chain-strict`.
+- The specification should state the default propagation a validator applies when no EGF says otherwise, with a keyword, and how `NOT` interacts with a far node that is invalid for a reason other than the edge's own checks.
+
+### A-G8. A BLID is a SAID only by analogy (lines 2066, 2141)
+
+- Text. Line 2066: "A BLID is effectively a type of SAID." Line 2141: "The BLID computation follows the SAID protocol, adapted for fixed-field representations." CESR line 1194 makes the SAID verification protocol a MUST.
+- Gap. Whether a validator MUST verify a disclosed blinded state block against its own BLID, as it must verify a SAID, rests on the analogy.
+- Effect. A blinded state block that does not hash to its own BLID, and a consistent block whose BLID is not the update's `b`, are both refused at SHOULD, inferred, in separate cases.
+- The specification should state that the SAID verification protocol applies to a BLID.
+
+### A-G9. The Annex's normative status is unstated (lines 1911, 2735)
+
+- Text. The Annex holds keyworded sentences, including line 2735's requirement that every implementation support the minimal selective disclosure mechanism, while line 1911 calls the Annex's ACDC examples informative.
+- Effect. The cases treat keyworded Annex sentences as normative and Annex examples as examples.
+- The specification should say which parts of the Annex are normative.
+
+## Bytes the text leaves open
+
+### A-B1. The bytes the most compact SAID is computed over (lines 62, 134-147; CESR lines 1194, 1276, 1289; line 3395)
+
+- Text. Lines 134 to 147 describe compaction. Nothing says what the version string's size field holds in the compact form, which is shorter than an expanded form presented on the wire, or which JSON form the compact serialization takes. Compact JSON (no whitespace, non-ASCII unescaped) appears only in worked examples (CESR lines 1276 and 1289; line 3395). CESR line 1194 says to replace the SAID "in the serialization", which a reader can take to mean the bytes received.
+- Effect. The generator gives `v` the compact serialization's own size, following line 62's statement that the field gives the serialization's size, and serializes compact JSON in UTF-8. A refusal stays MUST only if it holds under every reading. Accepting an ACDC presented in an expanded or partially disclosed form depends on the choice and is graded SHOULD, naming it. First-batch attribute values are ASCII.
+- The specification should state, with a keyword, the size field and the serialization of the most compact form.
+
+### A-B2. The serialization a schema's SAID is taken over (lines 186, 248; CESR line 1194)
+
+- Text. A schema's `$id` is its SAID by the CESR SAID protocol, applied to "the serialization". Schemas in use are often distributed pretty-printed, and their `$id` verifies over a compact re-serialization but not over the file's own bytes.
+- Effect. Scenario schemas are delivered compact, so both readings agree. A case that delivers a schema in another form grades its SAID at SHOULD.
+- The specification should state whether a schema's SAID is computed over its compact serialization or over the bytes as distributed.
+
+### A-B3. The code of a blinded state block's `ts` (lines 2062, 2087)
+
+- Text. The block's fields are serialized "as CESR primitives that are appropriate for" a state string (line 2062). Only the empty placeholder's code is fixed, `1AAP` (line 2087). Tag, StrB64 and Bytes codes are all appropriate, and each gives a different BLID.
+- Effect. The generator uses the Tag codes. Verifying a BLID does not depend on the code, since it is computed over the bytes received; reporting `ts` does, and a `ts` fact is graded SHOULD, naming the choice.
+- The specification should fix the codes of the state values.
+
+## The specification against itself
+
+### A-C1. The aggregate: a concatenation (line 110) or a serialized list (lines 714, 720, 745-746)
+
+- Text. Line 110 calls the aggregate "a cryptographic digest of the concatenation of an ordered set of the SAIDs of blinded Attribute sub-blocks". Line 714 serializes the list, with a dummied first entry, "as a list in whatever serialization kind is used by the enclosing ACDC". Neither has a keyword, and the verification steps at lines 745 and 746 index the list to a<sub>N-1</sub> where the definition at line 720 runs to a<sub>N</sub>.
+- Resolution in the text. The worked example at lines 951 to 956 settles the JSON case. Its pre-image is a compact JSON list of four entries for three blocks, the dummy first, and its Blake3-256 digest is the AGID the example states. A bare concatenation of the SAIDs gives a different digest.
+- Effect. The cases follow line 714 and the example and record line 110 in `spec_conflicts`. Because the reading rests on an example, accepting a selectively disclosed ACDC is graded SHOULD, inferred from line 2735 and the example. For a CESR-native ACDC, a list whose first entry is `#` characters is not a parseable CESR group, since `#` is not Base64, and the text does not say what bytes it denotes.
+- Correction. Make line 110 describe the list, put a keyword on the computation, fix the indexing at lines 745 and 746, and define the CESR form.
+
+### A-C2. The update's transaction SAID field: `ta` or `td` (lines 1980, 1993, 2035, 2060)
+
+- Text. Line 1993: the `upd` fields "MUST appear in the following order, `[v, t, d, rd, n, p, dt, ta, ts]`". The field table at line 1980 also has `ta`. The field's heading at line 2035 and the cross-reference at line 2060 call it `td`, as keripy does.
+- Effect. Cases that use `upd` follow line 1993's `ta`, record the other lines in `spec_conflicts`, and expect keripy to be disputed. No first-batch case uses `upd`.
+- Correction. Use one label throughout.
+
+### A-C3. Verifying a SAID by expanding: block-level or full (line 136 against lines 134, 142, 147)
+
+- Text. Line 136: "To verify the SAID, just reverse the process. First, expand a given block, verify its SAID". Lines 134 and 142 fix the SAID as the most compact form's, computed over each block's block-level expanded form (line 147).
+- Gap. Read as "fully expand", line 136 verifies a top-level SAID computed over the fully expanded form, which is keripy 1.x's rule and not 2.00's.
+- Effect. The cases follow the keyworded sentences: an ACDC whose top-level `d` is computed over its fully expanded form is not valid at MUST, with line 136 recorded in `spec_conflicts`.
+- Correction. Say "block-level expanded" in line 136.
+
+### A-C4. The registry inception's sequence number label (line 1985)
+
+- Text. Line 1985 lists the `rip` fields as `[v, t, d, u, i, n, dt]` and then says "The value of the sequence number field, `s` MUST be the hex encoded string for the integer 0". Seals use `s` (line 1922).
+- Correction. Use `n` in the sentence, or `s` in the list.
+
+### A-C5. Blinded state block labels (lines 2087, 2457)
+
+- Text. Line 2087 calls `ts` "the transaction ACDC SAID", which is `td`. Line 2457 describes a field `tn` in a block whose field list names it `bn`.
+- Correction. Fix the labels.
+
+### A-C6. Whether every ACDC has an issuee (line 318 against lines 126, 1201)
+
+- Text. Line 318: "The ACDC MUST be "issued by" an Issuer and MUST be "issued to" an Issuee." Lines 126 and 1201 define untargeted ACDCs, which have none.
+- Effect. The cases treat untargeted ACDCs as valid, as the edge rules at line 1201 require.
+- Correction. Qualify line 318 to targeted ACDCs.
+
+## Editorial (ACDC)
+
+- Line 226 calls JSON Schema 2020-12 "The Schema dialect for ACDC 1.0", naming the specification version where the protocol version, 2.00, is meant. The profile `acdc-1.0` shares the hazard and says so.
+- The example at line 1874 uses the version string `ACDC10JSON00011c_`.
+
+## KERI issues the exchange-message cases raise
+
+### K-G8. Which exchange message's signature counts (KERI lines 1260, 1266, 1737)
+
+- Text. Line 1266 drops a message without "at least one verifiable Controller signature", and line 1737 has a verifier establish the controlling keys "for the AID of that event". Line 1260 checks a signature against "the establishment event indicated by the event reference in the attachment group".
+- Gap. Nothing says in one place that the referenced establishment event must belong to the message's sender, the AID in its `i` field. A validator that verifies an attached signature against whatever establishment event it names accepts any identifier speaking as any other.
+- Effect. An exchange message carrying only another AID's valid signature, naming that AID's establishment event, is refused at MUST, on lines 1266 and 1737 together.
+- The specification should state in line 1260 that the establishment event must be one of the sender's.
