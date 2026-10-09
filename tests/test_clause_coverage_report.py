@@ -1,0 +1,589 @@
+"""Clause coverage, second half: reading the cases and the triage sidecars, measuring which
+keyword sentences the cases cite, and writing the generated report that scripts/clause-coverage
+--check holds the committed one to. Every input the measurement cannot interpret is refused with a
+coded error, because a coverage report built from a misread input would overstate the suite."""
+
+import dataclasses
+import hashlib
+import json
+import os
+import pathlib
+import sys
+
+import pytest
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from generators.spec_tables import clause_coverage as cc
+from generators.spec_tables import spec_source
+
+FAKE_TEXT = """\
+# Fake
+
+## Parsing
+
+A parser MUST refuse a bad code. A parser SHOULD log it. A parser MAY stop.
+Any producer MUST send the version first.
+
+## Keys
+
+The controller MUST keep its keys secret. A validator SHOULD hold the key state.
+A plain line with no keyword.
+"""
+
+FAKE = spec_source.Pin(name="FAKE", label="fake", repo="https://github.com/example/fake-spec",
+                       tag="v9", commit="f" * 40, file="spec/spec-body.md",
+                       sha256=hashlib.sha256(FAKE_TEXT.encode()).hexdigest())
+FAKE2 = dataclasses.replace(FAKE, tag="v10", commit="e" * 40)
+FAKE2_TEXT = FAKE_TEXT.replace("A parser MAY stop.", "A parser MUST stop.")
+
+
+def clause(quote, pin=FAKE):
+    return {"spec": pin.label, "commit": pin.commit, "quote": quote, "section": "x", "url": "u"}
+
+
+def case(case_id, *assertions, status="active"):
+    return {"id": case_id, "status": status, "assertions": [
+        {"id": f"a{n}", **a} for n, a in enumerate(assertions, start=1)]}
+
+
+def must(quote, check="rejected", expected=None, pin=FAKE):
+    return {"check": check, "level": "MUST", "expected": expected, "clause": clause(quote, pin)}
+
+
+def should(quote, inferred, line, check="disposition", expected="seen"):
+    return {"check": check, "level": "SHOULD", "expected": expected, "clause": clause(quote),
+            "inferred_from": {"quote": inferred, "line": line, "inference": "i", "section": "x"}}
+
+
+def interop():
+    return {"check": "rejected", "level": "INTEROP", "basis": "keripy does it"}
+
+
+def triage_file(entries=None):
+    return {"about": "Hand-kept triage.", "entries": entries or {}}
+
+
+@pytest.fixture
+def tree(tmp_path, monkeypatch):
+    """A repository with fake cases, a fake pinned text and an empty triage sidecar."""
+    monkeypatch.setattr(cc, "known_pins", lambda: [FAKE, FAKE2])
+    monkeypatch.setattr(cc, "load_text", lambda pin: {FAKE: FAKE_TEXT, FAKE2: FAKE2_TEXT}[pin])
+
+    def put(*cases, triage=None):
+        for one in cases:
+            path = tmp_path / "cases" / one["id"].split("-")[0].lower() / f"{one['id']}.json"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(one))
+        path = tmp_path / "scenarios" / "fake" / "triage.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(triage if triage is not None else triage_file()))
+        return tmp_path
+
+    return put
+
+
+# --- Reading cases ------------------------------------------------------------------------------
+
+
+def test_cases_are_read_in_id_order(tree):
+    root = tree(case("KERI-0002", must("A parser MUST refuse a bad code.")),
+                case("CESR-0001", must("A parser MUST refuse a bad code.")))
+    assert [c["id"] for c in cc.load_cases(root)] == ["CESR-0001", "KERI-0002"]
+
+
+@pytest.mark.parametrize("mangle, message", [
+    (lambda c: c.update(id="KERI-1"), "not a case id"),
+    (lambda c: c.update(status="retired"), "status"),
+    (lambda c: c.update(assertions=[]), "assertions"),
+    (lambda c: c.update(assertions="a1"), "assertions"),
+    (lambda c: c["assertions"].append("a2"), "assertion"),
+    (lambda c: c["assertions"][0].update(check=7), "check"),
+    (lambda c: c["assertions"][0].update(level="MAYBE"), "level"),
+    (lambda c: c["assertions"][0].update(id=None), "assertion id"),
+    (lambda c: c["assertions"][0].update(clause="x"), "clause"),
+    (lambda c: c["assertions"][0]["clause"].update(commit=None), "clause"),
+    (lambda c: c["assertions"][0].update(inferred_from={"quote": "q", "line": 1}) or
+     c["assertions"][0].pop("clause"), "inferred_from without a clause"),
+    (lambda c: c["assertions"][0].update(inferred_from={"quote": "q"}), "inferred_from"),
+    (lambda c: c["assertions"][0].update(inferred_from={"quote": "q", "line": True}),
+     "inferred_from"),
+])
+def test_a_malformed_case_is_a_coded_error(tree, mangle, message):
+    bad = case("KERI-0001", must("A parser MUST refuse a bad code."))
+    mangle(bad)
+    root = tree()
+    path = root / "cases" / "keri" / "KERI-0001.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(bad))
+    with pytest.raises(cc.CoverageError, match=message) as e:
+        cc.load_cases(root)
+    assert e.value.code == cc.E_CASE and "KERI-0001.json" in str(e.value)
+
+
+def test_a_case_that_is_not_an_object_is_a_coded_error(tree):
+    root = tree()
+    (root / "cases" / "keri").mkdir(parents=True)
+    (root / "cases" / "keri" / "KERI-0001.json").write_text("[]")
+    with pytest.raises(cc.CoverageError, match="not an object") as e:
+        cc.load_cases(root)
+    assert e.value.code == cc.E_CASE
+
+
+def test_a_case_whose_file_name_is_not_its_id_is_a_coded_error(tree):
+    root = tree()
+    (root / "cases" / "keri").mkdir(parents=True)
+    (root / "cases" / "keri" / "KERI-0009.json").write_text(json.dumps(
+        case("KERI-0001", must("A parser MUST refuse a bad code."))))
+    with pytest.raises(cc.CoverageError, match="KERI-0009.json") as e:
+        cc.load_cases(root)
+    assert e.value.code == cc.E_CASE
+
+
+def test_a_case_that_is_not_json_is_a_coded_error(tree):
+    root = tree()
+    (root / "cases" / "keri").mkdir(parents=True)
+    (root / "cases" / "keri" / "KERI-0001.json").write_text("{not json")
+    with pytest.raises(cc.CoverageError, match="could not be read as JSON") as e:
+        cc.load_cases(root)
+    assert e.value.code == cc.E_CASE
+
+
+def test_an_unreadable_case_is_a_coded_error(tree):
+    root = tree()
+    (root / "cases" / "keri" / "KERI-0001.json").mkdir(parents=True)  # a directory, not a file
+    with pytest.raises(cc.CoverageError, match="could not be read") as e:
+        cc.load_cases(root)
+    assert e.value.code == cc.E_CASE
+
+
+def test_an_oversized_case_is_refused_before_it_is_parsed(tree, monkeypatch):
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")))
+    monkeypatch.setattr(cc, "MAX_FILE_BYTES", 10)
+    with pytest.raises(cc.CoverageError, match="larger than 10 bytes") as e:
+        cc.load_cases(root)
+    assert e.value.code == cc.E_SIZE
+
+
+def test_an_unknown_check_type_anywhere_is_refused(tree):
+    root = tree(case("KERI-0001", {"check": "verdict", "level": "INTEROP", "expected": "valid"}))
+    with pytest.raises(cc.CoverageError, match="unknown check 'verdict'"):
+        cc.generate(root)
+
+
+# --- Pins ---------------------------------------------------------------------------------------
+
+
+def test_the_known_pins_are_the_cesr_and_keri_texts():
+    assert cc.known_pins() == [spec_source.cesr_pin(), spec_source.KERI]
+
+
+def test_load_text_reads_the_pinned_text(monkeypatch):
+    calls = []
+    monkeypatch.setattr(cc.spec_source, "load_spec",
+                        lambda allow_fetch=True, pin=None: calls.append(pin) or "text")
+    assert cc.load_text(FAKE) == "text" and calls == [FAKE]
+
+
+def test_a_clause_citing_an_unpinned_commit_is_a_coded_error(tree):
+    stale = dataclasses.replace(FAKE, commit="0" * 40)
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.", pin=stale)))
+    with pytest.raises(cc.CoverageError, match="0000000000") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_PIN
+
+
+def test_a_quote_not_in_its_pinned_text_is_a_coded_error(tree):
+    root = tree(case("KERI-0001", must("Nowhere in the text.")))
+    with pytest.raises(cc.CoverageError, match="KERI-0001 a1") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_CASE
+
+
+def test_an_inferred_quote_not_in_its_pinned_text_is_a_coded_error(tree):
+    root = tree(case("KERI-0001", should("A parser MUST refuse a bad code.", "Nowhere.", 10)))
+    with pytest.raises(cc.CoverageError, match="KERI-0001 a1: Quote not found") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_CASE
+
+
+def test_an_inference_whose_line_does_not_match_the_text_is_a_coded_error(tree):
+    root = tree(case("KERI-0001", should("A parser MUST refuse a bad code.",
+                                         "A validator SHOULD hold the key state.", 99)))
+    with pytest.raises(cc.CoverageError, match="line 99") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_CASE
+
+
+# --- Triage -------------------------------------------------------------------------------------
+
+
+def test_triage_is_validated_and_returned(tree):
+    entries = {"A parser MUST refuse a bad code.": {"scope": "validator", "security": True},
+               "The controller MUST keep its keys secret.": {
+                   "scope": "out-of-scope", "security": True, "note": "Controller only."},
+               "Any producer MUST send the version first.": {
+                   "scope": "untestable", "reason": "No adapter produces.", "security": False}}
+    root = tree(triage=triage_file(entries))
+    assert cc.load_triage(root, "fake") == entries
+
+
+def test_a_missing_triage_file_is_a_coded_error(tmp_path):
+    with pytest.raises(cc.CoverageError, match="scenarios/fake/triage.json") as e:
+        cc.load_triage(tmp_path, "fake")
+    assert e.value.code == cc.E_TRIAGE
+
+
+@pytest.mark.parametrize("triage, message", [
+    ([], "an object"),
+    ({"entries": {}}, "about"),
+    ({"about": "", "entries": {}}, "about field is not text"),
+    ({"about": "x", "entries": {}, "extra": 1}, "extra"),
+    ({"about": "x", "entries": []}, "entries"),
+    (triage_file({"s": "validator"}), "an object"),
+    (triage_file({"s": {"scope": "maybe", "security": False}}), "scope"),
+    (triage_file({"s": {"scope": "validator"}}), "security"),
+    (triage_file({"s": {"scope": "validator", "security": "yes"}}), "security"),
+    (triage_file({"s": {"scope": "untestable", "security": False}}), "reason"),
+    (triage_file({"s": {"scope": "untestable", "security": False, "reason": ""}}), "reason"),
+    (triage_file({"s": {"scope": "validator", "security": False, "reason": "r"}}), "reason"),
+    (triage_file({"s": {"scope": "validator", "security": False, "note": 3}}), "note"),
+    (triage_file({"s": {"scope": "validator", "security": False, "colour": "red"}}), "colour"),
+])
+def test_a_malformed_triage_file_is_a_coded_error(tree, triage, message):
+    root = tree(triage=triage)
+    with pytest.raises(cc.CoverageError, match=message) as e:
+        cc.load_triage(root, "fake")
+    assert e.value.code == cc.E_TRIAGE
+
+
+def test_a_triage_file_that_is_not_json_is_a_coded_error(tree):
+    root = tree()
+    (root / "scenarios" / "fake" / "triage.json").write_text("{")
+    with pytest.raises(cc.CoverageError) as e:
+        cc.load_triage(root, "fake")
+    assert e.value.code == cc.E_TRIAGE
+
+
+@pytest.mark.parametrize("sentence", [
+    "A plain line with no keyword.",  # not a keyword sentence
+    "A parser MUST refuse a bad code",  # not exact
+    "Nowhere in the text.",
+])
+def test_a_triage_entry_that_is_not_a_keyword_sentence_is_refused(tree, sentence):
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")),
+                triage=triage_file({sentence: {"scope": "validator", "security": False}}))
+    with pytest.raises(cc.CoverageError, match="not a keyword sentence") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_TRIAGE_STALE
+
+
+def test_a_triage_entry_for_a_sentence_that_occurs_twice_is_refused(tree, monkeypatch):
+    doubled = FAKE_TEXT + "A parser SHOULD log it.\n"
+    monkeypatch.setattr(cc, "load_text", lambda pin: doubled)
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")),
+                triage=triage_file({"A parser SHOULD log it.": {"scope": "validator",
+                                                                 "security": False}}))
+    with pytest.raises(cc.CoverageError, match="more than once") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_TRIAGE_STALE
+
+
+def test_a_triage_entry_needs_only_one_pin_of_its_spec_to_hold_it(tree):
+    """'A parser MUST stop.' is in the second pin's text only."""
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")),
+                case("KERI-0002", must("A parser MUST stop.", pin=FAKE2)),
+                triage=triage_file({"A parser MUST stop.": {"scope": "validator",
+                                                             "security": False}}))
+    assert "docs/coverage/fake.md" in cc.generate(root)
+
+
+def test_a_triage_file_for_a_spec_no_case_cites_must_be_empty(tree):
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")))
+    other = root / "scenarios" / "other" / "triage.json"
+    other.parent.mkdir(parents=True)
+    other.write_text(json.dumps(triage_file()))
+    cc.generate(root)
+    other.write_text(json.dumps(triage_file({"s": {"scope": "validator", "security": False}})))
+    with pytest.raises(cc.CoverageError, match="not a keyword sentence") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_TRIAGE_STALE
+
+
+# --- Measurement --------------------------------------------------------------------------------
+
+CASES = [
+    case("KERI-0001", must("A parser MUST refuse a bad code."),
+         should("A parser MUST refuse a bad code.", "A validator SHOULD hold the key state.", 10),
+         interop()),
+    case("KERI-0002", must("A parser MUST refuse a bad code.", check="encoded", expected="00")),
+    case("KERI-0003", must("The controller MUST keep its keys secret. "
+                           "A validator SHOULD hold the key state.",
+                           check="trunk", expected=False), status="disputed"),
+    case("KERI-0004", must("Unmatched: a plain line", check="key_state", expected={}),
+         should("A parser MUST refuse a bad code.", "A plain line with no keyword.", 11)),
+]
+CASES[3]["assertions"][0]["clause"]["quote"] = "A plain line with no keyword."
+
+
+def measured():
+    return cc.measure(CASES, {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)},
+                      {"fake": {"A parser MUST refuse a bad code.": {"scope": "validator",
+                                                                     "security": True}}})
+
+
+def row(coverage, text):
+    (found,) = [r for r in coverage.rows if r.sentence.text == text]
+    return found
+
+
+def test_measure_records_direct_and_inferred_citations_levels_polarity_and_disputes():
+    (coverage,) = measured()
+    bad_code = row(coverage, "A parser MUST refuse a bad code.")
+    assert bad_code.direct == ["KERI-0001", "KERI-0002"]
+    assert bad_code.inferred == ["KERI-0001", "KERI-0004"]
+    assert bad_code.levels == {"MUST": 2, "SHOULD": 2}
+    assert bad_code.polarity == "both"
+    assert bad_code.disputed == 0
+    assert bad_code.covered
+    assert bad_code.triage == {"scope": "validator", "security": True}
+
+
+def test_an_assertion_with_an_inference_cites_its_clause_by_inference_too():
+    (coverage,) = measured()
+    key_state = row(coverage, "A validator SHOULD hold the key state.")
+    assert key_state.direct == ["KERI-0003"] and key_state.inferred == ["KERI-0001"]
+
+
+def test_a_sentence_cited_only_by_a_disputed_case_is_not_covered():
+    (coverage,) = measured()
+    secret = row(coverage, "The controller MUST keep its keys secret.")
+    assert secret.direct == ["KERI-0003"] and secret.disputed == 1
+    assert not secret.covered and secret.polarity == ""
+    assert secret.triage is None
+
+
+def test_an_uncited_sentence_is_uncovered_with_no_polarity():
+    (coverage,) = measured()
+    stop = row(coverage, "A parser MAY stop.")
+    assert (stop.direct, stop.inferred, stop.levels, stop.polarity, stop.covered) == (
+        [], [], {}, "", False)
+
+
+def test_a_quote_matching_no_keyword_sentence_is_listed_not_refused():
+    (coverage,) = measured()
+    assert coverage.unmapped == [
+        cc.Unmapped(line=11, quote="A plain line with no keyword.", cited_as="clause",
+                    cases=["KERI-0004"]),
+        cc.Unmapped(line=11, quote="A plain line with no keyword.", cited_as="inference",
+                    cases=["KERI-0004"]),
+    ]
+
+
+def test_every_keyword_sentence_has_exactly_one_row_in_order():
+    (coverage,) = measured()
+    assert [(r.sentence.line, r.sentence.text) for r in coverage.rows] == [
+        (s.line, s.text) for s in cc.keyword_sentences(FAKE_TEXT)]
+
+
+# --- Rendering ----------------------------------------------------------------------------------
+
+
+def report_rows(markdown):
+    """(line, sentence) for every sentence row of a rendered per-spec report."""
+    out = []
+    for line in markdown.splitlines():
+        cells = cc.split_row(line)
+        if cells and cells[0].isdigit():
+            out.append((int(cells[0]), cells[-1]))
+    return out
+
+
+def test_a_table_cell_escapes_pipes_and_split_row_reads_it_back():
+    line = "| 3 | " + cc.cell("|`A`| It MUST be first. |") + " |"
+    assert cc.split_row(line) == ["3", "|`A`| It MUST be first. |"]
+    assert cc.split_row("not a row") == []
+
+
+def test_the_spec_report_starts_with_the_notice_and_lists_sections_in_order():
+    text = cc.render_spec("fake", measured())
+    assert text.startswith(cc.NOTICE)
+    assert text.index("Parsing") < text.index("Keys")
+    assert text.index("### Obligations") < text.index("### Permissions")
+    assert "https://github.com/example/fake-spec/blob/" + "f" * 40 + "/spec/spec-body.md#parsing" \
+        in text
+    assert report_rows(text) == [  # spec order, obligations first
+        (s.line, s.text) for s in cc.keyword_sentences(FAKE_TEXT) if s.level != "MAY"
+    ] + [(5, "A parser MAY stop.")]
+
+
+def test_the_spec_report_rows_carry_triage_counts_polarity_and_case_marks():
+    text = cc.render_spec("fake", measured())
+    (bad_code,) = [line for line in text.splitlines() if line.endswith("refuse a bad code. |")]
+    assert bad_code == ("| 5 | MUST | validator, security | 2 | 2 | 0 | MUST 2, SHOULD 2 | both "
+                        "| KERI-0001, KERI-0002, KERI-0004 (inferred) "
+                        "| A parser MUST refuse a bad code. |")
+    (secret,) = [line for line in text.splitlines() if line.endswith("keys secret. |")]
+    assert "| unassessed | 1 | 0 | 1 | MUST 1 | — | KERI-0003 (disputed) |" in secret
+
+
+def test_the_spec_report_lists_unmapped_quotes():
+    text = cc.render_spec("fake", measured())
+    assert "### Quotes that match no keyword sentence" in text
+    assert "| KERI-0004 | inference | 11 | A plain line with no keyword. |" in text
+
+
+def test_a_spec_report_with_nothing_unmapped_says_so():
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {})
+    assert "Every quoted clause matches a keyword sentence." in cc.render_spec("fake", coverage)
+
+
+def test_an_untestable_triage_shows_its_reason():
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": {
+        "A parser SHOULD log it.": {"scope": "untestable", "reason": "Logs are private.",
+                                    "security": False}}})
+    assert "| untestable: Logs are private. |" in cc.render_spec("fake", coverage)
+
+
+def test_a_sentence_before_any_heading_is_reported_under_its_own_heading():
+    text = "Before any heading it MUST hold.\n"
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, text)}, {})
+    assert "#### Before the first heading" in cc.render_spec("fake", coverage)
+
+
+def test_each_pin_of_a_spec_is_reported_separately():
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT),
+                               (FAKE2.label, FAKE2.commit): (FAKE2, FAKE2_TEXT)}, {})
+    assert [c.pin for c in coverage] == [FAKE2, FAKE]  # by label, then tag as text
+    text = cc.render_spec("fake", coverage)
+    assert "## v9, commit " + "f" * 12 in text and "## v10, commit " + "e" * 12 in text
+
+
+def test_the_summary_counts_obligations_triage_and_security():
+    (coverage,) = measured()
+    summary = cc.summarize(coverage)
+    assert summary == {
+        "MUST": 3, "SHOULD": 2, "MAY": 1, "covered": 2, "uncovered": 3, "both": 1,
+        "validator": 1, "out-of-scope": 0, "untestable": 0, "unassessed": 4,
+        "security covered": 1, "security uncovered": 0, "unmapped": 2,
+    }
+
+
+def test_the_index_has_the_notice_a_column_per_pin_and_a_row_per_measure():
+    index = cc.render_index(measured())
+    assert index.startswith(cc.NOTICE)
+    assert "[FAKE v9](fake.md)" in index
+    assert "| Obligations covered by an active case | 2 |" in index
+    assert "| Security-bearing obligations not covered | 0 |" in index
+    assert "scripts/clause-coverage" in index
+
+
+# --- Generation, writing and checking -----------------------------------------------------------
+
+
+def test_generate_writes_a_report_per_spec_and_an_index(tree):
+    root = tree(*CASES[:2])
+    files = cc.generate(root)
+    assert sorted(files) == ["docs/coverage/README.md", "docs/coverage/fake.md"]
+    assert files == cc.generate(root)  # deterministic
+
+
+def test_generate_reports_both_pins_of_a_spec_in_one_file(tree):
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")),
+                case("KERI-0002", must("A parser MUST stop.", pin=FAKE2)))
+    text = cc.generate(root)["docs/coverage/fake.md"].decode()
+    assert "## v9," in text and "## v10," in text
+
+
+def test_write_then_committed_round_trips_and_removes_stale_reports(tmp_path):
+    (tmp_path / "docs" / "coverage").mkdir(parents=True)
+    (tmp_path / "docs" / "coverage" / "old.md").write_text("stale")
+    (tmp_path / "docs" / "coverage" / "notes.txt").write_text("not owned")
+    files = {"docs/coverage/README.md": b"a\n", "docs/coverage/fake.md": b"b\n"}
+    cc.write(tmp_path, files)
+    assert cc.committed(tmp_path) == files
+    assert (tmp_path / "docs" / "coverage" / "notes.txt").exists()
+
+
+def test_differences_names_missing_extra_and_differing_reports():
+    assert cc.differences({"a": b"1", "b": b"2"}, {"b": b"3", "c": b"4"}) == [
+        "missing: a is generated but not committed",
+        "differs: b does not match what the cases and triage generate",
+        "extra: c is committed but nothing generates it",
+    ]
+
+
+def test_main_writes_under_out_then_check_passes_and_a_changed_byte_fails(tree, capsys,
+                                                                        monkeypatch):
+    root = tree(*CASES[:2])
+    monkeypatch.setattr(cc, "ROOT", root)
+    assert cc.main([]) == 0
+    assert "Wrote 2 files" in capsys.readouterr().out
+    assert cc.main(["--check"]) == 0
+    assert "2 generated files match" in capsys.readouterr().out
+    report = root / "docs" / "coverage" / "fake.md"
+    report.write_bytes(report.read_bytes() + b" ")
+    assert cc.main(["--check"]) == 1
+    out = capsys.readouterr().out
+    assert "differs: docs/coverage/fake.md" in out and "scripts/clause-coverage" in out
+
+
+def test_main_out_writes_elsewhere(tree, tmp_path_factory, monkeypatch, capsys):
+    root = tree(*CASES[:2])
+    monkeypatch.setattr(cc, "ROOT", root)
+    out = tmp_path_factory.mktemp("out")
+    assert cc.main(["--out", str(out)]) == 0
+    assert (out / "docs" / "coverage" / "fake.md").exists()
+    assert not (root / "docs").exists()
+
+
+def test_main_exits_2_when_a_specification_text_is_unavailable(tree, monkeypatch, capsys):
+    root = tree(*CASES[:2])
+    monkeypatch.setattr(cc, "ROOT", root)
+
+    def unavailable(pin):
+        raise spec_source.SpecUnavailable(spec_source.E_FETCH, "offline")
+
+    monkeypatch.setattr(cc, "load_text", unavailable)
+    assert cc.main(["--check"]) == 2
+    assert capsys.readouterr().err.strip() == "e.env.kcs-spec.fetch.r: offline"
+
+
+def test_main_exits_3_on_a_coded_input_error(tree, monkeypatch, capsys):
+    root = tree(case("KERI-0001", {"check": "verdict", "level": "MUST", "expected": 1}))
+    monkeypatch.setattr(cc, "ROOT", root)
+    assert cc.main(["--check"]) == 3
+    assert capsys.readouterr().err.startswith(cc.E_CASE + ": ")
+
+
+def test_the_wrapper_script_runs_main():
+    script = (ROOT / "scripts" / "clause-coverage").read_text()
+    assert "from generators.spec_tables.clause_coverage import main" in script
+    assert os.access(ROOT / "scripts" / "clause-coverage", os.X_OK)
+
+
+# --- The committed report -----------------------------------------------------------------------
+
+
+def real_files():
+    try:
+        return cc.generate(ROOT)
+    except spec_source.SpecUnavailable as e:
+        if os.environ.get("KCS_REQUIRE_SPEC") == "1":
+            raise
+        return pytest.skip(f"a pinned specification text is unavailable: {e}")
+
+
+def test_the_committed_report_is_what_the_cases_and_triage_generate():
+    assert cc.differences(real_files(), cc.committed(ROOT)) == []
+
+
+@pytest.mark.parametrize("pin", [spec_source.cesr_pin(), spec_source.KERI], ids=["cesr", "keri"])
+def test_every_keyword_sentence_of_each_pinned_text_is_in_the_report_exactly_once(pin):
+    files = real_files()
+    text = spec_source.load_spec(pin=pin)
+    want = sorted((s.line, s.text) for s in cc.keyword_sentences(text))
+    rows = report_rows(files[f"docs/coverage/{pin.label}.md"].decode())
+    assert sorted(rows) == want
+    assert len(rows) == len(set(rows))

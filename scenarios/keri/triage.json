@@ -1,0 +1,4 @@
+{
+  "about": "Hand-kept triage of the keyword sentences of the pinned KERI specification text, read by scripts/clause-coverage. Each entry is keyed by the exact text of one keyword sentence as docs/coverage/keri.md shows it, and must match exactly one sentence of a pinned text. Fields: scope, one of validator (a validator can be tested on it through an adapter), out-of-scope (it binds a role no adapter plays, such as a controller managing its keys) or untestable (no case could test it; reason is then required and says why); security, true when the sentence has a security consequence; note, optional. A sentence with no entry is reported as unassessed.",
+  "entries": {}
+}
