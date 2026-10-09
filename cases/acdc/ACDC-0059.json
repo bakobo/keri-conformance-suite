@@ -186,7 +186,7 @@
     "scenario": "scenarios/acdc/edges.json#KS-49"
   },
   "schema_version": 1,
-  "status": "active",
+  "status": "draft",
   "targets": {
     "features": [
       "acdc.edges",

@@ -151,7 +151,9 @@ PROFILES = {
             "scenarios/acdc/ and must not be edited. Fields: name; normative (true when every "
             "assertion cites a specification clause); spec (the pinned specification the "
             "assertions cite); cases (the case ids, in order). Disputed and deprecated cases are "
-            "listed but excluded from conformance results by their status."
+            "listed but excluded from conformance results by their status. Draft cases, which "
+            "the first ACDC batch is until an implementation has evaluated it, are run and "
+            "reported but do not decide the verdict and cover no clause."
         ),
         "name": "acdc-1.0",
         "normative": True,

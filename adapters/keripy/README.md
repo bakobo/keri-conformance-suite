@@ -149,7 +149,7 @@ adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare adapters
 
 `acdc.verify` (keripy main only) never answers `valid`, and the adapter declares no `acdc.*` feature, so the runner sends it no ACDC case. That is failing closed, not a gap in the adapter: keripy main has no entry point that judges an ACDC 2.00 against a bundle.
 
-**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, all 63 `acdc-1.0` cases are not-supported, because every one requires `acdc.version-2.x`, which this adapter does not declare; the verdict is `no-evidence`. The baseline is `baseline-acdc-1.0.json`, written with the baseline tool from a fresh run, and the `keripy-adapter` job in `.github/workflows/ci.yml` compares it against a fresh run.
+**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, all 76 `acdc-1.0` cases are not-supported, because every one requires `acdc.version-2.x`, which this adapter does not declare; the verdict is `no-evidence`. The cases are draft, so none would decide a verdict yet. The baseline is `baseline-acdc-1.0.json`, written with the baseline tool from a fresh run, and the `keripy-adapter` job in `.github/workflows/ci.yml` compares it against a fresh run.
 
 What keripy main has, at the pinned commit:
 

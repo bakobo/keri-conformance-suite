@@ -79,7 +79,7 @@
     "scenario": "scenarios/acdc/edges.json#KS-40-u"
   },
   "schema_version": 1,
-  "status": "active",
+  "status": "draft",
   "targets": {
     "features": [
       "acdc.version-2.x",

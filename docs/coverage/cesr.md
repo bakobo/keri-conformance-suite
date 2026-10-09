@@ -347,7 +347,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1194 | MUST | validator, security | 4 | 0 | 0 | MUST 4 | both | ACDC-0003, ACDC-0004, ACDC-0005, ACDC-0034 | The SAID verification protocol MUST be implemented as follows: |
+| 1194 | MUST | validator, security | 4 | 0 | 0 | MUST 4 | — | ACDC-0003 (draft), ACDC-0004 (draft), ACDC-0005 (draft), ACDC-0034 (draft) | The SAID verification protocol MUST be implemented as follows: |
 
 #### Description and Usage
 

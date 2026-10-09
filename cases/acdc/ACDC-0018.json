@@ -64,7 +64,7 @@
     "scenario": "scenarios/acdc/commitment.json#KS-20"
   },
   "schema_version": 1,
-  "status": "active",
+  "status": "draft",
   "targets": {
     "features": [
       "acdc.version-2.x",

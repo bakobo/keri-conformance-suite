@@ -477,6 +477,99 @@
       "assertions": {
         "a1": "not-supported"
       }
+    },
+    "ACDC-0064": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0065": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0066": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0067": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0068": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0069": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0070": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0071": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0072": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0073": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0074": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0075": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0076": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
     }
   }
 }

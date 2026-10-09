@@ -361,6 +361,15 @@ def test_a_non_local_reference_resolves_from_the_bundle_to_a_schema_the_acdc_sat
     assert [(a["level"], a["expected"]) for a in case["assertions"]] == [("SHOULD", "not-valid")]
 
 
+def test_the_first_batch_is_issued_draft():
+    # No implementation has evaluated an ACDC case yet, so each may still change before it is
+    # published active (SKP-F4); a scenario can still name another status.
+    [case] = grade(STRUCTURE, "KS-01")
+    assert case["status"] == "draft"
+    main, comp = grade(EDGES, "KS-40")
+    assert main["status"] == comp["status"] == "draft"
+
+
 def test_found_names_an_unnamed_presented_acdc_by_its_role():
     result = am.Result(am.Node({"d": "Ex"}, [am.Failure(1, "said")]), {}, [])
     assert ac.found(result, {}) == ["presented 1/said"]

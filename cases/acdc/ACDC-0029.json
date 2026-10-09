@@ -72,7 +72,7 @@
     "scenario": "scenarios/acdc/registry.json#KS-30b-u"
   },
   "schema_version": 1,
-  "status": "active",
+  "status": "draft",
   "targets": {
     "features": [
       "acdc.version-2.x",

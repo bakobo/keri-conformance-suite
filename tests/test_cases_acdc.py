@@ -102,7 +102,7 @@ def test_profile_features_wire_and_provenance(cid):
     assert set(acdc_cases.BASE_FEATURES) <= features
     assert case["targets"]["wire"][0] == "CESR-2.00" and case["targets"]["wire"][-1] == \
         acdc_cases.WIRE
-    assert case["profile"] == "acdc-1.0" and case["status"] == "active"
+    assert case["profile"] == "acdc-1.0" and case["status"] == "draft"
     assert {a["level"] for a in case["assertions"]} <= {"MUST", "SHOULD"}
     assert case["provenance"]["generator"]["name"] == acdc_cases.GENERATOR_NAME
     assert case["provenance"]["reference"] is None

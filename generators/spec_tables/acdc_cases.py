@@ -62,6 +62,10 @@ EDGES, BUP = "acdc.edges", "acdc.registry.bup"
 # only for a validator that performs the recovery. Such a case may carry no MUST.
 REQUIRABLE = ("kel.recovery",)
 RANK = {"SHOULD": 1, "MUST": 2}
+# The status a case gets unless its scenario names one. The first batch is draft: no
+# implementation has evaluated any ACDC case yet, so a case may still change before it is
+# published active (docs/design.md, ACDC, The first batch).
+BATCH_STATUS = "draft"
 
 # Each failing check: the clause it rests on, the inference that grades it below the clause's
 # level (None when the clause binds a validator directly), and the derivation in words.
@@ -416,7 +420,7 @@ def _case(cid, title, description, case, features, assertions, ev, scenario_path
         "id": cid,
         "title": title,
         "description": description,
-        "status": case.get("status", "active"),
+        "status": case.get("status", BATCH_STATUS),
         "profile": PROFILE,
         "targets": {"wire": wire, "features": features},
         "operation": "acdc.verify",

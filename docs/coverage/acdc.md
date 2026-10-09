@@ -33,7 +33,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 32 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0008 (inferred) | When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`. |
+| 32 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0008 (inferred, draft) | When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`. |
 
 #### Required Fields
 
@@ -66,8 +66,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 62 | MUST | validator | 0 | 0 | 0 | — | — | — | The Version String, `v`, field MUST be the first field in any top-level ACDC field map encoded in JSON, CBOR, or MGPK [[RFC4627](#RFC4627)] [[12](#CBOR)] [[13](#RFC8949)] [[14](#MGPK)]. |
-| 62 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | negative | ACDC-0064 | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. |
-| 64 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0009 (inferred) | The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol. |
+| 62 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0064 (draft) | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. |
+| 64 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0009 (inferred, draft) | The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol. |
 | 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the ACDC protocol [[1](#CESR)] used by the associated message. |
 | 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)]. |
 
@@ -110,7 +110,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | 95 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)]. |
 | 95 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Each AID SHOULD have set of one or more Controllers who each control a private key. |
 | 95 | MUST | untestable: States that no relationship is required; there is nothing to test. | 0 | 0 | 0 | — | — | — | No shared or trusted relationship between the Controllers and Verifiers is REQUIRED. |
-| 95 | MUST | validator, security | 0 | 7 | 0 | SHOULD 7 | negative | ACDC-0018 (inferred), ACDC-0019 (inferred), ACDC-0020 (inferred), ACDC-0021 (inferred), ACDC-0022 (inferred), ACDC-0023 (inferred), ACDC-0066 (inferred) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
+| 95 | MUST | validator, security | 0 | 7 | 0 | SHOULD 7 | — | ACDC-0018 (inferred, draft), ACDC-0019 (inferred, draft), ACDC-0020 (inferred, draft), ACDC-0021 (inferred, draft), ACDC-0022 (inferred, draft), ACDC-0023 (inferred, draft), ACDC-0066 (inferred, draft) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
 
 #### Datetime, `dt` Fields
 
@@ -134,7 +134,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 110 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0006 (inferred) | An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either. |
+| 110 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0006 (inferred, draft) | An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either. |
 
 #### Most compact form SAID
 
@@ -190,7 +190,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | 202 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | To elaborate, the serialization of a static schema SHOULD be self-contained. |
 | 202 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, all ACDC-compliant Schemas MUST be SADs. |
 | 202 | MUST | validator, security | 0 | 0 | 0 | — | — | — | In other words, the Schema MUST therefore be SAIDified. |
-| 206 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0014 (inferred) | ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable. |
+| 206 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0014 (inferred, draft) | ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable. |
 | 210 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the top-level id field, `$id`, MUST be a bare SAID. |
 | 220 | MUST | validator, security | 0 | 0 | 0 | — | — | — | To clarify, ACDCs MUST NOT use complex JSON Schema references which allow dynamically generated Schema resources to be obtained from online JSON Schema Libraries [[41](#ref41)] [[42](#JSchCx)]. |
 | 222 | MUST | validator, security | 0 | 0 | 0 | — | — | — | ACDCs MUST use static JSON Schema (i.e., SAIDifiable Schema). |
@@ -203,7 +203,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 226 | MUST | validator | 0 | 0 | 0 | — | — | — | The Schema dialect for ACDC 1.0 MUST be JSON Schema 2020-12 and is indicated by the identifier `"https://json-schema.org/draft/2020-12/schema"`  [[10](#JSch)] [[11](#JSch_202012)]. |
 | 226 | MUST | untestable: Which tooling a validator runs internally is not observable through an adapter. | 0 | 0 | 0 | — | — | — | The Validator MUST control the tooling code dialect used for Schema validation and hence the tooling dialect version actually used. |
-| 226 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | negative | ACDC-0016 | A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail. |
+| 226 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0016 (draft) | A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail. |
 | 226 | MUST | untestable: An adapter never fetches anything, so treating the $schema string as an identifier and not as a location cannot be told apart in a case. | 0 | 0 | 0 | — | — | — | The string MUST be treated simply as an identifier that communicates the intended dialect to be processed by the Schema validation tool. |
 | 226 | MUST | validator | 0 | 0 | 0 | — | — | — | When provided, the top-level `$schema` field value for ACDC version 1.0 MUST be "https://json-schema.org/draft/2020-12/schema". |
 
@@ -215,7 +215,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 230 | MUST | validator | 0 | 0 | 0 | — | — | — | Each schema MUST have at the top level a version field with the field label `version`. |
 | 230 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the `version` field MUST be a semantic version string in the dotted decimal notation of the form "major.minor.patch". |
-| 230 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | positive | ACDC-0017 | Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field. |
+| 230 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0017 (draft) | Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field. |
 | 232 | SHOULD | untestable: No case can present two different schemas with one SAID without a digest collision. | 0 | 0 | 0 | — | — | — | Any copy of a schema that verifies against the same SAID given by the Schema ID, `$id` field value, SHOULD be assumed to be identical to any other copy that verifies to the same SAID by virtue of the strong collision resistance of the digest employed. |
 | 234 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | To avoid confusion, any change to the Schema that changes the value of the `$id` MUST also be reflected in a correspondingly unique value of its `version` field. |
 | 236 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | To comply with the semantic versioning rules, a backward incompatible Schema MUST have a higher major version number in its `version` field value than any backward incompatible version. |
@@ -239,11 +239,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 246 | MUST | validator, security | 2 | 0 | 0 | MUST 2 | negative | ACDC-0012, ACDC-0013 | The provided ACDC MUST validate against an allowed combination of the composed variants. |
+| 246 | MUST | validator, security | 2 | 0 | 0 | MUST 2 | — | ACDC-0012 (draft), ACDC-0013 (draft) | The provided ACDC MUST validate against an allowed combination of the composed variants. |
 | 246 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Validator determines what decomposed variants the provided ACDC MUST also validate against. |
-| 248 | MUST | validator, security | 1 | 0 | 0 | MUST 1 | negative | ACDC-0010 | Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID. |
+| 248 | MUST | validator, security | 1 | 0 | 0 | MUST 1 | — | ACDC-0010 (draft) | Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID. |
 | 248 | MUST | validator, security | 0 | 0 | 0 | — | — | — | It also MUST validate against one of its specified `oneOf` variants. |
-| 250 | MUST | validator, security | 3 | 11 | 0 | MUST 3, SHOULD 11 | both | ACDC-0001 (inferred), ACDC-0002 (inferred), ACDC-0007, ACDC-0011, ACDC-0015, ACDC-0024 (inferred), ACDC-0025 (inferred), ACDC-0043 (inferred), ACDC-0048 (inferred), ACDC-0059 (inferred), ACDC-0062 (inferred), ACDC-0065 (inferred), ACDC-0067 (inferred), ACDC-0072 (inferred) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. |
+| 250 | MUST | validator, security | 3 | 11 | 0 | MUST 3, SHOULD 11 | — | ACDC-0001 (inferred, draft), ACDC-0002 (inferred, draft), ACDC-0007 (draft), ACDC-0011 (draft), ACDC-0015 (draft), ACDC-0024 (inferred, draft), ACDC-0025 (inferred, draft), ACDC-0043 (inferred, draft), ACDC-0048 (inferred, draft), ACDC-0059 (inferred, draft), ACDC-0062 (inferred, draft), ACDC-0065 (inferred, draft), ACDC-0067 (inferred, draft), ACDC-0072 (inferred, draft) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. |
 | 250 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | In contrast, the compliance of the provided composed schema for an expected ACDC type SHOULD be enforced by the Validator. |
 
 #### Cargo, `cargo` field
@@ -423,7 +423,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 1170 | MUST | validator | 0 | 0 | 0 | — | — | — | When an Edge block does not include a SAID, `d` field, then the node, `n` field MUST appear as the first field in the block. |
-| 1174 | MUST | validator, security | 4 | 17 | 0 | MUST 4, SHOULD 30 | both | ACDC-0043 (inferred), ACDC-0044 (inferred), ACDC-0046 (inferred), ACDC-0047, ACDC-0048 (inferred), ACDC-0049 (inferred), ACDC-0051 (inferred), ACDC-0053 (inferred), ACDC-0055 (inferred), ACDC-0057 (inferred), ACDC-0058, ACDC-0059 (inferred), ACDC-0060 (inferred), ACDC-0062 (inferred), ACDC-0068 (inferred), ACDC-0070 (inferred), ACDC-0072 (inferred), ACDC-0073 (inferred), ACDC-0074, ACDC-0075 (inferred), ACDC-0076 | In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema. |
+| 1174 | MUST | validator, security | 4 | 17 | 0 | MUST 4, SHOULD 30 | — | ACDC-0043 (inferred, draft), ACDC-0044 (inferred, draft), ACDC-0046 (inferred, draft), ACDC-0047 (draft), ACDC-0048 (inferred, draft), ACDC-0049 (inferred, draft), ACDC-0051 (inferred, draft), ACDC-0053 (inferred, draft), ACDC-0055 (inferred, draft), ACDC-0057 (inferred, draft), ACDC-0058 (draft), ACDC-0059 (inferred, draft), ACDC-0060 (inferred, draft), ACDC-0062 (inferred, draft), ACDC-0068 (inferred, draft), ACDC-0070 (inferred, draft), ACDC-0072 (inferred, draft), ACDC-0073 (inferred, draft), ACDC-0074 (draft), ACDC-0075 (inferred, draft), ACDC-0076 (draft) | In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema. |
 | 1174 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When the (near node) Edge block's schema, `s` field is present (see below), then the far node MUST also validate against the Schema indicated by the near node Edge block's Schema, `s` field value. |
 
 #### Schema, `s` field
@@ -434,7 +434,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 1178 | MUST | validator | 0 | 0 | 0 | — | — | — | When present, the Schema `s` field MUST appear immediately following the node `n` field in the Edge sub-block. |
 | 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The far node ACDC MUST also validate against an Edge block's schema, `s` field when present. |
-| 1178 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | negative | ACDC-0050, ACDC-0052, ACDC-0054 | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. |
+| 1178 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | — | ACDC-0050 (draft), ACDC-0052 (draft), ACDC-0054 (draft) | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. |
 | 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | However, when the Schema SAIDs differ, two Schema validation runs MUST be performed. |
 
 #### Operator, `o` field
@@ -448,8 +448,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | 1194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | \|`DI2I`\| Delegated-Issuer-To-Issuee, The Issuer AID of this ACDC MUST be either the Issuee AID or a delegated AID of the Issuee AID of the node this Edge points to. \| No \| |
 | 1199 | MUST | validator, security | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge is a targeted ACDC, i.e., has an Issuee, then the `I2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
 | 1201 | MUST | validator | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge block is an Untargeted ACDC i.e., does not have an Issuee, then the `NI2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
-| 1205 | MUST | validator, security | 5 | 0 | 0 | MUST 5 | negative | ACDC-0045, ACDC-0056, ACDC-0061, ACDC-0069, ACDC-0071 | The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points. |
-| 1205 | MUST | validator, security | 5 | 0 | 0 | MUST 5 | negative | ACDC-0045, ACDC-0056, ACDC-0061, ACDC-0069, ACDC-0071 | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
+| 1205 | MUST | validator, security | 5 | 0 | 0 | MUST 5 | — | ACDC-0045 (draft), ACDC-0056 (draft), ACDC-0061 (draft), ACDC-0069 (draft), ACDC-0071 (draft) | The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points. |
+| 1205 | MUST | validator, security | 5 | 0 | 0 | MUST 5 | — | ACDC-0045 (draft), ACDC-0056 (draft), ACDC-0061 (draft), ACDC-0069 (draft), ACDC-0071 (draft) | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
 | 1207 | MUST | validator | 0 | 0 | 0 | — | — | — | In other words, any REQUIREMENT that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID, if any, of the node the Edge points to is relaxed (not applicable). |
 | 1209 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
 
@@ -563,8 +563,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1669 | MUST | validator, security | 0 | 12 | 0 | SHOULD 12 | both | ACDC-0025 (inferred), ACDC-0026 (inferred), ACDC-0027 (inferred), ACDC-0028 (inferred), ACDC-0030 (inferred), ACDC-0032 (inferred), ACDC-0033 (inferred), ACDC-0035 (inferred), ACDC-0036 (inferred), ACDC-0037 (inferred), ACDC-0039 (inferred), ACDC-0041 (inferred) | The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal. |
-| 1669 | MUST | validator, security | 0 | 8 | 0 | SHOULD 8 | both | ACDC-0028 (inferred), ACDC-0029 (inferred), ACDC-0030 (inferred), ACDC-0031 (inferred), ACDC-0035 (inferred), ACDC-0038 (inferred), ACDC-0040 (inferred), ACDC-0042 (inferred) | Update events in the Registry's TEL MUST also be anchored. |
+| 1669 | MUST | validator, security | 0 | 12 | 0 | SHOULD 12 | — | ACDC-0025 (inferred, draft), ACDC-0026 (inferred, draft), ACDC-0027 (inferred, draft), ACDC-0028 (inferred, draft), ACDC-0030 (inferred, draft), ACDC-0032 (inferred, draft), ACDC-0033 (inferred, draft), ACDC-0035 (inferred, draft), ACDC-0036 (inferred, draft), ACDC-0037 (inferred, draft), ACDC-0039 (inferred, draft), ACDC-0041 (inferred, draft) | The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal. |
+| 1669 | MUST | validator, security | 0 | 8 | 0 | SHOULD 8 | — | ACDC-0028 (inferred, draft), ACDC-0029 (inferred, draft), ACDC-0030 (inferred, draft), ACDC-0031 (inferred, draft), ACDC-0035 (inferred, draft), ACDC-0038 (inferred, draft), ACDC-0040 (inferred, draft), ACDC-0042 (inferred, draft) | Update events in the Registry's TEL MUST also be anchored. |
 
 #### Graduated Disclosure
 
@@ -695,7 +695,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2015 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0038 (inferred) | The Issuer, `i` field value MUST be the AID of the Issuer. |
+| 2015 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0038 (inferred, draft) | The Issuer, `i` field value MUST be the AID of the Issuer. |
 
 #### Registry SAID, `rd` field
 
@@ -721,7 +721,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2027 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | positive | ACDC-0032 (inferred) | The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL. |
+| 2027 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0032 (inferred, draft) | The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL. |
 
 #### Datetime, `dt` field
 
@@ -755,7 +755,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 2058 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields MUST appear in the following order: `[d, u, td, ts]`. |
-| 2062 | MUST | validator | 0 | 5 | 0 | SHOULD 5 | positive | ACDC-0025 (inferred), ACDC-0026 (inferred), ACDC-0027 (inferred), ACDC-0036 (inferred), ACDC-0037 (inferred) | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`. |
+| 2062 | MUST | validator | 0 | 5 | 0 | SHOULD 5 | — | ACDC-0025 (inferred, draft), ACDC-0026 (inferred, draft), ACDC-0027 (inferred, draft), ACDC-0036 (inferred, draft), ACDC-0037 (inferred, draft) | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`. |
 
 #### BLID, `d` field
 
@@ -763,7 +763,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2066 | MUST | validator, security | 0 | 2 | 0 | SHOULD 2 | positive | ACDC-0039 (inferred), ACDC-0041 (inferred) | The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values. |
+| 2066 | MUST | validator, security | 0 | 2 | 0 | SHOULD 2 | — | ACDC-0039 (inferred, draft), ACDC-0041 (inferred, draft) | The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values. |
 
 #### UUID, `u` field
 
@@ -858,7 +858,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2735 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | positive | ACDC-0063 (inferred) | To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above. |
+| 2735 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0063 (inferred, draft) | To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above. |
 
 #### Basic Bulk Issuance Procedure
 
