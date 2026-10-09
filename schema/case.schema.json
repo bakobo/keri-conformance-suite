@@ -1701,6 +1701,38 @@
           "as_of": false
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "acdc.verify"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "pattern": "^ACDC-"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "exn.verify"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "pattern": "^KERI-"
+          }
+        }
+      }
     }
   ],
   "$defs": {

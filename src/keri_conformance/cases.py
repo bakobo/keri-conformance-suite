@@ -140,6 +140,8 @@ DAG = obj({"root": SAID, "edges": array(obj({"near": SAID, "path": string(EDGE_P
                                              "n": SAID}))})
 AS_OF = mapping(integer(minimum=0))
 ACDC_ONLY = ("dag", "as_of")
+# The layer whose ids the new operations' cases take (docs/design.md, ACDC; exchange messages).
+LAYER_PREFIX = {"acdc.verify": "ACDC-", "exn.verify": "KERI-"}
 
 CASE = obj(
     {
@@ -179,6 +181,10 @@ def _cross_field_problem(case: dict) -> str | None:
     for status, field in (("disputed", "dispute"), ("deprecated", "superseded_by")):
         if case["status"] == status and field not in case:
             return f'a {status} case needs "{field}"'
+    prefix = LAYER_PREFIX.get(case["operation"])
+    if prefix and not case["id"].startswith(prefix):
+        return (f'a {case["operation"]} case belongs to the {prefix.rstrip("-")} layer, so its id '
+                f'starts with "{prefix}"')
     acdc = case["operation"] == "acdc.verify"
     for field in ACDC_ONLY:
         if acdc and field not in case:

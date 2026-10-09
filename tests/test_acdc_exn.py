@@ -115,6 +115,19 @@ def test_acdc_and_exn_cases_satisfy_the_schema_and_the_runtime_check(case):
     assert case_problem(case) is None
 
 
+@pytest.mark.parametrize("case", [
+    acdc_case("KERI-0001", ALL_ACDC_CHECKS),
+    acdc_case("IPEX-0001", ALL_ACDC_CHECKS),
+    exn_case("ACDC-0001", [assertion("exn_verdict", message=0, expected="rejected")]),
+    exn_case("IPEX-0001", [assertion("exn_verdict", message=0, expected="rejected")]),
+], ids=["acdc-as-KERI", "acdc-as-IPEX", "exn-as-ACDC", "exn-as-IPEX"])
+def test_a_new_operation_is_tied_to_its_layer_id(case):
+    """Copilot on #17: an acdc.verify case is an ACDC case, and an exchange-message case is a KERI
+    case (docs/design.md, exchange messages)."""
+    assert list(CASE_SCHEMA.iter_errors(case))
+    assert "layer" in case_problem(case)
+
+
 def test_an_acdc_case_may_name_the_schema_the_validator_expects():
     case = acdc_case("ACDC-0001", ALL_ACDC_CHECKS)
     case["input"]["expect_schema"] = "ESch"
