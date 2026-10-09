@@ -322,6 +322,48 @@ def test_an_acdc_outside_the_presented_acdcs_dag_is_refused_by_name():
     assert "'X'" in e.value.message and "'N'" in e.value.message
 
 
+def test_an_acdc_reference_that_is_not_an_edge_does_not_reach_a_node():
+    """Only an edge's ``n`` field links a far node. An ``{"acdc": X}`` elsewhere in ``e`` puts X's
+    SAID in the body but writes no edge into the dag, so X would ship in ``acdcs`` with no edge
+    to it."""
+    frag = chain(["N", "F"])
+    frag["acdcs"].append({"name": "X", "issuer": "I", "schema": "S1", "a": {"d": "", "name": "x"}})
+    frag["acdcs"][0]["e"]["metadata"] = {"acdc": "X"}
+    with pytest.raises(ScenarioError) as e:
+        ab.build_bundle(T, frag)
+    assert e.value.code == ab.E_DAG_UNREACHABLE
+    assert "'X'" in e.value.message
+
+
+def test_an_edge_naming_its_far_node_by_literal_said_reaches_it():
+    frag = chain(["N", "F"])
+    said = ab.build_bundle(T, frag).saids["F"]
+    frag["acdcs"][0]["e"]["up"]["n"] = said
+    b = ab.build_bundle(T, frag)
+    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [said]
+    assert b.graph["N"] == ["F"]
+    assert b.dag["edges"] == [{"near": b.saids["N"], "path": "e.up", "n": said}]
+
+
+def test_an_edge_whose_literal_said_names_no_acdc_in_the_fragment_is_refused():
+    frag = chain(["N", "F"])
+    frag["acdcs"][0]["e"]["far"] = {"d": "", "n": "E" + "A" * 43}
+    err = _refused(frag, "'N'", "e.far", "E" + "A" * 43)
+    assert err.code == ab.E_DAG_UNREACHABLE
+
+
+def test_acdcs_and_the_dag_hold_the_same_nodes_on_a_diamond():
+    frag = chain(["N", "F1", "G"])
+    frag["acdcs"].insert(2, {"name": "F2", "issuer": "I", "schema": "S1",
+                             "a": {"d": "", "i": {"aid": "I"}, "name": "F2"},
+                             "e": {"d": "", "g": {"d": "", "n": {"acdc": "G"}}}})
+    frag["acdcs"][0]["e"]["b"] = {"d": "", "n": {"acdc": "F2"}}
+    b = ab.build_bundle(T, frag)
+    shipped = {body(e)[0]["d"] for e in b.request["acdcs"]} | {b.dag["root"]}
+    in_dag = {b.dag["root"]} | {e["near"] for e in b.dag["edges"]} | {e["n"] for e in b.dag["edges"]}
+    assert shipped == in_dag == {b.saids[n] for n in ("N", "F1", "F2", "G")}
+
+
 def test_omit_drops_entries_but_keeps_their_saids_and_incoming_edges():
     frag = chain(["N", "F", "G"])
     frag["omit"] = ["F", "S1"]
@@ -366,7 +408,7 @@ def test_edges_are_found_inside_lists_and_plain_maps_and_must_name_an_acdc():
     assert b.graph["N"] == ["F"]
     assert b.dag["edges"] == [{"near": b.saids["N"], "path": "e.grp.m.0", "n": b.saids["F"]}]
     frag["acdcs"][0]["e"]["grp"]["m"].append({"d": "", "n": {"acdc": "Z"}})
-    _refused(frag, "Z", "edge")
+    _refused(frag, "Z", "ACDC")
 
 
 def test_a_cycle_is_refused():

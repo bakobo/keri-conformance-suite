@@ -242,6 +242,16 @@ def test_the_received_reading_refuses_bytes_without_one_string_root_id():
         assert e.value.code == sa.E_READING, raw
 
 
+def test_the_received_reading_refuses_the_constants_json_does_not_have():
+    """Python's json reads NaN, Infinity and -Infinity, which are not JSON (RFC 8259)."""
+    received = sa.Readings(schema="received")
+    for constant in (b"NaN", b"Infinity", b"-Infinity"):
+        for raw in (b'{"x":' + constant + b',"$id":""}', b'{"$id":"","x":[' + constant + b']}'):
+            with pytest.raises(GeneratorError) as e:
+                sa.schema_said(T, {"$id": ""}, received, raw=raw)
+            assert e.value.code == sa.E_READING, raw
+
+
 def test_the_received_schema_reading_needs_the_bytes():
     with pytest.raises(GeneratorError) as e:
         sa.schema_said(T, {"$id": ""}, sa.Readings(schema="received"))

@@ -25,7 +25,9 @@ docs/design.md fixes, through ``acdc_saids``:
 - **The bundle** is the request of docs/adapter-protocol.md: hex streams, each led by the
   genus/version code ``-_AAACAA``, with schemas as raw compact JSON. Its ``acdcs`` hold the far
   nodes of the presented ACDC's provenance DAG, leaves first, each once, and nothing else: a
-  fragment naming an ACDC that no edge path from the presented one reaches is refused. The DAG
+  fragment naming an ACDC that no edge path from the presented one reaches is refused. An edge is
+  a map with an ``n`` field in an ACDC's ``e`` section, and ``n`` names its far node by reference
+  or by literal SAID; an ``{"acdc": N}`` anywhere else is a SAID, not an edge. The DAG
   is bounded at 16 ACDCs and a longest path of 8 edges.
 
 Inside an ACDC's sections, a map with one key names another thing in the fragment: ``{"aid": X}``
@@ -54,10 +56,10 @@ DEFAULT_DT = "2025-07-04T17:50:00.000000+00:00"
 MAX_ACDCS = 16
 MAX_DEPTH = 8
 
-# A provenance DAG beyond the protocol's bounds, or one with a cycle.
+# A provenance DAG beyond the protocol's bounds, or an ACDC whose edges lead back to itself.
 E_DAG = "e.input.range.kcs-acdc-dag.f"
 # An ACDC in the fragment that no edge path from the presented ACDC reaches, which ``acdcs``
-# (the presented ACDC's provenance DAG) cannot carry.
+# (the presented ACDC's provenance DAG) cannot carry, or an edge whose far node is in no fragment.
 E_DAG_UNREACHABLE = "e.input.format.kcs-acdc-dag-unreachable.f"
 
 
@@ -121,16 +123,6 @@ def edge_paths(e, path: str = "e") -> list[tuple[str, str]]:
         return [p for k, v in e.items() for p in edge_paths(v, f"{path}.{k}")]
     if isinstance(e, list):
         return [p for i, v in enumerate(e) for p in edge_paths(v, f"{path}.{i}")]
-    return []
-
-
-def _edge_targets(value) -> list[str]:
-    if isinstance(value, dict):
-        if set(value) == {"acdc"}:
-            return [value["acdc"]]
-        return [n for v in value.values() for n in _edge_targets(v)]
-    if isinstance(value, list):
-        return [n for v in value for n in _edge_targets(v)]
     return []
 
 
@@ -326,41 +318,47 @@ class _Builder:
 
     # -- the DAG -------------------------------------------------------------------------------
 
-    def dag(self) -> dict[str, list[str]]:
-        if len(self.acdcs) > MAX_ACDCS:
-            raise GeneratorError(f"The fragment has {len(self.acdcs)} ACDCs; a bundle holds at "
-                                 f"most {MAX_ACDCS}.", E_DAG)
-        edges = {}
-        for name, spec in self.acdcs.items():
-            targets = _edge_targets(spec.get("e", {}))
-            for target in targets:
-                if target not in self.acdcs:
-                    raise ScenarioError(f"ACDC {name!r} has an edge to {target!r}, which no "
-                                        f"ACDC is named.")
-            edges[name] = list(dict.fromkeys(targets))
+    def dag(self) -> tuple[dict[str, list[str]], list[tuple[str, str, str]]]:
+        """The provenance graph, from exactly the edges the bundle's ``dag`` lists: one per map
+        with an ``n`` field in an ACDC's expanded ``e`` section, its far node the fragment ACDC
+        whose SAID ``n`` holds, however the scenario wrote it. Returned as each ACDC's far nodes
+        by name, and every edge as (near name, label path, far SAID). Run once every SAID is
+        computed; a reference cycle has already been refused by ``acdc_said``, and a cycle of
+        literal SAIDs would need a digest to contain itself."""
+        # Two ACDCs written alike are one ACDC with one SAID, and an edge to it reaches both.
+        by_said: dict[str, list[str]] = {}
+        for name in self.acdcs:
+            by_said.setdefault(self.saids[name], []).append(name)
+        graph: dict[str, list[str]] = {}
+        edges: list[tuple[str, str, str]] = []
+        for name in self.acdcs:
+            graph[name] = []
+            for path, far in edge_paths(self.expanded[name].get("e", {})):
+                if far not in by_said:
+                    raise ScenarioError(f"ACDC {name!r} has an edge at {path} to {far!r}, which "
+                                        f"is the SAID of no ACDC in the fragment. To leave a far "
+                                        f"node out of the bundle, define it and list it in omit.",
+                                        E_DAG_UNREACHABLE)
+                edges.append((name, path, far))
+                graph[name] += [n for n in by_said[far] if n not in graph[name]]
         depth: dict[str, int] = {}
 
-        def longest(name, path):
-            if name in path:
-                raise GeneratorError(f"The provenance graph has a cycle through {name!r}.", E_DAG)
+        def longest(name):
             if name not in depth:
-                depth[name] = max((1 + longest(c, path | {name}) for c in edges[name]),
-                                  default=0)
+                depth[name] = max((1 + longest(c) for c in graph[name]), default=0)
             return depth[name]
 
-        for name in edges:
-            longest(name, frozenset())
         presented = self.frag["presented"]
-        if depth[presented] > MAX_DEPTH:
+        if longest(presented) > MAX_DEPTH:
             raise GeneratorError(f"The provenance DAG's longest path from {presented!r} has "
                                  f"{depth[presented]} edges; the bound is {MAX_DEPTH}.", E_DAG)
-        return edges
+        return graph, edges
 
-    def far_nodes(self, edges) -> list[str]:
+    def far_nodes(self, graph) -> list[str]:
         order: list[str] = []
 
         def visit(name):
-            for child in edges[name]:
+            for child in graph[name]:
                 visit(child)
                 if child not in order:
                     order.append(child)
@@ -405,14 +403,17 @@ class _Builder:
                 raise ScenarioError(f"{name!r} is omitted but names nothing in the fragment.")
         if presented in omit:
             raise ScenarioError(f"The presented ACDC {presented!r} cannot be omitted.")
-        edges = self.dag()
-        far = self.far_nodes(edges)
+        if len(self.acdcs) > MAX_ACDCS:
+            raise GeneratorError(f"The fragment has {len(self.acdcs)} ACDCs; a bundle holds at "
+                                 f"most {MAX_ACDCS}.", E_DAG)
         for name in list(self.schemas):
             self.schema_said(name)
         for name in list(self.registries):
             self.registry_event(name)
         for name in list(self.acdcs):
             self.acdc_said(name)
+        graph, edges = self.dag()
+        far = self.far_nodes(graph)
         forms = {name: self.form(name) for name in self.acdcs}
         kels, as_of = [], {}
         for delivery in self.frag.get("kels", []):
@@ -426,10 +427,9 @@ class _Builder:
                 body = self.events[name][0]
                 rd = body.get("rd", body["d"])
                 as_of[rd] = max(as_of.get(rd, 0), int(body["n"], 16))
-        present = [n for n in self.acdcs if n not in omit]
         dag = {"root": self.saids[presented], "edges": [
-            {"near": self.saids[n], "path": path, "n": far}
-            for n in present for path, far in edge_paths(self.expanded[n].get("e", {}))]}
+            {"near": self.saids[near], "path": path, "n": n}
+            for near, path, n in edges if near not in omit]}
 
         def acdc_entry(name):
             att = self.attachments(self.acdcs[name].get("source_seal"))
@@ -446,7 +446,7 @@ class _Builder:
             "presented": acdc_entry(presented),
         }
         return Bundle(request=request, saids=dict(self.saids), expanded=dict(self.expanded),
-                      forms=forms, graph=edges, dag=dag, as_of=as_of)
+                      forms=forms, graph=graph, dag=dag, as_of=as_of)
 
 
 def build_bundle(t: Tables, fragment: dict, readings: sa.Readings = sa.DEFAULT) -> Bundle:

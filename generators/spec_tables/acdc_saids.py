@@ -152,7 +152,10 @@ def _root_id_token(raw: bytes) -> tuple[int, int]:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
         raise refuse("are not UTF-8") from None
-    decoder = json.JSONDecoder()
+    def not_json(constant):
+        raise refuse(f"hold {constant}, which Python's json reads and JSON does not have")
+
+    decoder = json.JSONDecoder(parse_constant=not_json)
     ws = json.decoder.WHITESPACE.match
     i = ws(text, 0).end()
     if text[i:i + 1] != "{":
