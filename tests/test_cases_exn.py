@@ -18,7 +18,7 @@ from jsonschema import Draft202012Validator
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from generators.spec_tables import exn_build, keri_events, spec_source, tables
+from generators.spec_tables import exn_build, keri_events, keri_model, spec_source, tables
 
 SCHEMA = Draft202012Validator(
     json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8")))
@@ -122,3 +122,36 @@ def test_every_must_refusal_has_an_active_positive_pair():
     active_accepts = [cid for cid, c in CASES.items() if c["status"] == "active"
                       and any(a["expected"] == "accepted" for a in c["assertions"])]
     assert active_accepts
+
+
+def _readings(case):
+    """The model's run over a case's bytes, and for each message whether at least one sender
+    signature verifies, and the sender's signing threshold."""
+    model = exn_build.run(tables.load(),
+                          [bytes.fromhex(k["stream"]) for k in case["input"]["kels"]],
+                          [bytes.fromhex(m["stream"]) for m in case["input"]["messages"]])
+    out = []
+    for p in model.parsed:
+        kel = model.kel.kels[p.body["i"]]
+        valid, kt = 0, None
+        for g in p.groups:
+            if g.pre != p.body["i"]:
+                continue
+            est = kel.seen[g.said].body
+            kt = est["kt"]
+            valid += len({s.index for s in g.sigs if s.index < len(est["k"]) and keri_model.verify(
+                keri_model.qb64_raw(est["k"][s.index]), p.raw, s.raw)})
+        out.append((valid, kt))
+    return model, out
+
+
+def test_exchange_cases_use_a_route_and_payload_no_ipex_handler_polices():
+    """The clauses these cases cite are KERI's, about any exchange message, so their messages use
+    a route that no implementation registers a handler for and carry no ACDC; a deployment that
+    polices IPEX routes would otherwise refuse the positive pairs for IPEX reasons (review
+    SKP-F1, docs/design.md, IPEX)."""
+    for cid, case in CASES.items():
+        model, _ = _readings(case)
+        for p in model.parsed:
+            assert not p.body["r"].startswith("/ipex/"), cid
+            assert "acdc" not in p.body["a"], cid
