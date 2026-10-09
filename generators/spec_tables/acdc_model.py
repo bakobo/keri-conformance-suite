@@ -9,7 +9,8 @@ case is the earliest of them.
 
 What it checks, for the presented ACDC and for every far node its edges reach:
 
-1. Intrinsic: the version string frames an ACDC 2.00 JSON body (line 64); the top-level fields
+1. Intrinsic: the version string frames a 2.00 JSON body by its declared size (line 62) and
+   names ACDC (line 64), checked no further when it names another protocol; the top-level fields
    are known and in the order of line 32; the required fields of line 36 are present; ``a`` and
    ``A`` are not both non-empty (line 110); every SAIDed block, the aggregate's AGID and the
    top-level most compact SAID verify (CESR line 1194; lines 134 to 147, 714). A body that does
@@ -118,9 +119,10 @@ class Result:
 # -- reading the bytes ------------------------------------------------------------------------
 
 
-def _parse(t: Tables, stream: bytes):
+def _parse(t: Tables, stream: bytes, protocol: bytes | None = b"ACDC"):
     """The message body, its raw bytes and the blinded state blocks attached to it, or None if
     the stream is not the genus/version code, one ACDC 2.00 JSON body and an attachments group.
+    With ``protocol`` None, a 2.00 version string naming any protocol frames the body.
 
     The attachments are read here rather than by the reference parser (decoding), which does not
     read the Tag codes a blinded state block's ``ts`` uses (A-B3)."""
@@ -128,7 +130,8 @@ def _parse(t: Tables, stream: bytes):
         return None
     rest = stream[len(GENUS):]
     m = VERSION_2.match(rest)
-    if m is None or m.group(1) != b"ACDC" or (m.group(2), m.group(3)) != (b"C", b"AA") \
+    if m is None or (protocol is not None and m.group(1) != protocol) \
+            or (m.group(2), m.group(3)) != (b"C", b"AA") \
             or m.group(5) != b"JSON":
         return None
     size = b64.b64_to_int(m.group(6).decode())
@@ -236,8 +239,11 @@ class _Model:
 
     def node(self, stream: bytes) -> tuple[Node, bytes]:
         parsed = _parse(self.t, stream)
-        if parsed is None or not isinstance(parsed[0], dict):
-            return Node(None, [Failure(1, "unframeable")]), b""
+        if parsed is None:
+            # A body its version string frames under another protocol is not an ACDC body,
+            # which is a different failure from bytes no version string frames.
+            other = _parse(self.t, stream, protocol=None) is not None
+            return Node(None, [Failure(1, "protocol" if other else "unframeable")]), b""
         body, raw, _ = parsed
         node = Node(body)
         node.failures += self._intrinsic(body)

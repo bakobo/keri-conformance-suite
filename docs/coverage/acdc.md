@@ -66,7 +66,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 62 | MUST | validator | 0 | 0 | 0 | — | — | — | The Version String, `v`, field MUST be the first field in any top-level ACDC field map encoded in JSON, CBOR, or MGPK [[RFC4627](#RFC4627)] [[12](#CBOR)] [[13](#RFC8949)] [[14](#MGPK)]. |
-| 62 | SHOULD | validator | 0 | 0 | 0 | — | — | — | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. |
+| 62 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | negative | ACDC-0064 | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. |
 | 64 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0009 (inferred) | The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol. |
 | 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the ACDC protocol [[1](#CESR)] used by the associated message. |
 | 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)]. |

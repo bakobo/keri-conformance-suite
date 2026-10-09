@@ -221,7 +221,7 @@ def test_the_edge_schema_refusal_cites_the_validator_sentence():
 def test_an_unframeable_presented_acdc_grades_no_registry():
     c = one(REG, "KS-27")
     c["patch"] = {"acdcs": {"A1": {"protocol": "KERI"}}}
-    c["expect"], c["pair"] = ["presented 1/unframeable"], "KS-27"
+    c["expect"], c["pair"] = ["presented 1/protocol"], "KS-27"
     [case] = grade(REG, "KS-27", **{k: c[k] for k in ("patch", "expect", "pair")})
     assert [a["check"] for a in case["assertions"]] == ["verdict"]
 
@@ -259,6 +259,16 @@ def test_a_registry_commitment_refusal_rests_on_anchored_updates_by_inference():
     assert verdict["clause"]["quote"] == CLAUSES["update-anchored"][1]["quote"]
     assert verdict["inferred_from"] == INFERENCES["commitment-registry"]
     assert "step 5 no-registry-commitment" in verdict["note"]
+
+
+def test_another_protocol_is_a_producer_rule_and_a_misdeclared_size_a_parser_one():
+    [protocol] = grade(STRUCTURE, "KS-10")[0]["assertions"]
+    assert protocol["clause"]["quote"] == CLAUSES["version-protocol"][1]["quote"]
+    assert "inferred_from" in protocol and "step 1 (protocol)" in protocol["note"]
+    [size] = grade(STRUCTURE, "KS-09", pairs={"KS-02": ("ACDC-0002", False)})[0]["assertions"]
+    assert (size["level"], size["expected"]) == ("SHOULD", "not-valid")
+    assert size["clause"]["quote"] == CLAUSES["version-size"][1]["quote"]
+    assert "inferred_from" not in size and "step 1 (unframeable)" in size["note"]
 
 
 def test_found_names_an_unnamed_presented_acdc_by_its_role():

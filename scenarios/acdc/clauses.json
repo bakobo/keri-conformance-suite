@@ -116,6 +116,11 @@
       "section": "Version String Field",
       "level": "MUST",
       "quote": "The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol."
+    },
+    "version-size": {
+      "section": "Version String Field",
+      "level": "SHOULD",
+      "quote": "A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies."
     }
   },
   "inferences": {

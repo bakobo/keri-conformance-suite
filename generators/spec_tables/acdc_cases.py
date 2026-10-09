@@ -59,8 +59,11 @@ RANK = {"SHOULD": 1, "MUST": 2}
 # Each failing check: the clause it rests on, the inference that grades it below the clause's
 # level (None when the clause binds a validator directly), and the derivation in words.
 REASONS = {
-    "unframeable": ("version-protocol", "producer-version",
-                    "line 64 fixes the version string, a producer rule"),
+    "unframeable": ("version-size", None, ("line 62 says a stream parser should use the "
+                    "version string to extract the body, and its declared size frames none")),
+    "protocol": ("version-protocol", "producer-version", ("line 64 fixes the version string's "
+                 "protocol, a producer rule; a body framed as another protocol's is not an "
+                 "ACDC body, so no later step applies to it")),
     "field-order": ("field-order", "producer-order", "line 32 orders the fields, a producer rule"),
     "required-field": ("required-fields", "producer-required",
                        "line 36 requires the fields, a producer rule"),

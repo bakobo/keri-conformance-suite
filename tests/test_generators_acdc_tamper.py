@@ -223,3 +223,19 @@ def test_a_source_seal_may_name_an_event_by_a_wrong_said():
 def test_a_source_seal_map_names_an_event():
     with pytest.raises(ScenarioError, match="source seal"):
         ab.build_bundle(T, frag(source_seal={"wrong_said": "x"}))
+
+
+def test_a_presented_form_may_keep_the_compact_forms_version_string():
+    """An issuer that resizes nothing after expanding: the body is the expanded form, its version
+    string declares the compact form's size, and its SAIDs are untouched (CSR-F1's framing)."""
+    b = ab.build_bundle(T, frag(declared_size="compact"))
+    acdc, raw, _ = presented(b)
+    compact = sa.most_compact(T, acdc)
+    assert acdc["v"] == compact["v"] != sa.version_string(len(raw))
+    assert sa.b64.b64_to_int(acdc["v"][14:18]) < len(raw)
+    assert acdc["d"] == b.saids["A1"]
+
+
+def test_a_declared_size_names_the_compact_form_or_nothing():
+    with pytest.raises(ScenarioError, match="declared_size"):
+        ab.build_bundle(T, frag(declared_size="expanded"))

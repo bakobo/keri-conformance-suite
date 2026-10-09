@@ -10,7 +10,8 @@ docs/design.md fixes, through ``acdc_saids``:
   an ``A`` section is a list of blinded attribute blocks, prefixed with its AGID. Each ACDC is
   presented in the form its scenario names (``compact``, the default; ``expanded``; or a map
   naming dotted paths to ``compact`` and, for ``A``, the block indices to ``disclose``), with its
-  version string sized to that form.
+  version string sized to that form, unless the scenario names ``declared_size`` (``compact``:
+  the version string keeps the compact form's size, a deliberate framing tamper).
 - **Registry events** are the blindable registry's ``rip`` ``[v, t, d, u, i, n, dt]`` and ``bup``
   ``[v, t, d, rd, n, p, dt, b]`` (lines 1985 and 1989), ``n`` in hex without leading zeros, and
   ``b`` the BLID of the blinded state block ``[d, u, td, ts]``. Non-blindable ``upd`` events are
@@ -391,7 +392,22 @@ class _Builder:
     def form(self, name: str) -> dict:
         """The ACDC as it is presented, after any alteration the scenario asks for."""
         out = self._protocol(name, self._form(name))
-        return self._alter(out, self.acdcs[name].get("alter", []), f"ACDC {name!r}")
+        out = self._alter(out, self.acdcs[name].get("alter", []), f"ACDC {name!r}")
+        return self._declared(name, out)
+
+    def _declared(self, name: str, out: dict) -> dict:
+        """The presented form with its version string declaring another form's size, if the
+        scenario says so (a tamper of framing, made on purpose: the issuer resized nothing after
+        expanding). The version string keeps its length, so only the declared size changes."""
+        declared = self.acdcs[name].get("declared_size")
+        if declared is None:
+            return out
+        if declared != "compact":
+            raise ScenarioError(f"ACDC {name!r} has declared_size {declared!r}; the only other "
+                                f"size a form may declare is the compact form's.")
+        compact = sa.sized({**sa.most_compact(self.t, self.expanded[name], self.readings),
+                            "d": self.saids[name]}, self.readings)
+        return {**out, "v": out["v"][:4] + compact["v"][4:]}
 
     def _form(self, name: str) -> dict:
         expanded = self.expanded[name]

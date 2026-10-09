@@ -347,10 +347,29 @@
       "pair": "KS-01"
     },
     {
+      "id": "ACDC-0064",
+      "key": "KS-09",
+      "title": "Expanded form declaring the compact form's size",
+      "description": "The ACDC of KS-02 presented expanded, but its version string still declares the size of the most compact form, as from an issuer that computed the SAID and expanded the ACDC without resizing it. Its SAIDs, seal and schema all hold, and only the framing fails: a stream parser that uses the version string, as line 62 says it should, extracts a truncated body, while one that finds the body's end by matching braces accepts it.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "declared_size": "compact"
+          }
+        }
+      },
+      "expect": [
+        "presented 1/unframeable"
+      ],
+      "pair": "KS-02"
+    },
+    {
       "id": "ACDC-0009",
       "key": "KS-10",
       "title": "Version string names another protocol",
-      "description": "An ACDC whose version string names KERI rather than ACDC, with its SAID computed over that body and sealed. It does not frame as an ACDC, so no later step is evaluated.",
+      "description": "An ACDC whose version string names KERI rather than ACDC, with its SAID computed over that body and sealed. The body frames by its version string, but as another protocol's message, so it is not an ACDC body and no later step of the ACDC procedure applies to it. Line 64 fixes the protocol, a rule for the issuer.",
       "base": "direct",
       "patch": {
         "acdcs": {
@@ -360,7 +379,7 @@
         }
       },
       "expect": [
-        "presented 1/unframeable"
+        "presented 1/protocol"
       ],
       "pair": "KS-01"
     }

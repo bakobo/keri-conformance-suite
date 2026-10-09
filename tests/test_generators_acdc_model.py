@@ -81,7 +81,8 @@ def test_a_sealed_acdc_passes_every_check():
     ({"alter": [{"path": "a.name", "value": "Zed"}]}, ["1/said"]),
     ({"order": ["v", "t", "d", "i", "a", "s"]}, ["1/field-order"]),
     ({"schema": None}, ["1/required-field", "2/schema-absent"]),
-    ({"protocol": "KERI"}, ["1/unframeable"]),
+    ({"protocol": "KERI"}, ["1/protocol"]),
+    ({"declared_size": "compact"}, ["1/unframeable"]),
     ({"A": [{"d": "", "u": {"nonce": "b0"}, "x": 0}]}, ["1/a-and-A"]),
 ])
 def test_intrinsic_failures(over, expected):
