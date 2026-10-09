@@ -4,7 +4,7 @@
 
 An adapter is a program that connects one implementation to the runner. The runner starts it as a child process and talks to it over its standard input and output. This document is everything an adapter author needs.
 
-Two things check an adapter without running a single case: message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Both are described under "Checking an adapter" in [`design.md`](design.md). Neither covers `acdc.verify` or `exn.verify` yet; they are added with the first ACDC and exchange-message cases.
+Two things check an adapter without running a single case: message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Both are described under "Checking an adapter" in [`design.md`](design.md). The schemas cover `acdc.verify` and `exn.verify`; `kcs check-adapter` has no probe specific to either yet.
 
 ## Transport
 
@@ -171,7 +171,7 @@ The exact shape of `event` for each event type is defined by the case schema, `s
 
 ## `acdc.verify`
 
-Judge one ACDC against a bundle of everything it depends on. This operation and `exn.verify` are specified ahead of the first ACDC and exchange-message cases, so that their design can be reviewed before any case exists. The message schemas and the runner will accept them when those cases are added, and until then a runner refuses an adapter that lists either operation.
+Judge one ACDC against a bundle of everything it depends on. This operation and `exn.verify` are specified ahead of the first ACDC and exchange-message cases, so that their design can be reviewed before any case exists. The message schemas and the runner accept both.
 
 ```json
 {"id": 5, "op": "acdc.verify", "perspective": {"role": "validator"},
@@ -224,7 +224,7 @@ An input the implementation cannot parse or frame, whether the presented ACDC or
 
 `edges` lists every edge the implementation evaluated anywhere in the provenance DAG, each once. An edge is identified by `near`, the SAID of the ACDC it belongs to, and `path`, the chain of field labels from that ACDC's top-level `e` field joined by full stops. Each entry also carries the far node's SAID `n` and whether the edge is `valid`. An adapter that did not reach the edges, because an earlier step failed, or that stopped at the first failing edge, reports only what it evaluated. An edge assertion applies only when the edge it names is reported, and whether an edge is reported is graded separately at SHOULD, as [`design.md`](design.md) explains under Edges.
 
-The features these cases require are `acdc.version-2.x`, which every ACDC case requires together with the KERI base features, and the declinable features `acdc.edges` and `acdc.registry.bup`, which only liveness assertions and the assertions that an edge or a registry is reported require. `acdc.registry.upd` is added with the first cases that use non-blindable registry updates. The non-normative profile `acdc-keripy-1x-interop` adds `acdc.keripy-1x`, keripy 1.x's ACDC field set and SAID computation, and `acdc.ptel-1x`, keripy 1.x's issuance and revocation registry. These names enter the feature vocabulary, `profiles/features.json`, with the first ACDC cases.
+The features these cases require are `acdc.version-2.x`, which every ACDC case requires together with the KERI base features, and the declinable features `acdc.edges` and `acdc.registry.bup`, which only liveness assertions and the assertions that an edge or a registry is reported require. `acdc.registry.upd` is added with the first cases that use non-blindable registry updates. The non-normative profile `acdc-keripy-1x-interop` adds `acdc.keripy-1x`, keripy 1.x's ACDC field set and SAID computation, and `acdc.ptel-1x`, keripy 1.x's issuance and revocation registry. These names are in the feature vocabulary, `profiles/features.json`.
 
 ## `exn.verify`
 
