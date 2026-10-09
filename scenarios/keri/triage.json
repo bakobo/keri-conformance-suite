@@ -1031,15 +1031,11 @@
       "scope": "validator",
       "security": true
     },
-    "IF neither A. nor B. is satisfied, then recursively apply rules A. and B. to the delegating events of those delegating events and so on until either A. or B. is satisfied, or the root KEL of the delegation which MUST be undelegated has been reached.": {
+    "C. IF neither A. nor B. is satisfied, then recursively apply rules A. and B. to the delegating events of those delegating events and so on until either A. or B. is satisfied, or the root KEL of the delegation which MUST be undelegated has been reached.": {
       "scope": "validator",
       "security": true
     },
-    "The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B.": {
-      "scope": "validator",
-      "security": true
-    },
-    "MUST be satisfied, or else the superseding rotation MUST be discarded.": {
+    "The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B. MUST be satisfied, or else the superseding rotation MUST be discarded.": {
       "scope": "validator",
       "security": true
     },

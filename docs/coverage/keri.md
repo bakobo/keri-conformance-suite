@@ -6,7 +6,7 @@ This report lists every sentence of the pinned KERI specification text that carr
 
 ## v1.0.1, commit 71cb54ebb445
 
-The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md). It has 305 keyword sentences: 224 MUST, 22 SHOULD and 59 MAY or OPTIONAL.
+The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md). It has 304 keyword sentences: 223 MUST, 22 SHOULD and 59 MAY or OPTIONAL.
 
 ### Obligations (MUST and SHOULD)
 
@@ -736,9 +736,8 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1821 | MUST | validator, security | 0 | 0 | 0 | — | — | — | IF neither A. nor B. is satisfied, then recursively apply rules A. and B. to the delegating events of those delegating events and so on until either A. or B. is satisfied, or the root KEL of the delegation which MUST be undelegated has been reached. |
-| 1823 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B. |
-| 1823 | MUST | validator, security | 0 | 0 | 0 | — | — | — | MUST be satisfied, or else the superseding rotation MUST be discarded. |
+| 1821 | MUST | validator, security | 0 | 0 | 0 | — | — | — | C. IF neither A. nor B. is satisfied, then recursively apply rules A. and B. to the delegating events of those delegating events and so on until either A. or B. is satisfied, or the root KEL of the delegation which MUST be undelegated has been reached. |
+| 1823 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B. MUST be satisfied, or else the superseding rotation MUST be discarded. |
 | 1825 | MUST | untestable: Describes what an attacker would have to do, not an obligation on any party. | 0 | 0 | 0 | — | — | — | In order to unrecoverably capture control of a delegated identifier, the attacker MUST issue a delegated rotation that rotates to keys under the control of the attacker that the delegator MUST approve and then issue and get approved by the delegator another rotation that follows but does not supersede the compromising rotation. |
 
 #### Security Properties

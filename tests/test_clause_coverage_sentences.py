@@ -71,6 +71,7 @@ def test_a_line_splits_after_a_full_stop_followed_by_space_and_a_capital():
     "The next item MUST follow. and so on",  # a lowercase letter does not start a sentence
     "The code `a. B` MUST appear.",  # inside inline code
     "See [[ref: Key. Event]] which MUST hold.",  # inside a spec-up reference
+    "Therefore either A. or B. MUST be satisfied, or C. Applies.",  # rule labels, not stops
 ])
 def test_these_stops_do_not_end_a_sentence(line):
     assert cc.split_sentences(line) == [(0, len(line))]
@@ -185,6 +186,9 @@ def test_each_check_has_a_polarity(check, expected, polarity):
     ({"check": "verdict", "expected": "valid"}, "unknown check 'verdict'"),
     ({"check": "disposition", "expected": "duplicitous"}, "disposition 'duplicitous'"),
     ({"check": "trunk", "expected": "yes"}, "trunk"),
+    # Hostile pass on #15: JSON allows an unhashable expected value.
+    ({"check": "disposition", "expected": []}, "disposition"),
+    ({"check": "disposition", "expected": {"x": 1}}, "disposition"),
 ])
 def test_an_unknown_check_or_value_is_a_coded_error(assertion, message):
     with pytest.raises(cc.CoverageError, match=message) as e:
@@ -225,6 +229,14 @@ def test_a_quote_that_only_straddles_two_sentences_maps_to_neither():
 
 def test_a_quote_on_a_line_with_no_keyword_sentence_maps_to_nothing():
     assert cc.map_quote(MAP_SPEC, sentences_on(MAP_SPEC), "A plain line") == []
+
+
+def test_a_quote_repeated_on_its_line_is_a_coded_error():
+    # Hostile pass on #15: one quote must not credit two obligations.
+    text = "# Rules\n\nIt MUST parse. Then it MUST parse.\n"
+    with pytest.raises(cc.CoverageError, match="more than once") as e:
+        cc.map_quote(text, sentences_on(text), "MUST parse.")
+    assert e.value.code == cc.E_CASE
 
 
 @pytest.mark.parametrize("quote", ["Nowhere in the text.", "MUST"])

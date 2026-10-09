@@ -122,6 +122,8 @@ def split_sentences(line: str, offset: int = 0) -> list[tuple[int, int]]:
         if any(line.endswith(abbr, 0, stop + 1) and not line[:stop + 1 - len(abbr)][-1:].isalnum()
                for abbr in ABBREVIATIONS):
             continue
+        if line[stop - 1:stop].isupper() and not line[stop - 2:stop - 1].isalnum():
+            continue  # a one-letter rule label, as in "either A. or B. MUST be satisfied"
         cuts.append((m.start(1), m.end(1)))
     spans = []
     start = offset
@@ -191,14 +193,13 @@ def map_quote(text: str, sentences: list[Sentence], quote: str) -> list[Sentence
     except LookupError as e:
         raise CoverageError(str(e), E_CASE) from None
     line = text.splitlines()[number - 1]
-    spans = []
-    at = line.find(quote)
-    while at >= 0:
-        spans.append((at, at + len(quote)))
-        at = line.find(quote, at + 1)
+    a = line.find(quote)
+    if line.find(quote, a + 1) >= 0:
+        raise CoverageError(f"Quote appears more than once on line {number} of the specification, "
+                            f"so it cannot identify one sentence: {quote!r}", E_CASE)
+    b = a + len(quote)
     return [s for s in sentences if s.line == number
-            and any((s.start <= a and b <= s.end) or (a <= s.start and s.end <= b)
-                    for a, b in spans)]
+            and ((s.start <= a and b <= s.end) or (a <= s.start and s.end <= b))]
 
 
 # --- Polarity -------------------------------------------------------------------------------------
@@ -215,7 +216,7 @@ def polarity(assertion: dict, where: str) -> str:
         return "positive"
     if check == "rejected":
         return "negative"
-    if check == "disposition" and expected in _DISPOSITIONS:
+    if check == "disposition" and isinstance(expected, str) and expected in _DISPOSITIONS:
         return _DISPOSITIONS[expected]
     if check == "trunk" and isinstance(expected, bool):
         return "positive" if expected else "negative"
@@ -270,6 +271,8 @@ def _case_problem(case, stem: str) -> str | None:
             return "an assertion id is missing"
         if not _is_text(a.get("check")):
             return f"assertion {a['id']} has no check"
+        if a["check"] != "rejected" and a.get("expected") is None:
+            return f"assertion {a['id']} has no expected result"
         if a.get("level") not in ASSERTION_LEVELS:
             return f"assertion {a['id']} has level {a.get('level')!r}"
         clause = a.get("clause")

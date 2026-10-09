@@ -109,6 +109,9 @@ def test_cases_are_read_in_id_order(tree):
     (lambda c: c["assertions"][0].update(inferred_from={"quote": "q"}), "inferred_from"),
     (lambda c: c["assertions"][0].update(inferred_from={"quote": "q", "line": True}),
      "inferred_from"),
+    # Hostile pass on #15: an assertion with nothing to check must not count as coverage.
+    (lambda c: c["assertions"][0].update(check="decoded") or c["assertions"][0].pop("expected"),
+     "no expected result"),
 ])
 def test_a_malformed_case_is_a_coded_error(tree, mangle, message):
     bad = case("KERI-0001", must("A parser MUST refuse a bad code."))
