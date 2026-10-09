@@ -29,6 +29,9 @@ BUILD_FAILURES = (KeyError, ValueError, LookupError, TypeError, AttributeError)
 SCENARIO_DIR = "scenarios/cesr"
 CASE_DIR = "cases/cesr"
 CLAUSES_FILE = "clauses.json"
+# Clause coverage's triage sidecar (clause_coverage.py) sits beside the registry; it is not a
+# scenario.
+TRIAGE_FILE = "triage.json"
 MAX_SCENARIO_BYTES = 1024 * 1024  # per scenario or registry file
 CASE_ID = re.compile(r"CESR-([0-9]{4})")  # always applied with fullmatch
 KERI_SCENARIO_DIR = "scenarios/keri"
@@ -192,7 +195,7 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
     allowed: set[int] = set()
     members: dict[str, list[str]] = {name: [] for name in PROFILES}
     for path in sorted(scen_dir.glob("*.json")):
-        if path.name == CLAUSES_FILE:
+        if path.name in (CLAUSES_FILE, TRIAGE_FILE):
             continue
         scenario = _load_json(path)
         _scenario_shape(scenario, path.name)
@@ -250,7 +253,7 @@ def _generate_keri(root: pathlib.Path, files: dict[str, bytes],
     allowed: set[int] = set()
     numbers: list[int] = []
     for path in sorted(scen_dir.glob("*.json")):
-        if path.name == CLAUSES_FILE:
+        if path.name in (CLAUSES_FILE, TRIAGE_FILE):
             continue
         scenario = _load_json(path)
         _scenario_shape(scenario, path.name)
