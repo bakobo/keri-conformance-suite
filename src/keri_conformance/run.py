@@ -13,6 +13,13 @@ results and say when any failed, because a claim states them beside the verdict:
 layer, accepting a valid event is a SHOULD, so a validator that accepts nothing passes every MUST
 (docs/design.md, Versioning). A run cut short because a restarted adapter refused hello or
 changed it is aborted, and its report holds the cases completed before that.
+
+A run whose assertions are all INTEROP is a run of a non-normative profile (a profile is normative
+exactly when every assertion cites a clause), and it gets an interoperability verdict instead,
+from its active INTEROP assertions: not-interoperable if one failed, incomplete if none failed but
+one could not be evaluated, no-evidence if none passed, interoperable otherwise. It is never a
+conformance claim (docs/design.md, Practice). Any other run is judged on MUST as above, and its
+INTEROP results and their interoperability verdict are reported beside the verdict, apart from it.
 """
 
 from keri_conformance import __version__
@@ -32,7 +39,7 @@ from keri_conformance.session import AdapterSession, Failure, Reply
 MAX_RETAINED_BYTES = 512 * 1024 * 1024
 
 VERDICT_EXIT = {"conformant": 0, "not-conformant": 1, "aborted": 3, "incomplete": 4,
-                "no-evidence": 5}
+                "no-evidence": 5, "interoperable": 0, "not-interoperable": 1}
 # Session probes the design calls for that this runner cannot perform yet; listed in every report
 # so that their absence is visible.
 PROBES = {"statelessness": "not-yet-available"}
@@ -108,6 +115,17 @@ def run_case(session: AdapterSession, case: dict) -> dict:
     return entry
 
 
+def _verdict(outcomes: dict, held: str, broken: str) -> str:
+    """The verdict that the deciding assertions' outcome counts support."""
+    if outcomes.get("fail"):
+        return broken
+    if outcomes.get("not-implemented"):
+        return "incomplete"
+    if not outcomes.get("pass"):
+        return "no-evidence"
+    return held
+
+
 def summarize(entries: list[dict]) -> tuple[dict, str]:
     """Counts per status, level and outcome; and the verdict."""
     counts: dict = {}
@@ -115,21 +133,22 @@ def summarize(entries: list[dict]) -> tuple[dict, str]:
         for record in entry["assertions"]:
             by_level = counts.setdefault(entry["status"], {}).setdefault(record["level"], {})
             by_level[record["outcome"]] = by_level.get(record["outcome"], 0) + 1
-    must = counts.get("active", {}).get("MUST", {})
-    if must.get("fail"):
-        verdict = "not-conformant"
-    elif must.get("not-implemented"):
-        verdict = "incomplete"
-    elif not must.get("pass"):
-        verdict = "no-evidence"
+    interop = counts.get("active", {}).get("INTEROP", {})
+    interop_verdict = _verdict(interop, "interoperable", "not-interoperable")
+    levels = {record["level"] for entry in entries for record in entry["assertions"]}
+    if levels == {"INTEROP"}:
+        verdict = interop_verdict
     else:
-        verdict = "conformant"
+        verdict = _verdict(counts.get("active", {}).get("MUST", {}), "conformant",
+                           "not-conformant")
     should = counts.get("active", {}).get("SHOULD", {})
     failed = should.get("fail", 0)
     summary = {
         "counts": counts,
         "should": should,
         "should_failed": failed,
+        "interop": interop,
+        "interop_verdict": interop_verdict if interop else None,
         "should_warning": (None if not failed else
                            f"{failed} active SHOULD assertion{'' if failed == 1 else 's'} "
                            "failed. A conformance claim from this run must state its SHOULD "
@@ -215,8 +234,15 @@ def human_summary(report: dict, report_path: str | None) -> str:
         "active SHOULD assertions: "
         + (", ".join(f"{n} {k}" for k, n in sorted(report["summary"]["should"].items()))
            or "none"),
-        f"verdict: {report['verdict']}",
     ]
+    interop = report["summary"]["interop"]
+    if interop:
+        lines.append("active INTEROP assertions: "
+                     + ", ".join(f"{n} {k}" for k, n in sorted(interop.items())))
+    lines.append(f"verdict: {report['verdict']}")
+    if interop and report["verdict"] != report["summary"]["interop_verdict"]:
+        lines.append(f"interoperability: {report['summary']['interop_verdict']} (never part of "
+                     "the verdict)")
     if report["summary"]["should_warning"]:
         lines.append(f"warning: {report['summary']['should_warning']}")
     if report_path:
