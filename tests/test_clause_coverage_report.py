@@ -958,3 +958,10 @@ def test_a_basis_quoting_an_unpinned_commit_is_a_coded_error(tree):
     with pytest.raises(cc.CoverageError, match="basis") as e:
         cc.generate(root)
     assert e.value.code == cc.E_PIN
+
+
+def test_every_known_pin_has_a_triage_file_in_the_repository():
+    """Copilot on #22: a basis citing the ACDC pin needs scenarios/acdc/triage.json to exist, or
+    the first such case fails to generate. A spec no case cites yet keeps an empty triage."""
+    for pin in cc.known_pins():
+        assert isinstance(cc.load_triage(ROOT, pin.label), dict), pin.label
