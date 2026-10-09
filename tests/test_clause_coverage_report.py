@@ -180,8 +180,9 @@ def test_an_unknown_check_type_anywhere_is_refused(tree):
 # --- Pins ---------------------------------------------------------------------------------------
 
 
-def test_the_known_pins_are_the_cesr_and_keri_texts():
-    assert cc.known_pins() == [spec_source.cesr_pin(), spec_source.KERI]
+def test_the_known_pins_are_the_cesr_keri_and_acdc_texts():
+    # Hostile pass on #22: an IPEX practice basis cites the ACDC text, so it must be known.
+    assert cc.known_pins() == [spec_source.cesr_pin(), spec_source.KERI, spec_source.ACDC]
 
 
 def test_load_text_reads_the_pinned_text(monkeypatch):
@@ -852,7 +853,11 @@ def test_a_case_may_quote_a_sentence_in_its_basis(tree):
 
 
 @pytest.mark.parametrize("value", [{"text": "t"}, {"text": "t", "spec": "fake", "commit": "c"},
-                                   {"text": "t", "spec": "fake", "commit": "c", "quote": ""}, 7])
+                                   {"text": "t", "spec": "fake", "commit": "c", "quote": ""}, 7,
+                                   # Hostile pass on #22: the schema requires section and url too.
+                                   {"text": "t", "spec": "fake", "commit": "c", "quote": "q"},
+                                   {"text": "t", "spec": "fake", "commit": "c", "quote": "q",
+                                    "section": "s"}])
 def test_a_basis_that_is_neither_text_nor_a_quoted_sentence_is_a_coded_error(tree, value):
     bad = case("IPEX-0001", basis("A parser SHOULD log it."))
     bad["assertions"][0]["basis"] = value

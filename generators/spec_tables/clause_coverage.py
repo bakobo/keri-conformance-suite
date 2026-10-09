@@ -313,9 +313,9 @@ def _case_problem(case, stem: str) -> str | None:
             return f"assertion {a['id']} has a clause without a spec, commit and quote"
         basis = a.get("basis")
         if basis is not None and not (_is_text(basis) or (isinstance(basis, dict) and all(
-                _is_text(basis.get(k)) for k in ("text", "spec", "commit", "quote")))):
+                _is_text(basis.get(k)) for k in BASIS_FIELDS))):
             return (f"assertion {a['id']} has a basis that is neither text nor an object with a "
-                    "text, spec, commit and quote")
+                    f"{', '.join(BASIS_FIELDS)}")
         inferred = a.get("inferred_from")
         if inferred is not None:
             if clause is None:
@@ -519,7 +519,7 @@ class Coverage:
 
 
 def known_pins() -> list[spec_source.Pin]:
-    return [spec_source.cesr_pin(), spec_source.KERI]
+    return [spec_source.cesr_pin(), spec_source.KERI, spec_source.ACDC]
 
 
 def load_text(pin: spec_source.Pin) -> str:
@@ -577,6 +577,10 @@ def measure(cases: list[dict], texts: dict, triage: dict) -> list[Coverage]:
 
 
 _CITED_ORDER = {"clause": 0, "inference": 1, "basis": 2}
+
+
+# Every field schema/case.schema.json requires of a basis that quotes a sentence.
+BASIS_FIELDS = ("text", "spec", "section", "url", "commit", "quote")
 
 
 def _quoted_basis(assertion: dict) -> dict | None:
