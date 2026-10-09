@@ -2,6 +2,26 @@
   "about": "The feature vocabulary for the adapter protocol. An adapter's hello lists the features its implementation supports, and the runner sends only cases whose required features are all listed. Features marked composable may also appear in hello's composes list, meaning the adapter supplies that behaviour itself rather than the implementation. Names are permanent once released; a feature is retired, never renamed.",
   "vocabulary_version": 1,
   "features": {
+    "acdc.edges": {
+      "description": "Evaluates every edge in an ACDC's provenance DAG and reports each one it evaluated, keyed by its near node's SAID and label path. Only liveness assertions and the assertions that an edge is reported require it; an implementation without it answers incomplete for an ACDC that has edges.",
+      "composable": false
+    },
+    "acdc.keripy-1x": {
+      "description": "Reads the ACDC 1.x field set and computes the top-level SAID over the expanded form, as keripy 1.x does. No specification defines either; cases using it belong to the acdc-keripy-1x-interop profile.",
+      "composable": false
+    },
+    "acdc.ptel-1x": {
+      "description": "Verifies keripy 1.x's issuance and revocation registry (vcp, iss, rev). No specification defines it; cases using it belong to the acdc-keripy-1x-interop profile.",
+      "composable": false
+    },
+    "acdc.registry.bup": {
+      "description": "Verifies a blindable registry (rip and bup events, with any disclosed blinded state) and reports its verified head. Only liveness assertions and the assertions that a registry is reported require it.",
+      "composable": false
+    },
+    "acdc.version-2.x": {
+      "description": "Verifies ACDC 2.00 bodies, the wire the ACDC specification v1.0 defines, against a bundle of their KELs, registries, schemas and provenance. Every ACDC case requires it.",
+      "composable": false
+    },
     "cesr.domain.binary": {
       "description": "Handles the binary domain (qb2) and switches between text and binary domains within a stream.",
       "composable": false

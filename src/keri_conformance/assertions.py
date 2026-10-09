@@ -186,6 +186,118 @@ def _key_state(assertion, result):
     return Evaluation("pass", actual)
 
 
+REGISTRY_FIELDS = ("rd", "n", "d", "td", "ts")
+
+
+def _verdict(assertion, result):
+    actual = result.get("verdict")
+    holds = actual == "valid" if assertion["expected"] == "valid" else actual in (
+        "invalid", "incomplete")
+    if holds:
+        return Evaluation("pass", actual)
+    return _fail(actual, f"The adapter's verdict is {actual}, which is not "
+                         f"{assertion['expected']}.")
+
+
+def _registry(result):
+    registry = result.get("registry")
+    return registry if isinstance(registry, dict) else None
+
+
+def _registry_reported(assertion, result):
+    actual = _registry(result) is not None
+    if actual is assertion["expected"]:
+        return Evaluation("pass", actual)
+    return _fail(actual, "The adapter reported the registry's head, where it should have "
+                         "reported none." if actual else
+                         "The adapter reported no registry, where it should have reported "
+                         "the registry's head.")
+
+
+def _registry_state(assertion, result):
+    registry = _registry(result)
+    if registry is None:
+        if result.get("verdict") == "valid":
+            # A valid verdict commits the adapter to the registry it relied on, so it cannot hide
+            # a wrongly advanced head by not reporting it (docs/design.md, Registry state).
+            return _fail(None, "The adapter answered valid but reported no registry; a valid "
+                               "verdict for an ACDC that names a registry must report its head.")
+        return Evaluation("not-applicable", None,
+                          "The assertion applies only when the adapter reports a registry, and "
+                          f"it reported none with the verdict {result.get('verdict')}.")
+    expected = assertion["expected"]
+    wrong = [f for f in REGISTRY_FIELDS
+             if f not in registry or not strict_equal(registry[f], expected[f])]
+    if wrong:
+        return _fail(registry, f"The registry's head differs in {', '.join(wrong)}.")
+    return Evaluation("pass", registry)
+
+
+def _edge(assertion, result):
+    """The adapter's report of the assertion's edge, or None if it reported none."""
+    edges = result.get("edges")
+    for edge in edges if isinstance(edges, list) else ():
+        if (isinstance(edge, dict) and edge.get("near") == assertion["near"]
+                and edge.get("path") == assertion["path"]):
+            return edge
+    return None
+
+
+def _edge_name(assertion):
+    return f"the edge {assertion['path']} of {assertion['near']}"
+
+
+def _edge_reported(assertion, result):
+    edge = _edge(assertion, result)
+    if edge is not None:
+        return Evaluation("pass", edge)
+    return _fail(None, f"The adapter did not report {_edge_name(assertion)}.")
+
+
+def _edge_valid(assertion, result):
+    edge = _edge(assertion, result)
+    expected = assertion["expected"]
+    if edge is None:
+        verdict = result.get("verdict")
+        if expected is False and assertion["level"] == "MUST":
+            # A valid verdict commits the adapter to the failing edge: it must show it found the
+            # edge not valid (docs/design.md, Edges).
+            if verdict == "valid":
+                return _fail(None, f"The adapter answered valid without reporting "
+                                   f"{_edge_name(assertion)}, which is not valid.")
+            return Evaluation("pass", None, f"The adapter did not report "
+                                            f"{_edge_name(assertion)}, and its verdict is "
+                                            f"{verdict}, not valid.")
+        return Evaluation("not-applicable", None, f"The assertion applies only when the adapter "
+                                                  f"reports {_edge_name(assertion)}.")
+    actual = edge.get("valid")
+    if strict_equal(actual, expected):
+        return Evaluation("pass", actual)
+    return _fail(actual, f"The adapter found {_edge_name(assertion)} "
+                         f"{'valid' if actual is True else 'not valid'}, where it is "
+                         f"{'valid' if expected else 'not valid'}.")
+
+
+def _exn_verdict(assertion, result):
+    message, expected = assertion["message"], assertion["expected"]
+    verdicts = result.get("verdicts")
+    if not isinstance(verdicts, list) or message >= len(verdicts):
+        return _fail(None, f"The adapter reported no verdict for message {message}.")
+    entry = verdicts[message]
+    on_delivery, final = entry.get("on_delivery"), entry.get("verdict")
+    if expected == "rejected":
+        # A message that must be dropped is read twice, so accepting it on arrival and retracting
+        # it later still fails (docs/design.md, IPEX).
+        holds = on_delivery == "rejected" and final == "rejected"
+    else:
+        holds = final == "accepted"
+    if holds:
+        return Evaluation("pass", entry)
+    return _fail(entry, f"Message {message} was {on_delivery} on delivery and {final} at the "
+                        f"end, where it should have been {expected}"
+                        f"{' both times' if expected == 'rejected' else ' at the end'}.")
+
+
 CHECKS = {
     "decoded": _decoded,
     "rejected": _rejected,
@@ -193,6 +305,12 @@ CHECKS = {
     "disposition": _disposition,
     "trunk": _trunk,
     "key_state": _key_state,
+    "verdict": _verdict,
+    "registry_reported": _registry_reported,
+    "registry_state": _registry_state,
+    "edge_reported": _edge_reported,
+    "edge_valid": _edge_valid,
+    "exn_verdict": _exn_verdict,
 }
 
 
