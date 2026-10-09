@@ -16,10 +16,10 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 5 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All compliant encoded Primitives MUST be Composable. |
-| 5 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All compliant encoded Primitives MUST be self-framing. |
-| 7 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be Composable. |
-| 7 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be self-framing. |
+| 5 | MUST | validator | 0 | 0 | 0 | — | — | — | All compliant encoded Primitives MUST be Composable. |
+| 5 | MUST | validator | 0 | 0 | 0 | — | — | — | All compliant encoded Primitives MUST be self-framing. |
+| 7 | MUST | validator | 0 | 0 | 0 | — | — | — | All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be Composable. |
+| 7 | MUST | validator | 0 | 0 | 0 | — | — | — | All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be self-framing. |
 
 #### Transformations between Domains
 
@@ -27,7 +27,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 31 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All compliant implementations MUST support the transformations between all three domains. |
+| 31 | MUST | validator | 0 | 0 | 0 | — | — | — | All compliant implementations MUST support the transformations between all three domains. |
 
 #### Concatenation composability property
 
@@ -35,7 +35,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 73 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each and every Primitive or Count Code group of primitives MUST satisfy the [[ref: Concatenation Composability]] property. |
+| 73 | MUST | validator | 0 | 0 | 0 | — | — | — | Each and every Primitive or Count Code group of primitives MUST satisfy the [[ref: Concatenation Composability]] property. |
 
 #### Concrete Domain representations
 
@@ -43,7 +43,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 93 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)]. |
+| 93 | MUST | validator | 0 | 0 | 0 | — | — | — | The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)]. |
 
 #### Conversions
 
@@ -51,10 +51,10 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 196 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore, in order to cleanly capture integer multiples of twenty-four bits of information, Primitive lengths MUST be integer multiples of either four Base64 text characters or three binary bytes in their respective Domains. |
-| 198 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In other words, all Primitives MUST be aligned on 24-bit boundaries to satisfy the Composability property. |
-| 198 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This means that the length of any Primitive in the ‘B’ domain MUST be an integer multiple of three binary bytes with a minimum length of three binary bytes. |
-| 198 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters. |
+| 196 | MUST | validator | 0 | 0 | 0 | — | — | — | Therefore, in order to cleanly capture integer multiples of twenty-four bits of information, Primitive lengths MUST be integer multiples of either four Base64 text characters or three binary bytes in their respective Domains. |
+| 198 | MUST | validator | 0 | 0 | 0 | — | — | — | In other words, all Primitives MUST be aligned on 24-bit boundaries to satisfy the Composability property. |
+| 198 | MUST | validator | 0 | 0 | 0 | — | — | — | This means that the length of any Primitive in the ‘B’ domain MUST be an integer multiple of three binary bytes with a minimum length of three binary bytes. |
+| 198 | MUST | validator | 0 | 0 | 0 | — | — | — | Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters. |
 
 #### Stable Framing Codes in the text domain
 
@@ -62,7 +62,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 202 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The type portion of all compliant prepended Framing Codes MUST be stable in the Text domain. |
+| 202 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The type portion of all compliant prepended Framing Codes MUST be stable in the Text domain. |
 
 #### Stable type encoding
 
@@ -70,8 +70,8 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 208 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Stability also requires that for a given type, the type coding portion MUST consume a fixed integral number of characters in the ‘T’ domain. |
-| 210 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore, the type portion MUST begin the Framing Code, and the type coding portion MUST consume a fixed integral number of characters in the 'T' domain. |
+| 208 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Stability also requires that for a given type, the type coding portion MUST consume a fixed integral number of characters in the ‘T’ domain. |
+| 210 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Therefore, the type portion MUST begin the Framing Code, and the type coding portion MUST consume a fixed integral number of characters in the 'T' domain. |
 
 #### Stable value encoding
 
@@ -79,8 +79,8 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 214 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The combination of Stable leading type encoding and Stable trailing value encoding means that any zero padding MUST appear in the middle of the Primitive, after the type code, but before the value. |
-| 216 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore the value portion of any primitive MUST be right aligned. |
+| 214 | MUST | validator | 0 | 0 | 0 | — | — | — | The combination of Stable leading type encoding and Stable trailing value encoding means that any zero padding MUST appear in the middle of the Primitive, after the type code, but before the value. |
+| 216 | MUST | validator | 0 | 0 | 0 | — | — | — | Therefore the value portion of any primitive MUST be right aligned. |
 
 #### Code characters and lead bytes
 
@@ -88,7 +88,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 234 | MUST | unassessed | 11 | 3 | 0 | MUST 11, SHOULD 3 | both | CESR-0001, CESR-0002, CESR-0003, CESR-0004, CESR-0005, CESR-0006, CESR-0007, CESR-0008, CESR-0009, CESR-0010, CESR-0011, CESR-0038 (inferred), CESR-0039 (inferred), CESR-0040 (inferred) | Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined. |
+| 234 | MUST | validator | 11 | 3 | 0 | MUST 11, SHOULD 3 | both | CESR-0001, CESR-0002, CESR-0003, CESR-0004, CESR-0005, CESR-0006, CESR-0007, CESR-0008, CESR-0009, CESR-0010, CESR-0011, CESR-0038 (inferred), CESR-0039 (inferred), CESR-0040 (inferred) | Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined. |
 
 #### Multiple code table approach
 
@@ -96,7 +96,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 240 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each code table MUST be uniquely indicated by the first character of the type code in the 'T' domain. |
+| 240 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Each code table MUST be uniquely indicated by the first character of the type code in the 'T' domain. |
 
 #### Text Code Size
 
@@ -104,8 +104,8 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 268 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Because true Composability also requires that the ‘T’ domain value MUST be an integer multiple of 4 characters in length, the size of the text code MUST also be a function of the pad size, `ps`, and hence the length of the raw binary element, `N`. |
-| 268 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Thus, the size of the text code in Base64 characters MUST be a function of the equivalent pad size determined by the length `N mod 3` of the raw binary value. |
+| 268 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Because true Composability also requires that the ‘T’ domain value MUST be an integer multiple of 4 characters in length, the size of the text code MUST also be a function of the pad size, `ps`, and hence the length of the raw binary element, `N`. |
+| 268 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Thus, the size of the text code in Base64 characters MUST be a function of the equivalent pad size determined by the length `N mod 3` of the raw binary value. |
 
 #### Pre-padding a three-byte value
 
@@ -113,7 +113,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 344 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The prepended type code MUST be an integer multiple of four Base64 characters. |
+| 344 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The prepended type code MUST be an integer multiple of four Base64 characters. |
 
 #### Count or Group Framing Codes
 
@@ -121,8 +121,8 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 364 | MUST | unassessed | 0 | 0 | 0 | — | — | — | A Count Code is its own composable Primitive, and its length, therefore, MUST be an integer multiple of four characters in the Text domain or, equivalently, an integer multiple of three bytes in the Binary domain. |
-| 364 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Because a Count Code's raw binary element value is empty and its length MUST be an integer multiple of four characters (three bytes), its pad size MUST always be 0. |
+| 364 | MUST | validator | 0 | 0 | 0 | — | — | — | A Count Code is its own composable Primitive, and its length, therefore, MUST be an integer multiple of four characters in the Text domain or, equivalently, an integer multiple of three bytes in the Binary domain. |
+| 364 | MUST | validator | 0 | 0 | 0 | — | — | — | Because a Count Code's raw binary element value is empty and its length MUST be an integer multiple of four characters (three bytes), its pad size MUST always be 0. |
 
 #### Interleaved non-CESR serializations
 
@@ -130,7 +130,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 376 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When nesting inside CESR groups, a non-native CESR serializations MUST be encoded as a CESR primitive and then enclosed in a special count code for non-native messages. |
+| 376 | MUST | validator | 0 | 0 | 0 | — | — | — | When nesting inside CESR groups, a non-native CESR serializations MUST be encoded as a CESR primitive and then enclosed in a special count code for non-native messages. |
 
 #### Performant resynchronization with unique start bits
 
@@ -138,9 +138,9 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 388 | MUST | unassessed | 0 | 0 | 0 | — | — | — | A CESR Stream parser MUST support three specific interleaved serializations, namely, JSON, CBOR, and MGPK. |
-| 390 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Together these impose the constraint that the boundary start bits for interleaved text CESR, binary CESR, JSON, CBOR, and MGPK MUST be mutually distinct. |
-| 406 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The starting tritet of any cold start (restart) MUST begin with one of eight cases. |
+| 388 | MUST | validator | 0 | 0 | 0 | — | — | — | A CESR Stream parser MUST support three specific interleaved serializations, namely, JSON, CBOR, and MGPK. |
+| 390 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Together these impose the constraint that the boundary start bits for interleaved text CESR, binary CESR, JSON, CBOR, and MGPK MUST be mutually distinct. |
+| 406 | MUST | validator | 0 | 0 | 0 | — | — | — | The starting tritet of any cold start (restart) MUST begin with one of eight cases. |
 
 #### Stream parsing rules
 
@@ -148,9 +148,9 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 427 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each Stream MUST start (restart) with one of eight cases: |
-| 438 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the first Tritet indicates, its JSON, CBOR, or MGPK, the mapping's first field MUST be a Version String that provides the additional information needed to parse the associated encoded field map serialization fully. |
-| 440 | MUST | unassessed | 1 | 1 | 0 | MUST 1, SHOULD 1 | both | CESR-0030, CESR-0041 (inferred) | The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding. |
+| 427 | MUST | validator | 0 | 0 | 0 | — | — | — | Each Stream MUST start (restart) with one of eight cases: |
+| 438 | MUST | validator | 0 | 0 | 0 | — | — | — | When the first Tritet indicates, its JSON, CBOR, or MGPK, the mapping's first field MUST be a Version String that provides the additional information needed to parse the associated encoded field map serialization fully. |
+| 440 | MUST | validator | 1 | 1 | 0 | MUST 1, SHOULD 1 | both | CESR-0030, CESR-0041 (inferred) | The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding. |
 
 #### Code table selectors
 
@@ -158,14 +158,14 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 478 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To efficiently parse a Stream of Primitives with types from multiple text code tables, the first character in the text code MUST determine which code table to use, either a default code table or a code table selector character when not the default code table. |
-| 478 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Thus, the 1-character text code table MUST do double duty. |
-| 478 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST provide selectors for the different text code tables and MUST also provide type codes for the most popular Primitives that have a pad size of 1 that appears as the default code table. |
-| 484 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To clarify, the first character of any Primitive MUST be either a selector or a 1-character code type. |
-| 487 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Count Code table MUST use the '-' character as its selector. |
-| 487 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Op Code table MUST use the '_' character as its selector. |
-| 487 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The single code character table MUST use the characters [A-Z,a-z]. |
-| 487 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The other 10 code tables MUST each use one the characters [0-9] as their selector. |
+| 478 | MUST | validator | 0 | 0 | 0 | — | — | — | To efficiently parse a Stream of Primitives with types from multiple text code tables, the first character in the text code MUST determine which code table to use, either a default code table or a code table selector character when not the default code table. |
+| 478 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Thus, the 1-character text code table MUST do double duty. |
+| 478 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | It MUST provide selectors for the different text code tables and MUST also provide type codes for the most popular Primitives that have a pad size of 1 that appears as the default code table. |
+| 484 | MUST | validator | 0 | 0 | 0 | — | — | — | To clarify, the first character of any Primitive MUST be either a selector or a 1-character code type. |
+| 487 | MUST | validator | 0 | 0 | 0 | — | — | — | The Count Code table MUST use the '-' character as its selector. |
+| 487 | MUST | validator | 0 | 0 | 0 | — | — | — | The Op Code table MUST use the '_' character as its selector. |
+| 487 | MUST | validator | 0 | 0 | 0 | — | — | — | The single code character table MUST use the characters [A-Z,a-z]. |
+| 487 | MUST | validator | 0 | 0 | 0 | — | — | — | The other 10 code tables MUST each use one the characters [0-9] as their selector. |
 
 #### Count Code tables
 
@@ -173,15 +173,15 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 581 | MUST | unassessed | 2 | 0 | 0 | MUST 2 | positive | CESR-0024, CESR-0027 | Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain. |
-| 591 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each Count Code MUST be aligned on a 24-bit boundary. |
-| 591 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Count Codes MUST NOT have a value component but MUST have only type and size components. |
-| 591 | MUST | unassessed | 5 | 2 | 1 | MUST 5, SHOULD 2 | both | CESR-0015, CESR-0019, CESR-0025, CESR-0026, CESR-0031 (disputed), CESR-0032 (inferred), CESR-0033 (inferred) | The size component MUST count the Quadlets/triplets in its following group. |
-| 591 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Moreover, because Primitives are already guaranteed to be composable, Count Codes do not need to account for pad size because the Count Code MUST be aligned on a 24-bit boundary. |
-| 591 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each element in content of a Count Code group MUST be aligned on a 24-bit boundary. |
-| 594 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The first selector MUST always be the `-` character as the initial selector. |
-| 594 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the second character is numeral `0` - `9` or the letters `-` or `_`, then it MUST be a secondary Count Code table selector. |
-| 594 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the second character is a letter in the range `A` - `Z` or `a` - `z`, then it MUST be a unique single-character Count Code. |
+| 581 | MUST | validator, security | 2 | 0 | 0 | MUST 2 | positive | CESR-0024, CESR-0027 | Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain. |
+| 591 | MUST | validator | 0 | 0 | 0 | — | — | — | Each Count Code MUST be aligned on a 24-bit boundary. |
+| 591 | MUST | validator | 0 | 0 | 0 | — | — | — | Count Codes MUST NOT have a value component but MUST have only type and size components. |
+| 591 | MUST | validator, security | 5 | 2 | 1 | MUST 5, SHOULD 2 | both | CESR-0015, CESR-0019, CESR-0025, CESR-0026, CESR-0031 (disputed), CESR-0032 (inferred), CESR-0033 (inferred) | The size component MUST count the Quadlets/triplets in its following group. |
+| 591 | MUST | validator | 0 | 0 | 0 | — | — | — | Moreover, because Primitives are already guaranteed to be composable, Count Codes do not need to account for pad size because the Count Code MUST be aligned on a 24-bit boundary. |
+| 591 | MUST | validator | 0 | 0 | 0 | — | — | — | Each element in content of a Count Code group MUST be aligned on a 24-bit boundary. |
+| 594 | MUST | validator | 0 | 0 | 0 | — | — | — | The first selector MUST always be the `-` character as the initial selector. |
+| 594 | MUST | validator | 0 | 0 | 0 | — | — | — | When the second character is numeral `0` - `9` or the letters `-` or `_`, then it MUST be a secondary Count Code table selector. |
+| 594 | MUST | validator | 0 | 0 | 0 | — | — | — | When the second character is a letter in the range `A` - `Z` or `a` - `z`, then it MUST be a unique single-character Count Code. |
 
 #### Small Count Code table
 
@@ -189,11 +189,11 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 599 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | CESR-0034 (inferred) | Codes in the small Count Code table MUST be each four characters long. |
-| 599 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The first character MUST be the selector `-`. |
-| 599 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The second character MUST be the Count Code type. the last two characters MUST be the count size as a Base64 encoded integer. |
-| 599 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Count Code type MUST be a letter `A` - `Z` or `a` - `z`. |
-| 601 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | CESR-0037 (inferred) | If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error. |
+| 599 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | CESR-0034 (inferred) | Codes in the small Count Code table MUST be each four characters long. |
+| 599 | MUST | validator | 0 | 0 | 0 | — | — | — | The first character MUST be the selector `-`. |
+| 599 | MUST | validator | 0 | 0 | 0 | — | — | — | The second character MUST be the Count Code type. the last two characters MUST be the count size as a Base64 encoded integer. |
+| 599 | MUST | validator | 0 | 0 | 0 | — | — | — | The Count Code type MUST be a letter `A` - `Z` or `a` - `z`. |
+| 601 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | CESR-0037 (inferred) | If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error. |
 
 #### Large Count Code table
 
@@ -201,10 +201,10 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 605 | MUST | unassessed | 1 | 1 | 0 | MUST 1, SHOULD 1 | both | CESR-0028, CESR-0035 (inferred) | Codes in the large Count Code table MUST be each 8 characters long. |
-| 605 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The first two characters MUST be the selectors `--`. |
-| 605 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The next character MUST be the Count Code type. |
-| 605 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The last five characters MUST be the count size as a Base64 encoded integer. |
+| 605 | MUST | validator | 1 | 1 | 0 | MUST 1, SHOULD 1 | both | CESR-0028, CESR-0035 (inferred) | Codes in the large Count Code table MUST be each 8 characters long. |
+| 605 | MUST | validator | 0 | 0 | 0 | — | — | — | The first two characters MUST be the selectors `--`. |
+| 605 | MUST | validator | 0 | 0 | 0 | — | — | — | The next character MUST be the Count Code type. |
+| 605 | MUST | validator | 0 | 0 | 0 | — | — | — | The last five characters MUST be the count size as a Base64 encoded integer. |
 
 #### Protocol genus/version table
 
@@ -212,10 +212,10 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 609 | MUST | unassessed | 0 | 0 | 0 | — | — | — | A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets but MUST modify the protocol genus and Version of all the following Count Codes that either appear at the top level until another protocol and genus Count Code is provided or are inside a special enclosing Count Code group. |
-| 609 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Universal count codes MUST be universal across all genera of Count Code tables. |
-| 611 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The only table that all protocols MUST share (i.e., has identical values) is the protocol genus and version table (protocol table for short). |
-| 611 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Secondly, for a given protocol genus, a protocol genus and version code MUST provide the Version of that given protocol's table set. |
+| 609 | MUST | validator, security | 0 | 0 | 0 | — | — | — | A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets but MUST modify the protocol genus and Version of all the following Count Codes that either appear at the top level until another protocol and genus Count Code is provided or are inside a special enclosing Count Code group. |
+| 609 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Universal count codes MUST be universal across all genera of Count Code tables. |
+| 611 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The only table that all protocols MUST share (i.e., has identical values) is the protocol genus and version table (protocol table for short). |
+| 611 | MUST | validator | 0 | 0 | 0 | — | — | — | Secondly, for a given protocol genus, a protocol genus and version code MUST provide the Version of that given protocol's table set. |
 
 #### Protocol genus/version codes
 
@@ -223,9 +223,9 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 615 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The format for a protocol genus/version code MUST be as follows: `-_GGGVVV` where `GGG` represents the protocol genus and `VVV` represents the Version of that protocol genus. |
-| 620 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When a Major change occurs, the Major version number MUST be incremented. |
-| 622 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When a minor change occurs, the Minor version number MUST be incremented. |
+| 615 | MUST | validator | 0 | 0 | 0 | — | — | — | The format for a protocol genus/version code MUST be as follows: `-_GGGVVV` where `GGG` represents the protocol genus and `VVV` represents the Version of that protocol genus. |
+| 620 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | When a Major change occurs, the Major version number MUST be incremented. |
+| 622 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | When a minor change occurs, the Minor version number MUST be incremented. |
 
 #### Op Code table
 
@@ -233,7 +233,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 628 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The `_` selector MUST be reserved for the yet-to-be-defined opcode table or tables. |
+| 628 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The `_` selector MUST be reserved for the yet-to-be-defined opcode table or tables. |
 
 #### Encoding scheme table
 
@@ -241,7 +241,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 634 | MUST | unassessed | 0 | 0 | 0 | — | — | — | A given CESR protocol genus MUST use the table encoding schemes defined above and summarized in the following table: |
+| 634 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | A given CESR protocol genus MUST use the table encoding schemes defined above and summarized in the following table: |
 
 #### Encoding Scheme Table
 
@@ -249,7 +249,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 660 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In this case, the Code Size MUST equal the size of the Selector, Type, and Value Size parts summed together. |
+| 660 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | In this case, the Code Size MUST equal the size of the Selector, Type, and Value Size parts summed together. |
 
 #### Universal Code tables
 
@@ -257,7 +257,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 799 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All code tables for every protocol genus/version MUST implement the following tables: |
+| 799 | MUST | validator | 0 | 0 | 0 | — | — | — | All code tables for every protocol genus/version MUST implement the following tables: |
 
 #### Universal Code table genus/version codes that allow genus/version override
 
@@ -265,13 +265,13 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 814 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All genera MUST have the following codes in their Count Code table. |
-| 814 | MUST | unassessed | 1 | 0 | 0 | MUST 1 | positive | CESR-0029 | Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code. |
-| 814 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All other codes MUST NOT support this feature and are characterized as non-overrideable codes. |
-| 816 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser. |
-| 816 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In other words, the parser MUST only treat the genus/version count code, especially as an override, when it appears as the first count code within the framed material of an overrideable universal count code. |
-| 816 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Otherwise, there MUST be no special override meaning to the parser. |
-| 820 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All genera MUST have the following codes in their Count Code table. |
+| 814 | MUST | validator | 0 | 0 | 0 | — | — | — | All genera MUST have the following codes in their Count Code table. |
+| 814 | MUST | validator, security | 1 | 0 | 0 | MUST 1 | positive | CESR-0029 | Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code. |
+| 814 | MUST | validator, security | 0 | 0 | 0 | — | — | — | All other codes MUST NOT support this feature and are characterized as non-overrideable codes. |
+| 816 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser. |
+| 816 | MUST | validator, security | 0 | 0 | 0 | — | — | — | In other words, the parser MUST only treat the genus/version count code, especially as an override, when it appears as the first count code within the framed material of an overrideable universal count code. |
+| 816 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Otherwise, there MUST be no special override meaning to the parser. |
+| 820 | MUST | validator | 0 | 0 | 0 | — | — | — | All genera MUST have the following codes in their Count Code table. |
 
 #### Universal Code table genus/version codes that do not allow genus/version override
 
@@ -279,7 +279,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 835 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All genera MUST have the following codes in their Count Code table. |
+| 835 | MUST | validator | 0 | 0 | 0 | — | — | — | All genera MUST have the following codes in their Count Code table. |
 
 #### KERI/ACDC Protocol Stack Tables
 
@@ -287,7 +287,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 858 | MUST | unassessed | 0 | 0 | 0 | — | — | — | A compliant implementation of KERI/ACDC MUST support the following codes |
+| 858 | MUST | validator | 0 | 0 | 0 | — | — | — | A compliant implementation of KERI/ACDC MUST support the following codes |
 
 #### Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)
 
@@ -295,8 +295,8 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 874 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This master table includes the REQUIRED Primitive and Count Code types for the KERI/ACDC protocol stack. |
-| 878 | MUST | unassessed | 1 | 0 | 0 | MUST 1 | positive | CESR-0016 | A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables. |
+| 874 | MUST | validator | 0 | 0 | 0 | — | — | — | This master table includes the REQUIRED Primitive and Count Code types for the KERI/ACDC protocol stack. |
+| 878 | MUST | validator | 1 | 0 | 0 | MUST 1 | positive | CESR-0016 | A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables. |
 
 #### Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)
 
@@ -304,7 +304,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1068 | MUST | unassessed | 6 | 0 | 1 | MUST 6 | positive | CESR-0017, CESR-0018, CESR-0020, CESR-0021, CESR-0022 (disputed), CESR-0023 | A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table. |
+| 1068 | MUST | validator | 6 | 0 | 1 | MUST 6 | positive | CESR-0017, CESR-0018, CESR-0020, CESR-0021, CESR-0022 (disputed), CESR-0023 | A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table. |
 
 #### Version String field
 
@@ -312,7 +312,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1125 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Non-CESR serializations, namely, JSON, CBOR, and MGPK when interleaved in a CESR Stream MUST have a Version String as their first field with field label, `v` (lower case "v"). |
+| 1125 | MUST | validator | 0 | 0 | 0 | — | — | — | Non-CESR serializations, namely, JSON, CBOR, and MGPK when interleaved in a CESR Stream MUST have a Version String as their first field with field label, `v` (lower case "v"). |
 
 #### Version 2.XX string field format
 
@@ -320,9 +320,9 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1129 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Version String, `v` field MUST be the first field in any top-level field map of any interleaved JSON, CBOR, or MGPK serialization. |
-| 1129 | MUST | unassessed | 2 | 1 | 0 | MUST 2, SHOULD 1 | both | CESR-0012, CESR-0014, CESR-0042 (inferred) | A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps. |
-| 1129 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each field map in a Stream MUST use one of the serialization types from the JSON, CBOR, or MGPK set. |
+| 1129 | MUST | validator | 0 | 0 | 0 | — | — | — | The Version String, `v` field MUST be the first field in any top-level field map of any interleaved JSON, CBOR, or MGPK serialization. |
+| 1129 | MUST | validator, security | 2 | 1 | 0 | MUST 2, SHOULD 1 | both | CESR-0012, CESR-0014, CESR-0042 (inferred) | A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps. |
+| 1129 | MUST | validator | 0 | 0 | 0 | — | — | — | Each field map in a Stream MUST use one of the serialization types from the JSON, CBOR, or MGPK set. |
 
 #### Legacy Version 1.XX string field format
 
@@ -330,7 +330,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1158 | MUST | unassessed | 1 | 0 | 0 | MUST 1 | positive | CESR-0013 | Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events. |
+| 1158 | MUST | validator | 1 | 0 | 0 | MUST 1 | positive | CESR-0013 | Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events. |
 
 #### Self-addressing identifier (SAID)
 
@@ -338,8 +338,8 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1180 | MUST | unassessed | 0 | 0 | 0 | — | — | — | SAIDs MUST be encoded as a  CESR [CESR] Primitive. |
-| 1186 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In addition, a SAID MUST include a pre-pended derivation code that specifies the cryptographic algorithm used to generate the digest. |
+| 1180 | MUST | validator | 0 | 0 | 0 | — | — | — | SAIDs MUST be encoded as a  CESR [CESR] Primitive. |
+| 1186 | MUST | validator, security | 0 | 0 | 0 | — | — | — | In addition, a SAID MUST include a pre-pended derivation code that specifies the cryptographic algorithm used to generate the digest. |
 
 #### Generation and Verification Protocols
 
@@ -347,7 +347,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1194 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The SAID verification protocol MUST be implemented as follows: |
+| 1194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The SAID verification protocol MUST be implemented as follows: |
 
 #### Description and Usage
 
@@ -355,7 +355,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1434 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All path components MUST be an integer when the current context is an array. |
+| 1434 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | All path components MUST be an integer when the current context is an array. |
 
 ### Permissions (MAY and OPTIONAL)
 
