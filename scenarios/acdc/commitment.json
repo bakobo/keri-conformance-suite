@@ -1,0 +1,371 @@
+{
+  "about": "ACDC scenarios for steps 3 and 4 of the decision procedure (docs/design.md, ACDC): the issuer's key state and its commitment to the ACDC's most compact SAID.",
+  "profile": "acdc-1.0",
+  "fixtures": {
+    "direct": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "A1"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "A1",
+          "issuer": "I",
+          "schema": "S1",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Zoe Doe",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "source_seal": "ixn1"
+        }
+      ],
+      "presented": "A1"
+    }
+  },
+  "cases": [
+    {
+      "id": "ACDC-0018",
+      "key": "KS-20",
+      "title": "No issuer commitment",
+      "description": "The ACDC carries no seal reference, and nothing in its issuer's KEL seals it. No keyword sentence obliges a validator to refuse it (A-G1), so the refusal is inferred.",
+      "base": "direct",
+      "patch": {
+        "events": {
+          "ixn1": {
+            "a": []
+          }
+        },
+        "acdcs": {
+          "A1": {
+            "source_seal": null
+          }
+        }
+      },
+      "expect": [
+        "A1 4/no-commitment"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0019",
+      "key": "KS-20b",
+      "title": "Seal reference to an event that does not seal it",
+      "description": "The ACDC's attached reference names a real interaction event of its issuer, seen and on the trunk, that seals nothing; no event in the KEL seals the ACDC. A reference is a pointer (line 1671) and commits nothing.",
+      "base": "direct",
+      "patch": {
+        "events": {
+          "ixn1": {
+            "a": []
+          }
+        }
+      },
+      "expect": [
+        "A1 4/no-commitment"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0020",
+      "key": "KS-20c",
+      "title": "Seal reference with a digest that is not the event's",
+      "description": "The attached reference names the issuer's interaction event by sequence number with a digest that is not that event's, and no event in the KEL seals the ACDC.",
+      "base": "direct",
+      "patch": {
+        "events": {
+          "ixn1": {
+            "a": []
+          }
+        },
+        "acdcs": {
+          "A1": {
+            "source_seal": {
+              "event": "ixn1",
+              "wrong_said": "not-ixn1"
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 4/no-commitment"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0021",
+      "key": "KS-21",
+      "title": "Sealed only in another identifier's KEL",
+      "description": "An unrelated identifier's interaction event seals the ACDC, and the reference points to it; the issuer's KEL holds no seal. A seal by another controller is not the issuer's commitment.",
+      "base": "direct",
+      "patch": {
+        "events": {
+          "ixn1": {
+            "a": []
+          }
+        },
+        "acdcs": {
+          "A1": {
+            "source_seal": "xixn1"
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "Xicp",
+            "aid": "X",
+            "t": "icp",
+            "keys": [
+              "x0"
+            ],
+            "next": [
+              "x1"
+            ]
+          },
+          {
+            "name": "xixn1",
+            "aid": "X",
+            "t": "ixn",
+            "a": [
+              {
+                "acdc": "A1"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "Xicp",
+            "sigs": [
+              "x0"
+            ]
+          },
+          {
+            "event": "xixn1",
+            "sigs": [
+              "x0"
+            ]
+          }
+        ]
+      },
+      "expect": [
+        "A1 4/no-commitment"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0022",
+      "key": "KS-22",
+      "title": "Seal in an issuer event with a forged signature",
+      "description": "The interaction event that seals the ACDC carries a signature that does not verify against the issuer's key, so a validator drops it (KERI line 1266) and the seal is never on the trunk.",
+      "base": "direct",
+      "patch": {
+        "kels": {
+          "ixn1": {
+            "sigs": [
+              {
+                "key": "i0",
+                "forged": true
+              }
+            ]
+          }
+        }
+      },
+      "expect": [
+        "A1 4/no-commitment"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0023",
+      "key": "KS-23",
+      "title": "Issuer KEL absent",
+      "description": "The bundle holds no KEL for the ACDC's issuer, so its key state cannot be established (line 95) and nothing can show its commitment.",
+      "base": "direct",
+      "replace": {
+        "kels": []
+      },
+      "expect": [
+        "A1 3/issuer-kel"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0024",
+      "key": "KS-24",
+      "title": "Sealed, then the issuer rotates",
+      "description": "The issuer seals the ACDC in an interaction event and later rotates its keys. The seal stays on the trunk, so a validator should still find the ACDC valid.",
+      "base": "direct",
+      "append": {
+        "events": [
+          {
+            "name": "rot2",
+            "aid": "I",
+            "t": "rot",
+            "keys": [
+              "i1"
+            ],
+            "next": [
+              "i2"
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "rot2",
+            "sigs": [
+              "i1"
+            ]
+          }
+        ]
+      },
+      "expect": []
+    }
+  ]
+}

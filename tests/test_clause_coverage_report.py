@@ -172,8 +172,8 @@ def test_an_oversized_case_is_refused_before_it_is_parsed(tree, monkeypatch):
 
 
 def test_an_unknown_check_type_anywhere_is_refused(tree):
-    root = tree(case("KERI-0001", {"check": "verdict", "level": "INTEROP", "expected": "valid"}))
-    with pytest.raises(cc.CoverageError, match="unknown check 'verdict'"):
+    root = tree(case("KERI-0001", {"check": "bogus", "level": "INTEROP", "expected": "valid"}))
+    with pytest.raises(cc.CoverageError, match="unknown check 'bogus'"):
         cc.generate(root)
 
 
@@ -183,6 +183,12 @@ def test_an_unknown_check_type_anywhere_is_refused(tree):
 def test_the_known_pins_are_the_cesr_keri_and_acdc_texts():
     # Hostile pass on #22: an IPEX practice basis cites the ACDC text, so it must be known.
     assert cc.known_pins() == [spec_source.cesr_pin(), spec_source.KERI, spec_source.ACDC]
+
+
+def test_an_edge_reported_assertion_needs_no_expected_value(tree):
+    root = tree(case("KERI-0001", {"check": "edge_reported", "level": "INTEROP", "near": "E",
+                                   "path": "e.x"}))
+    assert cc.load_cases(root)
 
 
 def test_load_text_reads_the_pinned_text(monkeypatch):
@@ -812,7 +818,8 @@ def test_the_committed_report_is_what_the_cases_and_triage_generate():
     assert cc.differences(real_files(), cc.committed(ROOT)) == []
 
 
-@pytest.mark.parametrize("pin", [spec_source.cesr_pin(), spec_source.KERI], ids=["cesr", "keri"])
+@pytest.mark.parametrize("pin", [spec_source.cesr_pin(), spec_source.KERI, spec_source.ACDC],
+                         ids=["cesr", "keri", "acdc"])
 def test_every_keyword_sentence_of_each_pinned_text_is_in_the_report_exactly_once(pin):
     files = real_files()
     text = spec_source.load_spec(pin=pin)

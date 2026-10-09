@@ -1,0 +1,306 @@
+{
+  "as_of": {
+    "EAoT3Pm0sFRgbkyLrtayXVDBXUH7yxVK8sJOs67u7cWt": 1,
+    "EE0b17nyDBXN2DUgdllVSE7YLBwKNvvJ3kBRQqw0kamF": 1,
+    "EKsZVb0JtNh6tRN5O53ps5YgRVc_8SdXBrhpixyGS9YF": 1
+  },
+  "assertions": [
+    {
+      "check": "verdict",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema.",
+        "section": "Composable JSON Schema",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#composable-json-schema"
+      },
+      "expected": "valid",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "note": "Decision procedure step 7: every check passes, under the design's reading of compact_v."
+    },
+    {
+      "check": "edge_reported",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "id": "a2",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "ENERVOez0PfboNTCa11nGG3GWUVWAxIukQu21Ss57fRc",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.a"
+    },
+    {
+      "check": "edge_valid",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "expected": true,
+      "id": "a3",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "ENERVOez0PfboNTCa11nGG3GWUVWAxIukQu21Ss57fRc",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.a"
+    },
+    {
+      "check": "edge_reported",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "id": "a4",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "ENERVOez0PfboNTCa11nGG3GWUVWAxIukQu21Ss57fRc",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.b"
+    },
+    {
+      "check": "edge_valid",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "expected": true,
+      "id": "a5",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "ENERVOez0PfboNTCa11nGG3GWUVWAxIukQu21Ss57fRc",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.b"
+    },
+    {
+      "check": "edge_reported",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "id": "a6",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "EA0zdcvTpukqq0DYltGEUC64qioyaq8PjzZkYiSnx_xV",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.up"
+    },
+    {
+      "check": "edge_valid",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "expected": true,
+      "id": "a7",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "EA0zdcvTpukqq0DYltGEUC64qioyaq8PjzZkYiSnx_xV",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.up"
+    },
+    {
+      "check": "edge_reported",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "id": "a8",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "EEPVuRiWRsrKAfbjs3133mi3BoCySBfB3rBemaJgachH",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.up"
+    },
+    {
+      "check": "edge_valid",
+      "clause": {
+        "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field",
+        "spec": "acdc",
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field"
+      },
+      "expected": true,
+      "id": "a9",
+      "inferred_from": {
+        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
+        "line": 62,
+        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
+        "section": "Version String Field"
+      },
+      "level": "SHOULD",
+      "near": "EEPVuRiWRsrKAfbjs3133mi3BoCySBfB3rBemaJgachH",
+      "note": "Decision procedure step 6: every edge in the DAG passes its own checks.",
+      "path": "e.up"
+    }
+  ],
+  "dag": {
+    "edges": [
+      {
+        "n": "EA0zdcvTpukqq0DYltGEUC64qioyaq8PjzZkYiSnx_xV",
+        "near": "ENERVOez0PfboNTCa11nGG3GWUVWAxIukQu21Ss57fRc",
+        "path": "e.a"
+      },
+      {
+        "n": "EEPVuRiWRsrKAfbjs3133mi3BoCySBfB3rBemaJgachH",
+        "near": "ENERVOez0PfboNTCa11nGG3GWUVWAxIukQu21Ss57fRc",
+        "path": "e.b"
+      },
+      {
+        "n": "EJsgHI8XoB_YUwjZr9ROYZ1SKEieyDrGkH5BC7tBL2Sw",
+        "near": "EA0zdcvTpukqq0DYltGEUC64qioyaq8PjzZkYiSnx_xV",
+        "path": "e.up"
+      },
+      {
+        "n": "EJsgHI8XoB_YUwjZr9ROYZ1SKEieyDrGkH5BC7tBL2Sw",
+        "near": "EEPVuRiWRsrKAfbjs3133mi3BoCySBfB3rBemaJgachH",
+        "path": "e.up"
+      }
+    ],
+    "root": "ENERVOez0PfboNTCa11nGG3GWUVWAxIukQu21Ss57fRc"
+  },
+  "description": "The presented ACDC has edges to two far nodes, each of which has an edge to one root ACDC. Each of the four edges is reported once, keyed by its near node, and all are valid.",
+  "id": "ACDC-0062",
+  "input": {
+    "acdcs": [
+      {
+        "stream": "2d5f4141414341417b2276223a22414344434341414341414a534f4e414146392e222c2274223a2261636d222c2264223a22454a7367484938586f425f5955776a5a7239524f595a31534b456965794472476b483542433774424c325377222c2269223a2245416f5433506d3073465267626b794c7274617958564442585548377978564b38734a4f7336377537635774222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c2261223a7b2264223a2245416a4a474d33554d546a424e50486f64307038735a62344138317042494b5877784f3234336779676d5033222c2269223a22454b735a5662304a744e683674524e354f353370733559675256635f38536458427268706978794753395946222c226474223a22323032352d30372d30345431373a35303a30302e3030303030302b30303a3030222c226e616d65223a22526f6f74222c226c6569223a22353439333030314b4a5449494743385931523132227d7d2d4341532d534152304141414141414141414141414141414141414141414142454d6a354e45784d6146615f7a58434563316b527044517637736d5074343276483770454c4a43306a623855"
+      },
+      {
+        "stream": "2d5f4141414341417b2276223a22414344434341414341414a534f4e41414a6a2e222c2274223a2261636d222c2264223a224541307a6463765470756b71713044596c7447455543363471696f79617138506a7a5a6b5969536e785f7856222c2269223a22454b735a5662304a744e683674524e354f353370733559675256635f38536458427268706978794753395946222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c2261223a7b2264223a2245476d6c2d30376d764961747a526561794e304741775f6433644a6f4631627553577055797633326f6a4641222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c226474223a22323032352d30372d30345431373a35303a30302e3030303030302b30303a3030222c226e616d65223a22466172206f6e65222c226c6569223a22353439333030314b4a5449494743385931523132227d2c2265223a7b2264223a22454c6c4d69484e575749673849547a496c6a4e3837386c6c58444d6e78445f493432726c6e75463355345751222c227570223a7b2264223a224542454b533241637855446e77697966777a727a395230535155414459653332662d5173706f38657259755f222c226e223a22454a7367484938586f425f5955776a5a7239524f595a31534b456965794472476b483542433774424c325377222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c226f223a22493249227d7d7d2d4341532d534152304141414141414141414141414141414141414141414142454965372d7379575a595a505f7358484450547a714c79705846695f4e6e77316c4b7a722d467a6d55544d43"
+      },
+      {
+        "stream": "2d5f4141414341417b2276223a22414344434341414341414a534f4e41414a6a2e222c2274223a2261636d222c2264223a2245455056755269575273724b4166626a73333133336d6933426f437953426642337242656d614a6761636848222c2269223a22454b735a5662304a744e683674524e354f353370733559675256635f38536458427268706978794753395946222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c2261223a7b2264223a22454a7652497861523776467936593170474c66314177376d753044505a50447864425442376d5f4b62752d58222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c226474223a22323032352d30372d30345431373a35303a30302e3030303030302b30303a3030222c226e616d65223a224661722074776f222c226c6569223a22353439333030314b4a5449494743385931523132227d2c2265223a7b2264223a22454c6c4d69484e575749673849547a496c6a4e3837386c6c58444d6e78445f493432726c6e75463355345751222c227570223a7b2264223a224542454b533241637855446e77697966777a727a395230535155414459653332662d5173706f38657259755f222c226e223a22454a7367484938586f425f5955776a5a7239524f595a31534b456965794472476b483542433774424c325377222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c226f223a22493249227d7d7d2d4341532d534152304141414141414141414141414141414141414141414142454965372d7379575a595a505f7358484450547a714c79705846695f4e6e77316c4b7a722d467a6d55544d43"
+      }
+    ],
+    "kels": [
+      {
+        "source": "I",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c2273223a2230222c226b74223a2231222c226b223a5b2244485f78312d787347364a54764e39393842375f485071306b456348377842337a7639476d4a7777636c546e225d2c226e74223a2231222c226e223a5b2245465a65646f713845536b4342753664366252316550674b435f4c636a5135347271383265496e4b754d6e58225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414144443542754b796f4c6a593777515f6a554c4c57794c69563049666d7742626268474f417566666f664d447976664e694b6e337a67306a384d336a6979724b786331376a7665306d5f64624d507158464d4e41715950"
+      },
+      {
+        "source": "I",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145422e222c2274223a2269786e222c2264223a2245435064495f7a71524c567947374d30326657645752662d6d5868742d556e394e3546667736423951364a32222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c2273223a2231222c2270223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c2261223a5b7b2264223a22454e4552564f657a305066626f4e54436131316e4747334757555657417849756b5175323153733537665263227d5d7d2d4341582d4b41574141424469335f65783572374a4d43725342304c5957616a48306e3643772d744c4c63364b2d6b5561314f594b5434333334426f47586469464f7136395f3335303354394167534972394b704f6f4538625656784f79674e"
+      },
+      {
+        "source": "Q",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454b735a5662304a744e683674524e354f353370733559675256635f38536458427268706978794753395946222c2269223a22454b735a5662304a744e683674524e354f353370733559675256635f38536458427268706978794753395946222c2273223a2230222c226b74223a2231222c226b223a5b22444331786a564242386159755976696475615a5271702d795f694c64454553343756714c71312d6d6f495367225d2c226e74223a2231222c226e223a5b22454a6a54494e5561394c584b4a4e496a6338495a737069456e4d7141536973644e554b6e73796c5054683964225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414144386c302d765866635071335671595a31456c4c66445545685a694a756e624f66734e5154643630466d78396275637a65316c4c736b7777524a3165424848676d6434634f446c37656f355549706e6b6378766c4d44"
+      },
+      {
+        "source": "Q",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145322e222c2274223a2269786e222c2264223a22454965372d7379575a595a505f7358484450547a714c79705846695f4e6e77316c4b7a722d467a6d55544d43222c2269223a22454b735a5662304a744e683674524e354f353370733559675256635f38536458427268706978794753395946222c2273223a2231222c2270223a22454b735a5662304a744e683674524e354f353370733559675256635f38536458427268706978794753395946222c2261223a5b7b2264223a224541307a6463765470756b71713044596c7447455543363471696f79617138506a7a5a6b5969536e785f7856227d2c7b2264223a2245455056755269575273724b4166626a73333133336d6933426f437953426642337242656d614a6761636848227d5d7d2d4341582d4b4157414144346761566f764d5073586d57667363624850457a6e436769746f63775157572d744a3844316f53465a5932794b6269504164453054465f75354872386f593368494749775a5538555154575a486f7a4e503035384d"
+      },
+      {
+        "source": "R",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a2245416f5433506d3073465267626b794c7274617958564442585548377978564b38734a4f7336377537635774222c2269223a2245416f5433506d3073465267626b794c7274617958564442585548377978564b38734a4f7336377537635774222c2273223a2230222c226b74223a2231222c226b223a5b22444b7543456273643754716451584744473263424534746f356235324e4d6a4e54415065546a48717855555a225d2c226e74223a2231222c226e223a5b2245467630633361487164676655466e77316156676130313642752d795357356e62565279646466596b794848225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b41574141447a555951693542614d4d6c356f315a78536f79356746365477467963393935734f7378327250337743624236797a30624b4372423547676c4578347142724b7374474134674b70546f453567527961514e42574141"
+      },
+      {
+        "source": "R",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145422e222c2274223a2269786e222c2264223a22454d6a354e45784d6146615f7a58434563316b527044517637736d5074343276483770454c4a43306a623855222c2269223a2245416f5433506d3073465267626b794c7274617958564442585548377978564b38734a4f7336377537635774222c2273223a2231222c2270223a2245416f5433506d3073465267626b794c7274617958564442585548377978564b38734a4f7336377537635774222c2261223a5b7b2264223a22454a7367484938586f425f5955776a5a7239524f595a31534b456965794472476b483542433774424c325377227d5d7d2d4341582d4b415741414457433579755f2d425a31517a31362d5f70723448484b6c694741365a64394b3236544e734f6f31686972336c305438636d58716c4a7536432d675f683235694131455973676d36367a625733794d725931424d4d4c"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    },
+    "presented": {
+      "stream": "2d5f4141414341417b2276223a22414344434341414341414a534f4e41414d492e222c2274223a2261636d222c2264223a22454e4552564f657a305066626f4e54436131316e4747334757555657417849756b5175323153733537665263222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c2261223a7b2264223a22454c614248676f5277346573506f6e525f49764a556a7a4c32445f725a4972315a4332313351676f46557537222c2269223a22454c41545470634a684b6b4571384f354b7474527568716e3864314245516f366155784c6950627336627a45222c226474223a22323032352d30372d30345431373a35303a30302e3030303030302b30303a3030222c226e616d65223a224e656172222c226c6569223a22353439333030314b4a5449494743385931523132227d2c2265223a7b2264223a22454f38557046546e384b5243562d30555f456c44313673736c6e476c6a614b47514b77516b765f474f6a2d38222c2261223a7b2264223a2245494a306a444e456c4a785a56744476445930414177757944494c35574d4368717a46496c505453585f474a222c226e223a224541307a6463765470756b71713044596c7447455543363471696f79617138506a7a5a6b5969536e785f7856222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c226f223a22493249227d2c2262223a7b2264223a22454c544b4c495f7279656a765f47383369324c6e644d766b716d4442624371387a416532326d67334571486d222c226e223a2245455056755269575273724b4166626a73333133336d6933426f437953426642337242656d614a6761636848222c2273223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c226f223a22493249227d7d7d2d4341532d53415230414141414141414141414141414141414141414141414245435064495f7a71524c567947374d30326657645752662d6d5868742d556e394e3546667736423951364a32"
+    },
+    "registry": [],
+    "schemas": [
+      "7b22246964223a224541476e4b35377157484b624c67564b32354b6254357a526d5a30722d6a446b674c4f6270447a6d6c486b33222c2224736368656d61223a2268747470733a2f2f6a736f6e2d736368656d612e6f72672f64726166742f323032302d31322f736368656d61222c227469746c65223a224c6567616c20656e74697479222c2276657273696f6e223a22312e302e30222c2274797065223a226f626a656374222c227265717569726564223a5b2276222c2264222c2269222c2273222c2261225d2c2270726f70657274696573223a7b2276223a7b2274797065223a22737472696e67227d2c2274223a7b2274797065223a22737472696e67227d2c2264223a7b2274797065223a22737472696e67227d2c2269223a7b2274797065223a22737472696e67227d2c227264223a7b2274797065223a22737472696e67227d2c2273223a7b2274797065223a22737472696e67227d2c2261223a7b226f6e654f66223a5b7b2274797065223a22737472696e67227d2c7b2224726566223a22232f24646566732f61747472696275746573227d5d7d2c2265223a7b226f6e654f66223a5b7b2274797065223a22737472696e67227d2c7b2274797065223a226f626a656374227d5d7d2c2272223a7b226f6e654f66223a5b7b2274797065223a22737472696e67227d2c7b2274797065223a226f626a656374227d5d7d7d2c222464656673223a7b2261747472696275746573223a7b2274797065223a226f626a656374222c227265717569726564223a5b2264222c2269222c226474222c226e616d65222c226c6569225d2c2270726f70657274696573223a7b2264223a7b2274797065223a22737472696e67227d2c2269223a7b2274797065223a22737472696e67227d2c226474223a7b2274797065223a22737472696e67227d2c226e616d65223a7b2274797065223a22737472696e67227d2c226c6569223a7b2274797065223a22737472696e67227d7d7d7d7d"
+    ]
+  },
+  "operation": "acdc.verify",
+  "profile": "acdc-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-acdc",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/acdc/edges.json#KS-51"
+  },
+  "schema_version": 1,
+  "status": "active",
+  "targets": {
+    "features": [
+      "acdc.edges",
+      "acdc.version-2.x",
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON",
+      "ACDCCAACAAJSON"
+    ]
+  },
+  "title": "Diamond"
+}
