@@ -9,21 +9,21 @@
       "check": "verdict",
       "clause": {
         "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
-        "quote": "The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the \"most compact form\" algorithm above).",
-        "section": "Issuer Commitment Rules",
+        "quote": "Update events in the Registry's TEL MUST also be anchored.",
+        "section": "Binding to Key State at Time of ACDC State Change",
         "spec": "acdc",
-        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuer-commitment-rules"
+        "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#binding-to-key-state-at-time-of-acdc-state-change"
       },
       "expected": "not-valid",
       "id": "a1",
       "inferred_from": {
-        "inference": "This sentence has no keyword, and the one that does (line 1843) binds the issuer and sits in a section that line 1797 declares non-normative. No keyword sentence obliges a validator to refuse an ACDC its issuer never committed to, so refusing one is inferred and graded SHOULD (generators/SPEC-ISSUES.md, A-G1).",
-        "line": 1663,
-        "quote": "To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly.",
+        "inference": "An ACDC that names a registry is bound to its issuer's key state through an anchored update of that registry that includes its SAID; the registry inception names no ACDC. Line 1669's MUSTs bind the issuer that anchors the updates, and no keyword sentence obliges a validator to refuse an ACDC that no anchored update names, so refusing it is inferred and graded SHOULD (generators/SPEC-ISSUES.md, A-G1).",
+        "line": 1669,
+        "quote": "This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL.",
         "section": "Binding to Key State at Time of ACDC State Change"
       },
       "level": "SHOULD",
-      "note": "Decided at step 5 (no-commitment). Derivations: step 5 no-commitment: SHOULD, inferred, because lines 1663 and 1843 bind the issuer (A-G1). Graded at the highest, over the derivations, of the level of each."
+      "note": "Decided at step 5 (no-registry-commitment). Derivations: step 5 no-registry-commitment: SHOULD, inferred, because line 1669 binds the issuer to anchor the updates through which an ACDC's registry commits to it (A-G1). Graded at the highest, over the derivations, of the level of each."
     },
     {
       "check": "registry_reported",

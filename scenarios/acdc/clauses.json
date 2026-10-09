@@ -36,11 +36,6 @@
       "level": "MUST",
       "quote": "When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`."
     },
-    "issuer-commitment": {
-      "section": "Issuer Commitment Rules",
-      "level": "MUST",
-      "quote": "The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the \"most compact form\" algorithm above)."
-    },
     "key-state": {
       "section": "Autonomic IDentifier (AID) Fields",
       "level": "MUST",
@@ -132,7 +127,12 @@
     "commitment": {
       "section": "Binding to Key State at Time of ACDC State Change",
       "quote": "To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly.",
-      "inference": "This sentence has no keyword, and the one that does (line 1843) binds the issuer and sits in a section that line 1797 declares non-normative. No keyword sentence obliges a validator to refuse an ACDC its issuer never committed to, so refusing one is inferred and graded SHOULD (generators/SPEC-ISSUES.md, A-G1)."
+      "inference": "This sentence, which says how an ACDC is bound to its issuer's key state, has no keyword, and line 1673 adds that ACDCs \"are not directly signed by the Issuer\" but bound to the issuer's key state, which line 95 requires a validator to establish by KERI. A seal of the ACDC's most compact SAID on the trunk of that key state is therefore the only issuer commitment the normative text describes, but no keyword sentence obliges a validator to refuse an ACDC without one, so refusing it is inferred and graded SHOULD (generators/SPEC-ISSUES.md, A-G1). The keyworded line 1843 is not cited, because it sits in the IPEX section, which line 1797 declares non-normative."
+    },
+    "commitment-registry": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "quote": "This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL.",
+      "inference": "An ACDC that names a registry is bound to its issuer's key state through an anchored update of that registry that includes its SAID; the registry inception names no ACDC. Line 1669's MUSTs bind the issuer that anchors the updates, and no keyword sentence obliges a validator to refuse an ACDC that no anchored update names, so refusing it is inferred and graded SHOULD (generators/SPEC-ISSUES.md, A-G1)."
     },
     "issuer-kel": {
       "section": "Autonomic IDentifier (AID) Fields",

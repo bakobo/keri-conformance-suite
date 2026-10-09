@@ -303,7 +303,7 @@ def test_registry_inception_failures_report_no_registry():
     frag["kels"] = frag["kels"][:1]
     result, _ = run(frag)
     assert result.registry is None and result.registry_failure == "rip-unsealed"
-    assert tags(result.presented) == ["5/no-commitment"]
+    assert tags(result.presented) == ["5/no-registry-commitment"]
     frag = reg()
     frag["registries"][0]["issuer"] = "Q"
     assert run(frag)[0].registry_failure == "rip-issuer"
@@ -325,7 +325,7 @@ def test_a_block_that_does_not_verify_or_is_absent_leaves_the_state_unknown(disc
     result, _ = run(frag)
     assert result.registry.n == 1 and (result.registry.td, result.registry.ts) == (None, None)
     assert result.registry.block == block
-    assert tags(result.presented) == ["5/no-commitment"]
+    assert tags(result.presented) == ["5/no-registry-commitment"]
 
 
 def test_an_empty_state_and_a_state_that_is_not_a_tag():

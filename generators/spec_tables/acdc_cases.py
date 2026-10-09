@@ -79,8 +79,12 @@ REASONS = {
                        "validation")),
     "issuer-kel": ("key-state", "issuer-kel", ("line 95, with the issuer commitment no keyword "
                    "requires (A-G1)")),
-    "no-commitment": ("issuer-commitment", "commitment",
-                      "lines 1663 and 1843 bind the issuer (A-G1)"),
+    "no-commitment": ("key-state", "commitment", ("line 95 makes the issuer's key state the "
+                      "KERI one, and lines 1663 and 1673 bind an ACDC to it only by a seal, which "
+                      "no keyword sentence obliges a validator to require (A-G1)")),
+    "no-registry-commitment": ("update-anchored", "commitment-registry", ("line 1669 binds the "
+                               "issuer to anchor the updates through which an ACDC's registry "
+                               "commits to it (A-G1)")),
     "rip-absent": ("registry-anchored", "producer-registry-anchored",
                    "line 1669 binds the issuer"),
     "rip-said": ("said-verify", None, ("CESR line 1194 makes SAID verification a validator's "

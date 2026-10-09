@@ -206,6 +206,41 @@ def test_an_unframeable_presented_acdc_grades_no_registry():
     assert [a["check"] for a in case["assertions"]] == ["verdict"]
 
 
+def _ipex_lines():
+    """The line span of the ACDC text's IPEX section, which declares itself non-normative."""
+    heads = spec_source.headings(TEXTS["acdc"])
+    start = next(h for h in heads if h.text.startswith("Issuance and Presentation Exchange"))
+    end = next((h.line for h in heads if h.line > start.line and h.level <= start.level),
+               len(TEXTS["acdc"].splitlines()) + 1)
+    return range(start.line, end)
+
+
+def test_no_clause_inference_or_conflict_quotes_the_non_normative_ipex_section():
+    span = _ipex_lines()
+    for kind in ("clauses", "inferences", "conflicts"):
+        for key, record in REGISTRY[kind].items():
+            if record.get("spec", "acdc") != "acdc":
+                continue
+            line = spec_source.find_quote(TEXTS["acdc"], record["quote"])
+            assert line not in span, f"{kind} {key} quotes line {line}, in the IPEX section"
+
+
+def test_a_direct_commitment_refusal_rests_on_key_state_by_inference():
+    [case] = grade(scenario("commitment"), "KS-20")
+    [a] = case["assertions"]
+    assert (a["level"], a["expected"]) == ("SHOULD", "not-valid")
+    assert a["clause"]["quote"] == CLAUSES["key-state"][1]["quote"]
+    assert a["inferred_from"] == INFERENCES["commitment"]
+
+
+def test_a_registry_commitment_refusal_rests_on_anchored_updates_by_inference():
+    [case] = grade(REG, "KS-32")
+    verdict = next(a for a in case["assertions"] if a["check"] == "verdict")
+    assert verdict["clause"]["quote"] == CLAUSES["update-anchored"][1]["quote"]
+    assert verdict["inferred_from"] == INFERENCES["commitment-registry"]
+    assert "step 5 no-registry-commitment" in verdict["note"]
+
+
 def test_found_names_an_unnamed_presented_acdc_by_its_role():
     result = am.Result(am.Node({"d": "Ex"}, [am.Failure(1, "said")]), {}, [])
     assert ac.found(result, {}) == ["presented 1/said"]

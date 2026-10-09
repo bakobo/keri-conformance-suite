@@ -486,7 +486,7 @@
         ]
       },
       "expect": [
-        "A1 5/no-commitment",
+        "A1 5/no-registry-commitment",
         "registry bup-unsealed"
       ],
       "pair": "KS-27",
@@ -555,7 +555,7 @@
         ]
       },
       "expect": [
-        "A1 5/no-commitment",
+        "A1 5/no-registry-commitment",
         "registry bup-unsealed"
       ],
       "pair": "KS-27",
@@ -655,7 +655,7 @@
         }
       },
       "expect": [
-        "A1 5/no-commitment",
+        "A1 5/no-registry-commitment",
         "registry rip-unsealed"
       ],
       "pair": "KS-27"
@@ -776,7 +776,7 @@
         ]
       },
       "expect": [
-        "A1 5/no-commitment",
+        "A1 5/no-registry-commitment",
         "registry rip-issuer"
       ],
       "pair": "KS-27"
@@ -800,7 +800,7 @@
         }
       },
       "expect": [
-        "A1 5/no-commitment",
+        "A1 5/no-registry-commitment",
         "registry blid-self"
       ],
       "pair": "KS-27",
@@ -830,7 +830,7 @@
         }
       },
       "expect": [
-        "A1 5/no-commitment",
+        "A1 5/no-registry-commitment",
         "registry blid-other"
       ],
       "pair": "KS-27",

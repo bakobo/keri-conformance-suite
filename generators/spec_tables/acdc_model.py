@@ -327,7 +327,7 @@ class _Model:
             registry, _ = self.registry(body["rd"], issuer)
             if registry is not None and said in registry.names:
                 return []
-            return [Failure(5, "no-commitment")]
+            return [Failure(5, "no-registry-commitment")]
         return [Failure(4, "no-commitment")]
 
     # -- the registry -----------------------------------------------------------------------------

@@ -110,7 +110,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | 95 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)]. |
 | 95 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Each AID SHOULD have set of one or more Controllers who each control a private key. |
 | 95 | MUST | untestable: States that no relationship is required; there is nothing to test. | 0 | 0 | 0 | — | — | — | No shared or trusted relationship between the Controllers and Verifiers is REQUIRED. |
-| 95 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0023 (inferred) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
+| 95 | MUST | validator, security | 0 | 6 | 0 | SHOULD 6 | negative | ACDC-0018 (inferred), ACDC-0019 (inferred), ACDC-0020 (inferred), ACDC-0021 (inferred), ACDC-0022 (inferred), ACDC-0023 (inferred) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
 
 #### Datetime, `dt` Fields
 
@@ -564,7 +564,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 1669 | MUST | validator, security | 0 | 12 | 0 | SHOULD 12 | both | ACDC-0025 (inferred), ACDC-0026 (inferred), ACDC-0027 (inferred), ACDC-0028 (inferred), ACDC-0030 (inferred), ACDC-0032 (inferred), ACDC-0033 (inferred), ACDC-0035 (inferred), ACDC-0036 (inferred), ACDC-0037 (inferred), ACDC-0039 (inferred), ACDC-0041 (inferred) | The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal. |
-| 1669 | MUST | validator, security | 0 | 2 | 0 | SHOULD 2 | positive | ACDC-0028 (inferred), ACDC-0030 (inferred) | Update events in the Registry's TEL MUST also be anchored. |
+| 1669 | MUST | validator, security | 0 | 8 | 0 | SHOULD 8 | both | ACDC-0028 (inferred), ACDC-0029 (inferred), ACDC-0030 (inferred), ACDC-0031 (inferred), ACDC-0035 (inferred), ACDC-0038 (inferred), ACDC-0040 (inferred), ACDC-0042 (inferred) | Update events in the Registry's TEL MUST also be anchored. |
 
 #### Graduated Disclosure
 
@@ -618,7 +618,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1843 | MUST | out-of-scope, security | 0 | 11 | 0 | SHOULD 11 | negative | ACDC-0018 (inferred), ACDC-0019 (inferred), ACDC-0020 (inferred), ACDC-0021 (inferred), ACDC-0022 (inferred), ACDC-0029 (inferred), ACDC-0031 (inferred), ACDC-0035 (inferred), ACDC-0038 (inferred), ACDC-0040 (inferred), ACDC-0042 (inferred) | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). |
+| 1843 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). |
 | 1850 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants. |
 
 #### Overview
@@ -1554,6 +1554,7 @@ These quotes are cited by cases but contain no keyword sentence of the pinned te
 |:---|:---|---:|:---|
 | ACDC-0002, ACDC-0043, ACDC-0048, ACDC-0059, ACDC-0062 | inference | 62 | It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body. |
 | ACDC-0063 | inference | 714 | This list is then serialized as a list in whatever serialization kind is used by the enclosing ACDC (CESR, JSON, CBOR, MGPK). |
-| ACDC-0018, ACDC-0019, ACDC-0020, ACDC-0021, ACDC-0022, ACDC-0029, ACDC-0031, ACDC-0035, ACDC-0038, ACDC-0040, ACDC-0042 | inference | 1663 | To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly. |
+| ACDC-0018, ACDC-0019, ACDC-0020, ACDC-0021, ACDC-0022 | inference | 1663 | To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly. |
+| ACDC-0029, ACDC-0031, ACDC-0035, ACDC-0038, ACDC-0040, ACDC-0042 | inference | 1669 | This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL. |
 | ACDC-0025, ACDC-0026, ACDC-0027, ACDC-0036, ACDC-0037 | inference | 2062 | A group consists of its count code followed by one or more Blinded attribute blocks, where each block is composed of a concatenation of the four fields serialized in order as CESR primitives that are appropriate for the BLID, UUID, ACDC SAID, and transaction state string fields in that block. |
 | ACDC-0039, ACDC-0041 | inference | 2066 | A BLID is effectively a type of SAID. |
