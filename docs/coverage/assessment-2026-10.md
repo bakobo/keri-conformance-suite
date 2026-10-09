@@ -26,7 +26,7 @@ The grading itself is careful. Key-state assertions are conditional on the messa
 
 The positive cases share one format and one algorithm suite. Every case uses JSON bodies, Ed25519 signatures and Blake3 digests, and every KERI case uses 2.x bodies. So CBOR and MessagePack (which a CESR parser must support, line 388), native CESR bodies, legacy 1.x KELs (which a 2.x implementation must support, CESR line 1158 and KERI line 273), digests other than Blake3, and signature schemes other than Ed25519 have no KERI evidence at all. Most deployed KELs carry 1.x bodies, so this is the largest interoperability gap.
 
-CESR's variable-size primitives have no positive parse case, though ACDC and seals depend on them, and only seven of the KERI/ACDC master table's group codes appear in any case.
+CESR's variable-size primitives have no positive parse case, though ACDC and seals depend on them.
 
 Several KERI areas have only valid inputs, or none: seal shapes, receipt structure, witness list structure, weighted threshold arithmetic beyond two clauses, the specification's own reserve and custodial rotation examples, and every native CESR event body.
 
@@ -50,12 +50,11 @@ These are ranked by what an implementation that gets the requirement wrong would
 12. CBOR and MessagePack. CESR line 388. Frame a CBOR and a MessagePack inception at the CESR layer, then process one KEL in each at the KERI layer.
 13. Receipt and witness list structure. KERI lines 345, 353, 1252 and 1782. A receipt for a different SAID than the event it accompanies; a backer threshold larger than the witness list; a witness listed twice; a transferable witness prefix.
 14. Field and value structure. KERI lines 261, 323, 335 and 539, with the per-message field orders at lines 556 to 882. Extra, missing or reordered top-level fields; an inception with a nonzero sequence number; a sequence number above the maximum; an unknown message type; an empty key list.
-15. Variable-size primitives. CESR's variable raw-size table, which carries no keyword sentence. Positive parses with zero, one and two lead bytes, and a rejection for nonzero lead bytes.
-16. Master table codes no case exercises. CESR line 878. A decoded case for each group code not yet used, starting with `-N`.
-17. Genus override negatives. CESR line 816. A genus/version code as the first element of a group that does not allow override, which must have no override meaning, and an unknown genus or version.
-18. The text-domain alphabet. CESR line 93. A text-domain primitive containing `+`, `/` or `=`; expect rejected.
-19. A JSON body nested in a group. CESR line 376. A group that encloses a correctly wrapped JSON body, and one that encloses it bare; expect the first parsed and the second rejected.
-20. Native CESR KERI bodies. KERI lines 2077 and 2079, with the native body annex. One case per 2.0 native event type.
+15. Variable-size primitives. CESR's variable raw-size table, which carries no keyword sentence. Positive parses with zero, one and two lead bytes.
+16. Genus override negatives. CESR line 816. A genus/version code as the first element of a group that does not allow override, which must have no override meaning.
+17. The text-domain alphabet. CESR line 93. A text-domain primitive containing `+`, `/` or `=`; expect rejected.
+18. A JSON body nested in a group. CESR line 376. A group that encloses a correctly wrapped JSON body, and one that encloses it bare; expect the first parsed and the second rejected.
+19. Native CESR KERI bodies. KERI lines 2077 and 2079, with the native body annex. One case per 2.0 native event type.
 
 ## A security lens
 
