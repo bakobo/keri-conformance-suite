@@ -4,7 +4,7 @@
 
 An adapter is a program that connects one implementation to the runner. The runner starts it as a child process and talks to it over its standard input and output. This document is everything an adapter author needs.
 
-Two things will check an adapter without running a single case: message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Neither exists yet; both are being built next, and are described under "Checking an adapter" in [`design.md`](design.md).
+Two things check an adapter without running a single case: message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Both are described under "Checking an adapter" in [`design.md`](design.md). Neither covers `acdc.verify` or `exn.verify` yet; they are added with the first ACDC and IPEX cases.
 
 ## Transport
 
@@ -169,9 +169,90 @@ Build and sign an event from raw keys and parameters.
 
 The exact shape of `event` for each event type is defined by the case schema, `schema/case.schema.json`, which is added with the first KERI cases. The runner checks the event body byte for byte, checks that every signature verifies, and parses the attachments to check that they carry the right signatures with the right indexes. How the attachments are grouped is up to the implementation.
 
-## `acdc.verify` and IPEX
+## `acdc.verify`
 
-`acdc.verify` will be specified with the first ACDC cases: a bundle and an evaluation point in, a verdict of `valid`, `revoked`, `invalid` or `incomplete` out, with an informative reason. IPEX operations will follow once there is normative text for them to test.
+Judge one ACDC against a bundle of everything it depends on. This operation and `exn.verify` are specified ahead of the first ACDC and IPEX cases, so that their design can be reviewed before any case exists. The message schemas and the runner will accept them when those cases are added, and until then a runner refuses an adapter that lists either operation.
+
+```json
+{"id": 5, "op": "acdc.verify", "perspective": {"role": "validator"},
+ "kels": [
+   {"stream": "7b2276223a224b455249...", "source": "issuer"},
+   {"stream": "...", "source": "issuee"}
+ ],
+ "registry": [{"stream": "7b2276223a2241434443..."}, {"stream": "..."}],
+ "schemas": ["7b2224696422..."],
+ "acdcs": [{"stream": "..."}],
+ "presented": {"stream": "7b2276223a2241434443..."}}
+```
+
+Every value is a hex-encoded stream, and the adapter hands each to its implementation unchanged, as it does for `cesr.parse`.
+
+- `kels` holds the KERI messages of every KEL involved, in delivery order. The adapter delivers them as `keri.process` would, driving the implementation to quiescence after each one. `source` is a label for diagnostics.
+- `registry` holds the registry events (`rip`, `bup`, `upd`), each with its attachments, such as the reference to the key event that seals it and any disclosed blinded state block. It may be empty.
+- `schemas` holds serialized JSON Schema documents. It may hold schemas the ACDC does not use, and it may lack the one the ACDC names.
+- `acdcs` holds the far-node ACDCs that the presented ACDC's edges point to, each with its attachments. It may be empty.
+- `presented` is the ACDC to judge, in whatever variant the case uses, with the attachments that carry or point to its issuer's commitment.
+- An optional `expect_schema` names, by SAID, the schema the validator expects this kind of ACDC to have. Cases that test that expectation (ACDC specification line 250, a SHOULD) send it; the rest do not.
+
+The bundle is the whole world. An adapter must not fetch anything, follow a URL or an OOBI, or consult a clock: whatever the bundle lacks does not exist for this request, and a `dt` field or an expiry attribute is never compared with the current time. If an implementation reads the clock, the adapter must fix it.
+
+```json
+{"id": 5, "result": {
+  "verdict": "valid",
+  "reason": "sealed in issuer ixn 1",
+  "registry": {"rd": "EKa1...", "n": 2, "d": "EBc4...", "td": "EAcd...", "ts": "revoked"},
+  "edges": [{"path": "e.le", "n": "EFar...", "valid": true}]
+}}
+```
+
+`verdict` is one of three values, defined in [`design.md`](design.md) under ACDC:
+
+- `valid`: the ACDC verified against the bundle.
+- `invalid`: something in the ACDC, or in something it depends on, failed to verify.
+- `incomplete`: something the ACDC needs is absent from the bundle.
+
+Cases grade valid against not valid. `invalid` and `incomplete` both count as not valid, and which of them an adapter reports is recorded but never decides an assertion. There is no `revoked` verdict: a revocation is reported in `registry`, and what it means for the verdict is outside the normative cases.
+
+An implementation that cannot evaluate part of a bundle, such as a kind of registry, an edge operator or a commitment made only by signature, must answer `incomplete`, never `valid`. That is failing closed, and it is also what lets a case that checks a refusal run against every adapter: such a case requires no feature that an adapter can decline, as [`design.md`](design.md) explains under ACDC. An `unsupported` error is never the right answer to an `acdc.verify` case the runner sent, and it fails every assertion in the case, as any error does.
+
+`reason` is optional and informative.
+
+`registry` describes the verified head of the registry that the presented ACDC's `rd` field names, or is `null` when the ACDC names no registry or the implementation holds no verified inception for it. Its fields are the registry's SAID `rd`; the sequence number `n`, as an integer, and SAID `d` of the last event in the verified chain; and that event's transaction ACDC SAID `td` and state `ts`. For a blindable update whose blinded block was not disclosed, `td` and `ts` are `null`. The verified chain starts at the registry's inception and ends at the last event before the first one that fails a check, as step 5 of the decision procedure in [`design.md`](design.md) describes. A registry-state assertion applies only when `registry` is not `null`, as a KERI key-state assertion applies only when its message was seen.
+
+`edges` lists every edge the implementation evaluated, each with its `path`, which is the chain of field labels from the top-level `e` field joined by full stops; the far node's SAID `n`; and whether the edge is `valid`. An adapter that did not reach the edges, because the ACDC failed an earlier step, may report an empty list. Because a missing edge could otherwise hide a failure, an assertion that an edge is not valid is checked against the verdict when the edge is not reported: it passes if the verdict is not valid, and fails if the verdict is `valid`.
+
+The features these cases require are `acdc.version-2.x`, which every ACDC case requires together with the KERI base features, and the declinable features `acdc.edges`, `acdc.registry.bup`, `acdc.registry.upd` and `acdc.signed`, which only liveness assertions require. The non-normative profile `acdc-keripy-1x-interop` adds `acdc.keripy-1x`, keripy 1.x's ACDC field set and SAID computation, and `acdc.ptel-1x`, keripy 1.x's issuance and revocation registry. These names enter the feature vocabulary, `profiles/features.json`, with the first ACDC cases.
+
+## `exn.verify`
+
+Deliver KERI exchange messages and report whether each was accepted. IPEX is tested through this operation, because the only normative text about an IPEX message is KERI's text about exchange messages; [`design.md`](design.md) explains why under IPEX.
+
+```json
+{"id": 6, "op": "exn.verify", "perspective": {"role": "validator"},
+ "kels": [
+   {"stream": "...", "source": "issuer"},
+   {"stream": "...", "source": "holder"}
+ ],
+ "messages": [
+   {"stream": "7b2276223a224b455249...", "source": "issuer"},
+   {"stream": "...", "source": "holder"}
+ ]}
+```
+
+The adapter first delivers `kels` as `acdc.verify` does, driving the implementation to quiescence after each message, and then delivers `messages` in order: `xip` and `exn` messages, each with its attachments. It drives the implementation to quiescence after each message, and reports each message's state at quiescence after the last one.
+
+```json
+{"id": 6, "result": {"verdicts": [
+  {"verdict": "accepted"},
+  {"verdict": "rejected", "reason": "prior SAID does not match"}
+]}}
+```
+
+`verdicts` has one entry per message in `messages`, in order. `verdict` is `accepted` if the implementation accepted the message as valid, and `rejected` otherwise. `reason` is optional and informative. The messages in `kels` get no entry; they are graded by KERI cases, not here.
+
+An exchange message may name an ACDC in its `a` field, as an IPEX grant does. `exn.verify` does not judge that ACDC; a case that needs it judged is an `acdc.verify` case. IPEX cases name ACDCs by SAID, so that accepting an exchange message never depends on judging the ACDC it names.
+
+`exn.verify` adds no feature. An adapter that lists the operation receives every IPEX case whose other features it declares.
 
 ## Writing an adapter
 
