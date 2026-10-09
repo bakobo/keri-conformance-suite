@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""Check the published results under results/, or wrap a runner report for publication. The logic,
+usage and exit statuses are in tools/results.py, where the tests measure them."""
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
+from tools.results import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())

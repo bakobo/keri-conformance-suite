@@ -1,0 +1,93 @@
+name: Pages
+
+# Builds the documentation site and deploys it to GitHub Pages (docs/publishing-results.md). The
+# build job reproduces the results the site publishes as "Reproduced by CI": it builds every adapter
+# in adapters/ at its pin, runs each against the profiles its CI baselines cover, and wraps each
+# report with this run's URL and commit. It then assembles the site source from the README, docs/,
+# those results and the submitted results committed under results/, and builds it with the pinned
+# Zensical. The build job runs implementation code against hostile inputs, so it holds only a
+# read-only token; the deploy job, which holds the Pages and OIDC permissions, runs no repository
+# code at all.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+# One deployment at a time, and a deployment in progress is allowed to finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # keripy main needs Python 3.14; the keripy 1.2.14 instance sets 3.12 on its own step.
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      - name: Install libsodium
+        run: sudo apt-get update && sudo apt-get install -y libsodium23
+      # The site group is the pinned generator; the runner itself has no runtime dependencies.
+      - name: Sync the runner and the site generator
+        run: uv sync --locked --group site
+      - name: Build the keripy adapter at its pin (keripy main)
+        working-directory: adapters/keripy
+        run: uv sync --locked
+      - name: Build the keripy adapter at its pin (keripy 1.2.14)
+        working-directory: adapters/keripy/keripy-1.2.14
+        env:
+          UV_PYTHON: "3.12"
+        run: uv sync --locked
+      - name: Build the keriox adapter at its pin
+        working-directory: adapters/keriox
+        run: |
+          rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" --profile minimal
+          cargo build --locked
+      - name: Build the Affinidi adapter at its pins
+        working-directory: adapters/affinidi
+        run: |
+          rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" --profile minimal
+          cargo build --locked
+      # --require-all fails the build if any adapter is missing, rather than publishing a site that
+      # silently leaves an implementation out.
+      - name: Reproduce the results
+        run: |
+          scripts/reproduce-results "$RUNNER_TEMP/reproduced" \
+            --run "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT" \
+            --commit "$GITHUB_SHA" --require-all
+      - name: Assemble the site source
+        run: uv run python scripts/site-source --reproduced "$RUNNER_TEMP/reproduced"
+      - name: Build the site
+        run: uv run zensical build --clean --strict
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Fails here, before deploying, if Pages is not enabled with GitHub Actions as its source.
+      - name: Check the Pages configuration
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

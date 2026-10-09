@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Run the adapters in adapters/ against the profiles each is meant for, and wrap every report as a
+# reproduced result under OUT, for scripts/site-source --reproduced. The Pages workflow runs this
+# after building every adapter at its pin, with --require-all; run locally, it skips an adapter
+# that has not been built. The pairs match the baselines that ci.yml compares.
+#
+#   scripts/reproduce-results OUT --run <actions run URL> --commit <suite commit> [--date YYYY-MM-DD] [--require-all]
+#
+# Exit status: 0 when every built adapter produced a report; 1 when one did not, or (with
+# --require-all) an adapter was not built; 2 on a usage error.
+set -euo pipefail
+
+usage() { echo "e.input.format.f: usage: $0 OUT --run URL --commit SHA [--date YYYY-MM-DD] [--require-all]" >&2; exit 2; }
+
+[ $# -ge 1 ] || usage
+out=$(realpath -m -- "$1"); shift
+run="" commit="" date=$(date -u +%F) require_all=0
+while [ $# -gt 0 ]; do
+  case $1 in
+    --run) run=${2:-}; shift 2 || usage ;;
+    --commit) commit=${2:-}; shift 2 || usage ;;
+    --date) date=${2:-}; shift 2 || usage ;;
+    --require-all) require_all=1; shift ;;
+    *) usage ;;
+  esac
+done
+[ -n "$run" ] && [ -n "$commit" ] || usage
+if [ -e "$out" ] && [ -n "$(ls -A "$out")" ]; then
+  echo "e.state.conflict.result.f: $out is not empty; reproduced results are written into a fresh directory." >&2
+  exit 1
+fi
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+reports=$(mktemp -d)
+trap 'rm -rf "$reports"' EXIT
+
+# adapter executable (relative to the repository root), then the profiles it runs
+pairs=(
+  "adapters/keripy/.venv/bin/kcs-adapter-keripy cesr-1.0 keri-1.0 keri-escrow"
+  "adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy keripy-1x-interop"
+  "adapters/keriox/target/debug/kcs-adapter-keriox cesr-1.0 keripy-1x-interop"
+  "adapters/affinidi/target/debug/kcs-adapter-affinidi cesr-1.0 keripy-1x-interop"
+)
+
+status=0 n=0
+for pair in "${pairs[@]}"; do
+  read -r adapter profiles <<<"$pair"
+  if [ ! -x "$root/$adapter" ]; then
+    echo "reproduce-results: $adapter is not built; skipping it." >&2
+    [ "$require_all" = 1 ] && status=1
+    continue
+  fi
+  for profile in $profiles; do
+    n=$((n + 1))
+    report="$reports/$n.json"
+    # kcs exits non-zero for any verdict but conformant; that is a result, not a failure here.
+    (cd "$root" && uv run kcs run --adapter "$root/$adapter" --profile "$profile" --report "$report") || true
+    if [ ! -s "$report" ]; then
+      echo "reproduce-results: $adapter wrote no report for $profile." >&2
+      status=1
+      continue
+    fi
+    (cd "$root" && uv run python scripts/results wrap "$report" --into "$out" --date "$date" \
+      --reproduced --run "$run" --commit "$commit") || status=1
+  done
+done
+exit $status

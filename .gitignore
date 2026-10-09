@@ -5,6 +5,10 @@
 docs/**/*.pdf
 docs/**/*.html
 
+# The documentation site: its assembled source and the built HTML (scripts/site-source,
+# zensical.toml). Both are generated at build time and never committed.
+_site/
+
 # Python
 .venv/
 __pycache__/
