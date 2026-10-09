@@ -1,0 +1,1008 @@
+{
+  "profile": "keri-1.0",
+  "operation": "exn.verify",
+  "about": "Exchange-message cases (docs/design.md, IPEX): the KELs of the parties are delivered first, then xip and exn messages through exn.verify, each graded accepted or rejected by the exchange-message decision procedure (generators/spec_tables/exn_build.py). Every clause they cite is KERI's, so they are KERI cases in keri-1.0.",
+  "cases": [
+    {
+      "id": "KERI-0068",
+      "key": "IPEX-KS-01",
+      "title": "A well-formed exchange transaction",
+      "description": "The issuer opens a transaction with an exchange inception (xip) and continues it with a grant (exn) whose x and p are both the xip's SAID, each signed by the issuer's current key. A validator should accept both (liveness, inferred). The first message of a transaction MUST be an xip (KERI line 979), so an implementation that starts transactions without one, or does not process xip, fails this case.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "offer",
+          "t": "xip",
+          "sender": "I",
+          "receiver": "H",
+          "nonce": "offer",
+          "r": "/ipex/offer",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "said": "offer"
+          },
+          "p": {
+            "said": "offer"
+          },
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "offer",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first"
+        ],
+        "summary": "KERI line 979 says the first message of a transaction MUST be an exchange inception (xip), and x MUST be its SAID, so a validator should accept a well-formed, signed xip and the exn that continues it. keripy main (9a8b7aa7) does not process an exchange inception: Kevery.processXip is a stub ('no processing yet', src/keri/core/eventing.py), so it accepts no xip and reports every one rejected. The exn is accepted. keripy's own IPEX opens an exchange with an exn whose x is the digest of a fresh nonce rather than the SAID of an xip (apply, offer and grant in src/keri/acdc/ipexing.py), a reading of transactions the text does not support.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0069",
+      "key": "IPEX-KS-02",
+      "title": "An unsigned exchange message is dropped",
+      "description": "A grant outside any transaction (empty p and x) with no attachments: no signature and no seal. A validator MUST drop a non-key-event message without at least one verifiable controller signature (KERI line 1266), so it is rejected on delivery and after the last message. It is the signed grant of KERI-0077 with its signatures removed.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [],
+          "expect": [
+            "2/unsigned",
+            "2/unsigned"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0070",
+      "key": "IPEX-KS-03",
+      "title": "A signature by a key outside the sender's key state",
+      "description": "The grant of KERI-0077, signed instead by another identifier's key placed at index 0 of the sender's signature group, which names the sender's inception. The signature does not verify against the sender's key at that index, so the group does not satisfy the signing threshold of the establishment event it references (KERI line 1260), and the message is rejected at MUST.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "X-icp",
+          "aid": "X",
+          "t": "icp",
+          "keys": [
+            "x0"
+          ],
+          "next": [
+            "x1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        },
+        {
+          "event": "X-icp",
+          "sigs": [
+            "x0"
+          ],
+          "source": "other"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                {
+                  "key": "x0",
+                  "index": 0
+                }
+              ]
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0071",
+      "key": "IPEX-KS-04",
+      "title": "An exchange message with an extra top-level field",
+      "description": "The grant of KERI-0077 with an extra top-level field e after a, its SAID and version string recomputed and its signature made over the result. No other top-level fields are allowed in an exn (KERI line 1197), and a validator verifies the appearance of fields (line 1737), so it is rejected at MUST.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          },
+          "extra": {
+            "e": {}
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "1/fields",
+            "1/fields"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0072",
+      "key": "IPEX-KS-05",
+      "title": "A prior that does not name the message before it",
+      "description": "A transaction opened by an xip, continued by a grant whose x is the xip's SAID but whose p is a digest of nothing. p MUST be the SAID of the immediately preceding message in the transaction (KERI line 975); the sentence binds the sender, so a validator's refusal is an inferred SHOULD.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "offer",
+          "t": "xip",
+          "sender": "I",
+          "receiver": "H",
+          "nonce": "offer",
+          "r": "/ipex/offer",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "said": "offer"
+          },
+          "p": {
+            "nothing": "no-such-prior"
+          },
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "offer",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "3/prior",
+            "3/prior"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first",
+          "exn-prior"
+        ],
+        "summary": "KERI line 975 says p MUST be the SAID of the immediately preceding message in the transaction, and line 979 that the transaction's first message MUST be an xip. keripy main (9a8b7aa7) does not process an exchange inception: Kevery.processXip is a stub ('no processing yet', src/keri/core/eventing.py), so it accepts no xip and reports every one rejected. Its generic exchange processing (Exchanger.processEvent in src/keri/peer/exchanging.py, with no route handler registered) reads neither p nor x, so it accepts a signed exn whatever its transaction link says. The refusal is an inferred SHOULD, since both sentences bind the sender.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0073",
+      "key": "IPEX-KS-06",
+      "title": "An exchange id that names another transaction's inception",
+      "description": "Two transactions opened by the issuer, then a grant that continues the first (its p is the first xip's SAID) while its x names the second xip. x MUST be the SAID of the first message of the grant's own transaction (KERI line 979); the sentence binds the sender, so a validator's refusal is an inferred SHOULD.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "offer",
+          "t": "xip",
+          "sender": "I",
+          "receiver": "H",
+          "nonce": "offer",
+          "r": "/ipex/offer",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "offer2",
+          "t": "xip",
+          "sender": "I",
+          "receiver": "H",
+          "nonce": "offer2",
+          "r": "/ipex/offer",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "said": "offer2"
+          },
+          "p": {
+            "said": "offer"
+          },
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "offer",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "offer2",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "3/exchange-id",
+            "3/exchange-id"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first",
+          "exn-x"
+        ],
+        "summary": "KERI line 979 says x MUST be the SAID of the first message of the transaction, which MUST be an xip. keripy main (9a8b7aa7) does not process an exchange inception: Kevery.processXip is a stub ('no processing yet', src/keri/core/eventing.py), so it accepts no xip and reports every one rejected. Its generic exchange processing (Exchanger.processEvent in src/keri/peer/exchanging.py, with no route handler registered) reads neither p nor x, so it accepts a signed exn whatever its transaction link says. The refusal is an inferred SHOULD, since the sentence binds the sender.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0074",
+      "key": "IPEX-KS-07",
+      "title": "A lone exchange message with an empty prior and a non-empty exchange id",
+      "description": "A signed grant with an empty p and an x that names no exchange inception the validator holds, delivered alone. It is refused under either reading of whether it belongs to a transaction: outside one, x MUST be the empty string, and inside one the first message MUST be an xip, which was never delivered (KERI line 979). Both sentences bind the sender, so the refusal is an inferred SHOULD.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "nothing": "no-such-xip"
+          },
+          "p": "",
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "3/no-xip",
+            "3/no-xip"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first",
+          "exn-x-empty"
+        ],
+        "summary": "KERI line 979 says x MUST be the empty string for an exchange message outside a transaction, and that a transaction's first message MUST be an xip, so a lone exn with a non-empty x is refused under either reading. Its generic exchange processing (Exchanger.processEvent in src/keri/peer/exchanging.py, with no route handler registered) reads neither p nor x, so it accepts a signed exn whatever its transaction link says. keripy's own IPEX starts exchanges this way, with an x that is the digest of a fresh nonce and no xip (apply, offer and grant in src/keri/acdc/ipexing.py). The refusal is an inferred SHOULD, since the sentences bind the sender.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0075",
+      "key": "IPEX-KS-08",
+      "title": "An exchange message whose SAID does not verify",
+      "description": "The grant of KERI-0077 with its dt changed after its SAID was computed, keeping its length, and signed over the altered body, so the signature verifies but the SAID does not. A validator verifies a message's SAID (KERI line 1737; CESR line 1194), so it is rejected at MUST.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          },
+          "tamper": {
+            "dt": "2025-07-04T17:50:00.000001+00:00"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "1/said",
+            "1/said"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0076",
+      "key": "IPEX-KS-09",
+      "title": "Another identifier's valid signature does not authenticate the sender",
+      "description": "The grant of KERI-0077, whose i is the issuer, carrying only a fully valid signature group by another identifier that names that identifier's own establishment event. The message has no signature by its sender, so a validator MUST drop it (KERI lines 1266 and 1737).",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "X-icp",
+          "aid": "X",
+          "t": "icp",
+          "keys": [
+            "x0"
+          ],
+          "next": [
+            "x1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        },
+        {
+          "event": "X-icp",
+          "sigs": [
+            "x0"
+          ],
+          "source": "other"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "grant",
+          "source": "other",
+          "sigs": [
+            {
+              "aid": "X",
+              "keys": [
+                "x0"
+              ]
+            }
+          ],
+          "expect": [
+            "2/not-sender",
+            "2/not-sender"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0077",
+      "key": "IPEX-KS-10",
+      "title": "A signed exchange message outside any transaction",
+      "description": "A grant with an empty p and an empty x, as an exchange message that is not part of a transaction must carry (KERI lines 975 and 979), signed by the issuer's current key. A validator should accept it (liveness, inferred). It is the positive pair of the single-message refusals KERI-0069, KERI-0070, KERI-0071, KERI-0075 and KERI-0076, each of which differs from it only in its defect.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "issuer"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "holder"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "grant",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/ipex/grant",
+          "q": {},
+          "a": {
+            "acdc": {
+              "nothing": "A1"
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "grant",
+          "source": "issuer",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        }
+      ]
+    }
+  ]
+}

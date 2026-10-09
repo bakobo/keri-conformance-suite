@@ -374,8 +374,8 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 975 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | When the prior `p` field appears in an exchange message, its value MUST be the SAID of the immediately preceding exchange message in that transaction. |
-| 975 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | When an exchange message is not part of a transaction, then the prior `p` field value MUST be the empty string. |
+| 975 | MUST | validator, security | 0 | 1 | 1 | SHOULD 1 | — | KERI-0072 (inferred, disputed) | When the prior `p` field appears in an exchange message, its value MUST be the SAID of the immediately preceding exchange message in that transaction. |
+| 975 | MUST | validator | 0 | 0 | 0 | — | — | — | When an exchange message is not part of a transaction, then the prior `p` field value MUST be the empty string. |
 
 #### Exchange identifier field
 
@@ -383,9 +383,9 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 979 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction. |
-| 979 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The first message MUST be an Exchange Inception message with type `xip`. |
-| 979 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string. |
+| 979 | MUST | validator, security | 0 | 1 | 1 | SHOULD 1 | — | KERI-0073 (inferred, disputed) | The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction. |
+| 979 | MUST | validator | 0 | 0 | 0 | — | — | — | The first message MUST be an Exchange Inception message with type `xip`. |
+| 979 | MUST | validator | 0 | 1 | 1 | SHOULD 1 | — | KERI-0074 (inferred, disputed) | When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string. |
 
 #### Datetime, `dt` field
 
@@ -445,10 +445,10 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1154 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The top-level fields of an Exchange Transaction Incept, `xip` message body MUST appear in the following order: `[ v, t, d, u, i, ri, dt, r, q, a]`. |
-| 1154 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | All are REQUIRED. |
-| 1154 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | No other top-level fields are allowed (MUST NOT appear). |
-| 1154 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. |
+| 1154 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level fields of an Exchange Transaction Incept, `xip` message body MUST appear in the following order: `[ v, t, d, u, i, ri, dt, r, q, a]`. |
+| 1154 | MUST | validator | 0 | 0 | 0 | — | — | — | All are REQUIRED. |
+| 1154 | MUST | validator | 0 | 0 | 0 | — | — | — | No other top-level fields are allowed (MUST NOT appear). |
+| 1154 | MUST | validator | 0 | 0 | 0 | — | — | — | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. |
 
 #### Exchange Message Body
 
@@ -456,10 +456,10 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1197 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The top-level fields of an Exchange, `exn` message body MUST appear in the following order: `[ v, t, d, i, ri, x, p, dt, r, q, a]`. |
-| 1197 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | All are REQUIRED. |
-| 1197 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | No other top-level fields are allowed (MUST NOT appear). |
-| 1197 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. |
+| 1197 | MUST | validator | 1 | 0 | 0 | MUST 1 | negative | KERI-0071 | The top-level fields of an Exchange, `exn` message body MUST appear in the following order: `[ v, t, d, i, ri, x, p, dt, r, q, a]`. |
+| 1197 | MUST | validator | 0 | 0 | 0 | — | — | — | All are REQUIRED. |
+| 1197 | MUST | validator | 0 | 0 | 0 | — | — | — | No other top-level fields are allowed (MUST NOT appear). |
+| 1197 | MUST | validator | 0 | 0 | 0 | — | — | — | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. |
 
 #### Indexed Signatures
 
@@ -474,11 +474,11 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 | 1252 | MUST | validator | 0 | 0 | 0 | — | — | — | Witnesses MUST use only nontransferable identifiers, which include the controlling public key. |
 | 1256 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Recall that a prior next key digest MUST be exposed as a public key in the succeeding rotation event signing key list when used to sign. |
 | 1258 | MUST | validator, security | 8 | 0 | 0 | MUST 13 | negative | KERI-0004, KERI-0008, KERI-0009, KERI-0045, KERI-0054, KERI-0056, KERI-0058, KERI-0065 | A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid. |
-| 1260 | MUST | validator, security | 0 | 0 | 0 | — | — | — | A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid. |
+| 1260 | MUST | validator, security | 1 | 4 | 3 | MUST 1, SHOULD 6 | both | KERI-0068 (inferred, disputed), KERI-0070, KERI-0072 (inferred, disputed), KERI-0073 (inferred, disputed), KERI-0077 (inferred) | A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid. |
 | 1262 | MUST | validator, security | 1 | 0 | 0 | MUST 2 | negative | KERI-0022 | A set of controller-indexed signatures on a rotation event (delegated or not) MUST at least satisfy both the current signing threshold and the prior next rotation threshold in order for that event to be accepted as valid. |
 | 1264 | MUST | validator, security | 7 | 0 | 0 | MUST 13 | negative | KERI-0037, KERI-0039, KERI-0040, KERI-0055, KERI-0059, KERI-0060, KERI-0061 | A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid. |
 | 1266 | MUST | validator, security | 16 | 0 | 0 | SHOULD 26 | both | KERI-0004, KERI-0005, KERI-0008, KERI-0009, KERI-0022, KERI-0037, KERI-0038, KERI-0039, KERI-0040, KERI-0045, KERI-0056, KERI-0058, KERI-0059, KERI-0060, KERI-0061, KERI-0066 | Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section). |
-| 1266 | MUST | validator, security | 3 | 0 | 0 | MUST 5 | negative | KERI-0006, KERI-0007, KERI-0020 | A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it). |
+| 1266 | MUST | validator, security | 5 | 0 | 0 | MUST 7 | negative | KERI-0006, KERI-0007, KERI-0020, KERI-0069, KERI-0076 | A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it). |
 
 #### Non-indexed signatures
 
@@ -687,7 +687,7 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1740 | MUST | validator, security | 3 | 1 | 0 | MUST 6, SHOULD 2 | negative | KERI-0011, KERI-0012, KERI-0065, KERI-0067 (inferred) | Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures. |
+| 1740 | MUST | validator, security | 4 | 1 | 0 | MUST 7, SHOULD 2 | negative | KERI-0011, KERI-0012, KERI-0065, KERI-0067 (inferred), KERI-0075 | Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures. |
 
 #### Duplicity
 

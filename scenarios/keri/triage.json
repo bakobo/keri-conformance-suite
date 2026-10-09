@@ -361,15 +361,15 @@
         "section": "Bare Message Body"
       },
       {
-        "scope": "out-of-scope",
+        "scope": "validator",
         "security": false,
-        "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet.",
+        "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence.",
         "section": "Exchange Transaction Inception Message Body"
       },
       {
-        "scope": "out-of-scope",
+        "scope": "validator",
         "security": false,
-        "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet.",
+        "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence.",
         "section": "Exchange Message Body"
       }
     ],
@@ -436,15 +436,15 @@
         "section": "Bare Message Body"
       },
       {
-        "scope": "out-of-scope",
+        "scope": "validator",
         "security": false,
-        "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet.",
+        "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence.",
         "section": "Exchange Transaction Inception Message Body"
       },
       {
-        "scope": "out-of-scope",
+        "scope": "validator",
         "security": false,
-        "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet.",
+        "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence.",
         "section": "Exchange Message Body"
       }
     ],
@@ -553,15 +553,15 @@
         "section": "Bare Message Body"
       },
       {
-        "scope": "out-of-scope",
+        "scope": "validator",
         "security": false,
-        "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet.",
+        "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence.",
         "section": "Exchange Transaction Inception Message Body"
       },
       {
-        "scope": "out-of-scope",
+        "scope": "validator",
         "security": false,
-        "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet.",
+        "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence.",
         "section": "Exchange Message Body"
       }
     ],
@@ -576,29 +576,29 @@
       "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
     },
     "When the prior `p` field appears in an exchange message, its value MUST be the SAID of the immediately preceding exchange message in that transaction.": {
-      "scope": "out-of-scope",
-      "security": false,
-      "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
+      "scope": "validator",
+      "security": true,
+      "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence."
     },
     "When an exchange message is not part of a transaction, then the prior `p` field value MUST be the empty string.": {
-      "scope": "out-of-scope",
+      "scope": "validator",
       "security": false,
-      "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
+      "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence."
     },
     "The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction.": {
-      "scope": "out-of-scope",
-      "security": false,
-      "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
+      "scope": "validator",
+      "security": true,
+      "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence."
     },
     "The first message MUST be an Exchange Inception message with type `xip`.": {
-      "scope": "out-of-scope",
+      "scope": "validator",
       "security": false,
-      "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
+      "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence."
     },
     "When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string.": {
-      "scope": "out-of-scope",
+      "scope": "validator",
       "security": false,
-      "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
+      "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence."
     },
     "The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339).": {
       "scope": "out-of-scope",
@@ -626,14 +626,14 @@
       "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
     },
     "The top-level fields of an Exchange Transaction Incept, `xip` message body MUST appear in the following order: `[ v, t, d, u, i, ri, dt, r, q, a]`.": {
-      "scope": "out-of-scope",
+      "scope": "validator",
       "security": false,
-      "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
+      "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence."
     },
     "The top-level fields of an Exchange, `exn` message body MUST appear in the following order: `[ v, t, d, i, ri, x, p, dt, r, q, a]`.": {
-      "scope": "out-of-scope",
+      "scope": "validator",
       "security": false,
-      "note": "Binds the processing of routed messages; keri.process reports dispositions only for key events and receipts, so no adapter operation reports a routed message's validity yet."
+      "note": "Updated from out-of-scope when the exchange-message cases were added: exn.verify reports whether a validator accepted each exchange message, so a validator can be tested on this sentence."
     },
     "This way, only the indexed signature MUST be attached, not the public key needed to verify the signature.": {
       "scope": "validator",

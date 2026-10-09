@@ -24,7 +24,10 @@ SCHEMA = Draft202012Validator(
 PROTOCOL = json.loads((ROOT / "schema" / "adapter-protocol.schema.json").read_text(encoding="utf-8"))
 FEATURES = json.loads((ROOT / "profiles" / "features.json").read_text(encoding="utf-8"))["features"]
 CASE_DIR = ROOT / "cases" / "keri"
-CASES = {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in sorted(CASE_DIR.glob("*.json"))}
+ALL_CASES = {p.stem: json.loads(p.read_text(encoding="utf-8"))
+             for p in sorted(CASE_DIR.glob("*.json"))}
+# Exchange-message cases are KERI cases too, checked by test_cases_exn.
+CASES = {cid: c for cid, c in ALL_CASES.items() if c["operation"] == "keri.process"}
 NORMATIVE, ESCROW = "keri-1.0", "keri-escrow"
 GATED = {"keri.escrow", "kel.recovery"}
 
@@ -67,7 +70,7 @@ def test_case_validates_against_the_case_schema_and_loads_through_the_runner(cid
 
 
 def test_case_ids_are_contiguous_apart_from_documented_gaps():
-    numbers = sorted(int(cid.split("-")[1]) for cid in CASES)
+    numbers = sorted(int(cid.split("-")[1]) for cid in ALL_CASES)
     assert numbers[0] == 1
     missing = set(range(1, numbers[-1] + 1)) - set(numbers)
     assert missing <= _scenario_gaps()
@@ -177,7 +180,7 @@ def test_the_model_reads_the_committed_bytes_as_the_case_says(cid):
 def test_profile_lists_exactly_its_cases(name):
     profile = json.loads((ROOT / "profiles" / f"{name}.json").read_text(encoding="utf-8"))
     assert profile["name"] == name and profile["about"]
-    assert profile["cases"] == sorted(cid for cid, c in CASES.items() if c["profile"] == name)
+    assert profile["cases"] == sorted(cid for cid, c in ALL_CASES.items() if c["profile"] == name)
     assert profile["normative"] is (name == NORMATIVE)
     if name == NORMATIVE:
         assert profile["spec"]["tag"] == "v1.0.1"

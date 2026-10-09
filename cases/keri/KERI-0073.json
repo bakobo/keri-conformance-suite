@@ -1,0 +1,144 @@
+{
+  "assertions": [
+    {
+      "check": "exn_verdict",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "accepted",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states a condition for a non-key-event message to be accepted as valid, not that a validator must accept one that meets it. No sentence obliges a validator to accept an exchange message, so that it should accept one that passes every check is inferred and graded SHOULD, as liveness is in the rest of the KERI layer (docs/design.md, IPEX).",
+        "line": 1260,
+        "quote": "A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid.",
+        "section": "Indexed Signatures"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 4 (accepted)."
+    },
+    {
+      "check": "exn_verdict",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "accepted",
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states a condition for a non-key-event message to be accepted as valid, not that a validator must accept one that meets it. No sentence obliges a validator to accept an exchange message, so that it should accept one that passes every check is inferred and graded SHOULD, as liveness is in the rest of the KERI layer (docs/design.md, IPEX).",
+        "line": 1260,
+        "quote": "A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid.",
+        "section": "Indexed Signatures"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 4 (accepted)."
+    },
+    {
+      "check": "exn_verdict",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction.",
+        "section": "Exchange identifier field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#exchange-identifier-field"
+      },
+      "expected": "rejected",
+      "id": "a3",
+      "inferred_from": {
+        "inference": "The sentence binds the sender, who sets `x`. That a validator should not accept an exchange message that continues one transaction while its `x` names the exchange inception of another is inferred from it and graded SHOULD (docs/design.md, IPEX, step 3).",
+        "line": 979,
+        "quote": "The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction.",
+        "section": "Exchange identifier field"
+      },
+      "level": "SHOULD",
+      "message": 2,
+      "note": "Decision procedure step 3 (exchange-id)."
+    }
+  ],
+  "description": "Two transactions opened by the issuer, then a grant that continues the first (its p is the first xip's SAID) while its x names the second xip. x MUST be the SAID of the first message of the grant's own transaction (KERI line 979); the sentence binds the sender, so a validator's refusal is an inferred SHOULD.",
+  "dispute": {
+    "clauses": [
+      {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The first message MUST be an Exchange Inception message with type `xip`.",
+        "section": "Exchange identifier field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#exchange-identifier-field"
+      },
+      {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction.",
+        "section": "Exchange identifier field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#exchange-identifier-field"
+      }
+    ],
+    "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group.",
+    "summary": "KERI line 979 says x MUST be the SAID of the first message of the transaction, which MUST be an xip. keripy main (9a8b7aa7) does not process an exchange inception: Kevery.processXip is a stub ('no processing yet', src/keri/core/eventing.py), so it accepts no xip and reports every one rejected. Its generic exchange processing (Exchanger.processEvent in src/keri/peer/exchanging.py, with no route handler registered) reads neither p nor x, so it accepts a signed exn whatever its transaction link says. The refusal is an inferred SHOULD, since the sentence binds the sender."
+  },
+  "id": "KERI-0073",
+  "input": {
+    "kels": [
+      {
+        "source": "issuer",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c2273223a2230222c226b74223a2231222c226b223a5b2244485f78312d787347364a54764e39393842375f485071306b456348377842337a7639476d4a7777636c546e225d2c226e74223a2231222c226e223a5b2245465a65646f713845536b4342753664366252316550674b435f4c636a5135347271383265496e4b754d6e58225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414144443542754b796f4c6a593777515f6a554c4c57794c69563049666d7742626268474f417566666f664d447976664e694b6e337a67306a384d336a6979724b786331376a7665306d5f64624d507158464d4e41715950"
+      },
+      {
+        "source": "holder",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454c41545470634a684b6b4571384f354b7474527568716e3864314245516f366155784c6950627336627a45222c2269223a22454c41545470634a684b6b4571384f354b7474527568716e3864314245516f366155784c6950627336627a45222c2273223a2230222c226b74223a2231222c226b223a5b224445456b553562784565324d5f744c7a6a4b5146576131716151743835664d515656713936314c3054667843225d2c226e74223a2231222c226e223a5b2245467350306334686e6874326359744e6f4f4e647377467653625878494d7339315034674b4e506a574e727a225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414436705f7a4b79616e3645525f38614b38595478676f7133445a67776a375a5a5a6747653648695a5f7a692d76366c364144764a7773415939485631487343464c7654486e4261586e676b312d363975476e484d3842"
+      }
+    ],
+    "messages": [
+      {
+        "source": "issuer",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141456d2e222c2274223a22786970222c2264223a22454c51724c7278637831694e76534c6953636151416d476d6c7344356167676d4b5572335965726b616e4674222c2275223a22304143687046645747654f4766796574457a776969774b4f222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c227269223a22454c41545470634a684b6b4571384f354b7474527568716e3864314245516f366155784c6950627336627a45222c226474223a22323032352d30372d30345431373a35303a30302e3030303030302b30303a3030222c2272223a222f697065782f6f66666572222c2271223a7b7d2c2261223a7b7d7d2d4341302d58417a4545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d463041414141414141414141414141414141414141414141414545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d462d4b41574141444147656c42444c4f52706c2d4859785248636d725f46514c346f6d727a62585f7a4245373946394d5732744961686f5746786138576d493048507865507a35625a6252642d6a656176324c6e45794a574174636f43"
+      },
+      {
+        "source": "issuer",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141456d2e222c2274223a22786970222c2264223a22454a6e716f644443454438646536485351756c4559516f4679643875467a70555f436138723364565f476469222c2275223a22304141506a4d4a4a576e624c4435367351436941375a4433222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c227269223a22454c41545470634a684b6b4571384f354b7474527568716e3864314245516f366155784c6950627336627a45222c226474223a22323032352d30372d30345431373a35303a30302e3030303030302b30303a3030222c2272223a222f697065782f6f66666572222c2271223a7b7d2c2261223a7b7d7d2d4341302d58417a4545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d463041414141414141414141414141414141414141414141414545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d462d4b41574141433453676f714e7454782d2d7a79736f787558363972674e3455454a3547504e394b483736336d6a756c53416149625444707370466339707733687376427132796b4661744c32574e5f586973737044523748544549"
+      },
+      {
+        "source": "issuer",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414147692e222c2274223a2265786e222c2264223a22454137314c50306253706e794972757133655149716d67474d454a426130444946577168465f66456c724374222c2269223a224545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d46222c227269223a22454c41545470634a684b6b4571384f354b7474527568716e3864314245516f366155784c6950627336627a45222c2278223a22454a6e716f644443454438646536485351756c4559516f4679643875467a70555f436138723364565f476469222c2270223a22454c51724c7278637831694e76534c6953636151416d476d6c7344356167676d4b5572335965726b616e4674222c226474223a22323032352d30372d30345431373a35303a30302e3030303030302b30303a3030222c2272223a222f697065782f6772616e74222c2271223a7b7d2c2261223a7b2261636463223a22454831347461646c57765330356347727a3253443762436e457436516d3335377166524d4153754878633064227d7d2d4341302d58417a4545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d463041414141414141414141414141414141414141414141414545306231376e794442584e32445567646c6c56534537594c42774b4e76764a336b4252517177306b616d462d4b41574141414c67316e5071697869675871734c61616b3835744d4b655a6566386162347355416e6148714d444c49423534692d336768576665674445656e436b47565556544867682d444972584a6c4d6636624548353878674b"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "exn.verify",
+  "profile": "keri-1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/exchange.json#IPEX-KS-06"
+  },
+  "schema_version": 1,
+  "status": "disputed",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "An exchange id that names another transaction's inception"
+}
