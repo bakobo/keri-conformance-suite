@@ -54,6 +54,8 @@ def test_the_strongest_keyword_sets_the_level(sentence, level):
     "NOT alone is not a keyword.",
     "No keyword here.",
     "Sending it is NOT REQUIRED.",  # a negated REQUIRED is the absence of an obligation
+    "Sending it is NOT  REQUIRED.",  # hostile pass on #15: any whitespace between them
+    "Sending it is NOT\tREQUIRED.",
 ])
 def test_a_sentence_without_an_uppercase_whole_word_keyword_has_no_level(sentence):
     assert cc.level_of(sentence) is None

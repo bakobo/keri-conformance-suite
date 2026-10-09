@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 import sys
 
 import pytest
@@ -502,6 +503,27 @@ def test_a_table_cell_escapes_pipes_and_split_row_reads_it_back():
     line = "| 3 | " + cc.cell("|`A`| It MUST be first. |") + " |"
     assert cc.split_row(line) == ["3", "|`A`| It MUST be first. |"]
     assert cc.split_row("not a row") == []
+
+
+def test_a_backslash_before_a_pipe_survives_a_cell():
+    """Hostile pass on #15: an existing backslash must not unescape the pipe after it."""
+    text = r"Logs \| are private. C:\path"
+    line = "| 1 | " + cc.cell(text) + " | 2 |"
+    # Markdown escapes a pipe only after an odd run of backslashes; count the delimiters it sees.
+    delimiters = [m for m in re.finditer(r"(\\*)\|", line) if len(m.group(1)) % 2 == 0]
+    assert len(delimiters) == 4
+    # The text is markdown, so its own "\\|" was already an escaped pipe.
+    assert cc.split_row(line) == ["1", r"Logs | are private. C:\path", "2"]
+
+
+def test_write_refuses_a_report_it_could_not_read_back(tmp_path, monkeypatch):
+    """Hostile pass on #15: write() and committed() share one size bound."""
+    monkeypatch.setattr(cc, "MAX_REPORT_BYTES", len(cc.NOTICE) + 6)
+    big = {"docs/coverage/fake.md": cc.NOTICE.encode() + b"longer\n"}
+    with pytest.raises(cc.CoverageError, match="larger than") as e:
+        cc.write(tmp_path, big)
+    assert e.value.code == cc.E_SIZE
+    assert not (tmp_path / "docs" / "coverage" / "fake.md").exists()
 
 
 def test_the_spec_report_starts_with_the_notice_and_lists_sections_in_order():

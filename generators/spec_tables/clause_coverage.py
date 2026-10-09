@@ -113,7 +113,8 @@ def filesystem_error(doing: str, e: OSError) -> CoverageError:
 # --- Keywords and sentences ----------------------------------------------------------------------
 
 # REQUIRED after "NOT " states that nothing is required, so it is not a keyword.
-_KEYWORD = re.compile(r"\b(MUST|SHALL|(?<!\bNOT )REQUIRED|SHOULD|RECOMMENDED|MAY|OPTIONAL)\b")
+_KEYWORD = re.compile(r"\b(MUST|SHALL|REQUIRED|SHOULD|RECOMMENDED|MAY|OPTIONAL)\b")
+_NEGATED = re.compile(r"\bNOT\s+$")  # "NOT REQUIRED", with any whitespace, is no obligation
 _LEVEL = {"MUST": "MUST", "SHALL": "MUST", "REQUIRED": "MUST", "SHOULD": "SHOULD",
           "RECOMMENDED": "SHOULD", "MAY": "MAY", "OPTIONAL": "MAY"}
 LEVELS = ("MUST", "SHOULD", "MAY")  # strongest first
@@ -130,7 +131,8 @@ _TABLE_SEPARATOR = re.compile(r"^\s*\|[\s:|-]*\|?\s*$")
 
 def level_of(text: str) -> str | None:
     """The level of the strongest keyword in ``text``, or None if it has none."""
-    found = {_LEVEL[m.group(1)] for m in _KEYWORD.finditer(text)}
+    found = {_LEVEL[m.group(1)] for m in _KEYWORD.finditer(text)
+             if not (m.group(1) == "REQUIRED" and _NEGATED.search(text, 0, m.start()))}
     return next((level for level in LEVELS if level in found), None)
 
 
@@ -591,16 +593,22 @@ NONE = "—"
 
 
 def cell(text: str) -> str:
-    """``text`` as a markdown table cell: pipes escaped, line breaks made spaces."""
-    return " ".join(text.splitlines()).replace("|", "\\|")
+    """``text`` as a markdown table cell: line breaks made spaces, and every pipe escaped. The text
+    is markdown already, so a pipe after an odd run of backslashes is escaped as it stands; any
+    other pipe gets one more backslash. Other backslashes are left alone, so the specification's
+    own escapes (such as ``\\#``) render as written."""
+    return re.sub(r"(?<!\\)((?:\\\\)*)\|", r"\1\\|", " ".join(text.splitlines()))
 
 
 def split_row(line: str) -> list[str]:
     """The cells of a markdown table row written with ``cell``, unescaped; [] if not a row."""
     if not line.startswith("|"):
         return []
-    cells = re.split(r"(?<!\\)\|", line.strip())[1:-1]
-    return [c.strip().replace("\\|", "|") for c in cells]
+    cells = re.split(r"(?<!\\)((?:\\\\)*)\|", line.strip())
+    # re.split interleaves each delimiter's even run of backslashes; rejoin it to its cell.
+    joined = [cells[i] + (cells[i + 1] if i + 1 < len(cells) else "")
+              for i in range(0, len(cells), 2)][1:-1]
+    return [c.strip().replace("\\|", "|") for c in joined]
 
 
 def _triage_cell(entry: dict | None) -> str:
@@ -829,6 +837,10 @@ def differences(want: dict[str, bytes], have: dict[str, bytes]) -> list[str]:
 
 def write(root: pathlib.Path, files: dict[str, bytes]) -> None:
     """Make the owned files under ``root`` exactly ``files``."""
+    for path, data in files.items():
+        if len(data) > MAX_REPORT_BYTES:
+            raise CoverageError(f"{path} would be larger than {MAX_REPORT_BYTES} bytes, the most "
+                                f"clause coverage reads from one generated report.", E_SIZE)
     try:
         for path in sorted(set(committed(root)) - set(files)):
             (root / path).unlink()
