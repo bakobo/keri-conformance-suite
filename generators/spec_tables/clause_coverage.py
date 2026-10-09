@@ -847,6 +847,7 @@ def main(argv=None) -> int:
     group.add_argument("--out", type=pathlib.Path, help="write under this directory")
     args = parser.parse_args(argv)
 
+    diffs: list[str] = []
     try:
         files = generate(ROOT)
         if args.check:
