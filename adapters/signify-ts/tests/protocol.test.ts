@@ -134,6 +134,7 @@ describe('unreadable requests', () => {
         ['{"id": 1.5, "op": "hello"}', 'fractional id'],
         ['{"id": "7", "op": "hello"}', 'string id'],
         ['', 'blank line'],
+        ['{"id": 9007199254740993, "op": "hello"}', 'id too large to echo exactly'],
     ])('answers %s with an error whose id is null (%s)', (line) => {
         const response = raw(line);
         expect(response.id).toBeNull();
@@ -180,6 +181,13 @@ describe('serve', () => {
     it('answers an oversize final line that has no newline', async () => {
         const responses = await run(['x'.repeat(40)], 32);
         expect(responses).toMatchObject([{ id: null, error: { kind: 'harness' } }]);
+    });
+
+    it('answers a line that is not UTF-8 with a null-id error, never a result', async () => {
+        const line = Buffer.concat([Buffer.from('{"id":7,"op":"cesr.parse","stream":"","x":"'), Buffer.from([0xff]), Buffer.from('"}\n')]);
+        const responses = await run([line]);
+        expect(responses).toMatchObject([{ id: null, error: { kind: 'harness' } }]);
+        expect((responses[0] as { error: { message: string } }).error.message).toMatch(/^e\.input\.format\.request\.f: .*UTF-8/);
     });
 
     it('answers a blank line with a null-id error', async () => {

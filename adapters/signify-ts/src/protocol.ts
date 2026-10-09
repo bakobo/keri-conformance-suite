@@ -126,11 +126,32 @@ export function handleLine(line: string, deps: Deps = DEFAULT_DEPS): string {
     } else {
         const id = (request as Request).id;
         response =
-            typeof id === 'number' && Number.isInteger(id) && id >= 0
+            // A safe integer, because JSON.parse rounds a larger one and the response would not
+            // echo the id the runner sent.
+            typeof id === 'number' && Number.isSafeInteger(id) && id >= 0
                 ? respond(id, request as Request, deps)
-                : errorResponse(null, 'harness', `${E_MALFORMED}: The request has no usable "id"; it must be a non-negative integer.`);
+                : errorResponse(
+                      null,
+                      'harness',
+                      `${E_MALFORMED}: The request has no usable "id"; it must be a non-negative integer no larger than 2^53 - 1.`,
+                  );
     }
     return JSON.stringify(response);
+}
+
+const notUtf8 = (): string =>
+    JSON.stringify(errorResponse(null, 'harness', `${E_MALFORMED}: The request line is not valid UTF-8.`));
+
+// fatal: a line that is not UTF-8 is refused rather than read with replacement characters.
+const utf8 = new TextDecoder('utf-8', { fatal: true });
+
+/** The line as text, or undefined when it is not UTF-8. */
+function decodeLine(bytes: Buffer): string | undefined {
+    try {
+        return utf8.decode(bytes);
+    } catch {
+        return undefined;
+    }
 }
 
 function oversize(maxLine: number): string {
@@ -153,7 +174,8 @@ export async function serve(
     let over = false;
     let pending = false;
     const finish = async () => {
-        await write((over ? oversize(maxLine) : handleLine(Buffer.concat(parts).toString('utf8'))) + '\n');
+        const text = over ? undefined : decodeLine(Buffer.concat(parts));
+        await write((over ? oversize(maxLine) : text === undefined ? notUtf8() : handleLine(text)) + '\n');
         parts = [];
         held = 0;
         over = false;
