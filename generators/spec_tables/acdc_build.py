@@ -136,12 +136,23 @@ class _Builder:
         self.acdcs = _index(frag.get("acdcs", []), "ACDC")
         self.schemas = _index(frag.get("schemas", []), "schema")
         self.registries = _index(frag.get("registries", []), "registry event")
+        # Schemas, registry events and ACDCs share one map of SAIDs and one namespace of
+        # references, so a name used for two kinds of thing would silently resolve to the wrong one.
+        kinds = (("a schema", self.schemas), ("a registry event", self.registries),
+                 ("an ACDC", self.acdcs))
+        for i, (kind, names) in enumerate(kinds):
+            for other, other_names in kinds[i + 1:]:
+                for name in names:
+                    if name in other_names:
+                        raise ScenarioError(f"The name {name!r} names both {kind} and "
+                                            f"{other}; each name in a fragment names one thing.")
         self.eb = EventBuilder(t, frag.get("events", []), seal_resolver=self._seal)
         self.saids: dict[str, str] = {}
         self.expanded: dict[str, dict] = {}
         self.events: dict[str, tuple[dict, str]] = {}  # registry body and disclosed block
         self.schema_bodies: dict[str, dict] = {}
         self._building: set[str] = set()
+        self._building_events: set[str] = set()
 
     # -- references ----------------------------------------------------------------------------
 
@@ -210,6 +221,10 @@ class _Builder:
         if name in self.events:
             return self.events[name][0]
         spec = self._registry_spec(name)
+        if name in self._building_events:
+            raise ScenarioError(f"Registry event {name!r} depends on itself through its prior "
+                                f"events or its state, which no SAID can satisfy.")
+        self._building_events.add(name)
         dt = spec.get("dt", DEFAULT_DT)
         block = ""
         if spec["t"] == "rip":
@@ -230,6 +245,7 @@ class _Builder:
                                 f"bup are built (upd is deferred).")
         self.events[name] = (body, block)
         self.saids[name] = body["d"]
+        self._building_events.discard(name)
         return body
 
     def registry_inception(self, name: str) -> str:

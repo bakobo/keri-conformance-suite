@@ -10,8 +10,9 @@ only the standard library, so the ACDC generator evaluates schemas itself (docs/
 - ``oneOf`` (exactly one subschema holds) and ``anyOf`` (at least one holds);
 - ``const``, compared as JSON values: numbers by value, booleans apart from numbers, objects
   without regard to key order;
-- ``$ref`` to a JSON pointer inside the same schema (``#`` or ``#/...``), applied together with
-  its sibling keywords, as 2020-12 requires.
+- ``$ref`` to a JSON pointer inside the same schema (``#`` or ``#/...``) that lands on the root
+  or on a subschema, never inside ``const``, applied together with its sibling keywords, as
+  2020-12 requires.
 
 Some keywords have no effect on a verdict and are allowed: ``$id`` and ``$schema`` at the root,
 ``$defs`` as a home for reference targets, the annotations ``title`` and ``description``, and
@@ -61,22 +62,40 @@ def _is_local(ref) -> bool:
     return isinstance(ref, str) and (ref == "#" or ref.startswith("#/"))
 
 
+# Keywords whose value holds subschemas: a map of them, or a list of them. Only these lead from a
+# schema to another schema; everything else, ``const`` above all, is instance data or a scalar.
+SUBSCHEMA_MAPS = ("properties", "$defs")
+SUBSCHEMA_LISTS = ("oneOf", "anyOf")
+
+
+def _subschemas(node: dict, path: str):
+    """Each subschema directly below a schema object, with its location."""
+    for key in SUBSCHEMA_MAPS:
+        if isinstance(node.get(key), dict):
+            for name, sub in node[key].items():
+                yield sub, f"{path}/{key}/{name}"
+    for key in SUBSCHEMA_LISTS:
+        if isinstance(node.get(key), list):
+            for i, sub in enumerate(node[key]):
+                yield sub, f"{path}/{key}/{i}"
+
+
 def nonlocal_references(schema) -> list[str]:
     """The locations of every reference that leaves the schema: a non-local ``$ref``, a dynamic
-    or recursive reference keyword, or an ``$id`` below the root."""
+    or recursive reference keyword, or an ``$id`` below the root. Only schema positions are
+    searched, so a reference-shaped value inside ``const`` is data, not a reference."""
     found: list[str] = []
 
     def walk(node, path, root):
-        if isinstance(node, dict):
-            for key, value in node.items():
-                here = f"{path}/{key}"
-                leaves = key == "$ref" and not _is_local(value)
-                if leaves or key in NONLOCAL_KEYWORDS or (key == "$id" and not root):
-                    found.append(here)
-                walk(value, here, False)
-        elif isinstance(node, list):
-            for i, value in enumerate(node):
-                walk(value, f"{path}/{i}", False)
+        if not isinstance(node, dict):
+            return
+        for key, value in node.items():
+            here = f"{path}/{key}"
+            leaves = key == "$ref" and not _is_local(value)
+            if leaves or key in NONLOCAL_KEYWORDS or (key == "$id" and not root):
+                found.append(here)
+        for sub, sub_path in _subschemas(node, path):
+            walk(sub, sub_path, False)
 
     walk(schema, "", True)
     return found
@@ -139,22 +158,29 @@ def _check_value(key, value, here, refs, allow_nonlocal):
 
 
 def _resolve(root, ref: str):
-    """The subschema a local reference points to, by RFC 6901 after percent-decoding."""
+    """The subschema a local reference points to, by RFC 6901 after percent-decoding. The pointer
+    must step from schema to schema, through ``properties`` or ``$defs`` and a name or ``oneOf``
+    or ``anyOf`` and an index, so that it lands on a schema the subset check has already passed;
+    a location inside ``const``, or a keyword's value that is not itself a schema, is refused."""
     node = root
     pointer = urllib.parse.unquote(ref[1:])
-    tokens = pointer.split("/")[1:] if pointer else []
-    for token in tokens:
-        token = token.replace("~1", "/").replace("~0", "~")
-        if isinstance(node, dict) and token in node:
-            node = node[token]
-        elif isinstance(node, list) and token.isdigit() and int(token) < len(node):
-            node = node[int(token)]
+    tokens = [t.replace("~1", "/").replace("~0", "~") for t in pointer.split("/")[1:]] \
+        if pointer else []
+    for i in range(0, len(tokens), 2):
+        keyword, member = tokens[i], tokens[i + 1] if i + 1 < len(tokens) else None
+        if not isinstance(node, dict) or member is None:
+            node = None
+        elif keyword in SUBSCHEMA_MAPS and isinstance(node.get(keyword), dict):
+            node = node[keyword].get(member)
+        elif (keyword in SUBSCHEMA_LISTS and isinstance(node.get(keyword), list)
+              and member.isdigit() and int(member) < len(node[keyword])):
+            node = node[keyword][int(member)]
         else:
-            raise SchemaError(f"The reference {ref!r} resolves to nothing in the schema.",
-                              E_REFERENCE)
-    if not isinstance(node, (dict, bool)):
-        raise SchemaError(f"The reference {ref!r} resolves to {node!r}, which is not a schema.",
-                          E_REFERENCE)
+            node = None
+        if node is None:
+            raise SchemaError(f"The reference {ref!r} does not resolve to a schema in the schema; "
+                              f"a reference may point only at the root or at a subschema under "
+                              f"{', '.join(SUBSCHEMA_MAPS + SUBSCHEMA_LISTS)}.", E_REFERENCE)
     return node
 
 
@@ -179,7 +205,8 @@ def _is_number(v) -> bool:
 
 def _has_type(name: str, v) -> bool:
     if name == "integer":
-        return _is_number(v) and float(v).is_integer()
+        # An int is compared as an int: float() would overflow on one beyond about 1e308.
+        return _is_number(v) and (isinstance(v, int) or v.is_integer())
     if name == "number":
         return _is_number(v)
     return isinstance(v, {"object": dict, "array": list, "string": str, "boolean": bool,

@@ -22,7 +22,6 @@ from generators.spec_tables.errors import GeneratorError, ScenarioError
 
 try:
     CESR_TEXT = spec_source.load_spec()
-    ACDC_TEXT = spec_source.load_spec(pin=spec_source.ACDC)
 except spec_source.SpecUnavailable as e:
     if os.environ.get("KCS_REQUIRE_SPEC") == "1":
         raise
@@ -439,6 +438,34 @@ def test_scenario_refusals():
     f = direct()
     f["acdcs"][0]["form"] = {"compact": ["a.name.x"]}
     _refused(f, "a.name.x")
+
+
+@pytest.mark.parametrize("kind,name", [("schemas", "rip1"), ("acdcs", "rip1"), ("acdcs", "S1")])
+def test_a_name_used_for_two_kinds_of_thing_is_refused(kind, name):
+    # One map holds every SAID, so a shared name would let an ACDC's s silently name a registry.
+    f = registry()
+    extra = {"name": name, "schema": S1} if kind == "schemas" else \
+        {"name": name, "issuer": "I", "schema": "S1"}
+    f[kind].append(extra)
+    _refused(f, repr(name), "names both")
+
+
+@pytest.mark.parametrize("prior", ["self", "mutual", "state", "seal"])
+def test_a_registry_event_that_depends_on_itself_is_refused(prior):
+    f = registry()
+    bup = f["registries"][1]
+    if prior == "self":
+        bup["prior"] = "bup1"
+    elif prior == "mutual":
+        f["registries"].append({**bup, "name": "bup2", "prior": "bup1", "disclose": False})
+        del f["registries"][2]["source_seal"]
+        bup["prior"] = "bup2"
+    elif prior == "state":
+        bup["state"]["td"] = {"registry": "bup1"}
+    else:
+        f["events"][0]["a"] = [{"registry": "rip1"}]
+    e = _refused(f, "depends on itself")
+    assert e.code == "e.input.format.kcs-scenario.f"
 
 
 def test_an_acdc_sealed_in_its_own_issuers_inception_is_refused():

@@ -39,6 +39,10 @@ TYPE = [
     ({"type": ["integer", "string"]}, "a", True),
     ({"type": ["integer", "string"]}, 1, True),
     ({"type": ["integer", "string"]}, None, False),
+    # An integer too large for a float is still an integer and a number, not an overflow.
+    ({"type": "integer"}, 10**400, True),
+    ({"type": "number"}, 10**400, True),
+    ({"type": "integer"}, 1e308, True),
 ]
 PROPERTIES = [
     ({"properties": {"a": {"type": "integer"}}}, {"a": 1}, True),
@@ -86,6 +90,8 @@ CONST = [
     ({"const": [1, 2]}, [1, 2, 3], False),
     ({"const": [{"a": False}]}, [{"a": 0}], False),
     ({"const": [1]}, {"0": 1}, False),
+    ({"const": 10**400}, 10**400, True),
+    ({"const": 1e300}, 10**400, False),
 ]
 REF = [
     ({"$defs": {"i": {"type": "integer"}}, "$ref": "#/$defs/i"}, 1, True),
@@ -169,6 +175,15 @@ def test_non_local_and_dynamic_references_are_recognized_and_refused(schema):
         js.validate(schema, {})
 
 
+def test_a_reference_shaped_value_inside_const_is_instance_data_not_a_reference():
+    for schema in ({"const": {"$ref": "https://example.com/x"}},
+                   {"properties": {"a": {"const": [{"$dynamicRef": "#m", "$id": "y"}]}}}):
+        assert js.nonlocal_references(schema) == []
+        js.check(schema)
+    assert js.validate({"const": {"$ref": "https://example.com/x"}},
+                       {"$ref": "https://example.com/x"})
+
+
 def test_a_schema_with_only_local_references_has_no_nonlocal_reference():
     assert js.nonlocal_references({"$defs": {"a": True}, "$ref": "#/$defs/a"}) == []
     assert js.nonlocal_references(True) == []
@@ -197,6 +212,28 @@ def test_a_reference_that_resolves_to_something_other_than_a_schema_is_refused()
     with pytest.raises(GeneratorError) as e:
         js.check({"required": ["a"], "$ref": "#/required"})
     assert e.value.code == js.E_REFERENCE
+
+
+@pytest.mark.parametrize("ref", [
+    "#/$defs/x/const",  # instance data that happens to look like a schema
+    "#/$defs/y/const/0",
+    "#/$defs",  # a map of schemas, not a schema
+    "#/properties",
+    "#/oneOf",
+    "#/$defs/b/x",  # nothing is below a boolean schema
+    "#/$defs/b/properties/x",
+])
+def test_a_reference_must_land_on_a_schema_position(ref):
+    # If the evaluator followed #/$defs/x/const it would apply {"not": ...} as a schema without
+    # knowing "not", ignore it, and accept instances the full dialect rejects.
+    schema = {"$defs": {"x": {"const": {"not": {"type": "string"}}},
+                        "y": {"const": [{"type": "string"}]}, "b": True},
+              "properties": {"a": True}, "oneOf": [True], "$ref": ref}
+    with pytest.raises(GeneratorError) as e:
+        js.check(schema)
+    assert e.value.code == js.E_REFERENCE
+    with pytest.raises(GeneratorError):
+        js.validate(schema, "s")
 
 
 def test_a_reference_loop_that_consumes_no_instance_is_refused_not_followed_forever():
