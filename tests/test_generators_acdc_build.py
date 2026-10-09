@@ -390,13 +390,21 @@ def test_the_bundle_may_hold_sixteen_acdcs_but_not_seventeen():
         frag = chain(["N", "F"])
         for i in range(n - 2):
             frag["acdcs"].append({"name": f"X{i}", "issuer": "I", "schema": "S1",
-                                  "a": {"d": "", "name": "x"}})
+                                  "a": {"d": "", "name": f"x{i}"}})  # distinct, one SAID each
             frag["acdcs"][0]["e"][f"x{i}"] = {"d": "", "n": {"acdc": f"X{i}"}}
         return frag
     ab.build_bundle(T, wide(16))
     with pytest.raises(GeneratorError) as e:
         ab.build_bundle(T, wide(17))
     assert e.value.code == ab.E_DAG
+
+
+def test_two_acdcs_with_one_said_are_refused():
+    # Written alike, they are one ACDC: an edge to it would ship the same far node twice.
+    frag = chain(["N", "F"])
+    frag["acdcs"].append({**frag["acdcs"][1], "name": "G"})
+    e = _refused(frag, "'F'", "'G'", "SAID")
+    assert e.code == ScenarioError("x").code
 
 
 def test_edges_are_found_inside_lists_and_plain_maps_and_must_name_an_acdc():
@@ -407,6 +415,10 @@ def test_edges_are_found_inside_lists_and_plain_maps_and_must_name_an_acdc():
     assert "d" not in grp and grp["m"][0]["n"] == b.saids["F"]
     assert b.graph["N"] == ["F"]
     assert b.dag["edges"] == [{"near": b.saids["N"], "path": "e.grp.m.0", "n": b.saids["F"]}]
+    # Two edges to one far node are two dag edges, and the far node is listed once.
+    frag["acdcs"][0]["e"]["grp"]["m"].append({"d": "", "n": {"acdc": "F"}})
+    b = ab.build_bundle(T, frag)
+    assert b.graph["N"] == ["F"] and len(b.dag["edges"]) == 2
     frag["acdcs"][0]["e"]["grp"]["m"].append({"d": "", "n": {"acdc": "Z"}})
     _refused(frag, "Z", "ACDC")
 

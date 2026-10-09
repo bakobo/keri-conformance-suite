@@ -325,10 +325,16 @@ class _Builder:
         by name, and every edge as (near name, label path, far SAID). Run once every SAID is
         computed; a reference cycle has already been refused by ``acdc_said``, and a cycle of
         literal SAIDs would need a digest to contain itself."""
-        # Two ACDCs written alike are one ACDC with one SAID, and an edge to it reaches both.
-        by_said: dict[str, list[str]] = {}
+        # Two ACDCs written alike are one ACDC with one SAID; the bundle would carry it twice,
+        # and the protocol carries each far node once.
+        by_said: dict[str, str] = {}
         for name in self.acdcs:
-            by_said.setdefault(self.saids[name], []).append(name)
+            twin = by_said.get(self.saids[name])
+            if twin:
+                raise ScenarioError(f"The ACDCs {twin!r} and {name!r} are written alike and "
+                                    f"have one SAID; a bundle carries each ACDC once. Make them "
+                                    f"differ or define one.")
+            by_said[self.saids[name]] = name
         graph: dict[str, list[str]] = {}
         edges: list[tuple[str, str, str]] = []
         for name in self.acdcs:
@@ -340,7 +346,8 @@ class _Builder:
                                         f"node out of the bundle, define it and list it in omit.",
                                         E_DAG_UNREACHABLE)
                 edges.append((name, path, far))
-                graph[name] += [n for n in by_said[far] if n not in graph[name]]
+                if by_said[far] not in graph[name]:
+                    graph[name].append(by_said[far])
         depth: dict[str, int] = {}
 
         def longest(name):
