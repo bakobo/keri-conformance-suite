@@ -6,7 +6,7 @@ This report lists every sentence of the pinned ACDC specification text that carr
 
 ## v1.0, commit 4a543c549fd9
 
-The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md). It has 393 keyword sentences: 231 MUST, 21 SHOULD and 141 MAY or OPTIONAL.
+The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md). It has 393 keyword sentences: 228 MUST, 14 SHOULD and 141 MAY or OPTIONAL, and 10 triaged as practice.
 
 ### Obligations (MUST and SHOULD)
 
@@ -582,44 +582,6 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 1790 | MUST | untestable: A contractual obligation on later disclosers; whether the terms bind anyone is a legal question no case can check. | 0 | 0 | 0 | — | — | — | The terms-of-use of the original disclosure as applied to the original Disclosee MUST be applied by each subsequent Discloser to each subsequent Disclosee via each of the subsequent disclosures. |
 | 1792 | MUST | untestable: A contractual obligation on the party responsible for a contingent disclosure; no case can check it. | 0 | 0 | 0 | — | — | — | When that contingency is met, then the Contingent Disclosure MUST be made by the party whose responsibility it is to satisfy that disclosure obligation. |
-
-#### Issuance and Presentation Exchange (IPEX)
-
-[Line 1795 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuance-and-presentation-exchange-ipex).
-
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1797 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges. |
-
-#### IPEX Protocol Messages
-
-[Line 1805 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#ipex-protocol-messages).
-
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1807 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message. |
-| 1807 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | The notional semantics of each route indicate how the message SHOULD be used in an exchange. |
-
-#### Commitments via SAID
-
-[Line 1820 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#commitments-via-said).
-
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1822 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified. |
-| 1828 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed. |
-| 1828 | SHOULD | out-of-scope, security | 0 | 0 | 0 | — | — | — | In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD. |
-| 1832 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure. |
-| 1832 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | To restate, there are two proofs that a Discloser SHOULD provide. |
-
-#### Issuer Commitment Rules
-
-[Line 1841 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuer-commitment-rules).
-
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1843 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). |
-| 1850 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants. |
 
 #### Overview
 
@@ -1545,6 +1507,46 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 3067 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Emptiness for field values that MAY accept a field map is indicated by an empty field map. |
 | 3067 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Emptiness for field values that MAY accept a list is indicated by an empty list. |
+
+### Practice (any keyword, in text that states common practice)
+
+#### Issuance and Presentation Exchange (IPEX)
+
+[Line 1795 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuance-and-presentation-exchange-ipex).
+
+| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
+|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
+| 1797 | SHOULD | practice | 0 | 0 | 0 | — | — | — | This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges. |
+
+#### IPEX Protocol Messages
+
+[Line 1805 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#ipex-protocol-messages).
+
+| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
+|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
+| 1807 | MUST | practice | 0 | 0 | 0 | — | — | — | The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message. |
+| 1807 | SHOULD | practice | 0 | 0 | 0 | — | — | — | The notional semantics of each route indicate how the message SHOULD be used in an exchange. |
+
+#### Commitments via SAID
+
+[Line 1820 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#commitments-via-said).
+
+| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
+|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
+| 1822 | MUST | practice, security | 0 | 0 | 0 | — | — | — | In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified. |
+| 1828 | SHOULD | practice | 0 | 0 | 0 | — | — | — | To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed. |
+| 1828 | SHOULD | practice, security | 0 | 0 | 0 | — | — | — | In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD. |
+| 1832 | SHOULD | practice | 0 | 0 | 0 | — | — | — | Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure. |
+| 1832 | SHOULD | practice | 0 | 0 | 0 | — | — | — | To restate, there are two proofs that a Discloser SHOULD provide. |
+
+#### Issuer Commitment Rules
+
+[Line 1841 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuer-commitment-rules).
+
+| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
+|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
+| 1843 | MUST | practice, security | 0 | 0 | 0 | — | — | — | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). |
+| 1850 | SHOULD | practice | 0 | 0 | 0 | — | — | — | An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants. |
 
 ### Quotes that match no keyword sentence
 

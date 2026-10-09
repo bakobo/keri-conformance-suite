@@ -783,54 +783,54 @@
       "reason": "A contractual obligation on the party responsible for a contingent disclosure; no case can check it."
     },
     "This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": false,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": false,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "The notional semantics of each route indicate how the message SHOULD be used in an exchange.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": false,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": true,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": false,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": true,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": false,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "To restate, there are two proofs that a Discloser SHOULD provide.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": false,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the \"most compact form\" algorithm above).": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": true,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants.": {
-      "scope": "out-of-scope",
+      "scope": "practice",
       "security": false,
-      "note": "section declared non-normative"
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
     },
     "The transaction events MUST be sealed (anchored or bound) in a KEL using transaction event seals, whose JSON representation MUST be as follows.": {
       "scope": "validator",
