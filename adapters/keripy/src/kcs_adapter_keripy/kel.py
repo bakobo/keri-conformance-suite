@@ -42,12 +42,12 @@ class NotQuiescent(Exception):
     pass
 
 
-def fingerprint(db):
-    """A digest of the contents of every table in TABLES. A digest, not entry counts, because a
+def fingerprint(db, tables=TABLES):
+    """A digest of the contents of every named table. A digest, not entry counts, because a
     pass that replaces one escrow entry with another leaves the counts equal while the state has
     moved, and counting that as quiescence would stop escrow processing a pass too early."""
     h = hashlib.blake2b(digest_size=16)
-    for name in TABLES:
+    for name in tables:
         sdb = getattr(db, name).sdb
         h.update(name.encode())
         with db.env.begin(db=sdb) as txn, txn.cursor(sdb) as cur:
@@ -59,12 +59,15 @@ def fingerprint(db):
     return h.digest()
 
 
-def quiesce(kvy, db):
-    """Run keripy's escrow processing until a pass changes nothing."""
-    before = fingerprint(db)
+def quiesce(kvy, db, extra=(), tables=TABLES):
+    """Run keripy's escrow processing until a pass changes nothing in the named tables. `extra`
+    holds further keripy escrow processors to run in each pass, such as an Exchanger's."""
+    before = fingerprint(db, tables)
     for _ in range(MAX_ESCROW_PASSES):
         kvy.processEscrows()
-        now = fingerprint(db)
+        for process_escrow in extra:
+            process_escrow()
+        now = fingerprint(db, tables)
         if now == before:
             return
         before = now
@@ -73,17 +76,25 @@ def quiesce(kvy, db):
                        "the adapter stopped.")
 
 
-def identify(api, stream: bytes):
-    """What keripy's own parser says the message is, or None if keripy cannot parse it. Uses a
-    parser with no Kevery, so identifying a message never changes keripy's state."""
+def extract(api, stream: bytes):
+    """keripy's own parse of one message and its attachments (its MsgParseDom), or None if keripy
+    cannot parse it. Uses a parser with no processors attached, so parsing never changes keripy's
+    state."""
     try:
         gen = api.run(parsing.Parser(), bytearray(stream))
         while True:
             next(gen)
     except StopIteration as done:
-        exts = done.value
+        return done.value
     except Exception as exc:  # noqa: BLE001 - keripy refusing to parse is its answer
         print(f"keripy cannot parse message: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return None
+
+
+def identify(api, stream: bytes):
+    """What keripy's own parser says the message is, or None if keripy cannot parse it."""
+    exts = extract(api, stream)
+    if exts is None:
         return None
     serder = exts.serder
     return {"ilk": serder.ilk, "pre": serder.pre, "sn": serder.sn, "said": serder.said,
@@ -151,41 +162,53 @@ def key_state(kever) -> dict:
             "delegator": kever.delpre or None}
 
 
-def _streams(request) -> list[bytes]:
-    messages = request.get("messages")
-    if not isinstance(messages, list) or not all(isinstance(m, dict) for m in messages):
-        raise Malformed(f'{E_MALFORMED}: "messages" must be a list of objects.')
-    out = []
-    for m in messages:
-        stream = m.get("stream")
-        if not isinstance(stream, str) or len(stream) % 2 or not all(
-                c in "0123456789abcdef" for c in stream):
-            raise Malformed(f'{E_MALFORMED}: every message\'s "stream" must be a lowercase hex '
-                            "string.")
-        out.append(bytes.fromhex(stream))
-    return out
+def hex_stream(value, field):
+    """The bytes of one hex-encoded stream, or Malformed naming the request field."""
+    if not isinstance(value, str) or len(value) % 2 or not all(
+            c in "0123456789abcdef" for c in value):
+        raise Malformed(f'{E_MALFORMED}: every "stream" in "{field}" must be a lowercase hex '
+                        "string.")
+    return bytes.fromhex(value)
 
 
-def process(request) -> dict:
+def streams(request, field) -> list[bytes]:
+    """The streams of a request field that is a list of objects each carrying a "stream"."""
+    entries = request.get(field)
+    if not isinstance(entries, list) or not all(isinstance(m, dict) for m in entries):
+        raise Malformed(f'{E_MALFORMED}: "{field}" must be a list of objects.')
+    return [hex_stream(m.get("stream"), field) for m in entries]
+
+
+def validator(request):
+    """Check the request's perspective: an object, and an ordinary validator's."""
     perspective = request.get("perspective")
     if not isinstance(perspective, dict):
         raise Malformed(f'{E_MALFORMED}: "perspective" must be an object.')
-    streams = _streams(request)
     if perspective.get("role") != "validator":
         raise Unsupported(f"{E_PERSPECTIVE}: This adapter reports only an ordinary validator's "
                           f"perspective, not {perspective.get('role')!r}.")
+
+
+def deliver(parser, stream: bytes):
+    """Hand one stream to keripy unchanged. keripy refusing it drops it; that is logged."""
+    try:
+        parser.parse(ims=bytearray(stream))
+    except Exception as exc:  # noqa: BLE001 - keripy refusing a message drops it
+        print(f"keripy refused a message: {type(exc).__name__}: {exc}", file=sys.stderr)
+
+
+def process(request) -> dict:
+    validator(request)
+    messages = streams(request, "messages")
     api = keripy_api.load()
     with basing.openDB(name="kcs-adapter-keripy", temp=True) as db:
         # A fresh database, Kevery and Parser for every request: nothing carries over.
         kvy = eventing.Kevery(db=db, lax=False, local=False)
         parser = parsing.Parser(kvy=kvy)
-        idents = [identify(api, s) for s in streams]
+        idents = [identify(api, s) for s in messages]
         initial = []
-        for s, ident in zip(streams, idents, strict=True):
-            try:
-                parser.parse(ims=bytearray(s))
-            except Exception as exc:  # noqa: BLE001 - keripy refusing a message drops it
-                print(f"keripy refused a message: {type(exc).__name__}: {exc}", file=sys.stderr)
+        for s, ident in zip(messages, idents, strict=True):
+            deliver(parser, s)
             quiesce(kvy, db)
             initial.append(reading(db, ident))
         dispositions = []
