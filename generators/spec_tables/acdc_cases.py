@@ -338,8 +338,16 @@ def _registry(out, ev, case):
     elif registry.block:
         clause, inferred, _ = REASONS[registry.block]
         chain += f", and its blinded state block does not verify ({registry.block})"
-    elif stop:
+    elif stop and (registry.n == 0 or REASONS[stop][1] is not None):
+        # The stop's own clause decides the head: nothing before it was counted, or the stop
+        # is itself an inferred SHOULD.
         clause, inferred, _ = REASONS[stop]
+    elif stop:
+        # A check a validator owes directly stops the chain, but the head also counts updates
+        # before it, whose acceptance rests on rules that bind the issuer, so the check alone
+        # does not decide the head (docs/design.md, ACDC, Registry state).
+        clause, inferred = "registry-prior", "registry-head"
+        chain += ", and the updates before it count by rules that bind the issuer"
     else:
         clause, inferred = "registry-prior", "registry-head"
     out.add("registry_state", clause, inferred,

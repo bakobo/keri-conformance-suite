@@ -600,14 +600,11 @@
       "id": "ACDC-0033",
       "key": "KS-31",
       "title": "Update that does not verify against its SAID",
-      "description": "As KS-31p, but the revoking update's dt was changed after its SAID was computed, keeping the length, so its SAID does not verify (CESR line 1194) and the head must not advance past the issuance.",
+      "description": "As KS-31p, but the issuing update's dt was changed after its SAID was computed, keeping the length, so its SAID does not verify (CESR line 1194) and the head must not advance past the inception. The ACDC is also sealed directly, so it does not depend on the registry for its commitment.",
       "base": "revoked",
       "patch": {
         "registries": {
           "bup1": {
-            "disclose": false
-          },
-          "bup2": {
             "disclose": false,
             "alter": [
               {
@@ -615,6 +612,9 @@
                 "value": "2026-07-04T17:50:00.000000+00:00"
               }
             ]
+          },
+          "bup2": {
+            "disclose": false
           }
         },
         "events": {
@@ -638,7 +638,7 @@
         "id": "ACDC-0034",
         "key": "KS-31-u",
         "title": "Update that does not verify against its SAID: the head",
-        "description": "The MUST half of KS-31, ungated: if a registry is reported, its head is the issuing update, because the revoking update's SAID does not verify."
+        "description": "The MUST half of KS-31, ungated: if a registry is reported, its head is the inception, because the first update's SAID does not verify. Nothing but that SAID check decides the head, since a validator that reports the registry has accepted the inception."
       }
     },
     {

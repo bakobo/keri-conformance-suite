@@ -292,6 +292,31 @@ def test_only_a_known_feature_may_be_required():
         grade(STRUCTURE, "KS-01", requires=["acdc.teleport"])
 
 
+def test_a_must_registry_head_is_one_the_said_check_alone_decides():
+    # The update that fails its SAID is the first, so the head is the inception, which a
+    # validator that reports the registry must have accepted; counting no other update is
+    # involved (SEC-F7).
+    _, comp = grade(REG, "KS-31")
+    [a] = comp["assertions"]
+    assert (a["check"], a["level"]) == ("registry_state", "MUST")
+    assert a["expected"]["n"] == 0 and a["expected"]["d"] == a["expected"]["rd"]
+
+
+def test_a_said_failure_after_a_counted_update_grades_the_head_should():
+    # The head then also depends on counting an earlier update, whose acceptance rests on chain
+    # rules that bind the issuer, so the SAID check alone does not decide it (SEC-F7).
+    c = one(REG, "KS-31")
+    regs = c["patch"]["registries"]
+    regs["bup1"], regs["bup2"] = {"disclose": False}, {"disclose": False, "alter": [
+        {"path": "dt", "value": "2026-07-04T17:50:00.000000+00:00"}]}
+    del c["companion"]
+    [case] = ac.build_acdc_case("t", c, ac.build(T, REG["fixtures"], c),
+                                {"KS-31p": ("ACDC-0032", False)}, CLAUSES, INFERENCES, CONFLICTS)
+    a = next(a for a in case["assertions"] if a["check"] == "registry_state")
+    assert (a["level"], a["expected"]["n"]) == ("SHOULD", 1)
+    assert a["inferred_from"] == INFERENCES["registry-head"]
+
+
 def test_found_names_an_unnamed_presented_acdc_by_its_role():
     result = am.Result(am.Node({"d": "Ex"}, [am.Failure(1, "said")]), {}, [])
     assert ac.found(result, {}) == ["presented 1/said"]
