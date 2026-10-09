@@ -230,3 +230,27 @@ def test_an_accepted_summary_carries_only_a_non_negative_integer_consumed():
         assert list(RESPONSE.iter_errors({"id": 1, "result": {"accepted": bad}})), bad
     both = {"id": 1, "result": {"accepted": {"consumed": 4}, "items": []}}
     assert list(RESPONSE.iter_errors(both))
+
+
+def test_hello_operations_match_the_operations_the_runner_runs():
+    """The keripy adapter found the hello enum lagging session.OPERATIONS after #17: an adapter
+    offering acdc.verify failed the published schema while the runner accepted it."""
+    from keri_conformance.session import OPERATIONS
+
+    enums = [node["items"]["enum"] for node in _walk(SCHEMA)
+             if isinstance(node, dict) and node.get("type") == "array"
+             and isinstance(node.get("items"), dict)
+             and "cesr.parse" in node["items"].get("enum", [])]
+    assert enums, "the hello operations enum was not found"
+    for enum in enums:
+        assert set(enum) == set(OPERATIONS)
+
+
+def _walk(node):
+    yield node
+    if isinstance(node, dict):
+        for value in node.values():
+            yield from _walk(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _walk(value)

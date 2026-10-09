@@ -496,7 +496,9 @@
               "cesr.parse",
               "cesr.encode",
               "keri.process",
-              "keri.emit"
+              "keri.emit",
+              "acdc.verify",
+              "exn.verify"
             ]
           }
         },
