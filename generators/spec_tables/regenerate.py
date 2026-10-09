@@ -20,6 +20,7 @@ from .errors import (
     GeneratorError,
     ScenarioError,
 )
+from .exn_build import build_exn_case
 from .keri_build import build_keri_case
 
 # Failures of a case's content that the builder does not name itself: an unknown code or table
@@ -259,6 +260,8 @@ def _generate_keri(root: pathlib.Path, files: dict[str, bytes],
         _scenario_shape(scenario, path.name)
         rel = path.relative_to(root).as_posix()
         allowed.update(gap["number"] for gap in scenario.get("id_gaps", []))
+        # Exchange-message scenarios are KERI scenarios graded through exn.verify (design, IPEX).
+        builder = build_exn_case if scenario.get("operation") == "exn.verify" else build_keri_case
         for case in scenario["cases"]:
             case = {"profile": scenario["profile"], **case}
             case_id = case.get("id")
@@ -270,8 +273,8 @@ def _generate_keri(root: pathlib.Path, files: dict[str, bytes],
             if profile is None or not case["profile"].startswith("keri-"):
                 raise ScenarioError(f"{case_id}: unknown KERI profile {case['profile']!r}.")
             try:
-                built = build_keri_case(t, rel, case, clauses, inferences, conflicts,
-                                        profile["normative"])
+                built = builder(t, rel, case, clauses, inferences, conflicts,
+                                profile["normative"])
             except BUILD_FAILURES as e:
                 raise ScenarioError(f"{rel}, {case_id}: {type(e).__name__}: {e}") from None
             for one in built:
