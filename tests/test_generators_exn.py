@@ -189,6 +189,31 @@ def test_a_threshold_shortfall_is_unverified():
     assert tags(c) == [["2/unverified"] * 2]
 
 
+THRESHOLD = [{**EVENTS[0], "keys": ["i0", "j0", "k0"], "kt": "2", "next": ["i1", "j1", "k1"],
+              "nt": "2"}, *EVENTS[1:]]
+WEIGHTED = [{**EVENTS[0], "keys": ["i0", "j0", "k0", "l0"], "kt": ["1/2", "1/2", "1/4", "1/4"],
+             "next": ["i1", "j1", "k1", "l1"], "nt": "2"}, *EVENTS[1:]]
+THRESHOLD_KELS = [{"event": "I-icp", "sigs": ["i0", "j0", "k0"]}, *KELS[1:]]
+WEIGHTED_KELS = [{"event": "I-icp", "sigs": ["i0", "j0", "k0", "l0"]}, *KELS[1:]]
+
+
+@pytest.mark.parametrize("events,kels,keys,want", [
+    (THRESHOLD, THRESHOLD_KELS, ["j0"], "2/unverified"),
+    (THRESHOLD, THRESHOLD_KELS, ["i0", "k0"], OK),
+    (THRESHOLD, THRESHOLD_KELS, ["j0", "j0"], "2/unverified"),
+    (THRESHOLD, THRESHOLD_KELS, ["i0", {"key": "k0", "forged": True}], "2/unverified"),
+    (WEIGHTED, WEIGHTED_KELS, ["k0", "l0"], "2/unverified"),
+    (WEIGHTED, WEIGHTED_KELS, ["i0", "j0"], OK),
+    (WEIGHTED, WEIGHTED_KELS, ["i0", "k0", "l0"], OK),
+])
+def test_a_multi_key_sender_is_accepted_only_when_its_threshold_is_met(events, kels, keys, want):
+    """One valid sender signature passes the line-1266 floor; only the line-1260 threshold
+    refuses it, counted over distinct verified signers and, when weighted, by weight."""
+    sigs = [{"aid": "I", "keys": keys}]
+    c = case([LONE], [deliver("lone", want, sigs=sigs)], events=events, kels=kels)
+    assert tags(c) == [[want, want]]
+
+
 @pytest.mark.parametrize("grant,want", [
     ({**GRANT, "p": {"nothing": "elsewhere"}}, "3/prior"),
     ({**GRANT, "x": {"nothing": "no-such-xip"}}, "3/no-xip"),

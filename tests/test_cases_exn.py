@@ -145,6 +145,34 @@ def _readings(case):
     return model, out
 
 
+def _threshold_cases(weighted):
+    """Messages from a sender with a threshold above one signature: (case id, expected, number
+    of distinct valid sender signatures, clause quote)."""
+    found = []
+    for cid, case in CASES.items():
+        _, readings = _readings(case)
+        for a in case["assertions"]:
+            valid, kt = readings[a["message"]]
+            if kt is None or isinstance(kt, list) != weighted:
+                continue
+            if weighted or int(kt, 16) > 1:
+                found.append((cid, a["expected"], a["level"], valid, KEY_OF[a["clause"]["quote"]]))
+    return found
+
+
+@pytest.mark.parametrize("weighted", [False, True])
+def test_the_batch_refuses_valid_signatures_short_of_a_threshold_and_accepts_a_met_one(weighted):
+    """An implementation that accepts any one verifiable sender signature passes every refusal
+    with no valid signature, so the batch carries a sender whose threshold one valid signature
+    does not meet, refused at MUST under line 1260, and an active case accepting the same sender
+    when it is met (review SEC-F1)."""
+    found = _threshold_cases(weighted)
+    assert any(exp == "rejected" and level == "MUST" and valid >= 1 and key == "nonkey-threshold"
+               for _, exp, level, valid, key in found)
+    assert any(exp == "accepted" and CASES[cid]["status"] == "active"
+               for cid, exp, *_ in found)
+
+
 def test_exchange_cases_use_a_route_and_payload_no_ipex_handler_polices():
     """The clauses these cases cite are KERI's, about any exchange message, so their messages use
     a route that no implementation registers a handler for and carry no ACDC; a deployment that

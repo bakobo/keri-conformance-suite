@@ -67,7 +67,13 @@
     "KERI-0074",
     "KERI-0075",
     "KERI-0076",
-    "KERI-0077"
+    "KERI-0077",
+    "KERI-0078",
+    "KERI-0079",
+    "KERI-0080",
+    "KERI-0081",
+    "KERI-0082",
+    "KERI-0083"
   ],
   "name": "keri-1.0",
   "normative": true,
