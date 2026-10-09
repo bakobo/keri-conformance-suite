@@ -95,3 +95,17 @@ The second batch (KERI-0054 onward) adds companion safety cases, duplicate-signa
 - **KERI-0024, a rotation after a non-transferable inception.** The decision procedure refuses the rotation at step 3, because line 340 allows no more key events after a non-transferable inception. keripy refuses it earlier, when it parses the body: `ValidationError: ... Non-transferable code = B with non-empty nxt`. keripy treats any event of a basic non-transferable prefix that carries next keys as malformed, a rule of its own about basic prefixes (catalogue gap G15), and for the same reason its `SerderKERI` will not build that rotation at all, so the byte check cannot reproduce it. Both readings are "not seen", which is all the case grades. KERI-0025 tests the same rule with a self-addressing prefix, which keripy refuses by state, as the procedure does.
 - **Conflicting events that are not rotations** (KERI-0042, KERI-0044, KERI-0045 and KERI-0050). keripy reports the refused event as `duplicitous`. The cases grade only not seen there, at SHOULD, since the design treats duplicitous as informative for a validator.
 - **Readings the cases do not grade.** keripy keeps an event whose pre-rotation commitment is broken (KERI-0021) or whose delegating seal is missing (KERI-0028, KERI-0033, KERI-0034) as pending. The specification says only that such an event is not accepted, so the cases grade only not seen.
+
+# Disagreements between the ACDC generator's primitives and keripy
+
+No ACDC cases exist yet. The generator's primitives (`generators/spec_tables/acdc_saids.py`, `acdc_build.py` and `json_schema_subset.py`) compute SAIDs, most compact SAIDs, schema SAIDs, AGIDs and BLIDs, and evaluate schemas, from the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b0daaf48400f4005c2`) with the standard library only. keripy cross-checks them; it is not their source.
+
+How the cross-check was run, from the repository root:
+
+```sh
+cd generators/keripy_acdc_check && uv run python check.py --report /tmp/keripy-main-acdc-report.json
+```
+
+`generators/keripy_acdc_check` pins keripy main at `9a8b7aa70960f16fe7acffd8cf7901941ac912a1` (Python 3.14), the same commit and lock as `keripy_keri_check`. Its fixtures are the pinned text's worked examples and bundles the generator builds; for each it compares the generator's value with keripy's (`SerderACDC`, `Compactor`, `Aggor`, `Blinder`, `Schemer`) and, where the text leaves bytes open (`acdc_saids.CANDIDATES`), reports which reading keripy follows on the fixtures that tell the readings apart.
+
+Last run: 2026-10-09. Every primitive agrees on every fixture (13 registry SAIDs, 19 most compact SAIDs from compact, expanded, partially and selectively disclosed forms, 19 nested block SAIDs, 10 schema SAIDs, 2 AGIDs, 5 BLIDs, 9 schema verdicts). On every open choice keripy follows the design's reading: the most compact form's version string sized to itself (A-B1), JSON with non-ASCII unescaped (A-B1), a schema SAID over its compact re-serialization, so that a pretty-printed schema verifies (A-B2), Tag codes for `ts` (A-B3), the AGID over the serialized list (A-C1), and a SAIDed block inside a list left uncompacted, a choice the design does not name.

@@ -1,0 +1,11 @@
+[project]
+name = "kcs-keripy-acdc-check"
+version = "0.1.0"
+description = "Cross-checks the ACDC generator's SAIDs, most compact SAIDs, AGIDs, BLIDs and schema verdicts against keripy main at a pinned commit. Not part of the runner."
+requires-python = "~=3.14.0"
+dependencies = [
+    "keri @ git+https://github.com/WebOfTrust/keripy@9a8b7aa70960f16fe7acffd8cf7901941ac912a1",
+]
+
+[tool.uv]
+package = false
