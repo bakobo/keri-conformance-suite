@@ -126,6 +126,12 @@ def test_text_that_is_not_valid_unicode_is_refused(tmp_path):
     refused(R.E_RESULT_FORMAT, R.wrap, source, SUBMITTED, tmp_path / "out")
     assert not (tmp_path / "out").exists() or not any((tmp_path / "out").rglob("*"))
 
+    # Hostile fix pass on #18: a lone surrogate in an unexpected key must not reach the shape
+    # check's message, which is printed to UTF-8 stderr.
+    doc = result()
+    doc["report"]["x\ud800"] = 1
+    assert "Unicode" in R.result_problem(doc)
+
 
 def test_assertion_ids_are_checked_in_linear_time():
     """Hostile fix pass on #18: the repeat check must not rescan the list for every id."""

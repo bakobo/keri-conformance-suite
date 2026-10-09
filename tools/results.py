@@ -220,14 +220,15 @@ def _meaning_problem(report: dict) -> str | None:
 def result_problem(doc) -> str | None:
     """None if `doc` may be published, else a sentence fragment saying why not. Shape is checked
     before meaning, so the meaning checks can rely on every field being present and typed."""
-    problem = shape_problem(doc)
-    if problem:
-        return problem
     try:
         json.dumps(doc, ensure_ascii=False).encode("utf-8")
     except UnicodeEncodeError:
-        # JSON escapes can spell a lone surrogate, which no UTF-8 file or page can hold.
+        # JSON escapes can spell a lone surrogate, which no UTF-8 file, page or message can hold,
+        # so this runs before any check that would quote the text back.
         return "it carries text that is not valid Unicode"
+    problem = shape_problem(doc)
+    if problem:
+        return problem
     # The schema's date pattern is syntax only; whether the day exists is meaning. Every kind of
     # provenance has exactly one date, and the shape check guarantees it.
     try:
