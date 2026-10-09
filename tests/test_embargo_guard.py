@@ -335,11 +335,14 @@ def test_a_missing_list_named_by_the_flag_refuses_the_push(repo, tmp_path):
                        "--range", "HEAD..HEAD"]) == 2
 
 
-def test_a_relative_value_outside_a_checkout_is_left_relative_and_so_refused(tmp_path, capsys):
-    # Global git config can name a list for a directory that is not a checkout; with no main
-    # checkout to resolve against, the value stays as written and cannot be read from here.
+def test_a_relative_value_outside_a_checkout_is_refused(tmp_path, monkeypatch, capsys):
+    # Global git config can name a list for a directory that is not a checkout. With no main
+    # checkout to resolve against, the guard refuses rather than reading a file relative to
+    # wherever it happens to be run, even when one exists there.
     git(tmp_path, "config", "--global", guard.CONFIG_PATTERNS, "held/list.txt")
-    assert guard.patterns_path(tmp_path, None, {}) == (guard.pathlib.Path("held/list.txt"), True)
+    (tmp_path / "held").mkdir()
+    (tmp_path / "held" / "list.txt").write_text("nothing\n")
+    monkeypatch.chdir(tmp_path)
     assert guard.main(["--repo", str(tmp_path), "--range", "a..b"]) == 2
     assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
 
@@ -374,3 +377,10 @@ def test_the_script_runs_from_a_shell(repo, patterns):
                            str(patterns), "--range", rng], capture_output=True, text=True,
                           check=False)
     assert done.returncode == 1 and done.stderr.startswith("e.rule.embargo.f: ")
+
+
+def test_an_empty_git_config_value_is_refused_not_taken_for_unset(repo, capsys):
+    git(repo, "config", guard.CONFIG_PATTERNS, "")
+    assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
+    err = capsys.readouterr().err
+    assert err.startswith("e.input.format.embargo-patterns.f: ") and "empty" in err

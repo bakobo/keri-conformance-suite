@@ -67,7 +67,10 @@ def _configured(repo: pathlib.Path) -> str:
         return ""
     if done.returncode != 0:
         raise ConfigUnreadable(done.stderr.decode("utf-8", errors="replace").strip())
-    return done.stdout.decode("utf-8", errors="replace").strip()
+    value = done.stdout.decode("utf-8", errors="replace").strip()
+    if not value:
+        raise ConfigUnreadable(f"{CONFIG_PATTERNS} is set but empty")
+    return value
 
 
 def patterns_path(repo: pathlib.Path, flag, environ) -> tuple[pathlib.Path, bool]:
@@ -84,8 +87,9 @@ def patterns_path(repo: pathlib.Path, flag, environ) -> tuple[pathlib.Path, bool
         if not path.is_absolute():
             try:
                 path = _common_dir(repo).parent / path
-            except subprocess.CalledProcessError:
-                pass  # not a checkout: left as written, so it fails to read and refuses
+            except subprocess.CalledProcessError as exc:
+                raise ConfigUnreadable(f"{CONFIG_PATTERNS} is the relative path {value!r}, and "
+                                       "there is no main checkout to resolve it from") from exc
         return path, True
     return default_patterns(repo), False
 
