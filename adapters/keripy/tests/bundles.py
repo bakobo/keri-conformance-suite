@@ -5,7 +5,7 @@ with them, never what a case expects. Imported only on keripy main."""
 import json
 
 from keri.acdc import acdcmap, blindate, regcept
-from keri.core import Blinder, Codens, Counter, SealSource, coring, eventing, signing
+from keri.core import Blinder, Codens, Counter, SealEvent, SealSource, coring, eventing, signing
 from keri.core.coring import MtrDex
 from keri.kering import Kinds, Vrsn_2_0
 
@@ -85,6 +85,29 @@ class Issuer:
         return [signed(e, self.key) for e in self.events]
 
 
+class Group:
+    """A two-key AID whose signing threshold needs both signatures."""
+
+    def __init__(self):
+        self.keys = [signer(11), signer(12)]
+        self.icp = eventing.incept(keys=[k.verfer.qb64 for k in self.keys], isith="2",
+                                   ndigs=[dig(signer(13))], nsith="1", code=MtrDex.Blake3_256,
+                                   **common())
+        self.pre = self.icp.pre
+
+    def kel(self):
+        sigers = [k.sign(self.icp.raw, index=i) for i, k in enumerate(self.keys)]
+        return [GENUS + bytes(eventing.messagize(self.icp, sigers=sigers))]
+
+    def signed(self, serder, index):
+        return exn_signed(serder, self.keys[index], self.icp, index=index)
+
+
+def source_triple(kel_event):
+    """A source seal triple naming a key event of kel_event's AID."""
+    return SealEvent(i=kel_event.pre, s=f"{kel_event.sn:x}", d=kel_event.said)
+
+
 def registry(issuer_pre, uuid=UUID0):
     return regcept(israid=issuer_pre, uuid=uuid, stamp=STAMP0)
 
@@ -128,11 +151,11 @@ def exn(sender, route="/test/hello", prior="", xid="", stamp=STAMP0):
                              attributes={"m": "hello"}, stamp=stamp, **common())
 
 
-def exn_signed(serder, key, est):
+def exn_signed(serder, key, est, index=0):
     """An exchange message with one transferable signature group naming the establishment event
     est of the signer's KEL."""
     tsgs = [(coring.Prefixer(qb64=est.pre), coring.Number(num=est.sn),
-             coring.Diger(qb64=est.said), [key.sign(serder.raw, index=0)])]
+             coring.Diger(qb64=est.said), [key.sign(serder.raw, index=index)])]
     return GENUS + bytes(eventing.messagize(serder, tsgs=tsgs))
 
 
