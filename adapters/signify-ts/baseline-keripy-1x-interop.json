@@ -1,0 +1,75 @@
+{
+  "format": 2,
+  "profile": "keripy-1x-interop",
+  "implementation": {
+    "name": "signify-ts",
+    "version": "0.4.1 (dhh1128/signify-ts fork)",
+    "commit": "c5bc46af038440bf8d42275481b9106abf536cf5"
+  },
+  "verdict": "no-evidence",
+  "cases": {
+    "CESR-0045": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0046": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0047": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0048": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail"
+      }
+    },
+    "CESR-0049": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0050": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0052": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0054": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0057": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    }
+  }
+}
