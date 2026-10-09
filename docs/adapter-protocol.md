@@ -253,6 +253,8 @@ Every stream begins with a genus/version code, as in `acdc.verify`. The adapter 
 
 `verdicts` has one entry per message in `messages`, in order. `on_delivery` is the message's state at quiescence after its own delivery and `verdict` its state after the last message; each is `accepted` if the implementation accepted the message as valid, and `rejected` otherwise. An assertion that a message must be dropped is checked against both readings, so a message accepted on delivery fails it even if it is later rejected; a message the implementation cannot parse or frame is `rejected`, never an error. `reason` is optional and informative. The messages in `kels` get no entry; they are graded by `keri.process` cases, not here.
 
+A reading describes the delivery: the message together with the attachments it arrived with. A second delivery of the same body is read on its own, so a copy whose own attachments do not verify is `rejected` even after an earlier delivery of that body was accepted.
+
 An exchange message may name an ACDC in its `a` field, as an IPEX grant does. `exn.verify` does not judge that ACDC; a case that needs it judged is an `acdc.verify` case. Exchange-message cases name ACDCs by SAID, so that accepting an exchange message never depends on judging the ACDC it names.
 
 `exn.verify` adds no feature. An adapter that lists the operation receives every exchange-message case whose other features it declares.

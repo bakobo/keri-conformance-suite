@@ -124,3 +124,24 @@ def test_keri_process_results_validate():
     response = valid(respond(message))
     state = next(iter(response["result"]["key_states"].values()))
     assert state["kt"] == ["1/2", "1/2"] and state["wits"] == [tk.W1.verfer.qb64]
+
+
+@pytest.mark.main
+def test_acdc_verify_results_validate():
+    import test_acdc as ta
+
+    world = ta.World()
+    for registry in ([world.rip_stream(), world.bup_stream()],
+                     [world.rip_stream(), world.bup_stream(disclose=False)], []):
+        valid(world.verify(registry=registry))
+    valid(world.verify(presented=b"junk"))
+
+
+@pytest.mark.main
+def test_exn_verify_results_validate():
+    import bundles as b
+
+    issuer = b.Issuer(1, 2)
+    message = b.exn_signed(b.exn(issuer.pre), issuer.key, issuer.icp)
+    response = valid(b.exchange(issuer.kel(), [message, b"junk"]))
+    assert len(response["result"]["verdicts"]) == 2

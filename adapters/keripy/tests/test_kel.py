@@ -90,7 +90,8 @@ SEEN = ("seen", "seen", True)
 
 def test_hello_declares_keri_process_and_the_kel_features():
     hello = json.loads(protocol.handle_line(b'{"id":0,"op":"hello","protocol":1}'))["result"]
-    assert hello["operations"] == ["cesr.parse", "cesr.encode", "keri.process"]
+    assert hello["operations"] == ["cesr.parse", "cesr.encode", "keri.process", "acdc.verify",
+                                   "exn.verify"]
     assert set(kel.FEATURES) <= set(hello["features"])
     assert hello["composes"] == []
 
@@ -241,7 +242,7 @@ def test_a_perspective_other_than_validator_is_unsupported():
 
 def test_an_implementation_that_never_quiesces_is_an_error_not_a_reading(monkeypatch):
     counter = iter(range(10**6))
-    monkeypatch.setattr(kel, "fingerprint", lambda db: next(counter))
+    monkeypatch.setattr(kel, "fingerprint", lambda *args: next(counter))
     response = process(signed(icp(), [A0]))
     assert response["error"]["kind"] == "harness"
     assert kel.E_QUIESCENCE in response["error"]["message"]
