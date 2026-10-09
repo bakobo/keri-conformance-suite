@@ -589,12 +589,25 @@ def test_generate_reports_both_pins_of_a_spec_in_one_file(tree):
 
 def test_write_then_committed_round_trips_and_removes_stale_reports(tmp_path):
     (tmp_path / "docs" / "coverage").mkdir(parents=True)
-    (tmp_path / "docs" / "coverage" / "old.md").write_text("stale")
+    (tmp_path / "docs" / "coverage" / "old.md").write_text(cc.NOTICE + "stale")
     (tmp_path / "docs" / "coverage" / "notes.txt").write_text("not owned")
-    files = {"docs/coverage/README.md": b"a\n", "docs/coverage/fake.md": b"b\n"}
+    files = {"docs/coverage/README.md": cc.NOTICE.encode() + b"a\n",
+             "docs/coverage/fake.md": cc.NOTICE.encode() + b"b\n"}
     cc.write(tmp_path, files)
     assert cc.committed(tmp_path) == files
     assert (tmp_path / "docs" / "coverage" / "notes.txt").exists()
+
+
+def test_a_hand_written_markdown_file_beside_the_reports_is_not_owned(tmp_path):
+    """A dated assessment lives in docs/coverage/ but is written by hand, without the notice."""
+    (tmp_path / "docs" / "coverage").mkdir(parents=True)
+    assessment = tmp_path / "docs" / "coverage" / "assessment-2026-10.md"
+    assessment.write_text("# An assessment\n")
+    files = {"docs/coverage/README.md": cc.NOTICE.encode() + b"a\n"}
+    cc.write(tmp_path, files)
+    assert assessment.read_text() == "# An assessment\n"
+    assert cc.committed(tmp_path) == files
+    assert cc.differences(files, cc.committed(tmp_path)) == []
 
 
 def test_differences_names_missing_extra_and_differing_reports():
