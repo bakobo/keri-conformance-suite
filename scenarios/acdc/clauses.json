@@ -29,7 +29,7 @@
     "edge-schema": {
       "section": "Schema, `s` field",
       "level": "MUST",
-      "quote": "The far node ACDC MUST also validate against an Edge block's schema, `s` field when present."
+      "quote": "To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value."
     },
     "field-order": {
       "section": "Field Ordering",
@@ -209,11 +209,6 @@
       "quote": "This list is then serialized as a list in whatever serialization kind is used by the enclosing ACDC (CESR, JSON, CBOR, MGPK).",
       "inference": "Neither this sentence nor line 110 has a keyword, and they describe different pre-images for the aggregate. The worked example at lines 951 to 956 settles JSON: its pre-image is the serialized list with a dummied first entry. Accepting a selectively disclosed ACDC depends on that reading, which rests on an example, so it is graded SHOULD (generators/SPEC-ISSUES.md, A-C1)."
     },
-    "reading-compact_v": {
-      "section": "Version String Field",
-      "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
-      "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD."
-    },
     "registry-head": {
       "section": "Prior event SAID, `p` field",
       "quote": "The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL.",
@@ -229,12 +224,17 @@
     "expand-block": {
       "section": "Most compact form SAID",
       "quote": "First, expand a given block, verify its SAID, expand its enclosed blocks, verify their SAIDs, and so on as deep as needed or until the leaves are reached.",
-      "why": "Line 136 says to verify by first expanding \"a given block\" without saying block-level, which could be read as verifying the top-level SAID over the expanded form. The cases follow the keyworded lines 134 and 142, under which the SAID is taken over the most compact form (generators/SPEC-ISSUES.md, A-C3)."
+      "why": "Line 136 says to verify by first expanding \"a given block\" without saying block-level, which could be read as verifying the top-level SAID over the fully expanded form. The keyworded sentences do not settle it alone: line 142's MUST is about leaf blocks, and line 134's MUSTs require only that a block have one SAID and one way to compute it, which a fully expanded computation would also give. What selects the most compact form for a non-leaf block is the definitional text: line 134's depth-first algorithm and line 147, which compacts every non-leaf block \"with its SAID computed on its block-level expanded form\". The SAID verification protocol (CESR line 1194) checks the value that text defines, and line 136 read as a block-level expansion agrees with it, so the cases follow it (generators/SPEC-ISSUES.md, A-C3)."
     },
     "aggregate-concat": {
       "section": "Selectively Disclosable Aggregate Section Field",
       "quote": "The baseline standard approach is that the Aggregate field value is a cryptographic digest of the concatenation of an ordered set of the SAIDs of blinded Attribute sub-blocks.",
       "why": "Line 110 describes the aggregate as a digest of the concatenated SAIDs; line 714 and the worked example at lines 951 to 956 serialize the list with a dummied first entry. The cases follow line 714 and the example (generators/SPEC-ISSUES.md, A-C1)."
+    },
+    "a-and-A-presence": {
+      "section": "Partially Disclosable Attribute Section Field",
+      "quote": "An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either.",
+      "why": "Line 106 forbids both fields whenever either is present, while line 110 forbids only both being non-empty. An ACDC with a non-empty a and an empty A is forbidden by line 106 and permitted by line 110, and no keyword sentence decides between them. The cases grade only an ACDC with both sections non-empty, which both sentences forbid, and no case grades an empty one until the working group chooses (generators/SPEC-ISSUES.md, A-C7)."
     }
   }
 }

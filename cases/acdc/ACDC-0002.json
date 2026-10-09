@@ -15,20 +15,20 @@
       "expected": "valid",
       "id": "a1",
       "inferred_from": {
-        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
-        "line": 62,
-        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
-        "section": "Version String Field"
+        "inference": "The sentence says what a validator must check, not that it must accept an ACDC that passes. No sentence obliges a validator to accept anything, so that it should report a sound ACDC valid is inferred and graded SHOULD (docs/design.md, ACDC, Verdicts).",
+        "line": 250,
+        "quote": "The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema.",
+        "section": "Composable JSON Schema"
       },
       "level": "SHOULD",
-      "note": "Decision procedure step 7: every check passes, under the design's reading of compact_v."
+      "note": "Decision procedure step 7: every check passes."
     }
   ],
   "dag": {
     "edges": [],
     "root": "EMmm_lqjZwnIk8x0I8xSvAD0dKUVHxPg2KooF1SERsO6"
   },
-  "description": "The ACDC of KS-01 presented with its attribute section expanded. Its top-level SAID is the same most compact SAID (lines 134 and 147), so a validator should find it valid; that it is the same SAID depends on how the most compact form's version string is sized, which the text leaves open (A-B1).",
+  "description": "The ACDC of KS-01 presented with its attribute section expanded. Its top-level SAID is the same most compact SAID (lines 134 and 147), so a validator should find it valid.",
   "id": "ACDC-0002",
   "input": {
     "acdcs": [],

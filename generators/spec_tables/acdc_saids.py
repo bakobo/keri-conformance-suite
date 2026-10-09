@@ -56,13 +56,19 @@ E_READING = "e.input.format.kcs-acdc-reading.f"
 E_STATE = "e.input.format.kcs-acdc-state.f"
 
 CANDIDATES = {
-    "compact_v": ("own", "presented"),
+    "compact_v": ("own",),
     "ascii": (False, True),
     "schema": ("compact", "received"),
     "ts_code": ("tag", "strb64", "bytes"),
     "aggregate": ("list", "concat"),
     "lists": ("opaque", "traverse"),
 }
+
+# Readings the text rules out but the keripy cross-check still reports, to explain a disagreement.
+# Sizing the compact form's version string to the presented form would give each presented form
+# its own SAID, which line 134 forbids ("MUST have only one SAID regardless of how many different
+# variants"), so no grading considers it (generators/SPEC-ISSUES.md, A-B1).
+DIAGNOSTIC = {"compact_v": ("presented",)}
 
 # Tag codes by the number of characters they carry (CESR master table). Tags of 1, 5 and 9
 # characters carry a pre-pad character the CESR text does not name, so they are refused.
@@ -80,7 +86,8 @@ class Readings:
     lists: str = "opaque"
 
     def __post_init__(self):
-        for name, allowed in CANDIDATES.items():
+        for name, candidates in CANDIDATES.items():
+            allowed = candidates + DIAGNOSTIC.get(name, ())
             value = getattr(self, name)
             if not any(value is a if isinstance(a, bool) else value == a for a in allowed):
                 raise ScenarioError(f"{value!r} is not a candidate reading of {name}; the "

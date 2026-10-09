@@ -265,8 +265,8 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 ### A-G7. Whether an edge's failure propagates (lines 1114, 1116, 1211)
 
 - Text. Line 1114: "When any node in a provenance chain is invalid, an Edge pointing to that node MAY also be invalid. If a node has an invalid Edge, then the node MAY also be invalid." The same paragraph continues: "Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid." Line 1116 says the same of trees. Line 1211's `NOT` operator inverts a far node's validity.
-- Gap. A MUST inside "Typically, in a given EGF" binds no one in particular, and the MAYs leave both propagations, from a far node to its edge and from an edge to its near node, to the reader.
-- Effect. Each edge is graded at MUST on the checks lines 1174, 1178, 1199, 1201 and 1205 require of it. Propagation is informative in `acdc-1.0`, and the reading in which a chain must be wholly valid is graded in the non-normative profile `acdc-chain-strict`.
+- Gap. A MUST inside "Typically, in a given EGF" binds no one in particular, and the MAYs leave both propagations, from a far node to its edge and from an edge to its near node, to the reader. Line 1211 implies more than the MAY: it makes an edge valid under `NOT` exactly when its far node is invalid, for any reason, which presupposes that without `NOT` an edge's validity follows its far node's. Line 1114 (MAY) and line 1211 therefore imply different edge semantics.
+- Effect. Each edge is graded at MUST on the checks lines 1174, 1178, 1199, 1201 and 1205 require of it. Propagation is informative in `acdc-1.0`, and the reading in which a chain must be wholly valid is graded in the non-normative profile `acdc-chain-strict`. That decoupling rests on line 1114 alone and is provisional; no first-batch case depends on it, and cases that use `NOT` wait until the text says which semantics holds.
 - The specification should state the default propagation a validator applies when no EGF says otherwise, with a keyword, and how `NOT` interacts with a far node that is invalid for a reason other than the edge's own checks.
 
 ### A-G8. A BLID is a SAID only by analogy (lines 2066, 2141)
@@ -287,8 +287,9 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 ### A-B1. The bytes the most compact SAID is computed over (lines 62, 134-147; CESR lines 1194, 1276, 1289; line 3395)
 
 - Text. Lines 134 to 147 describe compaction. Nothing says what the version string's size field holds in the compact form, which is shorter than an expanded form presented on the wire, or which JSON form the compact serialization takes. Compact JSON (no whitespace, non-ASCII unescaped) appears only in worked examples (CESR lines 1276 and 1289; line 3395). CESR line 1194 says to replace the SAID "in the serialization", which a reader can take to mean the bytes received.
-- Effect. The generator gives `v` the compact serialization's own size, following line 62's statement that the field gives the serialization's size, and serializes compact JSON in UTF-8. A refusal stays MUST only if it holds under every reading. Accepting an ACDC presented in an expanded or partially disclosed form depends on the choice and is graded SHOULD, naming it. First-batch attribute values are ASCII.
-- The specification should state, with a keyword, the size field and the serialization of the most compact form.
+- Resolution in the text, for the size field. Sizing the compact form's `v` to the presented form would give one ACDC a different SAID for each form it is presented in, which line 134 forbids: a compactable block "MUST have only one SAID regardless of how many different variants its `oneOf` compositions allow". Fixing one `v` for every form instead would break CESR line 1129's framing for all forms but one. So the compact serialization's own size is the only reading consistent with both, and line 62 supports it. The spec's own worked example agrees (`tests/test_generators_acdc_saids.py`).
+- Effect. The generator gives `v` the compact serialization's own size and grades nothing against the other reading, which the keripy cross-check still reports as a diagnostic. It serializes compact JSON in UTF-8; that choice stays open, and a refusal stays MUST only if it holds under every reading of it. First-batch attribute values are ASCII.
+- The specification should confirm that the compact form's version string declares the compact serialization's own size, and state with a keyword the serialization of the most compact form.
 
 ### A-B2. The serialization a schema's SAID is taken over (lines 186, 248; CESR line 1194)
 
@@ -327,7 +328,7 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 
 - Text. Line 136: "To verify the SAID, just reverse the process. First, expand a given block, verify its SAID". Lines 134 and 142 fix the SAID as the most compact form's, computed over each block's block-level expanded form (line 147).
 - Gap. Read as "fully expand", line 136 verifies a top-level SAID computed over the fully expanded form, which is keripy 1.x's rule and not 2.00's.
-- Effect. The cases follow the keyworded sentences: an ACDC whose top-level `d` is computed over its fully expanded form is not valid at MUST, with line 136 recorded in `spec_conflicts`.
+- Effect. An ACDC whose top-level `d` is computed over its fully expanded form is not valid at MUST, with line 136 recorded in `spec_conflicts`. The keyworded sentences alone do not decide it: line 142's MUST is about leaf blocks, and line 134's MUSTs require only one SAID and one way to compute it, which a fully expanded computation would also give. What selects the most compact form is line 147's definition, reached through CESR line 1194, which makes verifying the value that text defines a validator's obligation.
 - Correction. Say "block-level expanded" in line 136.
 
 ### A-C4. The registry inception's sequence number label (line 1985)
@@ -345,6 +346,13 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 - Text. Line 318: "The ACDC MUST be "issued by" an Issuer and MUST be "issued to" an Issuee." Lines 126 and 1201 define untargeted ACDCs, which have none.
 - Effect. The cases treat untargeted ACDCs as valid, as the edge rules at line 1201 require.
 - Correction. Qualify line 318 to targeted ACDCs.
+
+### A-C7. The `a` and `A` exclusion: presence (line 106) or non-empty values (line 110)
+
+- Text. Line 106: "An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either." Line 110: "An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either." keripy enforces presence.
+- Gap. An ACDC with a non-empty `a` and an empty `A` is forbidden by line 106 and permitted by line 110, and both sentences carry the keyword, so the rule that a keyword sentence governs cannot decide.
+- Effect. The cases grade only an ACDC with both sections non-empty, which both sentences forbid, and record line 106 in `spec_conflicts`. No case grades an empty section.
+- Correction. Say which: presence, or non-empty values.
 
 ## Editorial (ACDC)
 

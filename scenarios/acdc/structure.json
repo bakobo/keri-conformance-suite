@@ -182,7 +182,7 @@
       "id": "ACDC-0002",
       "key": "KS-02",
       "title": "The same ACDC fully expanded",
-      "description": "The ACDC of KS-01 presented with its attribute section expanded. Its top-level SAID is the same most compact SAID (lines 134 and 147), so a validator should find it valid; that it is the same SAID depends on how the most compact form's version string is sized, which the text leaves open (A-B1).",
+      "description": "The ACDC of KS-01 presented with its attribute section expanded. Its top-level SAID is the same most compact SAID (lines 134 and 147), so a validator should find it valid.",
       "base": "direct",
       "patch": {
         "acdcs": {
@@ -270,7 +270,7 @@
       "id": "ACDC-0006",
       "key": "KS-06",
       "title": "Both an attribute section and an aggregate",
-      "description": "An ACDC with a non-empty a and a non-empty A, its SAIDs correct over the body and sealed. Line 110 forbids both, a rule the issuer must follow.",
+      "description": "An ACDC with a non-empty a and a non-empty A, its SAIDs correct over the body and sealed. Lines 106 and 110 both forbid it, rules the issuer must follow, though they disagree about an empty section.",
       "base": "direct",
       "patch": {
         "acdcs": {
@@ -294,6 +294,9 @@
           }
         }
       },
+      "spec_conflicts": [
+        "a-and-A-presence"
+      ],
       "expect": [
         "A1 1/a-and-A"
       ],

@@ -171,7 +171,7 @@ def _body(stream_hex: str) -> tuple[dict, bytes]:
 def _alternatives() -> list[tuple[str, sa.Readings]]:
     out = []
     for field, values in sa.CANDIDATES.items():
-        for value in values[1:]:
+        for value in values[1:] + sa.DIAGNOSTIC.get(field, ()):
             out.append((f"{field}={value}", sa.Readings(**{field: value})))
     return out
 

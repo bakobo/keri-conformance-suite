@@ -8,7 +8,7 @@
       "check": "edge_valid",
       "clause": {
         "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",
-        "quote": "The far node ACDC MUST also validate against an Edge block's schema, `s` field when present.",
+        "quote": "To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value.",
         "section": "Schema, `s` field",
         "spec": "acdc",
         "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-s-field"

@@ -17,13 +17,13 @@
       "expected": "valid",
       "id": "a1",
       "inferred_from": {
-        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
-        "line": 62,
-        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
-        "section": "Version String Field"
+        "inference": "The sentence says what a validator must check, not that it must accept an ACDC that passes. No sentence obliges a validator to accept anything, so that it should report a sound ACDC valid is inferred and graded SHOULD (docs/design.md, ACDC, Verdicts).",
+        "line": 250,
+        "quote": "The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema.",
+        "section": "Composable JSON Schema"
       },
       "level": "SHOULD",
-      "note": "Decision procedure step 7: every check passes, under the design's reading of compact_v."
+      "note": "Decision procedure step 7: every check passes."
     },
     {
       "check": "edge_reported",
@@ -36,10 +36,10 @@
       },
       "id": "a2",
       "inferred_from": {
-        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
-        "line": 62,
-        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
-        "section": "Version String Field"
+        "inference": "The sentence says what a validator must confirm before an edge is valid, not that it must report an edge that passes. That a validator should report each edge it evaluated, and find a sound edge valid, is inferred and graded SHOULD (docs/design.md, ACDC, Edges).",
+        "line": 1174,
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field"
       },
       "level": "SHOULD",
       "near": "EAIX4MsLS8LopLDCMqxYZWiT0caNSVZCIu_YPcx86cIn",
@@ -58,10 +58,10 @@
       "expected": true,
       "id": "a3",
       "inferred_from": {
-        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
-        "line": 62,
-        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
-        "section": "Version String Field"
+        "inference": "The sentence says what a validator must confirm before an edge is valid, not that it must report an edge that passes. That a validator should report each edge it evaluated, and find a sound edge valid, is inferred and graded SHOULD (docs/design.md, ACDC, Edges).",
+        "line": 1174,
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field"
       },
       "level": "SHOULD",
       "near": "EAIX4MsLS8LopLDCMqxYZWiT0caNSVZCIu_YPcx86cIn",
@@ -79,10 +79,10 @@
       },
       "id": "a4",
       "inferred_from": {
-        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
-        "line": 62,
-        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
-        "section": "Version String Field"
+        "inference": "The sentence says what a validator must confirm before an edge is valid, not that it must report an edge that passes. That a validator should report each edge it evaluated, and find a sound edge valid, is inferred and graded SHOULD (docs/design.md, ACDC, Edges).",
+        "line": 1174,
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field"
       },
       "level": "SHOULD",
       "near": "EKg7SozKJmmjae0QsgVVeff7srOC_rP3A6jgJAz1G-78",
@@ -101,10 +101,10 @@
       "expected": true,
       "id": "a5",
       "inferred_from": {
-        "inference": "Lines 134 to 147 say nothing about the version string's size field in the most compact form, which a presented expanded ACDC does not contain. The generator sizes it to the compact serialization itself, as this sentence says the field gives a serialization's size (generators/SPEC-ISSUES.md, A-B1); accepting an ACDC presented in another form depends on that reading, so it is graded SHOULD.",
-        "line": 62,
-        "quote": "It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body.",
-        "section": "Version String Field"
+        "inference": "The sentence says what a validator must confirm before an edge is valid, not that it must report an edge that passes. That a validator should report each edge it evaluated, and find a sound edge valid, is inferred and graded SHOULD (docs/design.md, ACDC, Edges).",
+        "line": 1174,
+        "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+        "section": "Node, `n` field"
       },
       "level": "SHOULD",
       "near": "EKg7SozKJmmjae0QsgVVeff7srOC_rP3A6jgJAz1G-78",

@@ -21,7 +21,7 @@
           "line": 136,
           "quote": "First, expand a given block, verify its SAID, expand its enclosed blocks, verify their SAIDs, and so on as deep as needed or until the leaves are reached.",
           "section": "Most compact form SAID",
-          "why": "Line 136 says to verify by first expanding \"a given block\" without saying block-level, which could be read as verifying the top-level SAID over the expanded form. The cases follow the keyworded lines 134 and 142, under which the SAID is taken over the most compact form (generators/SPEC-ISSUES.md, A-C3)."
+          "why": "Line 136 says to verify by first expanding \"a given block\" without saying block-level, which could be read as verifying the top-level SAID over the fully expanded form. The keyworded sentences do not settle it alone: line 142's MUST is about leaf blocks, and line 134's MUSTs require only that a block have one SAID and one way to compute it, which a fully expanded computation would also give. What selects the most compact form for a non-leaf block is the definitional text: line 134's depth-first algorithm and line 147, which compacts every non-leaf block \"with its SAID computed on its block-level expanded form\". The SAID verification protocol (CESR line 1194) checks the value that text defines, and line 136 read as a block-level expansion agrees with it, so the cases follow it (generators/SPEC-ISSUES.md, A-C3)."
         }
       ]
     }

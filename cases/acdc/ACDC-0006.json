@@ -21,14 +21,22 @@
         "section": "Selectively Disclosable Aggregate Section Field"
       },
       "level": "SHOULD",
-      "note": "Decided at step 1 (a-and-A). Derivations: step 1 a-and-A: SHOULD, inferred, because line 110 forbids both, a producer rule. Graded at the highest, over the derivations, of the level of each."
+      "note": "Decided at step 1 (a-and-A). Derivations: step 1 a-and-A: SHOULD, inferred, because line 110 forbids both, a producer rule. Graded at the highest, over the derivations, of the level of each.",
+      "spec_conflicts": [
+        {
+          "line": 106,
+          "quote": "An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either.",
+          "section": "Partially Disclosable Attribute Section Field",
+          "why": "Line 106 forbids both fields whenever either is present, while line 110 forbids only both being non-empty. An ACDC with a non-empty a and an empty A is forbidden by line 106 and permitted by line 110, and no keyword sentence decides between them. The cases grade only an ACDC with both sections non-empty, which both sentences forbid, and no case grades an empty one until the working group chooses (generators/SPEC-ISSUES.md, A-C7)."
+        }
+      ]
     }
   ],
   "dag": {
     "edges": [],
     "root": "EAN1EfSFkWXrY2mwms2N0xR53i0bMCuXR1MHj1sb6TGM"
   },
-  "description": "An ACDC with a non-empty a and a non-empty A, its SAIDs correct over the body and sealed. Line 110 forbids both, a rule the issuer must follow. Its positive pair is KS-01 (ACDC-0001), which differs from it only in the defect.",
+  "description": "An ACDC with a non-empty a and a non-empty A, its SAIDs correct over the body and sealed. Lines 106 and 110 both forbid it, rules the issuer must follow, though they disagree about an empty section. Its positive pair is KS-01 (ACDC-0001), which differs from it only in the defect.",
   "id": "ACDC-0006",
   "input": {
     "acdcs": [],

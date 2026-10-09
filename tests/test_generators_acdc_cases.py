@@ -194,8 +194,28 @@ def test_a_direct_should_acceptance_needs_no_inference():
 
 
 def test_an_acceptance_that_depends_on_a_reading_names_it():
+    [case] = grade(scenario("disclosure"), "KS-48")
+    assert case["assertions"][0]["inferred_from"] == INFERENCES["reading-aggregate"]
+
+
+def test_an_expanded_acdc_is_accepted_as_liveness_alone():
+    # Line 134 leaves one reading of the compact form's size field (A-B1), so accepting an
+    # expanded ACDC depends on no open reading.
     [case] = grade(STRUCTURE, "KS-02")
-    assert case["assertions"][0]["inferred_from"] == INFERENCES["reading-compact_v"]
+    assert case["assertions"][0]["inferred_from"] == INFERENCES["liveness"]
+
+
+def test_both_and_A_sentences_are_recorded_against_each_other():
+    [case] = grade(STRUCTURE, "KS-06")
+    [a] = case["assertions"]
+    assert [c["quote"] for c in a["spec_conflicts"]] == [CONFLICTS["a-and-A-presence"]["quote"]]
+
+
+def test_the_edge_schema_refusal_cites_the_validator_sentence():
+    _, comp = grade(EDGES, "KS-42", pairs={"KS-42p": ("ACDC-0048", False)})
+    [a] = comp["assertions"]
+    assert a["clause"]["quote"].startswith("To clarify, the Validator")
+    assert a["level"] == "MUST"
 
 
 def test_an_unframeable_presented_acdc_grades_no_registry():

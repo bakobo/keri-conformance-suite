@@ -413,3 +413,10 @@ def test_the_default_readings_are_the_designs():
                                   "lists"}
     for field, values in sa.CANDIDATES.items():
         assert getattr(d, field) == values[0]
+
+
+def test_the_presented_size_reading_is_a_diagnostic_not_a_candidate():
+    # Under it each presented form would give the ACDC another SAID, which line 134 forbids
+    # (A-B1), so no grading considers it; the keripy cross-check still reports it.
+    assert sa.CANDIDATES["compact_v"] == ("own",)
+    assert sa.DIAGNOSTIC == {"compact_v": ("presented",)}

@@ -433,8 +433,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 1178 | MUST | validator | 0 | 0 | 0 | — | — | — | When present, the Schema `s` field MUST appear immediately following the node `n` field in the Edge sub-block. |
-| 1178 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | negative | ACDC-0050, ACDC-0052, ACDC-0054 | The far node ACDC MUST also validate against an Edge block's schema, `s` field when present. |
-| 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. |
+| 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The far node ACDC MUST also validate against an Edge block's schema, `s` field when present. |
+| 1178 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | negative | ACDC-0050, ACDC-0052, ACDC-0054 | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. |
 | 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | However, when the Schema SAIDs differ, two Schema validation runs MUST be performed. |
 
 #### Operator, `o` field
@@ -1552,7 +1552,6 @@ These quotes are cited by cases but contain no keyword sentence of the pinned te
 
 | Cases | Cited as | Line | Quote |
 |:---|:---|---:|:---|
-| ACDC-0002, ACDC-0043, ACDC-0048, ACDC-0059, ACDC-0062 | inference | 62 | It provides a regular expression target for determining a serialized field map's serialization format and size (character count), constituting an ACDC message body. |
 | ACDC-0063 | inference | 714 | This list is then serialized as a list in whatever serialization kind is used by the enclosing ACDC (CESR, JSON, CBOR, MGPK). |
 | ACDC-0018, ACDC-0019, ACDC-0020, ACDC-0021, ACDC-0022 | inference | 1663 | To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly. |
 | ACDC-0029, ACDC-0031, ACDC-0035, ACDC-0038, ACDC-0040, ACDC-0042 | inference | 1669 | This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL. |
