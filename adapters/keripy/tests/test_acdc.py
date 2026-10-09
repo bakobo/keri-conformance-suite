@@ -142,6 +142,29 @@ def test_a_bare_acdc_without_an_attachment_group_is_one_keripy_cannot_parse():
     assert got["verdict"] == "invalid"
 
 
+def test_a_presented_stream_with_bytes_after_its_acdc_is_unframeable_and_invalid():
+    world = World()
+    got = result(world.verify(presented=b.attached(world.acdc) + b"garbage"))
+    assert (got["verdict"], got["reason"]) == ("invalid", acdc.REASON_UNREADABLE)
+    got = result(world.verify(presented=b.attached(world.acdc) + b.attached(world.acdc)))
+    assert got["verdict"] == "invalid"
+
+
+def test_a_registry_stream_with_bytes_after_its_event_is_dropped():
+    world = World()
+    got = result(world.verify(registry=[world.rip_stream() + b"garbage", world.bup_stream()]))
+    assert got["registry"] is None
+    got = result(world.verify(registry=[world.rip_stream(), world.bup_stream() + b"garbage"]))
+    assert (got["registry"]["n"], got["registry"]["d"]) == (0, world.rip.said)
+
+
+def test_a_kel_stream_with_bytes_after_its_event_is_not_delivered(capsys):
+    world = World()
+    icp, *rest = world.issuer.kel()
+    assert result(world.verify(kels=[icp + b"garbage", *rest]))["registry"] is None
+    assert "not exactly one message" in capsys.readouterr().err
+
+
 def test_requests_are_independent():
     world = World()
     assert result(world.verify())["registry"] is not None

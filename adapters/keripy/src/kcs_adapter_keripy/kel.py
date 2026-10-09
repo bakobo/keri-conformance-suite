@@ -76,19 +76,26 @@ def quiesce(kvy, db, extra=(), tables=TABLES):
                        "the adapter stopped.")
 
 
-def extract(api, stream: bytes):
+def extract(api, stream: bytes, exact=False):
     """keripy's own parse of one message and its attachments (its MsgParseDom), or None if keripy
     cannot parse it. Uses a parser with no processors attached, so parsing never changes keripy's
-    state."""
+    state. With exact, the stream must be that one message and nothing more: bytes keripy's parse
+    leaves over make the stream unframeable as one message, and the answer None."""
+    ims = bytearray(stream)
     try:
-        gen = api.run(parsing.Parser(), bytearray(stream))
+        gen = api.run(parsing.Parser(), ims)
         while True:
             next(gen)
     except StopIteration as done:
-        return done.value
+        exts = done.value
     except Exception as exc:  # noqa: BLE001 - keripy refusing to parse is its answer
         print(f"keripy cannot parse message: {type(exc).__name__}: {exc}", file=sys.stderr)
         return None
+    if exact and ims:
+        print(f"stream is not exactly one message: {len(ims)} bytes follow the first",
+              file=sys.stderr)
+        return None
+    return exts
 
 
 def identify(api, stream: bytes):
@@ -195,6 +202,16 @@ def deliver(parser, stream: bytes):
         parser.parse(ims=bytearray(stream))
     except Exception as exc:  # noqa: BLE001 - keripy refusing a message drops it
         print(f"keripy refused a message: {type(exc).__name__}: {exc}", file=sys.stderr)
+
+
+def deliver_framed(api, parser, stream: bytes):
+    """Hand one stream that must hold exactly one message to keripy, unchanged, and return
+    keripy's parse of it; a stream that is not exactly one message is not delivered, and the
+    answer is None."""
+    exts = extract(api, stream, exact=True)
+    if exts is not None:
+        deliver(parser, stream)
+    return exts
 
 
 def process(request) -> dict:

@@ -87,9 +87,9 @@ def test_the_on_delivery_reading_is_taken_before_later_messages(monkeypatch):
     calls = []
     real = exchange.accepted
 
-    def late(db, ident):
-        calls.append(ident)
-        return real(db, ident) and len(calls) > 1
+    def late(db, delivery):
+        calls.append(delivery)
+        return real(db, delivery) and len(calls) > 1
 
     monkeypatch.setattr(exchange, "accepted", late)
     message = b.exn_signed(b.exn(A.pre), A.key, A.icp)
@@ -136,10 +136,54 @@ def test_a_keripy_exception_while_delivering_is_logged_and_the_message_reported(
     assert "keripy refused a message: ValueError" in capsys.readouterr().err
 
 
-def test_a_copy_of_an_accepted_message_reads_accepted_whatever_its_attachments():
-    # Readings are keyed by SAID, as keri.process keys an event: keripy holds the message as
-    # accepted, although it refused the forged copy's own signatures.
+def test_a_forged_copy_of_an_accepted_message_is_read_on_its_own_attachments():
+    # A reading is about the delivery, the message with the attachments it arrived with; keripy
+    # keeps the genuine delivery and refuses the forged one's signatures.
     body = b.exn(A.pre)
     genuine, forged = b.exn_signed(body, A.key, A.icp), b.exn_signed(body, B.key, A.icp)
+    assert readings(b.exchange(A.kel(), [genuine, forged])) == [ACCEPTED, REJECTED]
     assert readings(b.exchange(A.kel(), [forged, genuine, forged])) == [
-        ("rejected", "accepted"), ACCEPTED, ACCEPTED]
+        REJECTED, ACCEPTED, REJECTED]
+
+
+def test_a_second_genuine_delivery_of_an_accepted_message_is_accepted():
+    message = b.exn_signed(b.exn(A.pre), A.key, A.icp)
+    assert readings(b.exchange(A.kel(), [message, message])) == [ACCEPTED, ACCEPTED]
+
+
+def test_signatures_split_across_deliveries_are_accepted_when_keripy_combines_them_in_escrow():
+    # keripy escrows each partially signed delivery and accepts the message once its escrowed
+    # signatures satisfy the threshold; each delivery whose signatures keripy kept is accepted.
+    group = b.Group()
+    body = b.exn(group.pre)
+    first, second = group.signed(body, 0), group.signed(body, 1)
+    assert readings(b.exchange(group.kel(), [first, second])) == [
+        ("rejected", "accepted"), ACCEPTED]
+
+
+def test_a_forged_partial_signature_in_escrow_is_not_accepted_with_the_genuine_ones():
+    group = b.Group()
+    body = b.exn(group.pre)
+    forged = b.exn_signed(body, B.key, group.icp, index=1)
+    response = b.exchange(group.kel(), [group.signed(body, 0), forged, group.signed(body, 1)])
+    assert readings(response) == [("rejected", "accepted"), REJECTED, ACCEPTED]
+
+
+def test_an_escrowed_delivery_carrying_no_signature_of_its_own_is_not_accepted():
+    # A delivery authenticated only by a source seal of another AID is escrowed by keripy with
+    # no signature of its own; a later genuine delivery does not make it accepted.
+    body = b.exn(A.pre)
+    sealed = b.GENUS + bytes(eventing.messagize(body, bonds=[b.source_triple(B.icp)]))
+    response = b.exchange(A.kel() + B.kel(), [sealed, b.exn_signed(body, A.key, A.icp)])
+    assert readings(response) == [REJECTED, ACCEPTED]
+
+
+def test_a_stream_with_bytes_after_its_message_is_unframeable_and_rejected():
+    message = b.exn_signed(b.exn(A.pre), A.key, A.icp)
+    assert readings(b.exchange(A.kel(), [message + b"garbage"])) == [REJECTED]
+    assert readings(b.exchange(A.kel(), [message + message])) == [REJECTED]
+
+
+def test_a_kel_stream_with_bytes_after_its_event_is_not_delivered():
+    message = b.exn_signed(b.exn(A.pre), A.key, A.icp)
+    assert readings(b.exchange([A.kel()[0] + b"garbage"], [message])) == [REJECTED]

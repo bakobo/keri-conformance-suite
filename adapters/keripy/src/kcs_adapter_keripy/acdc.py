@@ -85,7 +85,7 @@ def registry(api, db, acdc_exts, streams):
     rd = serder.sad.get("rd")
     if not rd:
         return None
-    events = [event for event in (kel.extract(api, s) for s in streams)
+    events = [event for event in (kel.extract(api, s, exact=True) for s in streams)
               if event is not None and isinstance(event.serder, SerderACDC)]
     rip = next((event for event in events
                 if event.serder.ilk == Ilks.rip and event.serder.said == rd), None)
@@ -131,9 +131,9 @@ def verify(request) -> dict:
         kvy = eventing.Kevery(db=db, lax=False, local=False)
         parser = parsing.Parser(kvy=kvy)
         for stream in kels:
-            kel.deliver(parser, stream)
+            kel.deliver_framed(api, parser, stream)
             kel.quiesce(kvy, db)
-        exts = kel.extract(api, presented)
+        exts = kel.extract(api, presented, exact=True)
         if disclosed_acdc(exts) is None:
             return {"verdict": "invalid", "reason": REASON_UNREADABLE, "registry": None,
                     "edges": []}
