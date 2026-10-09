@@ -24,19 +24,28 @@ from keri_conformance.session import AdapterSession, Limits, load_vocabulary
 from keri_conformance.suite import read_suite_version
 
 EXIT_CODES = """\
+A run whose cases carry only INTEROP assertions (a non-normative profile, such as
+keripy-1x-interop) gets an interoperability verdict instead of a conformance one:
+interoperable, not-interoperable, incomplete or no-evidence, from its active INTEROP
+assertions, with the exit codes below. It is never a conformance claim.
+
 exit codes:
-  0  conformant: every MUST assertion in every active case that was run passed
-  1  not-conformant: at least one MUST assertion in an active case failed
+  0  conformant: every MUST assertion in every active case that was run passed; or, for a
+     non-normative profile, interoperable: every active INTEROP assertion evaluated passed
+  1  not-conformant: at least one MUST assertion in an active case failed; or, for a
+     non-normative profile, not-interoperable: an active INTEROP assertion failed
   2  usage error
   3  the adapter's hello was refused: at the start (no case was run), or aborted after a
      restart in which it refused hello or changed it (the report, if --report was given,
      holds the cases completed before that)
   4  runner fault: the adapter could not be started, a case is malformed, the runner is
      running as root or off POSIX, or the report could not be written; also the verdict
-     incomplete: no MUST assertion failed, but an active one uses a check this runner
-     version cannot evaluate; also a run aborted because the adapter's responses passed
-     the 512 MiB budget for retained output (the partial report is written as for 3)
-  5  no-evidence: no active MUST assertion was evaluated, so nothing was shown
+     incomplete: no MUST (or, for a non-normative profile, INTEROP) assertion failed, but an
+     active one uses a check this runner version cannot evaluate; also a run aborted because
+     the adapter's responses passed the 512 MiB budget for retained output (the partial
+     report is written as for 3)
+  5  no-evidence: no active MUST assertion (for a non-normative profile, no active INTEROP
+     assertion) was evaluated, so nothing was shown
 """
 
 CHECK_EXIT_CODES = """\

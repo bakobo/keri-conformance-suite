@@ -6,7 +6,7 @@
     "version": "1.2.14",
     "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f"
   },
-  "verdict": "no-evidence",
+  "verdict": "interoperable",
   "cases": {
     "CESR-0045": {
       "outcome": "not-supported",
