@@ -242,16 +242,16 @@ Deliver KERI exchange messages and report whether each was accepted. Its cases b
  ]}
 ```
 
-Every stream begins with a genus/version code, as in `acdc.verify`. The adapter first delivers `kels` as `acdc.verify` does, driving the implementation to quiescence after each message, and then delivers `messages` in order: `xip` and `exn` messages, each with its attachments. It drives the implementation to quiescence after each message, and reports each message's state at quiescence after the last one.
+Every stream begins with a genus/version code, as in `acdc.verify`. The adapter first delivers `kels` as `acdc.verify` does, driving the implementation to quiescence after each message, and then delivers `messages` in order: `xip` and `exn` messages, each with its attachments. It drives the implementation to quiescence after each message, and reports each message's state twice: at quiescence after its own delivery, and at quiescence after the last message. The first reading is what catches an implementation that accepts a forged message on arrival, acts on it, and later retracts it, as `keri.process` reads each event as seen after its own delivery.
 
 ```json
 {"id": 6, "result": {"verdicts": [
-  {"verdict": "accepted"},
-  {"verdict": "rejected", "reason": "prior SAID does not match"}
+  {"on_delivery": "accepted", "verdict": "accepted"},
+  {"on_delivery": "rejected", "verdict": "rejected", "reason": "prior SAID does not match"}
 ]}}
 ```
 
-`verdicts` has one entry per message in `messages`, in order. `verdict` is `accepted` if the implementation accepted the message as valid, and `rejected` otherwise; a message the implementation cannot parse or frame is `rejected`, never an error. `reason` is optional and informative. The messages in `kels` get no entry; they are graded by `keri.process` cases, not here.
+`verdicts` has one entry per message in `messages`, in order. `on_delivery` is the message's state at quiescence after its own delivery and `verdict` its state after the last message; each is `accepted` if the implementation accepted the message as valid, and `rejected` otherwise. An assertion that a message must be dropped is checked against both readings, so a message accepted on delivery fails it even if it is later rejected; a message the implementation cannot parse or frame is `rejected`, never an error. `reason` is optional and informative. The messages in `kels` get no entry; they are graded by `keri.process` cases, not here.
 
 An exchange message may name an ACDC in its `a` field, as an IPEX grant does. `exn.verify` does not judge that ACDC; a case that needs it judged is an `acdc.verify` case. Exchange-message cases name ACDCs by SAID, so that accepting an exchange message never depends on judging the ACDC it names.
 
