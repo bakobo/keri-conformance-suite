@@ -957,7 +957,7 @@
         "td",
         "ts"
       ],
-      "description": "The verified head of the registry the presented ACDC's top-level rd names (docs/design.md, Registry state): the registry's SAID, and the sequence number, SAID, transaction ACDC SAID and state of the last event in the verified chain. td and ts are null when a blinded state was not disclosed.",
+      "description": "The verified head of the registry the presented ACDC's top-level rd names (docs/design.md, Registry state): the registry's SAID, and the sequence number, SAID, transaction ACDC SAID and state of the last event in the verified chain. td and ts are both null when a blinded state was not disclosed, and otherwise both given.",
       "properties": {
         "rd": {
           "type": "string",
@@ -992,7 +992,29 @@
             }
           ]
         }
-      }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "td": {
+              "type": "null"
+            },
+            "ts": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "td": {
+              "type": "string"
+            },
+            "ts": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "result_verified": {
       "type": "object",

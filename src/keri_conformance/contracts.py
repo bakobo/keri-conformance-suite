@@ -65,9 +65,12 @@ DISPOSITION = all_of(
 SAID = string(min_length=1)
 EDGE_PATH = r"^e(\.[^.]+)+$"
 VERDICTS = ("valid", "invalid", "incomplete")
-# The verified head of a registry; td and ts are null when a blinded state was not disclosed.
-REGISTRY_STATE = obj({"rd": SAID, "n": OFFSET, "d": SAID, "td": nullable(SAID),
-                      "ts": nullable(string())})
+# The verified head of a registry; td and ts are both null when a blinded state was not disclosed.
+REGISTRY_STATE = all_of(
+    obj({"rd": SAID, "n": OFFSET, "d": SAID, "td": nullable(SAID), "ts": nullable(string())}),
+    predicate(lambda value: (value["td"] is None) == (value["ts"] is None),
+              "td and ts both null (an undisclosed blinded state) or both given"),
+)
 EDGE_REPORT = obj({"near": SAID, "path": string(EDGE_PATH), "n": SAID,
                    "valid": enum(True, False)})
 # An exchange message's readings at quiescence after its own delivery and after the last message.

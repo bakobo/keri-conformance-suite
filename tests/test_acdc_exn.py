@@ -171,6 +171,14 @@ def test_a_dag_of_more_than_sixteen_acdcs_is_refused():
     assert "17 ACDCs" in problem
 
 
+def test_an_edge_the_presented_acdc_cannot_reach_is_refused():
+    """Hostile pass on #17: every edge must lie in the presented ACDC's provenance DAG."""
+    dag = {"root": "P", "edges": [{"near": "P", "path": "e.x", "n": "F"},
+                                  {"near": "ORPHAN", "path": "e.y", "n": "G"}]}
+    problem = case_problem(acdc_case("ACDC-0001", ALL_ACDC_CHECKS, dag=dag))
+    assert problem is not None and "ORPHAN" in problem and "cannot reach" in problem
+
+
 def test_a_diamond_counts_its_shared_far_node_once():
     diamond = {"root": "A", "edges": [{"near": "A", "path": "e.l", "n": "B"},
                                       {"near": "A", "path": "e.r", "n": "C"},
@@ -183,8 +191,8 @@ def test_a_diamond_counts_its_shared_far_node_once():
     [{"near": "A", "path": "e.self", "n": "A"}],
     [{"near": "A", "path": "e.x", "n": "B"}, {"near": "B", "path": "e.y", "n": "A"}],
     # A cycle away from the root is still not a DAG.
-    [{"near": "A", "path": "e.x", "n": "B"}, {"near": "C", "path": "e.y", "n": "D"},
-     {"near": "D", "path": "e.z", "n": "C"}],
+    [{"near": "A", "path": "e.x", "n": "B"}, {"near": "B", "path": "e.w", "n": "C"},
+     {"near": "C", "path": "e.y", "n": "D"}, {"near": "D", "path": "e.z", "n": "C"}],
 ])
 def test_a_cycle_is_refused(edges):
     problem = case_problem(acdc_case("ACDC-0001", ALL_ACDC_CHECKS,
@@ -278,6 +286,9 @@ def test_well_formed_results_are_read(op, result):
                                                "valid": True}]}, "path"),
     ("acdc.verify", {**ACDC_RESULT, "edges": [{"near": "", "path": "e.le", "n": "EFar",
                                                "valid": True}]}, "near"),
+    # Hostile pass on #17: td and ts are null together (undisclosed blinded state) or not at all.
+    ("acdc.verify", {**ACDC_RESULT, "registry": {**REGISTRY, "td": None}}, "td"),
+    ("acdc.verify", {**ACDC_RESULT, "registry": {**REGISTRY, "ts": None}}, "td"),
     ("exn.verify", {"verdicts": [{"verdict": "accepted"}]}, "on_delivery"),
     ("exn.verify", {"verdicts": [{"on_delivery": "seen", "verdict": "accepted"}]},
      "on_delivery"),

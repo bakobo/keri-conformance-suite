@@ -230,6 +230,16 @@ def _dag_problem(dag: dict) -> str | None:
             return f'Its provenance DAG lists the edge {edge["path"]} of {edge["near"]} twice.'
         listed.add((edge["near"], edge["path"]))
         children.setdefault(edge["near"], []).append(edge["n"])
+    reached, frontier = {dag["root"]}, [dag["root"]]
+    while frontier:
+        for far in children.get(frontier.pop(), []):
+            if far not in reached:
+                reached.add(far)
+                frontier.append(far)
+    for edge in edges:
+        if edge["near"] not in reached:
+            return (f'Its provenance DAG lists the edge {edge["path"]} of {edge["near"]}, which '
+                    f'the presented ACDC {dag["root"]} cannot reach.')
     depth = {}
     for node in sorted(nodes):
         if _longest(node, children, depth, set()) is None:

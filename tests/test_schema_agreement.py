@@ -286,6 +286,9 @@ def test_the_base_cases_are_valid_in_both():
 @pytest.mark.parametrize("base", BASE_CASES, ids=[c["id"] for c in BASE_CASES])
 def test_case_checks_agree_with_the_case_schema(base):
     found = disagreements(mutations(base), case_problem, CASE_VALIDATOR)
+    # Reachability from the presented ACDC is a runtime rule the schema cannot state; renaming an
+    # edge's near node strands it (see the test below).
+    found = [f for f in found if "cannot reach" not in (case_problem(f[2]) or "")]
     assert found == [], found[:3]
 
 
@@ -353,6 +356,13 @@ def test_trunk_and_condition_indexes_past_the_messages_are_runtime_rules_beyond_
     assert CASE_VALIDATOR.is_valid(case)
     assert "message 2" in case_problem(case)
     assert case_problem(_replace(BASE_CASES[3], ("assertions", a, field), 1)) is None
+
+
+def test_an_unreachable_dag_edge_is_a_runtime_rule_beyond_the_schema():
+    acdc = next(c for c in BASE_CASES if "dag" in c)
+    case = _replace(acdc, ("dag", "edges", 0, "near"), "ESTRANDED")
+    assert CASE_VALIDATOR.is_valid(case)
+    assert "cannot reach" in case_problem(case)
 
 
 def test_duplicate_assertion_ids_are_a_runtime_rule_beyond_the_schema():
