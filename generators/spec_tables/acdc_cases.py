@@ -34,7 +34,10 @@ The grading, per case:
 A case whose liveness assertions need a declinable feature (``acdc.edges``,
 ``acdc.registry.bup``) and that also has MUST or refusal assertions is split: those go to an
 ungated companion the scenario names, because no MUST, and no refusal, hides behind a feature an
-adapter can decline (docs/design.md, ACDC, Features).
+adapter can decline (docs/design.md, ACDC, Features). The one exception is a feature only whose
+performers can make any of a case's assertions, which a scenario names in ``requires``: a seal
+displaced by a recovery rotation is off the trunk only for a validator that performs recovery.
+Such a case is not split and may carry no MUST.
 """
 
 import copy
@@ -54,6 +57,10 @@ WIRE = "ACDCCAACAAJSON"
 BASE_FEATURES = ("acdc.version-2.x", "cesr.genus-2.00", "cesr.serialization.json",
                  "crypto.ed25519", "kel.basic", "keri.version-2.x")
 EDGES, BUP = "acdc.edges", "acdc.registry.bup"
+# Features a scenario may require of a whole case, because only an implementation that performs
+# them can make any of its assertions: a seal displaced by a recovery rotation is off the trunk
+# only for a validator that performs the recovery. Such a case may carry no MUST.
+REQUIRABLE = ("kel.recovery",)
 RANK = {"SHOULD": 1, "MUST": 2}
 
 # Each failing check: the clause it rests on, the inference that grades it below the clause's
@@ -457,6 +464,17 @@ def build_acdc_case(scenario_path: str, case: dict, ev: Evaluation, pairs: dict,
         raise ScenarioError(f"{key}: no assertion survives the grading rules.")
     features = _features(assertions, ev.result)
     gated = len(features) > len(BASE_FEATURES)
+    required = case.get("requires", [])
+    if required:
+        unknown = sorted(set(required) - set(REQUIRABLE))
+        if unknown:
+            raise ScenarioError(f"{key}: requires {unknown!r}; a scenario requires only "
+                                f"{', '.join(REQUIRABLE)}.")
+        if any(a["level"] == "MUST" for a in assertions):
+            raise ScenarioError(f"{key}: requires {', '.join(required)} but has a MUST "
+                                f"assertion, and no MUST is gated behind a feature an adapter "
+                                f"can decline.")
+        features = sorted(set(features) | set(required))
     movers = [a for a in assertions if _mover(a)]
     if gated and movers:
         comp = case.get("companion")

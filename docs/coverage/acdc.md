@@ -110,7 +110,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | 95 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)]. |
 | 95 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Each AID SHOULD have set of one or more Controllers who each control a private key. |
 | 95 | MUST | untestable: States that no relationship is required; there is nothing to test. | 0 | 0 | 0 | — | — | — | No shared or trusted relationship between the Controllers and Verifiers is REQUIRED. |
-| 95 | MUST | validator, security | 0 | 6 | 0 | SHOULD 6 | negative | ACDC-0018 (inferred), ACDC-0019 (inferred), ACDC-0020 (inferred), ACDC-0021 (inferred), ACDC-0022 (inferred), ACDC-0023 (inferred) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
+| 95 | MUST | validator, security | 0 | 7 | 0 | SHOULD 7 | negative | ACDC-0018 (inferred), ACDC-0019 (inferred), ACDC-0020 (inferred), ACDC-0021 (inferred), ACDC-0022 (inferred), ACDC-0023 (inferred), ACDC-0066 (inferred) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
 
 #### Datetime, `dt` Fields
 
@@ -243,7 +243,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 | 246 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Validator determines what decomposed variants the provided ACDC MUST also validate against. |
 | 248 | MUST | validator, security | 1 | 0 | 0 | MUST 1 | negative | ACDC-0010 | Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID. |
 | 248 | MUST | validator, security | 0 | 0 | 0 | — | — | — | It also MUST validate against one of its specified `oneOf` variants. |
-| 250 | MUST | validator, security | 3 | 8 | 0 | MUST 3, SHOULD 8 | both | ACDC-0001 (inferred), ACDC-0002 (inferred), ACDC-0007, ACDC-0011, ACDC-0015, ACDC-0024 (inferred), ACDC-0025 (inferred), ACDC-0043 (inferred), ACDC-0048 (inferred), ACDC-0059 (inferred), ACDC-0062 (inferred) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. |
+| 250 | MUST | validator, security | 3 | 10 | 0 | MUST 3, SHOULD 10 | both | ACDC-0001 (inferred), ACDC-0002 (inferred), ACDC-0007, ACDC-0011, ACDC-0015, ACDC-0024 (inferred), ACDC-0025 (inferred), ACDC-0043 (inferred), ACDC-0048 (inferred), ACDC-0059 (inferred), ACDC-0062 (inferred), ACDC-0065 (inferred), ACDC-0067 (inferred) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. |
 | 250 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | In contrast, the compliance of the provided composed schema for an expected ACDC type SHOULD be enforced by the Validator. |
 
 #### Cargo, `cargo` field
@@ -1553,7 +1553,7 @@ These quotes are cited by cases but contain no keyword sentence of the pinned te
 | Cases | Cited as | Line | Quote |
 |:---|:---|---:|:---|
 | ACDC-0063 | inference | 714 | This list is then serialized as a list in whatever serialization kind is used by the enclosing ACDC (CESR, JSON, CBOR, MGPK). |
-| ACDC-0018, ACDC-0019, ACDC-0020, ACDC-0021, ACDC-0022 | inference | 1663 | To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly. |
+| ACDC-0018, ACDC-0019, ACDC-0020, ACDC-0021, ACDC-0022, ACDC-0066 | inference | 1663 | To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly. |
 | ACDC-0029, ACDC-0031, ACDC-0035, ACDC-0038, ACDC-0040, ACDC-0042 | inference | 1669 | This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL. |
 | ACDC-0025, ACDC-0026, ACDC-0027, ACDC-0036, ACDC-0037 | inference | 2062 | A group consists of its count code followed by one or more Blinded attribute blocks, where each block is composed of a concatenation of the four fields serialized in order as CESR primitives that are appropriate for the BLID, UUID, ACDC SAID, and transaction state string fields in that block. |
 | ACDC-0039, ACDC-0041 | inference | 2066 | A BLID is effectively a type of SAID. |

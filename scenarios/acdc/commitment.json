@@ -214,28 +214,45 @@
     {
       "id": "ACDC-0020",
       "key": "KS-20c",
-      "title": "Seal reference with a digest that is not the event's",
-      "description": "The attached reference names the issuer's interaction event by sequence number with a digest that is not that event's, and no event in the KEL seals the ACDC.",
+      "title": "Seal reference whose digest names a superseded event",
+      "description": "The issuer seals the ACDC in an interaction event, then recovers with a rotation at the same sequence number that supersedes it and seals something else. The attached reference names the sequence number with the superseded interaction's digest, which is not the digest of the trunk event there. The seal is seen but off the trunk: a validator that resolves the reference by digest, or searches every seen event, accepts an ACDC sealed with a key the issuer has recovered from, which is the forgery line 1663 says the seal protects against. Only a validator that performs the recovery can tell, so the case requires kel.recovery.",
       "base": "direct",
-      "patch": {
-        "events": {
-          "ixn1": {
-            "a": []
+      "append": {
+        "events": [
+          {
+            "name": "rot1",
+            "aid": "I",
+            "t": "rot",
+            "prior": "Iicp",
+            "keys": [
+              "i1"
+            ],
+            "next": [
+              "i2"
+            ],
+            "a": [
+              {
+                "event": "Hicp"
+              }
+            ]
           }
-        },
-        "acdcs": {
-          "A1": {
-            "source_seal": {
-              "event": "ixn1",
-              "wrong_said": "not-ixn1"
-            }
+        ],
+        "kels": [
+          {
+            "event": "rot1",
+            "sigs": [
+              "i1"
+            ]
           }
-        }
+        ]
       },
+      "requires": [
+        "kel.recovery"
+      ],
       "expect": [
         "A1 4/no-commitment"
       ],
-      "pair": "KS-01"
+      "pair": "KS-25q"
     },
     {
       "id": "ACDC-0021",
@@ -365,6 +382,150 @@
           }
         ]
       },
+      "expect": []
+    },
+    {
+      "id": "ACDC-0065",
+      "key": "KS-25p",
+      "title": "Sealed again after a recovery",
+      "description": "The issuer seals the ACDC in an interaction event, then recovers with a rotation at the same sequence number that supersedes it and seals the ACDC again. No reference is attached, so a validator finds the seal on the trunk itself. A validator that performs the recovery should find the ACDC valid, so the case requires kel.recovery.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "source_seal": null
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "rot1",
+            "aid": "I",
+            "t": "rot",
+            "prior": "Iicp",
+            "keys": [
+              "i1"
+            ],
+            "next": [
+              "i2"
+            ],
+            "a": [
+              {
+                "acdc": "A1"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "rot1",
+            "sigs": [
+              "i1"
+            ]
+          }
+        ]
+      },
+      "requires": [
+        "kel.recovery"
+      ],
+      "expect": []
+    },
+    {
+      "id": "ACDC-0066",
+      "key": "KS-25",
+      "title": "Sealed only in a superseded event",
+      "description": "As KS-25p, but the recovery rotation seals something else, so the only seal of the ACDC is in the superseded interaction, seen but off the trunk. A validator that searches every seen event for the seal accepts an ACDC sealed with a key the issuer has recovered from, which is the forgery line 1663 says the seal protects against. Only a validator that performs the recovery can tell, so the case requires kel.recovery.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "source_seal": null
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "rot1",
+            "aid": "I",
+            "t": "rot",
+            "prior": "Iicp",
+            "keys": [
+              "i1"
+            ],
+            "next": [
+              "i2"
+            ],
+            "a": [
+              {
+                "event": "Hicp"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "rot1",
+            "sigs": [
+              "i1"
+            ]
+          }
+        ]
+      },
+      "requires": [
+        "kel.recovery"
+      ],
+      "expect": [
+        "A1 4/no-commitment"
+      ],
+      "pair": "KS-25p"
+    },
+    {
+      "id": "ACDC-0067",
+      "key": "KS-25q",
+      "title": "Sealed again after a recovery, by reference",
+      "description": "As KS-25p, with a reference to the recovery rotation that seals the ACDC attached. A validator that performs the recovery should find the ACDC valid, so the case requires kel.recovery.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "source_seal": "rot1"
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "rot1",
+            "aid": "I",
+            "t": "rot",
+            "prior": "Iicp",
+            "keys": [
+              "i1"
+            ],
+            "next": [
+              "i2"
+            ],
+            "a": [
+              {
+                "acdc": "A1"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "rot1",
+            "sigs": [
+              "i1"
+            ]
+          }
+        ]
+      },
+      "requires": [
+        "kel.recovery"
+      ],
       "expect": []
     }
   ]

@@ -238,6 +238,18 @@ def test_issuer_key_state_and_commitment():
     assert tags(run(frag)[0].presented) == ["4/no-commitment"]
 
 
+def test_a_seal_in_a_superseded_event_commits_nothing():
+    """A recovery rotation displaces the interaction that seals the ACDC: the seal is seen but off
+    the trunk, so it is no commitment; sealed again on the new trunk, it is."""
+    frag = base()
+    frag["events"].append({"name": "rot1", "aid": "I", "t": "rot", "prior": "Iicp",
+                           "keys": ["I1"], "next": ["I2"], "a": [{"event": "Hicp"}]})
+    frag["kels"].append({"event": "rot1", "sigs": ["I1"]})
+    assert tags(run(frag)[0].presented) == ["4/no-commitment"]
+    frag["events"][-1]["a"] = [{"acdc": "A1"}]
+    assert tags(run(frag)[0].presented) == []
+
+
 def test_kels_that_end_differently_under_different_keep_policies_are_refused():
     frag = base()
     frag["events"].insert(1, {"name": "Iicp", "aid": "I", "t": "icp", "keys": ["I0", "I9"],

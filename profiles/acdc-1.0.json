@@ -64,7 +64,10 @@
     "ACDC-0061",
     "ACDC-0062",
     "ACDC-0063",
-    "ACDC-0064"
+    "ACDC-0064",
+    "ACDC-0065",
+    "ACDC-0066",
+    "ACDC-0067"
   ],
   "name": "acdc-1.0",
   "normative": true,

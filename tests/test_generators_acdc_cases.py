@@ -271,6 +271,27 @@ def test_another_protocol_is_a_producer_rule_and_a_misdeclared_size_a_parser_one
     assert "inferred_from" not in size and "step 1 (unframeable)" in size["note"]
 
 
+def test_a_refusal_only_recovery_can_make_requires_it_and_is_not_split():
+    commitment = scenario("commitment")
+    [case] = grade(commitment, "KS-25", pairs={"KS-25p": ("ACDC-0065", False)})
+    assert "kel.recovery" in case["targets"]["features"]
+    [a] = case["assertions"]
+    assert (a["check"], a["level"], a["expected"]) == ("verdict", "SHOULD", "not-valid")
+    [positive] = grade(commitment, "KS-25p")
+    assert "kel.recovery" in positive["targets"]["features"]
+
+
+def test_a_required_feature_never_gates_a_must():
+    with pytest.raises(ScenarioError, match="requires"):
+        grade(STRUCTURE, "KS-03", pairs={"KS-02": ("ACDC-0002", False)},
+              requires=["kel.recovery"])
+
+
+def test_only_a_known_feature_may_be_required():
+    with pytest.raises(ScenarioError, match="requires"):
+        grade(STRUCTURE, "KS-01", requires=["acdc.teleport"])
+
+
 def test_found_names_an_unnamed_presented_acdc_by_its_role():
     result = am.Result(am.Node({"d": "Ex"}, [am.Failure(1, "said")]), {}, [])
     assert ac.found(result, {}) == ["presented 1/said"]
