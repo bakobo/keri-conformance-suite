@@ -490,3 +490,97 @@ def test_a_key_event_delivered_as_an_exchange_message_is_refused():
     kels, _ = built(case([LONE], [deliver("lone", OK)]))
     with pytest.raises(ScenarioError, match="not an exchange message"):
         exn_build.run(T, kels, [kels[1]])
+
+
+# --- Hostile pass on #23 ----------------------------------------------------------------------
+
+
+def _signed_lone():
+    """KERI-0077's shape: a lone exn and its signed stream, split into body and attachments."""
+    kels, streams = built(case([LONE], [deliver("lone", OK)]))
+    data = streams[0].removeprefix(keri_events.GENUS_CODE.encode())
+    size = b64.b64_to_int(data[20:24].decode())
+    return kels, data[:size], data[size:]
+
+
+def test_signatures_placed_before_the_body_do_not_authenticate_it():
+    """Moving the attachment group of KERI-0077 ahead of the body leaves the body with nothing
+    attached, so it is unsigned and dropped at MUST, not accepted."""
+    kels, raw, att = _signed_lone()
+    genus = keri_events.GENUS_CODE.encode()
+    assert exn_build.run(T, kels, [genus + raw + att]).initial[0].tag == OK
+    m = exn_build.run(T, kels, [genus + att + raw])
+    assert m.initial[0].tag == "2/unsigned"
+    assert m.parsed[0].groups == []
+
+
+def test_a_signature_group_not_immediately_following_the_body_does_not_authenticate_it():
+    """Only the attachments group directly after the body is its attachments: a bare -X group
+    outside one, or a second group after the first, attaches nothing."""
+    kels, raw, att = _signed_lone()
+    genus = keri_events.GENUS_CODE.encode()
+    bare = att[4:]  # the -X group without the -C counter around it
+    assert exn_build.run(T, kels, [genus + raw + bare]).initial[0].tag == "2/unsigned"
+    m = exn_build.run(T, kels, [genus + raw + att + att])
+    assert m.initial[0].tag == OK and len(m.parsed[0].groups) == 1
+
+
+def test_the_builder_places_signatures_before_the_body_only_for_a_refusal():
+    c = case([LONE], [deliver("lone", "2/unsigned", placement="before-body")])
+    _, streams = built(c)
+    _, raw, att = _signed_lone()
+    assert streams[0] == keri_events.GENUS_CODE.encode() + att + raw
+    a, _ = _by_message(c)
+    assert a[0]["expected"] == "rejected" and a[0]["clause"] == CLAUSES["drop-unsigned"][1]
+    with pytest.raises(ScenarioError, match="before the body") as e:
+        built(case([LONE], [deliver("lone", OK, placement="before-body")]))
+    assert e.value.code == "e.input.format.kcs-scenario.f"
+    with pytest.raises(ScenarioError, match="placement"):
+        built(case([LONE], [deliver("lone", OK, placement="sideways")]))
+
+
+@pytest.mark.parametrize("dt", [
+    "yesterday",
+    "",
+    "2025-07-04T17:50:00+00:00",  # no microseconds
+    "2025-07-04T17:50:00.000+00:00",  # milliseconds
+    "2025-07-04T17:50:00.000000",  # no UTC offset
+    "2025-07-04T17:50:00.000000Z",  # not the offset form of the specification's example
+    "2025-07-04 17:50:00.000000+00:00",
+    "2025-13-04T17:50:00.000000+00:00",  # no such month
+    "2025-07-04T17:50:00.000000+24:00",  # no such offset
+    "2025-07-04T17:50:00.000000+00:00\n",
+    5,
+])
+def test_a_positive_scenario_with_a_malformed_datetime_is_refused(dt):
+    """KERI line 983: dt MUST be the ISO-8601 datetime string with microseconds and UTC offset
+    as per RFC-3339. The model does not grade dt, so it refuses to call such a message accepted."""
+    with pytest.raises(ScenarioError, match="datetime") as e:
+        make(case([{**LONE, "dt": dt}], [deliver("lone", OK)]))
+    assert e.value.code == "e.input.format.kcs-scenario.f"
+
+
+@pytest.mark.parametrize("dt", ["2025-07-04T17:50:00.000000+00:00",
+                                "2020-08-22T17:50:09.988921-05:30"])
+def test_a_well_formed_datetime_is_accepted(dt):
+    assert tags(case([{**LONE, "dt": dt}], [deliver("lone", OK)])) == [[OK, OK]]
+
+
+def test_a_refusal_scenario_may_carry_a_malformed_datetime():
+    c = case([{**LONE, "dt": "yesterday"}], [deliver("lone", "2/unsigned", sigs=[])])
+    assert tags(c) == [["2/unsigned"] * 2]
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_a_scenario_value_that_is_not_json_is_refused(value):
+    with pytest.raises(ScenarioError, match="not JSON") as e:
+        built(case([{**LONE, "a": {"n": value}}], [deliver("lone", OK)]))
+    assert e.value.code == "e.input.format.kcs-scenario.f"
+
+
+def test_a_delivered_body_carrying_nan_is_unparseable():
+    kels, raw, att = _signed_lone()
+    bad = raw.replace(b'"a":{"acdc":', b'"a":{"n":NaN,"acdc":')
+    bad = bad.replace(raw[:24], raw[:20] + b64.int_to_b64(len(bad), 4).encode())
+    m = exn_build.run(T, kels, [keri_events.GENUS_CODE.encode() + bad + att])
+    assert m.initial[0].tag == "1/unparseable"

@@ -38,7 +38,9 @@ guessed at.
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass, field
+from datetime import datetime
 
 from . import encoding, keri_model
 from .decoding import Parser, Rejected
@@ -71,6 +73,13 @@ FIELDS = {
 # Every exchange-message case needs the KERI base features and whatever its KELs need.
 FEATURES_BASE = BASE_FEATURES
 DEFAULT_DT = "2025-07-04T17:50:00.000000+00:00"
+# KERI line 983: "the ISO-8601 datetime string with microseconds and UTC offset as per IETF
+# RFC-3339", as in its example `2020-08-22T17:50:09.988921+00:00`. The pattern fixes the shape;
+# ``datetime.fromisoformat`` then refuses a date, time or offset that does not exist.
+DATETIME = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}[+-]\d{2}:\d{2}")
+# Where a delivery's signature groups go: after the body they attach to, or, for a scenario that
+# shows they then authenticate nothing, before it.
+PLACEMENTS = ("after-body", "before-body")
 ACCEPTED = "accepted"
 # The clause and inference that grade each refusal (docs/design.md, IPEX). A field-set refusal
 # cites the field order of its message type, graded MUST through line 1737, which counts "the
@@ -115,6 +124,16 @@ class Exchange:
 class Message:
     stream: bytes
     source: str
+
+
+def well_formed_dt(dt) -> bool:
+    if not isinstance(dt, str) or not DATETIME.fullmatch(dt):
+        return False
+    try:
+        datetime.fromisoformat(dt)
+    except ValueError:
+        return False
+    return True
 
 
 def nonce(t: Tables, label: str) -> str:
@@ -212,9 +231,19 @@ class ExchangeBuilder:
         if name not in self.built:
             raise ScenarioError(f"No exchange is named {name!r}.")
         ex = self.built[name]
+        placement = delivery.get("placement", "after-body")
+        if placement not in PLACEMENTS:
+            raise ScenarioError(f"{name}: {placement!r} is not a signature placement "
+                                f"({', '.join(PLACEMENTS)}).")
+        if placement == "before-body" and f"4/{ACCEPTED}" in (delivery.get("expect") or []):
+            raise ScenarioError(f"{name}: signatures placed before the body attach to nothing, "
+                                f"so only a refusal scenario may place them there.")
         groups = [self._group(ex, g) for g in delivery.get("sigs", [])]
-        attachments = self.events._group("-C", groups) if groups else ""
-        return Message(GENUS_CODE.encode() + ex.raw + attachments.encode(),
+        attachments = (self.events._group("-C", groups) if groups else "").encode()
+        if placement == "before-body":
+            return Message(GENUS_CODE.encode() + attachments + ex.raw,
+                           delivery.get("source", "sender"))
+        return Message(GENUS_CODE.encode() + ex.raw + attachments,
                        delivery.get("source", "sender"))
 
     def kel_message(self, delivery: dict) -> Message:
@@ -246,19 +275,36 @@ class Parsed:
         return self.body.get("d")
 
 
+def _not_json(name: str):
+    raise ValueError(f"{name} is not JSON")
+
+
 def parse(t: Tables, stream: bytes) -> Parsed:
+    """The message and the signature groups attached to it. Attachments follow the body they
+    attach to: only the attachments group immediately after the body is read, and anything
+    before the body or after that group authenticates nothing."""
     try:
         items = Parser(t).parse(stream)
     except Rejected as e:
         return Parsed(error=f"unparseable: {e}")
-    messages = [it for it in items if it["kind"] == "message"]
-    if len(messages) != 1:
+    at = [i for i, it in enumerate(items) if it["kind"] == "message"]
+    if len(at) != 1:
         return Parsed(error="unparseable: not exactly one message")
-    m = messages[0]
+    m = items[at[0]]
     raw = stream[m["start"]:m["end"]]
-    p = Parsed(body=json.loads(raw), raw=raw)
+    try:
+        body = json.loads(raw, parse_constant=_not_json)
+    except ValueError:
+        return Parsed(error="unparseable: the body is not JSON")
+    p = Parsed(body=body, raw=raw)
+    after = items[at[0] + 1:]
+    if not after or after[0]["kind"] != "counter" or after[0]["code"] != "-C":
+        return p
+    end = after[0]["group_end"]
     group, prims = None, []
-    for it in items:
+    for it in after:
+        if it["start"] >= end:
+            break
         if it["kind"] == "counter" and it["code"] == "-X":
             group, prims = Group("", 0, ""), []
             p.groups.append(group)
@@ -274,7 +320,7 @@ def parse(t: Tables, stream: bytes) -> Parsed:
         elif it["kind"] == "indexed" and group is not None:
             group.sigs.append(keri_model.Sig(it["code"], it["index"], it.get("ondex"),
                                              bytes.fromhex(it["raw"])))
-        elif it["kind"] != "genus" and it["kind"] != "message":
+        else:
             p.other = True
     return p
 
@@ -389,6 +435,10 @@ class Model:
         reason = self._linked(p)
         if reason:
             return Outcome("rejected", 3, reason)
+        if not well_formed_dt(p.body["dt"]):
+            raise ScenarioError(f"The message's dt {p.body['dt']!r} is not an RFC-3339 datetime "
+                                f"with microseconds and a UTC offset (KERI line 983); the model "
+                                f"does not grade dt, so it does not call the message accepted.")
         self.accepted.add(p.said)
         if p.body["t"] == "xip":
             self.transactions[p.said] = [p.said]
