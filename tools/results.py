@@ -75,7 +75,8 @@ MAX_LABEL = 256
 KINDS = ("reproduced", "submitted")
 CASE_ID = "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
 PROFILE = "^[a-z0-9][a-z0-9.-]{0,63}$"
-SUITE_VERSION = r"^[0-9]+(\.[0-9]+){1,3}[A-Za-z0-9.+-]{0,32}$"
+# Components are sorted as integers, so each is short, and a suffix cannot start with a digit.
+SUITE_VERSION = r"^[0-9]{1,9}(\.[0-9]{1,9}){1,3}([A-Za-z+-][A-Za-z0-9.+-]{0,31})?$"
 DATE = "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
 RUN_URL = r"^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/actions/runs/[0-9]+(/attempts/[0-9]+)?$"
 PR_URL = r"^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/pull/[0-9]+$"
@@ -153,6 +154,8 @@ def slug(text: str) -> str | None:
     value = re.sub(r"[^a-z0-9.+_-]+", "-", text.lower()).strip("-.")
     if not value or len(value) > MAX_SLUG or not value[0].isalnum():
         return None
+    if value == "index" or value.endswith(".md"):
+        return None  # results/index.md and every page are markdown files the site writes
     return value
 
 
@@ -190,6 +193,10 @@ def _meaning_problem(report: dict) -> str | None:
         if entry["profile"] != profile:
             return (f"the case {entry['id']} is in the profile {json.dumps(entry['profile'])}, "
                     f"but the report was run for {profile}")
+        if entry["failure"] is not None and any(r["outcome"] != "fail"
+                                                for r in entry["assertions"]):
+            return (f"the case {entry['id']} records an adapter failure, but not every one of "
+                    "its assertions failed")
         if _case_outcome(entry) != entry["outcome"]:
             return (f"the case {entry['id']} has the outcome {entry['outcome']}, which its "
                     "assertions' outcomes do not imply")
@@ -236,7 +243,13 @@ def _discover(root: Path, max_files: int, max_total_bytes: int) -> list[Path]:
     """Every result file under `root`, refusing anything outside the layout and stopping, before
     any file is read, at more than `max_files` files or `max_total_bytes` bytes."""
     found, total = [], 0
-    for directory, dirnames, filenames in os.walk(root):
+    def unreadable(exc: OSError):
+        transient = exc.errno in TRANSIENT_ERRNOS
+        raise RunnerError(E_RESULT_READ_TRANSIENT if transient else E_RESULT_READ,
+                          f"The results directory {exc.filename} could not be scanned: "
+                          f"{exc.strerror or exc}.") from exc
+
+    for directory, dirnames, filenames in os.walk(root, onerror=unreadable):
         dirnames.sort()
         depth = len(Path(directory).relative_to(root).parts)
         for name in sorted(dirnames + filenames):

@@ -71,6 +71,33 @@ def test_an_unpublishable_name_is_refused():
     assert "version" in R.result_problem(result(report(version="..")))
 
 
+def test_a_case_whose_adapter_failed_must_fail_every_assertion():
+    """Hostile pass on #18: a failure recorded on a case cannot sit beside passing assertions."""
+    entry = case()
+    entry["failure"] = {"kind": "timeout", "detail": "adapter never answered"}
+    assert "failure" in R.result_problem(result(report([entry])))
+    failed = case(outcome="fail", records=[record(outcome="fail", detail="adapter never answered")])
+    failed["failure"] = {"kind": "timeout", "detail": "adapter never answered"}
+    assert R.result_problem(result(report([failed]))) is None
+
+
+@pytest.mark.parametrize("name", ["index", "Index", "index.md", "keripy.md"])
+def test_a_name_that_collides_with_a_page_is_refused(name):
+    """Hostile pass on #18: results/index.md is the index page, so no slug may be "index" or end
+    in ".md"."""
+    assert "name" in R.result_problem(result(report(name=name)))
+    assert "version" in R.result_problem(result(report(version=name)))
+
+
+def test_a_suite_version_component_is_bounded():
+    """Hostile pass on #18: the site sorts versions numerically, so each component is short."""
+    assert R.result_problem(result(report(suite_version="999999999.1"))) is None
+    assert "suite_version" in R.result_problem(result(report(suite_version="1" * 10 + ".1")))
+    # A suffix may not carry digits on into the last component (panel review of the fix).
+    assert "suite_version" in R.result_problem(result(report(suite_version="1.0.0.1234567890")))
+    assert R.result_problem(result(report(suite_version="0.1.0-rc.1"))) is None
+
+
 def test_a_case_from_another_profile_is_refused():
     doc = result(report([case(profile="keri-1.0")]))
     assert "profile" in R.result_problem(doc)
@@ -140,6 +167,20 @@ def test_load_reads_every_result_sorted(tmp_path):
 
 def test_load_of_an_empty_tree_is_empty(tmp_path):
     assert R.load_results(tmp_path, kinds=("submitted",)) == []
+
+
+def test_a_directory_that_cannot_be_scanned_is_refused(tmp_path, monkeypatch):
+    """Hostile pass on #18: os.walk swallows scan errors unless told otherwise."""
+    put(tmp_path, result())
+    real = os.scandir
+
+    def deny(path):
+        if str(path) == str(tmp_path):
+            raise PermissionError(errno.EACCES, "denied", str(path))
+        return real(path)
+
+    monkeypatch.setattr(os, "scandir", deny)
+    refused(R.E_RESULT_READ, R.load_results, tmp_path, kinds=("submitted",))
 
 
 def test_a_missing_directory_is_refused(tmp_path):

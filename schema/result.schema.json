@@ -178,7 +178,7 @@
       "properties": {
         "report_version": {"const": 1},
         "runner_version": {"$ref": "#/$defs/label"},
-        "suite_version": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+){1,3}[A-Za-z0-9.+-]{0,32}$"},
+        "suite_version": {"type": "string", "pattern": "^[0-9]{1,9}(\\.[0-9]{1,9}){1,3}([A-Za-z+-][A-Za-z0-9.+-]{0,31})?$"},
         "protocol_version": {"type": "integer", "minimum": 1},
         "supported_protocols": {"type": "array", "items": {"type": "integer", "minimum": 1}, "minItems": 1},
         "negotiated_protocol": {"type": "integer", "minimum": 1},

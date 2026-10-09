@@ -116,15 +116,16 @@ def test_a_profile_a_row_lacks_is_marked_not_run():
 def test_detail_page_states_the_claim_and_every_case():
     failing = case("CESR-0002", outcome="fail",
                    records=[record("a1", outcome="fail", detail="it <b>accepted</b> " + "x" * 400),
-                            record("a2", level="SHOULD", self_agreement=True)])
+                            record("a2", level="SHOULD", outcome="fail", detail="no answer")])
     failing["failure"] = {"kind": "timeout", "detail": "no answer"}
+    agreeing = case("CESR-0004", records=[record("a2", level="SHOULD", self_agreement=True)])
     unsupported = case("CESR-0003", outcome="not-supported",
                        records=[record(outcome="not-supported")])
     unsupported["missing_features"] = ["cesr.native"]
     unsupported["missing_operation"] = "cesr.encode"
     aborted = {"code": "e.x.f", "reason": "it stopped <here>", "problems": [],
                "at_case": "CESR-0003", "exit_code": 3}
-    doc = result(report([case(), failing, unsupported], aborted=aborted), SUBMITTED)
+    doc = result(report([case(), failing, unsupported, agreeing], aborted=aborted), SUBMITTED)
     pages = S.render_results(loaded(doc))
     page = pages["results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
     assert page.startswith("# keripy 2\\.1\\.0\\.dev1, profile cesr\\-1\\.0\n")
@@ -326,15 +327,17 @@ def _string_paths(value, path=()):
 def _rich_docs():
     failing = case("CESR-0002", outcome="fail",
                    records=[record("a1", outcome="fail", detail="d"),
-                            record("a2", level="SHOULD", self_agreement=True)])
+                            record("a2", level="SHOULD", outcome="fail", detail="d")])
     failing["failure"] = {"kind": "timeout", "detail": "no answer"}
+    agreeing = case("CESR-0004", records=[record("a2", level="SHOULD", self_agreement=True)])
     unsupported = case("CESR-0003", outcome="not-supported",
                        records=[record(outcome="not-supported")])
     unsupported["missing_features"] = ["cesr.native"]
     unsupported["missing_operation"] = "cesr.encode"
     aborted = {"code": "e.x.f", "reason": "r", "problems": ["p"], "at_case": "CESR-0003",
                "exit_code": 3}
-    rep = report([case(), failing, unsupported], composes=["keri.escrow"], aborted=aborted)
+    rep = report([case(), failing, unsupported, agreeing], composes=["keri.escrow"],
+                 aborted=aborted)
     rep["summary"]["not_supported_active"] = ["CESR-0003"]
     return [result(rep, SUBMITTED), result(report(), REPRODUCED)]
 
