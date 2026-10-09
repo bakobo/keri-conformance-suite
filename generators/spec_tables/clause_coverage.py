@@ -113,8 +113,9 @@ def filesystem_error(doing: str, e: OSError) -> CoverageError:
 # --- Keywords and sentences ----------------------------------------------------------------------
 
 # REQUIRED after "NOT " states that nothing is required, so it is not a keyword.
-_KEYWORD = re.compile(r"\b(MUST|SHALL|REQUIRED|SHOULD|RECOMMENDED|MAY|OPTIONAL)\b")
-_NEGATED = re.compile(r"\bNOT\s+$")  # "NOT REQUIRED", with any whitespace, is no obligation
+# A keyword, with the NOT that may precede it captured in the same single pass: "NOT REQUIRED",
+# with any whitespace between, is no obligation.
+_KEYWORD = re.compile(r"\b(?:(NOT)\s+)?(MUST|SHALL|REQUIRED|SHOULD|RECOMMENDED|MAY|OPTIONAL)\b")
 _LEVEL = {"MUST": "MUST", "SHALL": "MUST", "REQUIRED": "MUST", "SHOULD": "SHOULD",
           "RECOMMENDED": "SHOULD", "MAY": "MAY", "OPTIONAL": "MAY"}
 LEVELS = ("MUST", "SHOULD", "MAY")  # strongest first
@@ -131,8 +132,8 @@ _TABLE_SEPARATOR = re.compile(r"^\s*\|[\s:|-]*\|?\s*$")
 
 def level_of(text: str) -> str | None:
     """The level of the strongest keyword in ``text``, or None if it has none."""
-    found = {_LEVEL[m.group(1)] for m in _KEYWORD.finditer(text)
-             if not (m.group(1) == "REQUIRED" and _NEGATED.search(text, 0, m.start()))}
+    found = {_LEVEL[m.group(2)] for m in _KEYWORD.finditer(text)
+             if not (m.group(1) and m.group(2) == "REQUIRED")}
     return next((level for level in LEVELS if level in found), None)
 
 

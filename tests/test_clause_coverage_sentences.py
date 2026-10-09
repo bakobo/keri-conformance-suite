@@ -286,3 +286,12 @@ def test_every_keyword_line_of_a_pinned_text_yields_a_sentence(pin):
         if fenced or number in heading_lines:
             continue
         assert (cc.level_of(line) is not None) == (number in found), number
+
+
+def test_keyword_levels_take_linear_time_on_a_keyword_heavy_line():
+    """Hostile pass on #15: the NOT REQUIRED check must not rescan the line for every keyword."""
+    import time
+    line = "It is REQUIRED. " * 20000
+    started = time.perf_counter()
+    assert cc.level_of(line) == "MUST"
+    assert time.perf_counter() - started < 3  # quadratic took about 27 seconds here
