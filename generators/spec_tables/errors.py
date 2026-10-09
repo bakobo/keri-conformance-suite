@@ -18,6 +18,7 @@ class GeneratorError(Exception):
     def __init__(self, message: str, code: str):
         super().__init__(f"{code}: {message}")
         self.code = code
+        self.message = message  # without the code, for a caller that re-wraps it
 
 
 class ScenarioError(GeneratorError):

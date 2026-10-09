@@ -37,6 +37,10 @@ def texts(sentences):
     ("The field is OPTIONAL.", "MAY"),
     ("It MAY be sent, and a parser MUST then read it.", "MUST"),
     ("It MAY be sent, and a parser SHOULD then read it.", "SHOULD"),
+    # Copilot on #15: a negated REQUIRED obliges nothing, so it does not set the level.
+    ("It is NOT REQUIRED, but it MAY be sent.", "MAY"),
+    ("It is NOT REQUIRED, but a parser MUST read it.", "MUST"),
+    ("It is NOT RECOMMENDED and NOT REQUIRED.", "SHOULD"),
 ])
 def test_the_strongest_keyword_sets_the_level(sentence, level):
     assert cc.level_of(sentence) == level
@@ -49,6 +53,7 @@ def test_the_strongest_keyword_sets_the_level(sentence, level):
     "The REQUIREDNESS of it.",
     "NOT alone is not a keyword.",
     "No keyword here.",
+    "Sending it is NOT REQUIRED.",  # a negated REQUIRED is the absence of an obligation
 ])
 def test_a_sentence_without_an_uppercase_whole_word_keyword_has_no_level(sentence):
     assert cc.level_of(sentence) is None
@@ -150,6 +155,12 @@ def test_keyword_sentences_are_enumerated_in_order_with_line_level_kind_and_sect
         (20, "MUST", "list", "Lists", "A quoted line that MUST hold."),
         (26, "MUST", "table", "Tables", "|`A`| It MUST be first. It is short. |"),
     ]
+
+
+def test_a_sentence_whose_only_keyword_is_a_negated_required_is_not_a_keyword_sentence():
+    found = cc.keyword_sentences("It is NOT REQUIRED. It is NOT RECOMMENDED. It MUST NOT be.\n")
+    assert [(s.level, s.text) for s in found] == [("SHOULD", "It is NOT RECOMMENDED."),
+                                                  ("MUST", "It MUST NOT be.")]
 
 
 def test_a_sentences_span_locates_its_text_on_its_line():

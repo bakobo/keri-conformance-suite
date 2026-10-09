@@ -4,6 +4,7 @@ keyword sentences the cases cite, and writing the generated report that scripts/
 coded error, because a coverage report built from a misread input would overstate the suite."""
 
 import dataclasses
+import errno
 import hashlib
 import json
 import os
@@ -202,6 +203,9 @@ def test_a_quote_not_in_its_pinned_text_is_a_coded_error(tree):
     with pytest.raises(cc.CoverageError, match="KERI-0001 a1") as e:
         cc.generate(root)
     assert e.value.code == cc.E_CASE
+    # Copilot on #15: re-wrapping the error must not repeat its code.
+    assert str(e.value) == (f"{cc.E_CASE}: KERI-0001 a1: Quote not found verbatim in the "
+                            f"specification: 'Nowhere in the text.'")
 
 
 def test_an_inferred_quote_not_in_its_pinned_text_is_a_coded_error(tree):
@@ -533,6 +537,18 @@ def test_a_spec_report_with_nothing_unmapped_says_so():
     assert "Every quoted clause matches a keyword sentence." in cc.render_spec("fake", coverage)
 
 
+def test_a_triage_reason_is_escaped_like_any_other_cell():
+    """Copilot on #15: a pipe or a newline in a reason must not break the table row."""
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": {
+        "A parser SHOULD log it.": {"scope": "untestable", "reason": "Logs | are\nprivate.",
+                                    "security": False}}})
+    (line,) = [line for line in cc.render_spec("fake", coverage).splitlines()
+               if "SHOULD log it." in line]
+    cells = cc.split_row(line)
+    assert len(cells) == 10
+    assert cells[2] == "untestable: Logs | are private."
+
+
 def test_an_untestable_triage_shows_its_reason():
     coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": {
         "A parser SHOULD log it.": {"scope": "untestable", "reason": "Logs are private.",
@@ -613,6 +629,46 @@ def test_a_hand_written_markdown_file_beside_the_reports_is_not_owned(tmp_path):
     assert cc.differences(files, cc.committed(tmp_path)) == []
 
 
+def test_an_oversized_generated_report_is_refused_but_a_hand_written_file_is_not_read(
+        tmp_path, monkeypatch):
+    """Copilot on #15: committed() reads each file in docs/coverage/ with a bound."""
+    (tmp_path / "docs" / "coverage").mkdir(parents=True)
+    (tmp_path / "docs" / "coverage" / "assessment.md").write_text("# By hand\n" + "x" * 500)
+    report = tmp_path / "docs" / "coverage" / "fake.md"
+    report.write_bytes(cc.NOTICE.encode() + b"short\n")
+    monkeypatch.setattr(cc, "MAX_REPORT_BYTES", len(cc.NOTICE) + 6)
+    assert list(cc.committed(tmp_path)) == ["docs/coverage/fake.md"]
+    report.write_bytes(cc.NOTICE.encode() + b"longer\n")
+    with pytest.raises(cc.CoverageError, match=f"larger than {len(cc.NOTICE) + 6} bytes") as e:
+        cc.committed(tmp_path)
+    assert e.value.code == cc.E_SIZE
+
+
+def test_an_unreadable_committed_report_is_a_coded_error(tmp_path):
+    (tmp_path / "docs" / "coverage" / "fake.md").mkdir(parents=True)  # a directory, not a file
+    with pytest.raises(cc.CoverageError, match="docs/coverage/fake.md could not be read") as e:
+        cc.committed(tmp_path)
+    assert e.value.code == cc.E_FILE
+
+
+def failing(number):
+    def fail(*args, **kwargs):
+        raise OSError(number, os.strerror(number), "somewhere")
+    return fail
+
+
+@pytest.mark.parametrize(("number", "code"), [(errno.EIO, "E_FILE_TRANSIENT"),
+                                              (errno.EACCES, "E_FILE")])
+def test_a_committed_report_read_failure_says_whether_retrying_could_help(tmp_path, monkeypatch,
+                                                                         number, code):
+    (tmp_path / "docs" / "coverage").mkdir(parents=True)
+    (tmp_path / "docs" / "coverage" / "fake.md").write_text("x")
+    monkeypatch.setattr(pathlib.Path, "open", failing(number))
+    with pytest.raises(cc.CoverageError) as e:
+        cc.committed(tmp_path)
+    assert e.value.code == getattr(cc, code)
+
+
 def test_differences_names_missing_extra_and_differing_reports():
     assert cc.differences({"a": b"1", "b": b"2"}, {"b": b"3", "c": b"4"}) == [
         "missing: a is generated but not committed",
@@ -662,6 +718,52 @@ def test_main_exits_3_on_a_coded_input_error(tree, monkeypatch, capsys):
     monkeypatch.setattr(cc, "ROOT", root)
     assert cc.main(["--check"]) == 3
     assert capsys.readouterr().err.startswith(cc.E_CASE + ": ")
+
+
+def test_main_check_exits_4_when_a_committed_report_cannot_be_read(tree, monkeypatch, capsys):
+    """Copilot on #15: a filesystem failure in --check is a coded error, not a traceback."""
+    root = tree(*CASES[:2])
+    monkeypatch.setattr(cc, "ROOT", root)
+    (root / "docs" / "coverage" / "fake.md").mkdir(parents=True)
+    assert cc.main(["--check"]) == 4
+    assert capsys.readouterr().err.startswith(cc.E_FILE + ": ")
+
+
+@pytest.mark.parametrize(("number", "code"), [(errno.EIO, "E_FILE_TRANSIENT"),
+                                              (errno.ENOSPC, "E_FILE")])
+def test_main_check_exits_4_when_the_temporary_copy_cannot_be_made(tree, monkeypatch, capsys,
+                                                                   number, code):
+    root = tree(*CASES[:2])
+    monkeypatch.setattr(cc, "ROOT", root)
+    monkeypatch.setattr(cc.tempfile, "TemporaryDirectory", failing(number))
+    assert cc.main(["--check"]) == 4
+    assert capsys.readouterr().err.startswith(getattr(cc, code) + ": ")
+
+
+@pytest.mark.parametrize(("number", "code"), [(errno.EAGAIN, "E_FILE_TRANSIENT"),
+                                              (errno.EROFS, "E_FILE")])
+def test_main_check_exits_4_when_the_temporary_copy_cannot_be_written(tree, monkeypatch, capsys,
+                                                                      number, code):
+    root = tree(*CASES[:2])
+    monkeypatch.setattr(cc, "ROOT", root)
+    monkeypatch.setattr(pathlib.Path, "write_bytes", failing(number))
+    assert cc.main(["--check"]) == 4
+    assert capsys.readouterr().err.startswith(getattr(cc, code) + ": ")
+
+
+@pytest.mark.parametrize("operation", ["mkdir", "write_bytes", "unlink"])
+@pytest.mark.parametrize(("number", "code"), [(errno.EBUSY, "E_FILE_TRANSIENT"),
+                                              (errno.EACCES, "E_FILE")])
+def test_main_write_exits_4_when_the_report_cannot_be_written(tree, monkeypatch, capsys,
+                                                              operation, number, code):
+    """Copilot on #15: write mode classifies mkdir, unlink and write failures too."""
+    root = tree(*CASES[:2])
+    monkeypatch.setattr(cc, "ROOT", root)
+    (root / "docs" / "coverage").mkdir(parents=True)
+    (root / "docs" / "coverage" / "old.md").write_text(cc.NOTICE + "stale")  # so unlink runs
+    monkeypatch.setattr(pathlib.Path, operation, failing(number))
+    assert cc.main([]) == 4
+    assert capsys.readouterr().err.startswith(getattr(cc, code) + ": ")
 
 
 def test_the_wrapper_script_runs_main():

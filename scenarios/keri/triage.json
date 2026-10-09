@@ -1089,11 +1089,6 @@
       "security": true,
       "note": "Binds OOBI discovery and service behaviour, which depends on a transport the specification does not define."
     },
-    "By convention, the URL typically includes the word `oobi` in its path to indicate that it is to be used as an OOBI, but this is NOT REQUIRED.": {
-      "scope": "untestable",
-      "security": false,
-      "reason": "Says that something is not required; it imposes no obligation."
-    },
     "The request is unauthenticated and the response is untrusted at the transport layer; any returned material MUST be verified in-band before use, as with any other OOBI.": {
       "scope": "out-of-scope",
       "security": true,

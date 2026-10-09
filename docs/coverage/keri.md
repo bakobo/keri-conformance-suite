@@ -6,7 +6,7 @@ This report lists every sentence of the pinned KERI specification text that carr
 
 ## v1.0.1, commit 71cb54ebb445
 
-The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md). It has 304 keyword sentences: 223 MUST, 22 SHOULD and 59 MAY or OPTIONAL.
+The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md). It has 303 keyword sentences: 222 MUST, 22 SHOULD and 59 MAY or OPTIONAL.
 
 ### Obligations (MUST and SHOULD)
 
@@ -783,14 +783,6 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 2629 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | As such, an OOBI itself is not trusted but MUST be verified. |
 | 2629 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | To clarify, any information obtained from the service endpoint provided in the OOBI MUST be verified by some other mechanism. |
-
-#### Basic OOBI
-
-[Line 2639 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#basic-oobi).
-
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2641 | MUST | untestable: Says that something is not required; it imposes no obligation. | 0 | 0 | 0 | — | — | — | By convention, the URL typically includes the word `oobi` in its path to indicate that it is to be used as an OOBI, but this is NOT REQUIRED. |
 
 #### Well-Known OOBI
 
