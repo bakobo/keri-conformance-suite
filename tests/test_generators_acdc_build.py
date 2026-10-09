@@ -406,6 +406,11 @@ def test_two_acdcs_with_one_said_are_refused():
     e = _refused(frag, "'F'", "'G'", "SAID")
     assert e.code == ScenarioError("x").code
 
+    # A twin is found even when the first ACDC's name is empty (cross-model review of the fix).
+    frag = chain(["N", ""])
+    frag["acdcs"].append({**frag["acdcs"][1], "name": "G"})
+    _refused(frag, "''", "'G'", "SAID")
+
 
 def test_edges_are_found_inside_lists_and_plain_maps_and_must_name_an_acdc():
     frag = chain(["N", "F"])

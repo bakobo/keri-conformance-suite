@@ -330,7 +330,7 @@ class _Builder:
         by_said: dict[str, str] = {}
         for name in self.acdcs:
             twin = by_said.get(self.saids[name])
-            if twin:
+            if twin is not None:
                 raise ScenarioError(f"The ACDCs {twin!r} and {name!r} are written alike and "
                                     f"have one SAID; a bundle carries each ACDC once. Make them "
                                     f"differ or define one.")
