@@ -224,7 +224,9 @@ def test_triage_is_validated_and_returned(tree):
                "The controller MUST keep its keys secret.": {
                    "scope": "out-of-scope", "security": True, "note": "Controller only."},
                "Any producer MUST send the version first.": {
-                   "scope": "untestable", "reason": "No adapter produces.", "security": False}}
+                   "scope": "untestable", "reason": "No adapter produces.", "security": False},
+               "A parser SHOULD log it.": [{"scope": "validator", "security": False,
+                                            "section": "Logging", "occurrence": 2}]}
     root = tree(triage=triage_file(entries))
     assert cc.load_triage(root, "fake") == entries
 
@@ -250,6 +252,16 @@ def test_a_missing_triage_file_is_a_coded_error(tmp_path):
     (triage_file({"s": {"scope": "validator", "security": False, "reason": "r"}}), "reason"),
     (triage_file({"s": {"scope": "validator", "security": False, "note": 3}}), "note"),
     (triage_file({"s": {"scope": "validator", "security": False, "colour": "red"}}), "colour"),
+    (triage_file({"s": []}), "empty list"),
+    (triage_file({"s": [{"scope": "validator", "security": False}, 3]}), "is not an object"),
+    (triage_file({"s": {"scope": "validator", "security": False, "section": ""}}), "section that is not"),
+    (triage_file({"s": {"scope": "validator", "security": False, "section": 2}}), "section that is not"),
+    (triage_file({"s": {"scope": "validator", "security": False, "occurrence": 0}}),
+     "occurrence that is not"),
+    (triage_file({"s": {"scope": "validator", "security": False, "occurrence": True}}),
+     "occurrence that is not"),
+    (triage_file({"s": {"scope": "validator", "security": False, "occurrence": "1"}}),
+     "occurrence that is not"),
 ])
 def test_a_malformed_triage_file_is_a_coded_error(tree, triage, message):
     root = tree(triage=triage)
@@ -279,13 +291,92 @@ def test_a_triage_entry_that_is_not_a_keyword_sentence_is_refused(tree, sentence
     assert e.value.code == cc.E_TRIAGE_STALE
 
 
-def test_a_triage_entry_for_a_sentence_that_occurs_twice_is_refused(tree, monkeypatch):
+def test_a_triage_entry_for_a_sentence_that_occurs_twice_needs_a_section(tree, monkeypatch):
     doubled = FAKE_TEXT + "A parser SHOULD log it.\n"
     monkeypatch.setattr(cc, "load_text", lambda pin: doubled)
     root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")),
                 triage=triage_file({"A parser SHOULD log it.": {"scope": "validator",
                                                                  "security": False}}))
-    with pytest.raises(cc.CoverageError, match="more than once") as e:
+    with pytest.raises(cc.CoverageError, match="more than once.*section") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_TRIAGE_STALE
+
+
+# "A parser SHOULD log it." is once under Parsing and twice under Logging; the rest are unique.
+REPEATED_TEXT = FAKE_TEXT + "\n## Logging\n\nA parser SHOULD log it. A parser SHOULD log it.\n"
+LOG = "A parser SHOULD log it."
+
+
+def judged(scope="validator", **extra):
+    return {"scope": scope, "security": False, **extra}
+
+
+def resolved(entries, text=REPEATED_TEXT):
+    """(line, start, section) of each sentence a triage resolves, with its entry's scope."""
+    found = cc.resolve_triage("fake", entries, cc.keyword_sentences(text))
+    return sorted((s.line, s.start, s.section.text, e["scope"]) for s, e in found.items())
+
+
+def test_a_unique_sentence_resolves_by_its_text_alone():
+    assert resolved({"A parser MUST refuse a bad code.": judged()}) == [
+        (5, 0, "Parsing", "validator")]
+
+
+def test_a_repeated_sentence_resolves_by_section_then_occurrence():
+    assert resolved({LOG: [judged("untestable", section="Parsing", reason="r"),
+                           judged(section="Logging", occurrence=2),
+                           judged("out-of-scope", section="Logging", occurrence=1)]}) == [
+        (5, 33, "Parsing", "untestable"), (15, 0, "Logging", "out-of-scope"),
+        (15, 24, "Logging", "validator")]
+
+
+def test_a_single_disambiguated_entry_may_be_an_object_rather_than_a_list():
+    assert resolved({LOG: judged(section="Parsing")}) == [(5, 33, "Parsing", "validator")]
+
+
+def test_a_sentence_that_is_not_in_this_pinned_text_resolves_to_nothing():
+    """Another pin of the same spec may hold it; generate() refuses it if none does."""
+    assert resolved({"A parser MUST stop.": judged()}) == []
+
+
+@pytest.mark.parametrize("entry, message", [
+    (judged(), "more than once.*section"),  # repeated, no section
+    (judged(occurrence=1), "more than once.*section"),  # an occurrence is not a section
+    (judged(section="Nowhere"), "no section"),  # matches nothing
+    (judged(section="Logging"), "2 times.*occurrence"),  # repeats within its section
+    (judged(section="Logging", occurrence=3), "occurrence 3"),  # out of range
+    (judged(section="Parsing", occurrence=1), "once in section"),  # occurrence not needed
+    ([judged(section="Parsing"), judged(section="Parsing")], "two triage entries"),
+])
+def test_a_repeated_sentence_with_a_missing_or_wrong_disambiguator_is_refused(entry, message):
+    with pytest.raises(cc.CoverageError, match=message) as e:
+        resolved({LOG: entry})
+    assert e.value.code == cc.E_TRIAGE_STALE
+
+
+@pytest.mark.parametrize("entry", [judged(section="Parsing"), judged(occurrence=1)])
+def test_a_disambiguator_on_a_unique_sentence_is_refused(entry):
+    with pytest.raises(cc.CoverageError, match="only once") as e:
+        resolved({"A parser MUST refuse a bad code.": entry})
+    assert e.value.code == cc.E_TRIAGE_STALE
+
+
+def test_generate_reports_the_triage_of_each_occurrence_of_a_repeated_sentence(tree, monkeypatch):
+    monkeypatch.setattr(cc, "load_text", lambda pin: REPEATED_TEXT)
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")),
+                triage=triage_file({LOG: [judged(section="Parsing"),
+                                          judged("out-of-scope", section="Logging",
+                                                 occurrence=2)]}))
+    text = cc.generate(root)["docs/coverage/fake.md"].decode()
+    logs = [line for line in text.splitlines() if line.endswith(f"| {LOG} |")]
+    assert [line.split(" | ")[2] for line in logs] == ["validator", "unassessed", "out-of-scope"]
+
+
+def test_a_repeated_sentence_with_a_missing_disambiguator_fails_generate(tree, monkeypatch):
+    monkeypatch.setattr(cc, "load_text", lambda pin: REPEATED_TEXT)
+    root = tree(case("KERI-0001", must("A parser MUST refuse a bad code.")),
+                triage=triage_file({LOG: [judged(section="Logging")]}))
+    with pytest.raises(cc.CoverageError, match="occurrence") as e:
         cc.generate(root)
     assert e.value.code == cc.E_TRIAGE_STALE
 

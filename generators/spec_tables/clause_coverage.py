@@ -34,9 +34,15 @@ refused. A sentence is covered when an active case cites it; disputed and other 
 are listed but do not cover anything.
 
 Triage: ``scenarios/<spec>/triage.json`` holds hand-kept judgments keyed by the exact sentence
-text. An entry whose text is not a keyword sentence of a pinned text of its spec, or occurs more
-than once in one, is refused, so stale triage fails loudly. A sentence with no entry is
-unassessed.
+text. A sentence whose text occurs more than once in a pinned text has a list of judgments, each
+naming its ``section`` (the nearest heading's text, as the report shows it) and, when the text
+also repeats within that section, its 1-based ``occurrence`` there; a single judgment may be
+written as an object instead of a list of one. Each judgment must identify exactly one sentence
+in every pinned text of its spec that contains the text: a repeated text without the
+disambiguator it needs, a disambiguator that matches nothing, a disambiguator on a text that
+does not need it, two judgments of one sentence, and an entry whose text is not a keyword
+sentence of any pinned text of its spec are all refused, so stale triage fails loudly. A
+sentence with no judgment is unassessed.
 
 Exit status: 0 success; 1 --check found differences; 2 a specification text is unavailable; 3 an
 input could not be interpreted (a malformed case or triage file, an unknown check type, an
@@ -73,7 +79,7 @@ E_SIZE = "e.input.range.kcs-coverage-size.f"
 E_PIN = "e.input.range.kcs-coverage-pin.f"
 # A triage file that is missing, not JSON, or not of the documented shape.
 E_TRIAGE = "e.input.format.kcs-coverage-triage.f"
-# A triage entry whose sentence is not a keyword sentence of its pinned text exactly once.
+# A triage judgment that does not identify exactly one keyword sentence of its pinned text.
 E_TRIAGE_STALE = "e.input.range.kcs-coverage-triage-sentence.f"
 
 
@@ -295,7 +301,35 @@ def load_cases(root: pathlib.Path) -> list[dict]:
 
 
 _TRIAGE_SCOPES = ("validator", "out-of-scope", "untestable")
-_TRIAGE_FIELDS = {"scope", "security", "reason", "note"}
+_TRIAGE_FIELDS = {"scope", "security", "reason", "note", "section", "occurrence"}
+
+
+def _judgments(value) -> list:
+    """A triage entry's judgments: a list as written, or a single object as a list of one."""
+    return value if isinstance(value, list) else [value]
+
+
+def _judgment_problem(entry, where: str) -> str | None:
+    if not isinstance(entry, dict):
+        return f"{where} is not an object"
+    if set(entry) - _TRIAGE_FIELDS:
+        return f"{where} has the unknown fields {sorted(set(entry) - _TRIAGE_FIELDS)}"
+    if entry.get("scope") not in _TRIAGE_SCOPES:
+        return f"{where} has scope {entry.get('scope')!r}, not one of {_TRIAGE_SCOPES}"
+    if not isinstance(entry.get("security"), bool):
+        return f"{where} needs security true or false"
+    if (entry["scope"] == "untestable") != ("reason" in entry):
+        return f"{where} needs a reason exactly when its scope is untestable"
+    if "reason" in entry and not _is_text(entry["reason"]):
+        return f"{where} has an empty reason"
+    if "note" in entry and not isinstance(entry["note"], str):
+        return f"{where} has a note that is not text"
+    if "section" in entry and not _is_text(entry["section"]):
+        return f"{where} has a section that is not text"
+    if "occurrence" in entry and not (type(entry["occurrence"]) is int
+                                      and entry["occurrence"] >= 1):
+        return f"{where} has an occurrence that is not a whole number of at least 1"
+    return None
 
 
 def _triage_problem(triage) -> str | None:
@@ -309,22 +343,14 @@ def _triage_problem(triage) -> str | None:
         return "its about field is not text"
     if not isinstance(triage["entries"], dict):
         return "its entries field is not an object keyed by sentence"
-    for sentence, entry in triage["entries"].items():
+    for sentence, value in triage["entries"].items():
         where = f"the entry for {sentence!r}"
-        if not isinstance(entry, dict):
-            return f"{where} is not an object"
-        if set(entry) - _TRIAGE_FIELDS:
-            return f"{where} has the unknown fields {sorted(set(entry) - _TRIAGE_FIELDS)}"
-        if entry.get("scope") not in _TRIAGE_SCOPES:
-            return f"{where} has scope {entry.get('scope')!r}, not one of {_TRIAGE_SCOPES}"
-        if not isinstance(entry.get("security"), bool):
-            return f"{where} needs security true or false"
-        if (entry["scope"] == "untestable") != ("reason" in entry):
-            return f"{where} needs a reason exactly when its scope is untestable"
-        if "reason" in entry and not _is_text(entry["reason"]):
-            return f"{where} has an empty reason"
-        if "note" in entry and not isinstance(entry["note"], str):
-            return f"{where} has a note that is not text"
+        if value == []:
+            return f"{where} is an empty list"
+        for entry in _judgments(value):
+            problem = _judgment_problem(entry, where)
+            if problem:
+                return problem
     return None
 
 
@@ -343,19 +369,79 @@ def load_triage(root: pathlib.Path, label: str) -> dict:
     return triage["entries"]
 
 
+def _section_text(s: Sentence) -> str | None:
+    return s.section.text if s.section else None
+
+
+def _resolve_one(label: str, sentence: str, entry: dict, same: list[Sentence]) -> Sentence:
+    """The one sentence of ``same`` (every occurrence of ``sentence`` in a pinned text, in text
+    order) that ``entry`` judges, or a coded error saying why it cannot be told."""
+    where = f"scenarios/{label}/{TRIAGE_FILE}: {sentence!r}"
+    if len(same) == 1:
+        if "section" in entry or "occurrence" in entry:
+            raise CoverageError(
+                f"{where} occurs only once in its pinned {label} text, so its entry must not give "
+                f"a section or an occurrence. Remove them.", E_TRIAGE_STALE)
+        return same[0]
+    if "section" not in entry:
+        sections = sorted({_section_text(s) or "" for s in same})
+        raise CoverageError(
+            f"{where} occurs more than once in a pinned {label} text, so its entry needs a section "
+            f"naming the heading it is under, one of {sections}.", E_TRIAGE_STALE)
+    inside = [s for s in same if _section_text(s) == entry["section"]]
+    if not inside:
+        raise CoverageError(
+            f"{where} occurs in no section headed {entry['section']!r} in its pinned {label} text. "
+            f"The triage is stale; correct the section.", E_TRIAGE_STALE)
+    if len(inside) == 1:
+        if "occurrence" in entry:
+            raise CoverageError(
+                f"{where} occurs only once in section {entry['section']!r}, so its entry must not "
+                f"give an occurrence. Remove it.", E_TRIAGE_STALE)
+        return inside[0]
+    if "occurrence" not in entry:
+        raise CoverageError(
+            f"{where} occurs {len(inside)} times in section {entry['section']!r}, so its entry "
+            f"needs an occurrence from 1 to {len(inside)} saying which one it judges.",
+            E_TRIAGE_STALE)
+    if entry["occurrence"] > len(inside):
+        raise CoverageError(
+            f"{where} has occurrence {entry['occurrence']}, but it occurs only {len(inside)} times "
+            f"in section {entry['section']!r}. The triage is stale; correct the occurrence.",
+            E_TRIAGE_STALE)
+    return inside[entry["occurrence"] - 1]
+
+
+def resolve_triage(label: str, entries: dict, sentences: list[Sentence]) -> dict[Sentence, dict]:
+    """The triage entry that judges each sentence of one pinned text. An entry whose sentence is
+    not in this text is skipped, because another pin of the spec may hold it; one that is here
+    must say which occurrence it judges exactly when there is more than one."""
+    by_text: dict[str, list[Sentence]] = {}
+    for s in sentences:
+        by_text.setdefault(s.text, []).append(s)
+    out: dict[Sentence, dict] = {}
+    for sentence, value in entries.items():
+        if sentence not in by_text:
+            continue
+        for entry in _judgments(value):
+            s = _resolve_one(label, sentence, entry, by_text[sentence])
+            if s in out:
+                raise CoverageError(
+                    f"scenarios/{label}/{TRIAGE_FILE}: two triage entries for {sentence!r} judge "
+                    f"the same occurrence, on line {s.line}. Keep one.", E_TRIAGE_STALE)
+            out[s] = entry
+    return out
+
+
 def _check_triage(label: str, entries: dict, sentence_lists: list[list[Sentence]]) -> None:
     for sentence in entries:
-        counts = [sum(s.text == sentence for s in found) for found in sentence_lists]
-        if max(counts, default=0) == 0:
+        if not any(s.text == sentence for found in sentence_lists for s in found):
             raise CoverageError(
                 f"scenarios/{label}/{TRIAGE_FILE}: {sentence!r} is not a keyword sentence of any "
                 f"pinned {label} text. The triage is stale; correct or remove the entry.",
                 E_TRIAGE_STALE)
-        if max(counts) > 1:
-            raise CoverageError(
-                f"scenarios/{label}/{TRIAGE_FILE}: {sentence!r} occurs more than once in a pinned "
-                f"{label} text, so a triage entry cannot say which occurrence it judges.",
-                E_TRIAGE_STALE)
+    for found in sentence_lists:
+        resolve_triage(label, entries, found)
 
 
 # --- Measurement ----------------------------------------------------------------------------------
@@ -404,7 +490,8 @@ def measure(cases: list[dict], texts: dict, triage: dict) -> list[Coverage]:
     for key in sorted(texts, key=lambda k: (k[0], texts[k][0].tag, k[1])):
         pin, text = texts[key]
         sentences = keyword_sentences(text)
-        rows = {s: Row(s, triage.get(pin.label, {}).get(s.text)) for s in sentences}
+        judged = resolve_triage(pin.label, triage.get(pin.label, {}), sentences)
+        rows = {s: Row(s, judged.get(s)) for s in sentences}
         cites: dict[Sentence, list[tuple[dict, dict, str, str]]] = {s: [] for s in sentences}
         unmapped: dict[tuple[int, str, str], set[str]] = {}
         for case in cases:
@@ -626,7 +713,7 @@ Each row of a report gives:
 
 A sentence is covered when at least one active case cites it. Disputed cases are listed but cover nothing, because they are excluded from conformance results. Quotes that cases cite but that contain no keyword sentence are listed at the end of each part. The report counts only the public cases in this repository.
 
-The reports are generated by `{COMMAND}` from the cases under `cases/` and the triage files, and CI fails if they are stale. After adding or changing cases or triage, run `{COMMAND}` and commit the result. A triage entry whose sentence no longer appears exactly once in its pinned text is refused, so triage cannot silently go stale when a specification is re-pinned.
+The reports are generated by `{COMMAND}` from the cases under `cases/` and the triage files, and CI fails if they are stale. After adding or changing cases or triage, run `{COMMAND}` and commit the result. A triage entry is keyed by its sentence's text; when that text occurs more than once in a pinned text, each judgment also names its `section` (the heading it is under, as the report shows it) and, if the text repeats within that section too, its 1-based `occurrence` there. A judgment that does not identify exactly one sentence is refused, so triage cannot silently go stale when a specification is re-pinned.
 """
 
 
