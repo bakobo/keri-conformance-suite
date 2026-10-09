@@ -7,8 +7,8 @@ code tables, with the generator's own BLAKE3.
   serialization (ACDC line 62).
 - **The most compact form** (lines 134 to 147): a block whose ``d`` is a string is a SAIDed block.
   Its SAID is taken over its block-level expanded form, in which every SAIDed subblock, at any
-  depth below fields that are not SAIDed, is replaced by its own SAID, computed the same way, and
-  every other field stays expanded. At the top level, a schema section given as a map compacts to
+  depth below maps that are not SAIDed, is replaced by its own SAID, computed the same way, and
+  every other field stays expanded. A list is not a block, so by default it is left as it is. At the top level, a schema section given as a map compacts to
   its ``$id`` SAID without entering it (a schema is a SAD of its own, and its property maps may
   have ``d`` keys), and an aggregate section ``A`` given as a list compacts to its AGID.
 - **The aggregate** (lines 714 and 720, with the worked example at lines 951 to 956): the AGID is
@@ -29,7 +29,11 @@ so that the keripy cross-check can show which choice explains any disagreement:
 - ``ts_code`` (A-B3): a state value is a Tag primitive (``tag``), a Base64 string (``strb64``)
   or a byte string (``bytes``);
 - ``aggregate`` (A-C1): the AGID's pre-image is the serialized list (``list``) or the bare
-  concatenation of the SAIDs that line 110 describes (``concat``).
+  concatenation of the SAIDs that line 110 describes (``concat``);
+- ``lists``: a SAIDed block inside a list (other than an aggregate) is left expanded
+  (``opaque``), as lines 140 to 147, which speak only of fields whose values are blocks, read
+  literally, or compacted like a field's block (``traverse``). The design names no reading for
+  this; no first-batch scenario puts a block in a list.
 """
 
 import json
@@ -56,6 +60,7 @@ CANDIDATES = {
     "schema": ("compact", "received"),
     "ts_code": ("tag", "strb64", "bytes"),
     "aggregate": ("list", "concat"),
+    "lists": ("opaque", "traverse"),
 }
 
 # Tag codes by the number of characters they carry (CESR master table). Tags of 1, 5 and 9
@@ -71,6 +76,7 @@ class Readings:
     schema: str = "compact"
     ts_code: str = "tag"
     aggregate: str = "list"
+    lists: str = "opaque"
 
     def __post_init__(self):
         for name, allowed in CANDIDATES.items():
@@ -150,13 +156,14 @@ def is_saided(value) -> bool:
 
 
 def compact_value(t: Tables, value, readings: Readings = DEFAULT):
-    """A field value in block-level expanded form: a SAIDed block becomes its SAID, and maps and
-    lists that are not SAIDed blocks keep their shape with their contents compacted."""
+    """A field value in block-level expanded form: a SAIDed block becomes its SAID, a map that is
+    not a SAIDed block keeps its shape with its contents compacted, and a list is compacted
+    inside only under the ``traverse`` reading."""
     if is_saided(value):
         return block_said(t, value, readings)
     if isinstance(value, dict):
         return {k: compact_value(t, v, readings) for k, v in value.items()}
-    if isinstance(value, list):
+    if isinstance(value, list) and readings.lists == "traverse":
         return [compact_value(t, v, readings) for v in value]
     return value
 

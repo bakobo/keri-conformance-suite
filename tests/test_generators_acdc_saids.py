@@ -135,17 +135,30 @@ def test_the_expanded_form_said_is_not_the_most_compact_said():
 def test_nested_blocks_compact_depth_first_and_non_said_blocks_stay_expanded():
     leaf = {"d": "", "u": "0ABhY2Rjc3BlY3dvcmtyYXcw", "x": 1}
     leaf_said = sa.said(T, leaf)
-    inner = {"d": "", "leaf": leaf, "plain": {"k": [1, {"deep": leaf}]}}
-    # A non-leaf block's SAID is computed with its SAIDed subblocks compacted, wherever they sit.
-    expect_inner = sa.said(T, {"d": "", "leaf": leaf_said,
-                               "plain": {"k": [1, {"deep": leaf_said}]}})
+    inner = {"d": "", "leaf": leaf, "plain": {"deep": leaf}}
+    # A non-leaf block's SAID is computed with its SAIDed subblocks compacted, at any depth
+    # below fields that are not themselves SAIDed blocks.
+    expect_inner = sa.said(T, {"d": "", "leaf": leaf_said, "plain": {"deep": leaf_said}})
     assert sa.block_said(T, inner) == expect_inner
     assert sa.compact_value(T, inner) == expect_inner
-    assert sa.compact_value(T, {"plain": {"k": [leaf]}}) == {"plain": {"k": [leaf_said]}}
-    assert sa.compact_value(T, [leaf, "s", 3]) == [leaf_said, "s", 3]
+    assert sa.compact_value(T, {"plain": {"k": leaf}}) == {"plain": {"k": leaf_said}}
     assert sa.compact_value(T, "x") == "x"
     # Only a dict whose d is a string is a SAIDed block.
     assert sa.compact_value(T, {"d": {"type": "string"}}) == {"d": {"type": "string"}}
+
+
+def test_a_block_inside_a_list_is_left_alone_unless_the_traverse_reading_is_chosen():
+    """Lines 140 to 147 compact fields whose values are blocks; a list is not a block, and the
+    text says nothing of blocks inside one. The default leaves a list as it stands, which is
+    also what keripy does; the other reading compacts the blocks inside it."""
+    leaf = {"d": "", "u": "0ABhY2Rjc3BlY3dvcmtyYXcw", "x": 1}
+    leaf_said = sa.said(T, leaf)
+    traverse = sa.Readings(lists="traverse")
+    assert sa.compact_value(T, [leaf, "s", 3]) == [leaf, "s", 3]
+    assert sa.compact_value(T, [leaf, "s", 3], traverse) == [leaf_said, "s", 3]
+    group = {"d": "", "m": [leaf]}
+    assert sa.block_said(T, group) == sa.said(T, group)
+    assert sa.block_said(T, group, traverse) == sa.said(T, {"d": "", "m": [leaf_said]})
 
 
 def test_partial_disclosure_variants_share_the_top_level_said():
@@ -241,7 +254,7 @@ def test_the_aggregate_list_and_selective_disclosure_reproduce_the_example():
     full, selective = _json_at(909), _json_at(962)
     assert sa.aggregate(T, full[1:]) == [full[0]] + [b["d"] for b in full[1:]]
     assert sa.aggregate(T, selective[1:]) == sa.aggregate(T, full[1:])
-    assert sa.compact_value(T, full) == sa.aggregate(T, full[1:])
+    assert sa.compact_value(T, full, sa.Readings(lists="traverse")) == sa.aggregate(T, full[1:])
     acdc = {"v": "", "d": "", "i": "EIssuer", "s": "ESchema", "A": full}
     compact = {"v": "", "d": "", "i": "EIssuer", "s": "ESchema", "A": full[0]}
     assert sa.most_compact(T, acdc)["A"] == full[0]
@@ -326,7 +339,7 @@ def test_a_transaction_said_must_be_a_qualified_digest_or_empty():
 
 @pytest.mark.parametrize("field,value", [("compact_v", "both"), ("schema", "pretty"),
                                          ("ts_code", "label"), ("aggregate", "merkle"),
-                                         ("ascii", "yes")])
+                                         ("ascii", "yes"), ("lists", "flatten")])
 def test_an_unknown_reading_is_refused(field, value):
     with pytest.raises(GeneratorError) as e:
         sa.Readings(**{field: value})
@@ -335,8 +348,9 @@ def test_an_unknown_reading_is_refused(field, value):
 
 def test_the_default_readings_are_the_designs():
     d = sa.DEFAULT
-    assert (d.compact_v, d.ascii, d.schema, d.ts_code, d.aggregate) == (
-        "own", False, "compact", "tag", "list")
-    assert set(sa.CANDIDATES) == {"compact_v", "ascii", "schema", "ts_code", "aggregate"}
+    assert (d.compact_v, d.ascii, d.schema, d.ts_code, d.aggregate, d.lists) == (
+        "own", False, "compact", "tag", "list", "opaque")
+    assert set(sa.CANDIDATES) == {"compact_v", "ascii", "schema", "ts_code", "aggregate",
+                                  "lists"}
     for field, values in sa.CANDIDATES.items():
         assert getattr(d, field) == values[0]
