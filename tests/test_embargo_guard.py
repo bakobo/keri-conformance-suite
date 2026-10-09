@@ -8,6 +8,14 @@ import pytest
 from tools import embargo_guard as guard
 
 
+@pytest.fixture(autouse=True)
+def no_ambient_configuration(monkeypatch, tmp_path):
+    """Neither the caller's environment nor their global git config may point the guard anywhere."""
+    monkeypatch.delenv(guard.ENV_PATTERNS, raising=False)
+    monkeypatch.setenv("GIT_CONFIG_GLOBAL", str(tmp_path / "no-global-gitconfig"))
+    monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "1")
+
+
 def git(repo, *args):
     return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True,
                           text=True).stdout
@@ -76,12 +84,6 @@ def test_a_removed_line_is_not_refused(repo, patterns):
                        f"{start}..HEAD"]) == 0
 
 
-def test_without_a_patterns_file_the_guard_says_so_and_passes(repo, tmp_path, capsys):
-    assert guard.main(["--repo", str(repo), "--patterns", str(tmp_path / "absent.txt"),
-                       "--range", "HEAD..HEAD"]) == 0
-    assert "w.rule.embargo.patterns-missing.f" in capsys.readouterr().err
-
-
 def test_an_unreadable_range_is_a_coded_error(repo, patterns, capsys):
     assert guard.main(["--repo", str(repo), "--patterns", str(patterns), "--range",
                        "nope..HEAD"]) == 2
@@ -107,21 +109,6 @@ def test_hook_mode_reads_stdin(repo, patterns, monkeypatch, capsys):
     assert guard.main(["--repo", str(repo), "--patterns", str(patterns), "--hook"]) == 1
 
 
-def test_default_patterns_path_is_beside_the_main_checkout(tmp_path):
-    bakobo = tmp_path / "bakobo"
-    main_repo = bakobo / "keri-conformance-suite"
-    main_repo.mkdir(parents=True)
-    git(main_repo, "init", "-q", "-b", "main")
-    git(main_repo, "config", "user.email", "t@example.com")
-    git(main_repo, "config", "user.name", "t")
-    git(main_repo, "commit", "-q", "--allow-empty", "-m", "base")
-    worktree = main_repo / ".worktrees" / "w"
-    git(main_repo, "worktree", "add", "-q", str(worktree))
-    want = bakobo / "reviews" / "keri-conformance-suite" / "embargoed" / "patterns.txt"
-    assert guard.default_patterns(main_repo) == want
-    assert guard.default_patterns(worktree) == want
-
-
 def test_one_of_range_or_hook_is_required(repo, patterns, capsys):
     with pytest.raises(SystemExit) as e:
         guard.main(["--repo", str(repo), "--patterns", str(patterns)])
@@ -133,15 +120,6 @@ def test_a_three_dot_range_is_accepted_as_given(repo, patterns):
     commit(repo, "b.txt", "CESR-0099\n")
     assert guard.main(["--repo", str(repo), "--patterns", str(patterns), "--range",
                        f"{start}...HEAD"]) == 1
-
-
-def test_default_patterns_follow_the_repository_name(tmp_path):
-    bakobo = tmp_path / "bakobo"
-    renamed = bakobo / "renamed-suite"
-    renamed.mkdir(parents=True)
-    git(renamed, "init", "-q", "-b", "main")
-    assert guard.default_patterns(renamed) == (
-        bakobo / "reviews" / "renamed-suite" / "embargoed" / "patterns.txt")
 
 
 def test_outside_a_git_repository_the_guard_warns_and_passes(tmp_path, capsys):
@@ -257,3 +235,142 @@ def test_a_non_utf8_log_encoding_setting_is_overridden(repo, tmp_path):
     start = base(repo)
     commit(repo, "b.txt", "fine\n", message="see Kärten-0099")
     assert refused(repo, listed, f"{start}..HEAD")
+
+
+# --- where the list comes from -------------------------------------------------------------------
+
+
+def worktree_of(repo):
+    w = repo.parent / "elsewhere" / "w"
+    git(repo, "worktree", "add", "-q", str(w))
+    return w
+
+
+def listed_commit(repo):
+    start = base(repo)
+    commit(repo, "b.txt", "CESR-0099\n")
+    return f"{start}..HEAD"
+
+
+def test_the_default_list_lives_in_the_git_directory_shared_by_every_worktree(repo):
+    want = repo / ".git" / "info" / "embargo-patterns.txt"
+    assert guard.default_patterns(repo) == want
+    assert guard.default_patterns(worktree_of(repo)) == want
+
+
+def test_the_default_list_is_used_when_nothing_is_configured(repo, patterns):
+    (repo / ".git" / "info").mkdir(exist_ok=True)
+    (repo / ".git" / "info" / "embargo-patterns.txt").write_text(patterns.read_text())
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 1
+
+
+def test_without_any_list_the_guard_warns_and_passes(repo, capsys):
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 0
+    err = capsys.readouterr().err
+    assert err.startswith("w.rule.embargo.patterns-missing.f: ")
+    assert "embargo-patterns.txt" in err and guard.ENV_PATTERNS in err
+
+
+def test_the_environment_variable_names_the_list(repo, patterns, monkeypatch):
+    monkeypatch.setenv(guard.ENV_PATTERNS, str(patterns))
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 1
+
+
+def test_an_empty_environment_variable_is_unset(repo, monkeypatch, capsys):
+    monkeypatch.setenv(guard.ENV_PATTERNS, "  ")
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 0
+    assert "w.rule.embargo.patterns-missing.f" in capsys.readouterr().err
+
+
+def test_git_config_names_the_list(repo, patterns):
+    git(repo, "config", guard.CONFIG_PATTERNS, str(patterns))
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 1
+
+
+def test_a_relative_git_config_value_resolves_against_the_main_checkout(repo, patterns):
+    (repo / "held").mkdir()
+    (repo / "held" / "list.txt").write_text(patterns.read_text())
+    git(repo, "config", guard.CONFIG_PATTERNS, "held/list.txt")
+    rng = listed_commit(repo)
+    w = worktree_of(repo)
+    assert guard.patterns_path(w, None, {}) == (repo / "held" / "list.txt", True)
+    assert guard.main(["--repo", str(w), "--range", rng]) == 1
+
+
+def test_a_tilde_in_git_config_is_the_home_directory(repo, tmp_path, patterns, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    git(repo, "config", guard.CONFIG_PATTERNS, "~/patterns.txt")
+    assert guard.patterns_path(repo, None, {}) == (patterns, True)
+
+
+def test_a_tilde_in_the_environment_variable_is_the_home_directory(repo, tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    got = guard.patterns_path(repo, None, {guard.ENV_PATTERNS: "~/x.txt"})
+    assert got == (tmp_path / "x.txt", True)
+
+
+def test_the_flag_outranks_the_environment_which_outranks_git_config(repo, tmp_path):
+    git(repo, "config", guard.CONFIG_PATTERNS, str(tmp_path / "from-config.txt"))
+    env = {guard.ENV_PATTERNS: str(tmp_path / "from-env.txt")}
+    flag = tmp_path / "from-flag.txt"
+    assert guard.patterns_path(repo, flag, env) == (flag, True)
+    assert guard.patterns_path(repo, None, env) == (tmp_path / "from-env.txt", True)
+    assert guard.patterns_path(repo, None, {}) == (tmp_path / "from-config.txt", True)
+
+
+def test_a_configured_list_that_is_missing_refuses_the_push(repo, tmp_path, capsys):
+    git(repo, "config", guard.CONFIG_PATTERNS, str(tmp_path / "moved-away.txt"))
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 2
+    err = capsys.readouterr().err
+    assert err.startswith("e.input.format.embargo-patterns.f: ") and "moved-away.txt" in err
+
+
+def test_a_missing_list_named_by_the_environment_refuses_the_push(repo, tmp_path, monkeypatch):
+    monkeypatch.setenv(guard.ENV_PATTERNS, str(tmp_path / "nowhere.txt"))
+    assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
+
+
+def test_a_missing_list_named_by_the_flag_refuses_the_push(repo, tmp_path):
+    assert guard.main(["--repo", str(repo), "--patterns", str(tmp_path / "nowhere.txt"),
+                       "--range", "HEAD..HEAD"]) == 2
+
+
+def test_a_relative_value_outside_a_checkout_is_left_relative_and_so_refused(tmp_path, capsys):
+    # Global git config can name a list for a directory that is not a checkout; with no main
+    # checkout to resolve against, the value stays as written and cannot be read from here.
+    git(tmp_path, "config", "--global", guard.CONFIG_PATTERNS, "held/list.txt")
+    assert guard.patterns_path(tmp_path, None, {}) == (guard.pathlib.Path("held/list.txt"), True)
+    assert guard.main(["--repo", str(tmp_path), "--range", "a..b"]) == 2
+    assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
+
+
+def test_a_git_config_that_cannot_be_read_is_not_mistaken_for_unset(repo, capsys):
+    (repo / ".git" / "config").write_text("[broken\n")
+    assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
+    assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
+
+
+def test_the_pre_push_hook_reads_no_bakobo_path():
+    hook = (guard.pathlib.Path(__file__).resolve().parent.parent / ".githooks" / "pre-push")
+    source = hook.read_text() + guard.pathlib.Path(guard.__file__).read_text()
+    assert "reviews" not in source and "bakobo" not in source.lower()
+
+
+def test_run_as_a_script_the_guard_checks_and_sets_its_exit_status(repo, patterns, monkeypatch):
+    # Run by hand (python3 tools/embargo_guard.py ...) it must check, not import and exit 0.
+    import runpy
+    rng = listed_commit(repo)
+    monkeypatch.setattr("sys.argv", ["embargo_guard.py", "--repo", str(repo), "--patterns",
+                                     str(patterns), "--range", rng])
+    with pytest.raises(SystemExit) as e:
+        runpy.run_path(guard.__file__, run_name="__main__")
+    assert e.value.code == 1
+
+
+def test_the_script_runs_from_a_shell(repo, patterns):
+    import sys
+    rng = listed_commit(repo)
+    done = subprocess.run([sys.executable, guard.__file__, "--repo", str(repo), "--patterns",
+                           str(patterns), "--range", rng], capture_output=True, text=True,
+                          check=False)
+    assert done.returncode == 1 and done.stderr.startswith("e.rule.embargo.f: ")
