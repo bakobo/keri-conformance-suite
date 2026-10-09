@@ -51,11 +51,6 @@ def test_the_schema_is_the_suites():
     assert ROOT["title"].startswith("Adapter protocol")
 
 
-@pytest.mark.xfail(GENERATION == "main", strict=True, reason=(
-    "schema/adapter-protocol.schema.json lists only cesr.parse, cesr.encode, keri.process and "
-    "keri.emit in hello's operations, while the protocol and the runner (session.OPERATIONS) "
-    "also accept acdc.verify and exn.verify, which keripy main lists. Remove this mark when the "
-    "schema's enum gains them."))
 def test_hello_result_validates():
     response = valid(respond({"id": 0, "op": "hello", "protocol": 1, "supported": [1]}))
     assert response["result"]["protocol"] == 1
