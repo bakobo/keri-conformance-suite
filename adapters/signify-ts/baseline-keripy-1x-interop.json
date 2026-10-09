@@ -6,7 +6,7 @@
     "version": "0.4.1 (dhh1128/signify-ts fork)",
     "commit": "c5bc46af038440bf8d42275481b9106abf536cf5"
   },
-  "verdict": "no-evidence",
+  "verdict": "not-interoperable",
   "cases": {
     "CESR-0045": {
       "outcome": "pass",
