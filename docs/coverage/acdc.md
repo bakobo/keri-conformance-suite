@@ -16,7 +16,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 10 | MUST | unassessed | 0 | 0 | 0 | — | — | — | ACDCs MUST use insertion-ordered field maps for canonical serialization/deserialization. |
+| 10 | MUST | validator | 0 | 0 | 0 | — | — | — | ACDCs MUST use insertion-ordered field maps for canonical serialization/deserialization. |
 
 #### Top-Level Fields
 
@@ -24,8 +24,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 14 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Some fields are OPTIONAL but all fields that appear MUST appear in a defined order. |
-| 14 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This section defines which fields are REQUIRED and which are OPTIONAL. |
+| 14 | MUST | validator | 0 | 0 | 0 | — | — | — | Some fields are OPTIONAL but all fields that appear MUST appear in a defined order. |
+| 14 | MUST | untestable: A statement about what the section defines, not an obligation on any party. | 0 | 0 | 0 | — | — | — | This section defines which fields are REQUIRED and which are OPTIONAL. |
 
 #### Field Ordering
 
@@ -33,7 +33,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 32 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0008 (inferred) | When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`. |
+| 32 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0008 (inferred) | When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`. |
 
 #### Required Fields
 
@@ -41,7 +41,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 36 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The following fields are REQUIRED `[v, d, i, s]` i.e. they MUST appear in any ACDC (not to be confused with other message types in the ACDC protocol). |
+| 36 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The following fields are REQUIRED `[v, d, i, s]` i.e. they MUST appear in any ACDC (not to be confused with other message types in the ACDC protocol). |
 
 #### Other Reserved Fields
 
@@ -49,7 +49,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 40 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The following table defines non-top-level fields whose labels MUST be reserved. |
+| 40 | MUST | untestable: Reserves labels for the specification's own use; it states no condition on an ACDC beyond the rules that define each label. | 0 | 0 | 0 | — | — | — | The following table defines non-top-level fields whose labels MUST be reserved. |
 
 #### Compact Labels
 
@@ -57,7 +57,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 58 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The primary field labels are compact in that they MUST use only one or at most two characters. |
+| 58 | MUST | validator | 0 | 0 | 0 | — | — | — | The primary field labels are compact in that they MUST use only one or at most two characters. |
 
 #### Version String Field
 
@@ -65,11 +65,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 62 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Version String, `v`, field MUST be the first field in any top-level ACDC field map encoded in JSON, CBOR, or MGPK [[RFC4627](#RFC4627)] [[12](#CBOR)] [[13](#RFC8949)] [[14](#MGPK)]. |
-| 62 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. |
-| 64 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0009 (inferred) | The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol. |
-| 64 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the ACDC protocol [[1](#CESR)] used by the associated message. |
-| 64 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)]. |
+| 62 | MUST | validator | 0 | 0 | 0 | — | — | — | The Version String, `v`, field MUST be the first field in any top-level ACDC field map encoded in JSON, CBOR, or MGPK [[RFC4627](#RFC4627)] [[12](#CBOR)] [[13](#RFC8949)] [[14](#MGPK)]. |
+| 62 | SHOULD | validator | 0 | 0 | 0 | — | — | — | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. |
+| 64 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0009 (inferred) | The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol. |
+| 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the ACDC protocol [[1](#CESR)] used by the associated message. |
+| 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)]. |
 
 #### Legacy Version String Field Format
 
@@ -77,9 +77,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 68 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Compliant ACDC version 2.XX implementations MUST support the old ACDC version 1.x Version String format to properly verify Message bodies created with 1.x format events. |
-| 68 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The protocol field, `PPPP` value in the version string MUST be `ACDC` for the ACDC protocol. |
-| 68 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The version field, `vv`, MUST encode the old version of the ACDC protocol [[1](#CESR)]. |
+| 68 | MUST | validator | 0 | 0 | 0 | — | — | — | Compliant ACDC version 2.XX implementations MUST support the old ACDC version 1.x Version String format to properly verify Message bodies created with 1.x format events. |
+| 68 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol field, `PPPP` value in the version string MUST be `ACDC` for the ACDC protocol. |
+| 68 | MUST | validator | 0 | 0 | 0 | — | — | — | The version field, `vv`, MUST encode the old version of the ACDC protocol [[1](#CESR)]. |
 
 #### Message Type Field
 
@@ -87,10 +87,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 72 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
-| 72 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
-| 72 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
-| 72 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
+| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
+| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
+| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
+| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
 
 #### Self-addressing Identifier (SAID) Fields
 
@@ -98,7 +98,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 79 | MUST | unassessed | 0 | 0 | 0 | — | — | — | More specifically, special top-level ACDC fields MUST have for their value either a serialized field map or the SAID of that field map. |
+| 79 | MUST | validator | 0 | 0 | 0 | — | — | — | More specifically, special top-level ACDC fields MUST have for their value either a serialized field map or the SAID of that field map. |
 
 #### Autonomic IDentifier (AID) Fields
 
@@ -106,11 +106,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 95 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Some fields, such as the `i`, Issuer identifier field, MUST each have an [[ref: AID]] as its value. |
-| 95 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)]. |
-| 95 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | Each AID SHOULD have set of one or more Controllers who each control a private key. |
-| 95 | MUST | unassessed | 0 | 0 | 0 | — | — | — | No shared or trusted relationship between the Controllers and Verifiers is REQUIRED. |
-| 95 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0023 (inferred) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
+| 95 | MUST | validator | 0 | 0 | 0 | — | — | — | Some fields, such as the `i`, Issuer identifier field, MUST each have an [[ref: AID]] as its value. |
+| 95 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)]. |
+| 95 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Each AID SHOULD have set of one or more Controllers who each control a private key. |
+| 95 | MUST | untestable: States that no relationship is required; there is nothing to test. | 0 | 0 | 0 | — | — | — | No shared or trusted relationship between the Controllers and Verifiers is REQUIRED. |
+| 95 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0023 (inferred) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
 
 #### Datetime, `dt` Fields
 
@@ -118,7 +118,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 98 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). |
+| 98 | MUST | validator | 0 | 0 | 0 | — | — | — | The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). |
 
 #### Partially Disclosable Attribute Section Field
 
@@ -126,7 +126,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 106 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either. |
+| 106 | MUST | validator | 0 | 0 | 0 | — | — | — | An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either. |
 
 #### Selectively Disclosable Aggregate Section Field
 
@@ -134,7 +134,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 110 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0006 (inferred) | An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either. |
+| 110 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0006 (inferred) | An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either. |
 
 #### Most compact form SAID
 
@@ -142,11 +142,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 134 | MUST | unassessed | 0 | 0 | 0 | — | — | — | However, for the sake of verifiability, each section or block that is compactable MUST have only one SAID regardless of how many different variants its `oneOf` compositions allow. |
-| 134 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore, there MUST be one and only one unambiguous way to compute the SAID of a compactifiable section or block with compactifiable nested blocks. |
-| 140 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This compact form MUST appear as the first variant in the `oneOf` subschema list for its labeled field. |
-| 142 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Its SAID MUST be computed on the full expanded representation of the block. |
-| 142 | MUST | unassessed | 0 | 0 | 0 | — | — | — | These are special cases, and the most detailed variant of the subblock MUST be the fully expanded form. |
+| 134 | MUST | validator, security | 0 | 0 | 0 | — | — | — | However, for the sake of verifiability, each section or block that is compactable MUST have only one SAID regardless of how many different variants its `oneOf` compositions allow. |
+| 134 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, there MUST be one and only one unambiguous way to compute the SAID of a compactifiable section or block with compactifiable nested blocks. |
+| 140 | MUST | validator | 0 | 0 | 0 | — | — | — | This compact form MUST appear as the first variant in the `oneOf` subschema list for its labeled field. |
+| 142 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Its SAID MUST be computed on the full expanded representation of the block. |
+| 142 | MUST | validator, security | 0 | 0 | 0 | — | — | — | These are special cases, and the most detailed variant of the subblock MUST be the fully expanded form. |
 
 #### Public ACDC
 
@@ -154,7 +154,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 160 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | Thus, an ACDC without a top-level UUID, `u`, field SHOULD be considered a public (non-confidential) ACDC. |
+| 160 | SHOULD | untestable: Considering an ACDC public is a classification that acdc.verify does not report. | 0 | 0 | 0 | — | — | — | Thus, an ACDC without a top-level UUID, `u`, field SHOULD be considered a public (non-confidential) ACDC. |
 
 #### Type-is-schema
 
@@ -162,7 +162,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 182 | MUST | unassessed | 0 | 0 | 0 | — | — | — | ACDC's use of JSON Schema MUST be in accordance with the ACDC-defined profile as defined herein. |
+| 182 | MUST | validator | 0 | 0 | 0 | — | — | — | ACDC's use of JSON Schema MUST be in accordance with the ACDC-defined profile as defined herein. |
 
 #### Schema ID Field Label
 
@@ -170,13 +170,13 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 186 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This field value MUST be the SAID of the schema. |
-| 186 | MUST | unassessed | 0 | 0 | 0 | — | — | — | There are several ACDC supported formats for the value of the top-level id, `$id`, field but all of the formats MUST include the SAID of the Schema (see below). |
-| 186 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Correspondingly, the value of the top-level schema, `s`, field MUST be the SAID included in the schema's top-level `$id` field. |
-| 188 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The digest algorithm employed for generating [[ref: Schema]] SAIDs MUST have an approximate cryptographic strength of 128 bits. |
-| 188 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The [[3](#SAID)] MUST be generated in compliance with the ToIP SAID internet draft specification and MUST be encoded using CESR. |
-| 190 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of the id, `$id`, field in any ACDC bundled subschema resource MUST include the SAID of that subschema using one of the formats described below. |
-| 190 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The subschema so bundled MUST be verifiable against its referenced and embedded SAID value. |
+| 186 | MUST | validator, security | 0 | 0 | 0 | — | — | — | This field value MUST be the SAID of the schema. |
+| 186 | MUST | validator, security | 0 | 0 | 0 | — | — | — | There are several ACDC supported formats for the value of the top-level id, `$id`, field but all of the formats MUST include the SAID of the Schema (see below). |
+| 186 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Correspondingly, the value of the top-level schema, `s`, field MUST be the SAID included in the schema's top-level `$id` field. |
+| 188 | MUST | untestable: Every CESR digest code has at least 128 bits of strength, so no well-formed schema SAID can violate it., security | 0 | 0 | 0 | — | — | — | The digest algorithm employed for generating [[ref: Schema]] SAIDs MUST have an approximate cryptographic strength of 128 bits. |
+| 188 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The [[3](#SAID)] MUST be generated in compliance with the ToIP SAID internet draft specification and MUST be encoded using CESR. |
+| 190 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of the id, `$id`, field in any ACDC bundled subschema resource MUST include the SAID of that subschema using one of the formats described below. |
+| 190 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The subschema so bundled MUST be verifiable against its referenced and embedded SAID value. |
 
 #### Static (Immutable) Schema
 
@@ -184,16 +184,16 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 194 | MUST | unassessed | 0 | 0 | 0 | — | — | — | For security reasons, the full Schema of an ACDC MUST be completely self-contained and statically fixed (immutable) for that ACDC. |
-| 194 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This means that dynamic Schema references or dynamic Schema generation mechanisms MUST NOT be used, i.e are not allowed. |
-| 200 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To prevent both forms of attack, all Schemas MUST be static, i.e., Schemas MUST be SADs and therefore verifiable against their SAIDs. |
-| 202 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, the serialization of a static schema SHOULD be self-contained. |
-| 202 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore, all ACDC-compliant Schemas MUST be SADs. |
-| 202 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In other words, the Schema MUST therefore be SAIDified. |
-| 206 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0014 (inferred) | ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable. |
-| 210 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of the top-level id field, `$id`, MUST be a bare SAID. |
-| 220 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To clarify, ACDCs MUST NOT use complex JSON Schema references which allow dynamically generated Schema resources to be obtained from online JSON Schema Libraries [[41](#ref41)] [[42](#JSchCx)]. |
-| 222 | MUST | unassessed | 0 | 0 | 0 | — | — | — | ACDCs MUST use static JSON Schema (i.e., SAIDifiable Schema). |
+| 194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | For security reasons, the full Schema of an ACDC MUST be completely self-contained and statically fixed (immutable) for that ACDC. |
+| 194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | This means that dynamic Schema references or dynamic Schema generation mechanisms MUST NOT be used, i.e are not allowed. |
+| 200 | MUST | validator, security | 0 | 0 | 0 | — | — | — | To prevent both forms of attack, all Schemas MUST be static, i.e., Schemas MUST be SADs and therefore verifiable against their SAIDs. |
+| 202 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | To elaborate, the serialization of a static schema SHOULD be self-contained. |
+| 202 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, all ACDC-compliant Schemas MUST be SADs. |
+| 202 | MUST | validator, security | 0 | 0 | 0 | — | — | — | In other words, the Schema MUST therefore be SAIDified. |
+| 206 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0014 (inferred) | ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable. |
+| 210 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the top-level id field, `$id`, MUST be a bare SAID. |
+| 220 | MUST | validator, security | 0 | 0 | 0 | — | — | — | To clarify, ACDCs MUST NOT use complex JSON Schema references which allow dynamically generated Schema resources to be obtained from online JSON Schema Libraries [[41](#ref41)] [[42](#JSchCx)]. |
+| 222 | MUST | validator, security | 0 | 0 | 0 | — | — | — | ACDCs MUST use static JSON Schema (i.e., SAIDifiable Schema). |
 
 #### Schema dialect
 
@@ -201,11 +201,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 226 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Schema dialect for ACDC 1.0 MUST be JSON Schema 2020-12 and is indicated by the identifier `"https://json-schema.org/draft/2020-12/schema"`  [[10](#JSch)] [[11](#JSch_202012)]. |
-| 226 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Validator MUST control the tooling code dialect used for Schema validation and hence the tooling dialect version actually used. |
-| 226 | SHOULD | unassessed | 1 | 0 | 0 | SHOULD 1 | negative | ACDC-0016 | A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail. |
-| 226 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The string MUST be treated simply as an identifier that communicates the intended dialect to be processed by the Schema validation tool. |
-| 226 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When provided, the top-level `$schema` field value for ACDC version 1.0 MUST be "https://json-schema.org/draft/2020-12/schema". |
+| 226 | MUST | validator | 0 | 0 | 0 | — | — | — | The Schema dialect for ACDC 1.0 MUST be JSON Schema 2020-12 and is indicated by the identifier `"https://json-schema.org/draft/2020-12/schema"`  [[10](#JSch)] [[11](#JSch_202012)]. |
+| 226 | MUST | untestable: Which tooling a validator runs internally is not observable through an adapter. | 0 | 0 | 0 | — | — | — | The Validator MUST control the tooling code dialect used for Schema validation and hence the tooling dialect version actually used. |
+| 226 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | negative | ACDC-0016 | A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail. |
+| 226 | MUST | untestable: An adapter never fetches anything, so treating the $schema string as an identifier and not as a location cannot be told apart in a case. | 0 | 0 | 0 | — | — | — | The string MUST be treated simply as an identifier that communicates the intended dialect to be processed by the Schema validation tool. |
+| 226 | MUST | validator | 0 | 0 | 0 | — | — | — | When provided, the top-level `$schema` field value for ACDC version 1.0 MUST be "https://json-schema.org/draft/2020-12/schema". |
 
 #### Schema Versioning
 
@@ -213,15 +213,15 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 230 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each schema MUST have at the top level a version field with the field label `version`. |
-| 230 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of the `version` field MUST be a semantic version string in the dotted decimal notation of the form "major.minor.patch". |
-| 230 | SHOULD | unassessed | 1 | 0 | 0 | SHOULD 1 | positive | ACDC-0017 | Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field. |
-| 232 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | Any copy of a schema that verifies against the same SAID given by the Schema ID, `$id` field value, SHOULD be assumed to be identical to any other copy that verifies to the same SAID by virtue of the strong collision resistance of the digest employed. |
-| 234 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To avoid confusion, any change to the Schema that changes the value of the `$id` MUST also be reflected in a correspondingly unique value of its `version` field. |
-| 236 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To comply with the semantic versioning rules, a backward incompatible Schema MUST have a higher major version number in its `version` field value than any backward incompatible version. |
-| 238 | MUST | unassessed | 0 | 0 | 0 | — | — | — | As discussed below in the Edge section, an Edge block MAY have a Schema, `s` field, which indicates that the ACDC node the edge points to MUST validate against the schema indicated by the Edge's Schema, `s` field value. |
-| 238 | MUST | unassessed | 0 | 0 | 0 | — | — | — | If the Edge's schema does not validate against the ACDC node pointed to by the edge, then the Edge's schema is backward incompatible and MUST have a higher major version number than the ACDC's schema (node pointed to by the edge). |
-| 238 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In this latter case, ACDCs issued under the old major version MUST either be revoked and reissued to comply with the new major version schema, or the Edge's schema MUST include a `oneOf` composition that accepts either old or new major versions. |
+| 230 | MUST | validator | 0 | 0 | 0 | — | — | — | Each schema MUST have at the top level a version field with the field label `version`. |
+| 230 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the `version` field MUST be a semantic version string in the dotted decimal notation of the form "major.minor.patch". |
+| 230 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | positive | ACDC-0017 | Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field. |
+| 232 | SHOULD | untestable: No case can present two different schemas with one SAID without a digest collision. | 0 | 0 | 0 | — | — | — | Any copy of a schema that verifies against the same SAID given by the Schema ID, `$id` field value, SHOULD be assumed to be identical to any other copy that verifies to the same SAID by virtue of the strong collision resistance of the digest employed. |
+| 234 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | To avoid confusion, any change to the Schema that changes the value of the `$id` MUST also be reflected in a correspondingly unique value of its `version` field. |
+| 236 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | To comply with the semantic versioning rules, a backward incompatible Schema MUST have a higher major version number in its `version` field value than any backward incompatible version. |
+| 238 | MUST | validator, security | 0 | 0 | 0 | — | — | — | As discussed below in the Edge section, an Edge block MAY have a Schema, `s` field, which indicates that the ACDC node the edge points to MUST validate against the schema indicated by the Edge's Schema, `s` field value. |
+| 238 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | If the Edge's schema does not validate against the ACDC node pointed to by the edge, then the Edge's schema is backward incompatible and MUST have a higher major version number than the ACDC's schema (node pointed to by the edge). |
+| 238 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | In this latter case, ACDCs issued under the old major version MUST either be revoked and reissued to comply with the new major version schema, or the Edge's schema MUST include a `oneOf` composition that accepts either old or new major versions. |
 
 #### Schema Availability
 
@@ -229,9 +229,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 242 | MUST | unassessed | 0 | 0 | 0 | — | — | — | ACDCs MUST be verifiable when available. |
-| 242 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | Although a given ACDC application domain or ecosystem governance framework (EGF) may impose schema availability constraints, this ACDC specification itself does not impose any specific availability requirements on Issuers other than schema caches SHOULD be sufficiently available for the intended application of their associated ACDCs. |
-| 242 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Issuer of an ACDC is REQUIRED to satisfy any availability constraints on its Schema that MAY be imposed by the application domain or ecosystem. |
+| 242 | MUST | untestable: A general statement of intent with no condition a case could check. | 0 | 0 | 0 | — | — | — | ACDCs MUST be verifiable when available. |
+| 242 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Although a given ACDC application domain or ecosystem governance framework (EGF) may impose schema availability constraints, this ACDC specification itself does not impose any specific availability requirements on Issuers other than schema caches SHOULD be sufficiently available for the intended application of their associated ACDCs. |
+| 242 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The Issuer of an ACDC is REQUIRED to satisfy any availability constraints on its Schema that MAY be imposed by the application domain or ecosystem. |
 
 #### Composable JSON Schema
 
@@ -239,12 +239,12 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 246 | MUST | unassessed | 2 | 0 | 0 | MUST 2 | negative | ACDC-0012, ACDC-0013 | The provided ACDC MUST validate against an allowed combination of the composed variants. |
-| 246 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Validator determines what decomposed variants the provided ACDC MUST also validate against. |
-| 248 | MUST | unassessed | 1 | 0 | 0 | MUST 1 | negative | ACDC-0010 | Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID. |
-| 248 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It also MUST validate against one of its specified `oneOf` variants. |
-| 250 | MUST | unassessed | 3 | 8 | 0 | MUST 3, SHOULD 8 | both | ACDC-0001 (inferred), ACDC-0002 (inferred), ACDC-0007, ACDC-0011, ACDC-0015, ACDC-0024 (inferred), ACDC-0025 (inferred), ACDC-0043 (inferred), ACDC-0048 (inferred), ACDC-0059 (inferred), ACDC-0062 (inferred) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. |
-| 250 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | In contrast, the compliance of the provided composed schema for an expected ACDC type SHOULD be enforced by the Validator. |
+| 246 | MUST | validator, security | 2 | 0 | 0 | MUST 2 | negative | ACDC-0012, ACDC-0013 | The provided ACDC MUST validate against an allowed combination of the composed variants. |
+| 246 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Validator determines what decomposed variants the provided ACDC MUST also validate against. |
+| 248 | MUST | validator, security | 1 | 0 | 0 | MUST 1 | negative | ACDC-0010 | Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID. |
+| 248 | MUST | validator, security | 0 | 0 | 0 | — | — | — | It also MUST validate against one of its specified `oneOf` variants. |
+| 250 | MUST | validator, security | 3 | 8 | 0 | MUST 3, SHOULD 8 | both | ACDC-0001 (inferred), ACDC-0002 (inferred), ACDC-0007, ACDC-0011, ACDC-0015, ACDC-0024 (inferred), ACDC-0025 (inferred), ACDC-0043 (inferred), ACDC-0048 (inferred), ACDC-0059 (inferred), ACDC-0062 (inferred) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. |
+| 250 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | In contrast, the compliance of the provided composed schema for an expected ACDC type SHOULD be enforced by the Validator. |
 
 #### Cargo, `cargo` field
 
@@ -252,7 +252,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 286 | MUST | unassessed | 0 | 0 | 0 | — | — | — | These MUST be serializable using a serialization that is compatible with the serialization kind of the ACDC that conveys them. |
+| 286 | MUST | validator | 0 | 0 | 0 | — | — | — | These MUST be serializable using a serialization that is compatible with the serialization kind of the ACDC that conveys them. |
 
 #### Targeted Attribute Section
 
@@ -260,9 +260,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 316 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Issuee MUST be designated by the `i` field value at the top-level of the attribute `a`, field block. |
-| 318 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The ACDC MUST be "issued by" an Issuer and MUST be "issued to" an Issuee. |
-| 318 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, because the Issuee, `i`, field value MUST be an AID, by definition, there is a provable Controller of that AID. |
+| 316 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Issuee MUST be designated by the `i` field value at the top-level of the attribute `a`, field block. |
+| 318 | MUST | validator | 0 | 0 | 0 | — | — | — | The ACDC MUST be "issued by" an Issuer and MUST be "issued to" an Issuee. |
+| 318 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, because the Issuee, `i`, field value MUST be an AID, by definition, there is a provable Controller of that AID. |
 
 #### Targeted private-attribute section example
 
@@ -270,8 +270,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 338 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | The semantics of the Issuee SHOULD be defined by the Credential Frameworks in an associated Ecosystem Goveranance Framework (EGF) for the ACDC. |
-| 342 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | Later disclosure of the uncompacted Attribute block SHOULD be verified against its SAID, `d`, field that was provided in the compact form as the value of the top-level Attribute section, `a`, field. |
+| 338 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | The semantics of the Issuee SHOULD be defined by the Credential Frameworks in an associated Ecosystem Goveranance Framework (EGF) for the ACDC. |
+| 342 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | Later disclosure of the uncompacted Attribute block SHOULD be verified against its SAID, `d`, field that was provided in the compact form as the value of the top-level Attribute section, `a`, field. |
 
 #### Targeted Public-attribute Section Example
 
@@ -279,8 +279,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 499 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | The semantics of the issuance SHOULD be defined by the Credential Frameworks of the EGF. |
-| 501 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Thus, an ACDC without a UUID, `u` field in its Attributes block MUST be considered a Public-Attribute ACDC even when expressed in compact form. |
+| 499 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | The semantics of the issuance SHOULD be defined by the Credential Frameworks of the EGF. |
+| 501 | MUST | untestable: Considering an ACDC public is a classification that acdc.verify does not report. | 0 | 0 | 0 | — | — | — | Thus, an ACDC without a UUID, `u` field in its Attributes block MUST be considered a Public-Attribute ACDC even when expressed in compact form. |
 
 #### Selectively disclosable Aggregate of attribute blocks
 
@@ -288,7 +288,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 692 | MUST | unassessed | 0 | 0 | 0 | — | — | — | All fields in a given block MUST be disclosed together as a set. |
+| 692 | MUST | validator | 0 | 0 | 0 | — | — | — | All fields in a given block MUST be disclosed together as a set. |
 
 #### Edge Section
 
@@ -296,7 +296,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1051 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Edge Section itself MUST have a "oneOf" composition with only its SAID so that the Edge Section MUST be expressable in the most compact form as merely its SAID. |
+| 1051 | MUST | validator | 0 | 0 | 0 | — | — | — | The Edge Section itself MUST have a "oneOf" composition with only its SAID so that the Edge Section MUST be expressable in the most compact form as merely its SAID. |
 
 #### Block Types
 
@@ -304,11 +304,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1058 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Nested Edge-groups, when present, with one exception, MUST appear as locally unique labeled blocks nested within another Edge-group. |
-| 1058 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When present, it MUST appear at the top-level of the ACDC. |
-| 1058 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The presence of an Edge Section is OPTIONAL, An Edge is indicated by the REQUIRED presence of a node, `n` field in the non-compact variant of its subschema. |
-| 1058 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An Edge MUST contain a node, `n` field. |
-| 1058 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An Edge-group MUST NOT have a node, `n` field. |
+| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | Nested Edge-groups, when present, with one exception, MUST appear as locally unique labeled blocks nested within another Edge-group. |
+| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | When present, it MUST appear at the top-level of the ACDC. |
+| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | The presence of an Edge Section is OPTIONAL, An Edge is indicated by the REQUIRED presence of a node, `n` field in the non-compact variant of its subschema. |
+| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge MUST contain a node, `n` field. |
+| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge-group MUST NOT have a node, `n` field. |
 
 #### ACDCs as secure graph fragments of a globally distributed property graph (PG)
 
@@ -316,7 +316,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1066 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To enable both the node and its connecting edge to be globally uniquely resolvable, each Edge's block MUST also have a SAID, `d`, field. |
+| 1066 | MUST | validator | 0 | 0 | 0 | — | — | — | To enable both the node and its connecting edge to be globally uniquely resolvable, each Edge's block MUST also have a SAID, `d`, field. |
 
 #### Edge-group
 
@@ -324,7 +324,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1085 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An Edge-group MUST NOT have a node, `n`, field. |
+| 1085 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge-group MUST NOT have a node, `n`, field. |
 
 #### SAID, `d` field
 
@@ -332,8 +332,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1089 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Edge-group block. |
-| 1089 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| 1089 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Edge-group block. |
+| 1089 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
 
 #### UUID, `u` field
 
@@ -341,8 +341,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1093 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge-group block following the SAID, `d`, field. |
-| 1093 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. |
+| 1093 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge-group block following the SAID, `d`, field. |
+| 1093 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. |
 
 #### Operator, `o` field
 
@@ -350,11 +350,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1097 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Operator, `o` field MUST appear immediately following the SAID, `d` field, and UUID, `u` field (when present) in the Edge-group block. |
-| 1110 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the Operator, `o`, field is missing in an Edge-group block, the default value for the Operator, `o`, field MUST be the `AND` Operator. |
-| 1114 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid. |
-| 1114 | MUST | unassessed | 0 | 0 | 0 | — | — | — | If any links between the head and the tail are broken (invalid), then the head is itself MUST be invalid. |
-| 1116 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Typically, in a given EGF (ecosystem governance framework), all branches from the head MUST be valid for the head node to be valid. |
+| 1097 | MUST | validator | 0 | 0 | 0 | — | — | — | The Operator, `o` field MUST appear immediately following the SAID, `d` field, and UUID, `u` field (when present) in the Edge-group block. |
+| 1110 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When the Operator, `o`, field is missing in an Edge-group block, the default value for the Operator, `o`, field MUST be the `AND` Operator. |
+| 1114 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid. |
+| 1114 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | If any links between the head and the tail are broken (invalid), then the head is itself MUST be invalid. |
+| 1116 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | Typically, in a given EGF (ecosystem governance framework), all branches from the head MUST be valid for the head node to be valid. |
 
 #### Weight, `w` field
 
@@ -362,9 +362,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1120 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Weight, `w` field, is OPTIONAL but when present, it MUST appear immediately following all of the SAID, `d` field, UUID, `u` field (when present), and Operator, `o` field (when present) in the Edge-group block. |
-| 1120 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The top-level Edge-group MUST NOT have a weight, `w` field, because it is not a member of another Edge-group. |
-| 1122 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To simplify the semantics for such Operators, the Weight, `w`, field MUST be the reserved field label for weighting. |
+| 1120 | MUST | validator | 0 | 0 | 0 | — | — | — | The Weight, `w` field, is OPTIONAL but when present, it MUST appear immediately following all of the SAID, `d` field, UUID, `u` field (when present), and Operator, `o` field (when present) in the Edge-group block. |
+| 1120 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level Edge-group MUST NOT have a weight, `w` field, because it is not a member of another Edge-group. |
+| 1122 | MUST | untestable: Reserves a label; it states no condition a validator could find violated in an ACDC. | 0 | 0 | 0 | — | — | — | To simplify the semantics for such Operators, the Weight, `w`, field MUST be the reserved field label for weighting. |
 
 #### Labeled nested edge and edge-group fields
 
@@ -372,12 +372,12 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1126 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Such labeled nested Edge or Edge-group fields MUST appear after all of any fields with a reserved field label. |
-| 1128 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each nested Edge or Edge-group block within an Edge-group including the top-level Edge Section Edge-group MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. |
-| 1128 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To clarify, each nested block in every Edge-group MUST have its own field with its own local (to the ACDC) label. |
-| 1130 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Note that each nested block MUST NOT include a type field. |
-| 1130 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Because ACDCs MUST have a Schema, they SHOULD leverage it to provide property graph edge types with a cleaner separation of concerns. |
-| 1132 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each labeled Edge and Edge-group type MUST be defined by the subschema designated by its label. |
+| 1126 | MUST | validator | 0 | 0 | 0 | — | — | — | Such labeled nested Edge or Edge-group fields MUST appear after all of any fields with a reserved field label. |
+| 1128 | MUST | validator | 0 | 0 | 0 | — | — | — | Each nested Edge or Edge-group block within an Edge-group including the top-level Edge Section Edge-group MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. |
+| 1128 | MUST | validator | 0 | 0 | 0 | — | — | — | To clarify, each nested block in every Edge-group MUST have its own field with its own local (to the ACDC) label. |
+| 1130 | MUST | validator | 0 | 0 | 0 | — | — | — | Note that each nested block MUST NOT include a type field. |
+| 1130 | MUST | untestable: Restates that an ACDC has a schema, covered at line 36, and advises schema authors on modelling edge types; neither half names a check. | 0 | 0 | 0 | — | — | — | Because ACDCs MUST have a Schema, they SHOULD leverage it to provide property graph edge types with a cleaner separation of concerns. |
+| 1132 | MUST | validator | 0 | 0 | 0 | — | — | — | Each labeled Edge and Edge-group type MUST be defined by the subschema designated by its label. |
 
 #### Edge
 
@@ -385,10 +385,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1136 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An Edge MUST be represented as a block (field map) with two exceptions. |
-| 1149 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An Edge block MUST have a node, `n`, field. |
-| 1149 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To clarify, each Edge block MUST have a node, `n`, field and MAY have any combination of SAID, `d`, UUID, `u`, schema, `s`, operator, `o`, or weight, `w` fields. |
-| 1149 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When present the order of appearance of these fields MUST be as follows: `[d, u, n, s, o, w]'. |
+| 1136 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge MUST be represented as a block (field map) with two exceptions. |
+| 1149 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge block MUST have a node, `n`, field. |
+| 1149 | MUST | validator | 0 | 0 | 0 | — | — | — | To clarify, each Edge block MUST have a node, `n`, field and MAY have any combination of SAID, `d`, UUID, `u`, schema, `s`, operator, `o`, or weight, `w` fields. |
+| 1149 | MUST | validator | 0 | 0 | 0 | — | — | — | When present the order of appearance of these fields MUST be as follows: `[d, u, n, s, o, w]'. |
 
 #### SAID, `d` field
 
@@ -396,8 +396,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1154 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but, when present, MUST appear as the first field in the Edge block. |
-| 1154 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| 1154 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but, when present, MUST appear as the first field in the Edge block. |
+| 1154 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
 
 #### Compact edge
 
@@ -405,7 +405,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1158 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The schema for that edge's label MUST indicate that the edge value is the edge block SAID by using a `oneOf` composition of the compact form and the expanded form. |
+| 1158 | MUST | validator | 0 | 0 | 0 | — | — | — | The schema for that edge's label MUST indicate that the edge value is the edge block SAID by using a `oneOf` composition of the compact form and the expanded form. |
 
 #### UUID, `u` field
 
@@ -413,8 +413,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1162 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge block following the SAID, `d`, field. |
-| 1162 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). |
+| 1162 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge block following the SAID, `d`, field. |
+| 1162 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). |
 
 #### Node, `n` field
 
@@ -422,9 +422,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1170 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When an Edge block does not include a SAID, `d` field, then the node, `n` field MUST appear as the first field in the block. |
-| 1174 | MUST | unassessed | 2 | 12 | 0 | MUST 2, SHOULD 24 | both | ACDC-0043 (inferred), ACDC-0044 (inferred), ACDC-0046 (inferred), ACDC-0047, ACDC-0048 (inferred), ACDC-0049 (inferred), ACDC-0051 (inferred), ACDC-0053 (inferred), ACDC-0055 (inferred), ACDC-0057 (inferred), ACDC-0058, ACDC-0059 (inferred), ACDC-0060 (inferred), ACDC-0062 (inferred) | In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema. |
-| 1174 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the (near node) Edge block's schema, `s` field is present (see below), then the far node MUST also validate against the Schema indicated by the near node Edge block's Schema, `s` field value. |
+| 1170 | MUST | validator | 0 | 0 | 0 | — | — | — | When an Edge block does not include a SAID, `d` field, then the node, `n` field MUST appear as the first field in the block. |
+| 1174 | MUST | validator, security | 2 | 12 | 0 | MUST 2, SHOULD 24 | both | ACDC-0043 (inferred), ACDC-0044 (inferred), ACDC-0046 (inferred), ACDC-0047, ACDC-0048 (inferred), ACDC-0049 (inferred), ACDC-0051 (inferred), ACDC-0053 (inferred), ACDC-0055 (inferred), ACDC-0057 (inferred), ACDC-0058, ACDC-0059 (inferred), ACDC-0060 (inferred), ACDC-0062 (inferred) | In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema. |
+| 1174 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When the (near node) Edge block's schema, `s` field is present (see below), then the far node MUST also validate against the Schema indicated by the near node Edge block's Schema, `s` field value. |
 
 #### Schema, `s` field
 
@@ -432,10 +432,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1178 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When present, the Schema `s` field MUST appear immediately following the node `n` field in the Edge sub-block. |
-| 1178 | MUST | unassessed | 3 | 0 | 0 | MUST 3 | negative | ACDC-0050, ACDC-0052, ACDC-0054 | The far node ACDC MUST also validate against an Edge block's schema, `s` field when present. |
-| 1178 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. |
-| 1178 | MUST | unassessed | 0 | 0 | 0 | — | — | — | However, when the Schema SAIDs differ, two Schema validation runs MUST be performed. |
+| 1178 | MUST | validator | 0 | 0 | 0 | — | — | — | When present, the Schema `s` field MUST appear immediately following the node `n` field in the Edge sub-block. |
+| 1178 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | negative | ACDC-0050, ACDC-0052, ACDC-0054 | The far node ACDC MUST also validate against an Edge block's schema, `s` field when present. |
+| 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. |
+| 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | However, when the Schema SAIDs differ, two Schema validation runs MUST be performed. |
 
 #### Operator, `o` field
 
@@ -443,15 +443,15 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1186 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Operator, `o` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, node, `n` field, or schema, `s` field (when present) in the Edge block. |
-| 1192 | MUST | unassessed | 0 | 0 | 0 | — | — | — | \|`I2I`\| Issuer-To-Issuee, The Issuer AID of this ACDC MUST be the Issuee AID of the node this Edge points to.  \| Yes \| |
-| 1194 | MUST | unassessed | 0 | 0 | 0 | — | — | — | \|`DI2I`\| Delegated-Issuer-To-Issuee, The Issuer AID of this ACDC MUST be either the Issuee AID or a delegated AID of the Issuee AID of the node this Edge points to. \| No \| |
-| 1199 | MUST | unassessed | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge is a targeted ACDC, i.e., has an Issuee, then the `I2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
-| 1201 | MUST | unassessed | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge block is an Untargeted ACDC i.e., does not have an Issuee, then the `NI2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
-| 1205 | MUST | unassessed | 3 | 0 | 0 | MUST 3 | negative | ACDC-0045, ACDC-0056, ACDC-0061 | The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points. |
-| 1205 | MUST | unassessed | 3 | 0 | 0 | MUST 3 | negative | ACDC-0045, ACDC-0056, ACDC-0061 | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
-| 1207 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In other words, any REQUIREMENT that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID, if any, of the node the Edge points to is relaxed (not applicable). |
-| 1209 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
+| 1186 | MUST | validator | 0 | 0 | 0 | — | — | — | The Operator, `o` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, node, `n` field, or schema, `s` field (when present) in the Edge block. |
+| 1192 | MUST | validator, security | 0 | 0 | 0 | — | — | — | \|`I2I`\| Issuer-To-Issuee, The Issuer AID of this ACDC MUST be the Issuee AID of the node this Edge points to.  \| Yes \| |
+| 1194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | \|`DI2I`\| Delegated-Issuer-To-Issuee, The Issuer AID of this ACDC MUST be either the Issuee AID or a delegated AID of the Issuee AID of the node this Edge points to. \| No \| |
+| 1199 | MUST | validator, security | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge is a targeted ACDC, i.e., has an Issuee, then the `I2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
+| 1201 | MUST | validator | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge block is an Untargeted ACDC i.e., does not have an Issuee, then the `NI2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
+| 1205 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | negative | ACDC-0045, ACDC-0056, ACDC-0061 | The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points. |
+| 1205 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | negative | ACDC-0045, ACDC-0056, ACDC-0061 | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
+| 1207 | MUST | validator | 0 | 0 | 0 | — | — | — | In other words, any REQUIREMENT that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID, if any, of the node the Edge points to is relaxed (not applicable). |
+| 1209 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
 
 #### Weight, `w` field.
 
@@ -459,7 +459,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1215 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Weight, `w` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, Node, `n` field, Schema, `s` field, or Operator, `o` field (when present) in the Edge block. |
+| 1215 | MUST | validator | 0 | 0 | 0 | — | — | — | The Weight, `w` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, Node, `n` field, Schema, `s` field, or Operator, `o` field (when present) in the Edge block. |
 
 #### Labeled property fields
 
@@ -467,7 +467,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1221 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Labeled property fields MUST appear after all of any fields with a reserved field label. |
+| 1221 | MUST | validator | 0 | 0 | 0 | — | — | — | Labeled property fields MUST appear after all of any fields with a reserved field label. |
 
 #### Simple compact edge
 
@@ -475,7 +475,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1225 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Schema for that Edge's label MUST indicate in its description that the Edge value is a Far Node SAID, not the Edge block SAID. |
+| 1225 | MUST | untestable: Requires prose in a schema's description, which no validator interprets. | 0 | 0 | 0 | — | — | — | The Schema for that Edge's label MUST indicate in its description that the Edge value is a Far Node SAID, not the Edge block SAID. |
 
 #### Rule Section
 
@@ -483,7 +483,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1243 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Rule Section itself MUST have a "oneOf" composition with only its SAID so that the Rule Section MUST be expressable in the most compact form as merely its SAID. |
+| 1243 | MUST | validator | 0 | 0 | 0 | — | — | — | The Rule Section itself MUST have a "oneOf" composition with only its SAID so that the Rule Section MUST be expressable in the most compact form as merely its SAID. |
 
 #### SAID, `d` field
 
@@ -491,8 +491,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1271 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Rule-group block. |
-| 1271 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| 1271 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Rule-group block. |
+| 1271 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
 
 #### UUID, `u` field
 
@@ -500,8 +500,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1275 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule-group block following the SAID, `d`, field. |
-| 1275 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). |
+| 1275 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule-group block following the SAID, `d`, field. |
+| 1275 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). |
 
 #### Labeled nested rule and rule-group fields
 
@@ -509,10 +509,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1279 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Labeled nested Rule or Rule-group fields MUST appear after all of any fields with a reserved field label. |
-| 1281 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, each nested Rule or Rule-group block MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. |
-| 1283 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Note that each nested block MUST NOT include a type field. |
-| 1285 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each labeled Rule type MUST be defined by the subschema designated by its label. |
+| 1279 | MUST | validator | 0 | 0 | 0 | — | — | — | Labeled nested Rule or Rule-group fields MUST appear after all of any fields with a reserved field label. |
+| 1281 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, each nested Rule or Rule-group block MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. |
+| 1283 | MUST | validator | 0 | 0 | 0 | — | — | — | Note that each nested block MUST NOT include a type field. |
+| 1285 | MUST | validator | 0 | 0 | 0 | — | — | — | Each labeled Rule type MUST be defined by the subschema designated by its label. |
 
 #### Rule
 
@@ -520,8 +520,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1300 | MUST | unassessed | 0 | 0 | 0 | — | — | — | A Rule MUST have a Legal, `l`, field. |
-| 1300 | MUST | unassessed | 0 | 0 | 0 | — | — | — | A Rule MUST NOT have any other fields. |
+| 1300 | MUST | validator | 0 | 0 | 0 | — | — | — | A Rule MUST have a Legal, `l`, field. |
+| 1300 | MUST | validator | 0 | 0 | 0 | — | — | — | A Rule MUST NOT have any other fields. |
 
 #### SAID, `d` field
 
@@ -529,8 +529,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1303 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional, but when it appears, it MUST appear as the first field in the Clause block. |
-| 1303 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| 1303 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional, but when it appears, it MUST appear as the first field in the Clause block. |
+| 1303 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
 
 #### Compact Rule
 
@@ -538,7 +538,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1307 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Schema for that clause's label MUST indicate that the clause field value is the clause block SAID by using a `oneOf` composition of the compact form and the expanded form. |
+| 1307 | MUST | validator | 0 | 0 | 0 | — | — | — | The Schema for that clause's label MUST indicate that the clause field value is the clause block SAID by using a `oneOf` composition of the compact form and the expanded form. |
 
 #### UUID, `u` field
 
@@ -546,8 +546,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1311 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule Section block following the SAID, `d` field. |
-| 1311 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. |
+| 1311 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule Section block following the SAID, `d` field. |
+| 1311 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. |
 
 #### Simple Compact Rule
 
@@ -555,7 +555,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1323 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Schema for that Rule's label MUST indicate in its description that the Rule value is Legal Language, not a SAID. |
+| 1323 | MUST | untestable: Requires prose in a schema's description, which no validator interprets. | 0 | 0 | 0 | — | — | — | The Schema for that Rule's label MUST indicate in its description that the Rule value is Legal Language, not a SAID. |
 
 #### Binding to Key State at Time of ACDC State Change
 
@@ -563,8 +563,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1669 | MUST | unassessed | 0 | 12 | 0 | SHOULD 12 | both | ACDC-0025 (inferred), ACDC-0026 (inferred), ACDC-0027 (inferred), ACDC-0028 (inferred), ACDC-0030 (inferred), ACDC-0032 (inferred), ACDC-0033 (inferred), ACDC-0035 (inferred), ACDC-0036 (inferred), ACDC-0037 (inferred), ACDC-0039 (inferred), ACDC-0041 (inferred) | The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal. |
-| 1669 | MUST | unassessed | 0 | 2 | 0 | SHOULD 2 | positive | ACDC-0028 (inferred), ACDC-0030 (inferred) | Update events in the Registry's TEL MUST also be anchored. |
+| 1669 | MUST | validator, security | 0 | 12 | 0 | SHOULD 12 | both | ACDC-0025 (inferred), ACDC-0026 (inferred), ACDC-0027 (inferred), ACDC-0028 (inferred), ACDC-0030 (inferred), ACDC-0032 (inferred), ACDC-0033 (inferred), ACDC-0035 (inferred), ACDC-0036 (inferred), ACDC-0037 (inferred), ACDC-0039 (inferred), ACDC-0041 (inferred) | The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal. |
+| 1669 | MUST | validator, security | 0 | 2 | 0 | SHOULD 2 | positive | ACDC-0028 (inferred), ACDC-0030 (inferred) | Update events in the Registry's TEL MUST also be anchored. |
 
 #### Graduated Disclosure
 
@@ -572,7 +572,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1761 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Schema for the block MUST include a `oneOf` composition Operator that validates against both the compact and full versions of the block. |
+| 1761 | MUST | validator | 0 | 0 | 0 | — | — | — | The Schema for the block MUST include a `oneOf` composition Operator that validates against both the compact and full versions of the block. |
 
 #### Contractually Protected Disclosure
 
@@ -580,8 +580,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1790 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The terms-of-use of the original disclosure as applied to the original Disclosee MUST be applied by each subsequent Discloser to each subsequent Disclosee via each of the subsequent disclosures. |
-| 1792 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When that contingency is met, then the Contingent Disclosure MUST be made by the party whose responsibility it is to satisfy that disclosure obligation. |
+| 1790 | MUST | untestable: A contractual obligation on later disclosers; whether the terms bind anyone is a legal question no case can check. | 0 | 0 | 0 | — | — | — | The terms-of-use of the original disclosure as applied to the original Disclosee MUST be applied by each subsequent Discloser to each subsequent Disclosee via each of the subsequent disclosures. |
+| 1792 | MUST | untestable: A contractual obligation on the party responsible for a contingent disclosure; no case can check it. | 0 | 0 | 0 | — | — | — | When that contingency is met, then the Contingent Disclosure MUST be made by the party whose responsibility it is to satisfy that disclosure obligation. |
 
 #### Issuance and Presentation Exchange (IPEX)
 
@@ -589,7 +589,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1797 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges. |
+| 1797 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges. |
 
 #### IPEX Protocol Messages
 
@@ -597,8 +597,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1807 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message. |
-| 1807 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | The notional semantics of each route indicate how the message SHOULD be used in an exchange. |
+| 1807 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message. |
+| 1807 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | The notional semantics of each route indicate how the message SHOULD be used in an exchange. |
 
 #### Commitments via SAID
 
@@ -606,11 +606,11 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1822 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified. |
-| 1828 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed. |
-| 1828 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD. |
-| 1832 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure. |
-| 1832 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | To restate, there are two proofs that a Discloser SHOULD provide. |
+| 1822 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified. |
+| 1828 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed. |
+| 1828 | SHOULD | out-of-scope, security | 0 | 0 | 0 | — | — | — | In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD. |
+| 1832 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure. |
+| 1832 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | To restate, there are two proofs that a Discloser SHOULD provide. |
 
 #### Issuer Commitment Rules
 
@@ -618,8 +618,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1843 | MUST | unassessed | 0 | 11 | 0 | SHOULD 11 | negative | ACDC-0018 (inferred), ACDC-0019 (inferred), ACDC-0020 (inferred), ACDC-0021 (inferred), ACDC-0022 (inferred), ACDC-0029 (inferred), ACDC-0031 (inferred), ACDC-0035 (inferred), ACDC-0038 (inferred), ACDC-0040 (inferred), ACDC-0042 (inferred) | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). |
-| 1850 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants. |
+| 1843 | MUST | out-of-scope, security | 0 | 11 | 0 | SHOULD 11 | negative | ACDC-0018 (inferred), ACDC-0019 (inferred), ACDC-0020 (inferred), ACDC-0021 (inferred), ACDC-0022 (inferred), ACDC-0029 (inferred), ACDC-0031 (inferred), ACDC-0035 (inferred), ACDC-0038 (inferred), ACDC-0040 (inferred), ACDC-0042 (inferred) | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). |
+| 1850 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants. |
 
 #### Overview
 
@@ -627,7 +627,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1922 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The transaction events MUST be sealed (anchored or bound) in a KEL using transaction event seals, whose JSON representation MUST be as follows. |
+| 1922 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The transaction events MUST be sealed (anchored or bound) in a KEL using transaction event seals, whose JSON representation MUST be as follows. |
 
 #### Registry Inception event fields
 
@@ -635,9 +635,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1985 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The fields for the Registry-Inception, `rip` event , given by their labels, MUST appear in the following order, `[v, t, d, u, i, n, dt]`. |
-| 1985 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `rip`. |
-| 1985 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of the sequence number field, `s` MUST be the hex encoded string for the integer 0. |
+| 1985 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields for the Registry-Inception, `rip` event , given by their labels, MUST appear in the following order, `[v, t, d, u, i, n, dt]`. |
+| 1985 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `rip`. |
+| 1985 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the sequence number field, `s` MUST be the hex encoded string for the integer 0. |
 
 #### Blindable Update event fields
 
@@ -645,8 +645,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1989 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The fields for the Blindable-Update, `bup` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, b]`. |
-| 1989 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `bup`. |
+| 1989 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields for the Blindable-Update, `bup` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, b]`. |
+| 1989 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `bup`. |
 
 #### Update event fields
 
@@ -654,8 +654,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1993 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The fields for the Update, `upd` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, ta, ts]`. |
-| 1993 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `upd`. |
+| 1993 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields for the Update, `upd` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, ta, ts]`. |
+| 1993 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `upd`. |
 
 #### Version String, `v` field
 
@@ -663,7 +663,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1999 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The protocol type MUST be `ACDC`. |
+| 1999 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type MUST be `ACDC`. |
 
 #### Message type, `t` field
 
@@ -671,7 +671,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2003 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Message type, `t` field value MUST be  one of the Message types in the table above. |
+| 2003 | MUST | validator | 0 | 0 | 0 | — | — | — | The Message type, `t` field value MUST be  one of the Message types in the table above. |
 
 #### SAID, `d` field
 
@@ -679,7 +679,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2007 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The SAID, `d` field value MUST be the SAID of its enclosing block. |
+| 2007 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The SAID, `d` field value MUST be the SAID of its enclosing block. |
 
 #### UUID, `u` field
 
@@ -687,7 +687,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2011 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The UUID, `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). |
+| 2011 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The UUID, `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). |
 
 #### Issuer, `i` field
 
@@ -695,7 +695,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2015 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0038 (inferred) | The Issuer, `i` field value MUST be the AID of the Issuer. |
+| 2015 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | negative | ACDC-0038 (inferred) | The Issuer, `i` field value MUST be the AID of the Issuer. |
 
 #### Registry SAID, `rd` field
 
@@ -703,8 +703,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2019 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Registry SAID, `rd` field value MUST be the value of the SAID, `d` field of the Registry Inception, `rip` event. |
-| 2019 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Update events MUST include the Registry SAID, `rd` field so that they can be verifiably associated with the Registry (TEL). |
+| 2019 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Registry SAID, `rd` field value MUST be the value of the SAID, `d` field of the Registry Inception, `rip` event. |
+| 2019 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Update events MUST include the Registry SAID, `rd` field so that they can be verifiably associated with the Registry (TEL). |
 
 #### Sequence number, `n` field
 
@@ -712,8 +712,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2023 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The sequence number, `n` field value MUST be a hex-encoded string with no leading zeros of a zero-based strictly monotonically increasing integer. |
-| 2023 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The first (zeroth) transaction event in a given Registry (TEL) MUST have a sequence number of 0 or `0` hex. |
+| 2023 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The sequence number, `n` field value MUST be a hex-encoded string with no leading zeros of a zero-based strictly monotonically increasing integer. |
+| 2023 | MUST | validator | 0 | 0 | 0 | — | — | — | The first (zeroth) transaction event in a given Registry (TEL) MUST have a sequence number of 0 or `0` hex. |
 
 #### Prior event SAID, `p` field
 
@@ -721,7 +721,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2027 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | positive | ACDC-0032 (inferred) | The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL. |
+| 2027 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | positive | ACDC-0032 (inferred) | The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL. |
 
 #### Datetime, `dt` field
 
@@ -729,8 +729,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2031 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The datetime, `dt` field value MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). |
-| 2031 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This MUST be the datetime of the issuance of the transaction event relative to the clock of the issuer. |
+| 2031 | MUST | validator | 0 | 0 | 0 | — | — | — | The datetime, `dt` field value MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). |
+| 2031 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | This MUST be the datetime of the issuance of the transaction event relative to the clock of the issuer. |
 
 #### Transaction state, `ts` field
 
@@ -738,7 +738,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2041 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. |
+| 2041 | MUST | untestable: The specification does not define the registry's set of states, so no case can say a value is outside it. | 0 | 0 | 0 | — | — | — | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. |
 
 #### Blinded attribute, `b` field
 
@@ -746,7 +746,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2045 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The blinded attribute, `b` field value MUST be the SAID of the blinded attribute block. |
+| 2045 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The blinded attribute, `b` field value MUST be the SAID of the blinded attribute block. |
 
 #### Blinded Attribute Block
 
@@ -754,8 +754,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2058 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The fields MUST appear in the following order: `[d, u, td, ts]`. |
-| 2062 | MUST | unassessed | 0 | 5 | 0 | SHOULD 5 | positive | ACDC-0025 (inferred), ACDC-0026 (inferred), ACDC-0027 (inferred), ACDC-0036 (inferred), ACDC-0037 (inferred) | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`. |
+| 2058 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields MUST appear in the following order: `[d, u, td, ts]`. |
+| 2062 | MUST | validator | 0 | 5 | 0 | SHOULD 5 | positive | ACDC-0025 (inferred), ACDC-0026 (inferred), ACDC-0027 (inferred), ACDC-0036 (inferred), ACDC-0037 (inferred) | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`. |
 
 #### BLID, `d` field
 
@@ -763,7 +763,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2066 | MUST | unassessed | 0 | 2 | 0 | SHOULD 2 | positive | ACDC-0039 (inferred), ACDC-0041 (inferred) | The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values. |
+| 2066 | MUST | validator, security | 0 | 2 | 0 | SHOULD 2 | positive | ACDC-0039 (inferred), ACDC-0041 (inferred) | The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values. |
 
 #### UUID, `u` field
 
@@ -771,8 +771,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2073 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When not empty, the UUID `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). |
-| 2079 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the `u` field value is derived from a shared secret salt, the derivation algorithm MUST preserve the approximately 128 bits of cryptographic strength. |
+| 2073 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | When not empty, the UUID `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). |
+| 2079 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | When the `u` field value is derived from a shared secret salt, the derivation algorithm MUST preserve the approximately 128 bits of cryptographic strength. |
 
 #### Transaction ACDC SAID, `td` field
 
@@ -780,7 +780,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2087 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the transaction ACDC SAID, `ts`, field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
+| 2087 | MUST | validator | 0 | 0 | 0 | — | — | — | When the transaction ACDC SAID, `ts`, field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
 
 #### Transaction state, `ts` field
 
@@ -788,8 +788,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2092 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. |
-| 2094 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the transaction state `ts` field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
+| 2092 | MUST | untestable: The specification does not define the registry's set of states, so no case can say a value is outside it. | 0 | 0 | 0 | — | — | — | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. |
+| 2094 | MUST | validator | 0 | 0 | 0 | — | — | — | When the transaction state `ts` field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
 
 #### Blinded State Disclosure
 
@@ -797,7 +797,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2135 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each new event published by the Issuer in the Registry MUST increment the sequence number and hence the blinding factor, but MAY or MAY not change the actual blinded state. |
+| 2135 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Each new event published by the Issuer in the Registry MUST increment the sequence number and hence the blinding factor, but MAY or MAY not change the actual blinded state. |
 
 #### Blinded State Registry Example
 
@@ -805,8 +805,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2282 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The shared secret salt MUST have approximately 128 bits of cryptographic entropy. |
-| 2286 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Consequently, it knows that the value of the ACDC, SAID, `td` field MUST be either the empty string placeholder or the real ACDC SAID given above. |
+| 2282 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The shared secret salt MUST have approximately 128 bits of cryptographic entropy. |
+| 2286 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Consequently, it knows that the value of the ACDC, SAID, `td` field MUST be either the empty string placeholder or the real ACDC SAID given above. |
 
 #### Bound Blinded Attribute Block
 
@@ -814,8 +814,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2446 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The fields MUST appear in the following order `[d, u, td, ts, bn, bd]`. |
-| 2452 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization and MUST use one of the CESR group or count codes labeled `BoundStateSextuples` with code format `-b##` or `BigBoundStateSextuples` with code format `--b######`. |
+| 2446 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields MUST appear in the following order `[d, u, td, ts, bn, bd]`. |
+| 2452 | MUST | validator | 0 | 0 | 0 | — | — | — | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization and MUST use one of the CESR group or count codes labeled `BoundStateSextuples` with code format `-b##` or `BigBoundStateSextuples` with code format `--b######`. |
 
 #### Bound Issuee Key Event Sequence Number, `bn` Field
 
@@ -823,9 +823,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2457 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The bound Issuee key event sequence number, `tn`, field value MUST be a CESR encoded non-negative integer. |
-| 2457 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When not a placeholder, it MUST be the value of the `s` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. |
-| 2459 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST be CESR-encoded as the CESR encoding for the integer value of 0. |
+| 2457 | MUST | validator | 0 | 0 | 0 | — | — | — | The bound Issuee key event sequence number, `tn`, field value MUST be a CESR encoded non-negative integer. |
+| 2457 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When not a placeholder, it MUST be the value of the `s` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. |
+| 2459 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be CESR-encoded as the CESR encoding for the integer value of 0. |
 
 #### Bound Issuee Key Event SAID, `bd` Field
 
@@ -833,8 +833,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2476 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When not a placeholder, the bound Issuee key event SAID, `bd`, field value MUST be the value of the `d` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. |
-| 2478 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When the bound Issuee key event SAID, `bd`, field value is a placeholder as indicated by the empty string, i.e., "", it MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
+| 2476 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When not a placeholder, the bound Issuee key event SAID, `bd`, field value MUST be the value of the `d` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. |
+| 2478 | MUST | validator | 0 | 0 | 0 | — | — | — | When the bound Issuee key event SAID, `bd`, field value is a placeholder as indicated by the empty string, i.e., "", it MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
 
 #### Performance and Scalability
 
@@ -842,7 +842,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2703 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Higher-up nodes in the graph with many lower-level nodes need only be transmitted, verified, and cached once per every node or leaf in the branch not redundantly re-transmitted and re-verified for each node or leaf as is the case for document-based Verifiable Credentials where the whole equivalent of the branched (graph) structure MUST be contained in one document. |
+| 2703 | MUST | untestable: Describes document-based verifiable credentials for contrast; it binds nothing in ACDC. | 0 | 0 | 0 | — | — | — | Higher-up nodes in the graph with many lower-level nodes need only be transmitted, verified, and cached once per every node or leaf in the branch not redundantly re-transmitted and re-verified for each node or leaf as is the case for document-based Verifiable Credentials where the whole equivalent of the branched (graph) structure MUST be contained in one document. |
 
 #### Cryptographic Strength
 
@@ -850,7 +850,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2709 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Any subsequent cryptographic operations MUST preserve that minimum level of cryptographic strength. |
+| 2709 | MUST | untestable: A design principle for every cryptographic operation, with no single check a case could make. | 0 | 0 | 0 | — | — | — | Any subsequent cryptographic operations MUST preserve that minimum level of cryptographic strength. |
 
 #### Selective Disclosure
 
@@ -858,7 +858,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2735 | MUST | unassessed | 0 | 1 | 0 | SHOULD 1 | positive | ACDC-0063 (inferred) | To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above. |
+| 2735 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | positive | ACDC-0063 (inferred) | To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above. |
 
 #### Basic Bulk Issuance Procedure
 
@@ -866,10 +866,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2805 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The Issuer MUST anchor in its KEL an issuance proof digest seal of the set of bulk-issued ACDCs either directly or indirectly via an ACDC Registry (TEL). |
-| 2840 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | Consequently, a Discloser (Issuee) SHOULD NOT disclose the registry SAID until after contractual protection is in place, i.e., the Disclosee has agreed to the terms in the ACDC's Rule Section or not provide and `rd` field value in the ACDC at all. |
-| 2852 | SHOULD | unassessed | 0 | 0 | 0 | — | — | — | A bulk-issued TEL SHOULD use a blinded, blindable state update, `bup` message. |
-| 2879 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Whereas any KEL that has changed its Key State via a Rotation MUST be forked before the Rotation. |
+| 2805 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Issuer MUST anchor in its KEL an issuance proof digest seal of the set of bulk-issued ACDCs either directly or indirectly via an ACDC Registry (TEL). |
+| 2840 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Consequently, a Discloser (Issuee) SHOULD NOT disclose the registry SAID until after contractual protection is in place, i.e., the Disclosee has agreed to the terms in the ACDC's Rule Section or not provide and `rd` field value in the ACDC at all. |
+| 2852 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | A bulk-issued TEL SHOULD use a blinded, blindable state update, `bup` message. |
+| 2879 | MUST | untestable: Describes what a forger would have to do, not an obligation on any party. | 0 | 0 | 0 | — | — | — | Whereas any KEL that has changed its Key State via a Rotation MUST be forked before the Rotation. |
 
 #### Independent Registry Bulk-Issued ACDCs
 
@@ -877,7 +877,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2901 | MUST | unassessed | 0 | 0 | 0 | — | — | — | In this case, the bulk issuance process MUST be augmented so that each uniquely identified copy of the ACDC with a unique Issuee AID also gets its own TEL entry. |
+| 2901 | MUST | validator, security | 0 | 0 | 0 | — | — | — | In this case, the bulk issuance process MUST be augmented so that each uniquely identified copy of the ACDC with a unique Issuee AID also gets its own TEL entry. |
 
 #### Independent Registry Transaction Event Seals Using Merkle Tree Roots
 
@@ -885,7 +885,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2916 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When using a TEL as an ACDC state Registry for a bulk-issued set, each event in the TEL MUST be bound with an anchoring seal in the Issuer's KEL. |
+| 2916 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When using a TEL as an ACDC state Registry for a bulk-issued set, each event in the TEL MUST be bound with an anchoring seal in the Issuer's KEL. |
 
 #### Message Type Field
 
@@ -893,10 +893,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2966 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
-| 2966 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
-| 2966 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
-| 2966 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
+| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
+| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
+| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
+| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
 
 #### ACDC as a top-level field map in CESR native format
 
@@ -904,8 +904,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2970 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`, appears as a top-level field map, it MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. |
-| 2970 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
+| 2970 | MUST | validator | 0 | 0 | 0 | — | — | — | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`, appears as a top-level field map, it MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. |
+| 2970 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
 
 #### ACDC as a top-level set of fixed fields in CESR native format
 
@@ -913,10 +913,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2976 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`,  appears as a top-level set of fixed fields, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
-| 2976 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
-| 2976 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The value of either or both the `a` and `A` field MUST be empty. |
-| 2976 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To clarify, both the `a` and `A` field values MUST not be non-empty, one or the other or both MUST be empty. |
+| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`,  appears as a top-level set of fixed fields, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
+| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
+| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of either or both the `a` and `A` field MUST be empty. |
+| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | To clarify, both the `a` and `A` field values MUST not be non-empty, one or the other or both MUST be empty. |
 
 #### ACDC Message Fields
 
@@ -924,8 +924,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2982 | MUST | unassessed | 0 | 0 | 0 | — | — | — | One important feature of the fields maps used by ACDC is that they all MUST include a field with a SAID (self-addressing ID) using the SAID protocol [[ref: SAID]]. |
-| 2984 | MUST | unassessed | 0 | 0 | 0 | — | — | — | For some message types, some fields are optional, but all fields that appear MUST appear in this order, `[v, t, d, u, i, s, a, A, e, r]`. |
+| 2982 | MUST | validator | 0 | 0 | 0 | — | — | — | One important feature of the fields maps used by ACDC is that they all MUST include a field with a SAID (self-addressing ID) using the SAID protocol [[ref: SAID]]. |
+| 2984 | MUST | validator | 0 | 0 | 0 | — | — | — | For some message types, some fields are optional, but all fields that appear MUST appear in this order, `[v, t, d, u, i, s, a, A, e, r]`. |
 
 #### Message Type Field
 
@@ -933,10 +933,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3002 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
-| 3002 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
-| 3002 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
-| 3002 | MUST | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
+| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
+| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
+| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
+| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
 
 #### ACDC of type `acm` as a top-level field map in CESR native format
 
@@ -944,10 +944,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3006 | MUST | unassessed | 0 | 0 | 0 | — | — | — | It MUST appear as a top-level field map that MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. |
-| 3006 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
-| 3006 | MUST | unassessed | 0 | 0 | 0 | — | — | — | When field `a` appears then field `A` MUST NOT appear. |
-| 3006 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Likewise, when field `A` appears, then field `a` MUST NOT appear. |
+| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST appear as a top-level field map that MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. |
+| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
+| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | When field `a` appears then field `A` MUST NOT appear. |
+| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | Likewise, when field `A` appears, then field `a` MUST NOT appear. |
 
 #### ACDC of type `act` as a top-level set of fixed fields in CESR native format
 
@@ -955,9 +955,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3012 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An ACDC message of message type `act` in CESR native format, i.e., the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. |
-| 3012 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
-| 3012 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, e, r]`. |
+| 3012 | MUST | validator | 0 | 0 | 0 | — | — | — | An ACDC message of message type `act` in CESR native format, i.e., the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. |
+| 3012 | MUST | validator | 0 | 0 | 0 | — | — | — | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
+| 3012 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, e, r]`. |
 
 #### ACDC of type `acg` as a top-level set of fixed fields in CESR native format
 
@@ -965,9 +965,9 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3018 | MUST | unassessed | 0 | 0 | 0 | — | — | — | An ACDC message of message type `acg` in CESR native format, i.e. the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. |
-| 3018 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
-| 3018 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, A, e, r]`. |
+| 3018 | MUST | validator | 0 | 0 | 0 | — | — | — | An ACDC message of message type `acg` in CESR native format, i.e. the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. |
+| 3018 | MUST | validator | 0 | 0 | 0 | — | — | — | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
+| 3018 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, A, e, r]`. |
 
 #### Section Message Types
 
@@ -975,7 +975,7 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3067 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Emptiness for field values that MUST have a string value is indicated by an empty string. |
+| 3067 | MUST | validator | 0 | 0 | 0 | — | — | — | Emptiness for field values that MUST have a string value is indicated by an empty string. |
 
 #### Section Message top-level fields
 
@@ -983,8 +983,8 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3082 | MUST | unassessed | 0 | 0 | 0 | — | — | — | Each section Message MUST have Version String, `v`, Message type, `t`,  and SAID, `d` fields in that order. |
-| 3092 | MUST | unassessed | 0 | 0 | 0 | — | — | — | The embedded section block's SAID, `d` field in the respective section top-level field MUST match the section field value in the associated ACDC when in most compact form. |
+| 3082 | MUST | validator | 0 | 0 | 0 | — | — | — | Each section Message MUST have Version String, `v`, Message type, `t`,  and SAID, `d` fields in that order. |
+| 3092 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The embedded section block's SAID, `d` field in the respective section top-level field MUST match the section field value in the associated ACDC when in most compact form. |
 
 #### Accreditation ACDC
 
@@ -992,10 +992,10 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3698 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
-| 3851 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
-| 4004 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
-| 4114 | MUST | unassessed | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
+| 3698 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
+| 3851 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
+| 4004 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
+| 4114 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
 
 ### Permissions (MAY and OPTIONAL)
 
