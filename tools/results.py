@@ -223,6 +223,11 @@ def result_problem(doc) -> str | None:
     problem = shape_problem(doc)
     if problem:
         return problem
+    try:
+        json.dumps(doc, ensure_ascii=False).encode("utf-8")
+    except UnicodeEncodeError:
+        # JSON escapes can spell a lone surrogate, which no UTF-8 file or page can hold.
+        return "it carries text that is not valid Unicode"
     # The schema's date pattern is syntax only; whether the day exists is meaning. Every kind of
     # provenance has exactly one date, and the shape check guarantees it.
     try:

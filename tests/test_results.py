@@ -116,6 +116,17 @@ def test_a_repeated_assertion_is_refused():
     assert R.result_problem(result(report([case(records=[record(), record("a2")])]))) is None
 
 
+def test_text_that_is_not_valid_unicode_is_refused(tmp_path):
+    """Hostile fix pass on #18: JSON can carry a lone surrogate, which no UTF-8 file or page can
+    hold, so a result carrying one is refused before anything is written."""
+    rep = report(name="keripy\ud800")
+    assert "Unicode" in R.result_problem(result(rep))
+    source = tmp_path / "report.json"
+    source.write_text(json.dumps(rep))
+    refused(R.E_RESULT_FORMAT, R.wrap, source, SUBMITTED, tmp_path / "out")
+    assert not (tmp_path / "out").exists() or not any((tmp_path / "out").rglob("*"))
+
+
 def test_assertion_ids_are_checked_in_linear_time():
     """Hostile fix pass on #18: the repeat check must not rescan the list for every id."""
     import time
