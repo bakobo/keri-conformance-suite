@@ -252,6 +252,18 @@ def test_the_received_reading_refuses_the_constants_json_does_not_have():
             assert e.value.code == sa.E_READING, raw
 
 
+def test_the_received_reading_refuses_a_number_too_large_for_a_float():
+    """Tick 7q56: Python reads 1e999 as infinity, which no JSON number is."""
+    received = sa.Readings(schema="received")
+    for literal in (b"1e999", b"-1e999", b"1E400"):
+        for raw in (b'{"x":' + literal + b',"$id":""}', b'{"$id":"","x":[' + literal + b']}'):
+            with pytest.raises(GeneratorError) as e:
+                sa.schema_said(T, {"$id": ""}, received, raw=raw)
+            assert e.value.code == sa.E_READING, raw
+    # A large finite number is still JSON.
+    sa.schema_said(T, {"$id": ""}, received, raw=b'{"x":1e300,"$id":""}')
+
+
 def test_the_received_schema_reading_needs_the_bytes():
     with pytest.raises(GeneratorError) as e:
         sa.schema_said(T, {"$id": ""}, sa.Readings(schema="received"))

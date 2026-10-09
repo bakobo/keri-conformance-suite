@@ -37,6 +37,7 @@ so that the keripy cross-check can show which choice explains any disagreement:
 """
 
 import json
+import math
 from dataclasses import dataclass
 
 from . import b64, blake3, encoding
@@ -155,7 +156,13 @@ def _root_id_token(raw: bytes) -> tuple[int, int]:
     def not_json(constant):
         raise refuse(f"hold {constant}, which Python's json reads and JSON does not have")
 
-    decoder = json.JSONDecoder(parse_constant=not_json)
+    def finite(literal):
+        value = float(literal)
+        if math.isinf(value):
+            raise refuse(f"hold the number {literal}, which is too large for a float")
+        return value
+
+    decoder = json.JSONDecoder(parse_constant=not_json, parse_float=finite)
     ws = json.decoder.WHITESPACE.match
     i = ws(text, 0).end()
     if text[i:i + 1] != "{":

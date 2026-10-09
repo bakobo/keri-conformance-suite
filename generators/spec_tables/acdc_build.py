@@ -28,7 +28,9 @@ docs/design.md fixes, through ``acdc_saids``:
   fragment naming an ACDC that no edge path from the presented one reaches is refused. An edge is
   a map with an ``n`` field in an ACDC's ``e`` section, and ``n`` names its far node by reference
   or by literal SAID; an ``{"acdc": N}`` anywhere else is a SAID, not an edge. The DAG
-  is bounded at 16 ACDCs and a longest path of 8 edges.
+  is bounded at 16 ACDCs and a longest path of 8 edges. An omitted ACDC leaves ``acdcs``, and
+  so does every ACDC that only it reaches, because a validator cannot see the omitted node's
+  edges; the ``dag`` lists only the edges of nodes the bundle carries.
 
 Inside an ACDC's sections, a map with one key names another thing in the fragment: ``{"aid": X}``
 is the prefix of X's inception, ``{"acdc": N}`` N's most compact SAID, ``{"schema": S}`` S's
@@ -61,6 +63,8 @@ E_DAG = "e.input.range.kcs-acdc-dag.f"
 # An ACDC in the fragment that no edge path from the presented ACDC reaches, which ``acdcs``
 # (the presented ACDC's provenance DAG) cannot carry, or an edge whose far node is in no fragment.
 E_DAG_UNREACHABLE = "e.input.format.kcs-acdc-dag-unreachable.f"
+# An edge whose ``n`` is not a SAID string, so it names no far node.
+E_EDGE = "e.input.format.kcs-acdc-edge.f"
 
 
 def _seed(kind: str, label: str, size: int) -> bytes:
@@ -115,10 +119,13 @@ def _index(items: list[dict], kind: str) -> dict[str, dict]:
 
 def edge_paths(e, path: str = "e") -> list[tuple[str, str]]:
     """Every edge in an expanded edge section as (label path, far node SAID): a map with an
-    ``n`` field is an edge, and any other map or list is searched, a list's items labelled by
-    their index."""
+    ``n`` field is an edge, whose ``n`` must be a string, and any other map or list is searched,
+    a list's items labelled by their index."""
     if isinstance(e, dict):
-        if isinstance(e.get("n"), str):
+        if "n" in e:
+            if not isinstance(e["n"], str):
+                raise ScenarioError(f"The edge at {path} has an n of {e['n']!r}; an edge's n "
+                                    f"names its far node by SAID, so it is a string.", E_EDGE)
             return [(path, e["n"])]
         return [p for k, v in e.items() for p in edge_paths(v, f"{path}.{k}")]
     if isinstance(e, list):
@@ -380,6 +387,18 @@ class _Builder:
                                 f"Link them by an edge or remove them.", E_DAG_UNREACHABLE)
         return order
 
+    def _reachable(self, graph, omit) -> set[str]:
+        """The ACDCs reachable from the presented one without passing through an omitted one,
+        which are the nodes the bundle carries."""
+        seen, frontier = set(), [self.frag["presented"]]
+        while frontier:
+            name = frontier.pop()
+            if name in seen or name in omit:
+                continue
+            seen.add(name)
+            frontier.extend(graph[name])
+        return seen
+
     # -- streams -------------------------------------------------------------------------------
 
     def _group(self, code: str, parts: list[str]) -> str:
@@ -421,6 +440,10 @@ class _Builder:
             self.acdc_said(name)
         graph, edges = self.dag()
         far = self.far_nodes(graph)
+        # An omitted node's edges are invisible to a validator, so a node that only it reaches
+        # leaves the bundle with it: acdcs and the dag hold the same nodes, less the omitted.
+        kept = self._reachable(graph, omit)
+        far = [n for n in far if n in kept]
         forms = {name: self.form(name) for name in self.acdcs}
         kels, as_of = [], {}
         for delivery in self.frag.get("kels", []):
@@ -436,7 +459,7 @@ class _Builder:
                 as_of[rd] = max(as_of.get(rd, 0), int(body["n"], 16))
         dag = {"root": self.saids[presented], "edges": [
             {"near": self.saids[near], "path": path, "n": n}
-            for near, path, n in edges if near not in omit]}
+            for near, path, n in edges if near in kept]}
 
         def acdc_entry(name):
             att = self.attachments(self.acdcs[name].get("source_seal"))
@@ -449,7 +472,7 @@ class _Builder:
                 for n in self.registries if n not in omit],
             "schemas": [sa.serialize(self.schema_bodies[n], self.readings).hex()
                         for n in self.schemas if n not in omit],
-            "acdcs": [acdc_entry(n) for n in far if n not in omit],
+            "acdcs": [acdc_entry(n) for n in far],
             "presented": acdc_entry(presented),
         }
         return Bundle(request=request, saids=dict(self.saids), expanded=dict(self.expanded),

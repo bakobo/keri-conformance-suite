@@ -365,10 +365,10 @@ def test_acdcs_and_the_dag_hold_the_same_nodes_on_a_diamond():
 
 
 def test_omit_drops_entries_but_keeps_their_saids_and_incoming_edges():
-    frag = chain(["N", "F", "G"])
+    frag = chain(["N", "F"])
     frag["omit"] = ["F", "S1"]
     b = ab.build_bundle(T, frag)
-    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["G"]]
+    assert b.request["acdcs"] == []
     assert b.request["schemas"] == []
     assert "F" in b.saids  # an omitted node still has a SAID that edges name
     # The omitted far node's incoming edge stays in the dag: its near node is in the bundle.
@@ -376,6 +376,45 @@ def test_omit_drops_entries_but_keeps_their_saids_and_incoming_edges():
     frag["omit"] = ["N"]
     with pytest.raises(ScenarioError):
         ab.build_bundle(T, frag)
+
+
+def test_omitting_a_mid_dag_node_drops_what_only_it_reaches():
+    """Tick 7q56: a validator cannot see an omitted node's edges, so the nodes only it reaches
+    leave the bundle with it, and acdcs keeps holding exactly the DAG's nodes other than the
+    omitted ones."""
+    frag = chain(["N", "F", "G"])
+    frag["omit"] = ["F"]
+    b = ab.build_bundle(T, frag)
+    assert b.request["acdcs"] == []
+    assert b.dag["edges"] == [{"near": b.saids["N"], "path": "e.up", "n": b.saids["F"]}]
+    shipped = {body(e)[0]["d"] for e in b.request["acdcs"]} | {b.dag["root"]}
+    in_dag = {b.dag["root"]} | {e["near"] for e in b.dag["edges"]} | {e["n"] for e in b.dag["edges"]}
+    assert shipped == in_dag - {b.saids["F"]}
+
+
+def test_a_node_reachable_another_way_survives_omitting_one_parent():
+    frag = chain(["N", "F1", "G"])
+    frag["acdcs"].insert(2, {"name": "F2", "issuer": "I", "schema": "S1",
+                             "a": {"d": "", "i": {"aid": "I"}, "name": "F2"},
+                             "e": {"d": "", "g": {"d": "", "n": {"acdc": "G"}}}})
+    frag["acdcs"][0]["e"]["b"] = {"d": "", "n": {"acdc": "F2"}}
+    frag["omit"] = ["F1"]
+    b = ab.build_bundle(T, frag)
+    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["G"], b.saids["F2"]]
+    assert {(e["near"], e["path"]) for e in b.dag["edges"]} == {
+        (b.saids["N"], "e.up"), (b.saids["N"], "e.b"), (b.saids["F2"], "e.g")}
+
+
+@pytest.mark.parametrize("n", [["x"], 7, None, {"k": "v"}])
+def test_an_edge_n_that_is_not_a_string_is_refused_with_a_code(n):
+    """Tick 7q56: a map with an ``n`` key is an edge, and an edge's ``n`` names its far node by
+    SAID, so anything but a string is a coded refusal, not a TypeError."""
+    frag = chain(["N", "F"])
+    frag["acdcs"][0]["e"]["bad"] = {"d": "", "n": n}
+    with pytest.raises(ScenarioError) as e:
+        ab.build_bundle(T, frag)
+    assert e.value.code == ab.E_EDGE
+    assert "e.bad" in e.value.message
 
 
 def test_the_dag_may_be_eight_edges_deep_but_not_nine():
