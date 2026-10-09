@@ -61,37 +61,50 @@ class ConfigUnreadable(RuntimeError):
 def _configured(repo: pathlib.Path) -> str:
     """git config kcs.embargoPatterns, with ~ expanded, or "" when it is unset. Any other failure
     to read the configuration is raised rather than taken for unset."""
-    done = subprocess.run(["git", "-C", str(repo), "config", "--path", "--get", CONFIG_PATTERNS],
-                          capture_output=True, check=False)
+    try:
+        done = subprocess.run(["git", "-C", str(repo), "config", "--path", "--get",
+                               CONFIG_PATTERNS], capture_output=True, check=False)
+    except OSError as exc:
+        raise ConfigUnreadable(str(exc)) from exc
     if done.returncode == 1:
         return ""
     if done.returncode != 0:
         raise ConfigUnreadable(done.stderr.decode("utf-8", errors="replace").strip())
-    value = done.stdout.decode("utf-8", errors="replace").strip()
-    if not value:
+    # Only git's own line ending is removed: a configured path is used exactly as written.
+    value = done.stdout.decode("utf-8", errors="replace").removesuffix("\n")
+    if not value.strip():
         raise ConfigUnreadable(f"{CONFIG_PATTERNS} is set but empty")
     return value
 
 
-def patterns_path(repo: pathlib.Path, flag, environ) -> tuple[pathlib.Path, bool]:
+def patterns_path(repo: pathlib.Path, flag, environ) -> tuple[pathlib.Path | None, bool]:
     """Where the list is, and whether it was configured (by flag, environment or git config)
-    rather than assumed. Only an assumed list may be missing without refusing the push."""
+    rather than assumed. Only an assumed list may be missing without refusing the push, so any
+    failure to resolve a configured one is raised as ConfigUnreadable. A configured path is used
+    exactly as written, surrounding whitespace included: trimming it could turn a missing file
+    into a different one that exists."""
     if flag is not None:
         return pathlib.Path(flag), True
-    value = environ.get(ENV_PATTERNS, "").strip()
-    if value:
-        return pathlib.Path(value).expanduser(), True
+    value = environ.get(ENV_PATTERNS, "")
+    if value.strip():
+        try:
+            return pathlib.Path(value).expanduser(), True
+        except RuntimeError as exc:  # ~user names no user
+            raise ConfigUnreadable(f"{ENV_PATTERNS} is {value!r}: {exc}") from exc
     value = _configured(repo)
     if value:
         path = pathlib.Path(value)
         if not path.is_absolute():
             try:
                 path = _common_dir(repo).parent / path
-            except subprocess.CalledProcessError as exc:
+            except (subprocess.CalledProcessError, OSError) as exc:
                 raise ConfigUnreadable(f"{CONFIG_PATTERNS} is the relative path {value!r}, and "
                                        "there is no main checkout to resolve it from") from exc
         return path, True
-    return default_patterns(repo), False
+    try:
+        return default_patterns(repo), False
+    except (subprocess.CalledProcessError, OSError):
+        return None, False  # not a checkout, so there is no default list either
 
 
 def load_patterns(path: pathlib.Path) -> list[re.Pattern]:
@@ -198,12 +211,9 @@ def main(argv=None) -> int:
     try:
         path, explicit = patterns_path(repo, args.patterns, os.environ)
     except ConfigUnreadable as exc:
-        print(f"{E_PATTERNS}: git config could not be read to find {CONFIG_PATTERNS} ({exc}), "
-              "so the embargo list could not be located. Repair the configuration before "
-              "pushing.", file=sys.stderr)
+        print(f"{E_PATTERNS}: The configured embargo list could not be located ({exc}). Repair "
+              f"{ENV_PATTERNS} or git config {CONFIG_PATTERNS} before pushing.", file=sys.stderr)
         return 2
-    except (subprocess.CalledProcessError, OSError):
-        path, explicit = None, False
     if not explicit and (path is None or not path.is_file()):
         where = f"at {path}" if path is not None else "(this is not a git checkout)"
         print(f"{W_NO_PATTERNS}: No embargo list was found {where}, so this push was not checked "

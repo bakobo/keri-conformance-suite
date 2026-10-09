@@ -384,3 +384,38 @@ def test_an_empty_git_config_value_is_refused_not_taken_for_unset(repo, capsys):
     assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
     err = capsys.readouterr().err
     assert err.startswith("e.input.format.embargo-patterns.f: ") and "empty" in err
+
+
+def test_a_configured_path_is_used_exactly_as_written(repo, tmp_path, monkeypatch):
+    # "/dev/null " is not /dev/null: trimming it would read an empty list and pass.
+    monkeypatch.setenv(guard.ENV_PATTERNS, "/dev/null ")
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 2
+
+
+def test_git_config_keeps_its_value_less_the_line_ending(repo, tmp_path):
+    git(repo, "config", guard.CONFIG_PATTERNS, f"{tmp_path}/a b.txt")
+    assert guard.patterns_path(repo, None, {}) == (tmp_path / "a b.txt", True)
+
+
+def test_an_unknown_home_directory_is_a_coded_refusal(repo, monkeypatch, capsys):
+    monkeypatch.setenv(guard.ENV_PATTERNS, "~no_such_kcs_user_91731/patterns.txt")
+    assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
+    assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
+
+
+def test_an_os_failure_resolving_a_configured_list_refuses(repo, monkeypatch, capsys):
+    git(repo, "config", guard.CONFIG_PATTERNS, "held/list.txt")
+
+    def broken(_repo):
+        raise OSError("no git")
+    monkeypatch.setattr(guard, "_common_dir", broken)
+    assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
+    assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
+
+
+def test_git_that_cannot_be_started_is_not_taken_for_unset(repo, monkeypatch, capsys):
+    def no_git(*a, **k):
+        raise FileNotFoundError("git")
+    monkeypatch.setattr(guard.subprocess, "run", no_git)
+    assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
+    assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
