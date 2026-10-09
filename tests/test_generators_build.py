@@ -320,6 +320,15 @@ def test_generate_accepts_a_documented_gap(tree):
     assert f"cases/cesr/{_id(NEXT + 2)}.json" in files
 
 
+@pytest.mark.parametrize("layer", ["cesr", "keri"])
+def test_generate_skips_the_clause_coverage_triage_sidecar(tmp_path, layer):
+    """scenarios/<layer>/triage.json belongs to scripts/clause-coverage, not to the generator."""
+    shutil.copytree(ROOT / "scenarios", tmp_path / "scenarios")
+    (tmp_path / "scenarios" / layer / "triage.json").write_text(
+        json.dumps({"about": "Not a scenario.", "entries": {}}))
+    assert regenerate.generate(tmp_path) == regenerate.generate(ROOT)
+
+
 def test_generate_with_no_scenarios_produces_only_empty_profiles(tmp_path):
     (tmp_path / "scenarios" / "cesr").mkdir(parents=True)
     shutil.copy(ROOT / "scenarios" / "cesr" / "clauses.json", tmp_path / "scenarios" / "cesr")

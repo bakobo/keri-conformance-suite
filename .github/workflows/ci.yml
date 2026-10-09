@@ -36,14 +36,20 @@ jobs:
         run: uv run ruff check .
       # The generators read the pinned CESR specification text, which is not in this repository
       # (its licence differs); they fetch it into a cache and verify its SHA-256. CI requires it,
-      # so a test that needs the text fails here instead of skipping. Neither step needs keripy:
-      # the generators use only the standard library, and the keripy cross-checks under
+      # so a test that needs the text fails here instead of skipping. None of these steps needs
+      # keripy: the generators use only the standard library, and the keripy cross-checks under
       # generators/keripy_check and generators/keripy1x_check run by hand in their own
       # environments.
       - name: Regenerate every case and compare with the committed ones
         env:
           KCS_REQUIRE_SPEC: "1"
         run: uv run python scripts/regenerate --check
+      # The clause coverage report under docs/coverage/ is generated from the cases, the triage
+      # files and the pinned specification texts; this fails when it is stale.
+      - name: Regenerate the clause coverage report and compare with the committed one
+        env:
+          KCS_REQUIRE_SPEC: "1"
+        run: uv run python scripts/clause-coverage --check
       - name: Run tests (100% branch coverage gate)
         env:
           KCS_REQUIRE_SPEC: "1"

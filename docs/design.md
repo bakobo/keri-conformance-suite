@@ -184,13 +184,19 @@ An adapter is a small standalone program that connects one implementation to the
 
 Adapters start in this repository under `adapters/<name>/`, each self-contained so it can be lifted into its implementation's repository unchanged. The keripy adapter stays here permanently, because keripy is also a generator.
 
+## Clause coverage
+
+A list of cases cannot say where the suite is thin, so the suite also measures which normative sentences its cases test. `scripts/clause-coverage` enumerates every sentence of each pinned specification text that carries an uppercase RFC 2119 keyword, maps each assertion's clause and inference quotes onto those sentences, and writes a report per specification under [`coverage/`](coverage/README.md), which that directory's README explains how to read. The report is generated, never edited, and CI fails when it is stale. It counts only the public cases in this repository, so it reveals nothing about an embargoed one.
+
+Beside each clause registry, `scenarios/<layer>/triage.json` records a hand-kept judgment of each sentence: whether a validator can be tested on it through an adapter, whether it binds a role no adapter plays and is out of scope, or whether no case could test it and why, and whether it has a security consequence. A sentence with no judgment is reported as unassessed rather than guessed. A judgment that no longer identifies exactly one sentence of its pinned text is refused (a sentence repeated in the text is identified by its section and, if needed, its occurrence within that section), so re-pinning a specification forces the triage to be revisited. The report measures which sentences are cited, not how well; that judgment belongs in a dated assessment that cites the report, written by hand beside it. The first is [`coverage/assessment-2026-10.md`](coverage/assessment-2026-10.md).
+
 ## Continuous integration
 
 CI runs at three levels:
 
 Only the first level exists so far; the other two arrive with the first adapters.
 
-1. **On every pull request, cheaply:** the runner's own tests, validation of every case against the case schema, and regeneration of every case with a byte-for-byte comparison.
+1. **On every pull request, cheaply:** the runner's own tests, validation of every case against the case schema, and regeneration of every case and of the clause coverage report, each with a byte-for-byte comparison.
 2. **On every pull request, more slowly:** each adapter is built against its pinned implementation and run against the suite, and its results are compared with a baseline committed for that adapter. A regression fails the pull request. An improvement asks for the baseline to be updated in the same pull request.
 3. **Nightly, advisory:** each adapter is built against its implementation's latest development head and run, and the conformance reports are kept as artifacts. Accumulated, those records are the compatibility matrix; nobody maintains one by hand.
 

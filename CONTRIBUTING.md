@@ -55,7 +55,7 @@ Practically: if you add a failure path, give it a code in the existing style rat
 
 ## Adding or changing a conformance case
 
-Cases are generated, never hand-edited. A case's input and expected verdict come from a scenario file and a generator, and CI regenerates every fixture and fails if anything differs. To add a case, add or extend a scenario and regenerate.
+Cases are generated, never hand-edited. A case's input and expected verdict come from a scenario file and a generator, and CI regenerates every fixture and fails if anything differs. To add a case, add or extend a scenario and regenerate. Then run `scripts/clause-coverage` and commit the updated report under `docs/coverage/`, which CI also checks.
 
 A published case's expected verdict never changes. If a case turns out to be wrong, it is deprecated and a corrected case is added under a new id, so that no implementation's result silently flips between suite releases. Every case cites the normative spec clause it tests; behaviour that no spec clause requires belongs in a non-normative profile, not in the conformance cases.
 

@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Write the clause coverage report under docs/coverage/ from the cases and the triage files. The
+logic, usage and exit statuses are in generators/spec_tables/clause_coverage.py, where the tests
+measure them."""
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
+from generators.spec_tables.clause_coverage import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())

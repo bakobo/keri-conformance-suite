@@ -1,0 +1,401 @@
+{
+  "about": "Hand-kept triage of the keyword sentences of the pinned CESR specification text, read by scripts/clause-coverage. Each entry is keyed by the exact text of one keyword sentence as docs/coverage/cesr.md shows it. When that text occurs more than once in a pinned text, the entry is a list of judgments, each with section (the heading it is under, as the report shows it) and, when the text also repeats within that section, occurrence (1-based, in text order); a judgment must identify exactly one sentence or it is refused. Fields: scope, one of validator (a validator, verifier or parser can be tested on it through an adapter with fixed inputs), out-of-scope (it binds a role no adapter plays, such as a controller managing its keys) or untestable (no case could test it; reason is then required and says why); security, true when getting it wrong lets an attacker forge, bypass a threshold, equivocate undetected, smuggle data or exhaust resources; note, optional. A sentence with no judgment is reported as unassessed.",
+  "entries": {
+    "All compliant encoded Primitives MUST be Composable.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Observable through the framing of every parsed primitive and through cesr.encode in both domains."
+    },
+    "All compliant encoded Primitives MUST be self-framing.": {
+      "scope": "validator",
+      "security": false,
+      "note": "The specific framing rules that carry a security consequence are flagged where they are stated, such as the count size rule at line 591."
+    },
+    "All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be Composable.": {
+      "scope": "validator",
+      "security": false
+    },
+    "All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be self-framing.": {
+      "scope": "validator",
+      "security": false
+    },
+    "All compliant implementations MUST support the transformations between all three domains.": {
+      "scope": "validator",
+      "security": false,
+      "note": "cesr.encode covers raw to text and to binary, and cesr.parse reads both domains; no operation converts text to binary directly, so the round trip is observed through the two."
+    },
+    "Each and every Primitive or Count Code group of primitives MUST satisfy the [[ref: Concatenation Composability]] property.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)].": {
+      "scope": "validator",
+      "security": false,
+      "note": "A parser can be given a text-domain primitive containing a character outside the URL-safe alphabet."
+    },
+    "Therefore, in order to cleanly capture integer multiples of twenty-four bits of information, Primitive lengths MUST be integer multiples of either four Base64 text characters or three binary bytes in their respective Domains.": {
+      "scope": "validator",
+      "security": false
+    },
+    "In other words, all Primitives MUST be aligned on 24-bit boundaries to satisfy the Composability property.": {
+      "scope": "validator",
+      "security": false
+    },
+    "This means that the length of any Primitive in the ‘B’ domain MUST be an integer multiple of three binary bytes with a minimum length of three binary bytes.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The type portion of all compliant prepended Framing Codes MUST be stable in the Text domain.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "Stability also requires that for a given type, the type coding portion MUST consume a fixed integral number of characters in the ‘T’ domain.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "Therefore, the type portion MUST begin the Framing Code, and the type coding portion MUST consume a fixed integral number of characters in the 'T' domain.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "The combination of Stable leading type encoding and Stable trailing value encoding means that any zero padding MUST appear in the middle of the Primitive, after the type code, but before the value.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Therefore the value portion of any primitive MUST be right aligned.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each code table MUST be uniquely indicated by the first character of the type code in the 'T' domain.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule. The parser's side of it is line 478."
+    },
+    "Because true Composability also requires that the ‘T’ domain value MUST be an integer multiple of 4 characters in length, the size of the text code MUST also be a function of the pad size, `ps`, and hence the length of the raw binary element, `N`.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "Thus, the size of the text code in Base64 characters MUST be a function of the equivalent pad size determined by the length `N mod 3` of the raw binary value.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "The prepended type code MUST be an integer multiple of four Base64 characters.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "A Count Code is its own composable Primitive, and its length, therefore, MUST be an integer multiple of four characters in the Text domain or, equivalently, an integer multiple of three bytes in the Binary domain.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Because a Count Code's raw binary element value is empty and its length MUST be an integer multiple of four characters (three bytes), its pad size MUST always be 0.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When nesting inside CESR groups, a non-native CESR serializations MUST be encoded as a CESR primitive and then enclosed in a special count code for non-native messages.": {
+      "scope": "validator",
+      "security": false,
+      "note": "A parser can be given a group that encloses a bare JSON body instead of the wrapped primitive."
+    },
+    "A CESR Stream parser MUST support three specific interleaved serializations, namely, JSON, CBOR, and MGPK.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Together these impose the constraint that the boundary start bits for interleaved text CESR, binary CESR, JSON, CBOR, and MGPK MUST be mutually distinct.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains the design of the encodings' start bits, which the specification fixes."
+    },
+    "The starting tritet of any cold start (restart) MUST begin with one of eight cases.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each Stream MUST start (restart) with one of eight cases:": {
+      "scope": "validator",
+      "security": false
+    },
+    "When the first Tritet indicates, its JSON, CBOR, or MGPK, the mapping's first field MUST be a Version String that provides the additional information needed to parse the associated encoded field map serialization fully.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To efficiently parse a Stream of Primitives with types from multiple text code tables, the first character in the text code MUST determine which code table to use, either a default code table or a code table selector character when not the default code table.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Thus, the 1-character text code table MUST do double duty.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "It MUST provide selectors for the different text code tables and MUST also provide type codes for the most popular Primitives that have a pad size of 1 that appears as the default code table.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "To clarify, the first character of any Primitive MUST be either a selector or a 1-character code type.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Every Base64 character is already a selector or a one-character code, so this is observed through a parser's choice of table rather than through a malformed input."
+    },
+    "The Count Code table MUST use the '-' character as its selector.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Op Code table MUST use the '_' character as its selector.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The single code character table MUST use the characters [A-Z,a-z].": {
+      "scope": "validator",
+      "security": false
+    },
+    "The other 10 code tables MUST each use one the characters [0-9] as their selector.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Reading the size as a count of items rather than of quadlets or triplets misframes the group, so two parsers can read different content from the same bytes."
+    },
+    "Each Count Code MUST be aligned on a 24-bit boundary.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Count Codes MUST NOT have a value component but MUST have only type and size components.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The size component MUST count the Quadlets/triplets in its following group.": {
+      "scope": "validator",
+      "security": true,
+      "note": "A parser that trusts a size it has not checked against the stream can read past its group or allocate for content that is not there."
+    },
+    "Moreover, because Primitives are already guaranteed to be composable, Count Codes do not need to account for pad size because the Count Code MUST be aligned on a 24-bit boundary.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each element in content of a Count Code group MUST be aligned on a 24-bit boundary.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The first selector MUST always be the `-` character as the initial selector.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When the second character is numeral `0` - `9` or the letters `-` or `_`, then it MUST be a secondary Count Code table selector.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When the second character is a letter in the range `A` - `Z` or `a` - `z`, then it MUST be a unique single-character Count Code.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Codes in the small Count Code table MUST be each four characters long.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The first character MUST be the selector `-`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The second character MUST be the Count Code type. the last two characters MUST be the count size as a Base64 encoded integer.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Count Code type MUST be a letter `A` - `Z` or `a` - `z`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Codes in the large Count Code table MUST be each 8 characters long.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The first two characters MUST be the selectors `--`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The next character MUST be the Count Code type.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The last five characters MUST be the count size as a Base64 encoded integer.": {
+      "scope": "validator",
+      "security": false
+    },
+    "A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets but MUST modify the protocol genus and Version of all the following Count Codes that either appear at the top level until another protocol and genus Count Code is provided or are inside a special enclosing Count Code group.": {
+      "scope": "validator",
+      "security": true,
+      "note": "A parser that reads a genus/version code as a count, or applies it outside its scope, decodes what follows under the wrong table."
+    },
+    "Universal count codes MUST be universal across all genera of Count Code tables.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "The only table that all protocols MUST share (i.e., has identical values) is the protocol genus and version table (protocol table for short).": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "Secondly, for a given protocol genus, a protocol genus and version code MUST provide the Version of that given protocol's table set.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The format for a protocol genus/version code MUST be as follows: `-_GGGVVV` where `GGG` represents the protocol genus and `VVV` represents the Version of that protocol genus.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When a Major change occurs, the Major version number MUST be incremented.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds the authors of future code table versions."
+    },
+    "When a minor change occurs, the Minor version number MUST be incremented.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds the authors of future code table versions."
+    },
+    "The `_` selector MUST be reserved for the yet-to-be-defined opcode table or tables.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Reserves the selector for future tables; the specification does not say what a parser does with an op code before one is defined."
+    },
+    "A given CESR protocol genus MUST use the table encoding schemes defined above and summarized in the following table:": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "In this case, the Code Size MUST equal the size of the Selector, Type, and Value Size parts summed together.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Constrains how the code tables are designed, which the specification itself fixes; a parser is tested on the tables' entries rather than on this rule."
+    },
+    "All code tables for every protocol genus/version MUST implement the following tables:": {
+      "scope": "validator",
+      "security": false,
+      "note": "Also binds the authors of future genera; for the KERI/ACDC genus it means a parser handles the universal codes."
+    },
+    "All genera MUST have the following codes in their Count Code table.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "note": "Also binds the authors of future genera; for the KERI/ACDC genus it means a parser handles these codes.",
+        "section": "Universal Code table genus/version codes that allow genus/version override",
+        "occurrence": 1
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "note": "The second statement of this sentence in its section, before the table of overrideable codes.",
+        "section": "Universal Code table genus/version codes that allow genus/version override",
+        "occurrence": 2
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Universal Code table genus/version codes that do not allow genus/version override"
+      }
+    ],
+    "Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Switching tables at the wrong point decodes the group's content under the wrong table."
+    },
+    "All other codes MUST NOT support this feature and are characterized as non-overrideable codes.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Honouring an override in a group that does not allow one decodes its content under the wrong table."
+    },
+    "The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser.": {
+      "scope": "validator",
+      "security": true
+    },
+    "In other words, the parser MUST only treat the genus/version count code, especially as an override, when it appears as the first count code within the framed material of an overrideable universal count code.": {
+      "scope": "validator",
+      "security": true
+    },
+    "Otherwise, there MUST be no special override meaning to the parser.": {
+      "scope": "validator",
+      "security": true
+    },
+    "A compliant implementation of KERI/ACDC MUST support the following codes": {
+      "scope": "validator",
+      "security": false
+    },
+    "This master table includes the REQUIRED Primitive and Count Code types for the KERI/ACDC protocol stack.": {
+      "scope": "validator",
+      "security": false
+    },
+    "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.": {
+      "scope": "validator",
+      "security": false
+    },
+    "A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Non-CESR serializations, namely, JSON, CBOR, and MGPK when interleaved in a CESR Stream MUST have a Version String as their first field with field label, `v` (lower case \"v\").": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Version String, `v` field MUST be the first field in any top-level field map of any interleaved JSON, CBOR, or MGPK serialization.": {
+      "scope": "validator",
+      "security": false
+    },
+    "A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.": {
+      "scope": "validator",
+      "security": true,
+      "note": "The version string's size frames the body; a parser that misreads or does not bound it can read attachments as body or body as attachments."
+    },
+    "Each field map in a Stream MUST use one of the serialization types from the JSON, CBOR, or MGPK set.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events.": {
+      "scope": "validator",
+      "security": false,
+      "note": "An interoperability obligation: most deployed KELs carry 1.x bodies."
+    },
+    "SAIDs MUST be encoded as a  CESR [CESR] Primitive.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Observed at the KERI layer, where an event whose SAID is not a CESR digest is not seen."
+    },
+    "In addition, a SAID MUST include a pre-pended derivation code that specifies the cryptographic algorithm used to generate the digest.": {
+      "scope": "validator",
+      "security": true,
+      "note": "A verifier that ignores the derivation code and assumes one digest algorithm can be given a SAID that claims one algorithm and was computed with another."
+    },
+    "The SAID verification protocol MUST be implemented as follows:": {
+      "scope": "validator",
+      "security": true,
+      "note": "Observed at the KERI layer, where an event whose SAID does not verify is not seen."
+    },
+    "All path components MUST be an integer when the current context is an array.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds a SAD path resolver, which belongs to ACDC; no adapter operation resolves SAD paths yet."
+    }
+  }
+}
