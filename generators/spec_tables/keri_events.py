@@ -147,8 +147,11 @@ class Message:
 class EventBuilder:
     """Builds a case's named events on demand, each once, resolving priors, prefixes and seals."""
 
-    def __init__(self, t: Tables, specs: list[dict]):
+    def __init__(self, t: Tables, specs: list[dict], seal_resolver=None):
         self.t = t
+        # Turns a seal that names something other than a key event (an ACDC, a registry event)
+        # into its field map; the ACDC builder supplies it.
+        self.seal_resolver = seal_resolver
         self.specs: dict[str, dict] = {}
         self.order: list[str] = []
         for spec in specs:
@@ -201,6 +204,11 @@ class EventBuilder:
         return ev
 
     def _seal(self, seal: dict) -> dict:
+        if "event" not in seal:
+            if self.seal_resolver is None:
+                raise ScenarioError(f"The seal {seal!r} names no key event, and nothing here can "
+                                    f"resolve it.")
+            return self.seal_resolver(seal)
         target = self.event(seal["event"])
         d = label_digest(self.t, seal["wrong_said"]) if "wrong_said" in seal else target.said
         return {"i": target.pre, "s": f"{target.sn:x}", "d": d}

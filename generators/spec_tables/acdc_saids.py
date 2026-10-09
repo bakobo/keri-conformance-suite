@@ -97,7 +97,7 @@ def digest(t: Tables, data: bytes) -> str:
     return encoding.primitive(t, "E", blake3.digest(data))
 
 
-def _sized(sad: dict, readings: Readings) -> dict:
+def sized(sad: dict, readings: Readings = DEFAULT) -> dict:
     """A copy with ``v`` sized to the copy's own serialization, if it has a ``v``."""
     out = dict(sad)
     if "v" in out:
@@ -109,12 +109,12 @@ def _sized(sad: dict, readings: Readings) -> dict:
 def said(t: Tables, sad: dict, label: str = "d", readings: Readings = DEFAULT) -> str:
     """The SAID of ``sad`` as it stands: no compaction, ``v`` (if present) sized to the dummied
     serialization."""
-    return digest(t, serialize(_sized({**sad, label: DUMMY}, readings), readings))
+    return digest(t, serialize(sized({**sad, label: DUMMY}, readings), readings))
 
 
 def saidify(t: Tables, sad: dict, label: str = "d", readings: Readings = DEFAULT) -> dict:
     """A copy of ``sad`` with its SAID (and ``v``) filled in."""
-    return _sized({**sad, label: said(t, sad, label, readings)}, readings)
+    return sized({**sad, label: said(t, sad, label, readings)}, readings)
 
 
 def expanded_said(t: Tables, acdc: dict, readings: Readings = DEFAULT) -> str:
