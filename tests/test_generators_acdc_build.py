@@ -311,14 +311,22 @@ def test_a_diamond_puts_each_far_node_in_once():
     assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids[n] for n in ("G", "F1", "F2")]
 
 
-def test_an_acdc_outside_the_dag_follows_the_dag_and_omit_drops_entries():
+def test_an_acdc_outside_the_presented_acdcs_dag_is_refused_by_name():
+    """``acdcs`` holds the presented ACDC's provenance DAG and nothing else
+    (docs/adapter-protocol.md), so a fragment naming an ACDC no edge reaches is refused."""
     frag = chain(["N", "F"])
     frag["acdcs"].append({"name": "X", "issuer": "I", "schema": "S1", "a": {"d": "", "name": "x"}})
-    b = ab.build_bundle(T, frag)
-    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["F"], b.saids["X"]]
+    with pytest.raises(ScenarioError) as e:
+        ab.build_bundle(T, frag)
+    assert e.value.code == ab.E_DAG_UNREACHABLE
+    assert "'X'" in e.value.message and "'N'" in e.value.message
+
+
+def test_omit_drops_entries_but_keeps_their_saids_and_incoming_edges():
+    frag = chain(["N", "F", "G"])
     frag["omit"] = ["F", "S1"]
     b = ab.build_bundle(T, frag)
-    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["X"]]
+    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["G"]]
     assert b.request["schemas"] == []
     assert "F" in b.saids  # an omitted node still has a SAID that edges name
     # The omitted far node's incoming edge stays in the dag: its near node is in the bundle.
@@ -341,6 +349,7 @@ def test_the_bundle_may_hold_sixteen_acdcs_but_not_seventeen():
         for i in range(n - 2):
             frag["acdcs"].append({"name": f"X{i}", "issuer": "I", "schema": "S1",
                                   "a": {"d": "", "name": "x"}})
+            frag["acdcs"][0]["e"][f"x{i}"] = {"d": "", "n": {"acdc": f"X{i}"}}
         return frag
     ab.build_bundle(T, wide(16))
     with pytest.raises(GeneratorError) as e:

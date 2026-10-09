@@ -205,6 +205,43 @@ def test_the_accreditation_schema_said_reproduces_under_the_compact_reading_only
     assert sa.schema_said(T, schema, received, raw=compact) == schema["$id"]
 
 
+def test_the_received_reading_dummies_an_unfilled_id_as_the_said_protocol_does():
+    """An unfilled ``"$id":""`` is dummied to 44 ``#`` in place, so over compact bytes the
+    received reading agrees with the dict-based one (the SAID protocol, CESR line 1194)."""
+    schema = {"$id": "", "type": "object", "title": "unfilled"}
+    raw = sa.serialize(schema)
+    received = sa.schema_said(T, schema, sa.Readings(schema="received"), raw=raw)
+    assert received == sa.schema_said(T, schema)
+
+
+def test_the_received_reading_dummies_only_the_root_id_token():
+    """The root ``$id`` is found by the document's structure, not by its text: a subschema's
+    ``$id`` with the same value before it, and the value inside a string, stay as they are."""
+    for value in ("", "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM"):
+        schema = {"description": f"names {value} and \"$id\":\"{value}\"",
+                  "properties": {"x": {"$id": value, "type": "string"}},
+                  "$id": value, "type": "object"}
+        raw = sa.serialize(schema)
+        assert raw.count(value.encode()) >= 3
+        received = sa.schema_said(T, schema, sa.Readings(schema="received"), raw=raw)
+        assert received == sa.schema_said(T, schema)
+        pretty = json.dumps(schema, indent=2).encode()
+        expected = sa.digest(T, pretty.replace(f'\n  "$id": "{value}"'.encode(),
+                                               f'\n  "$id": "{sa.DUMMY}"'.encode()))
+        assert sa.schema_said(T, schema, sa.Readings(schema="received"), raw=pretty) == expected
+
+
+def test_the_received_reading_refuses_bytes_without_one_string_root_id():
+    received = sa.Readings(schema="received")
+    for raw in (b'{"$id":"a","$id":"a"}', b'{"$id":3}', b'["$id"]', b'{"$id":""} x',
+                b'{"x":{"$id":""}}', b'not json', b'\xff{"$id":""}', b'{"$id":"",}',
+                b'{1:"","$id":""}', b'{"$id" ""}', b'{"$id":"" "a":1}', b'{"$id":""',
+                b'{', b'{}'):
+        with pytest.raises(GeneratorError) as e:
+            sa.schema_said(T, {"$id": ""}, received, raw=raw)
+        assert e.value.code == sa.E_READING, raw
+
+
 def test_the_received_schema_reading_needs_the_bytes():
     with pytest.raises(GeneratorError) as e:
         sa.schema_said(T, {"$id": ""}, sa.Readings(schema="received"))

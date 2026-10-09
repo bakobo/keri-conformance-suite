@@ -24,8 +24,9 @@ docs/design.md fixes, through ``acdc_saids``:
   state quadruple (line 2087).
 - **The bundle** is the request of docs/adapter-protocol.md: hex streams, each led by the
   genus/version code ``-_AAACAA``, with schemas as raw compact JSON. Its ``acdcs`` hold the far
-  nodes of the presented ACDC's provenance DAG, leaves first, each once, then any other ACDC the
-  fragment names; the DAG is bounded at 16 ACDCs and a longest path of 8 edges.
+  nodes of the presented ACDC's provenance DAG, leaves first, each once, and nothing else: a
+  fragment naming an ACDC that no edge path from the presented one reaches is refused. The DAG
+  is bounded at 16 ACDCs and a longest path of 8 edges.
 
 Inside an ACDC's sections, a map with one key names another thing in the fragment: ``{"aid": X}``
 is the prefix of X's inception, ``{"acdc": N}`` N's most compact SAID, ``{"schema": S}`` S's
@@ -55,6 +56,9 @@ MAX_DEPTH = 8
 
 # A provenance DAG beyond the protocol's bounds, or one with a cycle.
 E_DAG = "e.input.range.kcs-acdc-dag.f"
+# An ACDC in the fragment that no edge path from the presented ACDC reaches, which ``acdcs``
+# (the presented ACDC's provenance DAG) cannot carry.
+E_DAG_UNREACHABLE = "e.input.format.kcs-acdc-dag-unreachable.f"
 
 
 def _seed(kind: str, label: str, size: int) -> bytes:
@@ -361,9 +365,15 @@ class _Builder:
                 if child not in order:
                     order.append(child)
 
-        visit(self.frag["presented"])
-        rest = [n for n in self.acdcs if n not in order and n != self.frag["presented"]]
-        return order + rest
+        presented = self.frag["presented"]
+        visit(presented)
+        rest = [n for n in self.acdcs if n not in order and n != presented]
+        if rest:
+            raise ScenarioError(f"The ACDCs {rest!r} are not in the provenance DAG of the "
+                                f"presented ACDC {presented!r}: no edge path from it reaches "
+                                f"them, and the bundle's acdcs hold that DAG and nothing else. "
+                                f"Link them by an edge or remove them.", E_DAG_UNREACHABLE)
+        return order
 
     # -- streams -------------------------------------------------------------------------------
 
@@ -396,6 +406,7 @@ class _Builder:
         if presented in omit:
             raise ScenarioError(f"The presented ACDC {presented!r} cannot be omitted.")
         edges = self.dag()
+        far = self.far_nodes(edges)
         for name in list(self.schemas):
             self.schema_said(name)
         for name in list(self.registries):
@@ -431,7 +442,7 @@ class _Builder:
                 for n in self.registries if n not in omit],
             "schemas": [sa.serialize(self.schema_bodies[n], self.readings).hex()
                         for n in self.schemas if n not in omit],
-            "acdcs": [acdc_entry(n) for n in self.far_nodes(edges) if n not in omit],
+            "acdcs": [acdc_entry(n) for n in far if n not in omit],
             "presented": acdc_entry(presented),
         }
         return Bundle(request=request, saids=dict(self.saids), expanded=dict(self.expanded),

@@ -138,17 +138,55 @@ def schema_said(t: Tables, schema: dict, readings: Readings = DEFAULT,
     if raw is None:
         raise ScenarioError("The received-bytes reading of a schema SAID needs the bytes.",
                             E_READING)
-    current = f'"$id":"{schema["$id"]}"'.encode()
-    at = raw.find(current)
-    if at < 0:
-        current = json.dumps({"$id": schema["$id"]})[1:-1].encode()
-        at = raw.find(current)
-    if at < 0:
-        raise ScenarioError("The schema bytes do not hold its $id where the received-bytes "
-                            "reading can dummy it.", E_READING)
-    dummied = raw[:at] + current.replace(schema["$id"].encode(), DUMMY.encode()) + \
-        raw[at + len(current):]
-    return digest(t, dummied)
+    at, end = _root_id_token(raw)
+    return digest(t, raw[:at] + f'"{DUMMY}"'.encode() + raw[end:])
+
+
+def _root_id_token(raw: bytes) -> tuple[int, int]:
+    """The byte span of the root map's ``$id`` value token, quotes included, found by walking the
+    document's top-level structure, so that the same text in a string or a subschema is not it."""
+    def refuse(why):
+        return ScenarioError(f"The schema bytes {why}, so the received-bytes reading has no "
+                             f"$id to dummy.", E_READING)
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        raise refuse("are not UTF-8") from None
+    decoder = json.JSONDecoder()
+    ws = json.decoder.WHITESPACE.match
+    i = ws(text, 0).end()
+    if text[i:i + 1] != "{":
+        raise refuse("are not a JSON object")
+    found = None
+    i = ws(text, i + 1).end()
+    try:
+        while text[i:i + 1] != "}":
+            key, i = decoder.raw_decode(text, i)
+            i = ws(text, i).end()
+            if not isinstance(key, str) or text[i:i + 1] != ":":
+                raise ValueError
+            start = ws(text, i + 1).end()
+            value, i = decoder.raw_decode(text, start)
+            if key == "$id":
+                if found is not None:
+                    raise refuse("name $id twice at the top level")
+                if not isinstance(value, str):
+                    raise refuse("hold a top-level $id that is not a string")
+                found = (start, i)
+            i = ws(text, i).end()
+            if text[i:i + 1] == ",":
+                i = ws(text, i + 1).end()
+                if text[i:i + 1] == "}":
+                    raise ValueError
+            elif text[i:i + 1] != "}":
+                raise ValueError
+    except ValueError:
+        raise refuse("are not well-formed JSON") from None
+    if ws(text, i + 1).end() != len(text):
+        raise refuse("carry text after the JSON object")
+    if found is None:
+        raise refuse("have no top-level $id")
+    return len(text[:found[0]].encode()), len(text[:found[1]].encode())
 
 
 def is_saided(value) -> bool:
