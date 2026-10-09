@@ -116,6 +116,16 @@ def test_a_repeated_assertion_is_refused():
     assert R.result_problem(result(report([case(records=[record(), record("a2")])]))) is None
 
 
+def test_assertion_ids_are_checked_in_linear_time():
+    """Hostile fix pass on #18: the repeat check must not rescan the list for every id."""
+    import time
+    records = [record(f"a{n}") for n in range(20000)]
+    doc = result(report([case(records=records)]))
+    started = time.perf_counter()
+    R.result_problem(doc)
+    assert time.perf_counter() - started < 3  # the quadratic check took about 9 seconds here
+
+
 @pytest.mark.parametrize("provenance", [SUBMITTED, REPRODUCED])
 @pytest.mark.parametrize("date", ["2026-02-30", "2025-02-29", "2026-04-31"])
 def test_an_impossible_date_is_refused(provenance, date):
@@ -366,6 +376,43 @@ def test_wrap_reports_a_write_failure(tmp_path, monkeypatch):
 
     monkeypatch.setattr(R.os, "link", fail_soft)
     refused(R.E_RESULT_WRITE_TRANSIENT, R.wrap, source, SUBMITTED, tmp_path / "out")
+
+
+def test_wrap_reports_a_temporary_file_it_could_not_remove(tmp_path, monkeypatch):
+    """Hostile fix pass on #18: the result is published, but a leftover temporary file would make
+    the next results check refuse the directory, so say so with a code instead of crashing."""
+    source = tmp_path / "report.json"
+    source.write_text(json.dumps(report()))
+
+    def deny(path):
+        raise PermissionError(errno.EACCES, "Permission denied")
+
+    monkeypatch.setattr(R.os, "unlink", deny)
+    message = refused(R.E_RESULT_WRITE, R.wrap, source, SUBMITTED, tmp_path / "out")
+    assert "temporary file" in message
+    assert (tmp_path / "out" / R.result_path(result(report()))).is_file()
+
+    def busy(path):
+        raise OSError(errno.EAGAIN, "Try again")
+
+    monkeypatch.setattr(R.os, "unlink", busy)
+    refused(R.E_RESULT_WRITE_TRANSIENT, R.wrap, source, SUBMITTED, tmp_path / "again")
+
+
+def test_a_failed_cleanup_never_hides_the_write_failure(tmp_path, monkeypatch):
+    source = tmp_path / "report.json"
+    source.write_text(json.dumps(report()))
+
+    def fail(*args, **kwargs):
+        raise OSError(errno.ENOSPC, "No space left on device")
+
+    def deny(path):
+        raise PermissionError(errno.EACCES, "Permission denied")
+
+    monkeypatch.setattr(R.os, "link", fail)
+    monkeypatch.setattr(R.os, "unlink", deny)
+    message = refused(R.E_RESULT_WRITE, R.wrap, source, SUBMITTED, tmp_path / "out")
+    assert "No space left" in message
 
 
 # --- command line -------------------------------------------------------------------------------

@@ -19,6 +19,7 @@ the cases. A hand-edited verdict is therefore refused rather than published.
 """
 
 import argparse
+import contextlib
 import json
 import os
 import re
@@ -194,10 +195,11 @@ def _meaning_problem(report: dict) -> str | None:
         if entry["profile"] != profile:
             return (f"the case {entry['id']} is in the profile {json.dumps(entry['profile'])}, "
                     f"but the report was run for {profile}")
-        ids = [r["id"] for r in entry["assertions"]]
-        repeated = sorted({i for i in ids if ids.count(i) > 1})
-        if repeated:
-            return f"the case {entry['id']} lists the assertion {repeated[0]} twice"
+        assertion_ids: set[str] = set()
+        for record in entry["assertions"]:
+            if record["id"] in assertion_ids:
+                return f"the case {entry['id']} lists the assertion {record['id']} twice"
+            assertion_ids.add(record["id"])
         if entry["failure"] is not None and any(r["outcome"] != "fail"
                                                 for r in entry["assertions"]):
             return (f"the case {entry['id']} records an adapter failure, but not every one of "
@@ -356,14 +358,24 @@ def wrap(report_path, provenance: dict, into) -> Path:
         # A hard link, unlike a rename, fails rather than replace a file that appeared after
         # the check above, and the target still appears whole or not at all.
         os.link(temporary, target)
-    except FileExistsError as exc:
-        raise exists from exc
     except OSError as exc:
+        # The write's own error is the one to report, so cleanup here is best effort.
+        with contextlib.suppress(OSError):
+            os.unlink(temporary)
+        if isinstance(exc, FileExistsError):
+            raise exists from exc
         code = (E_RESULT_WRITE_TRANSIENT if exc.errno in TRANSIENT_ERRNOS
                 else E_RESULT_WRITE)
         raise RunnerError(code, f"The result could not be written to {target}: {exc}.") from exc
-    finally:
+    try:
         os.unlink(temporary)
+    except OSError as exc:
+        # The result is published, but the leftover file would make the next results check
+        # refuse the directory, so it is reported with a code.
+        code = E_RESULT_WRITE_TRANSIENT if exc.errno in TRANSIENT_ERRNOS else E_RESULT_WRITE
+        raise RunnerError(code, f"The result was written to {target}, but its temporary file "
+                                f"{temporary} could not be removed: {exc}. Remove it before the "
+                                "next results check.") from exc
     return target
 
 
