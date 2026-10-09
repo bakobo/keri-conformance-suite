@@ -5,13 +5,15 @@ each delivery, at quiescence after its own delivery and after the last.
 A reading is about the delivery: the message together with the attachments it arrived with, so a
 second delivery of the same body is read on its own. keripy's Exchanger.processEvent returns True
 when it verified a delivery's attachments and logged the message, and the adapter records that
-return for the call keripy makes while parsing each delivery. A delivery whose attachments keripy
+return for the call keripy makes while parsing each delivery, whichever way keripy authenticated
+the sender. A delivery whose attachments keripy
 puts into escrow instead (escrowPSEvent) is accepted once keripy has logged the message and every signature the delivery carried
 is among those keripy kept as verified when it did (db.esigs).
 
 Nothing here decides whether a message is acceptable. keripy's Parser routes a KERI 2.x exn or xip
-to Kevery.processMsg, which hands an exn to the Exchanger; the Exchanger verifies the sender's
-signatures and logs or escrows the message. The adapter registers no route handlers, so keripy
+to Kevery.processMsg, which hands an exn to the Exchanger; the Exchanger authenticates the sender,
+by a valid source seal in the sender's KEL or by the sender's signatures, and logs or escrows the
+message. The adapter registers no route handlers, so keripy
 applies only its generic exchange rules (README.md, "exn.verify").
 """
 
@@ -87,6 +89,8 @@ def verify(request) -> dict:
     kel.validator(request)
     kels = kel.streams(request, "kels")
     messages = kel.streams(request, "messages")
+    if not messages:
+        raise kel.Malformed(f'{kel.E_MALFORMED}: "messages" must list at least one message.')
     api = keripy_api.load()
     with habbing.openHby(name="kcs-adapter-keripy", temp=True) as hby:
         # A fresh database, Kevery, Exchanger and Parser for every request: nothing carries over.

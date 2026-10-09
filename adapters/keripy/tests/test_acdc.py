@@ -185,6 +185,9 @@ def test_schemas_and_far_nodes_are_accepted_and_do_not_change_the_answer():
     ({"registry": [{"stream": "zz"}]}, '"stream"'),
     ({"schemas": ["zz"]}, '"schemas"'),
     ({"schemas": None}, '"schemas"'),
+    ({"expect_schema": ""}, '"expect_schema"'),
+    ({"expect_schema": 1}, '"expect_schema"'),
+    ({"expect_schema": None}, '"expect_schema"'),
     ({"acdcs": [1]}, '"acdcs"'),
     ({"presented": "00"}, '"presented"'),
     ({"presented": {"stream": 1}}, '"stream"'),
@@ -196,6 +199,15 @@ def test_malformed_requests_are_harness_errors(fields, match):
                          "presented": {"stream": ""}, **fields})
     assert response["error"]["kind"] == "harness"
     assert match in response["error"]["message"]
+
+
+@pytest.mark.parametrize("schemas", [["zz"], ["0"], ["AB"], [1], None])
+def test_malformed_schemas_have_their_own_message(schemas):
+    response = b.handle({"id": 7, "op": "acdc.verify", "perspective": {"role": "validator"},
+                         "kels": [], "registry": [], "schemas": schemas, "acdcs": [],
+                         "presented": {"stream": ""}})
+    assert response["error"]["message"] == (
+        f'{kel.E_MALFORMED}: every entry in "schemas" must be a lowercase hex string.')
 
 
 def test_a_perspective_other_than_validator_is_unsupported():

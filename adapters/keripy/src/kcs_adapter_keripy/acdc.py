@@ -31,11 +31,26 @@ REASON_NO_VERIFIER = ("keripy main has no entry point that judges an ACDC 2.00 a
 REASON_UNREADABLE = "keripy cannot parse the presented stream as a disclosed ACDC"
 
 
-def _hex_list(request, field):
-    values = request.get(field)
-    if not isinstance(values, list):
-        raise kel.Malformed(f'{kel.E_MALFORMED}: "{field}" must be a list of hex strings.')
-    return [kel.hex_stream(v, field) for v in values]
+def _schemas(request) -> list[bytes]:
+    """The request's schemas: a list of lowercase hex strings, each one schema's bytes."""
+    values = request.get("schemas")
+    if not isinstance(values, list) or not all(
+            isinstance(v, str) and len(v) % 2 == 0 and all(c in "0123456789abcdef" for c in v)
+            for v in values):
+        raise kel.Malformed(f'{kel.E_MALFORMED}: every entry in "schemas" must be a lowercase '
+                            "hex string.")
+    return [bytes.fromhex(v) for v in values]
+
+
+def _expect_schema(request):
+    """The optional expect_schema: absent, or a non-empty string."""
+    if "expect_schema" not in request:
+        return None
+    value = request["expect_schema"]
+    if not isinstance(value, str) or not value:
+        raise kel.Malformed(f'{kel.E_MALFORMED}: "expect_schema", when present, must be a '
+                            "non-empty string.")
+    return value
 
 
 def _presented(request) -> bytes:
@@ -121,9 +136,11 @@ def verify(request) -> dict:
     kel.validator(request)
     kels = kel.streams(request, "kels")
     registry_streams = kel.streams(request, "registry")
-    # Far nodes and schemas are read and checked, but keripy has no standalone use for either.
+    # Far nodes, schemas and expect_schema are read and checked, but keripy has no standalone use
+    # for any of them, and the answer is incomplete before a schema would be evaluated.
     kel.streams(request, "acdcs")
-    _hex_list(request, "schemas")
+    _schemas(request)
+    _expect_schema(request)
     presented = _presented(request)
     api = keripy_api.load()
     with basing.openDB(name="kcs-adapter-keripy", temp=True) as db:

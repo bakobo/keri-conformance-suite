@@ -102,8 +102,11 @@ def test_requests_are_independent():
     assert readings(b.exchange([], [message])) == [REJECTED]
 
 
-def test_an_empty_message_list_is_an_empty_result():
-    assert b.exchange(A.kel(), [])["result"] == {"verdicts": []}
+def test_an_empty_message_list_is_a_harness_error():
+    response = b.exchange(A.kel(), [])
+    assert response["error"]["kind"] == "harness"
+    assert response["error"]["message"] == (
+        f'{kel.E_MALFORMED}: "messages" must list at least one message.')
 
 
 @pytest.mark.parametrize("fields,match", [
