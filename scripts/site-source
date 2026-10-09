@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Assemble the documentation site's markdown source under _site/src: the README, docs/ and the
+results pages. The logic, usage and exit statuses are in tools/site_source.py, where the tests
+measure them."""
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
+from tools.site_source import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())
