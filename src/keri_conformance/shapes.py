@@ -162,6 +162,20 @@ def keyed(forms: dict[str, Check]) -> Check:
     return check
 
 
+def text_or(form: Check) -> Check:
+    """A non-empty string, or `form` (the schema's oneOf of a string and an object)."""
+    text = string(min_length=1)
+
+    def check(value, path):
+        if isinstance(value, str):
+            return text(value, path)
+        if isinstance(value, dict):
+            return form(value, path)
+        return f"{_name(path)} must be a string or an object"
+
+    return check
+
+
 def tagged(tag: str, forms: dict[str, Check]) -> Check:
     """Dispatch on a discriminating field, as a oneOf whose branches each fix that field."""
 

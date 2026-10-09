@@ -164,6 +164,46 @@ def test_interop_level_requires_a_basis_instead_of_a_clause():
     assert errors(case) == []
 
 
+QUOTED_BASIS = {
+    "text": "The ACDC specification's non-normative IPEX section states this practice.",
+    "spec": "acdc",
+    "section": "IPEX",
+    "url": "https://github.com/trustoverip/kswg-acdc-specification/blob/4df80aa/spec/spec.md#ipex",
+    "commit": "4df80aa",
+    "quote": "A Discloser MAY respond with a grant.",
+}
+
+
+def test_an_interop_basis_may_quote_the_sentence_it_rests_on():
+    case = copy.deepcopy(KERI_CASE)
+    assertion = case["assertions"][0]
+    assertion["level"] = "INTEROP"
+    del assertion["clause"]
+    assertion["basis"] = copy.deepcopy(QUOTED_BASIS)
+    assert errors(case) == []
+
+
+@pytest.mark.parametrize("field", ["text", "spec", "section", "url", "commit", "quote"])
+def test_a_quoted_basis_needs_every_field(field):
+    case = copy.deepcopy(KERI_CASE)
+    assertion = case["assertions"][0]
+    assertion["level"] = "INTEROP"
+    del assertion["clause"]
+    assertion["basis"] = {k: v for k, v in QUOTED_BASIS.items() if k != field}
+    assert errors(case), f"a quoted basis without {field} cannot be traced to its sentence"
+
+
+@pytest.mark.parametrize("change", [{"quote": ""}, {"text": ""}, {"spec": "vlei"},
+                                    {"commit": "zz"}, {"url": "http://x"}, {"extra": 1}])
+def test_a_quoted_basis_is_checked_like_a_clause(change):
+    case = copy.deepcopy(KERI_CASE)
+    assertion = case["assertions"][0]
+    assertion["level"] = "INTEROP"
+    del assertion["clause"]
+    assertion["basis"] = {**QUOTED_BASIS, **change}
+    assert errors(case)
+
+
 def test_interop_level_must_not_carry_a_clause():
     case = copy.deepcopy(KERI_CASE)
     case["assertions"][0]["level"] = "INTEROP"

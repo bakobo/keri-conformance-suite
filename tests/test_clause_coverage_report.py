@@ -598,7 +598,8 @@ def test_the_summary_counts_obligations_triage_and_security():
     assert summary == {
         "MUST": 3, "SHOULD": 2, "MAY": 1, "covered": 2, "uncovered": 3, "both": 1,
         "validator": 1, "out-of-scope": 0, "untestable": 0, "unassessed": 4,
-        "security covered": 1, "security uncovered": 0, "unmapped": 2,
+        "security covered": 1, "security uncovered": 0, "practice": 0, "practice covered": 0,
+        "unmapped": 2,
     }
 
 
@@ -818,3 +819,137 @@ def test_every_keyword_sentence_of_each_pinned_text_is_in_the_report_exactly_onc
     rows = report_rows(files[f"docs/coverage/{pin.label}.md"].decode())
     assert sorted(rows) == want
     assert len(rows) == len(set(rows))
+
+
+# --- Practice ------------------------------------------------------------------------------------
+# A keyword sentence in text that disclaims normativity, or that states common practice rather than
+# a requirement, is triaged practice. It is counted apart from the obligations and permissions, and
+# a case covers it by citing it as a clause or by quoting it in an INTEROP assertion's basis.
+
+PRACTICE = {"scope": "practice", "security": False}
+
+
+def basis(quote, pin=FAKE):
+    return {"check": "rejected", "level": "INTEROP", "expected": None, "basis": {
+        "text": "Common practice.", "spec": pin.label, "commit": pin.commit, "quote": quote,
+        "section": "x", "url": "u"}}
+
+
+def practice_measured(cases, triage=None):
+    triage = {"A parser SHOULD log it.": PRACTICE, "A parser MAY stop.": PRACTICE,
+              **(triage or {})}
+    return cc.measure(cases, {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": triage})
+
+
+def test_practice_is_a_triage_scope_that_needs_no_reason(tree):
+    entries = {"A parser SHOULD log it.": PRACTICE}
+    assert cc.load_triage(tree(triage=triage_file(entries)), "fake") == entries
+
+
+def test_a_case_may_quote_a_sentence_in_its_basis(tree):
+    root = tree(case("IPEX-0001", basis("A parser SHOULD log it.")))
+    assert [c["id"] for c in cc.load_cases(root)] == ["IPEX-0001"]
+
+
+@pytest.mark.parametrize("value", [{"text": "t"}, {"text": "t", "spec": "fake", "commit": "c"},
+                                   {"text": "t", "spec": "fake", "commit": "c", "quote": ""}, 7])
+def test_a_basis_that_is_neither_text_nor_a_quoted_sentence_is_a_coded_error(tree, value):
+    bad = case("IPEX-0001", basis("A parser SHOULD log it."))
+    bad["assertions"][0]["basis"] = value
+    root = tree()
+    path = root / "cases" / "ipex" / "IPEX-0001.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(bad))
+    with pytest.raises(cc.CoverageError, match="basis") as e:
+        cc.load_cases(root)
+    assert e.value.code == cc.E_CASE
+
+
+def test_a_basis_that_quotes_a_practice_sentence_covers_it():
+    (coverage,) = practice_measured([case("IPEX-0001", basis("A parser SHOULD log it."))])
+    log = row(coverage, "A parser SHOULD log it.")
+    assert log.basis == ["IPEX-0001"] and log.direct == [] and log.inferred == []
+    assert log.covered and log.polarity == "negative" and log.levels == {"INTEROP": 1}
+
+
+def test_a_clause_that_cites_a_practice_sentence_covers_it():
+    (coverage,) = practice_measured([case("KERI-0001", must("A parser MAY stop."))])
+    assert row(coverage, "A parser MAY stop.").covered
+
+
+def test_a_basis_never_covers_an_obligation():
+    """An INTEROP assertion is never evidence about an obligation, so a basis quoting a sentence
+    that is not triaged practice lists the case but covers nothing."""
+    (coverage,) = practice_measured([case("IPEX-0001", basis("A parser MUST refuse a bad code."))])
+    bad_code = row(coverage, "A parser MUST refuse a bad code.")
+    assert bad_code.basis == ["IPEX-0001"] and not bad_code.covered and bad_code.polarity == ""
+
+
+def test_a_practice_sentence_cited_only_by_an_inactive_case_is_not_covered():
+    (coverage,) = practice_measured([case("IPEX-0001", basis("A parser SHOULD log it."),
+                                          status="draft")])
+    assert not row(coverage, "A parser SHOULD log it.").covered
+
+
+def test_a_basis_quote_matching_no_keyword_sentence_is_listed_as_a_basis():
+    (coverage,) = practice_measured([case("IPEX-0001", basis("A plain line with no keyword."))])
+    assert coverage.unmapped == [cc.Unmapped(line=11, quote="A plain line with no keyword.",
+                                             cited_as="basis", cases=["IPEX-0001"])]
+
+
+def test_a_basis_quote_not_in_its_pinned_text_is_a_coded_error():
+    with pytest.raises(cc.CoverageError, match="IPEX-0001 a1") as e:
+        practice_measured([case("IPEX-0001", basis("Nowhere in the text."))])
+    assert e.value.code == cc.E_CASE
+
+
+def test_practice_sentences_are_counted_apart_from_obligations_and_permissions():
+    (coverage,) = practice_measured([case("IPEX-0001", basis("A parser SHOULD log it.")),
+                                     case("KERI-0001", must("A parser MUST refuse a bad code."))])
+    summary = cc.summarize(coverage)
+    assert summary == {
+        "MUST": 3, "SHOULD": 1, "MAY": 0, "covered": 1, "uncovered": 3, "both": 0,
+        "validator": 0, "out-of-scope": 0, "untestable": 0, "unassessed": 4,
+        "security covered": 0, "security uncovered": 0,
+        "practice": 2, "practice covered": 1, "unmapped": 0,
+    }
+
+
+def test_the_spec_report_lists_practice_sentences_in_their_own_part():
+    (coverage,) = practice_measured([case("IPEX-0001", basis("A parser SHOULD log it."))])
+    text = cc.render_spec("fake", [coverage])
+    obligations, rest = text.split("### Permissions")
+    permissions, practice = rest.split("### Practice")
+    assert "SHOULD log it." not in obligations and "MAY stop." not in permissions
+    assert "| practice | 0 | 0 | 0 | INTEROP 1 | negative | IPEX-0001 (basis) " \
+           "| A parser SHOULD log it. |" in practice
+    assert "| practice | 0 | 0 | 0 | — | — | — | A parser MAY stop. |" in practice
+    assert "3 MUST, 1 SHOULD and 0 MAY or OPTIONAL, and 2 triaged as practice" in text
+
+
+def test_a_spec_report_with_no_practice_sentence_says_so():
+    (coverage,) = measured()
+    assert "No sentence of this text is triaged as practice." in cc.render_spec("fake", [coverage])
+
+
+def test_the_index_counts_practice_in_its_own_rows_and_explains_the_scope():
+    index = cc.render_index(practice_measured([case("IPEX-0001", basis("A parser SHOULD log it."))]))
+    assert "| Practice sentences | 2 |" in index
+    assert "| Practice sentences covered by an active case | 1 |" in index
+    assert "`practice`" in index and "basis" in index
+
+
+def test_generate_reads_the_text_a_basis_quotes_even_when_no_clause_cites_it(tree):
+    root = tree(case("IPEX-0001", basis("A parser SHOULD log it.")),
+                triage=triage_file({"A parser SHOULD log it.": PRACTICE}))
+    text = cc.generate(root)["docs/coverage/fake.md"].decode()
+    assert "IPEX-0001 (basis)" in text
+
+
+def test_a_basis_quoting_an_unpinned_commit_is_a_coded_error(tree):
+    bad = basis("A parser SHOULD log it.")
+    bad["basis"]["commit"] = "0" * 40
+    root = tree(case("IPEX-0001", bad))
+    with pytest.raises(cc.CoverageError, match="basis") as e:
+        cc.generate(root)
+    assert e.value.code == cc.E_PIN

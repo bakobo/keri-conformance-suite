@@ -6,7 +6,7 @@ This report lists every sentence of the pinned KERI specification text that carr
 
 ## v1.0.1, commit 71cb54ebb445
 
-The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md). It has 303 keyword sentences: 222 MUST, 22 SHOULD and 59 MAY or OPTIONAL.
+The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md). It has 303 keyword sentences: 222 MUST, 22 SHOULD and 59 MAY or OPTIONAL, and 0 triaged as practice.
 
 ### Obligations (MUST and SHOULD)
 
@@ -1119,6 +1119,10 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 2896 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The record MAY have a Prior value that is being updated or the Update MAY serve to create the initial value of the record. |
+
+### Practice (any keyword, in text that states common practice)
+
+No sentence of this text is triaged as practice.
 
 ### Quotes that match no keyword sentence
 
