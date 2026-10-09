@@ -56,7 +56,9 @@ def hello(request):
     keripy = cesr.api()
     operations, features = list(OPERATIONS), list(keripy.features)
     if keripy.generation in KEL_GENERATIONS:
-        operations.append("keri.process")
+        # acdc.verify adds no feature: keripy main cannot judge an ACDC 2.00 against a bundle, so
+        # it answers every bundle fail-closed and declares no acdc.* feature (README.md).
+        operations += ["keri.process", "acdc.verify", "exn.verify"]
         features += [f for f in kel.FEATURES if f not in features]
     return {"protocol": PROTOCOL, "adapter": dict(ADAPTER),
             "implementation": keripy_api.implementation(), "operations": operations,
@@ -77,17 +79,34 @@ def _encode(request):
     return cesr.encode(code, raw.hex(), domain)
 
 
-def _process(request):
+def _main_only(request):
     if cesr.api().generation not in KEL_GENERATIONS:
         raise Undeclared(request.get("op"))
+
+
+def _process(request):
+    _main_only(request)
     return kel.process(request)
+
+
+def _acdc_verify(request):
+    _main_only(request)
+    from kcs_adapter_keripy import acdc  # keripy main only: keri.acdc is not in keripy 1.x
+    return acdc.verify(request)
+
+
+def _exn_verify(request):
+    _main_only(request)
+    from kcs_adapter_keripy import exchange  # keripy main only: KERI 2.x exchange messages
+    return exchange.verify(request)
 
 
 class Undeclared(Exception):
     pass
 
 
-OPS = {"hello": hello, "cesr.parse": _parse, "cesr.encode": _encode, "keri.process": _process}
+OPS = {"hello": hello, "cesr.parse": _parse, "cesr.encode": _encode, "keri.process": _process,
+       "acdc.verify": _acdc_verify, "exn.verify": _exn_verify}
 
 
 def handle(request):
