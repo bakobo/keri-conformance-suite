@@ -40,6 +40,7 @@ from keri_conformance.shapes import (
     obj,
     string,
     tagged,
+    text_or,
 )
 
 MAX_CASE_BYTES = 32 * 1024 * 1024
@@ -61,6 +62,11 @@ CLAUSE = obj({"spec": enum("cesr", "keri", "acdc", "ipex"), "section": string(mi
               "url": string("^https://"), "commit": string(COMMIT)},
              {"quote": string()})
 
+# What an INTEROP assertion rests on: a sentence, or one that also quotes the pinned text it rests
+# on, which clause coverage can then map (docs/design.md, Practice).
+BASIS = text_or(obj({"text": string(min_length=1), "spec": enum("cesr", "keri", "acdc", "ipex"),
+                     "section": string(min_length=1), "url": string("^https://"),
+                     "commit": string(COMMIT), "quote": string(min_length=1)}))
 
 SPEC_CONFLICT = obj({"quote": string(min_length=1), "section": string(min_length=1),
                      "line": integer(minimum=1), "why": string(min_length=1)})
@@ -71,7 +77,7 @@ INFERENCE = obj({"quote": string(min_length=1), "section": string(min_length=1),
 def _assertion(check: str, **fields) -> Check:
     return obj({"id": string("^a[0-9]+$"), "check": enum(check), "level": enum(*LEVELS),
                 **fields},
-               {"clause": CLAUSE, "basis": string(min_length=1), "note": string(),
+               {"clause": CLAUSE, "basis": BASIS, "note": string(),
                 "spec_conflicts": array(SPEC_CONFLICT, min_items=1),
                 "inferred_from": INFERENCE})
 

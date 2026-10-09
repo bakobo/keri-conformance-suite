@@ -1,0 +1,4 @@
+{
+  "about": "Hand-kept triage of the keyword sentences of the pinned ACDC specification text (tag v1.0), read by scripts/clause-coverage. It stays empty until the first ACDC case cites the text, because a triage for a specification no case cites must have no entries; the full triage arrives with the first ACDC cases.",
+  "entries": {}
+}

@@ -589,3 +589,88 @@ def test_a_summary_answering_a_decoded_case_restarts_the_adapter(cases_dir, tmp_
     monkeypatch.setattr(session_module.AdapterSession, "close", recording_close)
     run(good("--table", _summary_table(write_json, 1)), cases_dir(PASSING[1]), tmp_path)
     assert alive_at_close == [False]
+
+
+# --- Non-normative profiles: an interoperability verdict -----------------------------------------
+# A run whose cases carry only INTEROP assertions is a run of a non-normative profile (a profile is
+# normative exactly when every assertion cites a clause). Its verdict says whether the
+# implementation interoperates, from the INTEROP assertions, and never claims conformance.
+
+def _interop(case_id, check="rejected", status="active", **fields):
+    return make_case(case_id, "cesr.parse", {"stream": "2d4b"},
+                     [assertion(check, level="INTEROP", basis="keripy 1.x does it", **fields)],
+                     status=status, profile="keripy-1x-interop", features=["cesr.genus-2.00"])
+
+
+def _entry(level, outcome, status="active"):
+    return {"id": "CESR-0001", "status": status, "outcome": outcome,
+            "assertions": [{"level": level, "outcome": outcome, "self_agreement": False}]}
+
+
+@pytest.mark.parametrize("entries, verdict", [
+    ([_entry("INTEROP", "pass")], "interoperable"),
+    ([_entry("INTEROP", "pass"), _entry("INTEROP", "fail")], "not-interoperable"),
+    ([_entry("INTEROP", "pass"), _entry("INTEROP", "not-implemented")], "incomplete"),
+    ([_entry("INTEROP", "not-supported")], "no-evidence"),
+    ([_entry("INTEROP", "fail", status="draft"), _entry("INTEROP", "skipped", "deprecated")],
+     "no-evidence"),
+    # Any assertion at a normative level makes it a conformance run, judged on MUST as before.
+    ([_entry("INTEROP", "fail"), _entry("MUST", "pass")], "conformant"),
+    ([_entry("INTEROP", "pass"), _entry("SHOULD", "pass")], "no-evidence"),
+    ([], "no-evidence"),
+])
+def test_the_verdict_of_a_run(entries, verdict):
+    from keri_conformance.run import summarize
+
+    assert summarize(entries)[1] == verdict
+
+
+def test_the_interop_results_are_reported_apart_from_the_verdict():
+    from keri_conformance.run import summarize
+
+    summary, verdict = summarize([_entry("INTEROP", "fail"), _entry("MUST", "pass")])
+    assert verdict == "conformant"
+    assert summary["interop"] == {"fail": 1}
+    assert summary["interop_verdict"] == "not-interoperable"
+    summary, _ = summarize([_entry("MUST", "pass")])
+    assert summary["interop"] == {} and summary["interop_verdict"] is None
+
+
+def test_each_verdict_has_an_exit_code():
+    from keri_conformance.run import VERDICT_EXIT
+
+    assert VERDICT_EXIT["interoperable"] == errors.EXIT_CONFORMANT
+    assert VERDICT_EXIT["not-interoperable"] == errors.EXIT_FAILED
+
+
+def test_an_interoperable_run(cases_dir, tmp_path, capsys):
+    code, report = run(good(), cases_dir(_interop("CESR-0045")), tmp_path)
+    assert (code, report["verdict"]) == (errors.EXIT_CONFORMANT, "interoperable")
+    out = capsys.readouterr().out
+    assert "active INTEROP assertions: 1 pass" in out
+    assert "verdict: interoperable" in out
+
+
+def test_a_not_interoperable_run(cases_dir, tmp_path, capsys):
+    failing = make_case("CESR-0046", "cesr.parse", {"stream": "00"},
+                        [assertion("rejected", level="INTEROP", basis="keripy 1.x does it")],
+                        profile="keripy-1x-interop")
+    code, report = run(good(), cases_dir(_interop("CESR-0045"), failing), tmp_path)
+    assert (code, report["verdict"]) == (errors.EXIT_FAILED, "not-interoperable")
+
+
+def test_a_conformance_run_shows_its_interop_results_apart(cases_dir, tmp_path, capsys):
+    failing = make_case("CESR-0046", "cesr.parse", {"stream": "00"},
+                        [assertion("rejected", level="INTEROP", basis="keripy 1.x does it")],
+                        profile="keripy-1x-interop")
+    code, report = run(good(), cases_dir(PASSING[0], failing), tmp_path)
+    assert (code, report["verdict"]) == (errors.EXIT_CONFORMANT, "conformant")
+    out = capsys.readouterr().out
+    assert "interoperability: not-interoperable (never part of the verdict)" in out
+
+
+def test_help_documents_the_interop_verdicts(capsys):
+    with pytest.raises(SystemExit):
+        cli.main(["run", "--help"])
+    out = capsys.readouterr().out
+    assert "interoperable" in out and "not-interoperable" in out

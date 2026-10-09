@@ -117,6 +117,22 @@ def test_a_verdict_that_becomes_conformant_is_an_improvement():
         [], ["verdict: not-conformant -> conformant"])
 
 
+def test_a_non_normative_run_that_becomes_interoperable_is_an_improvement():
+    # A non-normative profile's verdict says whether the implementation interoperates.
+    assert baseline.compare(summary(verdict="no-evidence"), base_report(verdict="interoperable")) \
+        == ([], ["verdict: no-evidence -> interoperable"])
+
+
+def test_a_run_that_stops_interoperating_is_a_regression():
+    assert baseline.compare(summary(verdict="interoperable"),
+                            base_report(verdict="not-interoperable")) == (
+        ["verdict: interoperable -> not-interoperable"], [])
+
+
+def test_the_interop_verdicts_are_ones_kcs_reports():
+    assert {"interoperable", "not-interoperable"} <= baseline.VERDICTS
+
+
 def test_an_aborted_run_is_a_regression_even_against_an_aborted_baseline():
     regressions, _ = baseline.compare(summary(verdict="aborted"), base_report(verdict="aborted"))
     assert regressions == ["verdict: aborted (an aborted run never satisfies the baseline)"]

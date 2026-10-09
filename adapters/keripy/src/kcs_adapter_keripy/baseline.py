@@ -8,12 +8,12 @@ failed to answer, if it did: timeout, exited, malformed, ...), and every asserti
 compare exits 0 when the run matches it exactly. It exits 1 on a regression and also on an
 improvement, because an improvement must be recorded by updating the baseline in the same change.
 
-- Regressions: a different profile; an aborted run; a verdict change other than to conformant; a
-  case outcome or assertion outcome that changed to anything but pass; a failure kind that
-  appeared or changed (a case that starts crashing, though it still fails); a case or assertion
-  that disappeared.
-- Improvements: a verdict that became conformant; a new pass; a failure kind that went away; a
-  new case or assertion; a different keripy commit.
+- Regressions: a different profile; an aborted run; a verdict change other than to conformant
+  (or, for a non-normative profile, to interoperable); a case outcome or assertion outcome that
+  changed to anything but pass; a failure kind that appeared or changed (a case that starts
+  crashing, though it still fails); a case or assertion that disappeared.
+- Improvements: a verdict that became conformant or interoperable; a new pass; a failure kind
+  that went away; a new case or assertion; a different keripy commit.
 
 write records REPORT as the new baseline. Standard library only.
 """
@@ -47,7 +47,10 @@ NONE = "none"  # how a missing failure kind is written in a comparison line
 
 # The values a kcs conformance report can hold (src/keri_conformance/run.py and session.py). A
 # value outside these sets makes the report malformed: the tool fails closed rather than guess.
-VERDICTS = frozenset({"conformant", "not-conformant", "aborted", "incomplete", "no-evidence"})
+VERDICTS = frozenset({"conformant", "not-conformant", "aborted", "incomplete", "no-evidence",
+                      "interoperable", "not-interoperable"})
+# The verdicts a run can improve to: conformance, or interoperability for a non-normative profile.
+HELD = frozenset({"conformant", "interoperable"})
 CASE_OUTCOMES = frozenset({"pass", "fail", "incomplete", "not-supported", "skipped"})
 ASSERTION_OUTCOMES = frozenset({"pass", "fail", "not-implemented", "not-supported", "skipped"})
 FAILURE_KINDS = frozenset({"timeout", "oversize", "exited", "malformed", "error-harness",
@@ -101,10 +104,11 @@ def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
         # An aborted run is never accepted, whatever the baseline records.
         regressions.append(f"verdict: {ABORTED} (an aborted run never satisfies the baseline)")
     elif now["verdict"] != base["verdict"]:
-        # Any other change of verdict is a regression unless the run is now conformant, so an
-        # abnormal run cannot satisfy the gate even when every assertion it recorded matches.
+        # Any other change of verdict is a regression unless the run now holds (conformant, or
+        # interoperable), so an abnormal run cannot satisfy the gate even when every assertion it
+        # recorded matches.
         line = f"verdict: {base['verdict']} -> {now['verdict']}"
-        (improvements if now["verdict"] == "conformant" else regressions).append(line)
+        (improvements if now["verdict"] in HELD else regressions).append(line)
     if now["implementation"]["commit"] != base["implementation"]["commit"]:
         improvements.append(f"implementation commit: {base['implementation']['commit']} -> "
                             f"{now['implementation']['commit']}")

@@ -30,9 +30,11 @@ not end inside inline code or a ``[[...]]`` reference, or after a listed abbrevi
 Mapping: each assertion's ``clause.quote``, and its ``inferred_from.quote`` if it has one, is found
 in the pinned text its clause names and matched to the keyword sentences on its line that contain
 it or that it contains. An assertion with an inference tests both quotes by inference; one without
-tests its clause directly. A quote that matches no keyword sentence is listed in the report, not
-refused. A sentence is covered when an active case cites it; disputed and other non-active cases
-are listed but do not cover anything.
+tests its clause directly. An INTEROP assertion whose ``basis`` is an object quotes the sentence it
+rests on, which is mapped the same way and cited as a basis. A quote that matches no keyword
+sentence is listed in the report, not refused. A sentence is covered when an active case cites it;
+disputed and other non-active cases are listed but do not cover anything. A basis covers only a
+sentence triaged practice, because an INTEROP assertion is never evidence about an obligation.
 
 Triage: ``scenarios/<spec>/triage.json`` holds hand-kept judgments keyed by the exact sentence
 text. A sentence whose text occurs more than once in a pinned text has a list of judgments, each
@@ -43,7 +45,10 @@ in every pinned text of its spec that contains the text: a repeated text without
 disambiguator it needs, a disambiguator that matches nothing, a disambiguator on a text that
 does not need it, two judgments of one sentence, and an entry whose text is not a keyword
 sentence of any pinned text of its spec are all refused, so stale triage fails loudly. A
-sentence with no judgment is unassessed.
+sentence with no judgment is unassessed. A sentence triaged ``practice`` (a keyword sentence in a
+section that disclaims normativity, or one that otherwise states common practice rather than a
+requirement) is reported in a part of its own and counted apart from the obligations and
+permissions.
 
 Exit status: 0 success; 1 --check found differences; 2 a specification text is unavailable; 3 an
 input could not be interpreted (a malformed case or triage file, an unknown check type, an
@@ -306,6 +311,11 @@ def _case_problem(case, stem: str) -> str | None:
         if clause is not None and not (isinstance(clause, dict) and all(
                 _is_text(clause.get(k)) for k in ("spec", "commit", "quote"))):
             return f"assertion {a['id']} has a clause without a spec, commit and quote"
+        basis = a.get("basis")
+        if basis is not None and not (_is_text(basis) or (isinstance(basis, dict) and all(
+                _is_text(basis.get(k)) for k in BASIS_FIELDS))):
+            return (f"assertion {a['id']} has a basis that is neither text nor an object with a "
+                    f"{', '.join(BASIS_FIELDS)}")
         inferred = a.get("inferred_from")
         if inferred is not None:
             if clause is None:
@@ -330,7 +340,9 @@ def load_cases(root: pathlib.Path) -> list[dict]:
     return sorted(cases, key=lambda c: c["id"])
 
 
-_TRIAGE_SCOPES = ("validator", "out-of-scope", "untestable")
+_OBLIGATION_SCOPES = ("validator", "out-of-scope", "untestable")
+PRACTICE = "practice"
+_TRIAGE_SCOPES = (*_OBLIGATION_SCOPES, PRACTICE)
 _TRIAGE_FIELDS = {"scope", "security", "reason", "note", "section", "occurrence"}
 
 
@@ -483,6 +495,7 @@ class Row:
     triage: dict | None
     direct: list[str] = field(default_factory=list)  # case ids, ascending
     inferred: list[str] = field(default_factory=list)
+    basis: list[str] = field(default_factory=list)  # cases whose INTEROP basis quotes it
     levels: dict[str, int] = field(default_factory=dict)  # assertions citing it, by level
     polarity: str = ""  # positive, negative, both, or "" when no active case cites it
     disputed: int = 0  # disputed cases citing it
@@ -494,7 +507,7 @@ class Row:
 class Unmapped:
     line: int
     quote: str
-    cited_as: str  # clause or inference
+    cited_as: str  # clause, inference or basis
     cases: list[str]
 
 
@@ -506,7 +519,7 @@ class Coverage:
 
 
 def known_pins() -> list[spec_source.Pin]:
-    return [spec_source.cesr_pin(), spec_source.KERI]
+    return [spec_source.cesr_pin(), spec_source.KERI, spec_source.ACDC]
 
 
 def load_text(pin: spec_source.Pin) -> str:
@@ -529,11 +542,15 @@ def measure(cases: list[dict], texts: dict, triage: dict) -> list[Coverage]:
                 where = f"{case['id']} {a['id']}"
                 sign = polarity(a, where)
                 clause = a.get("clause")
-                if not clause or (clause["spec"], clause["commit"]) != key:
+                quoted = _quoted_basis(a)
+                if quoted and (quoted["spec"], quoted["commit"]) == key:
+                    how, quotes = "basis", [("basis", quoted["quote"])]
+                elif not clause or (clause["spec"], clause["commit"]) != key:
                     continue
-                how = "inference" if "inferred_from" in a else "direct"
-                quotes = [("clause", clause["quote"])]
-                if "inferred_from" in a:
+                else:
+                    how = "inference" if "inferred_from" in a else "direct"
+                    quotes = [("clause", clause["quote"])]
+                if how == "inference":
                     quotes.append(("inference", a["inferred_from"]["quote"]))
                     line = _quote_line(text, a["inferred_from"]["quote"], where)
                     if line != a["inferred_from"]["line"]:
@@ -555,8 +572,25 @@ def measure(cases: list[dict], texts: dict, triage: dict) -> list[Coverage]:
         out.append(Coverage(pin, list(rows.values()), [
             Unmapped(line, quote, cited_as, sorted(ids))
             for (line, quote, cited_as), ids in sorted(
-                unmapped.items(), key=lambda kv: (kv[0][0], kv[0][2] != "clause", kv[0][1]))]))
+                unmapped.items(), key=lambda kv: (kv[0][0], _CITED_ORDER[kv[0][2]], kv[0][1]))]))
     return out
+
+
+_CITED_ORDER = {"clause": 0, "inference": 1, "basis": 2}
+
+
+# Every field schema/case.schema.json requires of a basis that quotes a sentence.
+BASIS_FIELDS = ("text", "spec", "section", "url", "commit", "quote")
+
+
+def _quoted_basis(assertion: dict) -> dict | None:
+    """An assertion's basis when it quotes a sentence of a pinned text, else None."""
+    basis = assertion.get("basis")
+    return basis if isinstance(basis, dict) else None
+
+
+def is_practice(row: "Row") -> bool:
+    return row.triage is not None and row.triage["scope"] == PRACTICE
 
 
 def _quote_line(text: str, quote: str, where: str) -> int:
@@ -567,18 +601,20 @@ def _quote_line(text: str, quote: str, where: str) -> int:
 
 
 def _fill(row: Row, cites) -> None:
-    direct, inferred, signs = set(), set(), set()
+    ids: dict[str, set[str]] = {"direct": set(), "inference": set(), "basis": set()}
+    signs = set()
     seen_assertions = set()
     levels: Counter = Counter()
     for case, a, how, sign in cites:
-        (direct if how == "direct" else inferred).add(case["id"])
+        ids[how].add(case["id"])
         row.statuses[case["id"]] = case["status"]
         if (case["id"], a["id"]) not in seen_assertions:
             seen_assertions.add((case["id"], a["id"]))
             levels[a["level"]] += 1
-        if case["status"] == "active":
+        if case["status"] == "active" and (how != "basis" or is_practice(row)):
             signs.add(sign)
-    row.direct, row.inferred = sorted(direct), sorted(inferred)
+    row.direct, row.inferred = sorted(ids["direct"]), sorted(ids["inference"])
+    row.basis = sorted(ids["basis"])
     row.levels = {level: levels[level] for level in ASSERTION_LEVELS if levels[level]}
     row.polarity = "both" if len(signs) == 2 else next(iter(signs), "")
     row.disputed = sum(status == "disputed" for status in row.statuses.values())
@@ -625,8 +661,9 @@ def _triage_cell(entry: dict | None) -> str:
 
 def _cases_cell(row: Row) -> str:
     out = []
-    for case_id in sorted(set(row.direct) | set(row.inferred)):
-        marks = [] if case_id in row.direct else ["inferred"]
+    for case_id in sorted(set(row.direct) | set(row.inferred) | set(row.basis)):
+        marks = ([] if case_id in row.direct else ["inferred"] if case_id in row.inferred
+                 else ["basis"])
         if row.statuses[case_id] != "active":
             marks.append(row.statuses[case_id])
         out.append(case_id + (f" ({', '.join(marks)})" if marks else ""))
@@ -642,9 +679,10 @@ def _row_line(row: Row) -> str:
     return "| " + " | ".join(cells) + " |\n"
 
 
-def _sections(rows: list[Row], pin: spec_source.Pin) -> str:
+def _sections(rows: list[Row], pin: spec_source.Pin,
+              empty: str = "No sentence of this text carries these keywords.") -> str:
     if not rows:
-        return "No sentence of this text carries these keywords.\n\n"
+        return f"{empty}\n\n"
     out = []
     current = object()
     for row in rows:
@@ -672,16 +710,21 @@ def render_spec(label: str, coverages: list[Coverage]) -> str:
            f"[README.md](README.md) explains how to read it and how it is generated.\n\n")]
     for c in coverages:
         pin = c.pin
-        counts = Counter(r.sentence.level for r in c.rows)
+        practice = [r for r in c.rows if is_practice(r)]
+        normative = [r for r in c.rows if not is_practice(r)]
+        counts = Counter(r.sentence.level for r in normative)
         url = f"{pin.repo}/blob/{pin.commit}/{pin.file}"
         out.append(f"## {pin.tag}, commit {pin.commit[:12]}\n\n"
                    f"The pinned text is [{pin.file} at {pin.commit[:12]}]({url}). It has "
                    f"{len(c.rows)} keyword sentences: {counts['MUST']} MUST, {counts['SHOULD']} "
-                   f"SHOULD and {counts['MAY']} MAY or OPTIONAL.\n\n")
+                   f"SHOULD and {counts['MAY']} MAY or OPTIONAL, and {len(practice)} triaged as "
+                   f"practice.\n\n")
         out.append("### Obligations (MUST and SHOULD)\n\n")
-        out.append(_sections([r for r in c.rows if r.sentence.level in OBLIGATIONS], pin))
+        out.append(_sections([r for r in normative if r.sentence.level in OBLIGATIONS], pin))
         out.append("### Permissions (MAY and OPTIONAL)\n\n")
-        out.append(_sections([r for r in c.rows if r.sentence.level == "MAY"], pin))
+        out.append(_sections([r for r in normative if r.sentence.level == "MAY"], pin))
+        out.append("### Practice (any keyword, in text that states common practice)\n\n")
+        out.append(_sections(practice, pin, "No sentence of this text is triaged as practice."))
         out.append("### Quotes that match no keyword sentence\n\n")
         if c.unmapped:
             out.append("These quotes are cited by cases but contain no keyword sentence of the "
@@ -709,25 +752,32 @@ SUMMARY_ROWS = (
     ("unassessed", "Obligations not yet assessed"),
     ("security covered", "Security-bearing obligations covered"),
     ("security uncovered", "Security-bearing obligations not covered"),
+    ("practice", "Practice sentences"),
+    ("practice covered", "Practice sentences covered by an active case"),
     ("unmapped", "Quotes that match no keyword sentence"),
 )
 
 
 def summarize(c: Coverage) -> dict[str, int]:
-    """The summary counts for one pinned text. All but the level counts and the unmapped count
-    are of obligations (MUST and SHOULD sentences) only."""
-    obligations = [r for r in c.rows if r.sentence.level in OBLIGATIONS]
+    """The summary counts for one pinned text. Practice sentences are counted only in the two
+    practice counts; all but the level counts, the practice counts and the unmapped count are of
+    obligations (MUST and SHOULD sentences not triaged practice) only."""
+    practice = [r for r in c.rows if is_practice(r)]
+    normative = [r for r in c.rows if not is_practice(r)]
+    obligations = [r for r in normative if r.sentence.level in OBLIGATIONS]
     scopes = Counter(r.triage["scope"] if r.triage else "unassessed" for r in obligations)
-    levels = Counter(r.sentence.level for r in c.rows)
+    levels = Counter(r.sentence.level for r in normative)
     secure = [r for r in obligations if r.triage and r.triage["security"]]
     return {
         "MUST": levels["MUST"], "SHOULD": levels["SHOULD"], "MAY": levels["MAY"],
         "covered": sum(r.covered for r in obligations),
         "uncovered": sum(not r.covered for r in obligations),
         "both": sum(r.polarity == "both" for r in obligations),
-        **{scope: scopes[scope] for scope in (*_TRIAGE_SCOPES, "unassessed")},
+        **{scope: scopes[scope] for scope in (*_OBLIGATION_SCOPES, "unassessed")},
         "security covered": sum(r.covered for r in secure),
         "security uncovered": sum(not r.covered for r in secure),
+        "practice": len(practice),
+        "practice covered": sum(r.covered for r in practice),
         "unmapped": len(c.unmapped),
     }
 
@@ -740,12 +790,14 @@ Each specification has its own report, with a part for each pinned text that a c
 Each row of a report gives:
 
 - **Line**, **Level** and **Sentence**: where the sentence is in the pinned text, and its text.
-- **Triage**: the hand-kept judgment from `scenarios/<spec>/triage.json`. `validator` means a validator can be tested on it through an adapter. `out-of-scope` means it binds a role no adapter plays, such as a controller managing its keys. `untestable` gives a reason. `security` marks a sentence with a security consequence. `unassessed` means no judgment has been recorded yet.
+- **Triage**: the hand-kept judgment from `scenarios/<spec>/triage.json`. `validator` means a validator can be tested on it through an adapter. `out-of-scope` means it binds a role no adapter plays, such as a controller managing its keys. `untestable` gives a reason. `practice` means the sentence states common practice rather than a requirement, as explained below. `security` marks a sentence with a security consequence. `unassessed` means no judgment has been recorded yet.
 - **Direct** and **Inferred**: how many cases cite the sentence. An assertion cites its clause directly unless it records an inference (`inferred_from`), in which case it cites both its clause and the sentence it infers from by inference.
 - **Disputed**: how many of those cases are disputed.
 - **Assertions**: how many citing assertions there are at each level.
 - **Polarity**: whether the active cases that cite the sentence expect a positive outcome (something parsed, encoded, accepted, or held as key state), a negative one (something rejected, not accepted, left pending, or off the trunk), or both.
-- **Cases**: the case ids, marked when a case cites the sentence only by inference or is not active.
+- **Cases**: the case ids, marked when a case cites the sentence only by inference, only by quoting it in the basis of an INTEROP assertion, or is not active.
+
+A keyword sentence in a section that disclaims normativity, such as the ACDC specification's IPEX section, or one that otherwise states common practice rather than a requirement, is triaged `practice`. A keyword in such a sentence does not make it an obligation, so practice sentences have a part of their own in each report and their own rows in the summary, and are never counted among the MUST, SHOULD and MAY sentences or the obligations. They are what the suite's practice tier tests: INTEROP assertions in non-normative profiles, which rest on a basis instead of a clause (`docs/design.md`, Practice). A practice sentence is covered when an active case cites it as an assertion's clause or quotes it in an INTEROP assertion's basis. A basis covers nothing else, because an INTEROP assertion is never evidence about an obligation; a case whose basis quotes another sentence is listed beside it but does not cover it.
 
 A sentence is covered when at least one active case cites it. Disputed cases are listed but cover nothing, because they are excluded from conformance results. Quotes that cases cite but that contain no keyword sentence are listed at the end of each part. The report counts only the public cases in this repository.
 
@@ -777,13 +829,15 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
     for case in cases:
         for a in case["assertions"]:
             polarity(a, f"{case['id']} {a['id']}")
-            clause = a.get("clause")
-            if clause:
-                key = (clause["spec"], clause["commit"])
+            for cited_as, source in (("clause", a.get("clause")), ("basis", _quoted_basis(a))):
+                if not source:
+                    continue
+                key = (source["spec"], source["commit"])
                 if key not in pins:
                     raise CoverageError(
-                        f"{case['id']} {a['id']} cites commit {clause['commit']} of spec "
-                        f"{clause['spec']!r}, which is not a pinned text in spec_source.py.", E_PIN)
+                        f"{case['id']} {a['id']}'s {cited_as} cites commit {source['commit']} of "
+                        f"spec {source['spec']!r}, which is not a pinned text in spec_source.py.",
+                        E_PIN)
                 cited.add(key)
     texts = {key: (pins[key], load_text(pins[key])) for key in sorted(cited)}
     labels = sorted({label for label, _ in texts})
