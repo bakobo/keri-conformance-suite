@@ -302,6 +302,12 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 - Effect. The generator uses the Tag codes. Verifying a BLID does not depend on the code, since it is computed over the bytes received; reporting `ts` does, and a `ts` fact is graded SHOULD, naming the choice.
 - The specification should fix the codes of the state values.
 
+### A-B4. A SAIDed block inside a list (lines 140-147)
+
+- Text. The most compact form compacts "any field within the block whose value is" a SAIDed block (lines 145-147). It says nothing about a SAIDed block that is an element of a list, as in an edge group listing several edges.
+- Effect. The generator leaves a SAIDed block inside a list uncompacted when computing the enclosing block's SAID, which is the literal reading and, in the cross-check, keripy's. A case whose expected SAID depends on the choice grades it at SHOULD, naming it, under the grading rule for bytes the text leaves open.
+- The specification should say whether list elements are compacted.
+
 ## The specification against itself
 
 ### A-C1. The aggregate: a concatenation (line 110) or a serialized list (lines 714, 720, 745-746)
@@ -344,6 +350,7 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 
 - Line 226 calls JSON Schema 2020-12 "The Schema dialect for ACDC 1.0", naming the specification version where the protocol version, 2.00, is meant. The profile `acdc-1.0` shares the hazard and says so.
 - The example at line 1874 uses the version string `ACDC10JSON00011c_`.
+- The accreditation schema in the worked examples requires a `score` attribute (line 3760) that its own example ACDC (line 3679 onwards) does not carry, and it uses `additionalProperties`, so the example ACDC does not validate against its own schema. The generator reproduces the example's SAIDs but does not use the pair as a schema-validity case.
 
 ## KERI issues the exchange-message cases raise
 
