@@ -25,6 +25,7 @@ import re
 import sys
 import tempfile
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 from keri_conformance.errors import (
@@ -193,6 +194,10 @@ def _meaning_problem(report: dict) -> str | None:
         if entry["profile"] != profile:
             return (f"the case {entry['id']} is in the profile {json.dumps(entry['profile'])}, "
                     f"but the report was run for {profile}")
+        ids = [r["id"] for r in entry["assertions"]]
+        repeated = sorted({i for i in ids if ids.count(i) > 1})
+        if repeated:
+            return f"the case {entry['id']} lists the assertion {repeated[0]} twice"
         if entry["failure"] is not None and any(r["outcome"] != "fail"
                                                 for r in entry["assertions"]):
             return (f"the case {entry['id']} records an adapter failure, but not every one of "
@@ -216,6 +221,12 @@ def result_problem(doc) -> str | None:
     problem = shape_problem(doc)
     if problem:
         return problem
+    # The schema's date pattern is syntax only; whether the day exists is meaning. Every kind of
+    # provenance has exactly one date, and the shape check guarantees it.
+    try:
+        date.fromisoformat(doc["provenance"]["date"])
+    except ValueError:
+        return f"provenance.date {doc['provenance']['date']} is not a day on the calendar"
     return _meaning_problem(doc["report"])
 
 
@@ -331,22 +342,28 @@ def wrap(report_path, provenance: dict, into) -> Path:
         raise RunnerError(E_RESULT_FORMAT, f"The report {report_path} cannot be published with "
                                            f"this provenance: {problem}.")
     target = into / result_path(doc)
+    exists = RunnerError(E_RESULT_EXISTS, f"A result already exists at {target}. A published "
+                                          "result is not replaced in place; remove it in the "
+                                          "same change if it is meant to go.")
     if target.exists():
-        raise RunnerError(E_RESULT_EXISTS, f"A result already exists at {target}. A published "
-                                           "result is not replaced in place; remove it in the "
-                                           "same change if it is meant to go.")
+        raise exists
     text = json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
     target.parent.mkdir(parents=True, exist_ok=True)
     handle, temporary = tempfile.mkstemp(dir=target.parent, suffix=".tmp")
     try:
         with os.fdopen(handle, "w", encoding="utf-8") as f:
             f.write(text)
-        os.replace(temporary, target)
+        # A hard link, unlike a rename, fails rather than replace a file that appeared after
+        # the check above, and the target still appears whole or not at all.
+        os.link(temporary, target)
+    except FileExistsError as exc:
+        raise exists from exc
     except OSError as exc:
-        os.unlink(temporary)
         code = (E_RESULT_WRITE_TRANSIENT if exc.errno in TRANSIENT_ERRNOS
                 else E_RESULT_WRITE)
         raise RunnerError(code, f"The result could not be written to {target}: {exc}.") from exc
+    finally:
+        os.unlink(temporary)
     return target
 
 

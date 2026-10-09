@@ -38,6 +38,7 @@ MARKER = ".kcs-site-source"
 RESULTS_DIR = "results"
 E_SITE_OUT = "e.state.conflict.site-out.f"
 E_SITE_COLLISION = "e.self.config.site-collision.f"
+E_RESULT_SLUG = "e.rule.result.slug-collision.f"
 
 LABELS = {"reproduced": "Reproduced by CI", "submitted": "Submitted claim, not reproduced"}
 ADMONITION = {"reproduced": "success", "submitted": "warning"}
@@ -337,6 +338,7 @@ def render_results(results: list[Result]) -> dict[str, str]:
         if result.path != result_path(result.doc):
             raise RunnerError(E_RESULT_PATH, f"The result at {result.path.as_posix()[:200]} "
                                              "is not at the path its report implies.")
+    _distinct_slugs(results)
     pages = {f"{RESULTS_DIR}/index.md": _index(results)}
     by_impl: dict[str, list[Result]] = defaultdict(list)
     for result in results:
@@ -348,6 +350,27 @@ def render_results(results: list[Result]) -> dict[str, str]:
     for impl, group in by_impl.items():
         pages[f"{RESULTS_DIR}/{impl}/index.md"] = _implementation_page(group)
     return dict(sorted(pages.items()))
+
+
+def _distinct_slugs(results: list[Result]) -> None:
+    """Pages and rows are keyed by the slugs in a result's path, so two raw implementation names
+    with one slug, or two raw versions of one implementation with one slug, would be merged onto
+    one page. Such a set is refused, naming both."""
+    seen: dict[tuple, Result] = {}
+    for result in sorted(results, key=lambda r: (r.path.as_posix(), r.doc["provenance"]["kind"])):
+        impl = _impl(result)
+        for key, field, raw in (((result.path.parts[0],), "name", impl["name"]),
+                                (result.path.parts[:2], "version", impl["version"])):
+            other = seen.setdefault(key, result)
+            other_raw = _impl(other)[field]
+            if other_raw != raw:
+                where = [f"{r.doc['provenance']['kind']} {r.path.as_posix()}"
+                         for r in (other, result)]
+                raise RunnerError(E_RESULT_SLUG, (
+                    f"The implementation {field}s {json.dumps(other_raw[:80])} (in the "
+                    f"{where[0]} result) and {json.dumps(raw[:80])} (in the {where[1]} result) "
+                    f"both become {'/'.join(key)} in the results' paths, so they would share "
+                    "one page. Report one spelling for one implementation."))
 
 
 def assemble(repo, out, results: list[Result]) -> None:

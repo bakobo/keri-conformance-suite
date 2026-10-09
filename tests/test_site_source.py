@@ -384,3 +384,32 @@ def test_render_refuses_a_result_whose_path_is_not_its_own():
     with pytest.raises(RunnerError) as exc:
         S.render_results([Result(Path("..", "..", "evil.json"), result())])
     assert exc.value.code == "e.input.format.result-path.f"
+
+
+def test_render_refuses_two_implementation_names_that_share_a_slug():
+    """Copilot on #18: pages and rows are keyed by slug, so two raw names that slug alike would
+    share one page; the set is refused instead, naming both."""
+    a, b = result(report(name="Foo Bar")), result(report(name="Foo-Bar", profile="keri-1.0",
+                                                      cases=[case("KERI-0001", profile="keri-1.0")]))
+    with pytest.raises(RunnerError) as exc:
+        S.render_results(loaded(a, b))
+    assert exc.value.code == S.E_RESULT_SLUG
+    message = exc.value.message
+    assert "Foo Bar" in message and "Foo-Bar" in message
+    assert "foo-bar/2.1.0.dev1/cesr-1.0.json" in message
+    assert "foo-bar/2.1.0.dev1/keri-1.0.json" in message
+
+
+def test_render_refuses_two_versions_that_share_a_slug():
+    a = result(report(version="1.0 beta"))
+    b = result(report(version="1.0-beta"), provenance=REPRODUCED)
+    with pytest.raises(RunnerError) as exc:
+        S.render_results(loaded(a, b))
+    assert exc.value.code == S.E_RESULT_SLUG
+    assert "1.0 beta" in exc.value.message and "1.0-beta" in exc.value.message
+
+
+def test_render_accepts_one_raw_identity_under_each_slug():
+    a = result(report(name="Foo Bar"))
+    b = result(report(name="Foo Bar"), provenance=REPRODUCED)
+    assert "results/foo-bar/index.md" in S.render_results(loaded(a, b))

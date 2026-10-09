@@ -108,6 +108,24 @@ def test_a_repeated_case_is_refused():
     assert "twice" in R.result_problem(doc)
 
 
+def test_a_repeated_assertion_is_refused():
+    """Copilot on #18: a repeated passing assertion inflates a summary that still agrees with the
+    cases, so an assertion id may appear only once in its case."""
+    doc = result(report([case(records=[record(), record()])]))
+    assert "a1" in R.result_problem(doc) and "twice" in R.result_problem(doc)
+    assert R.result_problem(result(report([case(records=[record(), record("a2")])]))) is None
+
+
+@pytest.mark.parametrize("provenance", [SUBMITTED, REPRODUCED])
+@pytest.mark.parametrize("date", ["2026-02-30", "2025-02-29", "2026-04-31"])
+def test_an_impossible_date_is_refused(provenance, date):
+    """Copilot on #18: the date pattern is only syntax, so the calendar is checked as meaning."""
+    doc = result(provenance={**provenance, "date": date})
+    assert R.shape_problem(doc) is None
+    assert "date" in R.result_problem(doc)
+    assert R.result_problem(result(provenance={**provenance, "date": "2024-02-29"})) is None
+
+
 @pytest.mark.parametrize(("outcome", "records"), [
     ("pass", [record(outcome="fail")]),
     ("fail", [record(outcome="pass")]),
@@ -300,6 +318,25 @@ def test_wrap_refuses_to_overwrite(tmp_path):
     refused(R.E_RESULT_EXISTS, R.wrap, source, SUBMITTED, tmp_path / "out")
 
 
+def test_wrap_never_replaces_a_file_that_appears_after_its_check(tmp_path, monkeypatch):
+    """Copilot on #18: a result created between the existence check and the write must survive,
+    and the temporary file must not be left behind."""
+    source = tmp_path / "report.json"
+    source.write_text(json.dumps(report()))
+    into = tmp_path / "out"
+    target = into / R.result_path(result())
+    real = R.tempfile.mkstemp
+
+    def racing(*args, **kwargs):
+        target.write_text("theirs")
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(R.tempfile, "mkstemp", racing)
+    refused(R.E_RESULT_EXISTS, R.wrap, source, SUBMITTED, into)
+    assert target.read_text() == "theirs"
+    assert [p.name for p in target.parent.iterdir()] == [target.name]
+
+
 def test_wrap_refuses_an_inconsistent_report_and_writes_nothing(tmp_path):
     rep = report()
     rep["verdict"] = "not-conformant"
@@ -320,14 +357,14 @@ def test_wrap_reports_a_write_failure(tmp_path, monkeypatch):
     def fail(*args, **kwargs):
         raise OSError(errno.ENOSPC, "No space left on device")
 
-    monkeypatch.setattr(R.os, "replace", fail)
+    monkeypatch.setattr(R.os, "link", fail)
     refused(R.E_RESULT_WRITE, R.wrap, source, SUBMITTED, tmp_path / "out")
-    assert not list((tmp_path / "out").rglob("*.json*"))
+    assert not [p for p in (tmp_path / "out").rglob("*") if p.is_file()]
 
     def fail_soft(*args, **kwargs):
         raise OSError(errno.EAGAIN, "Try again")
 
-    monkeypatch.setattr(R.os, "replace", fail_soft)
+    monkeypatch.setattr(R.os, "link", fail_soft)
     refused(R.E_RESULT_WRITE_TRANSIENT, R.wrap, source, SUBMITTED, tmp_path / "out")
 
 
