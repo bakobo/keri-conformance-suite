@@ -9,7 +9,15 @@ fault naming its file, never a case that gets scored.
 import os
 from pathlib import Path
 
-from keri_conformance.contracts import HEX_STRING, ITEM, KEY_STATE
+from keri_conformance.contracts import (
+    EDGE_PATH,
+    EXN_READINGS,
+    HEX_STRING,
+    ITEM,
+    KEY_STATE,
+    REGISTRY_STATE,
+    SAID,
+)
 from keri_conformance.errors import (
     E_CASE_FORMAT,
     E_CASE_READ,
@@ -37,6 +45,8 @@ from keri_conformance.shapes import (
 MAX_CASE_BYTES = 32 * 1024 * 1024
 MAX_CASE_FILES = 10_000
 MAX_CASES_BYTES = 256 * 1024 * 1024
+MAX_DAG_ACDCS = 16
+MAX_DAG_DEPTH = 8
 CASE_ID = "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
 COMMIT = "^[0-9a-f]{7,40}$"
 FEATURE = r"^[a-z0-9]+(\.[a-z0-9-]+)+$"
@@ -44,6 +54,8 @@ STATUSES = ("active", "draft", "disputed", "deprecated")
 NORMATIVE = ("MUST", "SHOULD", "MAY")
 LEVELS = (*NORMATIVE, "INTEROP")
 EXPECTED_READINGS = ("seen", "not-seen", "pending", "rejected", "duplicitous")
+# Cases grade an ACDC as valid or not valid; invalid and incomplete are both not valid.
+EXPECTED_VERDICTS = ("valid", "not-valid")
 
 CLAUSE = obj({"spec": enum("cesr", "keri", "acdc", "ipex"), "section": string(min_length=1),
               "url": string("^https://"), "commit": string(COMMIT)},
@@ -78,6 +90,14 @@ CHECK_FORMS = {
     "signatures_verify": _assertion("signatures_verify"),
     "attachments_equivalent": _assertion("attachments_equivalent",
                                          expected=array(anything_object)),
+    "verdict": _assertion("verdict", expected=enum(*EXPECTED_VERDICTS)),
+    "registry_reported": _assertion("registry_reported", expected=enum(True, False)),
+    "registry_state": _assertion("registry_state", expected=REGISTRY_STATE),
+    "edge_reported": _assertion("edge_reported", near=SAID, path=string(EDGE_PATH)),
+    "edge_valid": _assertion("edge_valid", near=SAID, path=string(EDGE_PATH),
+                             expected=enum(True, False)),
+    "exn_verdict": _assertion("exn_verdict", message=integer(minimum=0),
+                              expected=enum(*EXN_READINGS)),
 }
 
 # The checks that can apply to each operation's result.
@@ -86,18 +106,42 @@ OPERATION_CHECKS = {
     "cesr.encode": ("encoded",),
     "keri.process": ("disposition", "trunk", "key_state"),
     "keri.emit": ("emitted_body", "signatures_verify", "attachments_equivalent"),
+    "acdc.verify": ("verdict", "registry_reported", "registry_state", "edge_reported",
+                    "edge_valid"),
+    "exn.verify": ("exn_verdict",),
 }
+
+PERSPECTIVE = obj({"role": enum("validator")})
+SOURCED = obj({"stream": HEX_STRING, "source": string()})
+STREAM = obj({"stream": HEX_STRING})
 
 INPUTS = {
     "cesr.parse": obj({"stream": HEX_STRING}),
     "cesr.encode": obj({"code": string(min_length=1), "raw": HEX_STRING,
                         "domain": enum("text", "binary")}),
-    "keri.process": obj({
-        "perspective": obj({"role": enum("validator")}),
-        "messages": array(obj({"stream": HEX_STRING, "source": string()}), min_items=1),
-    }),
+    "keri.process": obj({"perspective": PERSPECTIVE, "messages": array(SOURCED, min_items=1)}),
     "keri.emit": obj({"event": anything_object, "seeds": mapping(HEX_STRING)}),
+    # The bundle (docs/design.md, ACDC): every KEL, registry event, schema and far-node ACDC the
+    # presented ACDC depends on. The presented ACDC is a node of its own DAG, so the far nodes
+    # number at most one fewer than the DAG's bound.
+    "acdc.verify": obj({"perspective": PERSPECTIVE, "kels": array(SOURCED),
+                        "registry": array(STREAM), "schemas": array(HEX_STRING),
+                        "acdcs": array(STREAM, max_items=MAX_DAG_ACDCS - 1),
+                        "presented": STREAM},
+                       {"expect_schema": SAID}),
+    "exn.verify": obj({"perspective": PERSPECTIVE, "kels": array(SOURCED),
+                       "messages": array(SOURCED, min_items=1)}),
 }
+
+# The shape of an ACDC case's provenance DAG, which the runner bounds (_dag_problem) but never
+# sends: the adapter finds the DAG in the bundle's bytes. `as_of` records, informatively, the
+# sequence number at which the generator cut each KEL and registry: the evaluation point.
+DAG = obj({"root": SAID, "edges": array(obj({"near": SAID, "path": string(EDGE_PATH),
+                                             "n": SAID}))})
+AS_OF = mapping(integer(minimum=0))
+ACDC_ONLY = ("dag", "as_of")
+# The layer whose ids the new operations' cases take (docs/design.md, ACDC; exchange messages).
+LAYER_PREFIX = {"acdc.verify": "ACDC-", "exn.verify": "KERI-"}
 
 CASE = obj(
     {
@@ -123,6 +167,8 @@ CASE = obj(
         "dispute": obj({"clauses": array(CLAUSE, min_items=1), "summary": string(min_length=1),
                         "raised_at": string()}),
         "superseded_by": string(CASE_ID),
+        "dag": DAG,
+        "as_of": AS_OF,
     },
 )
 
@@ -135,6 +181,16 @@ def _cross_field_problem(case: dict) -> str | None:
     for status, field in (("disputed", "dispute"), ("deprecated", "superseded_by")):
         if case["status"] == status and field not in case:
             return f'a {status} case needs "{field}"'
+    prefix = LAYER_PREFIX.get(case["operation"])
+    if prefix and not case["id"].startswith(prefix):
+        return (f'a {case["operation"]} case belongs to the {prefix.rstrip("-")} layer, so its id '
+                f'starts with "{prefix}"')
+    acdc = case["operation"] == "acdc.verify"
+    for field in ACDC_ONLY:
+        if acdc and field not in case:
+            return f'an acdc.verify case needs "{field}"'
+        if not acdc and field in case:
+            return f'only an acdc.verify case carries "{field}"'
     checks = OPERATION_CHECKS[case["operation"]]
     for n, assertion in enumerate(case["assertions"]):
         if assertion["check"] not in checks:
@@ -152,6 +208,54 @@ def _cross_field_problem(case: dict) -> str | None:
     return None
 
 
+def _longest(node, children, depth, path) -> int | None:
+    """The most edges on a path from `node`, or None if a cycle is reachable from it. The node
+    count is bounded before this runs, so the recursion is at most MAX_DAG_ACDCS deep."""
+    if node in path:
+        return None
+    if node not in depth:
+        path.add(node)
+        lengths = [_longest(far, children, depth, path) for far in children.get(node, ())]
+        path.discard(node)
+        depth[node] = None if None in lengths else max((n + 1 for n in lengths), default=0)
+    return depth[node]
+
+
+def _dag_problem(dag: dict) -> str | None:
+    """The bounds of docs/design.md, ACDC: at most MAX_DAG_ACDCS ACDCs, the presented one
+    included, and at most MAX_DAG_DEPTH edges on the longest path from it; no cycle; each edge
+    listed once."""
+    edges = dag["edges"]
+    nodes = {dag["root"]} | {e["near"] for e in edges} | {e["n"] for e in edges}
+    if len(nodes) > MAX_DAG_ACDCS:
+        return (f"Its provenance DAG holds {len(nodes)} ACDCs, more than the {MAX_DAG_ACDCS} a "
+                "case may hold.")
+    children, listed = {}, set()
+    for edge in edges:
+        if (edge["near"], edge["path"]) in listed:
+            return f'Its provenance DAG lists the edge {edge["path"]} of {edge["near"]} twice.'
+        listed.add((edge["near"], edge["path"]))
+        children.setdefault(edge["near"], []).append(edge["n"])
+    reached, frontier = {dag["root"]}, [dag["root"]]
+    while frontier:
+        for far in children.get(frontier.pop(), []):
+            if far not in reached:
+                reached.add(far)
+                frontier.append(far)
+    for edge in edges:
+        if edge["near"] not in reached:
+            return (f'Its provenance DAG lists the edge {edge["path"]} of {edge["near"]}, which '
+                    f'the presented ACDC {dag["root"]} cannot reach.')
+    depth = {}
+    for node in sorted(nodes):
+        if _longest(node, children, depth, set()) is None:
+            return "Its provenance DAG has a cycle, so it is not a DAG."
+    if depth[dag["root"]] > MAX_DAG_DEPTH:
+        return (f"The longest path in its provenance DAG has {depth[dag['root']]} edges, more "
+                f"than the {MAX_DAG_DEPTH} a case may hold.")
+    return None
+
+
 def case_problem(case) -> str | None:
     """None if the case satisfies the case schema (and the runner's own rule that assertion ids
     are unique), else a sentence saying what is wrong."""
@@ -160,6 +264,10 @@ def case_problem(case) -> str | None:
     problem = CASE(case, "") or _cross_field_problem(case)
     if problem:
         return f"It does not satisfy the case schema: {problem}."
+    if "dag" in case:
+        problem = _dag_problem(case["dag"])
+        if problem:
+            return problem
     seen = set()
     for assertion in case["assertions"]:
         if assertion["id"] in seen:

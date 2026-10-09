@@ -167,6 +167,182 @@
               }
             }
           }
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "op",
+            "perspective",
+            "kels",
+            "registry",
+            "schemas",
+            "acdcs",
+            "presented"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "op": {
+              "const": "acdc.verify"
+            },
+            "perspective": {
+              "type": "object",
+              "required": [
+                "role"
+              ],
+              "properties": {
+                "role": {
+                  "const": "validator"
+                }
+              }
+            },
+            "kels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "stream",
+                  "source"
+                ],
+                "properties": {
+                  "stream": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "registry": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "stream"
+                ],
+                "properties": {
+                  "stream": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  }
+                }
+              }
+            },
+            "schemas": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^([0-9a-f]{2})*$"
+              }
+            },
+            "acdcs": {
+              "type": "array",
+              "maxItems": 15,
+              "items": {
+                "type": "object",
+                "required": [
+                  "stream"
+                ],
+                "properties": {
+                  "stream": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  }
+                }
+              },
+              "description": "The far nodes of the presented ACDC's provenance DAG. The DAG holds at most 16 ACDCs, the presented one included."
+            },
+            "presented": {
+              "type": "object",
+              "required": [
+                "stream"
+              ],
+              "properties": {
+                "stream": {
+                  "type": "string",
+                  "pattern": "^([0-9a-f]{2})*$"
+                }
+              }
+            },
+            "expect_schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "id",
+            "op",
+            "perspective",
+            "kels",
+            "messages"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "op": {
+              "const": "exn.verify"
+            },
+            "perspective": {
+              "type": "object",
+              "required": [
+                "role"
+              ],
+              "properties": {
+                "role": {
+                  "const": "validator"
+                }
+              }
+            },
+            "kels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "stream",
+                  "source"
+                ],
+                "properties": {
+                  "stream": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "messages": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "stream",
+                  "source"
+                ],
+                "properties": {
+                  "stream": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       ],
       "description": "Requests are open: an adapter must ignore fields it does not recognise, so later protocol versions can add fields without breaking version-1 adapters."
@@ -207,6 +383,12 @@
                 },
                 {
                   "$ref": "#/$defs/result_emitted"
+                },
+                {
+                  "$ref": "#/$defs/result_verified"
+                },
+                {
+                  "$ref": "#/$defs/result_exchanged"
                 }
               ]
             }
@@ -314,7 +496,9 @@
               "cesr.parse",
               "cesr.encode",
               "keri.process",
-              "keri.emit"
+              "keri.emit",
+              "acdc.verify",
+              "exn.verify"
             ]
           }
         },
@@ -764,6 +948,176 @@
           }
         }
       ]
+    },
+    "registry_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rd",
+        "n",
+        "d",
+        "td",
+        "ts"
+      ],
+      "description": "The verified head of the registry the presented ACDC's top-level rd names (docs/design.md, Registry state): the registry's SAID, and the sequence number, SAID, transaction ACDC SAID and state of the last event in the verified chain. td and ts are both null when a blinded state was not disclosed, and otherwise both given.",
+      "properties": {
+        "rd": {
+          "type": "string",
+          "minLength": 1
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "d": {
+          "type": "string",
+          "minLength": 1
+        },
+        "td": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        },
+        "ts": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "td": {
+              "type": "null"
+            },
+            "ts": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "td": {
+              "type": "string"
+            },
+            "ts": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "result_verified": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verdict",
+        "registry",
+        "edges"
+      ],
+      "description": "An acdc.verify result (docs/adapter-protocol.md). Each edge is listed once; the runner refuses an edge listed twice, which this schema cannot express.",
+      "properties": {
+        "verdict": {
+          "enum": [
+            "valid",
+            "invalid",
+            "incomplete"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "registry": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/registry_state"
+            }
+          ]
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "near",
+              "path",
+              "n",
+              "valid"
+            ],
+            "properties": {
+              "near": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^e(\\.[^.]+)+$",
+                "description": "The chain of field labels from the near node's top-level e field, joined by full stops, such as e.le."
+              },
+              "n": {
+                "type": "string",
+                "minLength": 1
+              },
+              "valid": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "result_exchanged": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verdicts"
+      ],
+      "description": "An exn.verify result: one entry per message, in order, each read at quiescence after its own delivery and after the last message.",
+      "properties": {
+        "verdicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "on_delivery",
+              "verdict"
+            ],
+            "properties": {
+              "on_delivery": {
+                "enum": [
+                  "accepted",
+                  "rejected"
+                ]
+              },
+              "verdict": {
+                "enum": [
+                  "accepted",
+                  "rejected"
+                ]
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
