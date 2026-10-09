@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/bakobo/keri-conformance-suite/schema/result.schema.json",
+  "title": "Published conformance result",
+  "description": "A conformance report written by `kcs run --report`, unchanged, inside a provenance envelope that says who produced it. One file per implementation, implementation version and profile, at results/<implementation>/<version>/<profile>.json. See docs/publishing-results.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["result_version", "provenance", "report"],
+  "properties": {
+    "result_version": {"const": 1},
+    "provenance": {
+      "oneOf": [
+        {"$ref": "#/$defs/reproduced"},
+        {"$ref": "#/$defs/submitted"}
+      ]
+    },
+    "report": {"$ref": "#/$defs/report"}
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+    "label": {
+      "description": "A string that is shown on the site, so it is bounded.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "strings": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "reproduced": {
+      "description": "Produced by this repository's CI from a pinned adapter and implementation. Never committed: the Pages workflow writes these at build time.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "run", "commit", "date"],
+      "properties": {
+        "kind": {"const": "reproduced"},
+        "run": {
+          "type": "string",
+          "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/actions/runs/[0-9]+(/attempts/[0-9]+)?$"
+        },
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "date": {"$ref": "#/$defs/date"}
+      }
+    },
+    "submitted": {
+      "description": "Sent by an implementation's maintainer through a pull request; the suite shows it as their claim and cannot verify it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "submitter", "pull_request", "date"],
+      "properties": {
+        "kind": {"const": "submitted"},
+        "submitter": {"$ref": "#/$defs/label"},
+        "pull_request": {
+          "type": "string",
+          "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/pull/[0-9]+$"
+        },
+        "date": {"$ref": "#/$defs/date"}
+      }
+    },
+    "named": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"$ref": "#/$defs/label"},
+        "version": {"$ref": "#/$defs/label"}
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "commit"],
+      "properties": {
+        "name": {"$ref": "#/$defs/label"},
+        "version": {"$ref": "#/$defs/label"},
+        "commit": {"$ref": "#/$defs/label"}
+      }
+    },
+    "hello": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "adapter", "implementation", "operations", "features"],
+      "properties": {
+        "protocol": {"type": "integer", "minimum": 1},
+        "adapter": {"$ref": "#/$defs/named"},
+        "implementation": {"$ref": "#/$defs/implementation"},
+        "operations": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "features": {"$ref": "#/$defs/strings"},
+        "composes": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "count": {"type": "integer", "minimum": 0},
+    "tally": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/count"}
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "check", "level", "outcome", "expected", "actual", "detail", "self_agreement"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^a[0-9]+$"},
+        "check": {"type": "string"},
+        "level": {"enum": ["MUST", "SHOULD", "MAY", "INTEROP"]},
+        "outcome": {"enum": ["pass", "fail", "not-applicable", "not-implemented", "not-supported", "skipped"]},
+        "expected": true,
+        "actual": true,
+        "detail": {"type": ["string", "null"]},
+        "self_agreement": {"type": "boolean"}
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "detail"],
+      "properties": {
+        "kind": {"type": "string"},
+        "detail": {"type": "string"}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "profile", "operation", "failure", "stderr", "outcome", "assertions"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"},
+        "status": {"enum": ["active", "draft", "disputed", "deprecated"]},
+        "profile": {"type": "string"},
+        "operation": {"type": "string"},
+        "failure": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/failure"}]},
+        "stderr": {"type": "string"},
+        "outcome": {"enum": ["pass", "fail", "incomplete", "not-supported", "skipped"]},
+        "assertions": {"type": "array", "items": {"$ref": "#/$defs/assertion"}},
+        "missing_operation": {"type": "string"},
+        "missing_features": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "aborted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "reason", "problems", "at_case", "exit_code"],
+      "properties": {
+        "code": {"type": "string"},
+        "reason": {"type": "string"},
+        "problems": {"$ref": "#/$defs/strings"},
+        "at_case": {"type": "string"},
+        "exit_code": {"type": "integer"}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["counts", "should", "should_failed", "should_warning", "not_supported_active", "self_agreement_passes"],
+      "properties": {
+        "counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {"$ref": "#/$defs/tally"}
+          }
+        },
+        "should": {"$ref": "#/$defs/tally"},
+        "should_failed": {"$ref": "#/$defs/count"},
+        "should_warning": {"type": ["string", "null"]},
+        "not_supported_active": {"$ref": "#/$defs/strings"},
+        "self_agreement_passes": {"$ref": "#/$defs/count"}
+      }
+    },
+    "report": {
+      "description": "Report version 1, as src/keri_conformance/run.py writes it. A published report must have been run with --profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report_version", "runner_version", "suite_version", "protocol_version", "supported_protocols", "negotiated_protocol", "hello", "declared_features", "composes", "filters", "session_stderr", "verdict", "aborted", "probes", "summary", "cases"],
+      "properties": {
+        "report_version": {"const": 1},
+        "runner_version": {"$ref": "#/$defs/label"},
+        "suite_version": {"type": "string", "pattern": "^[0-9]+(\\.[0-9]+){1,3}[A-Za-z0-9.+-]{0,32}$"},
+        "protocol_version": {"type": "integer", "minimum": 1},
+        "supported_protocols": {"type": "array", "items": {"type": "integer", "minimum": 1}, "minItems": 1},
+        "negotiated_protocol": {"type": "integer", "minimum": 1},
+        "hello": {"$ref": "#/$defs/hello"},
+        "declared_features": {"$ref": "#/$defs/strings"},
+        "composes": {"$ref": "#/$defs/strings"},
+        "filters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["profile", "cases_dir"],
+          "properties": {
+            "profile": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,63}$"},
+            "cases_dir": {"type": "string"}
+          }
+        },
+        "session_stderr": {"type": "string"},
+        "verdict": {"enum": ["conformant", "not-conformant", "incomplete", "no-evidence", "aborted"]},
+        "aborted": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/aborted"}]},
+        "probes": {"type": "object", "additionalProperties": {"type": "string"}},
+        "summary": {"$ref": "#/$defs/summary"},
+        "cases": {"type": "array", "items": {"$ref": "#/$defs/case"}}
+      }
+    }
+  }
+}

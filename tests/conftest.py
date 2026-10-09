@@ -8,6 +8,10 @@ import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 FAKES = ROOT / "tests" / "fakes"
+# tools/ and generators/ are imported from the checkout, not installed; this makes any test module
+# runnable on its own rather than only after one that happens to add the root.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 def good(*args):
