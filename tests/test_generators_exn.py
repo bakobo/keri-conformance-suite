@@ -199,11 +199,23 @@ def test_broken_transaction_links_are_refused(grant, want):
     assert tags(c)[1] == [want, want]
 
 
-def test_a_message_continuing_one_transaction_under_anothers_id_is_refused():
+def test_membership_is_by_x_so_a_prior_from_another_transaction_is_a_prior_failure():
+    """Line 979 says x "universally uniquely associates" a message with its transaction, so a
+    message whose x names one held xip belongs to that transaction, and a p naming a message of
+    another transaction breaks line 975, not line 979."""
     xip2 = {**XIP, "name": "xip2", "nonce": "other"}
     grant = {**GRANT, "x": {"said": "xip2"}, "p": {"said": "xip"}}
     c = case([XIP, xip2, grant], [deliver("xip", OK), deliver("xip2", OK),
-                                  deliver("grant", "3/exchange-id")])
+                                  deliver("grant", "3/prior")])
+    assert tags(c)[2] == ["3/prior"] * 2
+
+
+def test_an_exchange_id_naming_a_held_message_that_is_not_an_inception_is_refused():
+    """An x naming an accepted exn is not the SAID of any transaction's first message, under
+    either reading of which transaction the message continues."""
+    second = {**GRANT, "name": "second", "x": {"said": "grant"}, "p": {"said": "grant"}}
+    c = case([XIP, GRANT, second], [deliver("xip", OK), deliver("grant", OK),
+                                    deliver("second", "3/exchange-id")])
     assert tags(c)[2] == ["3/exchange-id"] * 2
 
 
@@ -376,7 +388,10 @@ def test_an_xip_with_an_extra_field_cites_the_xip_field_order():
      [deliver("xip", OK), deliver("grant", "3/prior")], "exn-prior", "exn-prior-link"),
     ([XIP, {**XIP, "name": "xip2", "nonce": "other"},
       {**GRANT, "x": {"said": "xip2"}}],
-     [deliver("xip", OK), deliver("xip2", OK), deliver("grant", "3/exchange-id")],
+     [deliver("xip", OK), deliver("xip2", OK), deliver("grant", "3/prior")],
+     "exn-prior", "exn-prior-link"),
+    ([XIP, GRANT, {**GRANT, "name": "second", "x": {"said": "grant"}, "p": {"said": "grant"}}],
+     [deliver("xip", OK), deliver("grant", OK), deliver("second", "3/exchange-id")],
      "exn-x", "exn-x-link"),
     ([{**LONE, "x": {"nothing": "no-such-xip"}}], [deliver("lone", "3/no-xip")],
      "exn-x-empty", "exn-lone"),

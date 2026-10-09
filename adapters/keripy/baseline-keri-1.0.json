@@ -716,7 +716,7 @@
       "failure": null,
       "assertions": {
         "a1": "fail",
-        "a2": "fail",
+        "a2": "pass",
         "a3": "fail"
       }
     },

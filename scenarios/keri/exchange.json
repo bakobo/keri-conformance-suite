@@ -485,8 +485,8 @@
     {
       "id": "KERI-0073",
       "key": "EXN-06",
-      "title": "An exchange id that names another transaction's inception",
-      "description": "Two transactions opened by the sender, then an exn that continues the first (its p is the first xip's SAID) while its x names the second xip. x MUST be the SAID of the first message of the exn's own transaction (KERI line 979); the sentence binds the sender, so a validator's refusal is an inferred SHOULD.",
+      "title": "An exchange id that names a message which is not an exchange inception",
+      "description": "A transaction opened by an xip and continued by an exn whose x and p are the xip's SAID, then a second exn whose p is the first exn's SAID and whose x is also the first exn's SAID. x MUST be the SAID of the first message of the transaction, which MUST be an xip (KERI line 979). The first exn is neither, so the second exn breaks line 979 whichever transaction it is read as continuing: by its x, a transaction whose first message is not an xip; by its p, the xip's transaction under another transaction's id. The sentence binds the sender, so a validator's refusal is an inferred SHOULD.",
       "events": [
         {
           "name": "I-icp",
@@ -539,25 +539,30 @@
           "a": {}
         },
         {
-          "name": "open2",
-          "t": "xip",
+          "name": "first",
+          "t": "exn",
           "sender": "I",
           "receiver": "H",
-          "nonce": "open2",
+          "x": {
+            "said": "open"
+          },
+          "p": {
+            "said": "open"
+          },
           "r": "/kcs/exchange",
           "q": {},
           "a": {}
         },
         {
-          "name": "msg",
+          "name": "second",
           "t": "exn",
           "sender": "I",
           "receiver": "H",
           "x": {
-            "said": "open2"
+            "said": "first"
           },
           "p": {
-            "said": "open"
+            "said": "first"
           },
           "r": "/kcs/exchange",
           "q": {},
@@ -582,7 +587,7 @@
           ]
         },
         {
-          "exchange": "open2",
+          "exchange": "first",
           "source": "sender",
           "sigs": [
             {
@@ -598,7 +603,7 @@
           ]
         },
         {
-          "exchange": "msg",
+          "exchange": "second",
           "source": "sender",
           "sigs": [
             {

@@ -23,9 +23,10 @@ the exact bytes a case delivers, never to the scenario's labels:
 2. no verifiable sender signature: no signature group, none by the sender (the AID in ``i``),
    or none of the sender's groups satisfies the signing threshold of the establishment event it
    references;
-3. a broken transaction link: an ``x`` that names no exchange inception the validator holds, a
-   ``p`` that is not the SAID of the message before it in its transaction, or a message that
-   continues one transaction while its ``x`` names another's inception;
+3. a broken transaction link: an ``x`` that names no exchange inception the validator holds
+   (either nothing it holds, or a message it accepted that is not an ``xip``), or a ``p`` that is
+   not the SAID of the message before it in the transaction its ``x`` names, membership being by
+   ``x`` (line 979);
 4. otherwise accepted.
 
 Steps 1 and 2 are graded MUST, step 3 SHOULD inferred from the sender rules (lines 975 and 979),
@@ -364,11 +365,13 @@ class Model:
             return None
         chain = self.transactions.get(x)
         if chain is None:
-            return "no-xip"
+            # x names an accepted message that is not an xip: under either reading of which
+            # transaction the message continues, x is not its first message's SAID.
+            return "exchange-id" if x in self.accepted else "no-xip"
+        # Membership is by x (line 979: x "universally uniquely associates" a message with its
+        # transaction), so a p that is not the last message of x's transaction breaks line 975.
         if prior == chain[-1]:
             return None
-        if any(prior in other for key, other in self.transactions.items() if key != x):
-            return "exchange-id"
         return "prior"
 
     def evaluate(self, p: Parsed) -> Outcome:

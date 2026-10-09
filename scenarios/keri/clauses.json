@@ -156,7 +156,7 @@
     "exn-x-link": {
       "section": "Exchange identifier field",
       "quote": "The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction.",
-      "inference": "The sentence binds the sender, who sets `x`. That a validator should not accept an exchange message that continues one transaction while its `x` names the exchange inception of another is inferred from it and graded SHOULD (docs/design.md, IPEX, step 3)."
+      "inference": "The sentence binds the sender, who sets `x`. That a validator should not accept an exchange message whose `x` names a message it holds that is not an exchange inception is inferred from it and graded SHOULD (docs/design.md, IPEX, step 3): whichever transaction the message is read as continuing, its `x` is then not the SAID of that transaction's first message. A message whose `x` names a held exchange inception belongs to that transaction, since `x` \"universally uniquely associates\" a message with its transaction, so a `p` naming a message of another transaction breaks the prior rule instead."
     },
     "exn-lone": {
       "section": "Exchange identifier field",
