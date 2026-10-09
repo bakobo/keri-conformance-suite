@@ -134,6 +134,16 @@ def test_a_directly_sealed_acdc_bundle():
     assert b.expanded["A1"]["a"]["i"] == body(req["kels"][2])[0]["i"]
 
 
+def test_the_case_input_and_evaluation_point():
+    frag = direct()
+    frag["registries"] = [{"name": "rip1", "t": "rip", "issuer": "I"}]
+    b = ab.build_bundle(T, frag)
+    assert b.case_input() == {"perspective": {"role": "validator"}, **b.request}
+    assert b.dag == {"root": b.saids["A1"], "edges": []}
+    i, h = b.expanded["A1"]["i"], b.expanded["A1"]["a"]["i"]
+    assert b.as_of == {i: 1, h: 0, b.saids["rip1"]: 0}
+
+
 def test_an_acdc_without_a_source_seal_has_no_attachments():
     frag = direct()
     del frag["acdcs"][0]["source_seal"]
@@ -246,6 +256,13 @@ def test_registry_overrides_and_an_undisclosed_block():
     assert bup2["b"] == sa.blid(T, ab.blind(T, "s2"), "", "")
 
 
+def test_an_omitted_registry_event_leaves_the_bundle_and_the_evaluation_point():
+    b = ab.build_bundle(T, registry(omit=["bup1"]))
+    assert [body(e)[0]["t"] for e in b.request["registry"]] == ["rip"]
+    assert b.as_of[b.saids["rip1"]] == 0
+    assert ab.build_bundle(T, registry()).as_of[b.saids["rip1"]] == 1
+
+
 def test_the_ts_reading_reaches_the_bup():
     other = sa.Readings(ts_code="bytes")
     a = ab.build_bundle(T, registry()).saids["bup1"]
@@ -277,7 +294,12 @@ def test_far_nodes_go_into_acdcs_leaves_first_and_edges_point_at_their_saids():
     assert [f["d"] for f in far] == [b.saids["G"], b.saids["F"]]
     n = b.expanded["N"]
     assert n["e"]["up"]["n"] == b.saids["F"] and n["e"]["up"]["s"] == b.saids["S1"]
-    assert b.dag == {"N": ["F"], "F": ["G"], "G": []}
+    assert b.graph == {"N": ["F"], "F": ["G"], "G": []}
+    # The case's dag field: SAIDs, each edge keyed by its near node and label path.
+    assert b.dag == {"root": b.saids["N"], "edges": [
+        {"near": b.saids["N"], "path": "e.up", "n": b.saids["F"]},
+        {"near": b.saids["F"], "path": "e.up", "n": b.saids["G"]},
+    ]}
 
 
 def test_a_diamond_puts_each_far_node_in_once():
@@ -300,6 +322,11 @@ def test_an_acdc_outside_the_dag_follows_the_dag_and_omit_drops_entries():
     assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["X"]]
     assert b.request["schemas"] == []
     assert "F" in b.saids  # an omitted node still has a SAID that edges name
+    # The omitted far node's incoming edge stays in the dag: its near node is in the bundle.
+    assert b.dag["edges"] == [{"near": b.saids["N"], "path": "e.up", "n": b.saids["F"]}]
+    frag["omit"] = ["N"]
+    with pytest.raises(ScenarioError):
+        ab.build_bundle(T, frag)
 
 
 def test_the_dag_may_be_eight_edges_deep_but_not_nine():
@@ -328,7 +355,8 @@ def test_edges_are_found_inside_lists_and_plain_maps_and_must_name_an_acdc():
     b = ab.build_bundle(T, frag)
     grp = b.expanded["N"]["e"]["grp"]
     assert "d" not in grp and grp["m"][0]["n"] == b.saids["F"]
-    assert b.dag["N"] == ["F"]
+    assert b.graph["N"] == ["F"]
+    assert b.dag["edges"] == [{"near": b.saids["N"], "path": "e.grp.m.0", "n": b.saids["F"]}]
     frag["acdcs"][0]["e"]["grp"]["m"].append({"d": "", "n": {"acdc": "Z"}})
     _refused(frag, "Z", "edge")
 

@@ -89,7 +89,13 @@ class Bundle:
     saids: dict[str, str]  # SAID of every named ACDC, schema and registry event
     expanded: dict[str, dict] = field(default_factory=dict)  # each ACDC fully expanded
     forms: dict[str, dict] = field(default_factory=dict)  # each ACDC as it is presented
-    dag: dict[str, list[str]] = field(default_factory=dict)  # edges by ACDC name
+    graph: dict[str, list[str]] = field(default_factory=dict)  # edges by ACDC name
+    dag: dict = field(default_factory=dict)  # the case's dag field: root and keyed edges
+    as_of: dict[str, int] = field(default_factory=dict)  # last sequence number per AID/registry
+
+    def case_input(self) -> dict:
+        """The case's input: the request, from a validator's perspective."""
+        return {"perspective": {"role": "validator"}, **self.request}
 
 
 def _index(items: list[dict], kind: str) -> dict[str, dict]:
@@ -99,6 +105,19 @@ def _index(items: list[dict], kind: str) -> dict[str, dict]:
             raise ScenarioError(f"The {kind} {item['name']!r} is defined twice.")
         out[item["name"]] = item
     return out
+
+
+def edge_paths(e, path: str = "e") -> list[tuple[str, str]]:
+    """Every edge in an expanded edge section as (label path, far node SAID): a map with an
+    ``n`` field is an edge, and any other map or list is searched, a list's items labelled by
+    their index."""
+    if isinstance(e, dict):
+        if isinstance(e.get("n"), str):
+            return [(path, e["n"])]
+        return [p for k, v in e.items() for p in edge_paths(v, f"{path}.{k}")]
+    if isinstance(e, list):
+        return [p for i, v in enumerate(e) for p in edge_paths(v, f"{path}.{i}")]
+    return []
 
 
 def _edge_targets(value) -> list[str]:
@@ -358,6 +377,8 @@ class _Builder:
         for name in omit:
             if not any(name in m for m in (self.acdcs, self.schemas, self.registries)):
                 raise ScenarioError(f"{name!r} is omitted but names nothing in the fragment.")
+        if presented in omit:
+            raise ScenarioError(f"The presented ACDC {presented!r} cannot be omitted.")
         edges = self.dag()
         for name in list(self.schemas):
             self.schema_said(name)
@@ -366,11 +387,22 @@ class _Builder:
         for name in list(self.acdcs):
             self.acdc_said(name)
         forms = {name: self.form(name) for name in self.acdcs}
-        kels = []
+        kels, as_of = [], {}
         for delivery in self.frag.get("kels", []):
             message = self.eb.message(delivery)
             kels.append({"stream": message.stream.hex(),
                          "source": delivery.get("source", message.event.aid)})
+            ev = message.event
+            as_of[ev.pre] = max(as_of.get(ev.pre, 0), ev.sn)
+        for name in self.registries:
+            if name not in omit:
+                body = self.events[name][0]
+                rd = body.get("rd", body["d"])
+                as_of[rd] = max(as_of.get(rd, 0), int(body["n"], 16))
+        present = [n for n in self.acdcs if n not in omit]
+        dag = {"root": self.saids[presented], "edges": [
+            {"near": self.saids[n], "path": path, "n": far}
+            for n in present for path, far in edge_paths(self.expanded[n].get("e", {}))]}
 
         def acdc_entry(name):
             att = self.attachments(self.acdcs[name].get("source_seal"))
@@ -387,7 +419,7 @@ class _Builder:
             "presented": acdc_entry(presented),
         }
         return Bundle(request=request, saids=dict(self.saids), expanded=dict(self.expanded),
-                      forms=forms, dag=edges)
+                      forms=forms, graph=edges, dag=dag, as_of=as_of)
 
 
 def build_bundle(t: Tables, fragment: dict, readings: sa.Readings = sa.DEFAULT) -> Bundle:
