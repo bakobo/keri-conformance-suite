@@ -235,6 +235,36 @@ BASE_CASES = [
                assertion("signatures_verify", name="a2", level="MAY"),
                assertion("attachments_equivalent", name="a3", expected=[{"i": 0}])]),
 ]
+REGISTRY = {"rd": "EReg", "n": 1, "d": "EBup", "td": "EAcd", "ts": "issued"}
+BASE_CASES += [
+    make_case("ACDC-0001", "acdc.verify",
+              {"perspective": {"role": "validator"},
+               "kels": [{"stream": "7b7d", "source": "issuer"}],
+               "registry": [{"stream": "7b7d"}], "schemas": ["7b7d"],
+               "acdcs": [{"stream": "7b01"}, {"stream": "7b02"}],
+               "presented": {"stream": "7b00"}, "expect_schema": "ESch"},
+              [assertion("verdict", expected="not-valid"),
+               assertion("registry_reported", name="a2", level="SHOULD", expected=True),
+               assertion("registry_state", name="a3", expected=REGISTRY),
+               assertion("registry_state", name="a4", expected={**REGISTRY, "td": None,
+                                                                "ts": None}),
+               assertion("edge_reported", name="a5", level="SHOULD", near="EAcd", path="e.le"),
+               assertion("edge_valid", name="a6", near="EAcd", path="e.le.qvi",
+                         expected=False)],
+              profile="acdc-1.0", features=["acdc.version-2.x"]),
+    make_case("KERI-0003", "exn.verify",
+              {"perspective": {"role": "validator"},
+               "kels": [{"stream": "7b7d", "source": "issuer"}],
+               "messages": [{"stream": "7b7d", "source": "issuer"},
+                            {"stream": "7b7e", "source": "holder"}]},
+              [assertion("exn_verdict", message=0, expected="rejected"),
+               assertion("exn_verdict", name="a2", level="SHOULD", message=1,
+                         expected="accepted")]),
+]
+BASE_CASES[5]["dag"] = {"root": "EAcd", "edges": [
+    {"near": "EAcd", "path": "e.le", "n": "EFar"},
+    {"near": "EFar", "path": "e.qvi", "n": "EQvi"}]}
+BASE_CASES[5]["as_of"] = {"EIss": 2, "EReg": 1}
 BASE_CASES[0]["assertions"][0]["clause"] = {**CLAUSE, "quote": "A stream MUST ..."}
 # A consumer obligation inferred from a producer-side MUST, graded SHOULD (inferred_from), and a
 # decoded assertion recording conflicting text elsewhere in the specification (spec_conflicts).
@@ -262,6 +292,7 @@ def test_case_checks_agree_with_the_case_schema(base):
 SEMANTIC = [
     ("status", "disputed"), ("status", "deprecated"), ("operation", "cesr.encode"),
     ("operation", "keri.process"), ("operation", "keri.emit"), ("operation", "cesr.parse"),
+    ("operation", "acdc.verify"), ("operation", "exn.verify"),
 ]
 
 
@@ -339,6 +370,8 @@ RESULT_DEFS = {
     "cesr.encode": {"$ref": "#/$defs/result_encoded"},
     "keri.process": {"$ref": "#/$defs/result_processed"},
     "keri.emit": {"$ref": "#/$defs/result_emitted"},
+    "acdc.verify": {"$ref": "#/$defs/result_verified"},
+    "exn.verify": {"$ref": "#/$defs/result_exchanged"},
 }
 
 BASE_RESULTS = [
@@ -360,6 +393,16 @@ BASE_RESULTS = [
                                        {"initial": "seen", "final": "seen", "trunk": False}],
                       "key_states": {"EAbc": {**STATE, "delegator": "EDel"}}}),
     ("keri.emit", {"stream": "7b7d"}),
+    ("acdc.verify", {"verdict": "valid", "reason": "sealed", "registry": REGISTRY,
+                     "edges": [{"near": "EAcd", "path": "e.le", "n": "EFar", "valid": True},
+                               {"near": "EFar", "path": "e.qvi.x", "n": "EQvi",
+                                "valid": False}]}),
+    ("acdc.verify", {"verdict": "incomplete", "edges": [],
+                     "registry": {**REGISTRY, "td": None, "ts": None}}),
+    ("acdc.verify", {"verdict": "invalid", "registry": None, "edges": []}),
+    ("exn.verify", {"verdicts": [{"on_delivery": "accepted", "verdict": "rejected",
+                                  "reason": "prior"},
+                                 {"on_delivery": "rejected", "verdict": "rejected"}]}),
 ]
 
 
@@ -418,6 +461,9 @@ OPERATION_CHECKS = {
     "cesr.encode": {"encoded"},
     "keri.process": {"disposition", "trunk", "key_state"},
     "keri.emit": {"emitted_body", "signatures_verify", "attachments_equivalent"},
+    "acdc.verify": {"verdict", "registry_reported", "registry_state", "edge_reported",
+                    "edge_valid"},
+    "exn.verify": {"exn_verdict"},
 }
 
 

@@ -84,12 +84,14 @@ def anything_object(value, path):
     return None if isinstance(value, dict) else f"{_name(path)} must be an object"
 
 
-def array(items: Check, min_items: int = 0) -> Check:
+def array(items: Check, min_items: int = 0, max_items: int | None = None) -> Check:
     def check(value, path):
         if not isinstance(value, list):
             return f"{_name(path)} must be a list"
         if len(value) < min_items:
             return f"{_name(path)} must have at least {min_items} item{'s' if min_items > 1 else ''}"
+        if max_items is not None and len(value) > max_items:
+            return f"{_name(path)} must have at most {max_items} items"
         for n, item in enumerate(value):
             problem = items(item, _join(path, n))
             if problem:

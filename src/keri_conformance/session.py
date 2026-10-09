@@ -47,7 +47,8 @@ from keri_conformance.errors import (
 from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, loads, read_json
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 
-OPERATIONS = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit")
+OPERATIONS = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit", "acdc.verify",
+              "exn.verify")
 ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "SYSTEMROOT")
 HELLO_FIELDS = ("protocol", "adapter", "implementation", "operations", "features", "composes")
 CHUNK = 65536
@@ -240,6 +241,39 @@ def check_result_shape(op: str, result) -> str | None:
     return f"{problem[0].upper()}{problem[1:]}." if problem else None
 
 
+def _per_message(fields, result, key, noun, op) -> str | None:
+    sent, got = len(fields["messages"]), len(result[key])
+    if sent == got:
+        return None
+    return (f"The adapter reported {got} {noun}{'' if got == 1 else 's'} for {sent} messages; "
+            f"a {op} result has one per message.")
+
+
+def beyond_schema(op: str, fields: dict, result: dict) -> str | None:
+    """The rules a well-shaped result must also satisfy that relate it to its request, or each of
+    its entries to the others, which the protocol schema cannot express."""
+    if op == "keri.process":
+        return _per_message(fields, result, "dispositions", "disposition", op)
+    if op == "exn.verify":
+        return _per_message(fields, result, "verdicts", "verdict", op)
+    if op == "cesr.parse" and "accepted" in result:
+        length, consumed = len(fields["stream"]) // 2, result["accepted"]["consumed"]
+        if consumed > length:
+            return (f"The adapter's summary says the implementation consumed {consumed} bytes "
+                    f"of a {length}-byte stream.")
+    if op == "acdc.verify":
+        # Each edge is reported once (docs/adapter-protocol.md, acdc.verify), so an edge
+        # assertion never has two answers to choose between.
+        seen = set()
+        for edge in result["edges"]:
+            key = (edge["near"], edge["path"])
+            if key in seen:
+                return (f"The adapter reported the edge {edge['path']} of {edge['near']} twice; "
+                        "an acdc.verify result lists each edge it evaluated once.")
+            seen.add(key)
+    return None
+
+
 def parse_response(line: bytes, request_id: int, op: str) -> Reply | Failure:
     """Validate one response line against the request it answers."""
     try:
@@ -337,19 +371,10 @@ class AdapterSession:
         self.ensure_running()
         rid = self.next_id()
         outcome = self._roundtrip({**fields, "id": rid, "op": op}, op, rid)
-        if op == "keri.process" and isinstance(outcome, Reply):
-            sent, got = len(fields["messages"]), len(outcome.result["dispositions"])
-            if sent != got:
-                outcome = Failure("malformed", f"The adapter reported {got} disposition"
-                                               f"{'' if got == 1 else 's'} for {sent} messages; "
-                                               "a keri.process result has one per message.")
-        if op == "cesr.parse" and isinstance(outcome, Reply) and "accepted" in outcome.result:
-            # Beyond the schema, which cannot relate the summary to the request's stream.
-            length, consumed = len(fields["stream"]) // 2, outcome.result["accepted"]["consumed"]
-            if consumed > length:
-                outcome = Failure("malformed", f"The adapter's summary says the implementation "
-                                               f"consumed {consumed} bytes of a {length}-byte "
-                                               "stream.")
+        if isinstance(outcome, Reply):
+            problem = beyond_schema(op, fields, outcome.result)
+            if problem:
+                outcome = Failure("malformed", problem)
         if isinstance(outcome, Failure):
             self.kill()
         return outcome

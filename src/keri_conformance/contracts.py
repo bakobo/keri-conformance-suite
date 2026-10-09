@@ -60,6 +60,21 @@ DISPOSITION = all_of(
               'off the trunk ("trunk": false) unless its final reading is "seen"'),
 )
 
+# ACDC (docs/design.md, ACDC). A SAID is never empty. An edge is named by its near node's SAID and
+# the label path from that node's top-level "e" field, such as "e.le".
+SAID = string(min_length=1)
+EDGE_PATH = r"^e(\.[^.]+)+$"
+VERDICTS = ("valid", "invalid", "incomplete")
+# The verified head of a registry; td and ts are null when a blinded state was not disclosed.
+REGISTRY_STATE = obj({"rd": SAID, "n": OFFSET, "d": SAID, "td": nullable(SAID),
+                      "ts": nullable(string())})
+EDGE_REPORT = obj({"near": SAID, "path": string(EDGE_PATH), "n": SAID,
+                   "valid": enum(True, False)})
+# An exchange message's readings at quiescence after its own delivery and after the last message.
+EXN_READINGS = ("accepted", "rejected")
+EXN_VERDICT = obj({"on_delivery": enum(*EXN_READINGS), "verdict": enum(*EXN_READINGS)},
+                  {"reason": string()})
+
 ERROR = obj({"kind": enum("harness", "unsupported"), "message": string()})
 
 RESULTS = {
@@ -74,4 +89,8 @@ RESULTS = {
         "key_states": mapping(KEY_STATE),
     }),
     "keri.emit": obj({"stream": HEX_STRING}),
+    "acdc.verify": obj({"verdict": enum(*VERDICTS), "registry": nullable(REGISTRY_STATE),
+                        "edges": array(EDGE_REPORT)},
+                       {"reason": string()}),
+    "exn.verify": obj({"verdicts": array(EXN_VERDICT)}),
 }
