@@ -3,8 +3,8 @@ name: CI
 # Two of the three CI levels in docs/design.md. Job `test` is level 1 (runner tests and lint).
 # Job `keripy-adapter` is level 2 for the keripy adapter. It builds both instances at their pins
 # (Python 3.14 with keripy main; Python 3.12 with keripy 1.2.14), runs the adapter's tests in each
-# and gates their combined branch coverage at 100%, then compares four runs with the baselines
-# committed beside the adapter: cesr-1.0, keri-1.0 and keri-escrow on keripy main, and
+# and gates their combined branch coverage at 100%, then compares five runs with the baselines
+# committed beside the adapter: cesr-1.0, keri-1.0, keri-escrow and acdc-1.0 on keripy main, and
 # keripy-1x-interop on keripy 1.2.14, each with its baseline-<profile>.json. Level 3 (nightly runs
 # against development heads) is not built yet; its absence here is the plan, not an omission.
 # Job `keriox-adapter` is level 2 for the keriox adapter; its comment says what it compares.
@@ -141,6 +141,15 @@ jobs:
           set -e
           adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare \
             adapters/keripy/baseline-keri-escrow.json "$RUNNER_TEMP/keripy-main-keri-escrow.json"
+      - name: Run acdc-1.0 on keripy main and compare with its baseline
+        run: |
+          set +e
+          uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" \
+            --profile acdc-1.0 --report "$RUNNER_TEMP/keripy-main-acdc-1.0.json"
+          echo "kcs run exited $?"
+          set -e
+          adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare \
+            adapters/keripy/baseline-acdc-1.0.json "$RUNNER_TEMP/keripy-main-acdc-1.0.json"
 
   # CI level 2 for the keriox adapter (adapters/keriox): keriox's CESR layer, cesrox 0.1.8 with
   # said 0.4.3, pinned exactly in Cargo.toml and Cargo.lock. The toolchain is pinned by
