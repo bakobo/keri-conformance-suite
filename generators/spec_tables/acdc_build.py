@@ -40,20 +40,23 @@ The builder never decides whether what it builds is valid; that is the grading's
 """
 
 import hashlib
+import json
+import re
 from dataclasses import dataclass, field
 
 from . import acdc_saids as sa
 from . import encoding
 from . import json_schema_subset as js
 from .errors import GeneratorError, ScenarioError
-from .keri_events import GENUS_CODE, EventBuilder
+from .keri_events import GENUS_CODE, EventBuilder, label_digest
 from .tables import Tables
 
 RIP_FIELDS = ("v", "t", "d", "u", "i", "n", "dt")
 BUP_FIELDS = ("v", "t", "d", "rd", "n", "p", "dt", "b")
 ACDC_FIELDS = ("v", "t", "d", "u", "i", "rd", "s", "a", "A", "e", "r")
 SECTIONS = ("a", "A", "e", "r")
-REFS = ("aid", "acdc", "schema", "registry", "nonce")
+REFS = ("aid", "acdc", "schema", "registry", "nonce", "nothing")
+PROTOCOL = re.compile(r"[A-Z]{4}")
 DEFAULT_DT = "2025-07-04T17:50:00.000000+00:00"
 MAX_ACDCS = 16
 MAX_DEPTH = 8
@@ -174,7 +177,8 @@ class _Builder:
                 kind, name = next(iter(value.items()))
                 return {"aid": self.eb.prefix, "acdc": self.acdc_said,
                         "schema": self.schema_said, "nonce": lambda x: nonce(self.t, x),
-                        "registry": lambda x: self.registry_event(x)["d"]}[kind](name)
+                        "registry": lambda x: self.registry_event(x)["d"],
+                        "nothing": lambda x: label_digest(self.t, x)}[kind](name)
             return {k: self._resolve(v) for k, v in value.items()}
         if isinstance(value, list):
             return [self._resolve(v) for v in value]
@@ -200,8 +204,10 @@ class _Builder:
             schema = self.schemas[name]["schema"]
             js.check(schema, allow_nonlocal=True)
             compact = sa.Readings(**{**self.readings.__dict__, "schema": "compact"})
-            self.schema_bodies[name] = sa.saidify(self.t, schema, "$id", compact)
-            self.saids[name] = self.schema_bodies[name]["$id"]
+            body = sa.saidify(self.t, schema, "$id", compact)
+            self.saids[name] = body["$id"]
+            self.schema_bodies[name] = self._alter(body, self.schemas[name].get("alter", []),
+                                                   f"schema {name!r}", sized=False)
         return self.saids[name]
 
     def _prior(self, name: str, spec: dict) -> str:
@@ -241,15 +247,31 @@ class _Builder:
             u, td, ts = blind(self.t, state["u"]), self._resolve(state["td"]), state["ts"]
             b = sa.blid(self.t, u, td, ts, self.readings)
             body = bup(self.t, rd, n, prior["d"], b, dt, self.readings)
-            if spec.get("disclose"):
-                block = sa.blinded_block(self.t, u, td, ts, self.readings)
+            block = self._disclosed(name, spec.get("disclose"), u, td, ts, b)
         else:
             raise ScenarioError(f"Registry event {name!r} has type {spec['t']!r}; only rip and "
                                 f"bup are built (upd is deferred).")
+        body = self._alter(body, spec.get("alter", []), f"registry event {name!r}")
         self.events[name] = (body, block)
         self.saids[name] = body["d"]
         self._building_events.discard(name)
         return body
+
+    def _disclosed(self, name: str, how, u: str, td: str, ts: str, b: str) -> str:
+        """The blinded state block a bup's attachment carries: none, the real one, or, for a
+        tamper, other content with either the real BLID kept or the content's own BLID."""
+        if not how:
+            return ""
+        if how is True:
+            return sa.blinded_block(self.t, u, td, ts, self.readings)
+        if not isinstance(how, dict) or how.get("blid") not in ("kept", "own"):
+            raise ScenarioError(f"Registry event {name!r} discloses {how!r}; a tampered "
+                                f"disclosure names its td or ts and whether its blid is kept "
+                                f"or its own.")
+        td = self._resolve(how.get("td", td))
+        ts = how.get("ts", ts)
+        own = sa.blinded_block(self.t, u, td, ts, self.readings)
+        return own if how["blid"] == "own" else b + own[len(b):]
 
     def registry_inception(self, name: str) -> str:
         spec = self._registry_spec(name)
@@ -275,21 +297,103 @@ class _Builder:
         values["i"] = self.eb.prefix(spec["issuer"])
         if "registry" in spec:
             values["rd"] = self.registry_inception(spec["registry"])
-        values["s"] = self.schema_said(spec["schema"])
+        if spec.get("schema") is not None:
+            values["s"] = self.schema_said(spec["schema"])
         for section in SECTIONS:
             if section in spec:
                 values[section] = self._fill(self._resolve(spec[section]))
         if "A" in values:
             values["A"] = sa.aggregate(self.t, values["A"], self.readings)[:1] + values["A"]
         acdc = {k: values[k] for k in ACDC_FIELDS if k in values and values[k] is not None}
-        acdc["d"] = sa.acdc_said(self.t, sa.sized({**acdc, "d": sa.DUMMY}, self.readings),
-                                 self.readings)
-        self.expanded[name] = sa.sized(acdc, self.readings)
+        acdc = self._ordered(name, acdc)
+        acdc["d"] = self._top_said(name, sa.sized({**acdc, "d": sa.DUMMY}, self.readings))
+        self.expanded[name] = self._protocol(name, sa.sized(acdc, self.readings))
         self.saids[name] = acdc["d"]
         self._building.discard(name)
         return acdc["d"]
 
+    def _ordered(self, name: str, acdc: dict) -> dict:
+        order = self.acdcs[name].get("order")
+        if order is None:
+            return acdc
+        if sorted(order) != sorted(acdc):
+            raise ScenarioError(f"ACDC {name!r} has the order {order!r}, which must name exactly "
+                                f"its fields {list(acdc)!r}.")
+        return {k: acdc[k] for k in order}
+
+    def _protocol(self, name: str, sad: dict) -> dict:
+        """The ACDC with its version string's protocol replaced, if its scenario names another
+        (a tamper: the body is no longer framed as an ACDC); the replacement keeps the length."""
+        protocol = self.acdcs[name].get("protocol")
+        if protocol is None:
+            return sad
+        if not isinstance(protocol, str) or not PROTOCOL.fullmatch(protocol):
+            raise ScenarioError(f"ACDC {name!r} names the protocol {protocol!r}; a version "
+                                f"string's protocol is four uppercase letters.")
+        return {**sad, "v": protocol + sad["v"][4:]}
+
+    def _top_said(self, name: str, dummied: dict) -> str:
+        """The top-level SAID: the most compact SAID (lines 134 to 147), or for a tamper the SAID
+        over the expanded form, keripy 1.x's rule (A-C3), or over a body whose version string
+        names another protocol."""
+        rule = self.acdcs[name].get("said", "compact")
+        if rule == "expanded":
+            return sa.expanded_said(self.t, dummied, self.readings)
+        if rule != "compact":
+            raise ScenarioError(f"ACDC {name!r} has the said rule {rule!r}; it is compact or "
+                                f"expanded.")
+        compact = sa.most_compact(self.t, dummied, self.readings)
+        if self.acdcs[name].get("protocol") is None:
+            return compact["d"]
+        patched = self._protocol(name, {**compact, "d": sa.DUMMY})
+        return sa.digest(self.t, sa.serialize(patched, self.readings))
+
+    def _alter(self, sad: dict, alterations: list, what: str, sized: bool = True) -> dict:
+        """``sad`` with each alteration applied after its SAIDs were computed: a value set at a
+        dotted path, then the SAIDs of any blocks named in ``resaid`` recomputed. Nothing else
+        is recomputed, and a SAD with a version string must keep its length, so the tamper
+        changes no framing."""
+        if not alterations:
+            return sad
+        out = json.loads(json.dumps(sad))
+        for alter in alterations:
+            if not isinstance(alter, dict) or not isinstance(alter.get("path"), str):
+                raise ScenarioError(f"An alteration of {what} needs a path: {alter!r}.")
+            self._set(out, alter["path"], self._resolve(alter.get("value")), what)
+            for path in alter.get("resaid", []):
+                parts = path.split(".")
+                block = self._get(out, parts, path, what)
+                if not sa.is_saided(block):
+                    raise ScenarioError(f"The path {path!r} of {what} does not name a SAIDed "
+                                        f"block, so it has no SAID to recompute.")
+                block["d"] = sa.block_said(self.t, block, self.readings)
+        if sized and len(sa.serialize(out, self.readings)) != len(sa.serialize(sad,
+                                                                                self.readings)):
+            raise ScenarioError(f"An alteration of {what} changes its length; a tamper keeps the "
+                                f"length so that its version string still frames it. Choose a "
+                                f"value of the same length.")
+        return out
+
+    def _get(self, node, parts: list[str], path: str, what: str):
+        for part in parts:
+            if not isinstance(node, dict) or part not in node:
+                raise ScenarioError(f"The path {path!r} names nothing in {what}.")
+            node = node[part]
+        return node
+
+    def _set(self, node: dict, path: str, value, what: str) -> None:
+        *head, last = path.split(".")
+        parent = self._get(node, head, path, what)
+        if not isinstance(parent, dict) or last not in parent:
+            raise ScenarioError(f"The path {path!r} names nothing in {what}.")
+        parent[last] = value
+
     def form(self, name: str) -> dict:
+        """The ACDC as it is presented, after any alteration the scenario asks for."""
+        out = self._protocol(name, self._form(name))
+        return self._alter(out, self.acdcs[name].get("alter", []), f"ACDC {name!r}")
+
+    def _form(self, name: str) -> dict:
         expanded = self.expanded[name]
         form = self.acdcs[name].get("form", "compact")
         if form == "expanded":
@@ -408,9 +512,15 @@ class _Builder:
     def attachments(self, source_seal: str | None, block: str = "") -> str:
         groups = []
         if source_seal is not None:
+            said = None
+            if isinstance(source_seal, dict):
+                if "event" not in source_seal:
+                    raise ScenarioError(f"The source seal {source_seal!r} names no event.")
+                said = label_digest(self.t, source_seal["wrong_said"])
+                source_seal = source_seal["event"]
             anchor = self.eb.event(source_seal)
             sn = encoding.primitive(self.t, "0A", anchor.sn.to_bytes(16, "big"))
-            groups.append(self._group("-S", [sn + anchor.said]))
+            groups.append(self._group("-S", [sn + (said or anchor.said)]))
         if block:
             groups.append(self._group("-a", [block]))
         return self._group("-C", groups) if groups else ""
