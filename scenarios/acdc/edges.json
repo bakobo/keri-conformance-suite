@@ -942,6 +942,38 @@
       }
     },
     {
+      "id": "ACDC-0075",
+      "key": "KS-41c",
+      "title": "Far node forged to point back at the near node",
+      "description": "As KS-49, but the bundle's middle node has its edge rewritten after its SAIDs were computed, keeping the length, to name the presented ACDC instead of the root, with its top-level SAID left equal to the edge's n. Read by their claimed SAIDs the two nodes form a cycle. Recomputing the middle node's SAID (line 1174) shows it is not the node the edge names, so a validator that recomputes before it follows the node's own edges never meets the cycle and refuses the edge; one that indexes far nodes by their claimed SAID and walks first may never answer, which fails every assertion. The case's dag lists the edges of the nodes as issued, which hold no cycle.",
+      "base": "two_hop",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "alter": [
+              {
+                "path": "e.qvi.n",
+                "value": {
+                  "acdc": "N"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "expect": [
+        "F 1/said",
+        "N:e.le far-said"
+      ],
+      "pair": "KS-49",
+      "companion": {
+        "id": "ACDC-0076",
+        "key": "KS-41c-u",
+        "title": "Far node forged to point back at the near node: the edge",
+        "description": "The MUST half of KS-41c, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
       "id": "ACDC-0048",
       "key": "KS-42p",
       "title": "Edge schema satisfied",
@@ -1083,6 +1115,273 @@
         ]
       },
       "expect": []
+    },
+    {
+      "id": "ACDC-0072",
+      "key": "KS-42q",
+      "title": "Far node under a stricter schema of its own",
+      "description": "As KS-39, but the far node is issued under S3, which requires a role attribute, and has one, while the edge names the more lenient S1. The far node satisfies both its own schema and the edge's, so a validator should find the edge valid.",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "schema": "S3",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "I"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12",
+              "role": "officer"
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": []
+    },
+    {
+      "id": "ACDC-0073",
+      "key": "KS-42d",
+      "title": "Far node fails its own schema but satisfies the edge's",
+      "description": "As KS-42q, but the far node has no role attribute, so it fails its own schema, S3, while it satisfies the edge's, S1. Line 1174 requires the far node to satisfy its own schema, and line 1178 makes the edge's schema an additional constraint, so the edge is not valid. A validator that checks the far node only against the edge's schema when the edge names one accepts it.",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "schema": "S3",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "I"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12"
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": [
+        "F 2/schema-invalid",
+        "N:e.le far-schema"
+      ],
+      "pair": "KS-42q",
+      "companion": {
+        "id": "ACDC-0074",
+        "key": "KS-42d-u",
+        "title": "Far node fails its own schema but satisfies the edge's: the edge",
+        "description": "The MUST half of KS-42d, ungated: the failing edge, if reported, is not valid."
+      }
     },
     {
       "id": "ACDC-0049",
@@ -1838,6 +2137,150 @@
       "description": "The presented ACDC has edges to two far nodes, each of which has an edge to one root ACDC. Each of the four edges is reported once, keyed by its near node, and all are valid.",
       "base": "diamond",
       "expect": []
+    },
+    {
+      "id": "ACDC-0068",
+      "key": "KS-52",
+      "title": "Diamond, the edge from F2 into the shared root fails I2I",
+      "description": "As KS-51, but F2 is issued by an identifier other than the root's issuee and sealed in that identifier's KEL, so its edge into the root fails I2I (line 1205) while F1's edge into the same root holds. The two edges share a far node and differ only in their near issuer, so a validator that treats I2I as a property of the far node, or caches an edge's result by the far node's SAID, reports one of them wrongly. Evaluated in delivery order, the failing edge is the second into the root; KS-53 is the mirror.",
+      "base": "diamond",
+      "patch": {
+        "acdcs": {
+          "F2": {
+            "issuer": "P"
+          }
+        },
+        "events": {
+          "qixn1": {
+            "a": [
+              {
+                "acdc": "F1"
+              }
+            ]
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "Picp",
+            "aid": "P",
+            "t": "icp",
+            "keys": [
+              "p0"
+            ],
+            "next": [
+              "p1"
+            ]
+          },
+          {
+            "name": "pixn1",
+            "aid": "P",
+            "t": "ixn",
+            "a": [
+              {
+                "acdc": "F2"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "Picp",
+            "sigs": [
+              "p0"
+            ]
+          },
+          {
+            "event": "pixn1",
+            "sigs": [
+              "p0"
+            ]
+          }
+        ]
+      },
+      "expect": [
+        "F2:e.up i2i-issuee"
+      ],
+      "pair": "KS-51",
+      "companion": {
+        "id": "ACDC-0069",
+        "key": "KS-52-u",
+        "title": "Diamond, the edge from F2 into the shared root fails I2I: the edge",
+        "description": "The MUST half of KS-52, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0070",
+      "key": "KS-53",
+      "title": "Diamond, the edge from F1 into the shared root fails I2I",
+      "description": "As KS-51, but F1 is issued by an identifier other than the root's issuee and sealed in that identifier's KEL, so its edge into the root fails I2I (line 1205) while F2's edge into the same root holds. The two edges share a far node and differ only in their near issuer, so a validator that treats I2I as a property of the far node, or caches an edge's result by the far node's SAID, reports one of them wrongly. Evaluated in delivery order, the failing edge is the first into the root; KS-52 is the mirror.",
+      "base": "diamond",
+      "patch": {
+        "acdcs": {
+          "F1": {
+            "issuer": "P"
+          }
+        },
+        "events": {
+          "qixn1": {
+            "a": [
+              {
+                "acdc": "F2"
+              }
+            ]
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "Picp",
+            "aid": "P",
+            "t": "icp",
+            "keys": [
+              "p0"
+            ],
+            "next": [
+              "p1"
+            ]
+          },
+          {
+            "name": "pixn1",
+            "aid": "P",
+            "t": "ixn",
+            "a": [
+              {
+                "acdc": "F1"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "Picp",
+            "sigs": [
+              "p0"
+            ]
+          },
+          {
+            "event": "pixn1",
+            "sigs": [
+              "p0"
+            ]
+          }
+        ]
+      },
+      "expect": [
+        "F1:e.up i2i-issuee"
+      ],
+      "pair": "KS-51",
+      "companion": {
+        "id": "ACDC-0071",
+        "key": "KS-53-u",
+        "title": "Diamond, the edge from F1 into the shared root fails I2I: the edge",
+        "description": "The MUST half of KS-53, ungated: the failing edge, if reported, is not valid."
+      }
     }
   ]
 }

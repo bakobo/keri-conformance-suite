@@ -480,5 +480,8 @@ def evaluate(t: Tables, request: dict, readings: sa.Readings = sa.DEFAULT,
             if edge.n in model.far:
                 far = model.far[edge.n][0]
                 result.far[edge.n] = far
-                frontier.append(far)
+                # A far node whose SAID does not verify is not the node the edge names, so its
+                # own edges are not followed: that is why a forged cycle is never walked.
+                if not any(f.reason == "said" for f in far.failures):
+                    frontier.append(far)
     return result

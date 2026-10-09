@@ -383,6 +383,23 @@ def _edge(frag):
     return [e.failure for e in result.edges]
 
 
+def test_a_far_node_whose_said_fails_is_not_walked():
+    """A forged far node whose own edge names the near node would make a cycle, but its SAID
+    does not verify, so the walk stops there and only the edge that names it is checked
+    (docs/design.md, ACDC, The bundle and the evaluation point)."""
+    frag = chain()
+    frag["events"] += [icp("R"), {"name": "rixn", "aid": "R", "t": "ixn", "a": [{"acdc": "G"}]}]
+    frag["kels"] += [{"event": "Ricp", "sigs": ["R0"]}, {"event": "rixn", "sigs": ["R0"]}]
+    frag["acdcs"][1]["e"] = {"d": "", "up": {"d": "", "n": {"acdc": "G"}, "s": {"schema": "S1"},
+                                            "o": "I2I"}}
+    frag["acdcs"][1]["alter"] = [{"path": "e.up.n", "value": {"acdc": "N"}}]
+    frag["acdcs"].append({"name": "G", "issuer": "R", "schema": "S1", "form": "expanded",
+                          "a": {"d": "", "i": {"aid": "Q"}, "name": "G"}, "source_seal": "rixn"})
+    result, b = run(frag)
+    assert [(e.path, e.failure) for e in result.edges] == [("e.le", "far-said")]
+    assert list(result.far) == [b.saids["F"]]
+
+
 def test_edge_failures():
     frag = chain()
     frag["acdcs"][1]["a"]["i"] = {"aid": "H"}

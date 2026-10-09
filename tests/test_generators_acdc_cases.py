@@ -17,6 +17,7 @@ from generators.spec_tables import acdc_cases as ac
 from generators.spec_tables import acdc_model as am
 from generators.spec_tables import regenerate, spec_source, tables
 from generators.spec_tables.errors import ScenarioError
+from keri_conformance import cases as runner_cases
 
 try:
     TEXTS = {"acdc": spec_source.load_spec(pin=spec_source.ACDC), "cesr": spec_source.load_spec()}
@@ -315,6 +316,37 @@ def test_a_said_failure_after_a_counted_update_grades_the_head_should():
     a = next(a for a in case["assertions"] if a["check"] == "registry_state")
     assert (a["level"], a["expected"]["n"]) == ("SHOULD", 1)
     assert a["inferred_from"] == INFERENCES["registry-head"]
+
+
+@pytest.mark.parametrize("key,near", [("KS-52", "F2"), ("KS-53", "F1")])
+def test_a_diamond_grades_each_edge_into_the_shared_root_on_its_own_pair(key, near):
+    # The two edges into G share a far node and differ in near issuer, so an implementation that
+    # treats I2I as a property of G, or caches it by G's SAID, fails one of the pair (KRT-F1).
+    main, comp = grade(EDGES, key, pairs={"KS-51": ("ACDC-0062", False)})
+    [a] = comp["assertions"]
+    assert (a["check"], a["level"], a["expected"], a["path"]) == ("edge_valid", "MUST", False,
+                                                                "e.up")
+    assert a["note"].endswith("because line 1205 states the I2I condition for validity.")
+    [r] = main["assertions"]
+    assert r["near"] == a["near"] and r["check"] == "edge_reported"
+
+
+def test_a_far_node_that_fails_its_own_schema_fails_the_edge_whatever_the_edge_s():
+    _, comp = grade(EDGES, "KS-42d", pairs={"KS-42q": ("ACDC-0072", False)})
+    [a] = comp["assertions"]
+    assert (a["level"], a["expected"]) == ("MUST", False)
+    assert "(far-schema)" in a["note"]
+    [positive] = grade(EDGES, "KS-42q")
+    assert any(x["check"] == "edge_valid" and x["expected"] is True
+               for x in positive["assertions"])
+
+
+def test_a_forged_cycle_grades_only_the_edge_into_it_and_lists_no_cycle():
+    _, comp = grade(EDGES, "KS-41c", pairs={"KS-49": ("ACDC-0059", False)})
+    [a] = comp["assertions"]
+    assert (a["path"], a["level"], a["expected"]) == ("e.le", "MUST", False)
+    assert "(far-said)" in a["note"]
+    assert runner_cases.case_problem(comp) is None
 
 
 def test_found_names_an_unnamed_presented_acdc_by_its_role():
