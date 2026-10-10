@@ -61,8 +61,10 @@ class CommandError(Exception):
 def run_command(cmd, *, check=True):
     """Run cmd and return its standard output. With check, a non-zero exit is a CommandError."""
     try:
-        done = subprocess.run(cmd, capture_output=True, text=True, timeout=COMMAND_TIMEOUT,
-                              check=False)
+        # errors="replace": output that is not UTF-8 is read, never a crash. Nothing here trusts
+        # it beyond matching commit hashes, which replacement characters cannot forge.
+        done = subprocess.run(cmd, capture_output=True, text=True, errors="replace",
+                              timeout=COMMAND_TIMEOUT, check=False)
     except FileNotFoundError as exc:
         raise CommandError(f"{E_COMMAND}: {cmd[0]} could not start ({exc}).") from exc
     except subprocess.TimeoutExpired as exc:
@@ -181,10 +183,22 @@ def resolve(source, ref, run):
     raise CommandError(f"{E_MISSING_REF}: {source} has no branch or tag named {ref}.")
 
 
-def differences(base, report):
-    """Every way report differs from the baseline summary base, except the commit it ran."""
+def fingerprint(item):
+    """The entry as recorded in the state, so a changed entry (another profile, another Python)
+    is checked again even when its commit and the suite's inputs did not move."""
+    return json.dumps(item, sort_keys=True)
+
+
+def differences(base, report, sha):
+    """Every way report differs from the baseline summary base, except that it ran another
+    keripy commit. The report must also say it ran keripy at sha, or nothing it says counts."""
+    found = []
+    implementation = report["hello"]["implementation"]
+    if implementation.get("name") != "keripy" or implementation.get("commit") != sha:
+        found.append(f"implementation: the report names {implementation.get('name')} at "
+                     f"{implementation.get('commit')}, not keripy at {sha}")
     regressions, improvements = baseline.compare(base, report)
-    return regressions + [line for line in improvements if not line.startswith(IDENTITY)]
+    return found + regressions + [line for line in improvements if not line.startswith(IDENTITY)]
 
 
 def check_ref(item, sha, suite, work, run):
@@ -193,20 +207,24 @@ def check_ref(item, sha, suite, work, run):
     venv = work / item["name"]
     python = venv / "bin" / "python"
     adapter = suite / "adapters" / "keripy"
-    work.mkdir(parents=True, exist_ok=True)
     try:
+        work.mkdir(parents=True, exist_ok=True)
         run(["uv", "venv", "-q", "--clear", "-p", item["python"], str(venv)])
         run(["uv", "pip", "install", "-q", "-p", str(python),
              f"keri @ git+{item['source']}@{sha}"])
         # --no-deps: the adapter's own keripy pin must not replace the keripy under test.
         run(["uv", "pip", "install", "-q", "-p", str(python), "--no-deps", str(adapter)])
-    except CommandError as exc:
+    except (CommandError, OSError) as exc:
         raise CommandError(f"{E_INSTALL}: {item['name']}: keripy {sha} could not be installed "
                            f"with the adapter: {exc}") from exc
     found = []
     for profile in item["profiles"]:
         report_path = work / f"{item['name']}.{profile}.json"
-        report_path.unlink(missing_ok=True)
+        try:
+            report_path.unlink(missing_ok=True)
+        except OSError as exc:
+            raise CommandError(f"{E_INSTALL}: {item['name']}: the stale report {report_path} "
+                               f"could not be removed: {exc}") from exc
         # kcs run exits non-zero for any verdict but conformant; the report is what is judged.
         run(["uv", "run", "--project", str(suite), "kcs", "run", "--suite", str(suite),
              "--adapter", str(venv / "bin" / "kcs-adapter-keripy"), "--profile", profile,
@@ -217,7 +235,7 @@ def check_ref(item, sha, suite, work, run):
         except baseline.InputError as exc:
             raise CommandError(f"{E_INSTALL}: {item['name']}: {profile} produced no usable "
                                f"report: {exc}") from exc
-        found += [f"{profile}: {line}" for line in differences(base, report)]
+        found += [f"{profile}: {line}" for line in differences(base, report, sha)]
     return found
 
 
@@ -231,7 +249,8 @@ def check_all(refs, state, inputs, suite, work, run):
         try:
             sha = resolve(item["source"], item["ref"], run)
             prior = state.get(name)
-            if prior and prior["keripy"] == sha and prior["inputs"] == inputs:
+            if (prior and prior["keripy"] == sha and prior["inputs"] == inputs
+                    and prior.get("config") == fingerprint(item)):
                 if prior["differences"]:
                     failed = True
                     lines.append(f"{E_DIFFERS}: {name}: unchanged at {sha} since the last run, "
@@ -246,7 +265,8 @@ def check_all(refs, state, inputs, suite, work, run):
             lines.append(f"{exc}" if str(exc).startswith(E_INSTALL)
                          else f"{E_INSTALL}: {name}: {exc}")
             continue
-        state[name] = {"keripy": sha, "inputs": inputs, "differences": found}
+        state[name] = {"keripy": sha, "inputs": inputs, "differences": found,
+                       "config": fingerprint(item)}
         if found:
             failed = True
             lines.append(f"{E_DIFFERS}: {name} at {sha} differs from the baselines:")

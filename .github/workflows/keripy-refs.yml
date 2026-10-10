@@ -48,7 +48,7 @@ jobs:
       # cases, profiles, schemas, the runner and the keripy adapter with its baselines.
       - name: Check every ref
         env:
-          INPUTS: ${{ hashFiles('cases/**', 'profiles/**', 'schema/**', 'src/**', 'pyproject.toml', 'uv.lock', 'adapters/keripy/src/**', 'adapters/keripy/baseline-*.json') }}
+          INPUTS: ${{ hashFiles('cases/**', 'profiles/**', 'schema/**', 'src/**', 'pyproject.toml', 'uv.lock', 'adapters/keripy/pyproject.toml', 'adapters/keripy/src/**', 'adapters/keripy/baseline-*.json') }}
         run: |
           PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.refs run \
             --refs adapters/keripy/refs.json --state .keripy-refs-state/state.json \

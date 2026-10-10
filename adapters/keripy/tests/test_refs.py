@@ -119,20 +119,39 @@ class TestResolve:
 class TestDifferences:
     def test_only_the_commit_differs_so_nothing_is_reported(self):
         base = refs.baseline.summarize(report("cesr-1.0", "pinned"))
-        assert refs.differences(base, report("cesr-1.0", SHA_A)) == []
+        assert refs.differences(base, report("cesr-1.0", SHA_A), SHA_A) == []
 
     def test_a_regression_is_reported(self):
         base = refs.baseline.summarize(report("cesr-1.0", "pinned"))
         now = report("cesr-1.0", SHA_A, case("CESR-0001", "fail", a1="fail"),
                      verdict="not-conformant")
-        lines = refs.differences(base, now)
+        lines = refs.differences(base, now, SHA_A)
         assert "CESR-0001: outcome pass -> fail" in lines
         assert any(line.startswith("verdict:") for line in lines)
 
     def test_an_improvement_is_a_difference_too(self):
         base = refs.baseline.summarize(report("cesr-1.0", "pinned", case("CESR-0001", "fail")))
-        lines = refs.differences(base, report("cesr-1.0", SHA_A))
+        lines = refs.differences(base, report("cesr-1.0", SHA_A), SHA_A)
         assert lines == ["CESR-0001: outcome fail -> pass"]
+
+
+class TestIdentity:
+    def test_a_report_from_another_implementation_is_a_difference(self, suite, tmp_path):
+        reports = matching()
+        reports["cesr-1.0"]["hello"]["implementation"]["name"] = "other-package"
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, reports)
+        code, state, _ = refs.check_all([entry()], {}, "h1", suite, tmp_path / "w", fake)
+        assert code == 1
+        assert any("other-package" in d for d in state["upstream-main"]["differences"])
+
+    def test_a_report_from_another_commit_is_a_difference(self, suite, tmp_path):
+        reports = matching()
+        reports["keri-1.0"]["hello"]["implementation"]["commit"] = "unknown"
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, reports)
+        code, state, _ = refs.check_all([entry()], {}, "h1", suite, tmp_path / "w", fake)
+        assert code == 1
+        assert any(d.startswith("keri-1.0: implementation:") and "unknown" in d
+                   for d in state["upstream-main"]["differences"])
 
 
 class TestLoadRefs:
@@ -214,7 +233,8 @@ class TestCheck:
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching())
         code, state, lines = self.run(suite, tmp_path, [entry()], {}, fake)
         assert code == 0
-        assert state == {"upstream-main": {"keripy": SHA_A, "inputs": "h1", "differences": []}}
+        assert state == {"upstream-main": {"keripy": SHA_A, "inputs": "h1", "differences": [],
+                                           "config": refs.fingerprint(entry())}}
         install = [c for c in fake.calls if c[:2] == ["uv", "pip"]]
         assert any(f"keri @ git+{UPSTREAM}@{SHA_A}" in c for c in install)
         assert any("--no-deps" in c for c in install)
@@ -222,7 +242,8 @@ class TestCheck:
 
     def test_an_unchanged_ref_is_skipped_without_installing_anything(self, suite, tmp_path):
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}})
-        prior = {"upstream-main": {"keripy": SHA_A, "inputs": "h1", "differences": []}}
+        prior = {"upstream-main": {"keripy": SHA_A, "inputs": "h1", "differences": [],
+                                   "config": refs.fingerprint(entry())}}
         code, state, lines = self.run(suite, tmp_path, [entry()], dict(prior), fake)
         assert code == 0
         assert state == prior
@@ -236,6 +257,16 @@ class TestCheck:
         assert code == 0
         assert state["upstream-main"]["keripy"] == SHA_B
         assert "venv" in fake.verbs()
+
+    def test_a_changed_entry_reruns_it(self, suite, tmp_path):
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching(profiles=["cesr-1.0"]))
+        prior = {"upstream-main": {"keripy": SHA_A, "inputs": "h1", "differences": [],
+                                   "config": refs.fingerprint(entry())}}
+        changed = entry(profiles=["cesr-1.0"])
+        code, state, _ = self.run(suite, tmp_path, [changed], prior, fake)
+        assert code == 0
+        assert "venv" in fake.verbs()
+        assert state["upstream-main"]["config"] == refs.fingerprint(changed)
 
     def test_changed_suite_inputs_rerun_it(self, suite, tmp_path):
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching())
@@ -259,7 +290,8 @@ class TestCheck:
     def test_an_unchanged_ref_that_differed_last_time_still_fails(self, suite, tmp_path):
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}})
         prior = {"upstream-main": {"keripy": SHA_A, "inputs": "h1",
-                                   "differences": ["keri-1.0: CESR-0001: outcome pass -> fail"]}}
+                                   "differences": ["keri-1.0: CESR-0001: outcome pass -> fail"],
+                                   "config": refs.fingerprint(entry())}}
         code, state, lines = self.run(suite, tmp_path, [entry()], dict(prior), fake)
         assert code == 1
         assert state == prior
@@ -292,6 +324,23 @@ class TestCheck:
         assert any(line.startswith("e.env.dependency.keripy-ref.r: upstream-main")
                    for line in lines)
 
+    def test_an_unusable_work_directory_fails_with_a_code(self, suite, tmp_path):
+        blocker = tmp_path / "file"
+        blocker.write_text("")
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching())
+        code, state, lines = refs.check_all([entry()], {}, "h1", suite, blocker / "work", fake)
+        assert code == 1
+        assert state == {}
+        assert any(line.startswith("e.env.dependency.keripy-ref.r: upstream-main") for line in lines)
+
+    def test_a_stale_report_that_cannot_be_removed_fails_with_a_code(self, suite, tmp_path):
+        (tmp_path / "work" / "upstream-main.cesr-1.0.json").mkdir(parents=True)
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching())
+        code, state, lines = self.run(suite, tmp_path, [entry()], {}, fake)
+        assert code == 1
+        assert state == {}
+        assert any("could not be removed" in line for line in lines)
+
     def test_a_run_that_wrote_no_report_fails_and_records_nothing(self, suite, tmp_path):
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching(), no_report={"keri-1.0"})
         code, state, lines = self.run(suite, tmp_path, [entry()], {}, fake)
@@ -301,7 +350,9 @@ class TestCheck:
 
     def test_every_ref_in_the_list_is_checked(self, suite, tmp_path):
         other = "https://github.com/bakobo/keripy"
-        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}, other: {"refs/heads/main": SHA_B}},
+        # Both resolve to SHA_A: the fake's reports name SHA_A, and a report must name the
+        # commit its ref resolved to.
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}, other: {"refs/heads/main": SHA_A}},
                     matching())
         refs_list = [entry(), entry(name="bakobo-main", source=other)]
         code, state, _ = self.run(suite, tmp_path, refs_list, {}, fake)
@@ -325,6 +376,11 @@ class TestRunCommand:
     def test_a_failing_command_raises_with_its_stderr(self):
         with pytest.raises(refs.CommandError, match="boom"):
             refs.run_command([sys.executable, "-c", "import sys; sys.exit('boom')"])
+
+    def test_output_that_is_not_utf8_does_not_crash(self):
+        out = refs.run_command([sys.executable, "-c",
+                                "import sys; sys.stdout.buffer.write(b'ok\\xff\\n')"])
+        assert out.startswith("ok")
 
     def test_check_false_tolerates_a_failing_exit(self):
         assert refs.run_command([sys.executable, "-c", "import sys; sys.exit(3)"],
