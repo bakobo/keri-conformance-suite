@@ -1,0 +1,63 @@
+name: keripy refs
+
+# Checks the keripy adapter, unchanged, against the keripy refs listed in adapters/keripy/refs.json
+# (forks, pinned releases, development heads), comparing each run with the committed baselines
+# and ignoring only the keripy commit (this.i, "The keripy adapter is checked weekly against other
+# keripy refs"). A ref is installed and run only when its commit or the suite's own inputs changed
+# since the last completed run, whose record lives in the Actions cache, so a quiet week is one
+# short job. adapters/keripy/README.md, "Other keripy refs", explains what to do when it fails.
+
+on:
+  schedule:
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keripy-refs
+  cancel-in-progress: false
+
+jobs:
+  keripy-refs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      # keripy signs and verifies through pysodium, which loads the system libsodium.
+      - name: Install libsodium
+        run: sudo apt-get update && sudo apt-get install -y libsodium23
+      - name: Sync the runner
+        run: uv sync --locked
+      # The newest state any earlier run saved. A miss (first run, or eviction) checks every ref.
+      - name: Restore the last run's record
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .keripy-refs-state
+          key: keripy-refs-state-${{ github.run_id }}
+          restore-keys: keripy-refs-state-
+      # The inputs hash covers everything that can change a ref's result other than the ref:
+      # cases, profiles, schemas, the runner and the keripy adapter with its baselines.
+      - name: Check every ref
+        env:
+          INPUTS: ${{ hashFiles('cases/**', 'profiles/**', 'schema/**', 'src/**', 'pyproject.toml', 'uv.lock', 'adapters/keripy/src/**', 'adapters/keripy/baseline-*.json') }}
+        run: |
+          PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.refs run \
+            --refs adapters/keripy/refs.json --state .keripy-refs-state/state.json \
+            --inputs "$INPUTS" --suite "$PWD" --work "$RUNNER_TEMP/keripy-refs"
+      # Saved whether or not a ref differed: the record of a difference is what keeps an
+      # unchanged, diverged ref failing without being re-run.
+      - name: Save this run's record
+        if: always() && hashFiles('.keripy-refs-state/state.json') != ''
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .keripy-refs-state
+          key: keripy-refs-state-${{ github.run_id }}

@@ -62,6 +62,20 @@ The tool reads at most 64 MiB of a report or baseline (`baseline.MAX_FILE_BYTES`
 
 The committed baseline is keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, verdict conformant: every active assertion passes, and the two disputed cases, CESR-0022 and CESR-0031, fail. The keripy 1.2.14 baseline for `keripy-1x-interop` records CESR-0045 to CESR-0048 as not-supported, because each has a `decoded` assertion and this build does not declare `cesr.item-extents` (CESR-0048 also needs `cesr.genus-2.00`), and the five must-reject cases as passing; its verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped to the cases sent. Its must-reject cases (CESR-0049 onward) pass because keripy 1.2.14 is the reference their expectations come from: it raises for the unassigned code, and its parser asks for more bytes on the truncated streams, which the adapter reports as a rejection under the end-of-input rule.
 
+## Other keripy refs
+
+CI pins one keripy commit per generation, but keripy is used at many refs. `refs.json` lists the others this adapter is checked against: upstream main, Bakobo's fork, Provenant's deployed refs and pinned releases. Each entry has a name, a public GitHub source, a branch, tag or commit, the Python version, and the profiles to run, each of which must have a committed `baseline-<profile>.json`. A 2.x ref runs the keripy-main profiles; a 1.x ref runs `keripy-1x-interop`. keripy before 1.2 is not listed, because the adapter cannot load it: `keri.core.counting` does not exist there.
+
+The `keripy refs` workflow (`.github/workflows/keripy-refs.yml`) runs weekly and on demand. It calls `python -m kcs_adapter_keripy.refs run`, which resolves each ref to a commit with `git ls-remote`, preferring a tag to a branch of the same name and following an annotated tag to its commit. A ref is skipped when both its commit and the suite's inputs match the last completed run. The inputs are a hash of the cases, profiles, schemas, runner and this adapter with its baselines, and the last run's record lives in the Actions cache. Otherwise the ref gets a fresh virtualenv with keripy at that commit and this adapter installed with `--no-deps`, so its own keripy pin cannot replace the keripy under test. Each profile is run with `kcs run` and compared with its baseline by the same comparison CI uses, minus the one line that reports a different keripy commit.
+
+The job fails when a ref differs from the baselines in any other way (`e.state.conflict.keripy-ref-differs.f`, listing every difference). It also fails when a ref could not be resolved, installed or run (`e.env.dependency.keripy-ref.r`). A ref that differed and has not changed since is not run again, but it keeps the job failing until someone acts. Acting means one of three things: fix the adapter, if the ref exposed an adapter defect; report the difference to the ref's maintainers; or, if the difference is accepted, drop the entry or give it baselines of its own. A cache eviction costs one full run and nothing else.
+
+```sh
+PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.refs run \
+  --refs adapters/keripy/refs.json --state /tmp/refs-state.json --inputs local \
+  --suite "$PWD" --work /tmp/keripy-refs
+```
+
 ## How a stream is parsed
 
 `cesr.parse` hands the stream to keripy's own `Parser.msgParsator`, one message (body plus attachments) per call. That is the same unit keripy's own parse loops (`allParsator`, `parsator`) use. The adapter calls it with `framed=True` until the stream is used up, using one fresh parser per request. keripy main is called as `msgParsator(ims, framed=True, piped=False, version=None)`, so a genus/version code at the top level carries over to later messages exactly as it does in keripy. keripy 1.2.14 is called as `msgParsator(ims, framed=True, pipeline=False)` with no KERI processors attached.

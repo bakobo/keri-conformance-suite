@@ -1,0 +1,8 @@
+[
+  {"name": "upstream-main", "source": "https://github.com/WebOfTrust/keripy", "ref": "main", "python": "3.14", "profiles": ["cesr-1.0", "keri-1.0", "keri-escrow"]},
+  {"name": "bakobo-main", "source": "https://github.com/bakobo/keripy", "ref": "main", "python": "3.14", "profiles": ["cesr-1.0", "keri-1.0", "keri-escrow"]},
+  {"name": "keripy-2.0.0-dev6", "source": "https://github.com/WebOfTrust/keripy", "ref": "b3ad967e21f58c24d7a1a847bb6eae12c66f5d06", "python": "3.14", "profiles": ["cesr-1.0", "keri-1.0", "keri-escrow"]},
+  {"name": "upstream-1.3.6", "source": "https://github.com/WebOfTrust/keripy", "ref": "1.3.6", "python": "3.12", "profiles": ["keripy-1x-interop"]},
+  {"name": "provenant-v1.2.13", "source": "https://github.com/provenant-dev/keripy", "ref": "v1.2.13", "python": "3.12", "profiles": ["keripy-1x-interop"]},
+  {"name": "provenant-pr-main", "source": "https://github.com/provenant-dev/keripy", "ref": "pr-main", "python": "3.12", "profiles": ["keripy-1x-interop"]}
+]
