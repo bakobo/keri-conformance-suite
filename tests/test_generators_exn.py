@@ -310,6 +310,21 @@ def test_attachments_the_model_does_not_grade_are_refused():
         exn_build.run(T, kels, [streams[0] + group.encode()])
 
 
+def test_a_genus_override_leading_the_attachments_group_is_part_of_the_group():
+    """CESR lets an attachments group open with a genus/version override; the signatures inside
+    still authenticate the message, so it grades as it would without the override."""
+    c = case([LONE], [deliver("lone", OK)])
+    kels, streams = built(c)
+    raw = exn_build.ExchangeBuilder(T, c["events"], c["exchanges"]).built["lone"].raw
+    head = keri_events.GENUS_CODE.encode() + raw
+    group = streams[0].removeprefix(head).decode()
+    inner = group[len(encoding.counter(T, "-C", 0)):]
+    src = keri_events.EventBuilder(T, EVENTS)
+    overridden = src._group("-C", [keri_events.GENUS_CODE, inner]).encode()
+    m = exn_build.run(T, kels, [head + overridden])
+    assert [[a.tag, b.tag] for a, b in zip(m.initial, m.outcome, strict=True)] == [[OK, OK]]
+
+
 def test_an_xip_delivered_after_a_message_that_named_it_is_not_graded():
     c = case([XIP, GRANT], [deliver("grant", "3/no-xip"), deliver("xip", OK)])
     with pytest.raises(ScenarioError, match="later delivery"):
@@ -549,6 +564,7 @@ def test_the_builder_places_signatures_before_the_body_only_for_a_refusal():
     "2025-07-04 17:50:00.000000+00:00",
     "2025-13-04T17:50:00.000000+00:00",  # no such month
     "2025-07-04T17:50:00.000000+24:00",  # no such offset
+    "2025-07-04T17:50:00.000000+00:60",  # RFC 3339 time-minute is 00-59; fromisoformat takes it
     "2025-07-04T17:50:00.000000+00:00\n",
     5,
 ])
@@ -561,7 +577,9 @@ def test_a_positive_scenario_with_a_malformed_datetime_is_refused(dt):
 
 
 @pytest.mark.parametrize("dt", ["2025-07-04T17:50:00.000000+00:00",
-                                "2020-08-22T17:50:09.988921-05:30"])
+                                "2020-08-22T17:50:09.988921-05:30",
+                                "2020-08-22T17:50:09.988921+05:30",
+                                "2020-08-22T17:50:09.988921-07:00"])
 def test_a_well_formed_datetime_is_accepted(dt):
     assert tags(case([{**LONE, "dt": dt}], [deliver("lone", OK)])) == [[OK, OK]]
 

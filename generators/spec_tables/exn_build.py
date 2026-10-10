@@ -127,7 +127,11 @@ class Message:
 
 
 def well_formed_dt(dt) -> bool:
+    """KERI line 983 by way of RFC 3339: the offset's hour is 00-23 and its minute 00-59, which
+    is checked here because ``datetime.fromisoformat`` normalizes an offset minute of 60."""
     if not isinstance(dt, str) or not DATETIME.fullmatch(dt):
+        return False
+    if int(dt[-5:-3]) > 23 or int(dt[-2:]) > 59:
         return False
     try:
         datetime.fromisoformat(dt)
@@ -310,6 +314,8 @@ def parse(t: Tables, stream: bytes) -> Parsed:
             p.groups.append(group)
         elif it["kind"] == "counter" and it["code"] in ("-C", "-K"):
             continue
+        elif it["kind"] == "genus" and it["start"] == after[0]["end"]:
+            continue  # a genus/version override leading the group, as CESR permits
         elif it["kind"] == "primitive" and group is not None and len(prims) < 3:
             prims.append(it)
             if len(prims) == 3:  # the signer's prefix, its event's sequence number and SAID
