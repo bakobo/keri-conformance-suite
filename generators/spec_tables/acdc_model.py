@@ -51,6 +51,14 @@ REQUIRED = ("v", "d", "i", "s")
 EMPTY = sa.EMPTY
 # Tag codes by code, the inverse of acdc_saids.TAGS.
 TAG_CODES = {code: size for size, code in sa.TAGS.items()}
+# The deepest nesting of maps and lists the model reads in any JSON body: an ACDC, a schema or a
+# registry event. The deepest legitimate body in the first batch is a schema at about ten levels;
+# the bound sits far above that and far below the interpreter's recursion limit, which the
+# model's recursive walks over a body would otherwise reach (about 1,100 levels in 2.5 KB).
+MAX_NESTING = 64
+# A body nested deeper than MAX_NESTING. No clause makes such a body invalid, so the model
+# refuses to derive any expectation from it rather than inventing a verdict.
+E_NESTING = "e.input.range.kcs-acdc-nesting.f"
 
 
 @dataclass(frozen=True)
@@ -185,7 +193,38 @@ def _primitive_code(t: Tables, text: str) -> str:
     raise KeyError(text[:4])
 
 
+def _nesting(raw: bytes) -> int:
+    """The deepest nesting of maps and lists in JSON text, counted without parsing it, so that a
+    body too deep to walk is refused before anything recurses into it. A bracket inside a string
+    does not count; in UTF-8 neither a quote nor a backslash byte occurs inside a multi-byte
+    character, so a byte scan finds the strings exactly."""
+    depth = deepest = 0
+    in_string = escaped = False
+    for byte in raw:
+        if escaped:
+            escaped = False
+        elif in_string:
+            if byte == 0x5C:  # backslash
+                escaped = True
+            elif byte == 0x22:  # quote
+                in_string = False
+        elif byte == 0x22:
+            in_string = True
+        elif byte in b"[{":
+            depth += 1
+            deepest = max(deepest, depth)
+        elif byte in b"]}":
+            depth -= 1
+    return deepest
+
+
 def _strict_json(raw: bytes):
+    if _nesting(raw) > MAX_NESTING:
+        raise ScenarioError(f"A JSON body in the bundle nests maps and lists more than "
+                            f"{MAX_NESTING} levels deep, beyond any ACDC, schema or registry "
+                            f"event the model reads, so it derives no expectation from the "
+                            f"bundle.", E_NESTING)
+
     def refuse(constant):
         raise ValueError(constant)
     try:
@@ -283,10 +322,17 @@ class _Model:
             return False
 
     def _blocks_verify(self, value) -> bool:
+        """Whether every SAIDed block in ``value`` verifies against its own SAID, wherever it
+        sits, inside a list included. The ``lists`` reading (acdc_saids) is a different question:
+        whether a block inside a list is compacted to its SAID in the enclosing block's most
+        compact form. Under either answer a block that carries a SAID is self-addressing, and a
+        SAID that does not verify is a failure (CESR line 1194)."""
         if isinstance(value, dict):
             if sa.is_saided(value) and sa.block_said(self.t, value, self.readings) != value["d"]:
                 return False
             return all(self._blocks_verify(v) for v in value.values())
+        if isinstance(value, list):
+            return all(self._blocks_verify(v) for v in value)
         return True
 
     def schema(self, said) -> tuple[dict | None, str | None]:
@@ -297,10 +343,13 @@ class _Model:
             schema = _strict_json(raw)
             if isinstance(schema, dict) and schema.get("$id") == said and isinstance(said, str):
                 try:
-                    if sa.schema_said(self.t, schema, self.readings, raw=raw) == said:
-                        return schema, None
+                    verifies = sa.schema_said(self.t, schema, self.readings, raw=raw) == said
                 except ScenarioError:
-                    pass
+                    # A schema whose SAID cannot be computed under this reading (its received
+                    # bytes have no top-level $id to dummy, say) does not verify against it.
+                    verifies = False
+                if verifies:
+                    return schema, None
                 found = "schema-said"
         return None, found or "schema-absent"
 

@@ -465,3 +465,58 @@ def test_a_diamond_evaluates_each_edge_once_and_each_far_node_once():
 def test_edge_blocks_are_found_in_maps_and_lists():
     e = {"d": "x", "grp": {"m": [{"n": "A"}, {"n": "B", "o": "I2I"}]}, "z": 3}
     assert am.edge_blocks(e) == [("e.grp.m.0", {"n": "A"}), ("e.grp.m.1", {"n": "B", "o": "I2I"})]
+
+
+def _with_listed_block(block_d=None):
+    """The presented A1 body with a SAIDed block inside a list in ``a``, its ``a`` and top-level
+    SAIDs recomputed over it, so only the listed block's own SAID can be wrong."""
+    _, b = run(base())
+    model = am._Model(T, b.request, sa.DEFAULT)
+    body, _ = model.node(bytes.fromhex(b.request["presented"]["stream"]))
+    body = copy.deepcopy(body.body)
+    block = {"d": "", "x": 1}
+    block["d"] = sa.block_said(T, block)
+    if block_d is not None:
+        block["d"] = block_d(block["d"])
+    body["a"]["items"] = [block]
+    body["a"]["d"] = sa.block_said(T, body["a"])
+    body["d"] = sa.acdc_said(T, body)
+    return model, body
+
+
+def test_a_saided_block_inside_a_list_must_verify_wherever_it_sits():
+    model, body = _with_listed_block()
+    assert model._intrinsic(body) == []
+    model, body = _with_listed_block(lambda d: d[:-1] + ("A" if d[-1] != "A" else "B"))
+    assert [f.tag for f in model._intrinsic(body)] == ["1/said"]
+
+
+def _framed(body: dict) -> bytes:
+    body = sa.sized(body)
+    return am.GENUS + sa.serialize(body)
+
+
+def _nested(depth: int):
+    value = 1
+    for _ in range(depth):
+        value = {"x": value}
+    return value
+
+
+def test_nesting_beyond_the_bound_is_refused_with_a_coded_error():
+    _, b = run(base())
+    model = am._Model(T, b.request, sa.DEFAULT)
+    body = {"v": sa.version_string(0), "d": "", "i": "I", "s": "S",
+            "a": _nested(1100)}
+    with pytest.raises(ScenarioError) as e:
+        model.node(_framed(body))
+    assert e.value.code == am.E_NESTING
+    # The top-level map is one level, and "a" holds the rest, so this is exactly the bound.
+    body["a"] = _nested(am.MAX_NESTING - 1)
+    node, _ = model.node(_framed(body))
+    assert "1/said" in tags(node)
+
+
+def test_nesting_is_counted_outside_strings_only():
+    assert am._nesting(b'{"a":"{[\\"{[","b":[{}]}') == 3
+    assert am._nesting(b'"\\\\"') == 0
