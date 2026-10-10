@@ -142,7 +142,8 @@ class TestLoadRefs:
         return path
 
     def test_reads_a_valid_list(self, tmp_path):
-        assert refs.load_refs(self.write(tmp_path, [entry()])) == [entry()]
+        path = self.write(tmp_path, [entry()])
+        assert refs.load_refs(path) == [entry()]
 
     @pytest.mark.parametrize("bad, why", [
         ("not json", "not JSON"),
@@ -351,14 +352,16 @@ class TestMain:
         refs_path.write_text(json.dumps([entry()]))
         monkeypatch.setattr(refs, "run_command",
                             Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching()))
-        assert refs.main(self.args(tmp_path, suite, refs_path)) == 0
+        code = refs.main(self.args(tmp_path, suite, refs_path))
+        assert code == 0
         assert json.loads((tmp_path / "state.json").read_text())["refs"]["upstream-main"]
         assert "upstream-main" in capsys.readouterr().out
 
     def test_a_bad_refs_file_is_a_usage_error(self, tmp_path, suite, capsys):
         refs_path = tmp_path / "refs.json"
         refs_path.write_text("[]")
-        assert refs.main(self.args(tmp_path, suite, refs_path)) == 2
+        code = refs.main(self.args(tmp_path, suite, refs_path))
+        assert code == 2
         assert "e.input.format.keripy-refs.f" in capsys.readouterr().err
 
     def test_bad_arguments_are_a_usage_error(self, capsys):
@@ -375,7 +378,8 @@ class TestMain:
         blocker = tmp_path / "state.json"
         blocker.mkdir()
         args = self.args(tmp_path, suite, refs_path)
-        assert refs.main(args) == 2
+        code = refs.main(args)
+        assert code == 2
         assert "e.env.filesystem.write" in capsys.readouterr().err
 
     def test_runs_as_a_module(self, monkeypatch):
