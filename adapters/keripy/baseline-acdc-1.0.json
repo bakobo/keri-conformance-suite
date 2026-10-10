@@ -1,0 +1,575 @@
+{
+  "format": 2,
+  "profile": "acdc-1.0",
+  "implementation": {
+    "name": "keripy",
+    "version": "2.1.0.dev1",
+    "commit": "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
+  },
+  "verdict": "no-evidence",
+  "cases": {
+    "ACDC-0001": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0002": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0003": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0004": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0005": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0006": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0007": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0008": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0009": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0010": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0011": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0012": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0013": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0014": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0015": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0016": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0017": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0018": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0019": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0020": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0021": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0022": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0023": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0024": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0025": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0026": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0027": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0028": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0029": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0030": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0031": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0032": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0033": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0034": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0035": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0036": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0037": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0038": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0039": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0040": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0041": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0042": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0043": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0044": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0045": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0046": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0047": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0048": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0049": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0050": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0051": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0052": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0053": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0054": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0055": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0056": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0057": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0058": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0059": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported",
+        "a4": "not-supported",
+        "a5": "not-supported"
+      }
+    },
+    "ACDC-0060": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0061": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0062": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported",
+        "a4": "not-supported",
+        "a5": "not-supported",
+        "a6": "not-supported",
+        "a7": "not-supported",
+        "a8": "not-supported",
+        "a9": "not-supported"
+      }
+    },
+    "ACDC-0063": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0064": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0065": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0066": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0067": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0068": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0069": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0070": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0071": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0072": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0073": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0074": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0075": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0076": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    }
+  }
+}

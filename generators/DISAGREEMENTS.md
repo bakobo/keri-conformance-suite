@@ -98,7 +98,7 @@ The second batch (KERI-0054 onward) adds companion safety cases, duplicate-signa
 
 # Disagreements between the ACDC generator's primitives and keripy
 
-No ACDC cases exist yet. The generator's primitives (`generators/spec_tables/acdc_saids.py`, `acdc_build.py` and `json_schema_subset.py`) compute SAIDs, most compact SAIDs, schema SAIDs, AGIDs and BLIDs, and evaluate schemas, from the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b0daaf48400f4005c2`) with the standard library only. keripy cross-checks them; it is not their source.
+The generator's primitives (`generators/spec_tables/acdc_saids.py`, `acdc_build.py` and `json_schema_subset.py`) compute SAIDs, most compact SAIDs, schema SAIDs, AGIDs and BLIDs, and evaluate schemas, from the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b0daaf48400f4005c2`) with the standard library only. keripy cross-checks them; it is not their source.
 
 How the cross-check was run, from the repository root:
 
@@ -108,4 +108,16 @@ cd generators/keripy_acdc_check && uv run python check.py --report /tmp/keripy-m
 
 `generators/keripy_acdc_check` pins keripy main at `9a8b7aa70960f16fe7acffd8cf7901941ac912a1` (Python 3.14), the same commit and lock as `keripy_keri_check`. Its fixtures are the pinned text's worked examples and bundles the generator builds; for each it compares the generator's value with keripy's (`SerderACDC`, `Compactor`, `Aggor`, `Blinder`, `Schemer`) and, where the text leaves bytes open (`acdc_saids.CANDIDATES`), reports which reading keripy follows on the fixtures that tell the readings apart.
 
-Last run: 2026-10-09. Every primitive agrees on every fixture (13 registry SAIDs, 19 most compact SAIDs from compact, expanded, partially and selectively disclosed forms, 19 nested block SAIDs, 10 schema SAIDs, 2 AGIDs, 5 BLIDs, 9 schema verdicts). On every open choice keripy follows the design's reading: the most compact form's version string sized to itself (A-B1), JSON with non-ASCII unescaped (A-B1), a schema SAID over its compact re-serialization, so that a pretty-printed schema verifies (A-B2), Tag codes for `ts` (A-B3), the AGID over the serialized list (A-C1), and a SAIDed block inside a list left uncompacted, a choice the design does not name.
+Last run: 2026-10-09. Every primitive agrees on every fixture (13 registry SAIDs, 19 most compact SAIDs from compact, expanded, partially and selectively disclosed forms, 19 nested block SAIDs, 10 schema SAIDs, 2 AGIDs, 5 BLIDs, 9 schema verdicts). On every open choice keripy follows the design's reading: the most compact form's version string sized to itself (A-B1, now settled by line 134 and reported only as a diagnostic), JSON with non-ASCII unescaped (A-B1), a schema SAID over its compact re-serialization, so that a pretty-printed schema verifies (A-B2), Tag codes for `ts` (A-B3), the AGID over the serialized list (A-C1), and a SAIDed block inside a list left uncompacted, a choice the design does not name.
+
+## The ACDC cases
+
+The ACDC cases (`cases/acdc/`) take their expected values from the decision procedure in `docs/design.md` ("ACDC"), applied by `generators/spec_tables/acdc_model.py` to the exact bytes of each bundle; keripy is not in their provenance. The same run of `generators/keripy_acdc_check` replays every committed case, stream by stream, and compares five things with keripy main:
+
+- whether each framed ACDC passes step 1 (field order, required fields, `a` and `A`, every SAID), against `SerderACDC(raw=..., verify=True)`: 116 ACDCs, all agree. keripy refuses the three bodies the cases refuse for their fields (ACDC-0006, 0007 and 0008) for the same field rule, not for their SAIDs;
+- whether each schema's `$id` is the SAID of its bytes, against `Schemer(raw=...)`: 86 schemas, all agree, including the document ACDC-0014's bundle holds at a non-local reference's URI, which is not a SAD and which both sides find is not one;
+- whether each ACDC validates against its verified schema, where the schema is inside the subset and names the 2020-12 dialect, against `Schemer.verify`: 110 verdicts, all agree;
+- whether each registry event's SAID verifies, against `SerderACDC(raw=..., verify=True)`: 43 events, all agree;
+- whether each disclosed blinded state block hashes to its own BLID, against the BLID `Blinder(crew=..., makify=True)` computes: 19 blocks, all agree, including the two the cases refuse.
+
+Last run: 2026-10-09, over the 76 cases after the acdc-exn-cases review. No ACDC case disagrees with keripy, and none is disputed. keripy's adapter does not declare `acdc.version-2.x`, so no case's verdict, registry head or edge has been compared with keripy's own judgment; `adapters/keripy/README.md` ("acdc.verify") says why. That is why the batch is issued `draft` (docs/design.md, ACDC, The first batch). The replay does not cover the KELs, so the recovery rotations of ACDC-0020 and ACDC-0065 to 0067 are checked by the KERI model alone, and an ACDC whose version string declares the wrong size (ACDC-0064) does not frame, so step 1 is not compared for it.

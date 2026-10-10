@@ -1,0 +1,245 @@
+{
+  "about": "The clauses, inferences and spec conflicts the ACDC cases cite, from the ACDC specification v1.0 (tag v1.0, commit 4a543c549fd9811c23bf97b0daaf48400f4005c2, spec/spec-body.md), and, where a clause names spec \"cesr\", from the CESR specification v1.0 (tag v1.0, commit 037129608b9e6960858b752019ac273d40d7386c). Each quote must appear verbatim exactly once in its pinned text, under the named heading; a clause's quote must contain its level's keyword. Inferences and conflicts quote the ACDC text, and an inference is used only with a clause from the ACDC text. The generator checks all of this before it writes a case.",
+  "clauses": {
+    "a-and-A": {
+      "section": "Selectively Disclosable Aggregate Section Field",
+      "level": "MUST",
+      "quote": "An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either."
+    },
+    "blid": {
+      "section": "BLID, `d` field",
+      "level": "MUST",
+      "quote": "The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values."
+    },
+    "blinded-attachment": {
+      "section": "Blinded Attribute Block",
+      "level": "MUST",
+      "quote": "It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`."
+    },
+    "edge-far": {
+      "section": "Node, `n` field",
+      "level": "MUST",
+      "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema."
+    },
+    "edge-i2i": {
+      "section": "Operator, `o` field",
+      "level": "MUST",
+      "quote": "The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points. Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC."
+    },
+    "edge-schema": {
+      "section": "Schema, `s` field",
+      "level": "MUST",
+      "quote": "To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value."
+    },
+    "field-order": {
+      "section": "Field Ordering",
+      "level": "MUST",
+      "quote": "When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`."
+    },
+    "key-state": {
+      "section": "Autonomic IDentifier (AID) Fields",
+      "level": "MUST",
+      "quote": "The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]."
+    },
+    "registry-anchored": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "level": "MUST",
+      "quote": "The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal."
+    },
+    "registry-issuer": {
+      "section": "Issuer, `i` field",
+      "level": "MUST",
+      "quote": "The Issuer, `i` field value MUST be the AID of the Issuer."
+    },
+    "registry-prior": {
+      "section": "Prior event SAID, `p` field",
+      "level": "MUST",
+      "quote": "The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL."
+    },
+    "registry-sn": {
+      "section": "Sequence number, `n` field",
+      "level": "MUST",
+      "quote": "The sequence number, `n` field value MUST be a hex-encoded string with no leading zeros of a zero-based strictly monotonically increasing integer."
+    },
+    "required-fields": {
+      "section": "Required Fields",
+      "level": "MUST",
+      "quote": "The following fields are REQUIRED `[v, d, i, s]` i.e. they MUST appear in any ACDC (not to be confused with other message types in the ACDC protocol)."
+    },
+    "said-verify": {
+      "spec": "cesr",
+      "section": "Generation and Verification Protocols",
+      "level": "MUST",
+      "quote": "The SAID verification protocol MUST be implemented as follows:"
+    },
+    "schema-dialect": {
+      "section": "Schema dialect",
+      "level": "SHOULD",
+      "quote": "A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail."
+    },
+    "schema-enforced": {
+      "section": "Composable JSON Schema",
+      "level": "MUST",
+      "quote": "The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema."
+    },
+    "schema-nonlocal": {
+      "section": "Static (Immutable) Schema",
+      "level": "MUST",
+      "quote": "ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable."
+    },
+    "schema-said": {
+      "section": "Composable JSON Schema",
+      "level": "MUST",
+      "quote": "Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID."
+    },
+    "schema-variant": {
+      "section": "Composable JSON Schema",
+      "level": "MUST",
+      "quote": "The provided ACDC MUST validate against an allowed combination of the composed variants."
+    },
+    "schema-version": {
+      "section": "Schema Versioning",
+      "level": "SHOULD",
+      "quote": "Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field."
+    },
+    "selective-support": {
+      "section": "Selective Disclosure",
+      "level": "MUST",
+      "quote": "To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above."
+    },
+    "update-anchored": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "level": "MUST",
+      "quote": "Update events in the Registry's TEL MUST also be anchored."
+    },
+    "version-protocol": {
+      "section": "Version String Field",
+      "level": "MUST",
+      "quote": "The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol."
+    },
+    "version-size": {
+      "section": "Version String Field",
+      "level": "SHOULD",
+      "quote": "A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies."
+    }
+  },
+  "inferences": {
+    "blid-analogy": {
+      "section": "BLID, `d` field",
+      "quote": "A BLID is effectively a type of SAID.",
+      "inference": "The text makes a BLID a SAID only by analogy, and its computation \"follows the SAID protocol, adapted for fixed-field representations\" (line 2141), so the validator obligation CESR line 1194 states for a SAID reaches a BLID only by inference: a block that does not verify against its BLID, or whose BLID is not the update's b, should leave the state unknown, graded SHOULD (generators/SPEC-ISSUES.md, A-G8)."
+    },
+    "commitment": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "quote": "To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly.",
+      "inference": "This sentence, which says how an ACDC is bound to its issuer's key state, has no keyword, and line 1673 adds that ACDCs \"are not directly signed by the Issuer\" but bound to the issuer's key state, which line 95 requires a validator to establish by KERI. A seal of the ACDC's most compact SAID on the trunk of that key state is therefore the only issuer commitment the normative text describes, but no keyword sentence obliges a validator to refuse an ACDC without one, so refusing it is inferred and graded SHOULD (generators/SPEC-ISSUES.md, A-G1). The keyworded line 1843 is not cited, because it sits in the IPEX section, which line 1797 declares non-normative."
+    },
+    "commitment-registry": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "quote": "This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL.",
+      "inference": "An ACDC that names a registry is bound to its issuer's key state through an anchored update of that registry that includes its SAID; the registry inception names no ACDC. Line 1669's MUSTs bind the issuer that anchors the updates, and no keyword sentence obliges a validator to refuse an ACDC that no anchored update names, so refusing it is inferred and graded SHOULD (generators/SPEC-ISSUES.md, A-G1)."
+    },
+    "issuer-kel": {
+      "section": "Autonomic IDentifier (AID) Fields",
+      "quote": "The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)].",
+      "inference": "The issuer's key state matters to an ACDC only through the issuer's commitment, and no keyword sentence obliges a validator to refuse an uncommitted ACDC (A-G1), so refusing an ACDC whose issuer's key state cannot be established is inferred and graded SHOULD."
+    },
+    "liveness": {
+      "section": "Composable JSON Schema",
+      "quote": "The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema.",
+      "inference": "The sentence says what a validator must check, not that it must accept an ACDC that passes. No sentence obliges a validator to accept anything, so that it should report a sound ACDC valid is inferred and graded SHOULD (docs/design.md, ACDC, Verdicts)."
+    },
+    "liveness-edge": {
+      "section": "Node, `n` field",
+      "quote": "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.",
+      "inference": "The sentence says what a validator must confirm before an edge is valid, not that it must report an edge that passes. That a validator should report each edge it evaluated, and find a sound edge valid, is inferred and graded SHOULD (docs/design.md, ACDC, Edges)."
+    },
+    "liveness-registry": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "quote": "The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal.",
+      "inference": "The sentence says what an issuer must anchor, not that a validator must report the registry it finds. That a validator should report the verified head of a sound registry is inferred and graded SHOULD (docs/design.md, ACDC, Registry state)."
+    },
+    "producer-a-and-A": {
+      "section": "Selectively Disclosable Aggregate Section Field",
+      "quote": "An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either.",
+      "inference": "The sentence describes what an issuer emits; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should refuse a message that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-nonlocal": {
+      "section": "Static (Immutable) Schema",
+      "quote": "ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable.",
+      "inference": "The sentence binds schema authors; it is not addressed to a validator (docs/design.md, \"How levels are derived\"), so that a validator should refuse a message that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-order": {
+      "section": "Field Ordering",
+      "quote": "When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`.",
+      "inference": "The sentence describes what an issuer emits; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should refuse a message that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-registry-anchored": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "quote": "The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal.",
+      "inference": "The sentence binds the issuer that keeps the registry; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should not count a registry whose inception breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-registry-issuer": {
+      "section": "Issuer, `i` field",
+      "quote": "The Issuer, `i` field value MUST be the AID of the Issuer.",
+      "inference": "The sentence describes the registry inception an issuer writes; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should not count a registry that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-registry-prior": {
+      "section": "Prior event SAID, `p` field",
+      "quote": "The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL.",
+      "inference": "The sentence describes the updates an issuer writes; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should not count an update that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-registry-sn": {
+      "section": "Sequence number, `n` field",
+      "quote": "The sequence number, `n` field value MUST be a hex-encoded string with no leading zeros of a zero-based strictly monotonically increasing integer.",
+      "inference": "The sentence describes the updates an issuer writes; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should not count an update that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-required": {
+      "section": "Required Fields",
+      "quote": "The following fields are REQUIRED `[v, d, i, s]` i.e. they MUST appear in any ACDC (not to be confused with other message types in the ACDC protocol).",
+      "inference": "The sentence describes what an issuer emits; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should refuse a message that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-update-anchored": {
+      "section": "Binding to Key State at Time of ACDC State Change",
+      "quote": "Update events in the Registry's TEL MUST also be anchored.",
+      "inference": "The sentence binds the issuer that keeps the registry; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should not count an update that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "producer-version": {
+      "section": "Version String Field",
+      "quote": "The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol.",
+      "inference": "The sentence describes the version string an issuer writes; it binds the producer, not a validator (docs/design.md, \"How levels are derived\"), so that a validator should refuse a message that breaks it is inferred and graded SHOULD, and the gap is raised in generators/SPEC-ISSUES.md."
+    },
+    "reading-aggregate": {
+      "section": "Computation of the AGID (Aggregate ID)",
+      "quote": "This list is then serialized as a list in whatever serialization kind is used by the enclosing ACDC (CESR, JSON, CBOR, MGPK).",
+      "inference": "Neither this sentence nor line 110 has a keyword, and they describe different pre-images for the aggregate. The worked example at lines 951 to 956 settles JSON: its pre-image is the serialized list with a dummied first entry. Accepting a selectively disclosed ACDC depends on that reading, which rests on an example, so it is graded SHOULD (generators/SPEC-ISSUES.md, A-C1)."
+    },
+    "registry-head": {
+      "section": "Prior event SAID, `p` field",
+      "quote": "The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL.",
+      "inference": "The registry's head is fixed by the chain rules for updates, which bind the issuer that writes them, so that a validator should report exactly this head is inferred and graded SHOULD (docs/design.md, ACDC, Registry state)."
+    },
+    "ts-code": {
+      "section": "Blinded Attribute Block",
+      "quote": "A group consists of its count code followed by one or more Blinded attribute blocks, where each block is composed of a concatenation of the four fields serialized in order as CESR primitives that are appropriate for the BLID, UUID, ACDC SAID, and transaction state string fields in that block.",
+      "inference": "The text fixes the code of a state value only for the empty placeholder (line 2087), so the generator writes states as Tag primitives, as keripy does (generators/SPEC-ISSUES.md, A-B3). The reported state ts depends on that choice, so the head's facts are graded SHOULD."
+    }
+  },
+  "conflicts": {
+    "expand-block": {
+      "section": "Most compact form SAID",
+      "quote": "First, expand a given block, verify its SAID, expand its enclosed blocks, verify their SAIDs, and so on as deep as needed or until the leaves are reached.",
+      "why": "Line 136 says to verify by first expanding \"a given block\" without saying block-level, which could be read as verifying the top-level SAID over the fully expanded form. The keyworded sentences do not settle it alone: line 142's MUST is about leaf blocks, and line 134's MUSTs require only that a block have one SAID and one way to compute it, which a fully expanded computation would also give. What selects the most compact form for a non-leaf block is the definitional text: line 134's depth-first algorithm and line 147, which compacts every non-leaf block \"with its SAID computed on its block-level expanded form\". The SAID verification protocol (CESR line 1194) checks the value that text defines, and line 136 read as a block-level expansion agrees with it, so the cases follow it (generators/SPEC-ISSUES.md, A-C3)."
+    },
+    "aggregate-concat": {
+      "section": "Selectively Disclosable Aggregate Section Field",
+      "quote": "The baseline standard approach is that the Aggregate field value is a cryptographic digest of the concatenation of an ordered set of the SAIDs of blinded Attribute sub-blocks.",
+      "why": "Line 110 describes the aggregate as a digest of the concatenated SAIDs; line 714 and the worked example at lines 951 to 956 serialize the list with a dummied first entry. The cases follow line 714 and the example (generators/SPEC-ISSUES.md, A-C1)."
+    },
+    "a-and-A-presence": {
+      "section": "Partially Disclosable Attribute Section Field",
+      "quote": "An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either.",
+      "why": "Line 106 forbids both fields whenever either is present, while line 110 forbids only both being non-empty. An ACDC with a non-empty a and an empty A is forbidden by line 106 and permitted by line 110, and no keyword sentence decides between them. The cases grade only an ACDC with both sections non-empty, which both sentences forbid, and no case grades an empty one until the working group chooses (generators/SPEC-ISSUES.md, A-C7)."
+    }
+  }
+}

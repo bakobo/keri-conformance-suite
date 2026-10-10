@@ -27,6 +27,20 @@ Primitives and the keripy computation each is compared with:
 - ``schema-validation``: the subset evaluator's verdict against ``Schemer.verify``, which runs the
   ``jsonschema`` library under the schema's declared dialect.
 
+Then every committed case under ``cases/acdc/`` is replayed, stream by stream (``case-*`` rows):
+
+- ``case-acdc-intrinsic``: for each ACDC in the bundle that frames as an ACDC 2.00 body, whether
+  it passes step 1 of the decision procedure (field order, required fields, a and A, every
+  SAID), by the generator's model validator (``acdc_model``) against
+  ``SerderACDC(raw=..., verify=True)``, which checks the same things;
+- ``case-registry-said``: the same for each registry event;
+- ``case-schema-said``: for each schema, whether its ``$id`` is the SAID of its bytes, by the
+  generator against ``Schemer(raw=...)``;
+- ``case-schema-verdict``: for each ACDC whose schema the bundle holds, verified and inside the
+  subset, whether it validates, by the subset evaluator against ``Schemer.verify``;
+- ``case-blid``: for each disclosed blinded state block, whether it hashes to its own BLID, by the
+  generator against the BLID ``Blinder(crew=..., makify=True)`` computes from its fields.
+
 The fixtures are the pinned ACDC text's own worked examples and bundles the generator builds from
 the fragments below.
 """
@@ -47,6 +61,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from generators.spec_tables import acdc_build as ab
+from generators.spec_tables import acdc_model as am
 from generators.spec_tables import acdc_saids as sa
 from generators.spec_tables import json_schema_subset as js
 from generators.spec_tables import spec_source, tables
@@ -156,7 +171,7 @@ def _body(stream_hex: str) -> tuple[dict, bytes]:
 def _alternatives() -> list[tuple[str, sa.Readings]]:
     out = []
     for field, values in sa.CANDIDATES.items():
-        for value in values[1:]:
+        for value in values[1:] + sa.DIAGNOSTIC.get(field, ()):
             out.append((f"{field}={value}", sa.Readings(**{field: value})))
     return out
 
@@ -350,6 +365,79 @@ def _validation(rep: Report):
         rep.compare("schema-validation", label, js.validate(schema, inst), keripy())
 
 
+def _bundle_bytes(case):
+    req = case["input"]
+    return ([bytes.fromhex(e["stream"]) for e in req["acdcs"]] +
+            [bytes.fromhex(req["presented"]["stream"])],
+            [bytes.fromhex(e["stream"]) for e in req["registry"]],
+            [bytes.fromhex(h) for h in req["schemas"]])
+
+
+def _keripy_schema_said(raw):
+    return scheming.Schemer(raw=bytearray(raw)).said
+
+
+def committed_cases(rep: Report):
+    model = am._Model(T, {"kels": [], "schemas": [], "registry": [], "acdcs": []}, sa.DEFAULT)
+    for path in sorted((ROOT / "cases" / "acdc").glob("*.json")):
+        case = json.loads(path.read_text())
+        cid = case["id"]
+        acdcs, registry, schemas = _bundle_bytes(case)
+        model.schemas = schemas
+        for i, stream in enumerate(acdcs):
+            parsed = am._parse(T, stream)
+            if parsed is None:
+                continue
+            body, raw, _ = parsed
+            ours = not model._intrinsic(body)
+            rep.keripy("case-acdc-intrinsic", f"{cid} acdc {i}", lambda r=raw: _verifies(r), ours)
+            schema, _ = model.schema(body.get("s"))
+            if schema is not None and not js.nonlocal_references(schema) and \
+                    js.dialect(schema) == js.DIALECT:
+                def keripy(sch=schema, b=body):
+                    try:
+                        return scheming.Schemer(sed=copy.deepcopy(sch)).verify(
+                            raw=json.dumps(b).encode())
+                    except Exception:  # noqa: BLE001 - keripy raises for any refusal
+                        return False
+                rep.compare("case-schema-verdict", f"{cid} acdc {i}", js.validate(schema, body),
+                            keripy())
+        for i, stream in enumerate(registry):
+            parsed = am._parse(T, stream)
+            body, raw, blocks = parsed
+            rep.keripy("case-registry-said", f"{cid} registry {i}", lambda r=raw: _verifies(r),
+                       model._event_said(body))
+            for blid, u, td, ts in blocks:
+                ours = sa.digest(T, (sa.DUMMY + u + td + ts).encode()) == blid
+                rep.keripy("case-blid", f"{cid} registry {i}",
+                           lambda b=(blid, u, td, ts): _blinder_verifies(*b), ours)
+        for i, raw in enumerate(schemas):
+            schema = json.loads(raw)
+            rep.keripy("case-schema-said", f"{cid} schema {i}",
+                       lambda r=raw: _schema_verifies(r),
+                       sa.schema_said(T, schema) == schema["$id"])
+
+
+def _verifies(raw):
+    try:
+        serdering.SerderACDC(raw=bytearray(raw), verify=True)
+        return True
+    except Exception:  # noqa: BLE001 - keripy refusing is the result being compared
+        return False
+
+
+def _blinder_verifies(blid, u, td, ts):
+    crew = BlindState(d="", u=u, td="" if td == am.EMPTY else td, ts=am._state(ts))
+    return structing.Blinder(crew=crew, makify=True).blid == blid
+
+
+def _schema_verifies(raw):
+    try:
+        return _keripy_schema_said(raw) == json.loads(raw)["$id"]
+    except Exception:  # noqa: BLE001 - keripy refusing is the result being compared
+        return False
+
+
 def summarize(rep: Report) -> list[str]:
     lines = [f"keripy {KERIPY_COMMIT}", "",
              "| primitive | fixtures | agree | disagree | explained by |",
@@ -386,6 +474,7 @@ def main() -> int:
     rep = Report()
     spec_examples(rep)
     generated(rep)
+    committed_cases(rep)
     print("\n".join(summarize(rep)))
     if args.report:
         args.report.write_text(json.dumps({"keripy": KERIPY_COMMIT, "results": rep.rows},

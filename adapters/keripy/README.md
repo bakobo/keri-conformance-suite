@@ -149,6 +149,8 @@ adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare adapters
 
 `acdc.verify` (keripy main only) never answers `valid`, and the adapter declares no `acdc.*` feature, so the runner sends it no ACDC case. That is failing closed, not a gap in the adapter: keripy main has no entry point that judges an ACDC 2.00 against a bundle.
 
+**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, all 76 `acdc-1.0` cases are not-supported, because every one requires `acdc.version-2.x`, which this adapter does not declare; the verdict is `no-evidence`. The cases are draft, so none would decide a verdict yet. The baseline is `baseline-acdc-1.0.json`, written with the baseline tool from a fresh run, and the `keripy-adapter` job in `.github/workflows/ci.yml` compares it against a fresh run.
+
 What keripy main has, at the pinned commit:
 
 - **A 2.00 ACDC verifier, but only inside IPEX.** keripy verifies ACDC 2.00 nodes in `keri.acdc.ipexing.IpexHandler`, and only when an `/ipex/grant` exchange message carries the disclosed DAG as nested streams. It walks the DAG, evaluates edge operators and edge schema pins, and checks each node's issuer commitment through its registry, a source seal, or a signature by the issuer's current keys. That path needs a grant signed by a sender, IPEX workflow state and a local registry store, none of which a bundle has, and its edge results are one boolean per edge block, not per edge. The adapter does not build a grant to reach it: that would be the adapter composing an IPEX exchange, and no `acdc.*` feature is composable.

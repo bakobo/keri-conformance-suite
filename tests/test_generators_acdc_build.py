@@ -365,10 +365,10 @@ def test_acdcs_and_the_dag_hold_the_same_nodes_on_a_diamond():
 
 
 def test_omit_drops_entries_but_keeps_their_saids_and_incoming_edges():
-    frag = chain(["N", "F", "G"])
+    frag = chain(["N", "F"])
     frag["omit"] = ["F", "S1"]
     b = ab.build_bundle(T, frag)
-    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["G"]]
+    assert b.request["acdcs"] == []
     assert b.request["schemas"] == []
     assert "F" in b.saids  # an omitted node still has a SAID that edges name
     # The omitted far node's incoming edge stays in the dag: its near node is in the bundle.
@@ -376,6 +376,45 @@ def test_omit_drops_entries_but_keeps_their_saids_and_incoming_edges():
     frag["omit"] = ["N"]
     with pytest.raises(ScenarioError):
         ab.build_bundle(T, frag)
+
+
+def test_omitting_a_mid_dag_node_drops_what_only_it_reaches():
+    """Tick 7q56: a validator cannot see an omitted node's edges, so the nodes only it reaches
+    leave the bundle with it, and acdcs keeps holding exactly the DAG's nodes other than the
+    omitted ones."""
+    frag = chain(["N", "F", "G"])
+    frag["omit"] = ["F"]
+    b = ab.build_bundle(T, frag)
+    assert b.request["acdcs"] == []
+    assert b.dag["edges"] == [{"near": b.saids["N"], "path": "e.up", "n": b.saids["F"]}]
+    shipped = {body(e)[0]["d"] for e in b.request["acdcs"]} | {b.dag["root"]}
+    in_dag = {b.dag["root"]} | {e["near"] for e in b.dag["edges"]} | {e["n"] for e in b.dag["edges"]}
+    assert shipped == in_dag - {b.saids["F"]}
+
+
+def test_a_node_reachable_another_way_survives_omitting_one_parent():
+    frag = chain(["N", "F1", "G"])
+    frag["acdcs"].insert(2, {"name": "F2", "issuer": "I", "schema": "S1",
+                             "a": {"d": "", "i": {"aid": "I"}, "name": "F2"},
+                             "e": {"d": "", "g": {"d": "", "n": {"acdc": "G"}}}})
+    frag["acdcs"][0]["e"]["b"] = {"d": "", "n": {"acdc": "F2"}}
+    frag["omit"] = ["F1"]
+    b = ab.build_bundle(T, frag)
+    assert [body(e)[0]["d"] for e in b.request["acdcs"]] == [b.saids["G"], b.saids["F2"]]
+    assert {(e["near"], e["path"]) for e in b.dag["edges"]} == {
+        (b.saids["N"], "e.up"), (b.saids["N"], "e.b"), (b.saids["F2"], "e.g")}
+
+
+@pytest.mark.parametrize("n", [["x"], 7, None, {"k": "v"}])
+def test_an_edge_n_that_is_not_a_string_is_refused_with_a_code(n):
+    """Tick 7q56: a map with an ``n`` key is an edge, and an edge's ``n`` names its far node by
+    SAID, so anything but a string is a coded refusal, not a TypeError."""
+    frag = chain(["N", "F"])
+    frag["acdcs"][0]["e"]["bad"] = {"d": "", "n": n}
+    with pytest.raises(ScenarioError) as e:
+        ab.build_bundle(T, frag)
+    assert e.value.code == ab.E_EDGE
+    assert "e.bad" in e.value.message
 
 
 def test_the_dag_may_be_eight_edges_deep_but_not_nine():
@@ -562,3 +601,21 @@ def test_a_seal_that_names_nothing_the_builder_knows_is_refused():
     resolved = keri_events.EventBuilder(T, [icp("I", "i0"), ixn("x", "I", [{"acdc": "A1"}])],
                                         seal_resolver=lambda seal: {"d": "E" + "A" * 43})
     assert resolved.event("x").body["a"] == [{"d": "E" + "A" * 43}]
+
+
+def test_a_schema_marked_unsaided_is_delivered_as_written():
+    """A schema that stands at a non-local reference's URI is not a SAD, so its $id is the URI and
+    nothing is computed (the decoy for a schema that refers outside itself)."""
+    lei = {"$id": "https://example.com/lei.json", "type": "string"}
+    frag = direct(schemas=[{"name": "S1", "schema": S1},
+                           {"name": "LEI", "schema": lei, "said": False}])
+    b = ab.build_bundle(T, frag)
+    assert json.loads(bytes.fromhex(b.request["schemas"][1])) == lei
+    assert b.saids["LEI"] == lei["$id"]
+
+
+def test_an_unsaided_schema_needs_an_id():
+    frag = direct(schemas=[{"name": "S1", "schema": S1},
+                           {"name": "LEI", "schema": {"type": "string"}, "said": False}])
+    with pytest.raises(ScenarioError, match="LEI"):
+        ab.build_bundle(T, frag)
