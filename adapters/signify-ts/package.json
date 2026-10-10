@@ -1,0 +1,33 @@
+{
+  "name": "kcs-adapter-signify-ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Adapter connecting signify-ts's CESR stream parser to the KERI conformance suite runner (adapter protocol v1).",
+  "license": "Apache-2.0",
+  "author": "Bakobo LLC",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "kcs-adapter-signify-ts": "bin/kcs-adapter-signify-ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "signify-ts": "git+https://github.com/dhh1128/signify-ts.git#c5bc46af038440bf8d42275481b9106abf536cf5"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.6",
+    "@vitest/coverage-v8": "5.0.1",
+    "ajv": "8.20.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.1"
+  },
+  "allowScripts": {
+    "github:dhh1128/signify-ts#c5bc46af038440bf8d42275481b9106abf536cf5": true
+  }
+}
