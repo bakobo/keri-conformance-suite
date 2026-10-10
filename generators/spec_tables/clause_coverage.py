@@ -238,6 +238,7 @@ def map_quote(text: str, sentences: list[Sentence], quote: str) -> list[Sentence
 
 _DISPOSITIONS = {"seen": "positive", "not-seen": "negative", "rejected": "negative",
                  "pending": "negative"}
+_EXN_VERDICTS = {"accepted": "positive", "rejected": "negative"}
 
 
 def polarity(assertion: dict, where: str) -> str:
@@ -252,7 +253,9 @@ def polarity(assertion: dict, where: str) -> str:
         return _DISPOSITIONS[expected]
     if check == "trunk" and isinstance(expected, bool):
         return "positive" if expected else "negative"
-    if check in ("disposition", "trunk"):
+    if check == "exn_verdict" and isinstance(expected, str) and expected in _EXN_VERDICTS:
+        return _EXN_VERDICTS[expected]
+    if check in ("disposition", "trunk", "exn_verdict"):
         raise CoverageError(f"{where}: a {check} of {expected!r} has no known polarity "
                             f"(disposition {expected!r}).", E_CASE)
     raise CoverageError(f"{where}: unknown check {check!r}. Clause coverage defines a polarity for "
