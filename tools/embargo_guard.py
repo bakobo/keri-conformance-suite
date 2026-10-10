@@ -15,9 +15,11 @@ and lines starting with # are ignored. Its location is the first of:
   4. info/embargo-patterns.txt inside the repository's git directory, which no commit can carry
      and every worktree shares.
 
-A list named by 1, 2 or 3 that cannot be read refuses the push, so a mistyped setting cannot
-switch the check off. Without any of those, a missing default list is the normal case for a
-contributor who holds none: the guard says so and lets the push through.
+A list named by 1, 2 or 3 that cannot be read refuses the push, as does a setting that is present
+but empty, so a mistyped setting cannot switch the check off. Without any of those, a default list
+that does not exist at all is the normal case for a contributor who holds none: the guard says so
+and lets the push through. Anything present at the default, a dangling symlink or a directory
+included, is read, and refuses if it cannot be.
 
 It reads each pushed commit on its own and needs git 2.31 or later (--diff-merges).
 
@@ -85,8 +87,10 @@ def patterns_path(repo: pathlib.Path, flag, environ) -> tuple[pathlib.Path | Non
     into a different one that exists."""
     if flag is not None:
         return pathlib.Path(flag), True
-    value = environ.get(ENV_PATTERNS, "")
-    if value.strip():
+    if ENV_PATTERNS in environ:
+        value = environ[ENV_PATTERNS]
+        if not value.strip():
+            raise ConfigUnreadable(f"{ENV_PATTERNS} is set but empty")
         try:
             return pathlib.Path(value).expanduser(), True
         except RuntimeError as exc:  # ~user names no user
@@ -214,7 +218,9 @@ def main(argv=None) -> int:
         print(f"{E_PATTERNS}: The configured embargo list could not be located ({exc}). Repair "
               f"{ENV_PATTERNS} or git config {CONFIG_PATTERNS} before pushing.", file=sys.stderr)
         return 2
-    if not explicit and (path is None or not path.is_file()):
+    # The default may be soft only when nothing is there at all. Anything present, even a dangling
+    # symlink or a directory, goes on to be read, and refuses if it cannot be.
+    if not explicit and (path is None or not os.path.lexists(path)):
         where = f"at {path}" if path is not None else "(this is not a git checkout)"
         print(f"{W_NO_PATTERNS}: No embargo list was found {where}, so this push was not checked "
               f"against one. A maintainer who holds the list names it with {ENV_PATTERNS} or "

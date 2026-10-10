@@ -276,10 +276,15 @@ def test_the_environment_variable_names_the_list(repo, patterns, monkeypatch):
     assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 1
 
 
-def test_an_empty_environment_variable_is_unset(repo, monkeypatch, capsys):
-    monkeypatch.setenv(guard.ENV_PATTERNS, "  ")
-    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 0
-    assert "w.rule.embargo.patterns-missing.f" in capsys.readouterr().err
+@pytest.mark.parametrize("value", ["", "  "])
+def test_an_empty_environment_variable_is_refused_not_taken_for_unset(repo, monkeypatch, capsys,
+                                                                     value):
+    # Set but empty is a mistyped setting, as an empty kcs.embargoPatterns is; it must not fall
+    # through to the soft default and switch the check off.
+    monkeypatch.setenv(guard.ENV_PATTERNS, value)
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 2
+    err = capsys.readouterr().err
+    assert err.startswith("e.input.format.embargo-patterns.f: ") and "empty" in err
 
 
 def test_git_config_names_the_list(repo, patterns):
@@ -356,7 +361,7 @@ def test_a_git_config_that_cannot_be_read_is_not_mistaken_for_unset(repo, capsys
 def test_the_pre_push_hook_reads_no_bakobo_path():
     hook = (guard.pathlib.Path(__file__).resolve().parent.parent / ".githooks" / "pre-push")
     source = hook.read_text() + guard.pathlib.Path(guard.__file__).read_text()
-    assert "reviews" not in source and "bakobo" not in source.lower()
+    assert "reviews" not in source.lower() and "bakobo" not in source.lower()
 
 
 def test_run_as_a_script_the_guard_checks_and_sets_its_exit_status(repo, patterns, monkeypatch):
@@ -418,4 +423,21 @@ def test_git_that_cannot_be_started_is_not_taken_for_unset(repo, monkeypatch, ca
         raise FileNotFoundError("git")
     monkeypatch.setattr(guard.subprocess, "run", no_git)
     assert guard.main(["--repo", str(repo), "--range", "HEAD..HEAD"]) == 2
+    assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
+
+
+def default_list(repo):
+    return repo / ".git" / "info" / "embargo-patterns.txt"
+
+
+def test_a_dangling_symlink_at_the_default_refuses(repo, tmp_path, capsys):
+    # Present but unreadable is not absent: a link into an unmounted mirror must not pass.
+    default_list(repo).symlink_to(tmp_path / "unmounted" / "patterns.txt")
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 2
+    assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
+
+
+def test_a_directory_at_the_default_refuses(repo, capsys):
+    default_list(repo).mkdir()
+    assert guard.main(["--repo", str(repo), "--range", listed_commit(repo)]) == 2
     assert capsys.readouterr().err.startswith("e.input.format.embargo-patterns.f: ")
