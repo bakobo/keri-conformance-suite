@@ -212,7 +212,9 @@ def check_ref(item, sha, suite, work, run):
     adapter = suite / "adapters" / "keripy"
     try:
         work.mkdir(parents=True, exist_ok=True)
-        run(["uv", "venv", "-q", "--clear", "-p", item["python"], str(venv)])
+        # A uv-managed Python: a runner's system one can be a patch release too old for
+        # keripy's dependencies (ubuntu-24.04's 3.12.3 against hio 0.6.19's 3.12.6).
+        run(["uv", "venv", "-q", "--clear", "--managed-python", "-p", item["python"], str(venv)])
         run(["uv", "pip", "install", "-q", "-p", str(python),
              f"keri @ git+{item['source']}@{sha}"])
         # --no-deps: the adapter's own keripy pin must not replace the keripy under test.
