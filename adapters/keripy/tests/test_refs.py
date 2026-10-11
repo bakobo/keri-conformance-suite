@@ -246,6 +246,14 @@ class TestCheck:
         assert any("--no-deps" in c for c in install)
         assert any("match" in line for line in lines)
 
+    def test_the_virtualenv_uses_a_uv_managed_python(self, suite, tmp_path):
+        # A runner's system Python can be an older patch release than keripy's dependencies
+        # accept: ubuntu-24.04 ships 3.12.3, and hio 0.6.19 requires 3.12.6.
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, matching())
+        self.run(suite, tmp_path, [entry()], {}, fake)
+        venv = [c for c in fake.calls if c[:2] == ["uv", "venv"]]
+        assert venv and all("--managed-python" in c for c in venv)
+
     def test_an_unchanged_ref_is_skipped_without_installing_anything(self, suite, tmp_path):
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}})
         prior = {"upstream-main": {"keripy": SHA_A, "inputs": "h1", "differences": [],
