@@ -15,7 +15,7 @@ SHA_B = "b" * 40
 MAIN_PROFILES = ["cesr-1.0", "keri-1.0"]
 
 
-def entry(name="upstream-main", ref="main", python="3.14", profiles=None,
+def entry(name="upstream-main", ref="refs/heads/main", python="3.14", profiles=None,
           source="https://github.com/WebOfTrust/keripy"):
     return {"name": name, "source": source, "ref": ref, "python": python,
             "profiles": list(MAIN_PROFILES if profiles is None else profiles)}
@@ -90,30 +90,33 @@ class TestResolve:
 
     def test_a_branch_resolves_to_its_head(self):
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}})
-        assert refs.resolve(UPSTREAM, "main", fake) == SHA_A
-        assert fake.calls == [["git", "ls-remote", UPSTREAM, "main"]]
+        assert refs.resolve(UPSTREAM, "refs/heads/main", fake) == SHA_A
+        # The peeled name must be asked for: a bare pattern does not list it.
+        assert fake.calls == [["git", "ls-remote", UPSTREAM, "refs/heads/main",
+                               "refs/heads/main^{}"]]
 
     def test_an_annotated_tag_resolves_to_the_commit_it_points_at(self):
         fake = Fake({UPSTREAM: {"refs/tags/1.3.6": SHA_B, "refs/tags/1.3.6^{}": SHA_A}})
-        assert refs.resolve(UPSTREAM, "1.3.6", fake) == SHA_A
+        assert refs.resolve(UPSTREAM, "refs/tags/1.3.6", fake) == SHA_A
 
     def test_a_lightweight_tag_resolves_to_its_commit(self):
         fake = Fake({UPSTREAM: {"refs/tags/v1": SHA_B}})
-        assert refs.resolve(UPSTREAM, "v1", fake) == SHA_B
+        assert refs.resolve(UPSTREAM, "refs/tags/v1", fake) == SHA_B
 
-    def test_a_tag_wins_over_a_branch_of_the_same_name(self):
+    def test_a_branch_is_not_hidden_by_a_tag_of_the_same_name(self):
         fake = Fake({UPSTREAM: {"refs/heads/x": SHA_B, "refs/tags/x": SHA_A}})
-        assert refs.resolve(UPSTREAM, "x", fake) == SHA_A
+        assert refs.resolve(UPSTREAM, "refs/heads/x", fake) == SHA_B
+        assert refs.resolve(UPSTREAM, "refs/tags/x", fake) == SHA_A
 
     def test_a_ref_that_names_nothing_is_an_error(self):
-        fake = Fake({UPSTREAM: {"refs/heads/other": SHA_A}})
+        fake = Fake({UPSTREAM: {"refs/heads/other": SHA_A, "refs/tags/main": SHA_B}})
         with pytest.raises(refs.CommandError, match=r"^e\.input\.missing\.keripy-ref\.f: "):
-            refs.resolve(UPSTREAM, "main", fake)
+            refs.resolve(UPSTREAM, "refs/heads/main", fake)
 
     def test_a_line_that_is_not_a_ref_listing_is_ignored(self):
         fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}})
         fake.remote[UPSTREAM]["garbage"] = "not-a-sha"
-        assert refs.resolve(UPSTREAM, "main", fake) == SHA_A
+        assert refs.resolve(UPSTREAM, "refs/heads/main", fake) == SHA_A
 
 
 class TestDifferences:
@@ -177,6 +180,9 @@ class TestLoadRefs:
         ([entry(source="https://github.com/a/b;rm")], "source"),
         ([entry(ref="-upload-pack=x")], "ref"),
         ([entry(ref="")], "ref"),
+        ([entry(ref="main")], "ref"),
+        ([entry(ref="refs/remotes/origin/main")], "ref"),
+        ([entry(ref="b3ad967")], "ref"),
         ([entry(ref=5)], "ref"),
         ([entry(python="3")], "python"),
         ([entry(profiles=[])], "profiles"),

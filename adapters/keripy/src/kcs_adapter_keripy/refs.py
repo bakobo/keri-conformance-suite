@@ -43,7 +43,7 @@ FIELDS = ("name", "source", "ref", "python", "profiles")
 NAME = re.compile(r"[a-z0-9][a-z0-9.-]*")
 SOURCE = re.compile(r"https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
 # A ref starting with '-' could be read by git as an option.
-REF = re.compile(r"[A-Za-z0-9_.][A-Za-z0-9_./-]*")
+REF = re.compile(r"refs/(heads|tags)/[A-Za-z0-9_.][A-Za-z0-9_./-]*|[0-9a-f]{40}")
 PYTHON = re.compile(r"3\.\d+")
 PROFILE = re.compile(r"[a-z0-9][a-z0-9.-]*")
 SHA = re.compile(r"[0-9a-f]{40}")
@@ -105,7 +105,8 @@ def _entry_problem(item, seen):
     if not isinstance(item["source"], str) or not SOURCE.fullmatch(item["source"]):
         return f"{item['name']}: the source must be an https://github.com/<owner>/<repo> URL"
     if not isinstance(item["ref"], str) or not REF.fullmatch(item["ref"]):
-        return f"{item['name']}: the ref must be a branch, tag or commit name"
+        return (f"{item['name']}: the ref must be refs/heads/<branch>, refs/tags/<tag> or a full "
+                "commit")
     if not isinstance(item["python"], str) or not PYTHON.fullmatch(item["python"]):
         return f"{item['name']}: python must be a version such as 3.14"
     profiles = item["profiles"]
@@ -168,19 +169,21 @@ def save_state(path, state):
 
 
 def resolve(source, ref, run):
-    """The commit ref names in source. A tag wins over a branch of the same name, and an
-    annotated tag resolves to the commit it points at."""
+    """The commit ref names in source. ref is a full ref name, so a tag and a branch that share
+    a short name cannot be mistaken for each other, and an annotated tag resolves to the commit
+    it points at, which ls-remote lists only when the peeled name is asked for."""
     if SHA.fullmatch(ref):
         return ref
+    peeled = f"{ref}^{{}}"
     listed = {}
-    for line in run(["git", "ls-remote", source, ref]).splitlines():
+    for line in run(["git", "ls-remote", source, ref, peeled]).splitlines():
         sha, _, name = line.partition("\t")
         if SHA.fullmatch(sha):
             listed[name] = sha
-    for name in (f"refs/tags/{ref}^{{}}", f"refs/tags/{ref}", f"refs/heads/{ref}"):
+    for name in (peeled, ref):
         if name in listed:
             return listed[name]
-    raise CommandError(f"{E_MISSING_REF}: {source} has no branch or tag named {ref}.")
+    raise CommandError(f"{E_MISSING_REF}: {source} has no {ref}.")
 
 
 def fingerprint(item):
