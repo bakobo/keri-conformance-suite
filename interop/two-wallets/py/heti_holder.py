@@ -9,10 +9,8 @@ import shutil
 import urllib.error
 import urllib.request
 
-from keri.core import serdering
-
 from heti.anchored.interop import keri1
-
+from keri.core import serdering
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OUT = ROOT / "out"
