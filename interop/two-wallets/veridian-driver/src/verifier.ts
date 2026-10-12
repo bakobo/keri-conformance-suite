@@ -36,24 +36,46 @@ async function notes(client: SignifyClient, route: string, seen: Set<string>) {
   return response.notes.find((n: any) => n.a?.r === route && !seen.has(n.a.d));
 }
 
-async function maybeNote(client: SignifyClient, route: string, seen: Set<string>, ms: number) {
-  try { return await until(route, async () => notes(client, route, seen), ms); }
+async function maybeGrant(client: SignifyClient, said: string, ms: number) {
+  try { return await until(`grant ${said}`, async () => {
+    const response = await client.notifications().list(0, 99);
+    return response.notes.find((n: any) => n.a?.r === '/exn/ipex/grant' && n.a?.d === said);
+  }, ms); }
   catch { return undefined; }
 }
 
 async function record(client: SignifyClient, wallet: string, notification: any, expected: any,
-                      seen: Set<string>) {
+                      seen: Set<string>, chain?: { apply: string; agree: string; verifier: string }) {
   const grant = await client.exchanges().get(notification.a.d);
+  if (grant.exn.d !== notification.a.d || grant.exn.r !== '/ipex/grant')
+    throw new Error(`${wallet} grant notification does not name a logged grant exchange.`);
   const sender = grant.exn.i;
   if (sender !== expected.holder) throw new Error(`Grant sender ${sender} differs from holder ${expected.holder}.`);
+  if (chain) {
+    if (grant.exn.p !== chain.agree) throw new Error('Veridian grant does not follow the verifier agreement.');
+    const agreement = await client.exchanges().get(grant.exn.p);
+    const offer = await client.exchanges().get(agreement.exn.p);
+    if (agreement.exn.d !== chain.agree || agreement.exn.r !== '/ipex/agree' ||
+        agreement.exn.i !== chain.verifier || offer.exn.r !== '/ipex/offer' ||
+        offer.exn.i !== expected.holder || offer.exn.p !== chain.apply)
+      throw new Error('Veridian grant prior chain does not lead to the verifier apply.');
+  }
   const carried = grant.exn.e?.acdc;
   if (carried?.d !== expected.said || carried?.i !== expected.issuer ||
       carried?.a?.i !== expected.holder || carried?.s !== expected.schema)
     throw new Error(`${wallet} grant does not embed the issued credential.`);
+  const heldBefore = (await client.credentials().list({ limit: 100 })).some((item: any) =>
+    item.sad?.d === expected.said);
+  if (wallet === 'heti' && heldBefore)
+    throw new Error('Verifier already held the credential before admitting the heti grant.');
+  if (wallet === 'veridian' && !heldBefore)
+    throw new Error('Verifier lost the credential before admitting the Veridian grant.');
   const [admit, sigs, atc] = await client.ipex().admit({
     senderName: 'verifier', recipient: sender, grantSaid: grant.exn.d,
     message: `G17 admit ${wallet}`,
   });
+  if (admit.ked.p !== grant.exn.d)
+    throw new Error(`${wallet} admit does not name the logged grant in its prior field.`);
   await wait(client, client.ipex().submitAdmit('verifier', admit, sigs, atc, [sender]));
   const credential = await until(`${wallet} credential`, async () => {
     const got = await client.credentials().get(expected.said);
@@ -64,7 +86,8 @@ async function record(client: SignifyClient, wallet: string, notification: any, 
   const result = {
     said: sad.d, issuer: sad.i, issuee: sad.a.i, schema: sad.s,
     tel_status: tel.et, sender, grant_said: grant.exn.d,
-    admit_said: admit.ked.d,
+    admit_said: admit.ked.d, fresh_admission: !heldBefore,
+    grant_logged: true, embedded_acdc: carried.d, admit_prior: admit.ked.p,
   };
   if (result.issuer !== expected.issuer || result.issuee !== expected.holder ||
       result.schema !== expected.schema || result.tel_status !== 'iss')
@@ -74,7 +97,16 @@ async function record(client: SignifyClient, wallet: string, notification: any, 
   return result;
 }
 
-async function proof(expected: any, veridian: any, heti: any | null) {
+async function proof(expected: any) {
+  await rm(path.join(out, 'm4.json'), { force: true });
+  const veridian = JSON.parse(await readFile(path.join(out, 'm3-veridian.json'), 'utf8'));
+  const heti = JSON.parse(await readFile(path.join(out, 'm3-heti.json'), 'utf8'));
+  if (veridian.said !== expected.said || heti.said !== expected.said ||
+      veridian.sender !== expected.holder || heti.sender !== expected.holder ||
+      !veridian.grant_logged || !heti.grant_logged ||
+      veridian.admit_prior !== veridian.grant_said || heti.admit_prior !== heti.grant_said ||
+      veridian.fresh_admission !== false || heti.fresh_admission !== true)
+    throw new Error('Both verified presentations of the expected credential are required for M4.');
   const issuerInfo = JSON.parse(await readFile(path.join(out, 'issuer.json'), 'utf8'));
   const issuer = new SignifyClient('http://127.0.0.1:3901', issuerInfo.bran,
     Tier.low, 'http://127.0.0.1:3903');
@@ -93,11 +125,9 @@ async function proof(expected: any, veridian: any, heti: any | null) {
     said: expected.said, issued_count: inRegistry.length,
     tel: [{ t: full.iss.t, s: full.iss.s, d: full.iss.d }],
     holder_aid_in_veridian: expected.holder,
-    holder_aid_in_heti: heti?.sender ?? JSON.parse(await readFile(path.join(out, 'heti-holder.json'), 'utf8')).aid,
-    verifier_saw: { veridian: veridian.said, heti: heti?.said ?? null },
+    holder_aid_in_heti: heti.sender,
+    verifier_saw: { veridian: veridian.said, heti: heti.said },
   };
-  if (heti && (heti.said !== veridian.said || heti.sender !== veridian.sender))
-    throw new Error('The two presentations do not name the same credential and holder.');
   await writeFile(path.join(out, 'm4.json'), JSON.stringify(result, null, 2) + '\n');
 }
 
@@ -133,6 +163,44 @@ async function main() {
   });
 
   const seen = new Set<string>();
+  const delivered = await until('heti delivery', async () => {
+    try { return JSON.parse(await readFile(path.join(out, 'heti-delivery.json'), 'utf8')); }
+    catch { return undefined; }
+  }, 180_000);
+  if (!delivered.posted || typeof delivered.grant_said !== 'string')
+    throw new Error('heti did not post a signed grant for admission.');
+  const bytes = await readFile(path.join(out, 'heti-grant.cesr'));
+  const version = bytes.toString('ascii', 0, 32).match(/^\{"v":"KERI10JSON([0-9a-fA-F]{6})_"/);
+  if (!version) throw new Error('heti grant has no KERI 1.x JSON version header.');
+  const grantBody = JSON.parse(bytes.subarray(0, parseInt(version[1], 16)).toString('utf8'));
+  if (grantBody.d !== delivered.grant_said || grantBody.r !== '/ipex/grant' ||
+      grantBody.i !== expected.holder || grantBody.e?.acdc?.d !== expected.said)
+    throw new Error('heti delivery does not name its signed grant and expected credential.');
+  // The verifier must encounter this credential through heti's grant first.
+  if ((await client.credentials().list({ limit: 100 })).some((item: any) => item.sad?.d === expected.said))
+    throw new Error('Verifier held the credential before heti presented it.');
+  let hetiNote = await maybeGrant(client, delivered.grant_said, 20_000);
+  if (!hetiNote) {
+    const response = await fetch('http://127.0.0.1:3902/', {
+      method: 'PUT', headers: { 'CESR-DESTINATION': aid }, body: bytes,
+    });
+    delivered.raw_put_status = response.status;
+    delivered.raw_put_body = (await response.text()).slice(0, 1000);
+    hetiNote = await maybeGrant(client, delivered.grant_said, 20_000);
+  }
+  if (!hetiNote) {
+    delivered.delivered = false;
+    delivered.verifier_notifications = (await client.notifications().list(0, 99)).notes.map((n: any) =>
+      ({ route: n.a?.r, said: n.a?.d, id: n.i }));
+    delivered.reason = 'KERIA accepted the signed grant but produced no matching /exn/ipex/grant notification.';
+    await writeFile(path.join(out, 'heti-delivery.json'), JSON.stringify(delivered, null, 2) + '\n');
+    throw new Error(delivered.reason);
+  }
+  await record(client, 'heti', hetiNote, expected, seen);
+  delivered.delivered = true;
+  await writeFile(path.join(out, 'heti-delivery.json'), JSON.stringify(delivered, null, 2) + '\n');
+  console.log(`Verifier admitted heti grant ${hetiNote.a.d}`);
+
   const [apply, applySigs] = await client.ipex().apply({
     senderName: 'verifier', recipient: holder.aid, schemaSaid: expected.schema,
     message: 'G17 SEDI presentation request',
@@ -147,42 +215,12 @@ async function main() {
     message: 'G17 agree',
   });
   await wait(client, client.ipex().submitAgree('verifier', agree, agreeSigs, [holder.aid]));
-  const first = await until('Veridian grant', async () => notes(client, '/exn/ipex/grant', seen), 180_000);
-  const veridian = await record(client, 'veridian', first, expected, seen);
-  console.log(`Verifier admitted Veridian grant ${first.a.d}`);
-
-  let heti: any | null = null;
-  const delivered = await until('heti delivery', async () => {
-    try { return JSON.parse(await readFile(path.join(out, 'heti-delivery.json'), 'utf8')); }
-    catch { return undefined; }
-  }, 180_000);
-  if (delivered.posted) {
-    // The first POST was delivered with CESR-DESTINATION. If KERIA accepted
-    // but did not notify, feed the identical signed stream to its raw PUT
-    // parser. This changes transport only, never heti's signed bytes.
-    let second = await maybeNote(client, '/exn/ipex/grant', seen, 20_000);
-    if (!second) {
-      const bytes = await readFile(path.join(out, 'heti-grant.cesr'));
-      const response = await fetch('http://127.0.0.1:3902/', {
-        method: 'PUT', headers: { 'CESR-DESTINATION': aid }, body: bytes,
-      });
-      delivered.raw_put_status = response.status;
-      delivered.raw_put_body = (await response.text()).slice(0, 1000);
-      second = await maybeNote(client, '/exn/ipex/grant', seen, 20_000);
-    }
-    if (second) {
-      heti = await record(client, 'heti', second, expected, seen);
-      delivered.delivered = true;
-      console.log(`Verifier admitted heti grant ${second.a.d}`);
-    } else {
-      delivered.delivered = false;
-      delivered.verifier_notifications = (await client.notifications().list(0, 99)).notes.map((n: any) =>
-        ({ route: n.a?.r, said: n.a?.d, id: n.i }));
-      delivered.reason = 'KERIA accepted the signed grant but produced no /exn/ipex/grant notification.';
-    }
-  }
-  await writeFile(path.join(out, 'heti-delivery.json'), JSON.stringify(delivered, null, 2) + '\n');
-  await proof(expected, veridian, heti);
+  const veridianNote = await until('Veridian grant', async () =>
+    notes(client, '/exn/ipex/grant', seen), 180_000);
+  await record(client, 'veridian', veridianNote, expected, seen,
+    { apply: apply.ked.d, agree: agree.ked.d, verifier: aid });
+  console.log(`Verifier admitted Veridian grant ${veridianNote.a.d}`);
+  await proof(expected);
 }
 
 main().catch(async (error) => {

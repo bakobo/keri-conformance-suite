@@ -14,11 +14,20 @@ from keri.core import serdering
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OUT = ROOT / "out"
+LIMIT = 1024 * 1024
+HTTP_BODY_TOO_LARGE = "e.input.http-response-size.f"
+
+
+def read_response(response) -> bytes:
+    body = response.read(LIMIT + 1)
+    if len(body) > LIMIT:
+        raise RuntimeError(f"{HTTP_BODY_TOO_LARGE}: HTTP response exceeds one MiB.")
+    return body
 
 
 def get(url: str) -> bytes:
     with urllib.request.urlopen(url, timeout=30) as response:
-        return response.read()
+        return read_response(response)
 
 
 def send(grant: bytes, verifier: str, content_type: str) -> tuple[int, str]:
@@ -35,9 +44,9 @@ def send(grant: bytes, verifier: str, content_type: str) -> tuple[int, str]:
     )
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-            return response.status, response.read().decode("utf-8", "replace")
+            return response.status, read_response(response).decode("utf-8", "replace")
     except urllib.error.HTTPError as error:
-        return error.code, error.read().decode("utf-8", "replace")
+        return error.code, read_response(error).decode("utf-8", "replace")
 
 
 def main() -> None:

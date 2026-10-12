@@ -1,10 +1,14 @@
 {
-  "said": "EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD",
-  "issuer": "EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ",
-  "issuee": "EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3",
+  "said": "EEZQtAFMO76EoHl9rw1D0s1aFRj4LWl2ThSdW7HcnLP_",
+  "issuer": "EMkZqD0x4UbmcL6ZG7vPL-Vwm3R00TTu9uzX8nu55Tce",
+  "issuee": "EHxEymowBDRMj639HrsKG0-6Cp6L_n_5IIv_HmU7SZZD",
   "schema": "EP3O5QNAho8Z7B9TTTdHWK7Ge_sPgZciw8Y4tYjpITqY",
   "tel_status": "iss",
-  "sender": "EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3",
-  "grant_said": "EPQkUJ--NibHUCETvdM-QRacYRLErY2XAnYCmQnDMkt2",
-  "admit_said": "EHAd7riAtKRS9WFTscHqOvGnWdzoTwmpLBjlFuC6G3LW"
+  "sender": "EHxEymowBDRMj639HrsKG0-6Cp6L_n_5IIv_HmU7SZZD",
+  "grant_said": "EIQZCVaZZcgN4BhfeMSY8Aeu0XZ5MLUF5bQEG8M1mo7j",
+  "admit_said": "EK-_nwpGWgALZoWw7g1-z7M8Z060VupGXA0FF4pBrW5y",
+  "fresh_admission": false,
+  "grant_logged": true,
+  "embedded_acdc": "EEZQtAFMO76EoHl9rw1D0s1aFRj4LWl2ThSdW7HcnLP_",
+  "admit_prior": "EIQZCVaZZcgN4BhfeMSY8Aeu0XZ5MLUF5bQEG8M1mo7j"
 }

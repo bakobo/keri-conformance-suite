@@ -78,15 +78,6 @@ async function run() {
     });
     await writeFile(path.join(out, 'verifier-holder-ready'), 'connected\n');
     await agent.markSeedPhraseAsVerified();
-    const apply = await until('Veridian apply notification', async () =>
-      (await agent.keriaNotifications.getNotifications()).find((note: any) =>
-        note.a?.r === '/exn/ipex/apply'));
-    const held = await agent.client.credentials().get(issued.said);
-    await agent.ipexCommunications.offerAcdcFromApply(apply.id, held.sad);
-    await until('Veridian presentation', async () => jsonFile('m3-veridian.json'), 180_000);
-    console.log(`Veridian presented ${issued.said} to ${identity.aid}`);
-    console.log('MILESTONE M3 reached');
-
     const exporting = spawn(path.join(root, 'veridian-driver', 'bin', 'veridian'),
       ['export'], { stdio: 'inherit', env: process.env });
     const exportExit = await new Promise<number>((resolve) =>
@@ -97,14 +88,16 @@ async function run() {
       [path.join(root, 'py', 'heti_holder.py')], { stdio: 'inherit', env: process.env });
     const exit = await new Promise<number>((resolve) => heti.on('exit', (code) => resolve(code ?? 1)));
     if (exit !== 0) throw new Error(`heti holder exited ${exit}`);
-    await until('heti presentation or recorded delivery result', async () =>
-      (await jsonFile('m3-heti.json')) || (await jsonFile('heti-delivery.json')), 120_000);
-    const delivery = await jsonFile('heti-delivery.json');
-    if (delivery?.delivered === false) {
-      console.log('heti grant delivery stopped at a documented incompatibility.');
-    } else {
-      await until('heti admission', async () => jsonFile('m3-heti.json'), 120_000);
-    }
+    await until('heti admission', async () => jsonFile('m3-heti.json'), 120_000);
+
+    const apply = await until('Veridian apply notification', async () =>
+      (await agent.keriaNotifications.getNotifications()).find((note: any) =>
+        note.a?.r === '/exn/ipex/apply'));
+    const held = await agent.client.credentials().get(issued.said);
+    await agent.ipexCommunications.offerAcdcFromApply(apply.id, held.sad);
+    await until('Veridian presentation', async () => jsonFile('m3-veridian.json'), 180_000);
+    console.log(`Veridian presented ${issued.said} to ${identity.aid}`);
+    console.log('MILESTONE M3 reached');
     await until('M4 issuer proof', async () => jsonFile('m4.json'), 120_000);
     console.log('MILESTONE M4 reached');
   } finally {

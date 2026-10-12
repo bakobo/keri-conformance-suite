@@ -16,12 +16,19 @@ set +e
 nice -n 19 ionice -c 3 "$root/veridian-driver/bin/veridian" m3
 result=$?
 set -e
-nice -n 19 ionice -c 3 docker compose -f "$root/compose.yaml" logs --no-color keria > "$root/out/keria-m3.log"
+nice -n 19 ionice -c 3 docker compose -f "$root/compose.yaml" logs --no-color keria \
+  | sed 's/[[:blank:]]*$//' > "$root/out/keria-m3.log"
+for required in m3-heti.json m4.json; do
+  if [[ ! -f "$root/out/$required" ]]; then
+    echo "Required M3/M4 result is missing: $required" >&2
+    result=1
+  fi
+done
 # Incompatibility 14 is an expected observation, not a failure of the run: the holder AID's only
 # published agent end role is still Veridian's KERIA agent, so the verifier's admit of heti's grant
 # is routed there, where no such grant exists. The run fails only if that observation changes,
 # because then the writeup is stale.
-if [[ "$result" -eq 0 && -f "$root/out/m3-heti.json" ]]; then
+if [[ "$result" -eq 0 ]]; then
   admit_said=$(node -e 'console.log(require(process.argv[1]).admit_said)' "$root/out/m3-heti.json")
   holder=$(node -e 'console.log(require(process.argv[1]).holder_aid_in_heti)' "$root/out/m4.json")
   veridian_agent=$(node -e 'console.log(require(process.argv[1]).keriaAgentPre)' "$root/out/m1.json")
