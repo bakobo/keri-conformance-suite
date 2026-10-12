@@ -14,3 +14,12 @@ export const SecureStoragePlugin = {
     return { value: [...data.keys()] };
   },
 };
+
+export function snapshotSecureStorage() {
+  return Object.fromEntries(data);
+}
+
+export function restoreSecureStorage(values: Record<string, string>) {
+  data.clear();
+  for (const [key, value] of Object.entries(values)) data.set(key, value);
+}

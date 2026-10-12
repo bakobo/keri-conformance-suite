@@ -2,9 +2,9 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-const mode = process.argv[2] as 'm1' | 'm2' | 'issuer' | 'vectors';
-if (!['m1', 'm2', 'issuer', 'vectors'].includes(mode)) {
-  console.error('Expected m1, m2, issuer or vectors.');
+const mode = process.argv[2] as 'm1' | 'm2' | 'm3' | 'export' | 'issuer' | 'verifier' | 'vectors';
+if (!['m1', 'm2', 'm3', 'export', 'issuer', 'verifier', 'vectors'].includes(mode)) {
+  console.error('Expected m1, m2, m3, export, issuer, verifier or vectors.');
   process.exit(2);
 }
 const driver = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

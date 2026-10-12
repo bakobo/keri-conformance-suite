@@ -4,7 +4,7 @@ const veridian = process.env.VERIDIAN_DIR || '/home/daniel/code/bakobo/veridian-
 const esbuild = require(path.join(veridian, 'node_modules/esbuild'));
 const root = __dirname;
 const mode = process.argv[2];
-if (!['m1', 'm2', 'issuer', 'vectors'].includes(mode)) throw new Error('Expected m1, m2, issuer or vectors.');
+if (!['m1', 'm2', 'm3', 'export', 'issuer', 'verifier', 'vectors'].includes(mode)) throw new Error('Expected m1, m2, m3, export, issuer, verifier or vectors.');
 const output = path.join(root, '..', '..', '..', '.ignored', `veridian-${mode}.cjs`);
 fs.mkdirSync(path.dirname(output), { recursive: true });
 esbuild.build({

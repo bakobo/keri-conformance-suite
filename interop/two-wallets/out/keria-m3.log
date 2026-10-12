@@ -1,0 +1,611 @@
+keria-1  | keri: Starting Agent for keria listening: admin/3901, http/3902, boot/3903
+keria-1  | keri: PID: 1
+keria-1  | keri: The Agency is loaded and waiting for requests...
+keria-1  | keri: Registered signal handlers for SIGTERM
+keria-1  | keri: Parsed Request: GET /boot (1, 1)
+keria-1  | keri: Parsed Request: POST /boot (1, 1)
+keria-1  | keri: Kever state: BOugX3YTHTutAR4k75JPA5-FhjReyp89JR7ehPKjgsLK First seen ordinal 0 at 2026-10-12T22:02:10.798666+00:00, said=EMNnMFr5QNQm4k_SNj_s0TY9fmh2LERqXYvxxP5tqUUP
+keria-1  | keri: Kever state: BOugX3YTHTutAR4k75JPA5-FhjReyp89JR7ehPKjgsLK Added to KEL valid said=EMNnMFr5QNQm4k_SNj_s0TY9fmh2LERqXYvxxP5tqUUP
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd First seen ordinal 0 at 2026-10-12T22:02:11.547228+00:00, said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov First seen ordinal 0 at 2026-10-12T22:02:11.989769+00:00, said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Parsed Request: GET /agent/ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov (1, 1)
+keria-1  | keri: Kever state: BBilc4-L3tFUnfM_wJr4S4OJanAv_VmF_dJNN6vkf2Ha First seen ordinal 0 at 2026-10-12T22:02:12.121202+00:00, said=EIkO4CUmYXukX4auGU9yaFoQaIicfVZkazQ0A3IO5biT
+keria-1  | keri: Kever state: BBilc4-L3tFUnfM_wJr4S4OJanAv_VmF_dJNN6vkf2Ha Added to KEL valid said=EIkO4CUmYXukX4auGU9yaFoQaIicfVZkazQ0A3IO5biT
+keria-1  | keri: Kever state: BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM First seen ordinal 0 at 2026-10-12T22:02:12.241345+00:00, said=EGuHrbhKDUC6umKP5buvRr6DLUorsQwnCZGZU0hEqsSP
+keria-1  | keri: Kever state: BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM Added to KEL valid said=EGuHrbhKDUC6umKP5buvRr6DLUorsQwnCZGZU0hEqsSP
+keria-1  | keri: Kever state: BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX First seen ordinal 0 at 2026-10-12T22:02:12.358408+00:00, said=EC5Yh_MaLtrkgFpg7PyVNkM7Fv6htQdZb1kGxThK6Ahi
+keria-1  | keri: Kever state: BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX Added to KEL valid said=EC5Yh_MaLtrkgFpg7PyVNkM7Fv6htQdZb1kGxThK6Ahi
+keria-1  | keri: Kever state: BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE First seen ordinal 0 at 2026-10-12T22:02:12.489835+00:00, said=EIGspjOvYwgoZkuu2ynls8d8x6RuJEYqIiqfc2l_DoHs
+keria-1  | keri: Kever state: BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE Added to KEL valid said=EIGspjOvYwgoZkuu2ynls8d8x6RuJEYqIiqfc2l_DoHs
+keria-1  | keri: Kever state: BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP First seen ordinal 0 at 2026-10-12T22:02:12.609478+00:00, said=EGm5cP_LsBmVsUuLlCXhfIUgPnRZwFk4bddDfSHWYkXu
+keria-1  | keri: Kever state: BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP Added to KEL valid said=EGm5cP_LsBmVsUuLlCXhfIUgPnRZwFk4bddDfSHWYkXu
+keria-1  | keri: Kever state: BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM First seen ordinal 0 at 2026-10-12T22:02:12.672621+00:00, said=EBou0Po7cpqA9gEyvjHG8LsJ7zrbZVHOmX3KXYi4-_tW
+keria-1  | keri: Kever state: BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM Added to KEL valid said=EBou0Po7cpqA9gEyvjHG8LsJ7zrbZVHOmX3KXYi4-_tW
+keria-1  | keri: Parsed Request: PUT /agent/ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov First seen ordinal 1 at 2026-10-12T22:02:14.108649+00:00, said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 First seen ordinal 0 at 2026-10-12T22:02:16.141573+00:00, said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST /boot (1, 1)
+keria-1  | keri: Kever state: BB4pWpS7rs8Cm7KwTa4tJQS86nZxMSEjqYamv0pzd113 First seen ordinal 0 at 2026-10-12T22:02:20.446660+00:00, said=EHZg1EpUBumD_Xga-4VYVkKA-hwhU5s-J3xw6CRRUUjm
+keria-1  | keri: Kever state: BB4pWpS7rs8Cm7KwTa4tJQS86nZxMSEjqYamv0pzd113 Added to KEL valid said=EHZg1EpUBumD_Xga-4VYVkKA-hwhU5s-J3xw6CRRUUjm
+keria-1  | keri: Kever state: ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG First seen ordinal 0 at 2026-10-12T22:02:21.268913+00:00, said=ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG
+keria-1  | keri: Kever state: ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG Added to KEL valid said=ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn First seen ordinal 0 at 2026-10-12T22:02:21.755163+00:00, said=EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: BBilc4-L3tFUnfM_wJr4S4OJanAv_VmF_dJNN6vkf2Ha First seen ordinal 0 at 2026-10-12T22:02:21.871740+00:00, said=EIkO4CUmYXukX4auGU9yaFoQaIicfVZkazQ0A3IO5biT
+keria-1  | keri: Kever state: BBilc4-L3tFUnfM_wJr4S4OJanAv_VmF_dJNN6vkf2Ha Added to KEL valid said=EIkO4CUmYXukX4auGU9yaFoQaIicfVZkazQ0A3IO5biT
+keria-1  | keri: Parsed Request: GET /agent/EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn (1, 1)
+keria-1  | keri: Kever state: BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM First seen ordinal 0 at 2026-10-12T22:02:21.975107+00:00, said=EGuHrbhKDUC6umKP5buvRr6DLUorsQwnCZGZU0hEqsSP
+keria-1  | keri: Kever state: BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM Added to KEL valid said=EGuHrbhKDUC6umKP5buvRr6DLUorsQwnCZGZU0hEqsSP
+keria-1  | keri: Kever state: BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX First seen ordinal 0 at 2026-10-12T22:02:22.053766+00:00, said=EC5Yh_MaLtrkgFpg7PyVNkM7Fv6htQdZb1kGxThK6Ahi
+keria-1  | keri: Kever state: BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX Added to KEL valid said=EC5Yh_MaLtrkgFpg7PyVNkM7Fv6htQdZb1kGxThK6Ahi
+keria-1  | keri: Kever state: BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE First seen ordinal 0 at 2026-10-12T22:02:22.143180+00:00, said=EIGspjOvYwgoZkuu2ynls8d8x6RuJEYqIiqfc2l_DoHs
+keria-1  | keri: Kever state: BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE Added to KEL valid said=EIGspjOvYwgoZkuu2ynls8d8x6RuJEYqIiqfc2l_DoHs
+keria-1  | keri: Kever state: BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP First seen ordinal 0 at 2026-10-12T22:02:22.205697+00:00, said=EGm5cP_LsBmVsUuLlCXhfIUgPnRZwFk4bddDfSHWYkXu
+keria-1  | keri: Kever state: BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP Added to KEL valid said=EGm5cP_LsBmVsUuLlCXhfIUgPnRZwFk4bddDfSHWYkXu
+keria-1  | keri: Kever state: BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM First seen ordinal 0 at 2026-10-12T22:02:22.293776+00:00, said=EBou0Po7cpqA9gEyvjHG8LsJ7zrbZVHOmX3KXYi4-_tW
+keria-1  | keri: Kever state: BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM Added to KEL valid said=EBou0Po7cpqA9gEyvjHG8LsJ7zrbZVHOmX3KXYi4-_tW
+keria-1  | keri: Parsed Request: PUT /agent/EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn (1, 1)
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn First seen ordinal 1 at 2026-10-12T22:02:22.514938+00:00, said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 0 at 2026-10-12T22:02:25.049469+00:00, said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 First seen ordinal 0 at 2026-10-12T22:02:27.237386+00:00, said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kevery process: skipped stale update from BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM of reply said=EKCWsSwYk5iWg8sJoGy-0xYFqLt32z_GguVClb5yipst
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EKCWsSwYk5iWg8sJoGy-0xYFqLt32z_GguVClb5yipst', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM', 'scheme': 'http', 'url': 'http://127.0.0.1:5643/'}}
+keria-1  | keri: Kevery process: skipped stale update from BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX of reply said=EJnHyBduWtVqls4hAvYFpbyiPGggjnnI3zbI9l0k_GJD
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EJnHyBduWtVqls4hAvYFpbyiPGggjnnI3zbI9l0k_GJD', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX', 'scheme': 'http', 'url': 'http://127.0.0.1:5644/'}}
+keria-1  | keri: Kevery process: skipped stale update from BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE of reply said=EKQm_MSgiIL64S0_XfI5IzrgxLuJLNSOqcvrl2lasXbX
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EKQm_MSgiIL64S0_XfI5IzrgxLuJLNSOqcvrl2lasXbX', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE', 'scheme': 'http', 'url': 'http://127.0.0.1:5645/'}}
+keria-1  | keri: Kevery process: skipped stale update from BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP of reply said=EDhcYhM7xSVlIcbFjl7g5DHCl-SkABl8C6Z_Jxhbz_Xu
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EDhcYhM7xSVlIcbFjl7g5DHCl-SkABl8C6Z_Jxhbz_Xu', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP', 'scheme': 'http', 'url': 'http://127.0.0.1:5646/'}}
+keria-1  | keri: Kevery process: skipped stale update from BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM of reply said=EMPi076KtW00D9ilSv2xoEDaGPPQ3nASxvcjM_I34y0D
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EMPi076KtW00D9ilSv2xoEDaGPPQ3nASxvcjM_I34y0D', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM', 'scheme': 'http', 'url': 'http://127.0.0.1:5647/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /oobi/EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3/agent/ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd (1, 1)
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov First seen ordinal 0 at 2026-10-12T22:02:27.473894+00:00, said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov First seen ordinal 1 at 2026-10-12T22:02:27.506668+00:00, said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd First seen ordinal 0 at 2026-10-12T22:02:27.528602+00:00, said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Credential registry missing anchor for inception = EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 1 at 2026-10-12T22:02:29.826768+00:00, said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Tever state: b'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE' Added to TEL valid said=EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE
+keria-1  | keri: Tevery unescrow succeeded in valid event: said=EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 2 at 2026-10-12T22:02:31.769903+00:00, said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Credential registry missing anchor for inception = EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt
+keria-1  | keri: Tever state: b'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD' Added to TEL valid said=EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt
+keria-1  | keri: Tevery unescrow succeeded in valid event: said=EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt
+keria-1  | keri: Verifier unescrow succeeded in valid group op: creder=EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /oobi/EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ/agent/ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 0 at 2026-10-12T22:02:34.829817+00:00, said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 1 at 2026-10-12T22:02:34.868449+00:00, said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 2 at 2026-10-12T22:02:34.893829+00:00, said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn First seen ordinal 0 at 2026-10-12T22:02:34.927720+00:00, said=EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn First seen ordinal 1 at 2026-10-12T22:02:34.944279+00:00, said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Kever state: ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG First seen ordinal 0 at 2026-10-12T22:02:34.965580+00:00, said=ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG
+keria-1  | keri: Kever state: ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG Added to KEL valid said=ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /oobi/EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3/agent/ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd (1, 1)
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Kevery process: skipped stale keystate sig datetime from ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd on reply said=ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd', 'scheme': 'http', 'url': 'http://127.0.0.1:3902/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/grant missing or does not have verify for said=EJun5JQaiL_3U2RCm_o7uSBvxz_zFEfJVPliMidfFBZM
+keria-1  | keri: Behavior for /ipex/grant missing or does not have handle for said=EJun5JQaiL_3U2RCm_o7uSBvxz_zFEfJVPliMidfFBZM
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=ECrXBxEcjxWEadTLNPzf0bpI3m8h_Y9CKa0_KQQ_QXex
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=ECrXBxEcjxWEadTLNPzf0bpI3m8h_Y9CKa0_KQQ_QXex
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=EDTWtFyq2s6-DvohYsL8N5qQolCmSCY5OfCvlUefMiVI
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=EDTWtFyq2s6-DvohYsL8N5qQolCmSCY5OfCvlUefMiVI
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Tever state: b'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE' Added to TEL valid said=EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE
+keria-1  | keri: Tever state: b'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD' Added to TEL valid said=EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/admit missing or does not have verify for said=EGvrx14SrFVGiCZrxJBrBNi1AR9FKklLScGPERjQ0RYK
+keria-1  | keri: Behavior for /ipex/admit missing or does not have handle for said=EGvrx14SrFVGiCZrxJBrBNi1AR9FKklLScGPERjQ0RYK
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kevery msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON0000ed_', 't': 'iss', 'd': 'EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt', 'i': 'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD', 's': '0', 'ri': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'dt': '2026-10-12T22:02:31.261000+00:00'} with sn 0.
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=EEy1UUh78K-t7DvTo7ENAJfo1QZUqSfQ-XQZA7qtylTl
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=EEy1UUh78K-t7DvTo7ENAJfo1QZUqSfQ-XQZA7qtylTl
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kevery process: skipped stale keystate sig datetime from ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd on reply said=ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd', 'scheme': 'http', 'url': 'http://127.0.0.1:3902/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kevery process: skipped stale keystate sig datetime from ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd on reply said=ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd', 'scheme': 'http', 'url': 'http://127.0.0.1:3902/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parser msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON000113_', 't': 'vcp', 'd': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'i': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'ii': 'EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ', 's': '0', 'c': ['NB'], 'bt': '0', 'b': [], 'n': 'APZShQk-o-CTS6oS8vfeK9yP_SR44VD8F21En48cDrA8'}.
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parser msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON0000ed_', 't': 'iss', 'd': 'EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt', 'i': 'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD', 's': '0', 'ri': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'dt': '2026-10-12T22:02:31.261000+00:00'} with sn 0.
+keria-1  | keri: Parsed Request: POST /boot (1, 1)
+keria-1  | keri: Parsed Request: GET /agent/ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov (1, 1)
+keria-1  | keri: Parsed Request: PUT /agent/ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST /boot (1, 1)
+keria-1  | keri: Kever state: BFEdOpDbf5oqzCJC7Sil3I5jPO9osrZeeZYWT1t2Tcn0 First seen ordinal 0 at 2026-10-12T22:02:50.016295+00:00, said=EABpMRouOYeAoJRyNHyOvdserrGezGj2qwwzIvdNc4ze
+keria-1  | keri: Kever state: BFEdOpDbf5oqzCJC7Sil3I5jPO9osrZeeZYWT1t2Tcn0 Added to KEL valid said=EABpMRouOYeAoJRyNHyOvdserrGezGj2qwwzIvdNc4ze
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX First seen ordinal 0 at 2026-10-12T22:02:50.689184+00:00, said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- First seen ordinal 0 at 2026-10-12T22:02:51.005879+00:00, said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /agent/EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- (1, 1)
+keria-1  | keri: Kever state: BBilc4-L3tFUnfM_wJr4S4OJanAv_VmF_dJNN6vkf2Ha First seen ordinal 0 at 2026-10-12T22:02:51.157872+00:00, said=EIkO4CUmYXukX4auGU9yaFoQaIicfVZkazQ0A3IO5biT
+keria-1  | keri: Kever state: BBilc4-L3tFUnfM_wJr4S4OJanAv_VmF_dJNN6vkf2Ha Added to KEL valid said=EIkO4CUmYXukX4auGU9yaFoQaIicfVZkazQ0A3IO5biT
+keria-1  | keri: Kever state: BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM First seen ordinal 0 at 2026-10-12T22:02:51.204173+00:00, said=EGuHrbhKDUC6umKP5buvRr6DLUorsQwnCZGZU0hEqsSP
+keria-1  | keri: Kever state: BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM Added to KEL valid said=EGuHrbhKDUC6umKP5buvRr6DLUorsQwnCZGZU0hEqsSP
+keria-1  | keri: Kever state: BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX First seen ordinal 0 at 2026-10-12T22:02:51.253042+00:00, said=EC5Yh_MaLtrkgFpg7PyVNkM7Fv6htQdZb1kGxThK6Ahi
+keria-1  | keri: Kever state: BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX Added to KEL valid said=EC5Yh_MaLtrkgFpg7PyVNkM7Fv6htQdZb1kGxThK6Ahi
+keria-1  | keri: Kever state: BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE First seen ordinal 0 at 2026-10-12T22:02:51.327458+00:00, said=EIGspjOvYwgoZkuu2ynls8d8x6RuJEYqIiqfc2l_DoHs
+keria-1  | keri: Kever state: BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE Added to KEL valid said=EIGspjOvYwgoZkuu2ynls8d8x6RuJEYqIiqfc2l_DoHs
+keria-1  | keri: Kever state: BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP First seen ordinal 0 at 2026-10-12T22:02:51.418778+00:00, said=EGm5cP_LsBmVsUuLlCXhfIUgPnRZwFk4bddDfSHWYkXu
+keria-1  | keri: Kever state: BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP Added to KEL valid said=EGm5cP_LsBmVsUuLlCXhfIUgPnRZwFk4bddDfSHWYkXu
+keria-1  | keri: Kever state: BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM First seen ordinal 0 at 2026-10-12T22:02:51.451333+00:00, said=EBou0Po7cpqA9gEyvjHG8LsJ7zrbZVHOmX3KXYi4-_tW
+keria-1  | keri: Kever state: BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM Added to KEL valid said=EBou0Po7cpqA9gEyvjHG8LsJ7zrbZVHOmX3KXYi4-_tW
+keria-1  | keri: Parsed Request: PUT /agent/EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- First seen ordinal 1 at 2026-10-12T22:02:51.732026+00:00, said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB First seen ordinal 0 at 2026-10-12T22:02:53.176541+00:00, said=EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB
+keria-1  | keri: Kever state: EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB Added to KEL valid said=EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 First seen ordinal 0 at 2026-10-12T22:02:54.711492+00:00, said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kevery process: skipped stale update from BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM of reply said=EKCWsSwYk5iWg8sJoGy-0xYFqLt32z_GguVClb5yipst
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EKCWsSwYk5iWg8sJoGy-0xYFqLt32z_GguVClb5yipst', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BLskRTInXnMxWaGqcpSyMgo0nYbalW99cGZESrz3zapM', 'scheme': 'http', 'url': 'http://127.0.0.1:5643/'}}
+keria-1  | keri: Kevery process: skipped stale update from BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX of reply said=EJnHyBduWtVqls4hAvYFpbyiPGggjnnI3zbI9l0k_GJD
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EJnHyBduWtVqls4hAvYFpbyiPGggjnnI3zbI9l0k_GJD', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BIKKuvBwpmDVA4Ds-EpL5bt9OqPzWPja2LigFYZN2YfX', 'scheme': 'http', 'url': 'http://127.0.0.1:5644/'}}
+keria-1  | keri: Kevery process: skipped stale update from BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE of reply said=EKQm_MSgiIL64S0_XfI5IzrgxLuJLNSOqcvrl2lasXbX
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EKQm_MSgiIL64S0_XfI5IzrgxLuJLNSOqcvrl2lasXbX', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BM35JN8XeJSEfpxopjn5jr7tAHCE5749f0OobhMLCorE', 'scheme': 'http', 'url': 'http://127.0.0.1:5645/'}}
+keria-1  | keri: Kevery process: skipped stale update from BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP of reply said=EDhcYhM7xSVlIcbFjl7g5DHCl-SkABl8C6Z_Jxhbz_Xu
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EDhcYhM7xSVlIcbFjl7g5DHCl-SkABl8C6Z_Jxhbz_Xu', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BIj15u5V11bkbtAxMA7gcNJZcax-7TgaBMLsQnMHpYHP', 'scheme': 'http', 'url': 'http://127.0.0.1:5646/'}}
+keria-1  | keri: Kevery process: skipped stale update from BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM of reply said=EMPi076KtW00D9ilSv2xoEDaGPPQ3nASxvcjM_I34y0D
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EMPi076KtW00D9ilSv2xoEDaGPPQ3nASxvcjM_I34y0D', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'BF2rZTW79z4IXocYRQnjjsOuvFUQv-ptCf8Yltd7PfsM', 'scheme': 'http', 'url': 'http://127.0.0.1:5647/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /oobi/EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3/agent/ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd (1, 1)
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov First seen ordinal 0 at 2026-10-12T22:02:54.907660+00:00, said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov First seen ordinal 1 at 2026-10-12T22:02:54.921321+00:00, said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd First seen ordinal 0 at 2026-10-12T22:02:54.930592+00:00, said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /oobi/EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ/agent/ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 0 at 2026-10-12T22:02:55.153854+00:00, said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 1 at 2026-10-12T22:02:55.171678+00:00, said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ First seen ordinal 2 at 2026-10-12T22:02:55.186659+00:00, said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn First seen ordinal 0 at 2026-10-12T22:02:55.201425+00:00, said=EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn First seen ordinal 1 at 2026-10-12T22:02:55.221540+00:00, said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Kever state: ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG First seen ordinal 0 at 2026-10-12T22:02:55.230138+00:00, said=ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG
+keria-1  | keri: Kever state: ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG Added to KEL valid said=ELvQe6-I7pR2sLGUzxZd-kM3UUKg8WSFYPlwbOheOVsG
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /oobi/EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB/agent/EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX (1, 1)
+keria-1  | keri: Kever state: EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB First seen ordinal 0 at 2026-10-12T22:02:55.734240+00:00, said=EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB
+keria-1  | keri: Kever state: EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB Added to KEL valid said=EJd7Y0-e296qizfNFWG9ImYnXwfCWf3fuyhVAPbdEerB
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- First seen ordinal 0 at 2026-10-12T22:02:55.757215+00:00, said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- First seen ordinal 1 at 2026-10-12T22:02:55.769225+00:00, said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX First seen ordinal 0 at 2026-10-12T22:02:55.781229+00:00, said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Parsed Request: GET /oobi/EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3/agent/ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd (1, 1)
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd Added to KEL valid said=ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd
+keria-1  | keri: Kevery process: skipped stale keystate sig datetime from ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd on reply said=ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'ELW8z4rq_wJ1A4lcKBZIgaLAU_2nAiNQ4OZQraPcoQpE', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'ENFGdGSBH1RYaEHOQ-N9RBz44i1TgXrzSAFKhYAYbpDd', 'scheme': 'http', 'url': 'http://127.0.0.1:3902/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/apply missing or does not have verify for said=EDacZ5sasVA5iX6e0gj6iN9blM9L_8bcnoM-IP8WgtG_
+keria-1  | keri: Behavior for /ipex/apply missing or does not have handle for said=EDacZ5sasVA5iX6e0gj6iN9blM9L_8bcnoM-IP8WgtG_
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=ENpNlQiKpmxs0nL0g17nWQgu-naDtRP62d0I9h_um4q4
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=ENpNlQiKpmxs0nL0g17nWQgu-naDtRP62d0I9h_um4q4
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/offer missing or does not have verify for said=EKIBjHw8YbQx21QW4U5MHJuaZle18G5hqC7EGAIN8qLo
+keria-1  | keri: Behavior for /ipex/offer missing or does not have handle for said=EKIBjHw8YbQx21QW4U5MHJuaZle18G5hqC7EGAIN8qLo
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=EPzi8MLnQ2Zix6TCI6CiNbd-iEnIDrCx6aNKiFoMmxSp
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=EPzi8MLnQ2Zix6TCI6CiNbd-iEnIDrCx6aNKiFoMmxSp
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/agree missing or does not have verify for said=EC33wYCOXqgAKTg7HU3d0M25Ft1POOxg4LI2spnfEU2x
+keria-1  | keri: Behavior for /ipex/agree missing or does not have handle for said=EC33wYCOXqgAKTg7HU3d0M25Ft1POOxg4LI2spnfEU2x
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=EMYjFkXDJNRU9uodzKkNsEUGTM6eyGIpsLR6-mofN1Zj
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=EMYjFkXDJNRU9uodzKkNsEUGTM6eyGIpsLR6-mofN1Zj
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/grant missing or does not have verify for said=EPQkUJ--NibHUCETvdM-QRacYRLErY2XAnYCmQnDMkt2
+keria-1  | keri: Behavior for /ipex/grant missing or does not have handle for said=EPQkUJ--NibHUCETvdM-QRacYRLErY2XAnYCmQnDMkt2
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=EKew2zx01sSleVl4l11EFxXlzYVR-IgK3kCeO6S4RRPu
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=EKew2zx01sSleVl4l11EFxXlzYVR-IgK3kCeO6S4RRPu
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=EHDphg4gf0oRm-LBQWpelA69SLMzyqXCDFyNeQrqh8aC
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=EHDphg4gf0oRm-LBQWpelA69SLMzyqXCDFyNeQrqh8aC
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kever state: EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3 Added to KEL valid said=EEu2qsjiR8yDG7PwqUBx43kPvRVC0yvvlESPiHrJaCw3
+keria-1  | keri: Tever state: b'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE' Added to TEL valid said=EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE
+keria-1  | keri: Tever state: b'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD' Added to TEL valid said=EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/admit missing or does not have verify for said=EHAd7riAtKRS9WFTscHqOvGnWdzoTwmpLBjlFuC6G3LW
+keria-1  | keri: Behavior for /ipex/admit missing or does not have handle for said=EHAd7riAtKRS9WFTscHqOvGnWdzoTwmpLBjlFuC6G3LW
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kevery msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON0000ed_', 't': 'iss', 'd': 'EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt', 'i': 'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD', 's': '0', 'ri': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'dt': '2026-10-12T22:02:31.261000+00:00'} with sn 0.
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=ELrQs9C2xLuax6plEdZIiLWXqLsNrLiQiV8LjenFDcTg
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=ELrQs9C2xLuax6plEdZIiLWXqLsNrLiQiV8LjenFDcTg
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parser msg non-extraction error: Missing KEL of delegator EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- of evt = {'v': 'KERI10JSON00015f_', 't': 'dip', 'd': 'EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX', 'i': 'EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX', 's': '0', 'kt': '1', 'k': ['DIEhvyFC5Pwh1JEahDImPstv4CALU1WZHfcj29mI5GHC'], 'nt': '1', 'n': ['EJB3P36owPdmuFtUSrGtGk9lOCaNJntFvYx5LTAIENKn'], 'bt': '0', 'b': [], 'c': [], 'a': [], 'di': 'EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-'}.
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- First seen ordinal 0 at 2026-10-12T22:03:07.346407+00:00, said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- First seen ordinal 1 at 2026-10-12T22:03:07.410195+00:00, said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX First seen ordinal 0 at 2026-10-12T22:03:07.452398+00:00, said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Kevery unescrow succeeded in valid event: event=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kevery process: skipped stale keystate sig datetime from EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX on reply said=EEu4j_SF1Y-YGBHHVKS1Rbh-JMbHr7QmFJSHV8dyxPS5
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EEu4j_SF1Y-YGBHHVKS1Rbh-JMbHr7QmFJSHV8dyxPS5', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX', 'scheme': 'http', 'url': 'http://127.0.0.1:3902/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parser msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON000113_', 't': 'vcp', 'd': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'i': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'ii': 'EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ', 's': '0', 'c': ['NB'], 'bt': '0', 'b': [], 'n': 'APZShQk-o-CTS6oS8vfeK9yP_SR44VD8F21En48cDrA8'}.
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parser msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON0000ed_', 't': 'iss', 'd': 'EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt', 'i': 'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD', 's': '0', 'ri': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'dt': '2026-10-12T22:02:31.261000+00:00'} with sn 0.
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST /boot (1, 1)
+keria-1  | keri: Parsed Request: GET /agent/ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT /agent/ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov (1, 1)
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Kever state: ENR18SefmbEhlVHNoL5EOoXCT85IlgkbipNlEc56ZIov Added to KEL valid said=EPsGJnLdriGR-PTAAFmbsYfsfo8pfzzthYvXtGoj-d_3
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Behavior for /ipex/admit missing or does not have verify for said=EErus_yxLsTKHnv9E6cd-7I_nemUMNQ1c-FIuDiB5qAR
+keria-1  | keri: Behavior for /ipex/admit missing or does not have handle for said=EErus_yxLsTKHnv9E6cd-7I_nemUMNQ1c-FIuDiB5qAR
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Kevery msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON0000ed_', 't': 'iss', 'd': 'EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt', 'i': 'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD', 's': '0', 'ri': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'dt': '2026-10-12T22:02:31.261000+00:00'} with sn 0.
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: PUT / (1, 1)
+keria-1  | keri: Behavior for /essr/req missing or does not have verify for said=EPHNSRREyc7O_5i3aOC3sM09AKIYU60gA75z1v6IOGdA
+keria-1  | keri: Behavior for /essr/req missing or does not have handle for said=EPHNSRREyc7O_5i3aOC3sM09AKIYU60gA75z1v6IOGdA
+keria-1  | keri: exn event for route /ipex/admit failed behavior verfication.  said=EErus_yxLsTKHnv9E6cd-7I_nemUMNQ1c-FIuDiB5qAR
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ-
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kevery process: skipped stale keystate sig datetime from EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX on reply said=EEu4j_SF1Y-YGBHHVKS1Rbh-JMbHr7QmFJSHV8dyxPS5
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EEu4j_SF1Y-YGBHHVKS1Rbh-JMbHr7QmFJSHV8dyxPS5', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX', 'scheme': 'http', 'url': 'http://127.0.0.1:3902/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EIKNEIbBsxDYDO2xTeTchXeMhYCAQti8Z2ixfOGrWfZ- Added to KEL valid said=EL8HW_bmJVckn7sieit25PYK-iZX4iN-XLheYahW2U50
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX Added to KEL valid said=EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kevery process: skipped stale keystate sig datetime from EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX on reply said=EEu4j_SF1Y-YGBHHVKS1Rbh-JMbHr7QmFJSHV8dyxPS5
+keria-1  | keri: Parser msg non-extraction error: Unverified loc scheme reply. {'v': 'KERI10JSON0000fa_', 't': 'rpy', 'd': 'EEu4j_SF1Y-YGBHHVKS1Rbh-JMbHr7QmFJSHV8dyxPS5', 'dt': '2022-01-20T12:57:59.823350+00:00', 'r': '/loc/scheme', 'a': {'eid': 'EEwpNVrP-mr5bPRvd9Bjrtn4jlGsislNQ-p9vfD3S5GX', 'scheme': 'http', 'url': 'http://127.0.0.1:3902/'}}
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: GET /agent/EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EIrxQb4LoXGOo-zFGLhAT6NoOyUM2jTj5yj73kzguyo2
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Kever state: EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ Added to KEL valid said=EKTXGLwWQnrVE6strwcdzbZfgq026xVrHDQ8j2kBL8-G
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parser msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON000113_', 't': 'vcp', 'd': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'i': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'ii': 'EGswvO_IIGeBgd_qkzh3_qqAwwjHPLiZszwvqhZHnXzJ', 's': '0', 'c': ['NB'], 'bt': '0', 'b': [], 'n': 'APZShQk-o-CTS6oS8vfeK9yP_SR44VD8F21En48cDrA8'}.
+keria-1  | keri: Parsed Request: PUT /agent/EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn (1, 1)
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Kever state: EJuyx71F2AFgqBVLuzVPKvC9VfpT7WyNfZdXS_Uqm7hn Added to KEL valid said=EH5J67txKR_MaYeVByoSsWC67AbVp7spDCNvNnldLL7k
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parser msg non-extraction error: Likely Duplicitous event={'v': 'KERI10JSON0000ed_', 't': 'iss', 'd': 'EIdMRMXsqGbm87Tu_LiLT6sl9sZKhzWz0R68lN1pDBqt', 'i': 'EG0z3j6ZPjv2lAYYmBqrNoQedt4AJyjUBsS27Rp1F2ZD', 's': '0', 'ri': 'EKWp6k1E2llcqptSs6AdArdA-jhdYJLufOKJva7kNxIE', 'dt': '2026-10-12T22:02:31.261000+00:00'} with sn 0.
+keria-1  | keri: Parsed Request: POST / (1, 1)
+keria-1  | keri: Parsed Request: POST / (1, 1)

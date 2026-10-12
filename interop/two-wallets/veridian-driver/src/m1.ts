@@ -23,6 +23,14 @@ globalThis.setTimeout = ((handler, delay, ...args) => {
   return timer;
 }) as typeof setTimeout;
 
+export function startPollers(poller: any) {
+  poller.startPolling();
+  pollingContext.run(true, () => {
+    void poller.pollNotifications();
+    void poller.pollLongOperations();
+  });
+}
+
 const root = path.resolve(__dirname, '..', 'interop', 'two-wallets');
 const veridianCommit = 'd41ce8811f790b9883176539794e68d36fa66bba';
 const signifyTsCommit = '62a646f1eb67c30c8f1aecfe628d81dd693b60f2';
@@ -40,11 +48,7 @@ export async function runM1(keepPolling = false) {
   await SecureStorage.set(KeyStoreKeys.SIGNIFY_BRAN, bran);
   await agent.bootAndConnect({ bootUrl: 'http://127.0.0.1:3903', url: 'http://127.0.0.1:3901' });
   const poller = agent.keriaNotifications;
-  poller.startPolling();
-  pollingContext.run(true, () => {
-    void poller.pollNotifications();
-    void poller.pollLongOperations();
-  });
+  startPollers(poller);
   try {
     const result = await agent.identifiers.createIdentifier({ displayName: 'holder', theme: 0 });
     const aid = result.identifier;

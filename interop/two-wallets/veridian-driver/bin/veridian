@@ -2,5 +2,5 @@
 set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 mode=${1:-}
-if [[ "$mode" != m1 && "$mode" != m2 ]]; then echo 'Usage: veridian m1|m2' >&2; exit 2; fi
+if [[ "$mode" != m1 && "$mode" != m2 && "$mode" != m3 && "$mode" != export ]]; then echo 'Usage: veridian m1|m2|m3|export' >&2; exit 2; fi
 nice -n 19 ionice -c 3 node --experimental-strip-types "$root/src/launcher.ts" "$mode"

@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+import { saveState } from './state';
 
 const root = path.resolve(__dirname, '..', 'interop', 'two-wallets');
 const out = path.join(root, 'out');
@@ -24,19 +25,21 @@ async function kel(aid: string): Promise<Buffer> {
   return Buffer.from(await response.arrayBuffer());
 }
 
-async function main() {
+export async function runM2(keepAlive = false) {
   // Fake IndexedDB and the secure-storage shim live in this process. Running
   // M1 here keeps the same Veridian Agent and local metadata through admit.
   process.env.G17_EMBED_M1 = '1';
   const { runM1 } = await import('./m1');
   const { agent, poller, output: holder } = await runM1(true);
   await rm(path.join(out, 'm2.json'), { force: true });
-  await rm(fixtures, { recursive: true, force: true });
+  const makeFixtures = !keepAlive && !process.env.G17_NO_FIXTURES;
+  if (makeFixtures) await rm(fixtures, { recursive: true, force: true });
   await rm(path.join(out, 'issuer.json'), { force: true });
   await rm(path.join(out, 'holder-ready'), { force: true });
   const child = spawn(path.join(root, 'veridian-driver', 'bin', 'issuer'), [], {
-    stdio: 'inherit', env: process.env,
+    stdio: 'inherit', env: process.env, detached: true,
   });
+  let succeeded = false;
   try {
     const issued = await until('issuer grant', async () => {
       if (child.exitCode !== null) throw new Error(`Issuer exited with ${child.exitCode}`);
@@ -74,27 +77,38 @@ async function main() {
     await agent.ipexCommunications.admitAcdcFromGrant(note.id);
     await until('Veridian credential listing', async () =>
       (await agent.credentials.getCredentials()).find((c: any) => c.id === issued.said));
-    await mkdir(fixtures, { recursive: true });
-    const credential = await agent.client.credentials().get(issued.said, true);
-    if (typeof credential !== 'string' || !credential.includes(issued.said))
-      throw new Error('Holder CESR export did not contain credential SAID.');
-    await writeFile(path.join(fixtures, 'credential.cesr'), credential, 'utf8');
-    await writeFile(path.join(fixtures, 'holder-kel.cesr'), await kel(holder.aid));
-    await writeFile(path.join(fixtures, 'issuer-kel.cesr'), await kel(issued.issuer));
-    await writeFile(path.join(fixtures, 'holder.json'), JSON.stringify({
-      bran: holder.bran, sxlt: holder.sxlt, aid: holder.aid,
-    }, null, 2) + '\n');
+    if (makeFixtures) {
+      await mkdir(fixtures, { recursive: true });
+      const credential = await agent.client.credentials().get(issued.said, true);
+      if (typeof credential !== 'string' || !credential.includes(issued.said))
+        throw new Error('Holder CESR export did not contain credential SAID.');
+      await writeFile(path.join(fixtures, 'credential.cesr'), credential, 'utf8');
+      await writeFile(path.join(fixtures, 'holder-kel.cesr'), await kel(holder.aid));
+      await writeFile(path.join(fixtures, 'issuer-kel.cesr'), await kel(issued.issuer));
+      await writeFile(path.join(fixtures, 'holder.json'), JSON.stringify({
+        bran: holder.bran, sxlt: holder.sxlt, aid: holder.aid,
+      }, null, 2) + '\n');
+    }
     const result = {
       said: issued.said, issuer: issued.issuer, registry: issued.registry,
       schema: issued.schema, holder: holder.aid,
     };
     await writeFile(path.join(out, 'm2.json'), JSON.stringify(result, null, 2) + '\n');
+    await saveState(agent);
     console.log(`Veridian holds ${issued.said}`);
+    succeeded = true;
+    return { agent, poller, holder, issued, child };
   } finally {
-    poller.stopPolling();
-    child.kill('SIGTERM');
+    if (!keepAlive || !succeeded) {
+      poller.stopPolling();
+      try { process.kill(-child.pid!, 'SIGTERM'); }
+      catch (error: any) { if (error.code !== 'ESRCH') throw error; }
+      if (child.exitCode === null) await new Promise((resolve) => child.once('exit', resolve));
+    }
     await rm(path.join(out, 'holder-ready'), { force: true });
   }
 }
 
-main().catch((error) => { console.error(error); process.exitCode = 1; });
+if (!process.env.G17_EMBED_M2) {
+  runM2().catch((error) => { console.error(error); process.exitCode = 1; });
+}
