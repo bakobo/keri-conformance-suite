@@ -1,6 +1,6 @@
-# G17 two-wallet interop, milestone M1
+# G17 two-wallet interop, milestones M1 and M2
 
-This is a live observation of pinned implementations, not a conformance verdict. M1 starts the six witnesses used by Veridian, boots Veridian's own `src/core` in a Node process, creates a witnessed holder AID, and checks the witness's KERI 1.x CESR with heti's keripy fork. It does not yet issue or present an ACDC.
+This is a live observation of pinned implementations, not a conformance verdict. M1 starts the six witnesses used by Veridian, boots Veridian's own `src/core` in a Node process, creates a witnessed holder AID, and checks the witness's KERI 1.x CESR with heti's keripy fork. M2 creates a separate issuer on the same KERIA, issues a SEDI-shaped 1.x ACDC, grants it over IPEX, and admits it through Veridian's core.
 
 ## Pins and prerequisites
 
@@ -36,4 +36,14 @@ nice -n 19 ionice -c 3 interop/two-wallets/scripts/m1.sh
 
 Run the offline vector generator alone with `nice -n 19 ionice -c 3 interop/two-wallets/veridian-driver/bin/vectors`. Stop and reset the services with `nice -n 19 ionice -c 3 interop/two-wallets/scripts/down.sh`. This removes the named Docker volumes.
 
-See [INCOMPATIBILITIES.md](INCOMPATIBILITIES.md) for the seams observed in M1.
+## M2: issue and hold
+
+```sh
+nice -n 19 ionice -c 3 interop/two-wallets/scripts/m2.sh
+```
+
+`m2.sh` first resets the volumes, starts the M1 services, then runs M1 creation and M2 admission **in one Node process** with `veridian m2`. This preserves Veridian's fake IndexedDB and secure-storage state until admission finishes. It then runs the M1 witness KEL check. The issuer CLI runs as a child process and serves the generated schema at `http://127.0.0.1:7723/oobi/<schema-said>` during the grant. The holder's issuer connection and schema OOBI resolution complete before the issuer sends the grant.
+
+`schemas/sedi-core-1x.schema.json` keeps the SAM core attribute section unchanged and uses the 1.x top-level ACDC fields. Its keripy `Schemer` SAID is `EP3O5QNAho8Z7B9TTTdHWK7Ge_sPgZciw8Y4tYjpITqY`. `out/m2.json` records the credential, issuer, registry, schema, and holder identifiers. `fixtures/m2/credential.cesr` is the exact holder-agent CESR response; `holder-kel.cesr` and `issuer-kel.cesr` are the exact witness responses; `holder.json` contains the holder bran, `sxlt`, and AID. These fixtures include wallet recovery material and are intended for heti's interop tests.
+
+The issuer uses the pinned signify-ts client and signing primitives. Its `credentials().issue` helper inserts `a.dt`, which the unchanged SAM attribute schema rejects; the local issuer path submits the same signed 1.x events without that field. The driver also bridges two Veridian core assumptions about this schema during admission, without editing Veridian. See [INCOMPATIBILITIES.md](INCOMPATIBILITIES.md) for evidence and ownership of every observed seam.

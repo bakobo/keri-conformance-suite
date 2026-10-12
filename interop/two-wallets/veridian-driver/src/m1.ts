@@ -27,7 +27,7 @@ const root = path.resolve(__dirname, '..', 'interop', 'two-wallets');
 const veridianCommit = 'd41ce8811f790b9883176539794e68d36fa66bba';
 const signifyTsCommit = '62a646f1eb67c30c8f1aecfe628d81dd693b60f2';
 
-async function main() {
+export async function runM1(keepPolling = false) {
   const [{ Agent }, { SecureStorage, KeyStoreKeys }, { ready }] = await Promise.all([
     import('@veridian/core/agent/agent'),
     import('@veridian/core/storage/secureStorage/secureStorage'),
@@ -70,12 +70,15 @@ async function main() {
     await mkdir(path.join(root, 'out'), { recursive: true });
     await writeFile(path.join(root, 'out', 'm1.json'), JSON.stringify(output, null, 2) + '\n');
     console.log(`Created and witnessed holder ${aid}`);
+    return { agent, poller, output };
   } finally {
-    poller.stopPolling();
+    if (!keepPolling) poller.stopPolling();
   }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (!process.env.G17_EMBED_M1) {
+  runM1().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

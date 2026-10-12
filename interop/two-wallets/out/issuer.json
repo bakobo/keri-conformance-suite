@@ -1,0 +1,9 @@
+{
+  "bran": "g17issuerpassphrase2026",
+  "issuer": "EAMeBT18-7V_6zJ9ODq65DB59cmsukDET5C0JQnyKhKr",
+  "issuerOobi": "http://127.0.0.1:3902/oobi/EAMeBT18-7V_6zJ9ODq65DB59cmsukDET5C0JQnyKhKr/agent/EMsiNY_WKhBfFqQJIGiXe1Fpta-uRaMD7eoMWKRCf-vg",
+  "registry": "EOnSc7JeG8iPjYxZPVoHd_NqtUchS4s7l9cW0joj9X-I",
+  "schema": "EP3O5QNAho8Z7B9TTTdHWK7Ge_sPgZciw8Y4tYjpITqY",
+  "said": "EEV6iE0GSbHV0vVk8iebw-zG877SGmfCRVjV2KRBhpFs",
+  "nestedSaidification": "client-side; credentials().issue saidifies a and ACDC only, and inserts forbidden a.dt"
+}
