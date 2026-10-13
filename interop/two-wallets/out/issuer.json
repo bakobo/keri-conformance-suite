@@ -1,9 +1,9 @@
 {
   "bran": "g17issuerpassphrase2026",
-  "issuer": "EB89dDu8g-KRrryDscrqUM7j3Fq7b7hShfcmlEdl2BWY",
-  "issuerOobi": "http://127.0.0.1:3902/oobi/EB89dDu8g-KRrryDscrqUM7j3Fq7b7hShfcmlEdl2BWY/agent/ELgg_Q3082qsze1Fv7XrDdfZc8YYE2WhMc9PjzTWtCSa",
-  "registry": "EMxKfNAD8VhxbRACDyDzcaRxqzrUc0XNaVaFm-pStQ1m",
+  "issuer": "EOQ9T_iRbtNrHh2DQTqz3gOgAnaMjWhvym4WUVkdC8dT",
+  "issuerOobi": "http://127.0.0.1:3902/oobi/EOQ9T_iRbtNrHh2DQTqz3gOgAnaMjWhvym4WUVkdC8dT/agent/EJWFp_zjW9WG3Ffknw0NNR9p9QJmiNy8H6o1TEozCJbQ",
+  "registry": "EHXGr_NgXs7sCmnRELqU6TBUCEcdblXKDXvPKw-RSp9_",
   "schema": "EP3O5QNAho8Z7B9TTTdHWK7Ge_sPgZciw8Y4tYjpITqY",
-  "said": "EETPwM8pyN5bDCiYmyc1CgOrY4U4eBDKRSL8URgfzH0J",
+  "said": "EJ5QW5yskR70iKNnRhWMn6a9RX-LksjgbBzKiujvl5Nv",
   "nestedSaidification": "client-side; credentials().issue saidifies a and ACDC only, and inserts forbidden a.dt"
 }

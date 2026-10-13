@@ -114,9 +114,14 @@ async function run() {
       await writeFile(path.join(out, 'm3-veridian-admit.json'),
         JSON.stringify({ said: admit, grant_said: presentation.grant_said }, null, 2) + '\n');
     const coreNotes = await agent.keriaNotifications.getNotifications();
-    const keriaNotes = await agent.client.notifications().list(0, 99);
-    const keriaAdmits = await Promise.all(keriaNotes.notes
-      .filter((n: any) => n.a?.r === '/exn/ipex/admit')
+    const keriaNotes: any[] = [];
+    for (let start = 0; ; start += 100) {
+      const page = await agent.client.notifications().list(start, start + 99);
+      keriaNotes.push(...page.notes);
+      if (page.notes.length === 0 || keriaNotes.length >= page.total) break;
+    }
+    const keriaAdmits = await Promise.all(keriaNotes
+      .filter((n: any) => n.a?.r === '/exn/ipex/admit' && n.a?.d === presentation.admit_said)
       .map(async (n: any) => {
         const exchange = await agent.client.exchanges().get(n.a.d);
         return { said: exchange.exn.d, route: exchange.exn.r,

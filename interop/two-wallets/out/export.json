@@ -1,9 +1,9 @@
 {
-  "mnemonic": "donkey permit bulk suggest guilt captain maze coast dance myself beef pill stage boy throw abandon abandon acoustic",
-  "bran": "A4dxlvzDbaf7RHPRmB5xP",
-  "aid": "EH1RJOPKW9ZbOeaXd7kMVjipYY1D-29NY12laUqQXikq",
-  "sxlt": "1AAHj0GM6EaKg5EblUFE617NTkF6otft0cOp6QaR80ICtlDc6hBxmlhoKY9pqvI9rWcysNpMy9_syNQu_0Xj1mrz5EH5b4RX3SzM",
-  "said": "EETPwM8pyN5bDCiYmyc1CgOrY4U4eBDKRSL8URgfzH0J",
+  "mnemonic": "dutch degree equal mimic shell powder never coconut erase glory obscure holiday grow pole sting abandon abandon access",
+  "bran": "Dg90FlWReAgLlra6fqO5x",
+  "aid": "ENcVMaocgyhPhjDW-32kQ9tjDgz0mAJb24w83Vjh5xJv",
+  "sxlt": "1AAHR6mMQAfpa9aSyYutDDTIO7I8OERnKc7onG9aoLAY60hNkhpqPAUnb6KG9fZBQj1pgUSk3OZI9QhVr-picngpEm-DDOPusT4A",
+  "said": "EJ5QW5yskR70iKNnRhWMn6a9RX-LksjgbBzKiujvl5Nv",
   "sxlt_source": "Veridian local IdentifierMetadataRecord",
   "credential_source": "holder KERIA agent via signify-ts credentials().get(said, true)",
   "credential_requires_old_agent_online": true
