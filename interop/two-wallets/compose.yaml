@@ -1,0 +1,28 @@
+name: g17-two-wallets
+services:
+  witnesses:
+    image: weboftrust/keri:1.1.26
+    network_mode: host
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONIOENCODING: UTF-8
+    entrypoint: [kli]
+    command: [witness, demo]
+    volumes:
+      - ./config/witnesses:/keripy/scripts/keri/cf/main
+      - witness-data:/usr/local/var/keri
+  keria:
+    image: g17/keria:bca7acc
+    network_mode: host
+    depends_on: [witnesses]
+    environment:
+      KERI_AGENT_CORS: "true"
+      ALLOW_INTRODUCTIONS: "true"
+      REMOTE_SIGNING: "true"
+    entrypoint: [keria, start, --config-file, backer-oobis, --config-dir, ./scripts, --loglevel, INFO]
+    volumes:
+      - ./config/config.json:/keria/scripts/keri/cf/backer-oobis.json
+      - keria-data:/usr/local/var/keri
+volumes:
+  witness-data:
+  keria-data:
