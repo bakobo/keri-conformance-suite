@@ -7,6 +7,7 @@ rm -f "$root/out/verifier.json" "$root/out/m3-veridian.json" "$root/out/m3-heti.
   "$root/out/verifier-holder-ready" "$root/out/export.json" \
   "$root/out/export-credential.cesr" "$root/out/heti-holder.json" \
   "$root/out/heti-grant.cesr" "$root/out/admit-behavior.log"
+rm -f "$root/out/m3-veridian-admit.json" "$root/out/m3-veridian-admit-check.json"
 rm -rf "$root/out/heti-holder"
 "$root/scripts/up.sh"
 G17_NO_FIXTURES=1 nice -n 19 ionice -c 3 "$root/veridian-driver/bin/veridian" m2

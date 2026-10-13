@@ -1,0 +1,15 @@
+{
+  "grant_said": "ELIpn75VEP-Jc9Uc_CMGwiVUFKlMpc30W0R7PAULBBzN",
+  "admit_said": "EKFG0pA7uG5A6705rz3LMc1nJIOp4AcprO-9BAOTERiL",
+  "holder_received_admit": null,
+  "core_admit_notifications": [],
+  "keria_admit_notifications": [
+    {
+      "said": "EKFG0pA7uG5A6705rz3LMc1nJIOp4AcprO-9BAOTERiL",
+      "route": "/ipex/admit",
+      "prior": "ELIpn75VEP-Jc9Uc_CMGwiVUFKlMpc30W0R7PAULBBzN",
+      "sender": "EJu6obTYCZKf9OpzZ_hWIz1_O30IPHAwUvWMRRDvBVPy",
+      "id": "0ACSYk6-3WlHlVHn3ZW_D07H"
+    }
+  ]
+}

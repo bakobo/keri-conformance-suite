@@ -8,6 +8,7 @@ from urllib.request import urlopen
 
 from keri.core.eventing import Kevery
 from keri.core.parsing import Parser
+from keri.core.routing import Revery, Router
 from keri.db.basing import Baser
 from keri.kering import Vrsn_1_0
 
@@ -36,7 +37,10 @@ def main() -> None:
 
     db = Baser(name="g17-witness-fetch", temp=True, reopen=True)
     try:
-        kevery = Kevery(db=db, lax=False, local=False)
+        router = Router()
+        revery = Revery(db=db, rtr=router, lax=False, local=False)
+        kevery = Kevery(db=db, lax=False, local=False, rvy=revery)
+        kevery.registerReplyRoutes(router=router)
         claimed: dict[str, int] = {}
         process = kevery.processEvent
 
@@ -45,7 +49,16 @@ def main() -> None:
             return process(serder, **kwa)
 
         kevery.processEvent = recording
-        Parser(version=Vrsn_1_0).parse(ims=bytearray(kel), kvy=kevery, local=False)
+        faults = []
+        Parser(version=Vrsn_1_0).parse(
+            ims=bytearray(kel), kvy=kevery, rvy=revery, local=False, faults=faults
+        )
+        if faults:
+            first = faults[0]
+            raise RuntimeError(
+                f"{KEL_UNVERIFIED}: Witness KEL for {aid} had {len(faults)} parser fault(s); "
+                f"first was {first.kind} at byte offset {first.offset}."
+            )
         kevery.processEscrows()
         kever = kevery.kevers.get(aid)
         if kever is None:

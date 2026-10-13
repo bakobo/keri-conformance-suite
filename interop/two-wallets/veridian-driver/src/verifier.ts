@@ -56,7 +56,8 @@ async function record(client: SignifyClient, wallet: string, notification: any, 
     const agreement = await client.exchanges().get(grant.exn.p);
     const offer = await client.exchanges().get(agreement.exn.p);
     if (agreement.exn.d !== chain.agree || agreement.exn.r !== '/ipex/agree' ||
-        agreement.exn.i !== chain.verifier || offer.exn.r !== '/ipex/offer' ||
+        agreement.exn.i !== chain.verifier || offer.exn.d !== agreement.exn.p ||
+        offer.exn.r !== '/ipex/offer' ||
         offer.exn.i !== expected.holder || offer.exn.p !== chain.apply)
       throw new Error('Veridian grant prior chain does not lead to the verifier apply.');
   }
@@ -77,6 +78,15 @@ async function record(client: SignifyClient, wallet: string, notification: any, 
   if (admit.ked.p !== grant.exn.d)
     throw new Error(`${wallet} admit does not name the logged grant in its prior field.`);
   await wait(client, client.ipex().submitAdmit('verifier', admit, sigs, atc, [sender]));
+  let admitLogged = false;
+  if (heldBefore) {
+    const logged = await until(`${wallet} admit exchange`, async () =>
+      client.exchanges().get(admit.ked.d));
+    if (logged.exn.d !== admit.ked.d || logged.exn.r !== '/ipex/admit' ||
+        logged.exn.p !== grant.exn.d)
+      throw new Error(`${wallet} admit exchange does not name the admitted grant.`);
+    admitLogged = true;
+  }
   const credential = await until(`${wallet} credential`, async () => {
     const got = await client.credentials().get(expected.said);
     return got?.sad?.d === expected.said ? got : undefined;
@@ -88,6 +98,7 @@ async function record(client: SignifyClient, wallet: string, notification: any, 
     tel_status: tel.et, sender, grant_said: grant.exn.d,
     admit_said: admit.ked.d, fresh_admission: !heldBefore,
     grant_logged: true, embedded_acdc: carried.d, admit_prior: admit.ked.p,
+    admit_logged: admitLogged, holder_received_admit: null, holder_agent_received_admit: false,
   };
   if (result.issuer !== expected.issuer || result.issuee !== expected.holder ||
       result.schema !== expected.schema || result.tel_status !== 'iss')
@@ -105,7 +116,8 @@ async function proof(expected: any) {
       veridian.sender !== expected.holder || heti.sender !== expected.holder ||
       !veridian.grant_logged || !heti.grant_logged ||
       veridian.admit_prior !== veridian.grant_said || heti.admit_prior !== heti.grant_said ||
-      veridian.fresh_admission !== false || heti.fresh_admission !== true)
+      veridian.fresh_admission !== false || heti.fresh_admission !== true ||
+      veridian.admit_logged !== true || veridian.holder_agent_received_admit !== true)
     throw new Error('Both verified presentations of the expected credential are required for M4.');
   const issuerInfo = JSON.parse(await readFile(path.join(out, 'issuer.json'), 'utf8'));
   const issuer = new SignifyClient('http://127.0.0.1:3901', issuerInfo.bran,
@@ -217,8 +229,23 @@ async function main() {
   await wait(client, client.ipex().submitAgree('verifier', agree, agreeSigs, [holder.aid]));
   const veridianNote = await until('Veridian grant', async () =>
     notes(client, '/exn/ipex/grant', seen), 180_000);
-  await record(client, 'veridian', veridianNote, expected, seen,
+  const veridian = await record(client, 'veridian', veridianNote, expected, seen,
     { apply: apply.ked.d, agree: agree.ked.d, verifier: aid });
+  const receipt = await until('Veridian admit receipt check', async () => {
+    try { return JSON.parse(await readFile(path.join(out, 'm3-veridian-admit-check.json'), 'utf8')); }
+    catch { return undefined; }
+  }, 60_000);
+  if (receipt.grant_said !== veridian.grant_said ||
+      receipt.admit_said !== veridian.admit_said ||
+      (receipt.holder_received_admit !== null &&
+       receipt.holder_received_admit !== veridian.admit_said))
+    throw new Error('Veridian admit receipt check does not match the submitted admit.');
+  if (!receipt.keria_admit_notifications?.some((n: any) => n.said === veridian.admit_said &&
+      n.route === '/ipex/admit' && n.prior === veridian.grant_said && n.sender === aid))
+    throw new Error("Veridian's KERIA agent did not receive the verifier's admit.");
+  veridian.holder_received_admit = receipt.holder_received_admit;
+  veridian.holder_agent_received_admit = true;
+  await writeFile(path.join(out, 'm3-veridian.json'), JSON.stringify(veridian, null, 2) + '\n');
   console.log(`Verifier admitted Veridian grant ${veridianNote.a.d}`);
   await proof(expected);
 }

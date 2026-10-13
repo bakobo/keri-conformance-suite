@@ -1,9 +1,9 @@
 {
-  "mnemonic": "drop famous assist index repeat remember often aisle debris must swallow thought case brick answer abandon abandon agent",
-  "bran": "CjT79kkkfh-8rClpr27Bh",
-  "aid": "EHxEymowBDRMj639HrsKG0-6Cp6L_n_5IIv_HmU7SZZD",
-  "sxlt": "1AAH8W0oRIePC1lsIBhzBvUP9sQXUuuSYrsqiKbX9YboZVXcGyuiUxbhAjWM3JtDBXWoIypcY2_mX6S5Q9Eq2hw1N78KULGvohqF",
-  "said": "EEZQtAFMO76EoHl9rw1D0s1aFRj4LWl2ThSdW7HcnLP_",
+  "mnemonic": "donkey permit bulk suggest guilt captain maze coast dance myself beef pill stage boy throw abandon abandon acoustic",
+  "bran": "A4dxlvzDbaf7RHPRmB5xP",
+  "aid": "EH1RJOPKW9ZbOeaXd7kMVjipYY1D-29NY12laUqQXikq",
+  "sxlt": "1AAHj0GM6EaKg5EblUFE617NTkF6otft0cOp6QaR80ICtlDc6hBxmlhoKY9pqvI9rWcysNpMy9_syNQu_0Xj1mrz5EH5b4RX3SzM",
+  "said": "EETPwM8pyN5bDCiYmyc1CgOrY4U4eBDKRSL8URgfzH0J",
   "sxlt_source": "Veridian local IdentifierMetadataRecord",
   "credential_source": "holder KERIA agent via signify-ts credentials().get(said, true)",
   "credential_requires_old_agent_online": true

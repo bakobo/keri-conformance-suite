@@ -7,7 +7,7 @@ Run of 2026-10-12, pins in [README.md](README.md). This is an observation of pin
 A SEDI-shaped ACDC (the SAM core identity schema, reshaped at the top level for KERI 1.x and with its attribute section unchanged) was issued over KERIA by a signify-ts issuer and held by Veridian's own wallet core. The holder then moved to heti without the issuer doing anything. Both wallets presented the same credential to one verifier, from the same holder AID:
 
 - The holder left Veridian through Veridian's own export: the recovery phrase, the bran recovered from it, the AID's sealed salt from Veridian's local metadata, and the credential stream from the holder's KERIA agent. heti's KERI 1.x bridge (heti `src/heti/anchored/interop/keri1.py`) re-derived the AID's keys exactly as signify-ts does. It adopted the AID only after checking that those keys incepted the KEL its witnesses serve. It then verified and held the credential and signed a 1.x `/ipex/grant`. The harness delivered heti's bytes unchanged. KERIA accepted the grant, and its admission was the verifier's first sight of the credential. KERIA then held the credential with `iss` status (`out/m3-heti.json`).
-- Veridian then presented through its own apply, offer, agree and grant flow. KERIA logged the grant after verifying its signatures; the verifier checked its holder sender and embedded credential, admitted that grant, and recorded the admit's prior link to it (`out/m3-veridian.json`).
+- Veridian then presented through its own apply, offer, agree and grant flow. KERIA logged the grant after verifying its signatures; the verifier checked its holder sender and embedded credential, admitted that grant, and verified that KERIA logged the admit exchange with `p` naming Veridian's grant (`out/m3-veridian.json`). Veridian's own KERIA agent then received that admit (`out/m3-veridian-admit-check.json`). M4 requires both for Veridian's presentation.
 - There was no reissue. The issuer's registry lists one credential, and its TEL holds a single `iss` at sequence number 0 (`out/m4.json`).
 
 heti's grant also verifies under stock keripy 1.x's `Exchanger` (heti `tests/interop/test_keri1_present.py`). That test's fixtures are the live run's bytes, not anything heti produced.
@@ -21,6 +21,7 @@ The migration is one-way and incomplete:
 - heti refuses an AID that has already rotated.
 - After the move, both wallets hold live keys for the AID until one of them rotates it. heti cannot yet rotate an adopted AID.
 - The AID's published endpoint still names Veridian's agent. heti can therefore present, but the verifier's admit receipt goes to Veridian and is refused there (incompatibility 14).
+- KERIA delivered the admit for Veridian's own grant to Veridian's holder agent, but Veridian's core filters the `/exn/ipex/admit` route, so its notification store never surfaced the receipt (`out/m3-veridian-admit-check.json`, incompatibility 18). M4 shows the receipt reached Veridian's agent and makes no claim that Veridian's core processed it.
 
 Some of Veridian's behaviour on a SEDI credential needed runtime workarounds, scoped to this one schema, in the headless driver (incompatibilities 10, 11 and 13). The claim is that Veridian's core holds and presents the credential *with those three assumptions bridged*. Veridian's source and the credential bytes were not changed.
 
@@ -36,6 +37,7 @@ These are the deliverable. Each one is filed where its owner tracks work. Entrie
 | 11 | Veridian assumes every ACDC has `a.dt` and fails on admit without it | Veridian | tick `6dat` |
 | 13 | Veridian's apply and agree handling looks for an indexer OOBI and fails when the counterparty has none | Veridian | tick `7g2n` |
 | 14 | After migration the AID's only agent end role still names the old wallet's agent, so replies to the new wallet go to the old one | heti (publish an end role for an adopted AID) | heti tick `2flw` |
+| 18 | Veridian's core filters `/exn/ipex/admit` notifications even when its KERIA agent receives one | Veridian | this writeup |
 | 15 | No wallet export carries a credential's signed evidence, so moving it needs the old KERIA agent online | Veridian and KERIA | Veridian tick `3sms` |
 | 3 | Veridian's notification pollers cannot be stopped | Veridian | tick `4wip` |
 | — | Two wallets hold live keys for a migrated AID until it is rotated from the new one | heti | heti tick `3yi6` |

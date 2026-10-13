@@ -95,7 +95,41 @@ async function run() {
         note.a?.r === '/exn/ipex/apply'));
     const held = await agent.client.credentials().get(issued.said);
     await agent.ipexCommunications.offerAcdcFromApply(apply.id, held.sad);
-    await until('Veridian presentation', async () => jsonFile('m3-veridian.json'), 180_000);
+    const presentation = await until('Veridian presentation', async () =>
+      jsonFile('m3-veridian.json'), 180_000);
+    const admit = await until('Veridian admit notification', async () => {
+      const notifications = await agent.keriaNotifications.getNotifications();
+      for (const note of notifications) {
+        if (note.a?.r !== '/exn/ipex/admit') continue;
+        const exchange = await agent.client.exchanges().get(note.a.d);
+        if (exchange.exn.d === presentation.admit_said &&
+            exchange.exn.r === '/ipex/admit' &&
+            exchange.exn.p === presentation.grant_said &&
+            exchange.exn.i === identity.aid)
+          return exchange.exn.d as string;
+      }
+      return undefined;
+    }, 20_000).catch(() => undefined);
+    if (admit)
+      await writeFile(path.join(out, 'm3-veridian-admit.json'),
+        JSON.stringify({ said: admit, grant_said: presentation.grant_said }, null, 2) + '\n');
+    const coreNotes = await agent.keriaNotifications.getNotifications();
+    const keriaNotes = await agent.client.notifications().list(0, 99);
+    const keriaAdmits = await Promise.all(keriaNotes.notes
+      .filter((n: any) => n.a?.r === '/exn/ipex/admit')
+      .map(async (n: any) => {
+        const exchange = await agent.client.exchanges().get(n.a.d);
+        return { said: exchange.exn.d, route: exchange.exn.r,
+          prior: exchange.exn.p, sender: exchange.exn.i, id: n.i };
+      }));
+    await writeFile(path.join(out, 'm3-veridian-admit-check.json'), JSON.stringify({
+      grant_said: presentation.grant_said,
+      admit_said: presentation.admit_said,
+      holder_received_admit: admit ?? null,
+      core_admit_notifications: coreNotes.filter((n: any) => n.a?.r === '/exn/ipex/admit')
+        .map((n: any) => ({ said: n.a.d, id: n.id })),
+      keria_admit_notifications: keriaAdmits,
+    }, null, 2) + '\n');
     console.log(`Veridian presented ${issued.said} to ${identity.aid}`);
     console.log('MILESTONE M3 reached');
     await until('M4 issuer proof', async () => jsonFile('m4.json'), 120_000);
