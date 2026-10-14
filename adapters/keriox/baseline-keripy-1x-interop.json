@@ -6,7 +6,7 @@
     "name": "cesrox",
     "version": "0.1.8 (said 0.4.3)"
   },
-  "verdict": "no-evidence",
+  "verdict": "interoperable",
   "cases": {
     "CESR-0045": {
       "outcome": "not-supported",

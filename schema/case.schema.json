@@ -116,9 +116,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -171,9 +169,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -221,9 +217,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -277,9 +271,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -348,9 +340,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -408,9 +398,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -469,9 +457,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -522,9 +508,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -572,9 +556,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -628,9 +610,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -685,9 +665,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -738,9 +716,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -793,9 +769,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -854,9 +828,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -918,9 +890,7 @@
                     "$ref": "#/$defs/clause"
                   },
                   "basis": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "For INTEROP assertions: the implementation behaviour the assertion rests on."
+                    "$ref": "#/$defs/basis"
                   },
                   "note": {
                     "type": "string"
@@ -2172,6 +2142,60 @@
             },
             "ts": {
               "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "basis": {
+      "description": "For INTEROP assertions: what the assertion rests on instead of a clause. Either a sentence of text, or an object that also quotes the sentence of a pinned text it rests on, such as a keyword sentence in a section that disclaims normativity; clause coverage counts a quoted sentence as covered when it is triaged practice (docs/design.md, Practice).",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text",
+            "spec",
+            "section",
+            "url",
+            "commit",
+            "quote"
+          ],
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "description": "What the assertion rests on, in a sentence."
+            },
+            "spec": {
+              "enum": [
+                "cesr",
+                "keri",
+                "acdc",
+                "ipex"
+              ]
+            },
+            "section": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{7,40}$"
+            },
+            "quote": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The sentence the basis rests on, verbatim."
             }
           }
         }

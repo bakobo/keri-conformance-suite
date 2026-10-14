@@ -1,0 +1,387 @@
+{
+  "about": "ACDC scenarios for step 1 of the decision procedure (docs/design.md, ACDC): framing, field rules and SAIDs. Fixtures are bundle fragments in the form generators/spec_tables/acdc_build.py reads; each case changes one and lists every check the decision procedure fails.",
+  "profile": "acdc-1.0",
+  "fixtures": {
+    "direct": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "A1"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "A1",
+          "issuer": "I",
+          "schema": "S1",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Zoe Doe",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "source_seal": "ixn1"
+        }
+      ],
+      "presented": "A1"
+    }
+  },
+  "cases": [
+    {
+      "id": "ACDC-0001",
+      "key": "KS-01",
+      "title": "Compact public ACDC, directly sealed",
+      "description": "A targeted ACDC presented compact, its attribute section as a SAID, with a digest seal of its most compact SAID in an interaction event of its issuer's KEL and a reference to that event attached. A validator should find it valid.",
+      "base": "direct",
+      "expect": []
+    },
+    {
+      "id": "ACDC-0002",
+      "key": "KS-02",
+      "title": "The same ACDC fully expanded",
+      "description": "The ACDC of KS-01 presented with its attribute section expanded. Its top-level SAID is the same most compact SAID (lines 134 and 147), so a validator should find it valid.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded"
+          }
+        }
+      },
+      "expect": []
+    },
+    {
+      "id": "ACDC-0003",
+      "key": "KS-03",
+      "title": "Top-level SAID computed over the expanded form",
+      "description": "The ACDC presented expanded, with its top-level SAID computed over the expanded serialization, as keripy 1.x does, and sealed on that SAID. ACDC 2.00 takes the SAID over the most compact form, so the SAID does not verify under any reading of the open bytes.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "said": "expanded"
+          }
+        }
+      },
+      "spec_conflicts": [
+        "expand-block"
+      ],
+      "expect": [
+        "A1 1/said"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0004",
+      "key": "KS-04",
+      "title": "Attribute changed after the SAIDs were computed",
+      "description": "The expanded ACDC with its name attribute changed after every SAID was computed, keeping the length, so neither the attribute block's SAID nor the top-level SAID verifies.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "alter": [
+              {
+                "path": "a.name",
+                "value": "Zoe Dot"
+              }
+            ]
+          }
+        }
+      },
+      "expect": [
+        "A1 1/said"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0005",
+      "key": "KS-05",
+      "title": "Attribute changed and its block SAID recomputed",
+      "description": "As KS-04, but the attribute block's SAID is recomputed after the change, so the block verifies and only the top-level SAID, which still commits to the original block, does not.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "alter": [
+              {
+                "path": "a.name",
+                "value": "Zoe Dot",
+                "resaid": [
+                  "a"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expect": [
+        "A1 1/said"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0006",
+      "key": "KS-06",
+      "title": "Both an attribute section and an aggregate",
+      "description": "An ACDC with a non-empty a and a non-empty A, its SAIDs correct over the body and sealed. Lines 106 and 110 both forbid it, rules the issuer must follow, though they disagree about an empty section.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "A": [
+              {
+                "d": "",
+                "u": {
+                  "nonce": "agg0"
+                },
+                "x": "0"
+              },
+              {
+                "d": "",
+                "u": {
+                  "nonce": "agg1"
+                },
+                "x": "1"
+              }
+            ]
+          }
+        }
+      },
+      "spec_conflicts": [
+        "a-and-A-presence"
+      ],
+      "expect": [
+        "A1 1/a-and-A"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0007",
+      "key": "KS-07",
+      "title": "No schema field",
+      "description": "An ACDC without its required s field, SAIDs recomputed and sealed. Line 36 requires the field of the issuer, and with no schema SAID the validator cannot validate the ACDC against a schema as line 250 requires, so the refusal is graded at MUST.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "schema": null
+          }
+        }
+      },
+      "expect": [
+        "A1 1/required-field",
+        "A1 2/schema-absent"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0008",
+      "key": "KS-08",
+      "title": "Top-level fields out of order",
+      "description": "An ACDC whose a field precedes its s field, with its SAIDs computed over that order and sealed. Line 32 fixes the order, a rule for the issuer.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "order": [
+              "v",
+              "t",
+              "d",
+              "i",
+              "a",
+              "s"
+            ]
+          }
+        }
+      },
+      "expect": [
+        "A1 1/field-order"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0064",
+      "key": "KS-09",
+      "title": "Expanded form declaring the compact form's size",
+      "description": "The ACDC of KS-02 presented expanded, but its version string still declares the size of the most compact form, as from an issuer that computed the SAID and expanded the ACDC without resizing it. Its SAIDs, seal and schema all hold, and only the framing fails: a stream parser that uses the version string, as line 62 says it should, extracts a truncated body, while one that finds the body's end by matching braces accepts it.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "declared_size": "compact"
+          }
+        }
+      },
+      "expect": [
+        "presented 1/unframeable"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0009",
+      "key": "KS-10",
+      "title": "Version string names another protocol",
+      "description": "An ACDC whose version string names KERI rather than ACDC, with its SAID computed over that body and sealed. The body frames by its version string, but as another protocol's message, so it is not an ACDC body and no later step of the ACDC procedure applies to it. Line 64 fixes the protocol, a rule for the issuer.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "protocol": "KERI"
+          }
+        }
+      },
+      "expect": [
+        "presented 1/protocol"
+      ],
+      "pair": "KS-01"
+    }
+  ]
+}

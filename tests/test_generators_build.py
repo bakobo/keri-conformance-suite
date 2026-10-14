@@ -333,7 +333,7 @@ def test_generate_with_no_scenarios_produces_only_empty_profiles(tmp_path):
     (tmp_path / "scenarios" / "cesr").mkdir(parents=True)
     shutil.copy(ROOT / "scenarios" / "cesr" / "clauses.json", tmp_path / "scenarios" / "cesr")
     files = regenerate.generate(tmp_path)
-    assert sorted(files) == ["profiles/cesr-1.0.json", "profiles/cesr-strict.json",
+    assert sorted(files) == ["profiles/acdc-1.0.json", "profiles/cesr-1.0.json", "profiles/cesr-strict.json",
                              "profiles/keri-1.0.json", "profiles/keri-escrow.json",
                              "profiles/keripy-1x-interop.json"]
 

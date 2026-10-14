@@ -41,6 +41,31 @@
       "level": "SHOULD",
       "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section)."
     },
+    "exn-fields": {
+      "section": "Exchange Message Body",
+      "level": "MUST",
+      "quote": "The top-level fields of an Exchange, `exn` message body MUST appear in the following order: `[ v, t, d, i, ri, x, p, dt, r, q, a]`."
+    },
+    "exn-prior": {
+      "section": "Prior event SAID field",
+      "level": "MUST",
+      "quote": "When the prior `p` field appears in an exchange message, its value MUST be the SAID of the immediately preceding exchange message in that transaction."
+    },
+    "exn-x": {
+      "section": "Exchange identifier field",
+      "level": "MUST",
+      "quote": "The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction."
+    },
+    "exn-x-empty": {
+      "section": "Exchange identifier field",
+      "level": "MUST",
+      "quote": "When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string."
+    },
+    "exn-xip-first": {
+      "section": "Exchange identifier field",
+      "level": "MUST",
+      "quote": "The first message MUST be an Exchange Inception message with type `xip`."
+    },
     "inception-d-i": {
       "section": "Inception event pre-rotation",
       "level": "MUST",
@@ -55,6 +80,11 @@
       "section": "Next key digest list field",
       "level": "MUST",
       "quote": "When the Next, `n` field value in an Inception or Delegated Inception event is an empty list, then the associated AID MUST be deemed non-transferable, and no more key events MUST be allowed in that KEL."
+    },
+    "nonkey-threshold": {
+      "section": "Indexed Signatures",
+      "level": "MUST",
+      "quote": "A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid."
     },
     "one-kel": {
       "section": "Tetrad bindings",
@@ -90,6 +120,11 @@
       "section": "Indexed Signatures",
       "level": "MUST",
       "quote": "A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid."
+    },
+    "xip-fields": {
+      "section": "Exchange Transaction Inception Message Body",
+      "level": "MUST",
+      "quote": "The top-level fields of an Exchange Transaction Incept, `xip` message body MUST appear in the following order: `[ v, t, d, u, i, ri, dt, r, q, a]`."
     }
   },
   "inferences": {
@@ -107,6 +142,26 @@
       "section": "Superseding Rules for Recovery at a given location, SN (sequence number).",
       "quote": "A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.",
       "inference": "Rule A0 uses a lowercase \"may\". A validator that accepts a rotation A0 permits keeps the displaced interaction and everything after it as seen but off the trunk (\"All the already-seen but superseded events in the superseded fork still remain in the KEL\"). Accepting the rotation, and the resulting trunk, are graded SHOULD as liveness."
+    },
+    "exn-liveness": {
+      "section": "Indexed Signatures",
+      "quote": "A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid.",
+      "inference": "The sentence states a condition for a non-key-event message to be accepted as valid, not that a validator must accept one that meets it. No sentence obliges a validator to accept an exchange message, so that it should accept one that passes every check is inferred and graded SHOULD, as liveness is in the rest of the KERI layer (docs/design.md, IPEX)."
+    },
+    "exn-prior-link": {
+      "section": "Prior event SAID field",
+      "quote": "When the prior `p` field appears in an exchange message, its value MUST be the SAID of the immediately preceding exchange message in that transaction.",
+      "inference": "The sentence binds the sender, who sets `p`. That a validator should not accept an exchange message whose `p` is not the SAID of the message before it in its transaction is inferred from it and graded SHOULD (docs/design.md, IPEX, step 3)."
+    },
+    "exn-x-link": {
+      "section": "Exchange identifier field",
+      "quote": "The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction.",
+      "inference": "The sentence binds the sender, who sets `x`. That a validator should not accept an exchange message whose `x` names a message it holds that is not an exchange inception is inferred from it and graded SHOULD (docs/design.md, IPEX, step 3): whichever transaction the message is read as continuing, its `x` is then not the SAID of that transaction's first message. A message whose `x` names a held exchange inception belongs to that transaction, since `x` \"universally uniquely associates\" a message with its transaction, so a `p` naming a message of another transaction breaks the prior rule instead."
+    },
+    "exn-lone": {
+      "section": "Exchange identifier field",
+      "quote": "When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string.",
+      "inference": "The sentence binds the sender. An exchange message whose `x` names no exchange inception the validator holds is refused under either reading of whether it belongs to a transaction: outside one, this sentence requires `x` to be empty; inside one, the transaction's first message must be an `xip` (\"The first message MUST be an Exchange Inception message with type `xip`.\"), and none with that SAID was delivered. Refusing it is inferred and graded SHOULD (docs/design.md, IPEX)."
     }
   },
   "conflicts": {

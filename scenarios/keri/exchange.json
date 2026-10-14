@@ -1,0 +1,1508 @@
+{
+  "profile": "keri-1.0",
+  "operation": "exn.verify",
+  "about": "Exchange-message cases (docs/design.md, IPEX): the KELs of the parties are delivered first, then xip and exn messages through exn.verify, each graded accepted or rejected by the exchange-message decision procedure (generators/spec_tables/exn_build.py). Every clause they cite is KERI's, so they are KERI cases in keri-1.0.",
+  "cases": [
+    {
+      "id": "KERI-0068",
+      "key": "EXN-01",
+      "title": "A well-formed exchange transaction",
+      "description": "The sender opens a transaction with an exchange inception (xip) and continues it with an exn whose x and p are both the xip's SAID, each signed by the sender's current key. A validator should accept both (liveness, inferred). The first message of a transaction MUST be an xip (KERI line 979), so an implementation that starts transactions without one, or does not process xip, fails this case.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "open",
+          "t": "xip",
+          "sender": "I",
+          "receiver": "H",
+          "nonce": "open",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "said": "open"
+          },
+          "p": {
+            "said": "open"
+          },
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "open",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first"
+        ],
+        "summary": "KERI line 979 says the first message of a transaction MUST be an exchange inception (xip), and x MUST be its SAID, so a validator should accept a well-formed, signed xip and the exn that continues it. keripy main (9a8b7aa7) does not process an exchange inception: Kevery.processXip is a stub ('no processing yet', src/keri/core/eventing.py), so it accepts no xip and reports every one rejected. The exn is accepted. keripy's own IPEX opens an exchange with an exn whose x is the digest of a fresh nonce rather than the SAID of an xip (apply, offer and grant in src/keri/acdc/ipexing.py), a reading of transactions the text does not support.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0069",
+      "key": "EXN-02",
+      "title": "An unsigned exchange message is dropped",
+      "description": "An exn outside any transaction (empty p and x) with no attachments: no signature and no seal. A validator MUST drop a non-key-event message without at least one verifiable controller signature (KERI line 1266), so it is rejected on delivery and after the last message. It is the signed exn of KERI-0077 with its signatures removed.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [],
+          "expect": [
+            "2/unsigned",
+            "2/unsigned"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0070",
+      "key": "EXN-03",
+      "title": "A signature by a key outside the sender's key state",
+      "description": "The exn of KERI-0077, signed instead by another identifier's key placed at index 0 of the sender's signature group, which names the sender's inception. The signature does not verify against the sender's key at that index, so the group does not satisfy the signing threshold of the establishment event it references (KERI line 1260), and the message is rejected at MUST.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "X-icp",
+          "aid": "X",
+          "t": "icp",
+          "keys": [
+            "x0"
+          ],
+          "next": [
+            "x1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        },
+        {
+          "event": "X-icp",
+          "sigs": [
+            "x0"
+          ],
+          "source": "other"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                {
+                  "key": "x0",
+                  "index": 0
+                }
+              ]
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0071",
+      "key": "EXN-04",
+      "title": "An exchange message with an extra top-level field",
+      "description": "The exn of KERI-0077 with an extra top-level field e after a, its SAID and version string recomputed and its signature made over the result. No other top-level fields are allowed in an exn (KERI line 1197), and a validator verifies the appearance of fields (line 1737), so it is rejected at MUST.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {},
+          "extra": {
+            "e": {}
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "1/fields",
+            "1/fields"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0072",
+      "key": "EXN-05",
+      "title": "A prior that does not name the message before it",
+      "description": "A transaction opened by an xip, continued by an exn whose x is the xip's SAID but whose p is a digest of nothing. p MUST be the SAID of the immediately preceding message in the transaction (KERI line 975); the sentence binds the sender, so a validator's refusal is an inferred SHOULD.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "open",
+          "t": "xip",
+          "sender": "I",
+          "receiver": "H",
+          "nonce": "open",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "said": "open"
+          },
+          "p": {
+            "nothing": "no-such-prior"
+          },
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "open",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "3/prior",
+            "3/prior"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first",
+          "exn-prior"
+        ],
+        "summary": "KERI line 975 says p MUST be the SAID of the immediately preceding message in the transaction, and line 979 that the transaction's first message MUST be an xip. keripy main (9a8b7aa7) does not process an exchange inception: Kevery.processXip is a stub ('no processing yet', src/keri/core/eventing.py), so it accepts no xip and reports every one rejected. Its generic exchange processing (Exchanger.processEvent in src/keri/peer/exchanging.py, with no route handler registered) reads neither p nor x, so it accepts a signed exn whatever its transaction link says. The refusal is an inferred SHOULD, since both sentences bind the sender.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0073",
+      "key": "EXN-06",
+      "title": "An exchange id that names a message which is not an exchange inception",
+      "description": "A transaction opened by an xip and continued by an exn whose x and p are the xip's SAID, then a second exn whose p is the first exn's SAID and whose x is also the first exn's SAID. x MUST be the SAID of the first message of the transaction, which MUST be an xip (KERI line 979). The first exn is neither, so the second exn breaks line 979 whichever transaction it is read as continuing: by its x, a transaction whose first message is not an xip; by its p, the xip's transaction under another transaction's id. The sentence binds the sender, so a validator's refusal is an inferred SHOULD.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "open",
+          "t": "xip",
+          "sender": "I",
+          "receiver": "H",
+          "nonce": "open",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "first",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "said": "open"
+          },
+          "p": {
+            "said": "open"
+          },
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        },
+        {
+          "name": "second",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "said": "first"
+          },
+          "p": {
+            "said": "first"
+          },
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "open",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "first",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        },
+        {
+          "exchange": "second",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "3/exchange-id",
+            "3/exchange-id"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first",
+          "exn-x"
+        ],
+        "summary": "KERI line 979 says x MUST be the SAID of the first message of the transaction, which MUST be an xip. keripy main (9a8b7aa7) does not process an exchange inception: Kevery.processXip is a stub ('no processing yet', src/keri/core/eventing.py), so it accepts no xip and reports every one rejected. Its generic exchange processing (Exchanger.processEvent in src/keri/peer/exchanging.py, with no route handler registered) reads neither p nor x, so it accepts a signed exn whatever its transaction link says. The refusal is an inferred SHOULD, since the sentence binds the sender.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0074",
+      "key": "EXN-07",
+      "title": "A lone exchange message with an empty prior and a non-empty exchange id",
+      "description": "A signed exn with an empty p and an x that names no exchange inception the validator holds, delivered alone. It is refused under either reading of whether it belongs to a transaction: outside one, x MUST be the empty string, and inside one the first message MUST be an xip, which was never delivered (KERI line 979). Both sentences bind the sender, so the refusal is an inferred SHOULD.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": {
+            "nothing": "no-such-xip"
+          },
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "3/no-xip",
+            "3/no-xip"
+          ]
+        }
+      ],
+      "status": "disputed",
+      "dispute": {
+        "clauses": [
+          "exn-xip-first",
+          "exn-x-empty"
+        ],
+        "summary": "KERI line 979 says x MUST be the empty string for an exchange message outside a transaction, and that a transaction's first message MUST be an xip, so a lone exn with a non-empty x is refused under either reading. Its generic exchange processing (Exchanger.processEvent in src/keri/peer/exchanging.py, with no route handler registered) reads neither p nor x, so it accepts a signed exn whatever its transaction link says. keripy's own IPEX starts exchanges this way, with an x that is the digest of a fresh nonce and no xip (apply, offer and grant in src/keri/acdc/ipexing.py). The refusal is an inferred SHOULD, since the sentences bind the sender.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-09; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0075",
+      "key": "EXN-08",
+      "title": "An exchange message whose SAID does not verify",
+      "description": "The exn of KERI-0077 with its dt changed after its SAID was computed, keeping its length, and signed over the altered body, so the signature verifies but the SAID does not. A validator verifies a message's SAID (KERI line 1737; CESR line 1194), so it is rejected at MUST.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {},
+          "tamper": {
+            "dt": "2025-07-04T17:50:00.000001+00:00"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "1/said",
+            "1/said"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0076",
+      "key": "EXN-09",
+      "title": "Another identifier's valid signature does not authenticate the sender",
+      "description": "The exn of KERI-0077, whose i is the sender, carrying only a fully valid signature group by another identifier that names that identifier's own establishment event. The message has no signature by its sender, so a validator MUST drop it (KERI lines 1266 and 1737).",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "X-icp",
+          "aid": "X",
+          "t": "icp",
+          "keys": [
+            "x0"
+          ],
+          "next": [
+            "x1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        },
+        {
+          "event": "X-icp",
+          "sigs": [
+            "x0"
+          ],
+          "source": "other"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "other",
+          "sigs": [
+            {
+              "aid": "X",
+              "keys": [
+                "x0"
+              ]
+            }
+          ],
+          "expect": [
+            "2/not-sender",
+            "2/not-sender"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0077",
+      "key": "EXN-10",
+      "title": "A signed exchange message outside any transaction",
+      "description": "An exn with an empty p and an empty x, as an exchange message that is not part of a transaction must carry (KERI lines 975 and 979), signed by the sender's current key. A validator should accept it (liveness, inferred). It is the positive pair of the single-message refusals KERI-0069, KERI-0070, KERI-0071, KERI-0075 and KERI-0076, each of which differs from it only in its defect.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0078",
+      "key": "EXN-11",
+      "title": "One valid signature short of a two-of-three threshold",
+      "description": "The sender's inception has three signing keys and a signing threshold of 2. The exn outside any transaction carries one valid signature, by the key at index 1. That meets the floor of at least one verifiable controller signature (KERI line 1266) but not the signing threshold of the establishment event the group references, which a set of signatures on a non-key-event message MUST satisfy to be accepted as valid (KERI line 1260), so it is rejected at MUST. An implementation that accepts any one verifiable sender signature fails this case. KERI-0079 is its positive pair.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "kt": "2",
+          "next": [
+            "i1",
+            "j1",
+            "k1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "j0"
+              ]
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0079",
+      "key": "EXN-12",
+      "title": "A two-of-three threshold met by two valid signatures",
+      "description": "The sender's inception has three signing keys and a signing threshold of 2. The exn outside any transaction carries valid signatures by the keys at indices 0 and 2, which satisfy the threshold (KERI line 1260). A validator should accept it (liveness, inferred). It is the positive pair of KERI-0078, KERI-0082 and KERI-0083.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "kt": "2",
+          "next": [
+            "i1",
+            "j1",
+            "k1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0",
+                "k0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0080",
+      "key": "EXN-13",
+      "title": "Two valid signatures whose weights fall short of a weighted threshold",
+      "description": "The sender's inception has four signing keys with the weighted signing threshold [1/2, 1/2, 1/4, 1/4], which is met when the weights of the signing keys sum to at least one (KERI line 1419). The exn outside any transaction carries valid signatures by the keys at indices 2 and 3, whose weights sum to 1/2. The weighted threshold is not satisfied (KERI line 1260), so it is rejected at MUST. An implementation that counts signatures without weighing them fails this case. KERI-0081 is its positive pair.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0",
+            "j0",
+            "k0",
+            "l0"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ],
+          "next": [
+            "i1",
+            "j1",
+            "k1",
+            "l1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0",
+            "j0",
+            "k0",
+            "l0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "k0",
+                "l0"
+              ]
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0081",
+      "key": "EXN-14",
+      "title": "A weighted threshold met by three valid signatures",
+      "description": "The sender's inception has four signing keys with the weighted signing threshold [1/2, 1/2, 1/4, 1/4], which is met when the weights of the signing keys sum to at least one (KERI line 1419). The exn outside any transaction carries valid signatures by the keys at indices 1, 2 and 3, whose weights sum to one, which satisfies the threshold (KERI line 1260). A validator should accept it (liveness, inferred). It is the positive pair of KERI-0080.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0",
+            "j0",
+            "k0",
+            "l0"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ],
+          "next": [
+            "i1",
+            "j1",
+            "k1",
+            "l1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0",
+            "j0",
+            "k0",
+            "l0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "j0",
+                "k0",
+                "l0"
+              ]
+            }
+          ],
+          "expect": [
+            "4/accepted",
+            "4/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0082",
+      "key": "EXN-15",
+      "title": "One key's signature attached twice does not meet a two-of-three threshold",
+      "description": "The sender's inception has three signing keys and a signing threshold of 2. The exn outside any transaction carries the same valid signature by the key at index 1 twice. One key has signed, so the threshold of the establishment event the group references is not satisfied (KERI line 1260), and it is rejected at MUST. An implementation that counts attached signatures rather than distinct signing keys fails this case. KERI-0079 is its positive pair.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "kt": "2",
+          "next": [
+            "i1",
+            "j1",
+            "k1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "j0",
+                "j0"
+              ]
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0083",
+      "key": "EXN-16",
+      "title": "Two signatures toward a two-of-three threshold, one of which does not verify",
+      "description": "The sender's inception has three signing keys and a signing threshold of 2. The exn outside any transaction carries a valid signature by the key at index 0 and, at index 2, a signature that does not verify against that key. One signature verifies, so the threshold of the establishment event the group references is not satisfied (KERI line 1260), and it is rejected at MUST. An implementation that counts signatures without verifying each fails this case. KERI-0079 is its positive pair.",
+      "events": [
+        {
+          "name": "I-icp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "kt": "2",
+          "next": [
+            "i1",
+            "j1",
+            "k1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "H-icp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "I-icp",
+          "sigs": [
+            "i0",
+            "j0",
+            "k0"
+          ],
+          "source": "sender"
+        },
+        {
+          "event": "H-icp",
+          "sigs": [
+            "h0"
+          ],
+          "source": "receiver"
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "msg",
+          "t": "exn",
+          "sender": "I",
+          "receiver": "H",
+          "x": "",
+          "p": "",
+          "r": "/kcs/exchange",
+          "q": {},
+          "a": {}
+        }
+      ],
+      "messages": [
+        {
+          "exchange": "msg",
+          "source": "sender",
+          "sigs": [
+            {
+              "aid": "I",
+              "keys": [
+                "i0",
+                {
+                  "key": "k0",
+                  "forged": true
+                }
+              ]
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    }
+  ]
+}

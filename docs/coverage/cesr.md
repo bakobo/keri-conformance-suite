@@ -6,7 +6,7 @@ This report lists every sentence of the pinned CESR specification text that carr
 
 ## v1.0, commit 037129608b9e
 
-The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md). It has 100 keyword sentences: 88 MUST, 0 SHOULD and 12 MAY or OPTIONAL.
+The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md). It has 100 keyword sentences: 88 MUST, 0 SHOULD and 12 MAY or OPTIONAL, and 0 triaged as practice.
 
 ### Obligations (MUST and SHOULD)
 
@@ -347,7 +347,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The SAID verification protocol MUST be implemented as follows: |
+| 1194 | MUST | validator, security | 4 | 0 | 0 | MUST 4 | — | ACDC-0003 (draft), ACDC-0004 (draft), ACDC-0005 (draft), ACDC-0034 (draft) | The SAID verification protocol MUST be implemented as follows: |
 
 #### Description and Usage
 
@@ -426,6 +426,10 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 | Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
 |---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
 | 1129 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Each field map MAY have a different serialization type. |
+
+### Practice (any keyword, in text that states common practice)
+
+No sentence of this text is triaged as practice.
 
 ### Quotes that match no keyword sentence
 

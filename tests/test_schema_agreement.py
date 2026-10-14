@@ -211,9 +211,14 @@ def disagreements(documents, ours, schema_validator):
 STATE = {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1", "ndigs": ["EGhi"],
          "nt": ["1/2", "1/2"], "wits": [], "bt": "0", "delegator": None}
 INTEROP = {"id": "a9", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x"}
+# A basis that quotes the sentence it rests on, as a practice case's does.
+QUOTED = {"id": "a10", "check": "rejected", "level": "INTEROP", "basis": {
+    "text": "The IPEX section states it.", "spec": "acdc", "section": "IPEX",
+    "url": "https://example.org/acdc#ipex", "commit": "4df80aa", "quote": "A Discloser MAY ..."}}
 
 BASE_CASES = [
-    make_case("CESR-0001", "cesr.parse", {"stream": "2d4b"}, [assertion("rejected"), INTEROP],
+    make_case("CESR-0001", "cesr.parse", {"stream": "2d4b"}, [assertion("rejected"), INTEROP,
+                                                          QUOTED],
               features=["cesr.genus-2.00"]),
     make_case("CESR-0002", "cesr.parse", {"stream": "00"}, [assertion("decoded", expected=[
         {"kind": "counter", "start": 0, "end": 4, "code": "-K", "size": 1, "group_end": 4},

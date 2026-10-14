@@ -1,4 +1,4 @@
-"""Access to the pinned specification texts (CESR and KERI): their headings, their GitHub anchors,
+"""Access to the pinned specification texts (CESR, KERI and ACDC): their headings, their GitHub anchors,
 their tables, and verbatim quotes.
 
 The texts are not part of this repository. Their licence (OWFa 1.0) differs from the suite's, so
@@ -43,8 +43,8 @@ _HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 class Pin:
     """One pinned specification text: what it is called, where it lives, and its hash."""
 
-    name: str  # for messages: "CESR", "KERI"
-    label: str  # for the cache file name and the case clauses' "spec" field: "cesr", "keri"
+    name: str  # for messages: "CESR", "KERI", "ACDC"
+    label: str  # for the cache file name and the case clauses' "spec" field: "cesr", "keri", ...
     repo: str
     tag: str
     commit: str
@@ -65,6 +65,19 @@ KERI = Pin(
     commit="71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
     file="spec/spec-body.md",
     sha256="10df5b8ca9395ce8d4270a84fb7338124b0bd8c80dfc27b65601418b3c4533c4",
+)
+
+
+# The released ACDC text, whose wire is ACDC 2.00 (docs/design.md, ACDC, "The specification and
+# the wire").
+ACDC = Pin(
+    name="ACDC",
+    label="acdc",
+    repo="https://github.com/trustoverip/kswg-acdc-specification",
+    tag="v1.0",
+    commit="4a543c549fd9811c23bf97b0daaf48400f4005c2",
+    file="spec/spec-body.md",
+    sha256="b441e70301671caffd55e395b732dcd0ce33dbffaa8a19d81f2301035bb99857",
 )
 
 

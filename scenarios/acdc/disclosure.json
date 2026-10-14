@@ -1,0 +1,215 @@
+{
+  "about": "ACDC scenarios for selective disclosure (docs/design.md, ACDC, Construction properties): an aggregate of blinded attribute blocks.",
+  "profile": "acdc-1.0",
+  "fixtures": {
+    "selective": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "A1"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "SSD",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Selectively disclosable entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "A"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "A": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "A1",
+          "issuer": "I",
+          "schema": "SSD",
+          "source_seal": "ixn1",
+          "form": {
+            "disclose": [
+              1
+            ]
+          },
+          "A": [
+            {
+              "d": "",
+              "u": {
+                "nonce": "sd0"
+              },
+              "name": "Zoe Doe"
+            },
+            {
+              "d": "",
+              "u": {
+                "nonce": "sd1"
+              },
+              "lei": "5493001KJTIIGC8Y1R12"
+            },
+            {
+              "d": "",
+              "u": {
+                "nonce": "sd2"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00"
+            }
+          ]
+        }
+      ],
+      "presented": "A1"
+    }
+  },
+  "cases": [
+    {
+      "id": "ACDC-0063",
+      "key": "KS-48",
+      "title": "One block of a selectively disclosable aggregate disclosed",
+      "description": "An ACDC whose attributes are an aggregate of three blinded attribute blocks, presented with the second block disclosed and the others as their SAIDs, sealed on its most compact SAID. Line 2735 requires every implementation to support the mechanism; accepting it depends on the aggregate's pre-image, which only the worked example at lines 951 to 956 fixes, so it is graded SHOULD.",
+      "base": "selective",
+      "accept_clause": "selective-support",
+      "spec_conflicts": [
+        "aggregate-concat"
+      ],
+      "expect": []
+    }
+  ]
+}

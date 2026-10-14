@@ -1,0 +1,759 @@
+{
+  "about": "ACDC scenarios for step 2 of the decision procedure (docs/design.md, ACDC): the schema an ACDC names, its SAID, its references and dialect, and validation against it.",
+  "profile": "acdc-1.0",
+  "fixtures": {
+    "direct": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "A1"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "A1",
+          "issuer": "I",
+          "schema": "S1",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Zoe Doe",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "source_seal": "ixn1"
+        }
+      ],
+      "presented": "A1"
+    }
+  },
+  "cases": [
+    {
+      "id": "ACDC-0010",
+      "key": "KS-11",
+      "title": "Schema changed after its SAID was computed",
+      "description": "The schema the ACDC names was changed after its SAID was computed: lei is no longer required, and the ACDC, presented expanded, has no lei. The schema in the bundle does not verify against its SAID (line 248), so the validator has no schema to validate against.",
+      "base": "direct",
+      "patch": {
+        "schemas": {
+          "S1": {
+            "alter": [
+              {
+                "path": "$defs.attributes.required",
+                "value": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name"
+                ]
+              }
+            ]
+          }
+        },
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "H"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Zoe Doe"
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 2/schema-said"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0011",
+      "key": "KS-12",
+      "title": "Another schema in place of the one named",
+      "description": "The ACDC names S1 by its SAID and has no lei; the bundle holds only a lenient schema that would accept it, with a correct SAID of its own. A schema whose SAID is not s does not stand in for it.",
+      "base": "direct",
+      "replace": {
+        "omit": [
+          "S1"
+        ]
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S2",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Lenient legal entity",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "H"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Zoe Doe"
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 2/schema-absent"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0012",
+      "key": "KS-13",
+      "title": "Required attribute missing",
+      "description": "The ACDC, presented expanded with SAIDs and seal correct, lacks the lei attribute its schema requires.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "H"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Zoe Doe"
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 2/schema-invalid"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0013",
+      "key": "KS-14",
+      "title": "Attribute of the wrong type",
+      "description": "The ACDC, presented expanded with SAIDs and seal correct, gives lei as a number where its schema requires a string.",
+      "base": "direct",
+      "patch": {
+        "acdcs": {
+          "A1": {
+            "form": "expanded",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "H"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Zoe Doe",
+              "lei": 5493001
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 2/schema-invalid"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0014",
+      "key": "KS-15",
+      "title": "Schema with a non-local reference",
+      "description": "The schema refers outside itself for the lei attribute, by a URL, and the ACDC is presented expanded, so the reference is on the path its attributes are validated along. Line 206 forbids such references in a schema, a rule for schema authors. The bundle also holds a document whose $id is that URL and which the lei value satisfies, so an implementation that resolves the reference from what it is given accepts the ACDC and fails the case; only refusing the reference passes. An adapter fetches nothing (docs/adapter-protocol.md, acdc.verify).",
+      "base": "direct",
+      "patch": {
+        "schemas": {
+          "S1": {
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Legal entity",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "$ref": "https://example.com/lei.json"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "acdcs": {
+          "A1": {
+            "form": "expanded"
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "LEI",
+            "said": false,
+            "schema": {
+              "$id": "https://example.com/lei.json",
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "expect": [
+        "A1 2/schema-nonlocal"
+      ],
+      "pair": "KS-02"
+    },
+    {
+      "id": "ACDC-0015",
+      "key": "KS-16",
+      "title": "Schema absent",
+      "description": "The bundle holds no schema at all. The validator cannot validate the ACDC against the schema s names, as line 250 requires.",
+      "base": "direct",
+      "replace": {
+        "omit": [
+          "S1"
+        ]
+      },
+      "expect": [
+        "A1 2/schema-absent"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0016",
+      "key": "KS-17",
+      "title": "Schema names another dialect",
+      "description": "The schema's $schema names JSON Schema draft-07. Line 226 says a dialect mismatch SHOULD fail validation.",
+      "base": "direct",
+      "patch": {
+        "schemas": {
+          "S1": {
+            "schema": {
+              "$id": "",
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "title": "Legal entity",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 2/schema-dialect"
+      ],
+      "pair": "KS-01"
+    },
+    {
+      "id": "ACDC-0017",
+      "key": "KS-19",
+      "title": "Schema version field does not matter",
+      "description": "The schema's version field is 9.9.9; the ACDC is otherwise as in KS-01. Line 230 says an ACDC SHOULD pass schema validation whatever that value.",
+      "base": "direct",
+      "patch": {
+        "schemas": {
+          "S1": {
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Legal entity",
+              "version": "9.9.9",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "accept_clause": "schema-version",
+      "expect": []
+    }
+  ]
+}
