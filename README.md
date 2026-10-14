@@ -20,10 +20,15 @@ uv run pytest
 uv run kcs --version
 ```
 
+## Results and documentation
+
+The suite's documentation and its published conformance results are on its site, <https://bakobo.github.io/keri-conformance-suite/>. Each result there is labelled as either reproduced by this repository's CI or submitted by an implementation's maintainer; [`docs/publishing-results.md`](docs/publishing-results.md) explains the difference and how to submit one.
+
 ## Documents
 
 - [`docs/design.md`](docs/design.md) — principles, verdicts, case format, versioning and CI.
 - [`docs/adapter-protocol.md`](docs/adapter-protocol.md) — how an adapter talks to the runner.
+- [`docs/publishing-results.md`](docs/publishing-results.md) — how results are produced, labelled and submitted, and how to build the site.
 
 ## License
 

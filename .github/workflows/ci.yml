@@ -8,6 +8,7 @@ name: CI
 # keripy-1x-interop on keripy 1.2.14, each with its baseline-<profile>.json. Level 3 (nightly runs
 # against development heads) is not built yet; its absence here is the plan, not an omission.
 # Job `keriox-adapter` is level 2 for the keriox adapter; its comment says what it compares.
+# Job `site` builds the documentation site without deploying it; pages.yml deploys it from main.
 
 on:
   push:
@@ -50,10 +51,38 @@ jobs:
         env:
           KCS_REQUIRE_SPEC: "1"
         run: uv run python scripts/clause-coverage --check
+      # Submitted results under results/ are untrusted input that the Pages workflow publishes;
+      # this refuses one that would not pass that build's checks, and renders the results pages
+      # (generated at build time, never committed) so a result that breaks them fails here.
+      - name: Check the submitted results and assemble the site source
+        run: |
+          uv run python scripts/results check results
+          uv run python scripts/site-source --out "$RUNNER_TEMP/site-src"
       - name: Run tests (100% branch coverage gate)
         env:
           KCS_REQUIRE_SPEC: "1"
         run: uv run pytest
+
+  # The documentation site, built as .github/workflows/pages.yml builds it but without the adapter
+  # runs, so a broken link or a page the pinned Zensical cannot build fails the pull request rather
+  # than the deployment on main.
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Sync the runner and the site generator
+        run: uv sync --locked --group site
+      - name: Assemble the site source
+        run: uv run python scripts/site-source
+      - name: Build the site
+        run: uv run zensical build --clean --strict
 
   keripy-adapter:
     runs-on: ubuntu-latest
