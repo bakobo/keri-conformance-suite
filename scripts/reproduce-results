@@ -36,10 +36,11 @@ trap 'rm -rf "$reports"' EXIT
 
 # adapter executable (relative to the repository root), then the profiles it runs
 pairs=(
-  "adapters/keripy/.venv/bin/kcs-adapter-keripy cesr-1.0 keri-1.0 keri-escrow"
+  "adapters/keripy/.venv/bin/kcs-adapter-keripy cesr-1.0 keri-1.0 keri-escrow acdc-1.0"
   "adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy keripy-1x-interop"
   "adapters/keriox/target/debug/kcs-adapter-keriox cesr-1.0 keripy-1x-interop"
   "adapters/affinidi/target/debug/kcs-adapter-affinidi cesr-1.0 keripy-1x-interop"
+  "adapters/signify-ts/bin/kcs-adapter-signify-ts cesr-1.0 keripy-1x-interop"
 )
 
 status=0 n=0
