@@ -198,6 +198,8 @@ def test_headings_and_fenced_code_are_not_sentences():
     ("edge_reported", None, "positive"),
     ("edge_valid", True, "positive"),
     ("edge_valid", False, "negative"),
+    ("exn_verdict", "accepted", "positive"),
+    ("exn_verdict", "rejected", "negative"),
 ])
 def test_each_check_has_a_polarity(check, expected, polarity):
     assert cc.polarity({"check": check, "expected": expected}, "KERI-0001 a1") == polarity
@@ -210,6 +212,8 @@ def test_each_check_has_a_polarity(check, expected, polarity):
     ({"check": "registry_reported", "expected": 1}, "registry_reported"),
     ({"check": "disposition", "expected": "duplicitous"}, "disposition 'duplicitous'"),
     ({"check": "trunk", "expected": "yes"}, "trunk"),
+    ({"check": "exn_verdict", "expected": "maybe"}, "exn_verdict"),
+    ({"check": "exn_verdict", "expected": []}, "exn_verdict"),
     # Hostile pass on #15: JSON allows an unhashable expected value.
     ({"check": "disposition", "expected": []}, "disposition"),
     ({"check": "disposition", "expected": {"x": 1}}, "disposition"),

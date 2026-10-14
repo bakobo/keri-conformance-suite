@@ -1,0 +1,15 @@
+{
+  "grant_said": "EEy8z_igPZGx78fZhPxScj53kNTVHX-hD7mjzdGjWMvH",
+  "admit_said": "ED7rH5Ih7JloZhg91XbYpsploeFtRHw4GI4ERDjLXxQ5",
+  "holder_received_admit": null,
+  "core_admit_notifications": [],
+  "keria_admit_notifications": [
+    {
+      "said": "ED7rH5Ih7JloZhg91XbYpsploeFtRHw4GI4ERDjLXxQ5",
+      "route": "/ipex/admit",
+      "prior": "EEy8z_igPZGx78fZhPxScj53kNTVHX-hD7mjzdGjWMvH",
+      "sender": "EIl0k2Mn_ZcdtA63FlZI4mMp8FGkVH-uACC7Xe23DkgK",
+      "id": "0AAdp0kh66c6_Gwx97Zub1z3"
+    }
+  ]
+}

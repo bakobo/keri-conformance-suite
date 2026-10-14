@@ -1,0 +1,9 @@
+#!/bin/sh
+# Starts the signify-ts adapter. Node runs the TypeScript sources directly (type stripping).
+#
+# --disable-wasm-trap-handler: libsodium runs as WebAssembly, and V8's default trap handler
+# reserves guard regions far larger than the runner's 4 GiB address-space limit, so
+# instantiation fails with "Out of memory: Cannot allocate Wasm memory". With the handler off,
+# V8 bounds-checks Wasm memory accesses explicitly and reserves only what it uses.
+here=$(dirname "$0")
+exec node --disable-wasm-trap-handler "$here/../src/main.ts" "$@"

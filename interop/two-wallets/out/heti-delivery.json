@@ -1,0 +1,15 @@
+{
+  "posted": true,
+  "delivered": true,
+  "grant_said": "EGKeIvwv8Fs6M8NI3i4XBTv4FtiiP1mGuCKHCmcf-53x",
+  "grant_route": "/ipex/grant",
+  "grant_rp": "",
+  "grant_a_i": "EIl0k2Mn_ZcdtA63FlZI4mMp8FGkVH-uACC7Xe23DkgK",
+  "attempts": [
+    {
+      "content_type": "application/cesr+json",
+      "status": 204,
+      "body": ""
+    }
+  ]
+}

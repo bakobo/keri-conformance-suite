@@ -1,0 +1,9 @@
+{
+  "bran": "g17issuerpassphrase2026",
+  "issuer": "EOQ9T_iRbtNrHh2DQTqz3gOgAnaMjWhvym4WUVkdC8dT",
+  "issuerOobi": "http://127.0.0.1:3902/oobi/EOQ9T_iRbtNrHh2DQTqz3gOgAnaMjWhvym4WUVkdC8dT/agent/EJWFp_zjW9WG3Ffknw0NNR9p9QJmiNy8H6o1TEozCJbQ",
+  "registry": "EHXGr_NgXs7sCmnRELqU6TBUCEcdblXKDXvPKw-RSp9_",
+  "schema": "EP3O5QNAho8Z7B9TTTdHWK7Ge_sPgZciw8Y4tYjpITqY",
+  "said": "EJ5QW5yskR70iKNnRhWMn6a9RX-LksjgbBzKiujvl5Nv",
+  "nestedSaidification": "client-side; credentials().issue saidifies a and ACDC only, and inserts forbidden a.dt"
+}
