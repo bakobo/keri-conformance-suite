@@ -174,6 +174,10 @@ def result_path(doc: dict) -> Path:
 
 def _case_outcome(entry: dict) -> str:
     outcomes = {r["outcome"] for r in entry["assertions"]}
+    # The runner skips exactly the deprecated cases, so a skipped active case would hide that
+    # case's assertions from the counts the verdict rests on.
+    if (entry["outcome"] == "skipped") != (entry["status"] == "deprecated"):
+        return "inconsistent"
     if entry["outcome"] in ("skipped", "not-supported"):
         return entry["outcome"] if outcomes <= {entry["outcome"]} else "inconsistent"
     if "fail" in outcomes:
@@ -189,6 +193,17 @@ def _meaning_problem(report: dict) -> str | None:
         if slug(impl[field]) is None:
             return (f"the implementation {field} {json.dumps(impl[field][:80])} leaves no "
                     f"usable path segment of at most {MAX_SLUG} letters, digits and . + _ -")
+    hello = report["hello"]
+    if report["negotiated_protocol"] != hello["protocol"]:
+        return (f"its negotiated_protocol is {report['negotiated_protocol']}, but its hello "
+                f"names protocol {hello['protocol']}")
+    if report["negotiated_protocol"] not in report["supported_protocols"]:
+        return (f"its negotiated_protocol {report['negotiated_protocol']} is not one of its "
+                "supported_protocols")
+    if report["declared_features"] != hello["features"]:
+        return "its declared_features are not the features its hello declares"
+    if report["composes"] != hello.get("composes", []):
+        return "its composes is not what its hello composes"
     profile = report["filters"]["profile"]
     seen = set()
     for entry in report["cases"]:
@@ -359,8 +374,12 @@ def wrap(report_path, provenance: dict, into) -> Path:
     if target.exists():
         raise exists
     text = json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
-    target.parent.mkdir(parents=True, exist_ok=True)
-    handle, temporary = tempfile.mkstemp(dir=target.parent, suffix=".tmp")
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        handle, temporary = tempfile.mkstemp(dir=target.parent, suffix=".tmp")
+    except OSError as exc:
+        code = E_RESULT_WRITE_TRANSIENT if exc.errno in TRANSIENT_ERRNOS else E_RESULT_WRITE
+        raise RunnerError(code, f"The result could not be written to {target}: {exc}.") from exc
     try:
         with os.fdopen(handle, "w", encoding="utf-8") as f:
             f.write(text)

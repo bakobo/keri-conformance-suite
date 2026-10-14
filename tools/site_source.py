@@ -24,13 +24,17 @@ from collections import defaultdict
 from pathlib import Path
 
 from keri_conformance.errors import E_USAGE_INVALID, EXIT_FAULT, EXIT_USAGE, RunnerError
+from keri_conformance.jsonfile import JsonFileError, read_json
 from tools.results import (
     E_RESULT_FORMAT,
     E_RESULT_PATH,
+    MAX_RESULT_BYTES,
     Result,
+    _read_error,
     load_results,
     result_path,
     result_problem,
+    slug,
 )
 
 REPO_URL = "https://github.com/bakobo/keri-conformance-suite"
@@ -361,21 +365,47 @@ def _distinct_slugs(results: list[Result]) -> None:
     """Pages and rows are keyed by the slugs in a result's path, so two raw implementation names
     with one slug, or two raw versions of one implementation with one slug, would be merged onto
     one page. Such a set is refused, naming both."""
-    seen: dict[tuple, Result] = {}
-    for result in sorted(results, key=lambda r: (r.path.as_posix(), r.doc["provenance"]["kind"])):
-        impl = _impl(result)
-        for key, field, raw in (((result.path.parts[0],), "name", impl["name"]),
-                                (result.path.parts[:2], "version", impl["version"])):
-            other = seen.setdefault(key, result)
-            other_raw = _impl(other)[field]
-            if other_raw != raw:
-                where = [f"{r.doc['provenance']['kind']} {r.path.as_posix()}"
-                         for r in (other, result)]
+    ordered = sorted(results, key=lambda r: (r.path.as_posix(), r.doc["provenance"]["kind"]))
+    distinct_identities([(f"the {r.doc['provenance']['kind']} result {r.path.as_posix()}",
+                          _impl(r)["name"], _impl(r)["version"]) for r in ordered])
+
+
+def distinct_identities(identities: list[tuple[str, str, str]]) -> None:
+    """Refuse two (where, name, version) identities whose raw name, or whose raw version of one
+    name, differ but share a slug."""
+    seen: dict[tuple, tuple[str, str, str]] = {}
+    for identity in identities:
+        where, name, version = identity
+        for key, index, field in (((slug(name),), 1, "name"),
+                                  ((slug(name), slug(version)), 2, "version")):
+            other = seen.setdefault(key, identity)
+            if other[index] != identity[index]:
                 raise RunnerError(E_RESULT_SLUG, (
-                    f"The implementation {field}s {json.dumps(other_raw[:80])} (in the "
-                    f"{where[0]} result) and {json.dumps(raw[:80])} (in the {where[1]} result) "
-                    f"both become {'/'.join(key)} in the results' paths, so they would share "
-                    "one page. Report one spelling for one implementation."))
+                    f"The implementation {field}s {json.dumps(other[index][:80])} (in "
+                    f"{other[0]}) and {json.dumps(identity[index][:80])} (in {where}) both "
+                    f"become {'/'.join(key)} in the results' paths, so they would share one "
+                    "page. Report one spelling for one implementation."))
+
+
+def baseline_identities(repo) -> list[tuple[str, str, str]]:
+    """The implementations CI reproduces, read from the adapters' committed baselines. The Pages
+    build publishes a reproduced result for each, so a pull request's submitted results are
+    checked against them here rather than first meeting them after the merge."""
+    repo, identities = Path(repo), []
+    for path in sorted((repo / "adapters").glob("*/baseline-*.json")):
+        try:
+            impl = read_json(path, MAX_RESULT_BYTES)["implementation"]
+            name, version = impl["name"], impl["version"]
+        except JsonFileError as exc:
+            raise _read_error(path, exc) from exc
+        except (KeyError, TypeError) as exc:
+            raise RunnerError(E_RESULT_FORMAT, f"The CI baseline {path} names no implementation "
+                                               "name and version.") from exc
+        if not (isinstance(name, str) and isinstance(version, str)):
+            raise RunnerError(E_RESULT_FORMAT, f"The CI baseline {path} names no implementation "
+                                               "name and version.")
+        identities.append((f"the CI baseline {path.relative_to(repo).as_posix()}", name, version))
+    return identities
 
 
 def assemble(repo, out, results: list[Result]) -> None:
@@ -444,6 +474,9 @@ def main(argv: list[str] | None = None) -> int:
     out = Path(args.out) if args.out else repo / "_site" / "src"
     try:
         results = load_results(args.results or repo / "results", kinds=("submitted",))
+        distinct_identities(baseline_identities(repo) + [
+            (f"the submitted result {r.path.as_posix()}", _impl(r)["name"], _impl(r)["version"])
+            for r in results])
         if args.reproduced:
             results += load_results(args.reproduced, kinds=("reproduced",))
         assemble(repo, out, results)

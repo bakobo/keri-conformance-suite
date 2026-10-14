@@ -268,6 +268,47 @@ def test_main_refuses_a_reproduced_result_in_the_committed_tree(repo, tmp_path, 
     assert "e.rule.result.provenance.f" in capsys.readouterr().err
 
 
+def _baseline(repo, adapter, name, version, profile="cesr-1.0"):
+    path = repo / "adapters" / adapter / f"baseline-{profile}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"implementation": {"name": name, "version": version}}))
+
+
+def test_main_refuses_a_submitted_name_that_collides_with_a_ci_baseline(repo, tmp_path, capsys):
+    """Hostile pass on #18: the Pages build adds a reproduced result for every CI baseline, so a
+    submitted name sharing a slug with one would pass the pull request and stop the deploy. The
+    pull request's build now checks submitted results against the baselines' identities."""
+    _baseline(repo, "keripy", "keripy", "2.1.0.dev1")
+    _baseline(repo, "keripy", "keripy", "1.2.14", "keripy-1x-interop")
+    doc = result(report(name="KeriPy"))
+    path = repo / "results" / result_path(doc)
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(doc))
+    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
+    err = capsys.readouterr().err
+    assert S.E_RESULT_SLUG in err and "the CI baseline adapters/keripy/" in err
+    path.write_text(json.dumps(result(report(name="keripy"))))
+    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 0
+
+
+def test_main_refuses_an_unreadable_ci_baseline(repo, tmp_path, capsys):
+    (repo / "results").mkdir()
+    (repo / "adapters" / "x").mkdir(parents=True)
+    (repo / "adapters" / "x" / "baseline-cesr-1.0.json").write_text("{")
+    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
+    assert "baseline-cesr-1.0.json" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("content", [{}, [], {"implementation": {"name": "x"}},
+                                     {"implementation": {"name": "x", "version": 1}}])
+def test_main_refuses_a_ci_baseline_that_names_no_implementation(repo, tmp_path, capsys, content):
+    (repo / "results").mkdir()
+    (repo / "adapters" / "x").mkdir(parents=True)
+    (repo / "adapters" / "x" / "baseline-cesr-1.0.json").write_text(json.dumps(content))
+    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
+    assert "names no implementation" in capsys.readouterr().err
+
+
 def test_main_usage_error(capsys):
     assert S.main(["--bogus"]) == 2
     assert "e.input.format.f" in capsys.readouterr().err

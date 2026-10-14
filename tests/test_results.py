@@ -166,12 +166,42 @@ def test_a_case_outcome_must_follow_from_its_assertions(outcome, records):
 
 @pytest.mark.parametrize(("outcome", "records"), [
     ("incomplete", [record(outcome="not-implemented"), record("a2")]),
-    ("skipped", [record(outcome="skipped")]),
     ("not-supported", [record(outcome="not-supported")]),
     ("pass", [record(outcome="not-applicable"), record("a2")]),
 ])
 def test_consistent_case_outcomes(outcome, records):
     assert R.result_problem(result(report([case(outcome=outcome, records=records)]))) is None
+
+
+def test_only_a_deprecated_case_is_skipped():
+    """Hostile pass on #18: the runner skips exactly the deprecated cases, so a skipped active
+    case would drop its assertions from the counts while the verdict stayed conformant."""
+    skipped = [record(outcome="skipped")]
+    assert R.result_problem(result(report([
+        case(), case("CESR-0002", status="deprecated", outcome="skipped", records=skipped)]))) is None
+    assert "outcome" in R.result_problem(result(report([
+        case(), case("CESR-0002", outcome="skipped", records=skipped)])))
+    assert "outcome" in R.result_problem(result(report([
+        case(status="deprecated")])))
+
+
+@pytest.mark.parametrize(("field", "value", "words"), [
+    ("negotiated_protocol", 99, "hello names protocol"),
+    ("declared_features", [], "declared_features"),
+    ("composes", ["x"], "composes"),
+])
+def test_report_fields_copied_from_hello_must_agree_with_it(field, value, words):
+    """Hostile pass on #18: these fields are the runner's copy of the hello, so a report whose
+    copy differs claims a protocol or capabilities its own hello contradicts."""
+    doc = result()
+    doc["report"][field] = value
+    assert words in R.result_problem(doc)
+
+
+def test_the_negotiated_protocol_must_be_a_supported_one():
+    doc = result()
+    doc["report"]["supported_protocols"] = [2]
+    assert "supported_protocols" in R.result_problem(doc)
 
 
 def test_an_edited_summary_is_refused():
@@ -413,6 +443,27 @@ def test_wrap_reports_a_temporary_file_it_could_not_remove(tmp_path, monkeypatch
         raise OSError(errno.EAGAIN, "Try again")
 
     monkeypatch.setattr(R.os, "unlink", busy)
+    refused(R.E_RESULT_WRITE_TRANSIENT, R.wrap, source, SUBMITTED, tmp_path / "again")
+
+
+@pytest.mark.parametrize("step", ["mkdir", "mkstemp"])
+def test_wrap_reports_an_output_directory_it_cannot_prepare(tmp_path, monkeypatch, step):
+    """Hostile pass on #18: creating the directory or the temporary file can fail as well as the
+    write, and must be refused with a code rather than a traceback."""
+    source = tmp_path / "report.json"
+    source.write_text(json.dumps(report()))
+
+    def deny(*args, **kwargs):
+        raise PermissionError(errno.EACCES, "Permission denied")
+
+    def busy(*args, **kwargs):
+        raise OSError(errno.EAGAIN, "Try again")
+
+    owner = R.Path if step == "mkdir" else R.tempfile
+    monkeypatch.setattr(owner, step, deny)
+    assert "Permission denied" in refused(R.E_RESULT_WRITE, R.wrap, source, SUBMITTED,
+                                          tmp_path / "out")
+    monkeypatch.setattr(owner, step, busy)
     refused(R.E_RESULT_WRITE_TRANSIENT, R.wrap, source, SUBMITTED, tmp_path / "again")
 
 
