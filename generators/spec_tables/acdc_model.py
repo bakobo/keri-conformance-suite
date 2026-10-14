@@ -59,6 +59,9 @@ MAX_NESTING = 64
 # A body nested deeper than MAX_NESTING. No clause makes such a body invalid, so the model
 # refuses to derive any expectation from it rather than inventing a verdict.
 E_NESTING = "e.input.range.kcs-acdc-nesting.f"
+# A JSON body that is not UTF-8. JSON exchanged between systems MUST be UTF-8 (RFC 8259 section
+# 8.1, which the ACDC specification cites for JSON), so the model derives no expectation from it.
+E_ENCODING = "e.input.format.kcs-acdc-encoding.f"
 
 
 @dataclass(frozen=True)
@@ -193,33 +196,38 @@ def _primitive_code(t: Tables, text: str) -> str:
     raise KeyError(text[:4])
 
 
-def _nesting(raw: bytes) -> int:
+def _nesting(text: str) -> int:
     """The deepest nesting of maps and lists in JSON text, counted without parsing it, so that a
     body too deep to walk is refused before anything recurses into it. A bracket inside a string
-    does not count; in UTF-8 neither a quote nor a backslash byte occurs inside a multi-byte
-    character, so a byte scan finds the strings exactly."""
+    does not count. It scans decoded text, so no encoding can hide a bracket from it."""
     depth = deepest = 0
     in_string = escaped = False
-    for byte in raw:
+    for char in text:
         if escaped:
             escaped = False
         elif in_string:
-            if byte == 0x5C:  # backslash
+            if char == "\\":
                 escaped = True
-            elif byte == 0x22:  # quote
+            elif char == '"':
                 in_string = False
-        elif byte == 0x22:
+        elif char == '"':
             in_string = True
-        elif byte in b"[{":
+        elif char in "[{":
             depth += 1
             deepest = max(deepest, depth)
-        elif byte in b"]}":
+        elif char in "]}":
             depth -= 1
     return deepest
 
 
 def _strict_json(raw: bytes):
-    if _nesting(raw) > MAX_NESTING:
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        raise ScenarioError("A JSON body in the bundle is not UTF-8, the only encoding JSON "
+                            "exchanged between systems may use (RFC 8259, section 8.1), so the "
+                            "model derives no expectation from the bundle.", E_ENCODING) from None
+    if _nesting(text) > MAX_NESTING:
         raise ScenarioError(f"A JSON body in the bundle nests maps and lists more than "
                             f"{MAX_NESTING} levels deep, beyond any ACDC, schema or registry "
                             f"event the model reads, so it derives no expectation from the "
@@ -228,7 +236,7 @@ def _strict_json(raw: bytes):
     def refuse(constant):
         raise ValueError(constant)
     try:
-        return json.loads(raw, parse_constant=refuse)
+        return json.loads(text, parse_constant=refuse)
     except ValueError:
         return None
 
@@ -313,6 +321,10 @@ class _Model:
                 blocks = aggregate[1:]
                 if any(isinstance(b, dict) and sa.block_said(self.t, b, self.readings) != b["d"]
                        for b in blocks):
+                    return False
+                # A SAIDed block nested in a disclosed block verifies too, as in ``a``.
+                if not all(self._blocks_verify(v) for b in blocks if isinstance(b, dict)
+                           for v in b.values()):
                     return False
                 if sa.aggregate(self.t, blocks, self.readings)[0] != aggregate[0]:
                     return False

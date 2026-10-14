@@ -518,5 +518,55 @@ def test_nesting_beyond_the_bound_is_refused_with_a_coded_error():
 
 
 def test_nesting_is_counted_outside_strings_only():
-    assert am._nesting(b'{"a":"{[\\"{[","b":[{}]}') == 3
-    assert am._nesting(b'"\\\\"') == 0
+    assert am._nesting('{"a":"{[\\"{[","b":[{}]}') == 3
+    assert am._nesting('"\\\\"') == 0
+
+
+def test_a_saided_block_nested_in_a_disclosed_aggregate_block_must_verify():
+    """A disclosed ``A`` block holding a SAIDed block whose claimed SAID is false, with the outer
+    block's SAID, the AGID and the top-level SAID all recomputed over it, still fails: the nested
+    block is checked wherever it sits, as it is in ``a``, ``e`` and ``r``."""
+    frag = base()
+    spec = frag["acdcs"][0]
+    del spec["a"]
+    spec.update({"A": [{"d": "", "u": {"nonce": f"b{i}"}, "x": i} for i in range(2)],
+                 "form": {"disclose": [0]}})
+    result, b = run(frag)
+    model = am._Model(T, b.request, sa.DEFAULT)
+
+    def with_inner(claim):
+        body = copy.deepcopy(result.presented.body)
+        inner = {"d": "", "y": 1}
+        inner["d"] = claim(sa.block_said(T, inner))
+        block = body["A"][1]
+        block["inner"] = inner
+        block["d"] = sa.block_said(T, block)
+        body["A"] = sa.aggregate(T, [block] + body["A"][2:])
+        body["A"][1] = block
+        body["d"] = sa.acdc_said(T, body)
+        return body
+
+    assert model._intrinsic(with_inner(lambda d: d)) == []
+    forged = with_inner(lambda d: d[:-1] + ("A" if d[-1] != "A" else "B"))
+    assert [f.tag for f in model._intrinsic(forged)] == ["1/said"]
+
+
+def test_json_that_is_not_utf8_is_refused_with_a_coded_error():
+    # RFC 8259 section 8.1, which the ACDC specification cites for JSON: JSON exchanged between
+    # systems MUST be UTF-8. A UTF-16 body used to be parsed while its nesting was scanned as
+    # UTF-8 bytes, so a deep one slipped past the bound: U+2200 is the bytes 00 22 in UTF-16LE,
+    # which the byte scan took for a quote that opened a string around the brackets.
+    text = '["\u2200",' + "[" * 601 + "]" * 601 + "]"
+    assert am._nesting(text) > am.MAX_NESTING
+    for raw in (text.encode("utf-16"), '{"a":1}'.encode("utf-16"), b'{"a":"\xff"}'):
+        with pytest.raises(ScenarioError) as e:
+            am._strict_json(raw)
+        assert e.value.code == am.E_ENCODING
+    # Without a byte-order mark the same body is valid UTF-8, holding NULs, and it is scanned and
+    # parsed as one text: it is not JSON, rather than a deep body that escaped the bound.
+    assert am._strict_json(text.encode("utf-16-le")) is None
+    assert am._strict_json('{"a":"\u00e9"}'.encode()) == {"a": "\u00e9"}
+
+
+def test_nesting_is_counted_over_decoded_text():
+    assert am._nesting('{"é":"[\\"","b":[{}]}') == 3
