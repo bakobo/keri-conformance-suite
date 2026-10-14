@@ -96,7 +96,12 @@ WIRE = "KERICAACAAJSON"
 
 
 def serialize(fields: dict) -> bytes:
-    return json.dumps(fields, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    try:
+        text = json.dumps(fields, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+    except ValueError:
+        raise ScenarioError("A scenario value is NaN or an infinity, which is not JSON (RFC 8259, "
+                            "section 6), so no body can carry it.") from None
+    return text.encode("utf-8")
 
 
 def sized(fields: dict) -> bytes:
