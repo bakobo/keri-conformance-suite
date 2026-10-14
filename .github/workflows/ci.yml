@@ -249,3 +249,54 @@ jobs:
           set -e
           PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
             adapters/affinidi/baseline-keripy-1x-interop.json "$RUNNER_TEMP/affinidi-interop.json"
+
+  # Level 2 for the signify-ts adapter (adapters/signify-ts/README.md). It installs signify-ts from
+  # the git commit package-lock.json pins (npm ci refuses a lock that does not match package.json),
+  # typechecks the adapter and runs its tests with the 100% branch gate, probes it, and compares a
+  # cesr-1.0 run and a keripy-1x-interop run with their committed baselines using the keripy
+  # adapter's standard-library baseline tool. Node 24 runs the TypeScript sources directly.
+  signify-ts-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: adapters/signify-ts/.node-version
+      - name: Sync the runner
+        run: uv sync --locked
+      - name: Install the signify-ts adapter at its pin
+        working-directory: adapters/signify-ts
+        run: npm ci --no-audit --no-fund
+      - name: Adapter typecheck and tests (100% branch gate)
+        working-directory: adapters/signify-ts
+        run: |
+          npm run typecheck
+          npm run coverage
+      - name: Probe the adapter
+        run: uv run kcs check-adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts"
+      - name: Run cesr-1.0 and compare with its baseline
+        run: |
+          set +e
+          uv run kcs run --adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts" \
+            --profile cesr-1.0 --report "$RUNNER_TEMP/signify-ts-cesr-1.0.json"
+          echo "kcs run exited $?"
+          set -e
+          PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
+            adapters/signify-ts/baseline-cesr-1.0.json "$RUNNER_TEMP/signify-ts-cesr-1.0.json"
+      - name: Run keripy-1x-interop and compare with its baseline
+        run: |
+          set +e
+          uv run kcs run --adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts" \
+            --profile keripy-1x-interop --report "$RUNNER_TEMP/signify-ts-interop.json"
+          echo "kcs run exited $?"
+          set -e
+          PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
+            adapters/signify-ts/baseline-keripy-1x-interop.json "$RUNNER_TEMP/signify-ts-interop.json"

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+nice -n 19 ionice -c 3 node --experimental-strip-types "$root/src/launcher.ts" verifier

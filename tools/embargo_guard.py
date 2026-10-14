@@ -1,9 +1,25 @@
 """Refuse a push whose new commits mention anything on the private embargo list.
 
-Embargoed cases (docs/design.md, Security) live in a private repository, and so does the list of
+Embargoed cases (docs/design.md, Security) are held outside this repository, and so is the list of
 identifiers and phrases that would disclose them. This guard reads that list and checks the lines a
 push adds and the messages of the commits it carries. It is a local safety net for maintainers who
-hold the private list; without the list it says so and lets the push through.
+hold the list.
+
+The list is a text file, one literal string per line, matched without regard to case; blank lines
+and lines starting with # are ignored. Its location is the first of:
+
+  1. --patterns PATH;
+  2. the environment variable KCS_EMBARGO_PATTERNS;
+  3. git config kcs.embargoPatterns, where a relative path is taken from the main checkout, so
+     every worktree finds the same file;
+  4. info/embargo-patterns.txt inside the repository's git directory, which no commit can carry
+     and every worktree shares.
+
+A list named by 1, 2 or 3 that cannot be read refuses the push, as does a setting that is present
+but empty, so a mistyped setting cannot switch the check off. Without any of those, a default list
+that does not exist at all is the normal case for a contributor who holds none: the guard says so
+and lets the push through. Anything present at the default, a dangling symlink or a directory
+included, is read, and refuses if it cannot be.
 
 It reads each pushed commit on its own and needs git 2.31 or later (--diff-merges).
 
@@ -12,6 +28,7 @@ or the list could not be read.
 """
 
 import argparse
+import os
 import pathlib
 import re
 import subprocess
@@ -23,15 +40,75 @@ E_HOOK = "e.input.format.embargo-hook-input.f"
 E_PATTERNS = "e.input.format.embargo-patterns.f"
 W_NO_PATTERNS = "w.rule.embargo.patterns-missing.f"
 ZERO = "0" * 40  # SHA-1 only; ~5ail
+ENV_PATTERNS = "KCS_EMBARGO_PATTERNS"
+CONFIG_PATTERNS = "kcs.embargoPatterns"
+
+
+def _common_dir(repo: pathlib.Path) -> pathlib.Path:
+    """git's common directory, which every worktree of one repository shares."""
+    return pathlib.Path(_git(repo, "rev-parse", "--path-format=absolute",
+                             "--git-common-dir").strip())
 
 
 def default_patterns(repo: pathlib.Path) -> pathlib.Path:
-    """The list's home in the standard Bakobo checkout layout: the private reviews repo beside the
-    main checkout, found through git's common directory so a worktree resolves to the same place."""
-    common = pathlib.Path(_git(repo, "rev-parse", "--path-format=absolute",
-                               "--git-common-dir").strip())
-    main_checkout = common.parent
-    return main_checkout.parent / "reviews" / main_checkout.name / "embargoed" / "patterns.txt"
+    """The list's default home: inside git's own directory, where no commit can carry it, found
+    through the common directory so a worktree resolves to the same file."""
+    return _common_dir(repo) / "info" / "embargo-patterns.txt"
+
+
+class ConfigUnreadable(RuntimeError):
+    """git config could not say whether kcs.embargoPatterns is set."""
+
+
+def _configured(repo: pathlib.Path) -> str:
+    """git config kcs.embargoPatterns, with ~ expanded, or "" when it is unset. Any other failure
+    to read the configuration is raised rather than taken for unset."""
+    try:
+        done = subprocess.run(["git", "-C", str(repo), "config", "--path", "--get",
+                               CONFIG_PATTERNS], capture_output=True, check=False)
+    except OSError as exc:
+        raise ConfigUnreadable(str(exc)) from exc
+    if done.returncode == 1:
+        return ""
+    if done.returncode != 0:
+        raise ConfigUnreadable(done.stderr.decode("utf-8", errors="replace").strip())
+    # Only git's own line ending is removed: a configured path is used exactly as written.
+    value = done.stdout.decode("utf-8", errors="replace").removesuffix("\n")
+    if not value.strip():
+        raise ConfigUnreadable(f"{CONFIG_PATTERNS} is set but empty")
+    return value
+
+
+def patterns_path(repo: pathlib.Path, flag, environ) -> tuple[pathlib.Path | None, bool]:
+    """Where the list is, and whether it was configured (by flag, environment or git config)
+    rather than assumed. Only an assumed list may be missing without refusing the push, so any
+    failure to resolve a configured one is raised as ConfigUnreadable. A configured path is used
+    exactly as written, surrounding whitespace included: trimming it could turn a missing file
+    into a different one that exists."""
+    if flag is not None:
+        return pathlib.Path(flag), True
+    if ENV_PATTERNS in environ:
+        value = environ[ENV_PATTERNS]
+        if not value.strip():
+            raise ConfigUnreadable(f"{ENV_PATTERNS} is set but empty")
+        try:
+            return pathlib.Path(value).expanduser(), True
+        except RuntimeError as exc:  # ~user names no user
+            raise ConfigUnreadable(f"{ENV_PATTERNS} is {value!r}: {exc}") from exc
+    value = _configured(repo)
+    if value:
+        path = pathlib.Path(value)
+        if not path.is_absolute():
+            try:
+                path = _common_dir(repo).parent / path
+            except (subprocess.CalledProcessError, OSError) as exc:
+                raise ConfigUnreadable(f"{CONFIG_PATTERNS} is the relative path {value!r}, and "
+                                       "there is no main checkout to resolve it from") from exc
+        return path, True
+    try:
+        return default_patterns(repo), False
+    except (subprocess.CalledProcessError, OSError):
+        return None, False  # not a checkout, so there is no default list either
 
 
 def load_patterns(path: pathlib.Path) -> list[re.Pattern]:
@@ -136,19 +213,25 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     repo = args.repo.resolve()
     try:
-        path = args.patterns or default_patterns(repo)
-    except (subprocess.CalledProcessError, OSError):
-        path = None
-    if path is None or not path.is_file():
-        where = f"at {path}" if path is not None else "(not a git checkout in the usual layout)"
-        print(f"{W_NO_PATTERNS}: The private embargo list was not found {where}, so this "
-              "push was not checked against it.", file=sys.stderr)
+        path, explicit = patterns_path(repo, args.patterns, os.environ)
+    except ConfigUnreadable as exc:
+        print(f"{E_PATTERNS}: The configured embargo list could not be located ({exc}). Repair "
+              f"{ENV_PATTERNS} or git config {CONFIG_PATTERNS} before pushing.", file=sys.stderr)
+        return 2
+    # The default may be soft only when nothing is there at all. Anything present, even a dangling
+    # symlink or a directory, goes on to be read, and refuses if it cannot be.
+    if not explicit and (path is None or not os.path.lexists(path)):
+        where = f"at {path}" if path is not None else "(this is not a git checkout)"
+        print(f"{W_NO_PATTERNS}: No embargo list was found {where}, so this push was not checked "
+              f"against one. A maintainer who holds the list names it with {ENV_PATTERNS} or "
+              f"git config {CONFIG_PATTERNS}.", file=sys.stderr)
         return 0
     try:
         patterns = load_patterns(path)
     except (OSError, UnicodeDecodeError) as exc:
-        print(f"{E_PATTERNS}: The private embargo list at {path} could not be read as UTF-8 text "
-              f"({exc}). Repair it before pushing.", file=sys.stderr)
+        print(f"{E_PATTERNS}: The embargo list at {path} could not be read as UTF-8 text "
+              f"({exc}). Repair it, or correct the setting that names it, before pushing.",
+              file=sys.stderr)
         return 2
     try:
         hook_input = sys.stdin.buffer.read().decode("utf-8", errors="replace") if args.hook else ""
@@ -175,3 +258,6 @@ def main(argv=None) -> int:
         return 1
     return 0
 
+
+if __name__ == "__main__":
+    sys.exit(main())

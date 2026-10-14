@@ -1,0 +1,17 @@
+{
+  "said": "EJ5QW5yskR70iKNnRhWMn6a9RX-LksjgbBzKiujvl5Nv",
+  "issued_count": 1,
+  "tel": [
+    {
+      "t": "iss",
+      "s": "0",
+      "d": "EI_NSyPsLjOcJnlOjJ7MblBPLZqrwzSqcwT-j5rIzmwl"
+    }
+  ],
+  "holder_aid_in_veridian": "ENcVMaocgyhPhjDW-32kQ9tjDgz0mAJb24w83Vjh5xJv",
+  "holder_aid_in_heti": "ENcVMaocgyhPhjDW-32kQ9tjDgz0mAJb24w83Vjh5xJv",
+  "verifier_saw": {
+    "veridian": "EJ5QW5yskR70iKNnRhWMn6a9RX-LksjgbBzKiujvl5Nv",
+    "heti": "EJ5QW5yskR70iKNnRhWMn6a9RX-LksjgbBzKiujvl5Nv"
+  }
+}
