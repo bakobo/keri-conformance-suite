@@ -298,7 +298,7 @@ def test_a_cell_gives_interop_results_and_unsupported_cases_when_there_are_any()
                        records=[record(level="INTEROP", outcome="not-supported")])
     doc = result(report([interop, unsupported], profile="keripy-1x-interop"), REPRODUCED)
     index = S.render_results(loaded(doc))["results/index.md"]
-    assert ("[no\\-evidence](keripy/2.1.0.dev1/keripy-1x-interop-reproduced.md) · MUST 0 pass, "
+    assert ("[interoperable](keripy/2.1.0.dev1/keripy-1x-interop-reproduced.md) · MUST 0 pass, "
             "0 fail · SHOULD 0 pass, 0 fail · INTEROP 1 pass, 0 fail · 1 active case not "
             "supported |") in index
     detail = S.render_results(loaded(doc))[
@@ -306,6 +306,20 @@ def test_a_cell_gives_interop_results_and_unsupported_cases_when_there_are_any()
     assert "| Active INTEROP assertions | 1 passed, 0 failed (1 not\\-supported, 1 pass) |" in detail
     assert "INTEROP" not in S.render_results(loaded(result()))[
         "results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
+    assert "Interoperability" not in detail
+
+
+def test_an_interop_verdict_beside_a_conformance_verdict_is_shown_apart_from_it():
+    must = case("CESR-0001")
+    interop = case("CESR-0002", outcome="fail", records=[record(level="INTEROP", outcome="fail")])
+    doc = result(report([must, interop]), REPRODUCED)
+    assert doc["report"]["verdict"] == "conformant"
+    pages = S.render_results(loaded(doc))
+    assert ("[conformant](keripy/2.1.0.dev1/cesr-1.0-reproduced.md) · MUST 1 pass, 0 fail · "
+            "SHOULD 0 pass, 0 fail · INTEROP 0 pass, 1 fail (not\\-interoperable) |"
+            ) in pages["results/index.md"]
+    assert ("| Interoperability (never part of the verdict) | not\\-interoperable |"
+            in pages["results/keripy/2.1.0.dev1/cesr-1.0-reproduced.md"])
 
 
 # --- hostile input ------------------------------------------------------------------------------

@@ -140,11 +140,13 @@ def _cell(report: dict, link: str) -> str:
     must, should = _tally(report, "MUST"), _tally(report, "SHOULD")
     cell = (f"[{text(report['verdict'])}]({link}) · MUST {must[0]} pass, {must[1]} fail · "
             f"SHOULD {should[0]} pass, {should[1]} fail")
-    # A non-normative profile's assertions are INTEROP, so its verdict is always no-evidence and
-    # these counts are its whole result.
+    # A non-normative profile's assertions are all INTEROP, so its verdict is the interoperability
+    # verdict; any other run's interoperability verdict is shown beside its verdict, never in it.
     if "INTEROP" in report["summary"]["counts"].get("active", {}):
         interop = _tally(report, "INTEROP")
         cell += f" · INTEROP {interop[0]} pass, {interop[1]} fail"
+        if report["summary"]["interop_verdict"] not in (None, report["verdict"]):
+            cell += f" ({text(report['summary']['interop_verdict'])})"
     unsupported = len(report["summary"]["not_supported_active"])
     if unsupported:
         cell += f" · {_n(unsupported)} active case{'' if unsupported == 1 else 's'} not supported"
@@ -299,6 +301,9 @@ def _detail_page(result: Result) -> str:
         interop = _tally(report, "INTEROP")
         lines.append(f"| Active INTEROP assertions | {interop[0]} passed, {interop[1]} failed "
                      f"({_outcome_counts(report, 'INTEROP')}) |")
+        if report["summary"]["interop_verdict"] not in (None, report["verdict"]):
+            lines.append("| Interoperability (never part of the verdict) | "
+                         f"{text(report['summary']['interop_verdict'])} |")
     lines += [
         (f"| Implementation | {text(impl['name'], 80)} {text(impl['version'], 80)}, commit "
         f"{text(impl['commit'])} |"),

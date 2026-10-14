@@ -82,7 +82,9 @@ SUITE_VERSION = r"^[0-9]{1,9}(\.[0-9]{1,9}){1,3}([A-Za-z+-][A-Za-z0-9.+-]{0,31})
 DATE = "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
 RUN_URL = r"^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/actions/runs/[0-9]+(/attempts/[0-9]+)?$"
 PR_URL = r"^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/pull/[0-9]+$"
-VERDICTS = ("conformant", "not-conformant", "incomplete", "no-evidence", "aborted")
+VERDICTS = ("conformant", "not-conformant", "interoperable", "not-interoperable", "incomplete",
+            "no-evidence", "aborted")
+INTEROP_VERDICTS = ("interoperable", "not-interoperable", "incomplete", "no-evidence")
 CASE_OUTCOMES = ("pass", "fail", "incomplete", "not-supported", "skipped")
 ASSERTION_OUTCOMES = ("pass", "fail", "not-applicable", "not-implemented", "not-supported",
                       "skipped")
@@ -126,6 +128,7 @@ HELLO = obj({"protocol": POSITIVE,
             {"composes": STRINGS})
 
 SUMMARY = obj({"counts": mapping(mapping(TALLY)), "should": TALLY, "should_failed": COUNT,
+               "interop": TALLY, "interop_verdict": nullable(enum(*INTEROP_VERDICTS)),
                "should_warning": nullable(string()), "not_supported_active": STRINGS,
                "self_agreement_passes": COUNT})
 

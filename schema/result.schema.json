@@ -154,7 +154,7 @@
     "summary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["counts", "should", "should_failed", "should_warning", "not_supported_active", "self_agreement_passes"],
+      "required": ["counts", "should", "should_failed", "interop", "interop_verdict", "should_warning", "not_supported_active", "self_agreement_passes"],
       "properties": {
         "counts": {
           "type": "object",
@@ -165,6 +165,8 @@
         },
         "should": {"$ref": "#/$defs/tally"},
         "should_failed": {"$ref": "#/$defs/count"},
+        "interop": {"$ref": "#/$defs/tally"},
+        "interop_verdict": {"enum": ["interoperable", "not-interoperable", "incomplete", "no-evidence", null]},
         "should_warning": {"type": ["string", "null"]},
         "not_supported_active": {"$ref": "#/$defs/strings"},
         "self_agreement_passes": {"$ref": "#/$defs/count"}
@@ -195,7 +197,7 @@
           }
         },
         "session_stderr": {"type": "string"},
-        "verdict": {"enum": ["conformant", "not-conformant", "incomplete", "no-evidence", "aborted"]},
+        "verdict": {"enum": ["conformant", "not-conformant", "interoperable", "not-interoperable", "incomplete", "no-evidence", "aborted"]},
         "aborted": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/aborted"}]},
         "probes": {"type": "object", "additionalProperties": {"type": "string"}},
         "summary": {"$ref": "#/$defs/summary"},
