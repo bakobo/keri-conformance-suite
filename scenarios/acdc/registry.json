@@ -1,0 +1,845 @@
+{
+  "about": "ACDC scenarios for step 5 of the decision procedure (docs/design.md, ACDC): a blindable registry (rip and bup) and the verified head it gives.",
+  "profile": "acdc-1.0",
+  "fixtures": {
+    "issued": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "registry": "rip1"
+            }
+          ]
+        },
+        {
+          "name": "ixn2",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "registry": "bup1"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "i0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "registries": [
+        {
+          "name": "rip1",
+          "t": "rip",
+          "issuer": "I",
+          "source_seal": "ixn1"
+        },
+        {
+          "name": "bup1",
+          "t": "bup",
+          "registry": "rip1",
+          "source_seal": "ixn2",
+          "disclose": true,
+          "state": {
+            "u": "s1",
+            "td": {
+              "acdc": "A1"
+            },
+            "ts": "issued"
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "A1",
+          "issuer": "I",
+          "schema": "S1",
+          "registry": "rip1",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Zoe Doe",
+            "lei": "5493001KJTIIGC8Y1R12"
+          }
+        }
+      ],
+      "presented": "A1"
+    },
+    "revoked": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "registry": "rip1"
+            }
+          ]
+        },
+        {
+          "name": "ixn2",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "registry": "bup1"
+            }
+          ]
+        },
+        {
+          "name": "ixn3",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "registry": "bup2"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn3",
+          "sigs": [
+            "i0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "registries": [
+        {
+          "name": "rip1",
+          "t": "rip",
+          "issuer": "I",
+          "source_seal": "ixn1"
+        },
+        {
+          "name": "bup1",
+          "t": "bup",
+          "registry": "rip1",
+          "source_seal": "ixn2",
+          "disclose": true,
+          "state": {
+            "u": "s1",
+            "td": {
+              "acdc": "A1"
+            },
+            "ts": "issued"
+          }
+        },
+        {
+          "name": "bup2",
+          "t": "bup",
+          "registry": "rip1",
+          "source_seal": "ixn3",
+          "disclose": true,
+          "state": {
+            "u": "s2",
+            "td": {
+              "acdc": "A1"
+            },
+            "ts": "revoked"
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "A1",
+          "issuer": "I",
+          "schema": "S1",
+          "registry": "rip1",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Zoe Doe",
+            "lei": "5493001KJTIIGC8Y1R12"
+          }
+        }
+      ],
+      "presented": "A1"
+    }
+  },
+  "cases": [
+    {
+      "id": "ACDC-0025",
+      "key": "KS-27",
+      "title": "Blindable registry, issued",
+      "description": "The ACDC names its registry by rd. The registry inception and an update disclosing the issued state of the ACDC are each sealed in the issuer's KEL. A validator should find the ACDC valid and report the registry's head.",
+      "base": "issued",
+      "expect": []
+    },
+    {
+      "id": "ACDC-0026",
+      "key": "KS-28",
+      "title": "Blindable registry, then revoked",
+      "description": "As KS-27, then a second update, sealed, discloses the revoked state. What a revocation means for the ACDC has no normative text, so only the registry's head is graded.",
+      "base": "revoked",
+      "expect": []
+    },
+    {
+      "id": "ACDC-0027",
+      "key": "KS-30",
+      "title": "Revocation not sealed",
+      "description": "As KS-28, but the issuer never seals the revoking update, so it is not in the verified chain and the head stays at the issuance.",
+      "base": "revoked",
+      "remove": {
+        "kels": [
+          "ixn3"
+        ]
+      },
+      "expect": [
+        "registry bup-unsealed"
+      ],
+      "pair": "KS-28"
+    },
+    {
+      "id": "ACDC-0028",
+      "key": "KS-30b",
+      "title": "Issuance not sealed in a sound registry",
+      "description": "The registry inception is sealed, but the update that issues the ACDC is not, so the verified chain ends at the inception and nothing in it names the ACDC.",
+      "base": "issued",
+      "remove": {
+        "kels": [
+          "ixn2"
+        ]
+      },
+      "expect": [
+        "A1 5/no-registry-commitment",
+        "registry bup-unsealed"
+      ],
+      "pair": "KS-27",
+      "companion": {
+        "id": "ACDC-0029",
+        "key": "KS-30b-u",
+        "title": "Issuance not sealed in a sound registry: the refusal",
+        "description": "The refusal half of KS-30b, ungated: an ACDC whose issuing update is not sealed is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0030",
+      "key": "KS-30c",
+      "title": "Issuance sealed only in another identifier's KEL",
+      "description": "As KS-30b, but the issuing update is sealed in an unrelated identifier's KEL, which commits nothing for the issuer.",
+      "base": "issued",
+      "remove": {
+        "kels": [
+          "ixn2"
+        ]
+      },
+      "patch": {
+        "registries": {
+          "bup1": {
+            "source_seal": "xixn1"
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "Xicp",
+            "aid": "X",
+            "t": "icp",
+            "keys": [
+              "x0"
+            ],
+            "next": [
+              "x1"
+            ]
+          },
+          {
+            "name": "xixn1",
+            "aid": "X",
+            "t": "ixn",
+            "a": [
+              {
+                "registry": "bup1"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "Xicp",
+            "sigs": [
+              "x0"
+            ]
+          },
+          {
+            "event": "xixn1",
+            "sigs": [
+              "x0"
+            ]
+          }
+        ]
+      },
+      "expect": [
+        "A1 5/no-registry-commitment",
+        "registry bup-unsealed"
+      ],
+      "pair": "KS-27",
+      "companion": {
+        "id": "ACDC-0031",
+        "key": "KS-30c-u",
+        "title": "Issuance sealed only in another identifier's KEL: the refusal",
+        "description": "The refusal half of KS-30c, ungated: an ACDC whose issuing update is sealed only by another identifier is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0032",
+      "key": "KS-31p",
+      "title": "Revoked by undisclosed updates",
+      "description": "As KS-28, but neither update discloses its blinded state, and the ACDC is also sealed directly. The head is the revoking update, with its state unknown.",
+      "base": "revoked",
+      "patch": {
+        "registries": {
+          "bup1": {
+            "disclose": false
+          },
+          "bup2": {
+            "disclose": false
+          }
+        },
+        "events": {
+          "ixn1": {
+            "a": [
+              {
+                "registry": "rip1"
+              },
+              {
+                "acdc": "A1"
+              }
+            ]
+          }
+        }
+      },
+      "expect": []
+    },
+    {
+      "id": "ACDC-0033",
+      "key": "KS-31",
+      "title": "Update that does not verify against its SAID",
+      "description": "As KS-31p, but the issuing update's dt was changed after its SAID was computed, keeping the length, so its SAID does not verify (CESR line 1194) and the head must not advance past the inception. The ACDC is also sealed directly, so it does not depend on the registry for its commitment.",
+      "base": "revoked",
+      "patch": {
+        "registries": {
+          "bup1": {
+            "disclose": false,
+            "alter": [
+              {
+                "path": "dt",
+                "value": "2026-07-04T17:50:00.000000+00:00"
+              }
+            ]
+          },
+          "bup2": {
+            "disclose": false
+          }
+        },
+        "events": {
+          "ixn1": {
+            "a": [
+              {
+                "registry": "rip1"
+              },
+              {
+                "acdc": "A1"
+              }
+            ]
+          }
+        }
+      },
+      "expect": [
+        "registry bup-said"
+      ],
+      "pair": "KS-31p",
+      "companion": {
+        "id": "ACDC-0034",
+        "key": "KS-31-u",
+        "title": "Update that does not verify against its SAID: the head",
+        "description": "The MUST half of KS-31, ungated: if a registry is reported, its head is the inception, because the first update's SAID does not verify. Nothing but that SAID check decides the head, since a validator that reports the registry has accepted the inception."
+      }
+    },
+    {
+      "id": "ACDC-0035",
+      "key": "KS-32",
+      "title": "Registry inception not sealed",
+      "description": "The issuer never seals the registry inception, so a validator should report no registry and, with nothing else committing to it, should not find the ACDC valid.",
+      "base": "issued",
+      "patch": {
+        "events": {
+          "ixn1": {
+            "a": []
+          }
+        }
+      },
+      "expect": [
+        "A1 5/no-registry-commitment",
+        "registry rip-unsealed"
+      ],
+      "pair": "KS-27"
+    },
+    {
+      "id": "ACDC-0036",
+      "key": "KS-33",
+      "title": "Update with the wrong prior",
+      "description": "As KS-28, but the revoking update names the inception, not the issuing update, as its prior (line 2027), so the head stays at the issuance.",
+      "base": "revoked",
+      "patch": {
+        "registries": {
+          "bup2": {
+            "prior": "rip1",
+            "n": 2
+          }
+        }
+      },
+      "expect": [
+        "registry bup-prior"
+      ],
+      "pair": "KS-28"
+    },
+    {
+      "id": "ACDC-0037",
+      "key": "KS-34",
+      "title": "Update that skips a sequence number",
+      "description": "As KS-28, but the revoking update's sequence number is 3 where 2 is next (line 2023), so the head stays at the issuance.",
+      "base": "revoked",
+      "patch": {
+        "registries": {
+          "bup2": {
+            "n": 3
+          }
+        }
+      },
+      "expect": [
+        "registry bup-sn"
+      ],
+      "pair": "KS-28"
+    },
+    {
+      "id": "ACDC-0038",
+      "key": "KS-35",
+      "title": "Registry incepted by another identifier",
+      "description": "The registry inception names an unrelated identifier as its issuer and is sealed in that identifier's KEL, as is the update issuing the ACDC. It is not the ACDC issuer's registry (line 2015), so a validator should report no registry.",
+      "base": "issued",
+      "patch": {
+        "registries": {
+          "rip1": {
+            "issuer": "X",
+            "source_seal": "xixn1"
+          },
+          "bup1": {
+            "source_seal": "xixn2"
+          }
+        }
+      },
+      "remove": {
+        "kels": [
+          "ixn1",
+          "ixn2"
+        ]
+      },
+      "append": {
+        "events": [
+          {
+            "name": "Xicp",
+            "aid": "X",
+            "t": "icp",
+            "keys": [
+              "x0"
+            ],
+            "next": [
+              "x1"
+            ]
+          },
+          {
+            "name": "xixn1",
+            "aid": "X",
+            "t": "ixn",
+            "a": [
+              {
+                "registry": "rip1"
+              }
+            ]
+          },
+          {
+            "name": "xixn2",
+            "aid": "X",
+            "t": "ixn",
+            "a": [
+              {
+                "registry": "bup1"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "Xicp",
+            "sigs": [
+              "x0"
+            ]
+          },
+          {
+            "event": "xixn1",
+            "sigs": [
+              "x0"
+            ]
+          },
+          {
+            "event": "xixn2",
+            "sigs": [
+              "x0"
+            ]
+          }
+        ]
+      },
+      "expect": [
+        "A1 5/no-registry-commitment",
+        "registry rip-issuer"
+      ],
+      "pair": "KS-27"
+    },
+    {
+      "id": "ACDC-0039",
+      "key": "KS-36a",
+      "title": "Disclosed state that does not hash to its BLID",
+      "description": "The issuing update's attached blinded state block keeps the update's BLID but names another ACDC, so it does not hash to its own BLID; the state is unknown and nothing names the ACDC.",
+      "base": "issued",
+      "patch": {
+        "registries": {
+          "bup1": {
+            "disclose": {
+              "td": {
+                "nothing": "A2"
+              },
+              "blid": "kept"
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 5/no-registry-commitment",
+        "registry blid-self"
+      ],
+      "pair": "KS-27",
+      "companion": {
+        "id": "ACDC-0040",
+        "key": "KS-36a-u",
+        "title": "Disclosed state that does not hash to its BLID: the refusal",
+        "description": "The refusal half of KS-36a, ungated: an ACDC whose only issuance is an undisclosed or unverifiable state is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0041",
+      "key": "KS-36b",
+      "title": "Disclosed state with a BLID the update does not commit to",
+      "description": "The issuing update's attached blinded state block is consistent with its own BLID but names another ACDC, and that BLID is not the update's b, so the update never committed to it.",
+      "base": "issued",
+      "patch": {
+        "registries": {
+          "bup1": {
+            "disclose": {
+              "td": {
+                "nothing": "A2"
+              },
+              "blid": "own"
+            }
+          }
+        }
+      },
+      "expect": [
+        "A1 5/no-registry-commitment",
+        "registry blid-other"
+      ],
+      "pair": "KS-27",
+      "companion": {
+        "id": "ACDC-0042",
+        "key": "KS-36b-u",
+        "title": "Disclosed state with a BLID the update does not commit to: the refusal",
+        "description": "The refusal half of KS-36b, ungated: an ACDC whose disclosed state is not the one its update committed to is not valid."
+      }
+    }
+  ]
+}

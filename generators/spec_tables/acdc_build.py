@@ -7,10 +7,12 @@ docs/design.md fixes, through ``acdc_saids``:
 - **ACDCs** have their top-level fields in the order of line 32, ``[v, t, d, u, i, rd, s, a, A,
   e, r]``, with ``t`` = ``acm`` unless the scenario omits it, and ``d`` the most compact SAID.
   Every block in a scenario that carries ``"d": ""`` is a SAIDed block whose SAID is computed;
-  an ``A`` section is a list of blinded attribute blocks, prefixed with its AGID. Each ACDC is
+  an ``A`` section is a list of blinded attribute blocks, prefixed with its AGID. A schema marked
+  ``"said": false`` is not a SAD: it is delivered as written, its ``$id`` the URI it stands at. Each ACDC is
   presented in the form its scenario names (``compact``, the default; ``expanded``; or a map
   naming dotted paths to ``compact`` and, for ``A``, the block indices to ``disclose``), with its
-  version string sized to that form.
+  version string sized to that form, unless the scenario names ``declared_size`` (``compact``:
+  the version string keeps the compact form's size, a deliberate framing tamper).
 - **Registry events** are the blindable registry's ``rip`` ``[v, t, d, u, i, n, dt]`` and ``bup``
   ``[v, t, d, rd, n, p, dt, b]`` (lines 1985 and 1989), ``n`` in hex without leading zeros, and
   ``b`` the BLID of the blinded state block ``[d, u, td, ts]``. Non-blindable ``upd`` events are
@@ -28,7 +30,9 @@ docs/design.md fixes, through ``acdc_saids``:
   fragment naming an ACDC that no edge path from the presented one reaches is refused. An edge is
   a map with an ``n`` field in an ACDC's ``e`` section, and ``n`` names its far node by reference
   or by literal SAID; an ``{"acdc": N}`` anywhere else is a SAID, not an edge. The DAG
-  is bounded at 16 ACDCs and a longest path of 8 edges.
+  is bounded at 16 ACDCs and a longest path of 8 edges. An omitted ACDC leaves ``acdcs``, and
+  so does every ACDC that only it reaches, because a validator cannot see the omitted node's
+  edges; the ``dag`` lists only the edges of nodes the bundle carries.
 
 Inside an ACDC's sections, a map with one key names another thing in the fragment: ``{"aid": X}``
 is the prefix of X's inception, ``{"acdc": N}`` N's most compact SAID, ``{"schema": S}`` S's
@@ -38,20 +42,23 @@ The builder never decides whether what it builds is valid; that is the grading's
 """
 
 import hashlib
+import json
+import re
 from dataclasses import dataclass, field
 
 from . import acdc_saids as sa
 from . import encoding
 from . import json_schema_subset as js
 from .errors import GeneratorError, ScenarioError
-from .keri_events import GENUS_CODE, EventBuilder
+from .keri_events import GENUS_CODE, EventBuilder, label_digest
 from .tables import Tables
 
 RIP_FIELDS = ("v", "t", "d", "u", "i", "n", "dt")
 BUP_FIELDS = ("v", "t", "d", "rd", "n", "p", "dt", "b")
 ACDC_FIELDS = ("v", "t", "d", "u", "i", "rd", "s", "a", "A", "e", "r")
 SECTIONS = ("a", "A", "e", "r")
-REFS = ("aid", "acdc", "schema", "registry", "nonce")
+REFS = ("aid", "acdc", "schema", "registry", "nonce", "nothing")
+PROTOCOL = re.compile(r"[A-Z]{4}")
 DEFAULT_DT = "2025-07-04T17:50:00.000000+00:00"
 MAX_ACDCS = 16
 MAX_DEPTH = 8
@@ -61,6 +68,8 @@ E_DAG = "e.input.range.kcs-acdc-dag.f"
 # An ACDC in the fragment that no edge path from the presented ACDC reaches, which ``acdcs``
 # (the presented ACDC's provenance DAG) cannot carry, or an edge whose far node is in no fragment.
 E_DAG_UNREACHABLE = "e.input.format.kcs-acdc-dag-unreachable.f"
+# An edge whose ``n`` is not a SAID string, so it names no far node.
+E_EDGE = "e.input.format.kcs-acdc-edge.f"
 
 
 def _seed(kind: str, label: str, size: int) -> bytes:
@@ -115,10 +124,13 @@ def _index(items: list[dict], kind: str) -> dict[str, dict]:
 
 def edge_paths(e, path: str = "e") -> list[tuple[str, str]]:
     """Every edge in an expanded edge section as (label path, far node SAID): a map with an
-    ``n`` field is an edge, and any other map or list is searched, a list's items labelled by
-    their index."""
+    ``n`` field is an edge, whose ``n`` must be a string, and any other map or list is searched,
+    a list's items labelled by their index."""
     if isinstance(e, dict):
-        if isinstance(e.get("n"), str):
+        if "n" in e:
+            if not isinstance(e["n"], str):
+                raise ScenarioError(f"The edge at {path} has an n of {e['n']!r}; an edge's n "
+                                    f"names its far node by SAID, so it is a string.", E_EDGE)
             return [(path, e["n"])]
         return [p for k, v in e.items() for p in edge_paths(v, f"{path}.{k}")]
     if isinstance(e, list):
@@ -167,7 +179,8 @@ class _Builder:
                 kind, name = next(iter(value.items()))
                 return {"aid": self.eb.prefix, "acdc": self.acdc_said,
                         "schema": self.schema_said, "nonce": lambda x: nonce(self.t, x),
-                        "registry": lambda x: self.registry_event(x)["d"]}[kind](name)
+                        "registry": lambda x: self.registry_event(x)["d"],
+                        "nothing": lambda x: label_digest(self.t, x)}[kind](name)
             return {k: self._resolve(v) for k, v in value.items()}
         if isinstance(value, list):
             return [self._resolve(v) for v in value]
@@ -189,12 +202,23 @@ class _Builder:
     def schema_said(self, name: str) -> str:
         if name not in self.schemas:
             raise ScenarioError(f"No schema is named {name!r}.")
+        if name not in self.schema_bodies and self.schemas[name].get("said", True) is False:
+            # A document that stands at a non-local reference's URI: not a SAD, so its $id is
+            # that URI and it is delivered as written.
+            schema = self.schemas[name]["schema"]
+            if not isinstance(schema.get("$id"), str) or not schema["$id"]:
+                raise ScenarioError(f"The unsaided schema {name!r} needs the URI it stands at "
+                                    f"as its $id.")
+            js.check(schema, allow_nonlocal=True)
+            self.saids[name], self.schema_bodies[name] = schema["$id"], schema
         if name not in self.schema_bodies:
             schema = self.schemas[name]["schema"]
             js.check(schema, allow_nonlocal=True)
             compact = sa.Readings(**{**self.readings.__dict__, "schema": "compact"})
-            self.schema_bodies[name] = sa.saidify(self.t, schema, "$id", compact)
-            self.saids[name] = self.schema_bodies[name]["$id"]
+            body = sa.saidify(self.t, schema, "$id", compact)
+            self.saids[name] = body["$id"]
+            self.schema_bodies[name] = self._alter(body, self.schemas[name].get("alter", []),
+                                                   f"schema {name!r}", sized=False)
         return self.saids[name]
 
     def _prior(self, name: str, spec: dict) -> str:
@@ -234,15 +258,31 @@ class _Builder:
             u, td, ts = blind(self.t, state["u"]), self._resolve(state["td"]), state["ts"]
             b = sa.blid(self.t, u, td, ts, self.readings)
             body = bup(self.t, rd, n, prior["d"], b, dt, self.readings)
-            if spec.get("disclose"):
-                block = sa.blinded_block(self.t, u, td, ts, self.readings)
+            block = self._disclosed(name, spec.get("disclose"), u, td, ts, b)
         else:
             raise ScenarioError(f"Registry event {name!r} has type {spec['t']!r}; only rip and "
                                 f"bup are built (upd is deferred).")
+        body = self._alter(body, spec.get("alter", []), f"registry event {name!r}")
         self.events[name] = (body, block)
         self.saids[name] = body["d"]
         self._building_events.discard(name)
         return body
+
+    def _disclosed(self, name: str, how, u: str, td: str, ts: str, b: str) -> str:
+        """The blinded state block a bup's attachment carries: none, the real one, or, for a
+        tamper, other content with either the real BLID kept or the content's own BLID."""
+        if not how:
+            return ""
+        if how is True:
+            return sa.blinded_block(self.t, u, td, ts, self.readings)
+        if not isinstance(how, dict) or how.get("blid") not in ("kept", "own"):
+            raise ScenarioError(f"Registry event {name!r} discloses {how!r}; a tampered "
+                                f"disclosure names its td or ts and whether its blid is kept "
+                                f"or its own.")
+        td = self._resolve(how.get("td", td))
+        ts = how.get("ts", ts)
+        own = sa.blinded_block(self.t, u, td, ts, self.readings)
+        return own if how["blid"] == "own" else b + own[len(b):]
 
     def registry_inception(self, name: str) -> str:
         spec = self._registry_spec(name)
@@ -268,21 +308,118 @@ class _Builder:
         values["i"] = self.eb.prefix(spec["issuer"])
         if "registry" in spec:
             values["rd"] = self.registry_inception(spec["registry"])
-        values["s"] = self.schema_said(spec["schema"])
+        if spec.get("schema") is not None:
+            values["s"] = self.schema_said(spec["schema"])
         for section in SECTIONS:
             if section in spec:
                 values[section] = self._fill(self._resolve(spec[section]))
         if "A" in values:
             values["A"] = sa.aggregate(self.t, values["A"], self.readings)[:1] + values["A"]
         acdc = {k: values[k] for k in ACDC_FIELDS if k in values and values[k] is not None}
-        acdc["d"] = sa.acdc_said(self.t, sa.sized({**acdc, "d": sa.DUMMY}, self.readings),
-                                 self.readings)
-        self.expanded[name] = sa.sized(acdc, self.readings)
+        acdc = self._ordered(name, acdc)
+        acdc["d"] = self._top_said(name, sa.sized({**acdc, "d": sa.DUMMY}, self.readings))
+        self.expanded[name] = self._protocol(name, sa.sized(acdc, self.readings))
         self.saids[name] = acdc["d"]
         self._building.discard(name)
         return acdc["d"]
 
+    def _ordered(self, name: str, acdc: dict) -> dict:
+        order = self.acdcs[name].get("order")
+        if order is None:
+            return acdc
+        if sorted(order) != sorted(acdc):
+            raise ScenarioError(f"ACDC {name!r} has the order {order!r}, which must name exactly "
+                                f"its fields {list(acdc)!r}.")
+        return {k: acdc[k] for k in order}
+
+    def _protocol(self, name: str, sad: dict) -> dict:
+        """The ACDC with its version string's protocol replaced, if its scenario names another
+        (a tamper: the body is no longer framed as an ACDC); the replacement keeps the length."""
+        protocol = self.acdcs[name].get("protocol")
+        if protocol is None:
+            return sad
+        if not isinstance(protocol, str) or not PROTOCOL.fullmatch(protocol):
+            raise ScenarioError(f"ACDC {name!r} names the protocol {protocol!r}; a version "
+                                f"string's protocol is four uppercase letters.")
+        return {**sad, "v": protocol + sad["v"][4:]}
+
+    def _top_said(self, name: str, dummied: dict) -> str:
+        """The top-level SAID: the most compact SAID (lines 134 to 147), or for a tamper the SAID
+        over the expanded form, keripy 1.x's rule (A-C3), or over a body whose version string
+        names another protocol."""
+        rule = self.acdcs[name].get("said", "compact")
+        if rule == "expanded":
+            return sa.expanded_said(self.t, dummied, self.readings)
+        if rule != "compact":
+            raise ScenarioError(f"ACDC {name!r} has the said rule {rule!r}; it is compact or "
+                                f"expanded.")
+        compact = sa.most_compact(self.t, dummied, self.readings)
+        if self.acdcs[name].get("protocol") is None:
+            return compact["d"]
+        patched = self._protocol(name, {**compact, "d": sa.DUMMY})
+        return sa.digest(self.t, sa.serialize(patched, self.readings))
+
+    def _alter(self, sad: dict, alterations: list, what: str, sized: bool = True) -> dict:
+        """``sad`` with each alteration applied after its SAIDs were computed: a value set at a
+        dotted path, then the SAIDs of any blocks named in ``resaid`` recomputed. Nothing else
+        is recomputed, and a SAD with a version string must keep its length, so the tamper
+        changes no framing."""
+        if not alterations:
+            return sad
+        out = json.loads(json.dumps(sad))
+        for alter in alterations:
+            if not isinstance(alter, dict) or not isinstance(alter.get("path"), str):
+                raise ScenarioError(f"An alteration of {what} needs a path: {alter!r}.")
+            self._set(out, alter["path"], self._resolve(alter.get("value")), what)
+            for path in alter.get("resaid", []):
+                parts = path.split(".")
+                block = self._get(out, parts, path, what)
+                if not sa.is_saided(block):
+                    raise ScenarioError(f"The path {path!r} of {what} does not name a SAIDed "
+                                        f"block, so it has no SAID to recompute.")
+                block["d"] = sa.block_said(self.t, block, self.readings)
+        if sized and len(sa.serialize(out, self.readings)) != len(sa.serialize(sad,
+                                                                                self.readings)):
+            raise ScenarioError(f"An alteration of {what} changes its length; a tamper keeps the "
+                                f"length so that its version string still frames it. Choose a "
+                                f"value of the same length.")
+        return out
+
+    def _get(self, node, parts: list[str], path: str, what: str):
+        for part in parts:
+            if not isinstance(node, dict) or part not in node:
+                raise ScenarioError(f"The path {path!r} names nothing in {what}.")
+            node = node[part]
+        return node
+
+    def _set(self, node: dict, path: str, value, what: str) -> None:
+        *head, last = path.split(".")
+        parent = self._get(node, head, path, what)
+        if not isinstance(parent, dict) or last not in parent:
+            raise ScenarioError(f"The path {path!r} names nothing in {what}.")
+        parent[last] = value
+
     def form(self, name: str) -> dict:
+        """The ACDC as it is presented, after any alteration the scenario asks for."""
+        out = self._protocol(name, self._form(name))
+        out = self._alter(out, self.acdcs[name].get("alter", []), f"ACDC {name!r}")
+        return self._declared(name, out)
+
+    def _declared(self, name: str, out: dict) -> dict:
+        """The presented form with its version string declaring another form's size, if the
+        scenario says so (a tamper of framing, made on purpose: the issuer resized nothing after
+        expanding). The version string keeps its length, so only the declared size changes."""
+        declared = self.acdcs[name].get("declared_size")
+        if declared is None:
+            return out
+        if declared != "compact":
+            raise ScenarioError(f"ACDC {name!r} has declared_size {declared!r}; the only other "
+                                f"size a form may declare is the compact form's.")
+        compact = sa.sized({**sa.most_compact(self.t, self.expanded[name], self.readings),
+                            "d": self.saids[name]}, self.readings)
+        return {**out, "v": out["v"][:4] + compact["v"][4:]}
+
+    def _form(self, name: str) -> dict:
         expanded = self.expanded[name]
         form = self.acdcs[name].get("form", "compact")
         if form == "expanded":
@@ -380,6 +517,18 @@ class _Builder:
                                 f"Link them by an edge or remove them.", E_DAG_UNREACHABLE)
         return order
 
+    def _reachable(self, graph, omit) -> set[str]:
+        """The ACDCs reachable from the presented one without passing through an omitted one,
+        which are the nodes the bundle carries."""
+        seen, frontier = set(), [self.frag["presented"]]
+        while frontier:
+            name = frontier.pop()
+            if name in seen or name in omit:
+                continue
+            seen.add(name)
+            frontier.extend(graph[name])
+        return seen
+
     # -- streams -------------------------------------------------------------------------------
 
     def _group(self, code: str, parts: list[str]) -> str:
@@ -389,9 +538,15 @@ class _Builder:
     def attachments(self, source_seal: str | None, block: str = "") -> str:
         groups = []
         if source_seal is not None:
+            said = None
+            if isinstance(source_seal, dict):
+                if "event" not in source_seal:
+                    raise ScenarioError(f"The source seal {source_seal!r} names no event.")
+                said = label_digest(self.t, source_seal["wrong_said"])
+                source_seal = source_seal["event"]
             anchor = self.eb.event(source_seal)
             sn = encoding.primitive(self.t, "0A", anchor.sn.to_bytes(16, "big"))
-            groups.append(self._group("-S", [sn + anchor.said]))
+            groups.append(self._group("-S", [sn + (said or anchor.said)]))
         if block:
             groups.append(self._group("-a", [block]))
         return self._group("-C", groups) if groups else ""
@@ -421,6 +576,10 @@ class _Builder:
             self.acdc_said(name)
         graph, edges = self.dag()
         far = self.far_nodes(graph)
+        # An omitted node's edges are invisible to a validator, so a node that only it reaches
+        # leaves the bundle with it: acdcs and the dag hold the same nodes, less the omitted.
+        kept = self._reachable(graph, omit)
+        far = [n for n in far if n in kept]
         forms = {name: self.form(name) for name in self.acdcs}
         kels, as_of = [], {}
         for delivery in self.frag.get("kels", []):
@@ -436,7 +595,7 @@ class _Builder:
                 as_of[rd] = max(as_of.get(rd, 0), int(body["n"], 16))
         dag = {"root": self.saids[presented], "edges": [
             {"near": self.saids[near], "path": path, "n": n}
-            for near, path, n in edges if near not in omit]}
+            for near, path, n in edges if near in kept]}
 
         def acdc_entry(name):
             att = self.attachments(self.acdcs[name].get("source_seal"))
@@ -449,7 +608,7 @@ class _Builder:
                 for n in self.registries if n not in omit],
             "schemas": [sa.serialize(self.schema_bodies[n], self.readings).hex()
                         for n in self.schemas if n not in omit],
-            "acdcs": [acdc_entry(n) for n in far if n not in omit],
+            "acdcs": [acdc_entry(n) for n in far],
             "presented": acdc_entry(presented),
         }
         return Bundle(request=request, saids=dict(self.saids), expanded=dict(self.expanded),

@@ -1,4 +1,1183 @@
 {
-  "about": "Hand-kept triage of the keyword sentences of the pinned ACDC specification text (tag v1.0), read by scripts/clause-coverage. It stays empty until the first ACDC case cites the text, because a triage for a specification no case cites must have no entries; the full triage arrives with the first ACDC cases.",
-  "entries": {}
+  "about": "Hand-kept triage of the keyword sentences of the pinned ACDC specification text, read by scripts/clause-coverage. Each entry is keyed by the exact text of one keyword sentence as docs/coverage/acdc.md shows it. When that text occurs more than once in a pinned text, the entry is a list of judgments, each with section (the heading it is under, as the report shows it) and, when the text also repeats within that section, occurrence (1-based, in text order); a judgment must identify exactly one sentence or it is refused. Fields: scope, one of validator (a validator, verifier or parser can be tested on it through an adapter with fixed inputs), out-of-scope (it binds a role no adapter plays, such as an issuer acting outside the bundle a validator is given) or untestable (no case could test it; reason is then required and says why); security, true when getting it wrong lets an attacker forge or misattribute a credential, bypass revocation or chaining, or smuggle data; note, optional. A sentence with no judgment is reported as unassessed.",
+  "entries": {
+    "ACDCs MUST use insertion-ordered field maps for canonical serialization/deserialization.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Some fields are OPTIONAL but all fields that appear MUST appear in a defined order.": {
+      "scope": "validator",
+      "security": false
+    },
+    "This section defines which fields are REQUIRED and which are OPTIONAL.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "A statement about what the section defines, not an obligation on any party."
+    },
+    "When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The following fields are REQUIRED `[v, d, i, s]` i.e. they MUST appear in any ACDC (not to be confused with other message types in the ACDC protocol).": {
+      "scope": "validator",
+      "security": true,
+      "note": "An ACDC missing `s` or `i` would skip its schema check or its issuer's commitment."
+    },
+    "The following table defines non-top-level fields whose labels MUST be reserved.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Reserves labels for the specification's own use; it states no condition on an ACDC beyond the rules that define each label."
+    },
+    "The primary field labels are compact in that they MUST use only one or at most two characters.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Version String, `v`, field MUST be the first field in any top-level ACDC field map encoded in JSON, CBOR, or MGPK [[RFC4627](#RFC4627)] [[12](#CBOR)] [[13](#RFC8949)] [[14](#MGPK)].": {
+      "scope": "validator",
+      "security": false
+    },
+    "A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the ACDC protocol [[1](#CESR)] used by the associated message.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)].": {
+      "scope": "validator",
+      "security": false
+    },
+    "Compliant ACDC version 2.XX implementations MUST support the old ACDC version 1.x Version String format to properly verify Message bodies created with 1.x format events.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Graded as framing: a 1.x version string must be parsed and the body it declares framed."
+    },
+    "The protocol field, `PPPP` value in the version string MUST be `ACDC` for the ACDC protocol.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The version field, `vv`, MUST encode the old version of the ACDC protocol [[1](#CESR)].": {
+      "scope": "validator",
+      "security": false
+    },
+    "It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 1
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 2
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 3
+      }
+    ],
+    "It MUST be present in messages with any other message type, regardless of the kind of serialization.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 1
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 2
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 3
+      }
+    ],
+    "The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 1
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 2
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 3
+      }
+    ],
+    "To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 1
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 2
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Message Type Field",
+        "occurrence": 3
+      }
+    ],
+    "More specifically, special top-level ACDC fields MUST have for their value either a serialized field map or the SAID of that field map.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Some fields, such as the `i`, Issuer identifier field, MUST each have an [[ref: AID]] as its value.": {
+      "scope": "validator",
+      "security": false
+    },
+    "An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)].": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds how a controller derives an AID; KERI's own cases test AID derivation."
+    },
+    "Each AID SHOULD have set of one or more Controllers who each control a private key.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds who controls an AID, a role no adapter plays."
+    },
+    "No shared or trusted relationship between the Controllers and Verifiers is REQUIRED.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "States that no relationship is required; there is nothing to test."
+    },
+    "The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)].": {
+      "scope": "validator",
+      "security": true
+    },
+    "The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339).": {
+      "scope": "validator",
+      "security": false
+    },
+    "An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Stricter than line 110, which allows one of the two to be empty."
+    },
+    "An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either.": {
+      "scope": "validator",
+      "security": false
+    },
+    "However, for the sake of verifiability, each section or block that is compactable MUST have only one SAID regardless of how many different variants its `oneOf` compositions allow.": {
+      "scope": "validator",
+      "security": true
+    },
+    "Therefore, there MUST be one and only one unambiguous way to compute the SAID of a compactifiable section or block with compactifiable nested blocks.": {
+      "scope": "validator",
+      "security": true
+    },
+    "This compact form MUST appear as the first variant in the `oneOf` subschema list for its labeled field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Its SAID MUST be computed on the full expanded representation of the block.": {
+      "scope": "validator",
+      "security": true
+    },
+    "These are special cases, and the most detailed variant of the subblock MUST be the fully expanded form.": {
+      "scope": "validator",
+      "security": true
+    },
+    "Thus, an ACDC without a top-level UUID, `u`, field SHOULD be considered a public (non-confidential) ACDC.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Considering an ACDC public is a classification that acdc.verify does not report."
+    },
+    "ACDC's use of JSON Schema MUST be in accordance with the ACDC-defined profile as defined herein.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Observable through the specific schema rules that follow it."
+    },
+    "This field value MUST be the SAID of the schema.": {
+      "scope": "validator",
+      "security": true
+    },
+    "There are several ACDC supported formats for the value of the top-level id, `$id`, field but all of the formats MUST include the SAID of the Schema (see below).": {
+      "scope": "validator",
+      "security": true
+    },
+    "Correspondingly, the value of the top-level schema, `s`, field MUST be the SAID included in the schema's top-level `$id` field.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The digest algorithm employed for generating [[ref: Schema]] SAIDs MUST have an approximate cryptographic strength of 128 bits.": {
+      "scope": "untestable",
+      "security": true,
+      "reason": "Every CESR digest code has at least 128 bits of strength, so no well-formed schema SAID can violate it."
+    },
+    "The [[3](#SAID)] MUST be generated in compliance with the ToIP SAID internet draft specification and MUST be encoded using CESR.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The value of the id, `$id`, field in any ACDC bundled subschema resource MUST include the SAID of that subschema using one of the formats described below.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The subschema so bundled MUST be verifiable against its referenced and embedded SAID value.": {
+      "scope": "validator",
+      "security": true
+    },
+    "For security reasons, the full Schema of an ACDC MUST be completely self-contained and statically fixed (immutable) for that ACDC.": {
+      "scope": "validator",
+      "security": true
+    },
+    "This means that dynamic Schema references or dynamic Schema generation mechanisms MUST NOT be used, i.e are not allowed.": {
+      "scope": "validator",
+      "security": true
+    },
+    "To prevent both forms of attack, all Schemas MUST be static, i.e., Schemas MUST be SADs and therefore verifiable against their SAIDs.": {
+      "scope": "validator",
+      "security": true
+    },
+    "To elaborate, the serialization of a static schema SHOULD be self-contained.": {
+      "scope": "validator",
+      "security": true
+    },
+    "Therefore, all ACDC-compliant Schemas MUST be SADs.": {
+      "scope": "validator",
+      "security": true
+    },
+    "In other words, the Schema MUST therefore be SAIDified.": {
+      "scope": "validator",
+      "security": true
+    },
+    "ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The value of the top-level id field, `$id`, MUST be a bare SAID.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To clarify, ACDCs MUST NOT use complex JSON Schema references which allow dynamically generated Schema resources to be obtained from online JSON Schema Libraries [[41](#ref41)] [[42](#JSchCx)].": {
+      "scope": "validator",
+      "security": true
+    },
+    "ACDCs MUST use static JSON Schema (i.e., SAIDifiable Schema).": {
+      "scope": "validator",
+      "security": true
+    },
+    "The Schema dialect for ACDC 1.0 MUST be JSON Schema 2020-12 and is indicated by the identifier `\"https://json-schema.org/draft/2020-12/schema\"`  [[10](#JSch)] [[11](#JSch_202012)].": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Validator MUST control the tooling code dialect used for Schema validation and hence the tooling dialect version actually used.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Which tooling a validator runs internally is not observable through an adapter."
+    },
+    "A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The string MUST be treated simply as an identifier that communicates the intended dialect to be processed by the Schema validation tool.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "An adapter never fetches anything, so treating the $schema string as an identifier and not as a location cannot be told apart in a case."
+    },
+    "When provided, the top-level `$schema` field value for ACDC version 1.0 MUST be \"https://json-schema.org/draft/2020-12/schema\".": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each schema MUST have at the top level a version field with the field label `version`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of the `version` field MUST be a semantic version string in the dotted decimal notation of the form \"major.minor.patch\".": {
+      "scope": "validator",
+      "security": false
+    },
+    "Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Any copy of a schema that verifies against the same SAID given by the Schema ID, `$id` field value, SHOULD be assumed to be identical to any other copy that verifies to the same SAID by virtue of the strong collision resistance of the digest employed.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "No case can present two different schemas with one SAID without a digest collision."
+    },
+    "To avoid confusion, any change to the Schema that changes the value of the `$id` MUST also be reflected in a correspondingly unique value of its `version` field.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds a schema author's versioning across schema revisions, which a validator judging one bundle does not see."
+    },
+    "To comply with the semantic versioning rules, a backward incompatible Schema MUST have a higher major version number in its `version` field value than any backward incompatible version.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds a schema author's versioning across schema revisions, which a validator judging one bundle does not see."
+    },
+    "As discussed below in the Edge section, an Edge block MAY have a Schema, `s` field, which indicates that the ACDC node the edge points to MUST validate against the schema indicated by the Edge's Schema, `s` field value.": {
+      "scope": "validator",
+      "security": true
+    },
+    "If the Edge's schema does not validate against the ACDC node pointed to by the edge, then the Edge's schema is backward incompatible and MUST have a higher major version number than the ACDC's schema (node pointed to by the edge).": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds a schema author's versioning across schema revisions, which a validator judging one bundle does not see."
+    },
+    "In this latter case, ACDCs issued under the old major version MUST either be revoked and reissued to comply with the new major version schema, or the Edge's schema MUST include a `oneOf` composition that accepts either old or new major versions.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds what an issuer does with ACDCs issued under an old schema, an action a validator does not see."
+    },
+    "ACDCs MUST be verifiable when available.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "A general statement of intent with no condition a case could check."
+    },
+    "Although a given ACDC application domain or ecosystem governance framework (EGF) may impose schema availability constraints, this ACDC specification itself does not impose any specific availability requirements on Issuers other than schema caches SHOULD be sufficiently available for the intended application of their associated ACDCs.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds the availability of schema caches, which is infrastructure, not a validator."
+    },
+    "The Issuer of an ACDC is REQUIRED to satisfy any availability constraints on its Schema that MAY be imposed by the application domain or ecosystem.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds the issuer to constraints an ecosystem governance framework imposes."
+    },
+    "The provided ACDC MUST validate against an allowed combination of the composed variants.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The Validator determines what decomposed variants the provided ACDC MUST also validate against.": {
+      "scope": "validator",
+      "security": true
+    },
+    "Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID.": {
+      "scope": "validator",
+      "security": true
+    },
+    "It also MUST validate against one of its specified `oneOf` variants.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema.": {
+      "scope": "validator",
+      "security": true
+    },
+    "In contrast, the compliance of the provided composed schema for an expected ACDC type SHOULD be enforced by the Validator.": {
+      "scope": "validator",
+      "security": true
+    },
+    "These MUST be serializable using a serialization that is compatible with the serialization kind of the ACDC that conveys them.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Issuee MUST be designated by the `i` field value at the top-level of the attribute `a`, field block.": {
+      "scope": "validator",
+      "security": true,
+      "note": "The issuee identified here is what the `I2I` edge check compares."
+    },
+    "The ACDC MUST be \"issued by\" an Issuer and MUST be \"issued to\" an Issuee.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To elaborate, because the Issuee, `i`, field value MUST be an AID, by definition, there is a provable Controller of that AID.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The semantics of the Issuee SHOULD be defined by the Credential Frameworks in an associated Ecosystem Goveranance Framework (EGF) for the ACDC.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Leaves the meaning of an issuee to an ecosystem governance framework."
+    },
+    "Later disclosure of the uncompacted Attribute block SHOULD be verified against its SAID, `d`, field that was provided in the compact form as the value of the top-level Attribute section, `a`, field.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The semantics of the issuance SHOULD be defined by the Credential Frameworks of the EGF.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Leaves the meaning of issuance to an ecosystem governance framework."
+    },
+    "Thus, an ACDC without a UUID, `u` field in its Attributes block MUST be considered a Public-Attribute ACDC even when expressed in compact form.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Considering an ACDC public is a classification that acdc.verify does not report."
+    },
+    "All fields in a given block MUST be disclosed together as a set.": {
+      "scope": "validator",
+      "security": false,
+      "note": "A block missing a field fails its own SAID, which is flagged at line 134."
+    },
+    "The Edge Section itself MUST have a \"oneOf\" composition with only its SAID so that the Edge Section MUST be expressable in the most compact form as merely its SAID.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Nested Edge-groups, when present, with one exception, MUST appear as locally unique labeled blocks nested within another Edge-group.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When present, it MUST appear at the top-level of the ACDC.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The presence of an Edge Section is OPTIONAL, An Edge is indicated by the REQUIRED presence of a node, `n` field in the non-compact variant of its subschema.": {
+      "scope": "validator",
+      "security": false
+    },
+    "An Edge MUST contain a node, `n` field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "An Edge-group MUST NOT have a node, `n` field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To enable both the node and its connecting edge to be globally uniquely resolvable, each Edge's block MUST also have a SAID, `d`, field.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Conflicts with lines 1089 and 1154, which make the `d` field optional."
+    },
+    "An Edge-group MUST NOT have a node, `n`, field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Edge-group block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of this field MUST be the SAID of its enclosing block.": [
+      {
+        "scope": "validator",
+        "security": true,
+        "section": "SAID, `d` field",
+        "occurrence": 1
+      },
+      {
+        "scope": "validator",
+        "security": true,
+        "section": "SAID, `d` field",
+        "occurrence": 2
+      },
+      {
+        "scope": "validator",
+        "security": true,
+        "section": "SAID, `d` field",
+        "occurrence": 3
+      },
+      {
+        "scope": "validator",
+        "security": true,
+        "section": "SAID, `d` field",
+        "occurrence": 4
+      }
+    ],
+    "The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge-group block following the SAID, `d`, field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy.": [
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has.",
+        "section": "UUID, `u` field",
+        "occurrence": 1
+      },
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has.",
+        "section": "UUID, `u` field",
+        "occurrence": 2
+      }
+    ],
+    "The Operator, `o` field MUST appear immediately following the SAID, `d` field, and UUID, `u` field (when present) in the Edge-group block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When the Operator, `o`, field is missing in an Edge-group block, the default value for the Operator, `o`, field MUST be the `AND` Operator.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Reading a missing operator as anything weaker than `AND` would accept a group with a failing member."
+    },
+    "Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid.": {
+      "scope": "out-of-scope",
+      "security": true,
+      "note": "Hedged as what is typical in an ecosystem governance framework; the framework decides, and the acdc-chain-strict profile grades the common reading as INTEROP."
+    },
+    "If any links between the head and the tail are broken (invalid), then the head is itself MUST be invalid.": {
+      "scope": "out-of-scope",
+      "security": true,
+      "note": "Hedged as what is typical in an ecosystem governance framework; the framework decides, and the acdc-chain-strict profile grades the common reading as INTEROP."
+    },
+    "Typically, in a given EGF (ecosystem governance framework), all branches from the head MUST be valid for the head node to be valid.": {
+      "scope": "out-of-scope",
+      "security": true,
+      "note": "Hedged as what is typical in an ecosystem governance framework; the framework decides, and the acdc-chain-strict profile grades the common reading as INTEROP."
+    },
+    "The Weight, `w` field, is OPTIONAL but when present, it MUST appear immediately following all of the SAID, `d` field, UUID, `u` field (when present), and Operator, `o` field (when present) in the Edge-group block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The top-level Edge-group MUST NOT have a weight, `w` field, because it is not a member of another Edge-group.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To simplify the semantics for such Operators, the Weight, `w`, field MUST be the reserved field label for weighting.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Reserves a label; it states no condition a validator could find violated in an ACDC."
+    },
+    "Such labeled nested Edge or Edge-group fields MUST appear after all of any fields with a reserved field label.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each nested Edge or Edge-group block within an Edge-group including the top-level Edge Section Edge-group MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To clarify, each nested block in every Edge-group MUST have its own field with its own local (to the ACDC) label.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Note that each nested block MUST NOT include a type field.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Labeled nested edge and edge-group fields"
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "Labeled nested rule and rule-group fields"
+      }
+    ],
+    "Because ACDCs MUST have a Schema, they SHOULD leverage it to provide property graph edge types with a cleaner separation of concerns.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Restates that an ACDC has a schema, covered at line 36, and advises schema authors on modelling edge types; neither half names a check."
+    },
+    "Each labeled Edge and Edge-group type MUST be defined by the subschema designated by its label.": {
+      "scope": "validator",
+      "security": false
+    },
+    "An Edge MUST be represented as a block (field map) with two exceptions.": {
+      "scope": "validator",
+      "security": false
+    },
+    "An Edge block MUST have a node, `n`, field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To clarify, each Edge block MUST have a node, `n`, field and MAY have any combination of SAID, `d`, UUID, `u`, schema, `s`, operator, `o`, or weight, `w` fields.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When present the order of appearance of these fields MUST be as follows: `[d, u, n, s, o, w]'.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The SAID, `d` field is optional but, when present, MUST appear as the first field in the Edge block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The schema for that edge's label MUST indicate that the edge value is the edge block SAID by using a `oneOf` composition of the compact form and the expanded form.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge block following the SAID, `d`, field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally).": [
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has.",
+        "section": "UUID, `u` field",
+        "occurrence": 1
+      },
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has.",
+        "section": "UUID, `u` field",
+        "occurrence": 2
+      }
+    ],
+    "When an Edge block does not include a SAID, `d` field, then the node, `n` field MUST appear as the first field in the block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema.": {
+      "scope": "validator",
+      "security": true
+    },
+    "When the (near node) Edge block's schema, `s` field is present (see below), then the far node MUST also validate against the Schema indicated by the near node Edge block's Schema, `s` field value.": {
+      "scope": "validator",
+      "security": true
+    },
+    "When present, the Schema `s` field MUST appear immediately following the node `n` field in the Edge sub-block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The far node ACDC MUST also validate against an Edge block's schema, `s` field when present.": {
+      "scope": "validator",
+      "security": true
+    },
+    "To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value.": {
+      "scope": "validator",
+      "security": true
+    },
+    "However, when the Schema SAIDs differ, two Schema validation runs MUST be performed.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The Operator, `o` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, node, `n` field, or schema, `s` field (when present) in the Edge block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "|`I2I`| Issuer-To-Issuee, The Issuer AID of this ACDC MUST be the Issuee AID of the node this Edge points to.  | Yes |": {
+      "scope": "validator",
+      "security": true
+    },
+    "|`DI2I`| Delegated-Issuer-To-Issuee, The Issuer AID of this ACDC MUST be either the Issuee AID or a delegated AID of the Issuee AID of the node this Edge points to. | No |": {
+      "scope": "validator",
+      "security": true
+    },
+    "If the node pointed to by the Edge is a targeted ACDC, i.e., has an Issuee, then the `I2I` Operator MUST be appended to the Operator, `o`, field's effective list value.": {
+      "scope": "validator",
+      "security": true
+    },
+    "If the node pointed to by the Edge block is an Untargeted ACDC i.e., does not have an Issuee, then the `NI2I` Operator MUST be appended to the Operator, `o`, field's effective list value.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Appending `NI2I` relaxes a check, so getting it wrong over-refuses."
+    },
+    "The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points.": {
+      "scope": "validator",
+      "security": true
+    },
+    "Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC.": [
+      {
+        "scope": "validator",
+        "security": true,
+        "section": "Operator, `o` field",
+        "occurrence": 1
+      },
+      {
+        "scope": "validator",
+        "security": true,
+        "section": "Operator, `o` field",
+        "occurrence": 2
+      }
+    ],
+    "In other words, any REQUIREMENT that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID, if any, of the node the Edge points to is relaxed (not applicable).": {
+      "scope": "validator",
+      "security": false,
+      "note": "Relaxes the `I2I` check, so getting it wrong over-refuses."
+    },
+    "The Weight, `w` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, Node, `n` field, Schema, `s` field, or Operator, `o` field (when present) in the Edge block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Labeled property fields MUST appear after all of any fields with a reserved field label.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Schema for that Edge's label MUST indicate in its description that the Edge value is a Far Node SAID, not the Edge block SAID.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Requires prose in a schema's description, which no validator interprets."
+    },
+    "The Rule Section itself MUST have a \"oneOf\" composition with only its SAID so that the Rule Section MUST be expressable in the most compact form as merely its SAID.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Rule-group block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule-group block following the SAID, `d`, field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Labeled nested Rule or Rule-group fields MUST appear after all of any fields with a reserved field label.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To elaborate, each nested Rule or Rule-group block MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each labeled Rule type MUST be defined by the subschema designated by its label.": {
+      "scope": "validator",
+      "security": false
+    },
+    "A Rule MUST have a Legal, `l`, field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "A Rule MUST NOT have any other fields.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The SAID, `d` field is optional, but when it appears, it MUST appear as the first field in the Clause block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Schema for that clause's label MUST indicate that the clause field value is the clause block SAID by using a `oneOf` composition of the compact form and the expanded form.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule Section block following the SAID, `d` field.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Schema for that Rule's label MUST indicate in its description that the Rule value is Legal Language, not a SAID.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Requires prose in a schema's description, which no validator interprets."
+    },
+    "The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Binds the issuer, but a missing anchor is visible in the bundle; refusing is an inferred SHOULD."
+    },
+    "Update events in the Registry's TEL MUST also be anchored.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Binds the issuer, but a missing anchor is visible in the bundle; refusing is an inferred SHOULD."
+    },
+    "The Schema for the block MUST include a `oneOf` composition Operator that validates against both the compact and full versions of the block.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The terms-of-use of the original disclosure as applied to the original Disclosee MUST be applied by each subsequent Discloser to each subsequent Disclosee via each of the subsequent disclosures.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "A contractual obligation on later disclosers; whether the terms bind anyone is a legal question no case can check."
+    },
+    "When that contingency is met, then the Contingent Disclosure MUST be made by the party whose responsibility it is to satisfy that disclosure obligation.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "A contractual obligation on the party responsible for a contingent disclosure; no case can check it."
+    },
+    "This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges.": {
+      "scope": "practice",
+      "security": false,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message.": {
+      "scope": "practice",
+      "security": false,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "The notional semantics of each route indicate how the message SHOULD be used in an exchange.": {
+      "scope": "practice",
+      "security": false,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified.": {
+      "scope": "practice",
+      "security": true,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed.": {
+      "scope": "practice",
+      "security": false,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD.": {
+      "scope": "practice",
+      "security": true,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure.": {
+      "scope": "practice",
+      "security": false,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "To restate, there are two proofs that a Discloser SHOULD provide.": {
+      "scope": "practice",
+      "security": false,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the \"most compact form\" algorithm above).": {
+      "scope": "practice",
+      "security": true,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants.": {
+      "scope": "practice",
+      "security": false,
+      "note": "In the IPEX section, which declares itself non-normative (line 1797); triaged as practice, so it is counted apart from obligations and an INTEROP basis may quote it."
+    },
+    "The transaction events MUST be sealed (anchored or bound) in a KEL using transaction event seals, whose JSON representation MUST be as follows.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The fields for the Registry-Inception, `rip` event , given by their labels, MUST appear in the following order, `[v, t, d, u, i, n, dt]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of the Message type, `t` field MUST be `rip`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of the sequence number field, `s` MUST be the hex encoded string for the integer 0.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Names a field `s` that the `rip` field list on the same line does not have; read as `n`."
+    },
+    "The fields for the Blindable-Update, `bup` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, b]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of the Message type, `t` field MUST be `bup`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The fields for the Update, `upd` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, ta, ts]`.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Names the transaction SAID field `ta`, where lines 2035 and 2060 call it `td`."
+    },
+    "The value of the Message type, `t` field MUST be `upd`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The protocol type MUST be `ACDC`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The Message type, `t` field value MUST be  one of the Message types in the table above.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The SAID, `d` field value MUST be the SAID of its enclosing block.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The UUID, `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally).": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has."
+    },
+    "The Issuer, `i` field value MUST be the AID of the Issuer.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The Registry SAID, `rd` field value MUST be the value of the SAID, `d` field of the Registry Inception, `rip` event.": {
+      "scope": "validator",
+      "security": true
+    },
+    "Update events MUST include the Registry SAID, `rd` field so that they can be verifiably associated with the Registry (TEL).": {
+      "scope": "validator",
+      "security": true
+    },
+    "The sequence number, `n` field value MUST be a hex-encoded string with no leading zeros of a zero-based strictly monotonically increasing integer.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The first (zeroth) transaction event in a given Registry (TEL) MUST have a sequence number of 0 or `0` hex.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The datetime, `dt` field value MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339).": {
+      "scope": "validator",
+      "security": false
+    },
+    "This MUST be the datetime of the issuance of the transaction event relative to the clock of the issuer.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds the issuer's clock, which a validator cannot see."
+    },
+    "The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry.": [
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "The specification does not define the registry's set of states, so no case can say a value is outside it.",
+        "section": "Transaction state, `ts` field",
+        "occurrence": 1
+      },
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "The specification does not define the registry's set of states, so no case can say a value is outside it.",
+        "section": "Transaction state, `ts` field",
+        "occurrence": 2
+      }
+    ],
+    "The blinded attribute, `b` field value MUST be the SAID of the blinded attribute block.": {
+      "scope": "validator",
+      "security": true
+    },
+    "The fields MUST appear in the following order: `[d, u, td, ts]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values.": {
+      "scope": "validator",
+      "security": true
+    },
+    "When not empty, the UUID `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally).": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has."
+    },
+    "When the `u` field value is derived from a shared secret salt, the derivation algorithm MUST preserve the approximately 128 bits of cryptographic strength.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has."
+    },
+    "When the transaction ACDC SAID, `ts`, field value is a placeholder, it is indicated by the empty string, i.e., \"\", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When the transaction state `ts` field value is a placeholder, it is indicated by the empty string, i.e., \"\", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each new event published by the Issuer in the Registry MUST increment the sequence number and hence the blinding factor, but MAY or MAY not change the actual blinded state.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Binds the issuer, but a repeated sequence number is visible in the registry."
+    },
+    "The shared secret salt MUST have approximately 128 bits of cryptographic entropy.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has."
+    },
+    "Consequently, it knows that the value of the ACDC, SAID, `td` field MUST be either the empty string placeholder or the real ACDC SAID given above.": {
+      "scope": "validator",
+      "security": true,
+      "note": "Stated in an example; a disclosed block whose `td` names another ACDC's SAID is visible in the bundle."
+    },
+    "The fields MUST appear in the following order `[d, u, td, ts, bn, bd]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization and MUST use one of the CESR group or count codes labeled `BoundStateSextuples` with code format `-b##` or `BigBoundStateSextuples` with code format `--b######`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The bound Issuee key event sequence number, `tn`, field value MUST be a CESR encoded non-negative integer.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Calls the field `tn` where its heading and field list call it `bn`."
+    },
+    "When not a placeholder, it MUST be the value of the `s` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event.": {
+      "scope": "validator",
+      "security": true,
+      "note": "A validator can check that `bn` and `bd` name one event of the issuee's KEL; whether that event was current when the `bup` was published is not observable in a bundle."
+    },
+    "It MUST be CESR-encoded as the CESR encoding for the integer value of 0.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When not a placeholder, the bound Issuee key event SAID, `bd`, field value MUST be the value of the `d` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event.": {
+      "scope": "validator",
+      "security": true,
+      "note": "A validator can check that `bn` and `bd` name one event of the issuee's KEL; whether that event was current when the `bup` was published is not observable in a bundle."
+    },
+    "When the bound Issuee key event SAID, `bd`, field value is a placeholder as indicated by the empty string, i.e., \"\", it MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Higher-up nodes in the graph with many lower-level nodes need only be transmitted, verified, and cached once per every node or leaf in the branch not redundantly re-transmitted and re-verified for each node or leaf as is the case for document-based Verifiable Credentials where the whole equivalent of the branched (graph) structure MUST be contained in one document.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Describes document-based verifiable credentials for contrast; it binds nothing in ACDC."
+    },
+    "Any subsequent cryptographic operations MUST preserve that minimum level of cryptographic strength.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "A design principle for every cryptographic operation, with no single check a case could make."
+    },
+    "To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above.": {
+      "scope": "validator",
+      "security": false,
+      "note": "A liveness obligation: accepting a valid selectively disclosed ACDC."
+    },
+    "The Issuer MUST anchor in its KEL an issuance proof digest seal of the set of bulk-issued ACDCs either directly or indirectly via an ACDC Registry (TEL).": {
+      "scope": "validator",
+      "security": true,
+      "note": "Binds the issuer, but a bulk-issued ACDC with no anchored issuance proof is visible in the bundle."
+    },
+    "Consequently, a Discloser (Issuee) SHOULD NOT disclose the registry SAID until after contractual protection is in place, i.e., the Disclosee has agreed to the terms in the ACDC's Rule Section or not provide and `rd` field value in the ACDC at all.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Binds when a discloser reveals the registry SAID, an action outside the bundle."
+    },
+    "A bulk-issued TEL SHOULD use a blinded, blindable state update, `bup` message.": {
+      "scope": "out-of-scope",
+      "security": false,
+      "note": "Advises issuers on registry design for privacy; it gives a validator no ground to refuse an ACDC."
+    },
+    "Whereas any KEL that has changed its Key State via a Rotation MUST be forked before the Rotation.": {
+      "scope": "untestable",
+      "security": false,
+      "reason": "Describes what a forger would have to do, not an obligation on any party."
+    },
+    "In this case, the bulk issuance process MUST be augmented so that each uniquely identified copy of the ACDC with a unique Issuee AID also gets its own TEL entry.": {
+      "scope": "validator",
+      "security": true,
+      "note": "A copy presented with no registry entry of its own would borrow another copy's state."
+    },
+    "When using a TEL as an ACDC state Registry for a bulk-issued set, each event in the TEL MUST be bound with an anchoring seal in the Issuer's KEL.": {
+      "scope": "validator",
+      "security": true
+    },
+    "When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`, appears as a top-level field map, it MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "ACDC as a top-level field map in CESR native format"
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "ACDC of type `acm` as a top-level field map in CESR native format"
+      }
+    ],
+    "When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`,  appears as a top-level set of fixed fields, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The value of either or both the `a` and `A` field MUST be empty.": {
+      "scope": "validator",
+      "security": false
+    },
+    "To clarify, both the `a` and `A` field values MUST not be non-empty, one or the other or both MUST be empty.": {
+      "scope": "validator",
+      "security": false
+    },
+    "One important feature of the fields maps used by ACDC is that they all MUST include a field with a SAID (self-addressing ID) using the SAID protocol [[ref: SAID]].": {
+      "scope": "validator",
+      "security": false
+    },
+    "For some message types, some fields are optional, but all fields that appear MUST appear in this order, `[v, t, d, u, i, s, a, A, e, r]`.": {
+      "scope": "validator",
+      "security": false,
+      "note": "Omits `rd`, which the order at line 32 includes."
+    },
+    "It MUST appear as a top-level field map that MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level.": {
+      "scope": "validator",
+      "security": false
+    },
+    "When field `a` appears then field `A` MUST NOT appear.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Likewise, when field `A` appears, then field `a` MUST NOT appear.": {
+      "scope": "validator",
+      "security": false
+    },
+    "An ACDC message of message type `act` in CESR native format, i.e., the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level.": [
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "ACDC of type `act` as a top-level set of fixed fields in CESR native format"
+      },
+      {
+        "scope": "validator",
+        "security": false,
+        "section": "ACDC of type `acg` as a top-level set of fixed fields in CESR native format"
+      }
+    ],
+    "The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, e, r]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "An ACDC message of message type `acg` in CESR native format, i.e. the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, A, e, r]`.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Emptiness for field values that MUST have a string value is indicated by an empty string.": {
+      "scope": "validator",
+      "security": false
+    },
+    "Each section Message MUST have Version String, `v`, Message type, `t`,  and SAID, `d` fields in that order.": {
+      "scope": "validator",
+      "security": false
+    },
+    "The embedded section block's SAID, `d` field in the respective section top-level field MUST match the section field value in the associated ACDC when in most compact form.": {
+      "scope": "validator",
+      "security": true
+    },
+    "This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient.\"": [
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Legal language inside a worked example's rule section, not an obligation of the specification.",
+        "section": "Accreditation ACDC",
+        "occurrence": 1
+      },
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Legal language inside a worked example's rule section, not an obligation of the specification.",
+        "section": "Accreditation ACDC",
+        "occurrence": 2
+      },
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Legal language inside a worked example's rule section, not an obligation of the specification.",
+        "section": "Accreditation ACDC",
+        "occurrence": 3
+      },
+      {
+        "scope": "untestable",
+        "security": false,
+        "reason": "Legal language inside a worked example's rule section, not an obligation of the specification.",
+        "section": "Accreditation ACDC",
+        "occurrence": 4
+      }
+    ]
+  }
 }

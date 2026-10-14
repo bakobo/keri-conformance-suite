@@ -1,0 +1,2286 @@
+{
+  "about": "ACDC scenarios for step 6 of the decision procedure (docs/design.md, ACDC, Edges): each edge in the provenance DAG graded on its own checks, with the I2I operator named explicitly.",
+  "profile": "acdc-1.0",
+  "fixtures": {
+    "chain": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "Qicp",
+          "aid": "Q",
+          "t": "icp",
+          "keys": [
+            "q0"
+          ],
+          "next": [
+            "q1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "N"
+            }
+          ]
+        },
+        {
+          "name": "qixn1",
+          "aid": "Q",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "F"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "Qicp",
+          "sigs": [
+            "q0"
+          ]
+        },
+        {
+          "event": "qixn1",
+          "sigs": [
+            "q0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "N",
+          "issuer": "I",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Near",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "e": {
+            "d": "",
+            "le": {
+              "d": "",
+              "n": {
+                "acdc": "F"
+              },
+              "s": {
+                "schema": "S1"
+              },
+              "o": "I2I"
+            }
+          },
+          "source_seal": "ixn1"
+        },
+        {
+          "name": "F",
+          "issuer": "Q",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "I"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Far",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "source_seal": "qixn1"
+        }
+      ],
+      "presented": "N"
+    },
+    "two_hop": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "Qicp",
+          "aid": "Q",
+          "t": "icp",
+          "keys": [
+            "q0"
+          ],
+          "next": [
+            "q1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "N"
+            }
+          ]
+        },
+        {
+          "name": "qixn1",
+          "aid": "Q",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "F"
+            }
+          ]
+        },
+        {
+          "name": "Ricp",
+          "aid": "R",
+          "t": "icp",
+          "keys": [
+            "r0"
+          ],
+          "next": [
+            "r1"
+          ]
+        },
+        {
+          "name": "rixn1",
+          "aid": "R",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "G"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "Qicp",
+          "sigs": [
+            "q0"
+          ]
+        },
+        {
+          "event": "qixn1",
+          "sigs": [
+            "q0"
+          ]
+        },
+        {
+          "event": "Ricp",
+          "sigs": [
+            "r0"
+          ]
+        },
+        {
+          "event": "rixn1",
+          "sigs": [
+            "r0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "N",
+          "issuer": "I",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Near",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "e": {
+            "d": "",
+            "le": {
+              "d": "",
+              "n": {
+                "acdc": "F"
+              },
+              "s": {
+                "schema": "S1"
+              },
+              "o": "I2I"
+            }
+          },
+          "source_seal": "ixn1"
+        },
+        {
+          "name": "F",
+          "issuer": "Q",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "I"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Far",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "source_seal": "qixn1",
+          "e": {
+            "d": "",
+            "qvi": {
+              "d": "",
+              "n": {
+                "acdc": "G"
+              },
+              "s": {
+                "schema": "S1"
+              },
+              "o": "I2I"
+            }
+          }
+        },
+        {
+          "name": "G",
+          "issuer": "R",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "Q"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Root",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "source_seal": "rixn1"
+        }
+      ],
+      "presented": "N"
+    },
+    "diamond": {
+      "events": [
+        {
+          "name": "Iicp",
+          "aid": "I",
+          "t": "icp",
+          "keys": [
+            "i0"
+          ],
+          "next": [
+            "i1"
+          ]
+        },
+        {
+          "name": "Hicp",
+          "aid": "H",
+          "t": "icp",
+          "keys": [
+            "h0"
+          ],
+          "next": [
+            "h1"
+          ]
+        },
+        {
+          "name": "Qicp",
+          "aid": "Q",
+          "t": "icp",
+          "keys": [
+            "q0"
+          ],
+          "next": [
+            "q1"
+          ]
+        },
+        {
+          "name": "Ricp",
+          "aid": "R",
+          "t": "icp",
+          "keys": [
+            "r0"
+          ],
+          "next": [
+            "r1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "I",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "N"
+            }
+          ]
+        },
+        {
+          "name": "qixn1",
+          "aid": "Q",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "F1"
+            },
+            {
+              "acdc": "F2"
+            }
+          ]
+        },
+        {
+          "name": "rixn1",
+          "aid": "R",
+          "t": "ixn",
+          "a": [
+            {
+              "acdc": "G"
+            }
+          ]
+        }
+      ],
+      "kels": [
+        {
+          "event": "Iicp",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "i0"
+          ]
+        },
+        {
+          "event": "Qicp",
+          "sigs": [
+            "q0"
+          ]
+        },
+        {
+          "event": "qixn1",
+          "sigs": [
+            "q0"
+          ]
+        },
+        {
+          "event": "Ricp",
+          "sigs": [
+            "r0"
+          ]
+        },
+        {
+          "event": "rixn1",
+          "sigs": [
+            "r0"
+          ]
+        }
+      ],
+      "schemas": [
+        {
+          "name": "S1",
+          "schema": {
+            "$id": "",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Legal entity",
+            "version": "1.0.0",
+            "type": "object",
+            "required": [
+              "v",
+              "d",
+              "i",
+              "s",
+              "a"
+            ],
+            "properties": {
+              "v": {
+                "type": "string"
+              },
+              "t": {
+                "type": "string"
+              },
+              "d": {
+                "type": "string"
+              },
+              "i": {
+                "type": "string"
+              },
+              "rd": {
+                "type": "string"
+              },
+              "s": {
+                "type": "string"
+              },
+              "a": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/attributes"
+                  }
+                ]
+              },
+              "e": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              },
+              "r": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
+                  }
+                ]
+              }
+            },
+            "$defs": {
+              "attributes": {
+                "type": "object",
+                "required": [
+                  "d",
+                  "i",
+                  "dt",
+                  "name",
+                  "lei"
+                ],
+                "properties": {
+                  "d": {
+                    "type": "string"
+                  },
+                  "i": {
+                    "type": "string"
+                  },
+                  "dt": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lei": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "acdcs": [
+        {
+          "name": "N",
+          "issuer": "I",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "H"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Near",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "e": {
+            "d": "",
+            "a": {
+              "d": "",
+              "n": {
+                "acdc": "F1"
+              },
+              "s": {
+                "schema": "S1"
+              },
+              "o": "I2I"
+            },
+            "b": {
+              "d": "",
+              "n": {
+                "acdc": "F2"
+              },
+              "s": {
+                "schema": "S1"
+              },
+              "o": "I2I"
+            }
+          },
+          "source_seal": "ixn1"
+        },
+        {
+          "name": "F1",
+          "issuer": "Q",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "I"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Far one",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "e": {
+            "d": "",
+            "up": {
+              "d": "",
+              "n": {
+                "acdc": "G"
+              },
+              "s": {
+                "schema": "S1"
+              },
+              "o": "I2I"
+            }
+          },
+          "source_seal": "qixn1"
+        },
+        {
+          "name": "F2",
+          "issuer": "Q",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "I"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Far two",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "e": {
+            "d": "",
+            "up": {
+              "d": "",
+              "n": {
+                "acdc": "G"
+              },
+              "s": {
+                "schema": "S1"
+              },
+              "o": "I2I"
+            }
+          },
+          "source_seal": "qixn1"
+        },
+        {
+          "name": "G",
+          "issuer": "R",
+          "schema": "S1",
+          "form": "expanded",
+          "a": {
+            "d": "",
+            "i": {
+              "aid": "Q"
+            },
+            "dt": "2025-07-04T17:50:00.000000+00:00",
+            "name": "Root",
+            "lei": "5493001KJTIIGC8Y1R12"
+          },
+          "source_seal": "rixn1"
+        }
+      ],
+      "presented": "N"
+    }
+  },
+  "cases": [
+    {
+      "id": "ACDC-0043",
+      "key": "KS-39",
+      "title": "Chained ACDC, I2I edge valid",
+      "description": "The presented ACDC has an edge with the I2I operator and the S1 schema to a far node issued by another identifier to the presented ACDC's issuer. Every node is sealed by its issuer. A validator should find the ACDC and the edge valid.",
+      "base": "chain",
+      "expect": []
+    },
+    {
+      "id": "ACDC-0044",
+      "key": "KS-40",
+      "title": "I2I edge to a far node targeted at someone else",
+      "description": "As KS-39, but the far node's issuee is not the near node's issuer, which the I2I operator requires (line 1205).",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "H"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12"
+            }
+          }
+        }
+      },
+      "expect": [
+        "N:e.le i2i-issuee"
+      ],
+      "pair": "KS-39",
+      "companion": {
+        "id": "ACDC-0045",
+        "key": "KS-40-u",
+        "title": "I2I edge to a far node targeted at someone else: the edge",
+        "description": "The MUST half of KS-40, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0046",
+      "key": "KS-41b",
+      "title": "Far node changed with its SAID left as the edge names",
+      "description": "The far node was issued to another party; its issuee was then rewritten to the near node's issuer and its attribute block's SAID recomputed, but its top-level SAID left equal to the edge's n. Recomputing the far node's SAID (line 1174) shows it is not the node the edge names.",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "H"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12"
+            },
+            "alter": [
+              {
+                "path": "a.i",
+                "value": {
+                  "aid": "I"
+                },
+                "resaid": [
+                  "a"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "expect": [
+        "F 1/said",
+        "N:e.le far-said"
+      ],
+      "pair": "KS-39",
+      "companion": {
+        "id": "ACDC-0047",
+        "key": "KS-41b-u",
+        "title": "Far node changed with its SAID left as the edge names: the edge",
+        "description": "The MUST half of KS-41b, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0075",
+      "key": "KS-41c",
+      "title": "Far node forged to point back at the near node",
+      "description": "As KS-49, but the bundle's middle node has its edge rewritten after its SAIDs were computed, keeping the length, to name the presented ACDC instead of the root, with its top-level SAID left equal to the edge's n. Read by their claimed SAIDs the two nodes form a cycle. Recomputing the middle node's SAID (line 1174) shows it is not the node the edge names, so a validator that recomputes before it follows the node's own edges never meets the cycle and refuses the edge; one that indexes far nodes by their claimed SAID and walks first may never answer, which fails every assertion. The case's dag lists the edges of the nodes as issued, which hold no cycle.",
+      "base": "two_hop",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "alter": [
+              {
+                "path": "e.qvi.n",
+                "value": {
+                  "acdc": "N"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "expect": [
+        "F 1/said",
+        "N:e.le far-said"
+      ],
+      "pair": "KS-49",
+      "companion": {
+        "id": "ACDC-0076",
+        "key": "KS-41c-u",
+        "title": "Far node forged to point back at the near node: the edge",
+        "description": "The MUST half of KS-41c, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0048",
+      "key": "KS-42p",
+      "title": "Edge schema satisfied",
+      "description": "As KS-39, but the edge names a stricter schema, S3, which requires a role attribute, and the far node has one. A validator should find the edge valid.",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "N": {
+            "e": {
+              "d": "",
+              "le": {
+                "d": "",
+                "n": {
+                  "acdc": "F"
+                },
+                "s": {
+                  "schema": "S3"
+                },
+                "o": "I2I"
+              }
+            }
+          },
+          "F": {
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "I"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12",
+              "role": "officer"
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": []
+    },
+    {
+      "id": "ACDC-0072",
+      "key": "KS-42q",
+      "title": "Far node under a stricter schema of its own",
+      "description": "As KS-39, but the far node is issued under S3, which requires a role attribute, and has one, while the edge names the more lenient S1. The far node satisfies both its own schema and the edge's, so a validator should find the edge valid.",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "schema": "S3",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "I"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12",
+              "role": "officer"
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": []
+    },
+    {
+      "id": "ACDC-0073",
+      "key": "KS-42d",
+      "title": "Far node fails its own schema but satisfies the edge's",
+      "description": "As KS-42q, but the far node has no role attribute, so it fails its own schema, S3, while it satisfies the edge's, S1. Line 1174 requires the far node to satisfy its own schema, and line 1178 makes the edge's schema an additional constraint, so the edge is not valid. A validator that checks the far node only against the edge's schema when the edge names one accepts it.",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "F": {
+            "schema": "S3",
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "I"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12"
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": [
+        "F 2/schema-invalid",
+        "N:e.le far-schema"
+      ],
+      "pair": "KS-42q",
+      "companion": {
+        "id": "ACDC-0074",
+        "key": "KS-42d-u",
+        "title": "Far node fails its own schema but satisfies the edge's: the edge",
+        "description": "The MUST half of KS-42d, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0049",
+      "key": "KS-42",
+      "title": "Far node fails the edge's schema",
+      "description": "As KS-42p, but the far node has no role attribute. It satisfies its own schema, not the edge's (line 1178).",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "N": {
+            "e": {
+              "d": "",
+              "le": {
+                "d": "",
+                "n": {
+                  "acdc": "F"
+                },
+                "s": {
+                  "schema": "S3"
+                },
+                "o": "I2I"
+              }
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": [
+        "N:e.le edge-schema"
+      ],
+      "pair": "KS-42p",
+      "companion": {
+        "id": "ACDC-0050",
+        "key": "KS-42-u",
+        "title": "Far node fails the edge's schema: the edge",
+        "description": "The MUST half of KS-42, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0051",
+      "key": "KS-42b",
+      "title": "Edge schema absent",
+      "description": "As KS-42p, but the bundle does not hold the schema the edge names, so the far node cannot be confirmed to validate against it (line 1178).",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "N": {
+            "e": {
+              "d": "",
+              "le": {
+                "d": "",
+                "n": {
+                  "acdc": "F"
+                },
+                "s": {
+                  "schema": "S3"
+                },
+                "o": "I2I"
+              }
+            }
+          },
+          "F": {
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "I"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12",
+              "role": "officer"
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "replace": {
+        "omit": [
+          "S3"
+        ]
+      },
+      "expect": [
+        "N:e.le edge-schema"
+      ],
+      "pair": "KS-42p",
+      "companion": {
+        "id": "ACDC-0052",
+        "key": "KS-42b-u",
+        "title": "Edge schema absent: the edge",
+        "description": "The MUST half of KS-42b, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0053",
+      "key": "KS-42c",
+      "title": "Edge schema substituted",
+      "description": "As KS-42b, but the bundle holds a lenient schema with a correct SAID of its own in place of the one the edge names, and the far node has no role. A schema whose SAID is not the edge's s does not stand in for it.",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "N": {
+            "e": {
+              "d": "",
+              "le": {
+                "d": "",
+                "n": {
+                  "acdc": "F"
+                },
+                "s": {
+                  "schema": "S3"
+                },
+                "o": "I2I"
+              }
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S3",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei",
+                    "role"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "S3x",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Lenient role",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "i",
+                    "dt",
+                    "name",
+                    "lei"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "replace": {
+        "omit": [
+          "S3"
+        ]
+      },
+      "expect": [
+        "N:e.le edge-schema"
+      ],
+      "pair": "KS-42p",
+      "companion": {
+        "id": "ACDC-0054",
+        "key": "KS-42c-u",
+        "title": "Edge schema substituted: the edge",
+        "description": "The MUST half of KS-42c, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0055",
+      "key": "KS-44",
+      "title": "I2I edge to an untargeted far node",
+      "description": "The edge names the I2I operator, but the far node, valid under its own schema, has no issuee. To be valid, the far node of an I2I edge must be targeted (line 1205).",
+      "base": "chain",
+      "patch": {
+        "acdcs": {
+          "N": {
+            "e": {
+              "d": "",
+              "le": {
+                "d": "",
+                "n": {
+                  "acdc": "F"
+                },
+                "s": {
+                  "schema": "S1u"
+                },
+                "o": "I2I"
+              }
+            }
+          },
+          "F": {
+            "schema": "S1u",
+            "a": {
+              "d": "",
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Far",
+              "lei": "5493001KJTIIGC8Y1R12"
+            }
+          }
+        }
+      },
+      "append": {
+        "schemas": [
+          {
+            "name": "S1u",
+            "schema": {
+              "$id": "",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Untargeted entity",
+              "version": "1.0.0",
+              "type": "object",
+              "required": [
+                "v",
+                "d",
+                "i",
+                "s",
+                "a"
+              ],
+              "properties": {
+                "v": {
+                  "type": "string"
+                },
+                "t": {
+                  "type": "string"
+                },
+                "d": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "string"
+                },
+                "rd": {
+                  "type": "string"
+                },
+                "s": {
+                  "type": "string"
+                },
+                "a": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/$defs/attributes"
+                    }
+                  ]
+                },
+                "e": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                },
+                "r": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              },
+              "$defs": {
+                "attributes": {
+                  "type": "object",
+                  "required": [
+                    "d",
+                    "dt",
+                    "name",
+                    "lei"
+                  ],
+                  "properties": {
+                    "d": {
+                      "type": "string"
+                    },
+                    "i": {
+                      "type": "string"
+                    },
+                    "dt": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lei": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "expect": [
+        "N:e.le i2i-untargeted"
+      ],
+      "pair": "KS-39",
+      "companion": {
+        "id": "ACDC-0056",
+        "key": "KS-44-u",
+        "title": "I2I edge to an untargeted far node: the edge",
+        "description": "The MUST half of KS-44, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0057",
+      "key": "KS-45",
+      "title": "Far node absent",
+      "description": "As KS-39, but the bundle does not hold the far node, so its SAID cannot be confirmed (line 1174).",
+      "base": "chain",
+      "replace": {
+        "omit": [
+          "F"
+        ]
+      },
+      "expect": [
+        "N:e.le far-absent"
+      ],
+      "pair": "KS-39",
+      "companion": {
+        "id": "ACDC-0058",
+        "key": "KS-45-u",
+        "title": "Far node absent: the edge",
+        "description": "The MUST half of KS-45, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0059",
+      "key": "KS-49",
+      "title": "Two-hop chain, valid",
+      "description": "The presented ACDC's edge points to a far node whose own edge points to a root ACDC; each edge uses I2I, and each node is sealed by its issuer. A validator should find both edges and the ACDC valid.",
+      "base": "two_hop",
+      "expect": []
+    },
+    {
+      "id": "ACDC-0060",
+      "key": "KS-50",
+      "title": "Two-hop chain, the deeper edge fails I2I",
+      "description": "As KS-49, but the root ACDC is targeted at someone other than the middle node's issuer, so the deeper edge fails I2I (line 1205). The validator evaluates edges anywhere in the provenance DAG.",
+      "base": "two_hop",
+      "patch": {
+        "acdcs": {
+          "G": {
+            "a": {
+              "d": "",
+              "i": {
+                "aid": "H"
+              },
+              "dt": "2025-07-04T17:50:00.000000+00:00",
+              "name": "Root",
+              "lei": "5493001KJTIIGC8Y1R12"
+            }
+          }
+        }
+      },
+      "expect": [
+        "F:e.qvi i2i-issuee"
+      ],
+      "pair": "KS-49",
+      "companion": {
+        "id": "ACDC-0061",
+        "key": "KS-50-u",
+        "title": "Two-hop chain, the deeper edge fails I2I: the edge",
+        "description": "The MUST half of KS-50, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0062",
+      "key": "KS-51",
+      "title": "Diamond",
+      "description": "The presented ACDC has edges to two far nodes, each of which has an edge to one root ACDC. Each of the four edges is reported once, keyed by its near node, and all are valid.",
+      "base": "diamond",
+      "expect": []
+    },
+    {
+      "id": "ACDC-0068",
+      "key": "KS-52",
+      "title": "Diamond, the edge from F2 into the shared root fails I2I",
+      "description": "As KS-51, but F2 is issued by an identifier other than the root's issuee and sealed in that identifier's KEL, so its edge into the root fails I2I (line 1205) while F1's edge into the same root holds. The two edges share a far node and differ only in their near issuer, so a validator that treats I2I as a property of the far node, or caches an edge's result by the far node's SAID, reports one of them wrongly. Evaluated in delivery order, the failing edge is the second into the root; KS-53 is the mirror.",
+      "base": "diamond",
+      "patch": {
+        "acdcs": {
+          "F2": {
+            "issuer": "P"
+          }
+        },
+        "events": {
+          "qixn1": {
+            "a": [
+              {
+                "acdc": "F1"
+              }
+            ]
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "Picp",
+            "aid": "P",
+            "t": "icp",
+            "keys": [
+              "p0"
+            ],
+            "next": [
+              "p1"
+            ]
+          },
+          {
+            "name": "pixn1",
+            "aid": "P",
+            "t": "ixn",
+            "a": [
+              {
+                "acdc": "F2"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "Picp",
+            "sigs": [
+              "p0"
+            ]
+          },
+          {
+            "event": "pixn1",
+            "sigs": [
+              "p0"
+            ]
+          }
+        ]
+      },
+      "expect": [
+        "F2:e.up i2i-issuee"
+      ],
+      "pair": "KS-51",
+      "companion": {
+        "id": "ACDC-0069",
+        "key": "KS-52-u",
+        "title": "Diamond, the edge from F2 into the shared root fails I2I: the edge",
+        "description": "The MUST half of KS-52, ungated: the failing edge, if reported, is not valid."
+      }
+    },
+    {
+      "id": "ACDC-0070",
+      "key": "KS-53",
+      "title": "Diamond, the edge from F1 into the shared root fails I2I",
+      "description": "As KS-51, but F1 is issued by an identifier other than the root's issuee and sealed in that identifier's KEL, so its edge into the root fails I2I (line 1205) while F2's edge into the same root holds. The two edges share a far node and differ only in their near issuer, so a validator that treats I2I as a property of the far node, or caches an edge's result by the far node's SAID, reports one of them wrongly. Evaluated in delivery order, the failing edge is the first into the root; KS-52 is the mirror.",
+      "base": "diamond",
+      "patch": {
+        "acdcs": {
+          "F1": {
+            "issuer": "P"
+          }
+        },
+        "events": {
+          "qixn1": {
+            "a": [
+              {
+                "acdc": "F2"
+              }
+            ]
+          }
+        }
+      },
+      "append": {
+        "events": [
+          {
+            "name": "Picp",
+            "aid": "P",
+            "t": "icp",
+            "keys": [
+              "p0"
+            ],
+            "next": [
+              "p1"
+            ]
+          },
+          {
+            "name": "pixn1",
+            "aid": "P",
+            "t": "ixn",
+            "a": [
+              {
+                "acdc": "F1"
+              }
+            ]
+          }
+        ],
+        "kels": [
+          {
+            "event": "Picp",
+            "sigs": [
+              "p0"
+            ]
+          },
+          {
+            "event": "pixn1",
+            "sigs": [
+              "p0"
+            ]
+          }
+        ]
+      },
+      "expect": [
+        "F1:e.up i2i-issuee"
+      ],
+      "pair": "KS-51",
+      "companion": {
+        "id": "ACDC-0071",
+        "key": "KS-53-u",
+        "title": "Diamond, the edge from F1 into the shared root fails I2I: the edge",
+        "description": "The MUST half of KS-53, ungated: the failing edge, if reported, is not valid."
+      }
+    }
+  ]
+}
