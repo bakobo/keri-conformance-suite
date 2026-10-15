@@ -4,7 +4,7 @@ its schema too. A refusal is re-raised here as a generator error, so a generator
 catches every other."""
 
 from keri_conformance import json_schema_subset as _js
-from keri_conformance.json_schema_subset import (  # noqa: F401 - the generators' names for them
+from keri_conformance.json_schema_subset import (
     DIALECT,
     E_DEPTH,
     E_FORM,
@@ -15,6 +15,10 @@ from keri_conformance.json_schema_subset import (  # noqa: F401 - the generators
 )
 
 from .errors import GeneratorError
+
+# The names the generators use, re-exported from the runner's module.
+__all__ = ["DIALECT", "E_DEPTH", "E_FORM", "E_KEYWORD", "E_REFERENCE", "SchemaError", "check",
+           "dialect", "nonlocal_references", "validate"]
 
 
 class SchemaError(GeneratorError):

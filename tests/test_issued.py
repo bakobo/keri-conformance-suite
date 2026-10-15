@@ -419,7 +419,8 @@ def test_edges_not_as_asked_fail(asked, issued, words, kwargs):
 
 
 def test_an_edge_section_that_is_not_a_map():
-    assert iss._edges({"le": {}}, "Ecompact", {}, {}) == ["the edge section is not a map"]
+    assert iss._edges({"le": {}}, "Ecompact", {}, {}, {}) == (["the edge section is not a map"],
+                                                             [])
 
 
 def test_credentials_are_checked_far_first_whatever_the_order():
@@ -567,14 +568,16 @@ def test_an_edge_schema_must_be_carried_and_satisfied():
     assert edged({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR, "s": said}}) == []
     problems = edged({"le": {"credential": "c"}},
                      {"le": {"d": "", "n": FAR, "s": "E" + "A" * 43}})
-    assert any("which the request does not carry" in p for p in problems)
+    assert any("which the request does not carry" in p or "does not carry" in p
+               for p in problems)
     strict = {"$id": "", "type": "object", "required": ["zz"]}
-    bodies = {"c": {"d": "Efar", "a": {}}}
-    assert "far credential" in iss._edge_schemas({"le": {"n": "Efar", "s": "Es"}}, bodies,
-                                                 {"Es": strict})[0]
-    assert iss._edge_blocks("Ecompact") == []
-    # A far node the issuance does not hold is reported by the edge check, not here.
-    assert iss._edge_schemas({"le": {"n": "Eunknown", "s": "Es"}}, {}, {"Es": strict}) == []
+    far = {"d": "Efar", "a": {}}
+    got = {"d": "x", "n": "Efar", "s": "Es"}
+    as_asked, holding = iss._edge("le", {"credential": "c"}, got, {"i": "E"}, far,
+                                  {"Es": strict})
+    assert as_asked == [] and "far credential" in holding[0]
+    as_asked, _ = iss._edge("le", {"credential": "c"}, {**got, "s": []}, {}, far, {})
+    assert "not a schema's SAID" in as_asked[0]
 
 
 @pytest.mark.parametrize("fields,words", [
@@ -616,9 +619,29 @@ def test_a_registry_must_be_genus_pinned_bodies_only():
 
 
 def test_an_or_group_holds_when_one_member_does():
-    asked = {"o": "OR", "a": {"credential": "c"}, "b": {"credential": "nope"}}
-    issued_e = {"o": "OR", "a": {"d": "", "n": FAR}, "b": {"d": "", "n": "Ewrong"}}
-    assert edged(asked, issued_e) == []
-    asked["a"] = {"credential": "nope"}
-    issued_e["a"] = {"d": "", "n": "Ewrong"}
-    assert any("does not name" in p for p in edged(asked, issued_e))
+    asked = {"o": "OR", "a": {"credential": "c", "o": "I2I"}, "b": {"credential": "c",
+                                                                     "o": "E1E"}}
+    issued_e = {"o": "OR", "a": {"d": "", "n": FAR, "o": "I2I"},
+                "b": {"d": "", "n": FAR, "o": "E1E"}}
+    # Issued by the issuer, so I2I fails while E1E (both issued to the holder) holds.
+    assert edged(asked, issued_e, near_issuer="issuer") == []
+    asked["o"] = issued_e["o"] = "AND"
+    assert any("do not hold" in p for p in edged(asked, issued_e, near_issuer="issuer"))
+    # A member naming the wrong credential was not issued as asked, whatever the operator.
+    wrong = {"o": "OR", "a": {"d": "", "n": FAR, "o": "I2I"}, "b": {"d": "", "n": "Ewrong",
+                                                                     "o": "E1E"}}
+    assert any("does not name" in p for p in edged({**asked, "o": "OR"}, wrong))
+
+
+def test_an_or_group_still_needs_each_member_issued_as_asked():
+    asked = {"o": "OR", "a": {"credential": "c"}, "b": {"credential": "c"}}
+    no_said = {"o": "OR", "a": {"d": "", "n": FAR}, "b": {"n": FAR}}
+    assert any("no SAID of its own" in p for p in edged(asked, no_said))
+    unused_schema = {"o": "OR", "a": {"d": "", "n": FAR},
+                     "b": {"d": "", "n": FAR, "s": "E" + "B" * 43}}
+    assert edged(asked, unused_schema) == []
+
+
+def test_a_stamp_must_name_a_moment_that_exists():
+    assert not iss._is_stamp("2026-99-99T99:99:99.999999+99:99")
+    assert not iss._is_stamp("2026-02-30T00:00:00.000000+00:00")

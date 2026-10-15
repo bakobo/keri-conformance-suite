@@ -28,6 +28,7 @@ plan.md, item 13), so the work is bounded by the bounds, not by what an adapter 
 """
 
 import base64
+import datetime
 import json
 import re
 
@@ -334,8 +335,15 @@ def _is_salt(text) -> bool:
 
 
 def _is_stamp(text) -> bool:
-    """A stamp: an RFC 3339 datetime with microseconds and a UTC offset (ACDC line 98)."""
-    return isinstance(text, str) and STAMP.fullmatch(text) is not None
+    """A stamp: an RFC 3339 datetime with microseconds and a UTC offset (ACDC line 98), naming a
+    date, time and offset that exist."""
+    if not isinstance(text, str) or STAMP.fullmatch(text) is None:
+        return False
+    try:
+        datetime.datetime.fromisoformat(text)
+    except ValueError:
+        return False
+    return True
 
 
 def _is_digest(text) -> bool:
@@ -504,30 +512,36 @@ def check_registry(chain: bytes, disclosure, issuer: str, trunk: list[dict], acd
     return rd, problems
 
 
-def _edges(asked: dict, e, near: dict, issued: dict[str, dict]) -> list[str]:
-    """What fails in an issued edge section against the one asked for. ``issued`` maps each
-    credential already checked to its body."""
+def _edges(asked: dict, e, near: dict, issued: dict[str, dict],
+           schemas: dict[str, dict]) -> tuple[list[str], list[str]]:
+    """What fails in an issued edge section against the one asked for, in two parts: what the
+    issuer did not issue as asked, which fails whatever the group's operator, and whether each
+    edge holds, which an OR group needs of one member only. ``issued`` maps each credential
+    already checked to its body."""
     if not isinstance(e, dict):
-        return ["the edge section is not a map"]
-    problems = []
+        return ["the edge section is not a map"], []
+    as_asked: list[str] = []
     if asked.get("o", "AND") != e.get("o", "AND"):
-        problems.append("an edge group's operator is not the one asked for")
+        as_asked.append("an edge group's operator is not the one asked for")
     labels = {k for k in asked if k != "o"}
     if labels != {k for k in e if k not in ("d", "u", "o")}:
-        problems.append("the edge section's labels are not the ones asked for")
-    members = []
+        as_asked.append("the edge section's labels are not the ones asked for")
+    holding = []
     for label in sorted(labels & set(e)):
         want, got = asked[label], e[label]
         if not isinstance(got, dict):
-            members.append([f"the edge {label} is not a map"])
-        elif "credential" not in want:
-            members.append(_edges(want, got, near, issued))
+            as_asked.append(f"the edge {label} is not a map")
+            continue
+        if "credential" not in want:
+            member = _edges(want, got, near, issued, schemas)
         else:
-            members.append(_edge(label, want, got, near, issued.get(want["credential"])))
+            member = _edge(label, want, got, near, issued.get(want["credential"]), schemas)
+        as_asked += member[0]
+        holding.append(member[1])
     # An OR group holds when any member does; AND, the default, when every member does.
-    if asked.get("o") == "OR" and any(not m for m in members):
-        return problems
-    return problems + [p for m in members for p in m]
+    if asked.get("o") == "OR" and any(not h for h in holding):
+        return as_asked, []
+    return as_asked, [p for h in holding for p in h]
 
 
 def _issuee(body: dict | None):
@@ -535,17 +549,22 @@ def _issuee(body: dict | None):
     return a.get("i") if isinstance(a, dict) else None
 
 
-def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None) -> list[str]:
-    """What fails in one issued edge: its own SAID (edge-said), its far node, the operators
-    asked for (or the default when none was), and whether they hold between the two credentials
-    as issued. The runner's identifiers are never delegated, so DI2I holds as I2I does."""
+def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None,
+          schemas: dict[str, dict]) -> tuple[list[str], list[str]]:
+    """What fails in one issued edge, as _edges splits it. As asked: its own SAID (edge-said),
+    its far node, the operators asked for (or the default when none was), and a schema in s
+    that is a SAID. Holding: whether the operators hold between the two credentials as issued,
+    and whether the request carries the edge's schema and the far credential validates against
+    it (ACDC line 1178). The runner's identifiers are never delegated, so DI2I holds as I2I does."""
     if not isinstance(got.get("d"), str):
-        return [f"the edge {label} carries no SAID of its own in d"]
+        return [f"the edge {label} carries no SAID of its own in d"], []
     if far is None or got.get("n") != far.get("d"):
-        return [f"the edge {label} does not name the credential asked for"]
+        return [f"the edge {label} does not name the credential asked for"], []
+    if "s" in got and not isinstance(got["s"], str):
+        return [f"the edge {label}'s s is not a schema's SAID"], []
     default = ["I2I" if _issuee(far) else "NI2I"]
     if "o" in got and not _operator_shape(got["o"]):
-        return [f"the edge {label}'s o is neither an operator nor a list of operators"]
+        return [f"the edge {label}'s o is neither an operator nor a list of operators"], []
     asked, issued_ops = _ops(want.get("o")), _ops(got.get("o"))
     # An absent or empty o reads as the default (ACDC line 1197); an o the request names must be
     # issued as named.
@@ -554,18 +573,24 @@ def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None) -> li
     else:
         matches = issued_ops in ([], default)
     if not matches:
-        return [f"the edge {label}'s operators are not the ones asked for"]
+        return [f"the edge {label}'s operators are not the ones asked for"], []
     ops = asked or default
     if any(op not in UNARY for op in ops):
-        return [f"the edge {label} has an operator outside {', '.join(UNARY)}"]
+        return [f"the edge {label} has an operator outside {', '.join(UNARY)}"], []
     relation = next((op for op in reversed(ops) if op in ("I2I", "NI2I", "DI2I")), None)
     holds = True
     if relation in ("I2I", "DI2I"):
         holds = _issuee(far) is not None and near.get("i") == _issuee(far)
     if "E1E" in ops:
         holds = holds and _issuee(far) is not None and _issuee(near) == _issuee(far)
-    return [] if holds else [(f"the edge {label}'s operators do not hold between the "
-                              "credentials issued")]
+    holding = [] if holds else [(f"the edge {label}'s operators do not hold between the "
+                                 "credentials issued")]
+    if "s" in got and got["s"] not in schemas:
+        holding.append(f"the edge {label} names a schema the request does not carry")
+    elif "s" in got:
+        holding += [f"the edge {label}'s far credential: {p}"
+                    for p in _fits(far, schemas[got["s"]])]
+    return [], holding
 
 
 def _operator_shape(o) -> bool:
@@ -607,7 +632,8 @@ def _aggregate_verifies(aggregate) -> bool:
 
 
 def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema: str,
-               issued: dict[str, dict]) -> tuple[str | None, dict | None, list[str]]:
+               issued: dict[str, dict], schemas: dict[str, dict]
+               ) -> tuple[str | None, dict | None, list[str]]:
     """The ACDC's SAID, its body, and what fails in it against what was asked."""
     if len(raw) > MAX_STREAM:
         return None, None, ["the ACDC is longer than the runner reads"]
@@ -661,7 +687,8 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
             except Unread:
                 problems.append("the attribute block's salt is not a 128-bit salt")
     if "edges" in asked:
-        problems += _edges(asked["edges"], body.get("e"), body, issued)
+        as_asked, holding = _edges(asked["edges"], body.get("e"), body, issued, schemas)
+        problems += as_asked + holding
     elif body.get("e"):
         problems.append("the ACDC has edges, and none was asked for")
     return body.get("d"), body, problems
@@ -677,31 +704,6 @@ def _fits(body: dict, schema) -> list[str]:
     except js.SchemaError as exc:
         return [f"its schema cannot be evaluated by the runner: {exc.message}"]
     return [] if fits else ["the ACDC does not validate against its schema"]
-
-
-def _edge_schemas(e, bodies: dict[str, dict], schemas: dict[str, dict]) -> list[str]:
-    """What fails in an edge that names a schema in s: the request must carry that schema, and
-    the far credential must validate against it (ACDC line 1178)."""
-    by_said = {b.get("d"): b for b in bodies.values()}
-    out = []
-    for block in _edge_blocks(e):
-        if "s" not in block:
-            continue
-        if block["s"] not in schemas:
-            out.append(f"an edge names the schema {block['s']!r}, which the request does not "
-                       "carry")
-        elif block.get("n") in by_said:
-            out += [f"an edge's far credential: {p}"
-                    for p in _fits(by_said[block["n"]], schemas[block["s"]])]
-    return out
-
-
-def _edge_blocks(e) -> list[dict]:
-    if not isinstance(e, dict):
-        return []
-    if "n" in e:
-        return [e]
-    return [b for k, v in e.items() if k not in ("d", "u", "o") for b in _edge_blocks(v)]
 
 
 def grade(request: dict, result: dict) -> list[str]:
@@ -739,12 +741,11 @@ def grade(request: dict, result: dict) -> list[str]:
         if asked["schema"] not in schemas:
             problems.append(f"{name}: no schema in the request verifies as {asked['schema']}")
         d, body, failed = check_acdc(bytes.fromhex(out["acdc"]), asked, issuer, issuee,
-                                     asked["schema"], bodies)
+                                     asked["schema"], bodies, schemas)
         problems += [f"{name}: {p}" for p in failed]
         if d is None:
             continue
         problems += [f"{name}: {p}" for p in _fits(body, schemas.get(asked["schema"]))]
-        problems += [f"{name}: {p}" for p in _edge_schemas(body.get("e"), bodies, schemas)]
         bodies[name] = body
         chain = bytes.fromhex(out["registry"]) if isinstance(out.get("registry"), str) else b""
         rd, failed = check_registry(chain, out.get("disclosure"), issuer,
