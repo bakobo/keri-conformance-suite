@@ -3,7 +3,7 @@ module github.com/bakobo/keri-conformance-suite/adapters/keri-go
 go 1.24.0
 
 require (
-	github.com/dlclark/regexp2 v1.11.0
+	github.com/dlclark/regexp2 v1.12.0
 	github.com/grapeid/keri-go v0.1.5
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
 )
