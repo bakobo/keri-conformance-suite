@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "5a19fc06c2e17dbee09bcb58815a1c0458625b1e",
+    "commit": "1d1d26b5d7fdf9cd80c79efccc91ce7215185e3b",
     "date": "2026-10-15"
   },
   "report": {
@@ -24,22 +24,45 @@
       "features": [
         "cesr.genus-1.00",
         "cesr.serialization.json",
+        "crypto.ed25519",
+        "kel.basic",
+        "kel.delegation",
+        "kel.multisig.numeric",
+        "kel.multisig.weighted",
+        "kel.nontransferable",
+        "kel.partial-rotation",
+        "kel.witness",
+        "keri.duplicity",
+        "keri.escrow",
+        "keri.routing",
         "keri.version-1.x"
       ],
       "implementation": {
-        "commit": "40840948fb669424a0b7629979291ee0c777bb0e (said a385e69028fa2d9bd8fda31a9401ad0a630e1361)",
-        "name": "cesrox",
-        "version": "0.1.8 (said 0.4.3)"
+        "commit": "b25ba2b1b276706cbe103bc185224071a5e73579 (cesrox 40840948fb669424a0b7629979291ee0c777bb0e, said a385e69028fa2d9bd8fda31a9401ad0a630e1361)",
+        "name": "keri-core",
+        "version": "0.17.13 (cesrox 0.1.8, said 0.4.3)"
       },
       "operations": [
         "cesr.parse",
-        "cesr.encode"
+        "cesr.encode",
+        "keri.process"
       ],
       "protocol": 1
     },
     "declared_features": [
       "cesr.genus-1.00",
       "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "kel.multisig.numeric",
+      "kel.multisig.weighted",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "kel.witness",
+      "keri.duplicity",
+      "keri.escrow",
+      "keri.routing",
       "keri.version-1.x"
     ],
     "composes": [],
