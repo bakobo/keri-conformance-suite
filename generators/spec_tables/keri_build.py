@@ -44,7 +44,7 @@ graded SHOULD, inferred from rule A0, and needs ``kel.recovery``.
 
 import itertools
 
-from . import keri_model
+from . import digests, keri_model
 from .errors import ScenarioError
 from .keri_events import DELEGATED, ESTABLISHMENT, INCEPTIONS, ROTATIONS, WIRE, EventBuilder
 
@@ -53,7 +53,10 @@ GENERATOR_VERSION = "0.1.0"
 SCHEMA_VERSION = 1
 BASE_FEATURES = ("cesr.genus-2.00", "cesr.serialization.json", "crypto.ed25519", "kel.basic",
                  "keri.version-2.x")
-GATED = ("keri.escrow", "kel.recovery")
+# Digest algorithms beyond Blake3 that a validator may decline (CESR line 1186 lets each
+# serialization choose; no sentence requires any one), named by the code that selects them.
+DIGEST_FEATURES = {"F": "crypto.blake2b-256", "I": "crypto.sha2-256"}
+GATED = ("keri.escrow", "kel.recovery", *DIGEST_FEATURES.values())
 REJECT_REASONS = {
     "unsigned": "drop-unsigned",
     "unverified": "drop-unsigned",
@@ -184,9 +187,33 @@ def _features(ideal, messages, graded: set[str]) -> list[str]:
             kel = ideal.kels.get(p.pre)
             if ideal.outcome[i].state == "seen" and kel:
                 prior_n = set(kel.est_before(p.sn).body["n"])
-                if {ideal._digest(k) for k in body["k"]} != prior_n:
+                keys = body["k"]
+                if ({d for d in prior_n if any(ideal.commits(d, k) for k in keys)} != prior_n
+                        or not all(any(ideal.commits(d, k) for d in prior_n) for k in keys)):
                     features.add("kel.partial-rotation")
+    features.update(_digest_features(ideal))
     return sorted(features)
+
+
+def _digest_features(ideal) -> set[str]:
+    """The declinable digest algorithms of the digests in every message the model ever sees:
+    its SAID, a digest prefix, its prior and its next-key digests. A message refused anyway, such
+    as one whose SAID's code names one algorithm while its value came from another, needs none,
+    because a validator without the algorithm refuses it too."""
+    features = set()
+    for i, p in enumerate(ideal.parsed):
+        if "seen" not in (ideal.initial[i].state, ideal.outcome[i].state) or p.ilk == "rct":
+            continue
+        for text in (p.said, p.pre, p.body.get("p", ""), *p.body.get("n", [])):
+            code = digests.code_of(text)
+            if code not in digests.ALGORITHMS or code == digests.DEFAULT:
+                continue
+            if code not in DIGEST_FEATURES:
+                raise ScenarioError(f"Digest code {code!r} has no feature, so a validator without "
+                                    f"its algorithm could not decline a case that accepts it. Add "
+                                    f"one to profiles/features.json and DIGEST_FEATURES first.")
+            features.add(DIGEST_FEATURES[code])
+    return features
 
 
 MAX_PERMUTED = 4  # every order of up to this many kept messages; beyond, forward and reverse
@@ -355,8 +382,9 @@ def build_keri_case(t, scenario_path: str, case: dict, clauses: dict, inferences
         musts = [a for a in assertions if a["level"] == "MUST"]
         if musts:
             comp = _companion_case(case, gated)
+            ungated = [f for f in _features(ideal, messages, set()) if f not in GATED]
             companion = _case(comp["id"], comp["title"], comp["description"], case,
-                              _features(ideal, messages, set()), musts, messages, scenario_path,
+                              ungated, musts, messages, scenario_path,
                               comp["key"], clauses)
         elif "companion" in case:
             raise ScenarioError(f"{cid}: names a companion but has no MUST assertion to put in it.")

@@ -1,0 +1,231 @@
+{
+  "profile": "keri-v1.0.1",
+  "cases": [
+    {
+      "id": "KERI-0117",
+      "key": "KS-DA01",
+      "status": "draft",
+      "title": "A KEL whose digests are all SHA2-256",
+      "description": "An inception, a rotation and an interaction whose SAIDs, digest prefix, prior digests and next-key digests all use SHA2-256 (code I). CESR line 1186 lets each serialization use the digest algorithm its derivation code names, and the SAID verification protocol computes the digest with that algorithm (CESR line 1194), so every event should be accepted. No sentence requires a validator to support SHA2-256, so the case needs crypto.sha2-256, and its MUST assertions are in KERI-0118.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "digest": "I"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "digest": "I"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn",
+          "digest": "I"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ],
+      "companion": {
+        "id": "KERI-0118",
+        "key": "KS-DA01s",
+        "title": "A KEL whose digests are all SHA2-256: safety half",
+        "description": "KS-DA01's deliveries, graded only at MUST and without needing crypto.sha2-256: if the interaction is accepted, the key state is the one its SHA2-256 KEL establishes."
+      }
+    },
+    {
+      "id": "KERI-0119",
+      "key": "KS-DA02",
+      "status": "draft",
+      "title": "A KEL whose digests are all Blake2b-256",
+      "description": "An inception, a rotation and an interaction whose SAIDs, digest prefix, prior digests and next-key digests all use Blake2b-256 (code F), computed with a 32-byte digest length rather than truncated from Blake2b-512. CESR line 1186 lets each serialization use the digest algorithm its derivation code names, and the SAID verification protocol computes the digest with that algorithm (CESR line 1194), so every event should be accepted. No sentence requires a validator to support Blake2b-256, so the case needs crypto.blake2b-256, and its MUST assertions are in KERI-0120.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "digest": "F"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "digest": "F"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn",
+          "digest": "F"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ],
+      "companion": {
+        "id": "KERI-0120",
+        "key": "KS-DA02s",
+        "title": "A KEL whose digests are all Blake2b-256: safety half",
+        "description": "KS-DA02's deliveries, graded only at MUST and without needing crypto.blake2b-256: if the interaction is accepted, the key state is the one its Blake2b-256 KEL establishes."
+      }
+    },
+    {
+      "id": "KERI-0121",
+      "key": "KS-DA03",
+      "status": "draft",
+      "title": "SAID coded SHA2-256 but computed with Blake3-256",
+      "description": "A self-addressing inception whose SAID and prefix carry the SHA2-256 code (I) while their value is the Blake3-256 digest of the body. The SAID verification protocol computes the digest with the algorithm the SAID's own code names (CESR line 1194), so the SAID does not verify and the inception must not be accepted. A validator that always uses Blake3, whatever the code says, accepts it. The case needs no digest feature, because a validator without SHA2-256 refuses it too.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "digest": "I",
+          "tamper": {
+            "said_digest": "E"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/said",
+            "1/said"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0122",
+      "key": "KS-DA04",
+      "status": "draft",
+      "title": "SAID coded Blake3-256 but computed with SHA2-256",
+      "description": "A self-addressing inception whose SAID and prefix carry the Blake3-256 code (E) while their value is the SHA2-256 digest of the body. The SAID verification protocol computes the digest with the algorithm the SAID's own code names (CESR line 1194), so the SAID does not verify and the inception must not be accepted. A validator that tries each algorithm it knows until one matches accepts it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "digest": "E",
+          "tamper": {
+            "said_digest": "I"
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/said",
+            "1/said"
+          ]
+        }
+      ]
+    }
+  ]
+}
