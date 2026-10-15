@@ -53,11 +53,11 @@ uv run coverage combine .coverage.main .coverage.onex && uv run coverage report 
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| keripy 1.2.14 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite b270e092](../../results/keripy/1.2.14/keripy-1x-interop.json) |
-| keripy 2.1.0.dev1 | `acdc-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 0 | [2026-10-15, suite 2562445e](../../results/keripy/2.1.0.dev1/acdc-v1.0.json) |
-| keripy 2.1.0.dev1 | `cesr-v1.0` | conformant | 29 / 0 | 10 / 0 | 0 / 0 | 0 | [2026-10-15, suite 2562445e](../../results/keripy/2.1.0.dev1/cesr-v1.0.json) |
-| keripy 2.1.0.dev1 | `keri-escrow` | interoperable | 0 / 0 | 0 / 0 | 16 / 0 | 0 | [2026-10-15, suite 2562445e](../../results/keripy/2.1.0.dev1/keri-escrow.json) |
-| keripy 2.1.0.dev1 | `keri-v1.0.1` | conformant | 127 / 0 | 209 / 0 | 0 / 0 | 0 | [2026-10-15, suite 2562445e](../../results/keripy/2.1.0.dev1/keri-v1.0.1.json) |
+| keripy 1.2.14 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite 5f29f480](../../results/keripy/1.2.14/keripy-1x-interop.json) |
+| keripy 2.1.0.dev1 | `acdc-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 0 | [2026-10-15, suite 5f29f480](../../results/keripy/2.1.0.dev1/acdc-v1.0.json) |
+| keripy 2.1.0.dev1 | `cesr-v1.0` | conformant | 29 / 0 | 10 / 0 | 0 / 0 | 0 | [2026-10-15, suite 5f29f480](../../results/keripy/2.1.0.dev1/cesr-v1.0.json) |
+| keripy 2.1.0.dev1 | `keri-escrow` | interoperable | 0 / 0 | 0 / 0 | 16 / 0 | 0 | [2026-10-15, suite 5f29f480](../../results/keripy/2.1.0.dev1/keri-escrow.json) |
+| keripy 2.1.0.dev1 | `keri-v1.0.1` | conformant | 127 / 0 | 209 / 0 | 0 / 0 | 0 | [2026-10-15, suite 5f29f480](../../results/keripy/2.1.0.dev1/keri-v1.0.1.json) |
 
 <!-- END generated results -->
 
@@ -103,9 +103,10 @@ No keripy code is modified. keripy's parser returns objects, not offsets, so two
 **End of input.** If keripy's parser yields, asking for more bytes, the stream is complete (adapter protocol, "End of input"), so the adapter rejects with keripy's `ShortageError`. This happens on keripy 1.2.14, which waits rather than raising when a body or an item is cut short, and which also waits for attachments after any message. On 1.2.14 a final message with no attachments is therefore a rejection.
 
 **Rejections.** Any exception keripy's parser raises is a rejection, with keripy's exception class as the class. On keripy main a failure inside an enclosed attachments group arrives as keripy's own `SizedGroupError`. There is one exception. keripy 1.2.14's `msgParsator` dispatches the finished message to its KERI processors, and with none attached that dispatch raises (`ValidationError: No kevery to process...`). keripy's own parse loop classes such errors as non-extraction errors and resumes. The adapter treats an exception as this post-extraction kind only when every one of these holds:
+- the keripy generation is 1.2.14, whose parser dispatches (keripy main's `msgParsator` only frames, so on main every exception is a rejection, including one raised while framing attachments after a whole message, such as the `TypeError` keripy main raises for a `-J` group inside `-C`);
+- the exception is a `ValidationError`, the class every one of 1.2.14's dispatch failures raises;
 - the call consumed a whole message;
 - the exception was not raised inside an extraction;
-- the exception is not an `ExtractionError`;
 - keripy's buffer stands at the end of the stream or at the start of the next message.
 
 ## Measured, not sourced

@@ -239,22 +239,38 @@ describe('cesr.encode', () => {
         }
     });
 
-    it('answers a code signify-ts refuses as unsupported, naming its reason', () => {
-        let caught: unknown;
-        try {
-            encode('#', new Uint8Array(1), 'text');
-        } catch (err) {
-            caught = err;
-        }
-        expect(caught).toBeInstanceOf(OpError);
-        expect((caught as OpError).kind).toBe('unsupported');
-        expect((caught as OpError).message).toMatch(/^e\.input\.format\.encode-refused\.f: /);
+    it.each([
+        ['a raw value too short for its code', 'E', 31, 'Error'],
+        ['a code signify-ts does not know', '#', 1, 'TypeError'],
+    ])('answers %s as a rejection naming the class signify-ts threw', (_name, code, size, klass) => {
+        const err = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+        expect(encode(code, new Uint8Array(size), 'text')).toEqual({ reject: { class: klass } });
+        expect(String(err.mock.calls[0][0])).toMatch(new RegExp(`^signify-ts refused to encode: ${klass}: `));
+        vi.restoreAllMocks();
     });
 
-    it('reports a non-Error throw from signify-ts too', () => {
+    it('reports what signify-ts encodes from a raw value too long for its code, without judging it', () => {
+        // signify-ts keeps the first 32 bytes and encodes them; whether that conforms is the cases' call.
+        expect(encode('E', new Uint8Array(33), 'text')).toEqual({ encoded: hex(digestE()) });
+    });
+
+    it('names a subclass signify-ts throws by its own name', () => {
+        class EmptyMaterialError extends Error {}
+        const thrower = () => {
+            throw new EmptyMaterialError('empty');
+        };
+        vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+        expect(encode('E', new Uint8Array(32), 'text', thrower)).toEqual({ reject: { class: 'EmptyMaterialError' } });
+        vi.restoreAllMocks();
+    });
+
+    it('answers a non-Error throw from signify-ts as a rejection naming its type', () => {
         const thrower = () => {
             throw 'plain string';
         };
-        expect(() => encode('E', new Uint8Array(32), 'text', thrower)).toThrowError(/plain string/);
+        const err = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+        expect(encode('E', new Uint8Array(32), 'text', thrower)).toEqual({ reject: { class: 'string' } });
+        expect(String(err.mock.calls[0][0])).toMatch(/plain string/);
+        vi.restoreAllMocks();
     });
 });

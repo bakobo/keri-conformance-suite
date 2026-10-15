@@ -1,7 +1,7 @@
 //! Adapter protocol v1 over stdio: one JSON request per line in, one JSON response per line out.
 //!
 //! `handle_line` never panics and always returns exactly one response line. Operations that call
-//! into cesrox or said run on a worker thread (see `isolate`), so a panic inside them becomes a
+//! into keri-core, cesrox or said run on a worker thread (see `isolate`), so a panic inside them becomes a
 //! `harness` error for that request and the adapter answers the next one.
 
 use std::io::{self, BufRead, Write};
@@ -10,15 +10,27 @@ use std::panic::{self, AssertUnwindSafe};
 use serde_json::{json, Map, Value};
 
 use crate::cesr::{self, OpError};
+use crate::kel;
 
 pub const PROTOCOL: u64 = 1;
 pub const ADAPTER_NAME: &str = "kcs-adapter-keriox";
 pub const ADAPTER_VERSION: &str = env!("CARGO_PKG_VERSION");
-pub const OPERATIONS: [&str; 2] = ["cesr.parse", "cesr.encode"];
+pub const OPERATIONS: [&str; 3] = ["cesr.parse", "cesr.encode", "keri.process"];
 /// Drawn from profiles/features.json; README.md says why each is or is not declared.
-pub const FEATURES: [&str; 3] = [
+pub const FEATURES: [&str; 14] = [
     "cesr.genus-1.00",
     "cesr.serialization.json",
+    "crypto.ed25519",
+    "kel.basic",
+    "kel.delegation",
+    "kel.multisig.numeric",
+    "kel.multisig.weighted",
+    "kel.nontransferable",
+    "kel.partial-rotation",
+    "kel.witness",
+    "keri.duplicity",
+    "keri.escrow",
+    "keri.routing",
     "keri.version-1.x",
 ];
 
@@ -34,6 +46,7 @@ pub const E_OVERSIZE: &str = "e.input.range.request-size.f";
 pub const E_MALFORMED: &str = "e.input.format.request.f";
 pub const E_UNKNOWN_OP: &str = "e.input.range.unknown-op.f";
 pub const E_UNDECLARED_OP: &str = "e.feature.unsupported.undeclared-op.f";
+pub const E_PERSPECTIVE: &str = "e.feature.unsupported.perspective.f";
 pub const E_VERSION: &str = "e.feature.unsupported.protocol-version.f";
 pub const E_PANIC: &str = "e.self.unknown.panic.f";
 pub const E_WORKER: &str = "e.self.resource.worker-thread.r";
@@ -51,9 +64,19 @@ fn from_op_error(id: Value, err: OpError) -> Value {
 
 fn implementation() -> Value {
     json!({
-        "name": "cesrox",
-        "version": format!("{} (said {})", env!("KCS_CESROX_VERSION"), env!("KCS_SAID_VERSION")),
-        "commit": format!("{} (said {})", env!("KCS_CESROX_COMMIT"), env!("KCS_SAID_COMMIT")),
+        "name": "keri-core",
+        "version": format!(
+            "{} (cesrox {}, said {})",
+            env!("KCS_KERI_CORE_VERSION"),
+            env!("KCS_CESROX_VERSION"),
+            env!("KCS_SAID_VERSION")
+        ),
+        "commit": format!(
+            "{} (cesrox {}, said {})",
+            env!("KCS_KERI_CORE_COMMIT"),
+            env!("KCS_CESROX_COMMIT"),
+            env!("KCS_SAID_COMMIT")
+        ),
     })
 }
 
@@ -139,6 +162,41 @@ fn encode_op(request: &Map<String, Value>) -> Result<Value, OpError> {
     isolate(move || cesr::encode(&code, &raw, &domain))
 }
 
+fn process_op(request: &Map<String, Value>) -> Result<Value, OpError> {
+    match request.get("perspective") {
+        Some(Value::Object(p)) if p.get("role") == Some(&Value::from("validator")) => {}
+        Some(Value::Object(p)) => {
+            return Err(OpError::Unsupported(format!(
+                "{E_PERSPECTIVE}: This adapter reports only an ordinary validator's \
+                 perspective, not {}.",
+                p.get("role").unwrap_or(&Value::Null)
+            )))
+        }
+        _ => {
+            return Err(OpError::Harness(format!(
+                "{E_MALFORMED}: \"perspective\" must be an object."
+            )))
+        }
+    }
+    let streams = match request.get("messages") {
+        Some(Value::Array(messages)) => messages
+            .iter()
+            .map(|m| match m {
+                Value::Object(m) => hex_field(m, "stream"),
+                _ => Err(OpError::Harness(format!(
+                    "{E_MALFORMED}: \"messages\" must be a list of objects."
+                ))),
+            })
+            .collect::<Result<Vec<_>, _>>()?,
+        _ => {
+            return Err(OpError::Harness(format!(
+                "{E_MALFORMED}: \"messages\" must be a list of objects."
+            )))
+        }
+    };
+    isolate(move || kel::process(streams))
+}
+
 /// Run one operation on a fresh worker thread and turn a panic into a harness error. The panic's
 /// own message also reaches standard error through Rust's default panic hook.
 pub(crate) fn isolate<F>(work: F) -> Result<Value, OpError>
@@ -189,7 +247,8 @@ fn handle(id: Value, request: &Map<String, Value>) -> Value {
         "hello" => hello(request),
         "cesr.parse" => parse_op(request),
         "cesr.encode" => encode_op(request),
-        "keri.process" | "keri.emit" => Err(OpError::Unsupported(format!(
+        "keri.process" => process_op(request),
+        "keri.emit" => Err(OpError::Unsupported(format!(
             "{E_UNDECLARED_OP}: This adapter does not implement {op} and did not declare it in \
              hello."
         ))),

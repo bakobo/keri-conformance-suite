@@ -435,6 +435,8 @@ def main() -> int:
     results = []
     for path in sorted((ROOT / "cases" / "keri").glob("KERI-*.json")):
         case = json.loads(path.read_text())
+        if case["profile"] == "keripy-1x-interop":
+            continue  # KERI 1.x bodies, checked against keripy 1.2.14 by generators/keripy1x_check
         r = check(case)
         results.append(r)
         bad = r.get("disagreements") or r.get("bytes") or "hang" in r or "crash" in r

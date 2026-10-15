@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "2562445e342c363a7eb5b5cc7d4cb3730f9b36fa",
+    "commit": "5f29f480eae6038effc6697a59441607358af971",
     "date": "2026-10-15"
   },
   "report": {
@@ -3358,7 +3358,7 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
+        "stderr": "keripy rejected the stream: TypeError: attribute name must be string, not 'NoneType'\n",
         "assertions": [
           {
             "id": "a1",
@@ -3407,42 +3407,12 @@
                 "start": 317
               }
             ],
-            "actual": [
-              {
-                "kind": "genus",
-                "start": 0,
-                "end": 8,
-                "code": "-_AAACAA",
-                "genus": "AAA",
-                "version": "2.00"
-              },
-              {
-                "kind": "message",
-                "start": 8,
-                "end": 309,
-                "proto": "KERI",
-                "version": "2.0",
-                "serialization": "JSON",
-                "size": 301
-              },
-              {
-                "kind": "counter",
-                "start": 309,
-                "end": 313,
-                "code": "-C",
-                "size": 4,
-                "group_end": 329
-              },
-              {
-                "kind": "counter",
-                "start": 313,
-                "end": 317,
-                "code": "-J",
-                "size": 3,
-                "group_end": 317
+            "actual": {
+              "reject": {
+                "class": "TypeError"
               }
-            ],
-            "detail": "The decoded items differ from the expected items.",
+            },
+            "detail": "The adapter did not report decoded items.",
             "self_agreement": false
           }
         ],
@@ -3454,7 +3424,7 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
+        "stderr": "keripy rejected the stream: TypeError: attribute name must be string, not 'NoneType'\n",
         "assertions": [
           {
             "id": "a1",
@@ -3503,42 +3473,12 @@
                 "start": 317
               }
             ],
-            "actual": [
-              {
-                "kind": "genus",
-                "start": 0,
-                "end": 8,
-                "code": "-_AAACAA",
-                "genus": "AAA",
-                "version": "2.00"
-              },
-              {
-                "kind": "message",
-                "start": 8,
-                "end": 309,
-                "proto": "KERI",
-                "version": "2.0",
-                "serialization": "JSON",
-                "size": 301
-              },
-              {
-                "kind": "counter",
-                "start": 309,
-                "end": 313,
-                "code": "-C",
-                "size": 4,
-                "group_end": 329
-              },
-              {
-                "kind": "counter",
-                "start": 313,
-                "end": 317,
-                "code": "-J",
-                "size": 3,
-                "group_end": 317
+            "actual": {
+              "reject": {
+                "class": "TypeError"
               }
-            ],
-            "detail": "The decoded items differ from the expected items.",
+            },
+            "detail": "The adapter did not report decoded items.",
             "self_agreement": false
           }
         ],
@@ -3550,7 +3490,7 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
+        "stderr": "keripy rejected the stream: TypeError: attribute name must be string, not 'NoneType'\n",
         "assertions": [
           {
             "id": "a1",
@@ -3599,42 +3539,12 @@
                 "start": 317
               }
             ],
-            "actual": [
-              {
-                "kind": "genus",
-                "start": 0,
-                "end": 8,
-                "code": "-_AAACAA",
-                "genus": "AAA",
-                "version": "2.00"
-              },
-              {
-                "kind": "message",
-                "start": 8,
-                "end": 309,
-                "proto": "KERI",
-                "version": "2.0",
-                "serialization": "JSON",
-                "size": 301
-              },
-              {
-                "kind": "counter",
-                "start": 309,
-                "end": 313,
-                "code": "-C",
-                "size": 4,
-                "group_end": 329
-              },
-              {
-                "kind": "counter",
-                "start": 313,
-                "end": 317,
-                "code": "-J",
-                "size": 3,
-                "group_end": 317
+            "actual": {
+              "reject": {
+                "class": "TypeError"
               }
-            ],
-            "detail": "The decoded items differ from the expected items.",
+            },
+            "detail": "The adapter did not report decoded items.",
             "self_agreement": false
           }
         ],
@@ -3646,7 +3556,7 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
+        "stderr": "keripy rejected the stream: TypeError: attribute name must be string, not 'NoneType'\n",
         "assertions": [
           {
             "id": "a1",
@@ -3709,42 +3619,12 @@
                 "start": 331
               }
             ],
-            "actual": [
-              {
-                "kind": "genus",
-                "start": 0,
-                "end": 6,
-                "code": "-_AAACAA",
-                "genus": "AAA",
-                "version": "2.00"
-              },
-              {
-                "kind": "message",
-                "start": 6,
-                "end": 307,
-                "proto": "KERI",
-                "version": "2.0",
-                "serialization": "JSON",
-                "size": 301
-              },
-              {
-                "kind": "counter",
-                "start": 307,
-                "end": 310,
-                "code": "-C",
-                "size": 10,
-                "group_end": 340
-              },
-              {
-                "kind": "counter",
-                "start": 310,
-                "end": 313,
-                "code": "-J",
-                "size": 9,
-                "group_end": 313
+            "actual": {
+              "reject": {
+                "class": "TypeError"
               }
-            ],
-            "detail": "The decoded items differ from the expected items.",
+            },
+            "detail": "The adapter did not report decoded items.",
             "self_agreement": false
           }
         ],
