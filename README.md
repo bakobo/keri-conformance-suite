@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/bakobo/keri-conformance-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/bakobo/keri-conformance-suite/actions/workflows/ci.yml)
 
-A conformance suite for implementations of [CESR](https://github.com/trustoverip/kswg-cesr-specification), [KERI](https://github.com/trustoverip/kswg-keri-specification), [ACDC](https://github.com/trustoverip/kswg-acdc-specification) and IPEX.
+A conformance suite for implementations of [CESR](https://github.com/trustoverip/kswg-cesr-specification), [KERI](https://github.com/trustoverip/kswg-keri-specification), [ACDC](https://github.com/trustoverip/kswg-acdc-specification) and [IPEX](https://trustoverip.github.io/kswg-acdc-specification/#issuance-and-presentation-exchange-ipex). See the [published results](https://bakobo.github.io/keri-conformance-suite/results/).
 
 Each test case is a fixed input together with assertions that do not depend on any implementation: for CESR, the decoded structure or a rejection; for KERI, what a validator does with each message (accepts it, holds it pending, rejects it, records it as duplicitous) and the resulting key state; for ACDC, whether a credential bundle is valid, revoked, invalid or incomplete; for IPEX, whether each exchange message is well-formed, signed and correctly referenced. Every assertion cites the specification clause it tests. An implementation shows conformance by running the cases through a small adapter and satisfying every MUST assertion.
 
@@ -22,7 +22,7 @@ uv run kcs --version
 
 ## Results and documentation
 
-The suite's documentation and its published conformance results are on its site, <https://bakobo.github.io/keri-conformance-suite/>. Each result there is labelled as either reproduced by this repository's CI or submitted by an implementation's maintainer; [`docs/publishing-results.md`](docs/publishing-results.md) explains the difference and how to submit one.
+Each of the [published conformance results](https://bakobo.github.io/keri-conformance-suite/results/) is labelled as either reproduced by this repository's CI or submitted by an implementation's maintainer; [`docs/publishing-results.md`](docs/publishing-results.md) explains the difference and how to submit one.
 
 ## Documents
 

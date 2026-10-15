@@ -1,0 +1,62 @@
+/* Site colours, taken from keri.one: its bronze (#986c32) as the primary colour, its olive green
+   (#61783e) as the accent, and its dark olive (rgb(29, 38, 0)) for table headers. zensical.toml
+   selects these with primary = "custom" and accent = "custom". */
+
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: #986c32;
+  --md-primary-fg-color--light: #b68a52;
+  --md-primary-fg-color--dark: #6f4e22;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+  --md-typeset-a-color: #7a5526;
+}
+
+[data-md-color-accent="custom"] {
+  --md-accent-fg-color: #61783e;
+  --md-accent-fg-color--transparent: rgba(97, 120, 62, 0.1);
+  --md-accent-bg-color: #ffffff;
+  --md-accent-bg-color--light: rgba(255, 255, 255, 0.7);
+}
+
+[data-md-color-scheme="slate"][data-md-color-primary="custom"] {
+  --md-typeset-a-color: #d2a76a;
+}
+
+[data-md-color-scheme="slate"][data-md-color-accent="custom"] {
+  --md-accent-fg-color: #9cb874;
+  --md-accent-fg-color--transparent: rgba(156, 184, 116, 0.1);
+}
+
+/* Tables: a dark header row set apart from the data, and alternate rows shaded. */
+:root {
+  --kcs-table-head-bg: #2a3410;
+  --kcs-table-head-fg: #f5f0e4;
+  --kcs-table-stripe: rgba(152, 108, 50, 0.07);
+  --kcs-table-hover: rgba(97, 120, 62, 0.12);
+}
+
+[data-md-color-scheme="slate"] {
+  --kcs-table-head-bg: #3d4a1c;
+  --kcs-table-head-fg: #f5f0e4;
+  --kcs-table-stripe: rgba(210, 167, 106, 0.06);
+  --kcs-table-hover: rgba(156, 184, 116, 0.12);
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--kcs-table-head-bg);
+  color: var(--kcs-table-head-fg);
+}
+
+.md-typeset table:not([class]) th a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.md-typeset table:not([class]) tbody tr:nth-child(even) {
+  background-color: var(--kcs-table-stripe);
+}
+
+.md-typeset table:not([class]) tbody tr:hover {
+  background-color: var(--kcs-table-hover);
+  box-shadow: none;
+}
