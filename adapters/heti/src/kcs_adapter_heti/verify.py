@@ -177,17 +177,30 @@ def _blinder(attachments: bytes) -> str | None:
 
 def well_formed(attachments: bytes) -> bool:
     """Whether what follows a body is nothing, or exactly one attachments group whose count
-    measures all of it."""
+    measures all of it and whose contents are groups that, read by their own counts, measure all
+    of those."""
     if not attachments:
         return True
     try:
         if attachments.startswith(b"--C"):
-            return 8 + _count(attachments[3:8]) * 4 == len(attachments)
-        if attachments.startswith(b"-C"):
-            return 4 + _count(attachments[2:4]) * 4 == len(attachments)
+            start, size = 8, _count(attachments[3:8]) * 4
+        elif attachments.startswith(b"-C"):
+            start, size = 4, _count(attachments[2:4]) * 4
+        else:
+            return False
+        if start + size != len(attachments):
+            return False
+        i = start
+        while i < len(attachments):
+            if attachments.startswith(b"--", i):
+                i += 8 + _count(attachments[i + 3:i + 8]) * 4
+            elif attachments.startswith(b"-", i) and len(attachments) >= i + 4:
+                i += 4 + _count(attachments[i + 2:i + 4]) * 4
+            else:
+                return False
+        return i == len(attachments)
     except ValueError:
         return False
-    return False
 
 
 def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
@@ -272,40 +285,15 @@ async def _judge(home: pathlib.Path, served, schemas, regs, far, presented) -> d
         if verdict.registry is not None:
             head = {"rd": verdict.registry, "n": verdict.head_sn, "d": verdict.head_said,
                     "td": verdict.said, "ts": verdict.state}
+        # heti reports which far nodes it walked, not whether each edge held: in an OR group one
+        # member may fail while the group holds. So no edge is reported (the protocol asks only
+        # for what was evaluated, and heti does not expose a result per edge).
         return {"verdict": "valid", "reason": "heti verified the ACDC", "registry": head,
-                "edges": walked_edges([acdc] + [f[0] for f in far], verdict.walked)}
+                "edges": []}
     finally:
         box.close()
         server.shutdown()
         server.server_close()
-
-
-def edge_blocks(e, path: str = "e") -> list[tuple[str, dict]]:
-    """Every edge block in an edge section, as (label path, block): a map with an n."""
-    if not isinstance(e, dict):
-        return []
-    if isinstance(e.get("n"), str):
-        return [(path, e)]
-    return [p for k, v in e.items() if k not in ("d", "u", "o")
-            for p in edge_blocks(v, f"{path}.{k}")]
-
-
-def walked_edges(streams: list[bytes], walked) -> list[dict]:
-    """The edges heti evaluated: for a verified ACDC whose far nodes heti walked, every edge, of
-    the presented ACDC or of a far node, that points at a node heti walked, each valid. heti
-    reports the nodes it walked, not a result per edge, so an edge it left unwalked (E1E without
-    far nodes) is not reported."""
-    if not walked:
-        return []
-    out = []
-    for stream in streams:
-        parts = split(stream)
-        if parts is None:
-            continue
-        sad = parts[0]
-        out += [{"near": sad.get("d"), "path": path, "n": block["n"], "valid": True}
-                for path, block in edge_blocks(sad.get("e")) if block["n"] in walked]
-    return out
 
 
 def verify(request) -> dict:

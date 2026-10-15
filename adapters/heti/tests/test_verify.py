@@ -164,6 +164,11 @@ def test_a_presented_acdc_with_trailing_bytes_goes_to_heti_as_it_came():
 @pytest.mark.parametrize("attachments,expected", [
     (b"", True), (b"-CAB-SAA", True), (b"--CAAAAB-SAA", True), (b"-CAB-SAAjunk", False),
     (b"--CAAAAB", False), (b"-C!!", False), (b"junk", False),
+    (b"-CAB" + b"xxxx", False),  # the outer count holds, but its contents are no group
+    (b"-CAC" + b"-SAB" + b"AAAA", True),
+    (b"-CAC" + b"--SAAAAA", True),
+    (b"-CAB" + b"-SAC", False),  # an inner group's count reaches past the end
+    (b"-CAA" + b"", True), (b"-CAB-S", False),
 ])
 def test_well_formed_attachments(attachments, expected):
     assert verify.well_formed(attachments) == expected
@@ -171,14 +176,3 @@ def test_well_formed_attachments(attachments, expected):
 
 def test_a_disclosure_that_is_not_text_is_left_out():
     assert verify._blinder(b"-CAB-aAB\xff\xff\xff\xff") is None
-
-
-def test_walked_edges_report_only_what_heti_walked():
-    stream = bytes.fromhex(BUNDLES["chain"]["presented"]["stream"])
-    near = verify.split(stream)[0]
-    far = next(p for _, p in verify.edge_blocks(near["e"]))["n"]
-    assert verify.walked_edges([stream, b"junk"], (far,)) == [
-        {"near": near["d"], "path": "e.le", "n": far, "valid": True}]
-    assert verify.walked_edges([stream], None) == []
-    assert verify.walked_edges([stream], ("Eother",)) == []
-    assert verify.edge_blocks("Ecompact") == []

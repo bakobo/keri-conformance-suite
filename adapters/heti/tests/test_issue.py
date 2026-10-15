@@ -63,8 +63,8 @@ def test_heti_issues_a_chain_far_node_first():
     assert acdc["e"]["core"]["n"] == core["d"] and acdc["e"]["core"]["o"] == "I2I"
     verdict = verify.verify(bundle(result, "guardian", far=("core",)))
     assert verdict["verdict"] == "valid"
-    assert verdict["edges"] == [{"near": acdc["d"], "path": "e.core", "n": core["d"],
-                                 "valid": True}]
+    # heti does not report a result per edge, so the adapter reports none (verify.py).
+    assert verdict["edges"] == []
 
 
 def test_an_edge_group_keeps_its_operator():
