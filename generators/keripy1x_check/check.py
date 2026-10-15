@@ -1,4 +1,5 @@
-"""Cross-check the keripy-1x-interop CESR cases against keripy 1.2.14's own Parser.
+"""Cross-check the keripy-1x-interop cases against keripy 1.2.14: the CESR cases against its own
+Parser here, and the KERI cases against its Kevery in ``kel.py``.
 
 Run from this directory, in its own pinned environment:
 
@@ -20,6 +21,7 @@ import json
 import pathlib
 import sys
 
+import kel
 import keri
 from keri.core.parsing import Parser
 
@@ -114,13 +116,17 @@ def main(argv=None):
                 verdicts.append("agree" if outcome.get("parsed") == expected_view(a["expected"])
                                 else "keripy-1.2.14-differs")
         results.append({"id": case["id"], "keripy": outcome, "verdicts": verdicts})
+    kel_results = [kel.check(case) for case in kel.cases()]
     report = {"keripy_version": keri.__version__, "keripy_commit": KERIPY_COMMIT,
-              "path": "Parser.msgParsator with a recording Kevery", "cases": results}
+              "path": "Parser.msgParsator with a recording Kevery", "cases": results,
+              "kel_cases": kel_results}
     if args.report:
         args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n",
                                encoding="utf-8")
     for r in results:
         print(f"{r['id']} {','.join(r['verdicts'])} {r.get('keripy', {}).get('rejected', '')}")
+    for line in kel.main_lines(kel_results):
+        print(line)
     return 0
 
 

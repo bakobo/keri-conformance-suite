@@ -43,7 +43,7 @@ from functools import cache
 from . import b64, digests, ed25519, encoding
 from .decoding import Parser, Rejected
 from .errors import ScenarioError
-from .keri_events import DUMMY, ESTABLISHMENT, FIELDS, INCEPTIONS, ROTATIONS, sized
+from .keri_events import DUMMY, ESTABLISHMENT, INCEPTIONS, ROTATIONS, V2, Wire, sized, wire_of
 from .tables import Tables
 
 POLICIES = ("all", "thresholds", "none")
@@ -113,6 +113,7 @@ class Parsed:
     wigs: list[tuple[int, bytes]] = field(default_factory=list)
     couples: list[tuple[str, bytes]] = field(default_factory=list)
     seals: list[tuple[int, str]] = field(default_factory=list)
+    wire: Wire = V2  # the wire the body's version string selects
 
     @property
     def ilk(self):
@@ -132,8 +133,11 @@ class Parsed:
 
 
 def parse(t: Tables, stream: bytes) -> Parsed:
+    """Read one delivery. A stream that starts with a KERI 1.0 body is read with keripy 1.x's
+    CESR 1.00 table and no genus/version code (keri_events.V1); any other with genus 2.00."""
+    wire = wire_of(stream)
     try:
-        items = Parser(t).parse(stream)
+        items = Parser(t, wire.table).parse(stream)
     except Rejected as e:
         return Parsed(error=f"unparseable: {e}")
     messages = [it for it in items if it["kind"] == "message"]
@@ -142,22 +146,30 @@ def parse(t: Tables, stream: bytes) -> Parsed:
     m = messages[0]
     raw = stream[m["start"]:m["end"]]
     body = json.loads(raw)
-    p = Parsed(body=body, raw=raw)
+    p = Parsed(body=body, raw=raw, wire=wire_of(raw))
+    if p.wire is not wire or (wire.table is not None
+                              and any(it["kind"] == "genus" for it in items)):
+        # A body of one KERI version under the other's attachment framing, including a 1.x
+        # stream whose genus/version code switches its attachments to 2.00: neither wire this
+        # model knows defines it, so it is refused as not modelled rather than graded.
+        raise ScenarioError(f"A KERI {p.wire.name} body in a stream framed as {wire.name} is not "
+                            f"modelled.")
+    kinds = {code: kind for kind, code in wire.groups.items()}
     group, pending = None, []
     for it in items:
         if it["kind"] == "counter":
-            group = it["code"]
-        elif group == "-K" and it["kind"] == "indexed":
+            group = kinds.get(it["code"])
+        elif group == "sigs" and it["kind"] == "indexed":
             ondex = None if it["code"] in ("B", "2B") else it.get("ondex", it["index"])
             p.sigs.append(Sig(it["code"], it["index"], ondex, bytes.fromhex(it["raw"])))
-        elif group == "-L" and it["kind"] == "indexed":
+        elif group == "wigs" and it["kind"] == "indexed":
             p.wigs.append((it["index"], bytes.fromhex(it["raw"])))
-        elif group in ("-M", "-S") and it["kind"] == "primitive":
+        elif group in ("couples", "seals") and it["kind"] == "primitive":
             pending.append(it)
             if len(pending) == 2:
                 a, b = pending
                 pending = []
-                if group == "-M":
+                if group == "couples":
                     prefix = encoding.primitive(t, a["code"], bytes.fromhex(a["raw"]))
                     p.couples.append((prefix, bytes.fromhex(b["raw"])))
                 else:
@@ -183,14 +195,15 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
     if p.error:
         return p.error
     ilk = p.ilk
-    if "t" in p.body and ilk not in FIELDS:
+    fields_of = p.wire.fields
+    if "t" in p.body and ilk not in fields_of:
         return "ilk"
-    if ilk not in FIELDS or tuple(p.body) != FIELDS[ilk]:
+    if ilk not in fields_of or tuple(p.body) != fields_of[ilk]:
         return "fields"
     if not _canonical_hex(p.body["s"]):
         raise ScenarioError(f"A sequence number of {p.body['s']!r}, which is not hex without "
                             f"leading zeros (line 323), is not modelled.")
-    if sized(dict(p.body)) != p.raw:
+    if sized(dict(p.body), p.wire) != p.raw:
         # A body that is not its own compact serialization (whitespace, escapes, a repeated
         # label) may still carry a correct SAID; whether it is valid is K-I4, so no case grades it.
         raise ScenarioError("A body that is not its own compact JSON serialization is not "
@@ -215,7 +228,7 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
         fields["i"] = DUMMY
     # Recomputed with the algorithm the claimed SAID's own code names (CESR line 1194), so a value
     # computed with another algorithm, or a code no algorithm here computes, does not verify.
-    if not digests.verifies(t, p.said, sized(fields)):
+    if not digests.verifies(t, p.said, sized(fields, p.wire)):
         return "said"
     if ilk in INCEPTIONS and p.sn != 0:
         return "inception-sn"
@@ -245,7 +258,8 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     inception's backer threshold no larger than its backer list (line 345), and no
     inception-only configuration trait in a rotation (lines 367-373). A rotation's threshold is
     checked against the effective list, which depends on state, at step 4."""
-    traits = p.body["c"]
+    # A 1.x rotation has no c field (keri_events.V1), so it carries no trait at all.
+    traits = p.body.get("c", [])
     if not isinstance(traits, list) or not all(isinstance(x, str) for x in traits):
         raise ScenarioError(f"Configuration traits of {traits!r}, which are not a list of "
                             f"strings (line 367), are not modelled.")
