@@ -157,11 +157,32 @@ def html_attr(value: str) -> str:
     return "".join(_ENTITIES.get(char, char) for char in value)
 
 
+# How a verdict or outcome is coloured, as a class from docs/stylesheets/kcs.css: green for a pass,
+# red for a failure, amber for a run that cannot tell, and grey for an absence of evidence. The
+# word itself always carries the meaning; the colour only makes it quicker to find.
+TONES = {
+    "conformant": "good", "interoperable": "good",
+    "not-conformant": "bad", "not-interoperable": "bad", "fail": "bad",
+    "incomplete": "warn", "aborted": "warn", "not-implemented": "warn",
+    "no-evidence": "muted", "not-supported": "muted", "skipped": "muted",
+    "not-applicable": "muted",
+}
+
+
 def term(value: str) -> str:
-    """`value` made inert, with its definition as a tooltip when it is a glossary term."""
+    """`value` made inert, with its definition as a tooltip when it is a glossary term and its
+    colour when it is a verdict or an outcome."""
+    tone = f' class="kcs-tone kcs-{TONES[value]}"' if value in TONES else ""
     if value in GLOSSARY:
-        return f'<abbr title="{html_attr(GLOSSARY[value])}">{text(value)}</abbr>'
+        return f'<abbr{tone} title="{html_attr(GLOSSARY[value])}">{text(value)}</abbr>'
+    if tone:
+        return f"<span{tone}>{text(value)}</span>"
     return text(value)
+
+
+def _absent(reason: str) -> str:
+    """An empty matrix cell's reason, shown in grey so the cells with results stand out."""
+    return f'<span class="kcs-absent">{reason}</span>'
 
 
 def _rewrite_target(url: str, source: str, target: str) -> str:
@@ -296,8 +317,8 @@ def _empty_cell(row: dict[str, Result], profile: str, profile_ops: dict) -> str:
     for result in row.values():
         offered.update(result.doc["report"]["hello"]["operations"])
     if needed and not needed & offered:
-        return f"not applicable: the adapter offers no {text(', '.join(sorted(needed)))}"
-    return "no result published"
+        return _absent(f"not applicable: the adapter offers no {text(', '.join(sorted(needed)))}")
+    return _absent("no result published")
 
 
 def load_profiles(repo) -> tuple[dict, dict]:

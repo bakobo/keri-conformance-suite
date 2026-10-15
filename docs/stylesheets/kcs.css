@@ -96,3 +96,56 @@
 .md-typeset blockquote + p:has(> .kcs-mark:first-child) {
   margin-top: 0;
 }
+
+/* Verdicts and outcomes on the results pages (tools/site_source.py TONES): a pale badge with dark
+   text for a pass, a failure or a run that cannot tell, and grey text for an absence of evidence.
+   The word inside always carries the meaning, so the colour is never the only signal. */
+:root {
+  --kcs-good-bg: #e2edd2;
+  --kcs-good-fg: #2e4812;
+  --kcs-bad-bg: #f7dbd5;
+  --kcs-bad-fg: #8a1f11;
+  --kcs-warn-bg: #f6e8cb;
+  --kcs-warn-fg: #6b4700;
+  --kcs-muted-fg: #77736a;
+}
+
+[data-md-color-scheme="slate"] {
+  --kcs-good-bg: rgba(156, 184, 116, 0.22);
+  --kcs-good-fg: #cfe3b0;
+  --kcs-bad-bg: rgba(232, 112, 92, 0.22);
+  --kcs-bad-fg: #f5b8ab;
+  --kcs-warn-bg: rgba(222, 172, 74, 0.22);
+  --kcs-warn-fg: #efd093;
+  --kcs-muted-fg: #96928a;
+}
+
+.md-typeset .kcs-good,
+.md-typeset .kcs-bad,
+.md-typeset .kcs-warn {
+  padding: 0.05em 0.45em;
+  border-radius: 0.25em;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.md-typeset .kcs-good {
+  background-color: var(--kcs-good-bg);
+  color: var(--kcs-good-fg);
+}
+
+.md-typeset .kcs-bad {
+  background-color: var(--kcs-bad-bg);
+  color: var(--kcs-bad-fg);
+}
+
+.md-typeset .kcs-warn {
+  background-color: var(--kcs-warn-bg);
+  color: var(--kcs-warn-fg);
+}
+
+.md-typeset .kcs-muted,
+.md-typeset .kcs-absent {
+  color: var(--kcs-muted-fg);
+}
