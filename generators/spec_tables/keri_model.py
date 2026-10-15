@@ -254,7 +254,11 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     # fields the model can read; otherwise the body is refused as not modelled, as below.
     if p.ilk in ROTATIONS and set(traits) & set(INCEPTION_ONLY_TRAITS):
         _check_bt_modelled(p.body["bt"])
-        for prefix in p.body["ba"]:
+        added = p.body["ba"]
+        if not isinstance(added, list) or not all(isinstance(x, str) for x in added):
+            raise ScenarioError(f"A witness add list of {added!r}, which is not a list of "
+                                f"prefixes (line 353), is not modelled.")
+        for prefix in added:
             _check_witness_code_modelled(digests.code_of(prefix))
         return "trait-inception-only"
     if not p.body["k"]:
