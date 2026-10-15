@@ -54,6 +54,7 @@ const (
 	eUndeclaredOp = "e.feature.unsupported.undeclared-op.f"
 	eVersion      = "e.feature.unsupported.protocol-version.f"
 	eBinaryDomain = "e.feature.unsupported.binary-domain.f"
+	eACDCBody     = "e.feature.unsupported.acdc-body.f"
 	ePanic        = "e.self.unknown.panic.f"
 	eStdio        = "e.env.io.stdio.f"
 )

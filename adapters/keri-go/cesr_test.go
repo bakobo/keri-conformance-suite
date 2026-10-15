@@ -155,13 +155,16 @@ func TestABodyKeriGoCannotReadIsRejected(t *testing.T) {
 	}
 }
 
-// keri-go's ParseEvent reads KERI events: an ACDC's s is a schema SAID, which it would refuse as a
-// sequence number. An ACDC body, here keri-go's own issued-into-registry vector, is framed and its
-// version read, and is not given to ParseEvent.
-func TestAnACDCBodyIsNotReadAsAKeyEvent(t *testing.T) {
-	acdc, _ := base64.StdEncoding.DecodeString("eyJ2IjoiQUNEQzEwSlNPTjAwMDE5NF8iLCJkIjoiRUNnSVVVc1dhWjhIU2o1aWV6ODc2OFBFcEcxeE4wYmNaRjdOOHdWWWw1UzMiLCJpIjoiREdMRHpoZzdWTzFVRUZPczRBdi1nVVU3aGNSYmR2eU9fNW53N0liS0JyUXQiLCJyaSI6IkVOclNGcnhPTXI1R1VfQldVRWFKdEx0ZDdsLTVlZWJHTy0tUVgzX283bG9vIiwicyI6IkVDSzB4Wmxram1Qb092ME5HR0Z5Mi1fal9lOXpjMHl4YXlISDBwTmVveDh3IiwiYSI6eyJkIjoiRUVGRjlqczdrT09zSXlBY2tTMHpZVldiSGJpMmVHbXQtMFdfdWdxVkFxM2ciLCJpIjoiREdwbzJiczdncTh3TjNYenBYUkR1RzlSYVkzbXhlUTlVa0ttZnI3YUwwZy0iLCJkdCI6IjIwMjQtMDEtMDFUMDA6MDA6MDAuMDAwMDAwKzAwOjAwIiwibmFtZSI6IkFsaWNlIiwic2NvcmUiOjQyfX0=")
-	res := parseResult(t, hex.EncodeToString(acdc))
-	if int(res["accepted"].(map[string]any)["consumed"].(float64)) != len(acdc) {
-		t.Fatalf("%v", res)
+// keri-go has no parse-level ACDC reader: ParseEvent reads key events (and would refuse an ACDC's
+// s, a schema SAID, as a sequence number), and VerifyCredential also checks SAIDs. So an ACDC body
+// is answered unsupported, whether it is keri-go's own issued-into-registry vector or not JSON.
+func TestAnACDCBodyIsUnsupported(t *testing.T) {
+	good, _ := base64.StdEncoding.DecodeString("eyJ2IjoiQUNEQzEwSlNPTjAwMDE5NF8iLCJkIjoiRUNnSVVVc1dhWjhIU2o1aWV6ODc2OFBFcEcxeE4wYmNaRjdOOHdWWWw1UzMiLCJpIjoiREdMRHpoZzdWTzFVRUZPczRBdi1nVVU3aGNSYmR2eU9fNW53N0liS0JyUXQiLCJyaSI6IkVOclNGcnhPTXI1R1VfQldVRWFKdEx0ZDdsLTVlZWJHTy0tUVgzX283bG9vIiwicyI6IkVDSzB4Wmxram1Qb092ME5HR0Z5Mi1fal9lOXpjMHl4YXlISDBwTmVveDh3IiwiYSI6eyJkIjoiRUVGRjlqczdrT09zSXlBY2tTMHpZVldiSGJpMmVHbXQtMFdfdWdxVkFxM2ciLCJpIjoiREdwbzJiczdncTh3TjNYenBYUkR1RzlSYVkzbXhlUTlVa0ttZnI3YUwwZy0iLCJkdCI6IjIwMjQtMDEtMDFUMDA6MDA6MDAuMDAwMDAwKzAwOjAwIiwibmFtZSI6IkFsaWNlIiwic2NvcmUiOjQyfX0=")
+	bad := []byte(`{"v":"ACDC10JSON000000_","x":xx}`)
+	for _, body := range [][]byte{good, bad} {
+		kind, msg := errorOf(t, answer(t, `{"id":1,"op":"cesr.parse","stream":"`+hex.EncodeToString(body)+`"}`))
+		if kind != "unsupported" || !strings.HasPrefix(msg, eACDCBody+": ") {
+			t.Fatalf("%s: got %s %q", body, kind, msg)
+		}
 	}
 }
