@@ -105,7 +105,7 @@ fn hex_field(request: &Map<String, Value>, field: &str) -> Result<Vec<u8>, OpErr
 }
 
 /// The implementation identity: both pinned crates, so that moving either pin changes the identity
-/// the CI baseline gate compares.
+/// the committed results record.
 pub fn implementation() -> Value {
     json!({
         "name": IMPLEMENTATION_NAME,

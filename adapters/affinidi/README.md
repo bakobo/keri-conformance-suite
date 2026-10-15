@@ -9,7 +9,7 @@ Connects Affinidi's Rust CESR/KERI crates to the conformance runner over adapter
 | `affinidi-keri-core` | `=0.4.0` | `6277ae866c5761edb5cfa807a5f7ac83ebf3700c` (affinidi/affinidi-keri-rs) | Stream parser and message framing; names the implementation in `hello` |
 | `affinidi-cesr` | `=0.1.3` | `b970cb01bdd1acd0530137b67460579e4624ab47` (affinidi/affinidi-tdk-rs) | Primitives (`Matter`), used by `cesr.encode` and by the parser; its version and commit are part of `hello`'s implementation identity |
 
-Both are the latest releases on crates.io as of 2026-10-02, pinned exactly in `Cargo.toml` and locked in `Cargo.lock`. The adapter uses only their public API and patches nothing. `hello` reports name `affinidi-keri-core`, version `0.4.0 (affinidi-cesr 0.1.3)` and commit `6277ae86… (affinidi-cesr b970cb01…)`, so moving either pin changes the identity the baseline gate compares. `tests/pins.rs` fails if those constants in `src/protocol.rs` drift from `Cargo.lock` or from the commits crates.io published. To move a pin, change it in `Cargo.toml`, run `cargo update -p <crate> --precise <version>`, update the constants, and re-record the baseline.
+Both are the latest releases on crates.io as of 2026-10-02, pinned exactly in `Cargo.toml` and locked in `Cargo.lock`. The adapter uses only their public API and patches nothing. `hello` reports name `affinidi-keri-core`, version `0.4.0 (affinidi-cesr 0.1.3)` and commit `6277ae86… (affinidi-cesr b970cb01…)`, so moving either pin changes the identity the committed results record. `tests/pins.rs` fails if those constants in `src/protocol.rs` drift from `Cargo.lock` or from the commits crates.io published. To move a pin, change it in `Cargo.toml`, run `cargo update -p <crate> --precise <version>`, update the constants, and refresh the committed results.
 
 The toolchain is Rust 1.95.0 (`rust-toolchain.toml`), the `rust-version` both crates declare.
 
@@ -61,17 +61,22 @@ This is the central limitation. Affinidi's parser returns attachments as decoded
 
 `hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when the integer 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB (`protocol::MAX_REQUEST_LINE`, not counting its newline). The adapter reads at most that far before deciding; a longer line gets an error whose `id` is null (`e.input.range.request-size.f`) and the rest of it is skipped a buffer at a time, never held whole. A line that is blank, not UTF-8, not a JSON object, or has no usable `id` (a non-negative integer up to 2^64−1) gets an error whose `id` is null (`e.input.format.request.f`). `keri.process` and `keri.emit` get an `unsupported` error. When Affinidi refuses to encode, the response is an `unsupported` error naming its `CesrError` variant (`e.input.format.encode-refused.f`), because that operation has no rejection result. A panic anywhere in an operation, including inside Affinidi, is caught and answered as a harness error (`e.self.unknown.panic.f`), so the session continues. Every error is also written to standard error, which the runner keeps in its report.
 
-## CI and the baseline
+## Results
 
-CI level 2 (`docs/design.md`) for this adapter is the `affinidi-adapter` job in `.github/workflows/ci.yml`. It installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, runs `kcs check-adapter`, and then runs `kcs run` for `cesr-v1.0` and for `keripy-1x-interop` and compares each report with its baseline, `baseline-cesr-v1.0.json` and `baseline-keripy-1x-interop.json`. The comparison is the keripy adapter's tool, run from source with `PYTHONPATH=adapters/keripy/src`; it uses only the standard library, so keripy is not installed. Its rules are the keripy job's: a regression fails, and so does an improvement until the baseline is updated in the same change.
+<!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+<!-- END generated results -->
+
+## CI and the committed results
+
+The `affinidi-adapter` job in `.github/workflows/ci.yml` installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0` and `keripy-1x-interop`, under `results/affinidi-keri-core/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). After building the adapter as above:
 
 ```sh
-uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile cesr-v1.0 --report /tmp/r.json
-PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-cesr-v1.0.json /tmp/r.json
-uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile keripy-1x-interop --report /tmp/i.json
-PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-keripy-1x-interop.json /tmp/i.json
+uv run python scripts/reproduce-results check --adapter affinidi     # compare fresh runs with the committed results
+uv run python scripts/reproduce-results refresh --adapter affinidi   # replace them, from a clean tree
 ```
 
-The committed baseline is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-v1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
+`check` fails on a regression, and on an improvement too, until the results are refreshed in the same change (the rules are in the keripy adapter's README, CI and the committed results).
 
-In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 need `cesr.item-extents` and CESR-0048 also needs `cesr.genus-2.00`, so none is sent; in `cesr-strict`, both cases need `cesr.genus-2.00`. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, need no item extents, so they are sent; Affinidi rejects all five, as keripy 1.2.14 does, and they pass. The `keripy-1x-interop` baseline records those five passes and the four cases not sent; its verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped like any verdict to the cases the adapter's declared features let the runner send.
+The committed `cesr-v1.0` result is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-v1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
+
+In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 need `cesr.item-extents` and CESR-0048 also needs `cesr.genus-2.00`, so none is sent; in `cesr-strict`, both cases need `cesr.genus-2.00`. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, need no item extents, so they are sent; Affinidi rejects all five, as keripy 1.2.14 does, and they pass. The `keripy-1x-interop` result records those five passes and the four cases not sent; its verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped like any verdict to the cases the adapter's declared features let the runner send.

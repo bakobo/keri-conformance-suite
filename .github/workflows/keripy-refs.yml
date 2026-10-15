@@ -1,15 +1,15 @@
 name: keripy refs
 
 # Checks the keripy adapter, unchanged, against the keripy refs listed in adapters/keripy/refs.json
-# (forks, pinned releases, development heads), comparing each run with the committed baselines
-# and ignoring only the keripy commit (this.i, "The keripy adapter is checked weekly against other
-# keripy refs"). A ref is installed and run only when its commit or the suite's own inputs changed
-# since the last completed run, whose record lives in the Actions cache, so a quiet week is one
-# short job. adapters/keripy/README.md, "Other keripy refs", explains what to do when it fails.
+# (forks, pinned releases, development heads), comparing each run with the suite's committed keripy
+# results and ignoring only the keripy commit (this.i, "The keripy adapter is checked weekly against
+# other keripy refs"). It runs on demand only, because no workflow runs an adapter on a schedule
+# (this.i, "CI tests the suite; results are committed maintainer runs"). A ref is installed and run
+# only when its commit or the suite's own inputs changed since the last completed run, whose record
+# lives in the Actions cache. adapters/keripy/README.md, "Other keripy refs", explains what to do
+# when it fails.
 
 on:
-  schedule:
-    - cron: "23 5 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -45,10 +45,11 @@ jobs:
           key: keripy-refs-state-${{ github.run_id }}
           restore-keys: keripy-refs-state-
       # The inputs hash covers everything that can change a ref's result other than the ref:
-      # cases, profiles, schemas, the runner and the keripy adapter with its baselines.
+      # cases, profiles, schemas, the runner, the outcome comparison, the keripy adapter and the
+      # committed keripy results it is compared with.
       - name: Check every ref
         env:
-          INPUTS: ${{ hashFiles('cases/**', 'profiles/**', 'schema/**', 'src/**', 'pyproject.toml', 'uv.lock', 'adapters/keripy/pyproject.toml', 'adapters/keripy/src/**', 'adapters/keripy/baseline-*.json') }}
+          INPUTS: ${{ hashFiles('cases/**', 'profiles/**', 'schema/**', 'src/**', 'pyproject.toml', 'uv.lock', 'adapters/keripy/pyproject.toml', 'adapters/keripy/src/**', 'tools/outcomes.py', 'results/keripy/**') }}
         run: |
           PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.refs run \
             --refs adapters/keripy/refs.json --state .keripy-refs-state/state.json \

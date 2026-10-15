@@ -97,11 +97,18 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 
 `hello` negotiates from the request's `supported` list, or `[protocol]` when the list is absent, and answers with protocol 1, or with an `unsupported` error (`e.feature.unsupported.protocol-version.f`) when 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB (`protocol::MAX_REQUEST_LINE`, not counting its newline); the adapter holds at most that much of a line, answers a longer one with an error whose `id` is null (`e.input.range.request-size.f`), drops the rest of it, and answers the next request. A line that is not a JSON object, including a blank line, or a request whose `id` is not a non-negative integer, gets an error whose `id` is null (`e.input.format.request.f`). A request without a string `op` or with malformed fields is a `harness` error carrying its id (`e.input.format.request.f`), and an unknown `op` is too (`e.input.range.unknown-op.f`). The adapter exits with status 0 at end of input. If it cannot read standard input or write standard output, it explains why on standard error (`e.env.io.stdio.f`) and exits with status 1. Every code ends in `f` except `e.self.resource.worker-thread.r`, which is the failure to start a worker thread and may clear on retry.
 
-## CI and the baselines
+## Results
 
-CI level 2 (`docs/design.md`) for this adapter is the `keriox-adapter` job in `.github/workflows/ci.yml`. It installs the toolchain `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test`, runs `kcs check-adapter`, and then compares two runs with the baselines here: `cesr-v1.0` with `baseline-cesr-v1.0.json`, and `keripy-1x-interop` with `baseline-keripy-1x-interop.json`. The comparison is the keripy adapter's standard-library tool, `python -m kcs_adapter_keripy.baseline compare` with `PYTHONPATH=adapters/keripy/src`, with the rules its README gives: a regression fails the job, and so does an improvement, including a different cesrox or said commit, until the baseline is updated in the same change:
+<!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+<!-- END generated results -->
+
+## CI and the committed results
+
+The `keriox-adapter` job in `.github/workflows/ci.yml` installs the toolchain `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test` and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results, `results/cesrox/0.1.8-said-0.4.3/<profile>.json`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). After building the adapter as above:
 
 ```sh
-uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile cesr-v1.0 --report /tmp/r.json
-PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/keriox/baseline-cesr-v1.0.json /tmp/r.json
+uv run python scripts/reproduce-results check --adapter keriox     # compare a fresh run with the committed results
+uv run python scripts/reproduce-results refresh --adapter keriox   # replace them, from a clean tree
 ```
+
+`check` fails on a regression, and on an improvement too, including a different cesrox or said commit, until the results are refreshed in the same change.
