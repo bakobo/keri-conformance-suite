@@ -43,8 +43,13 @@ def _rich():
     unsupported["missing_operation"] = "cesr.encode"
     aborted = {"code": "e.x.f", "reason": "stopped", "problems": ["p"], "at_case": "CESR-0003",
                "exit_code": 3}
+    layered = report([case(), case("CESR-0004", profile="lay")], profile="lay")
+    layered["claim"] = {"profile": "lay", "version": "1", "prerequisites": {"cesr-1.0": "conformant"},
+                        "own_verdict": "no-evidence",
+                        "missing": {"operations": ["acdc.issue"], "features": []},
+                        "verdict": "not-interoperable"}
     return [result(report([case(), failed, unsupported], composes=["keri.escrow"]), SUBMITTED),
-            result(report(aborted=aborted), REPRODUCED)]
+            result(report(aborted=aborted), REPRODUCED), result(layered, SUBMITTED)]
 
 
 SAMPLES = [1, 1.5, "x", "", None, True, [], {}, ["x"], {"x": 1}]

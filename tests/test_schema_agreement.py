@@ -210,7 +210,8 @@ def disagreements(documents, ours, schema_validator):
 
 STATE = {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1", "ndigs": ["EGhi"],
          "nt": ["1/2", "1/2"], "wits": [], "bt": "0", "delegator": None}
-INTEROP = {"id": "a9", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x"}
+INTEROP = {"id": "a9", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x",
+           "choices": ["tel-sequence", "registry-head"]}
 # A basis that quotes the sentence it rests on, as a practice case's does.
 QUOTED = {"id": "a10", "check": "rejected", "level": "INTEROP", "basis": {
     "text": "The IPEX section states it.", "spec": "acdc", "section": "IPEX",
@@ -311,6 +312,8 @@ def test_cross_field_rules_agree_with_the_case_schema(base):
         for level in ("MUST", "INTEROP"):
             documents.append(_replace(base, ("assertions", a, "level"), level))
         documents.append(_replace(base, ("assertions", a, "basis"), "b"))
+        documents.append(_replace(base, ("assertions", a, "choices"), ["registry-head"]))
+        documents.append(_replace(base, ("assertions", a, "choices"), ["x", "x"]))
         if assertion_["check"] == "disposition":
             documents.append(_replace(base, ("assertions", a, "phase"), "initial"))
             for retired in ("accepted", "not-accepted", "superseded"):

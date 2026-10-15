@@ -1,0 +1,5 @@
+# A deployment profile's content is ratified by Daniel, by review rather than by memory
+# (docs/profiles/sedi-test-plan.md, item 1).
+/scenarios/sedi/ @dhh1128
+/profiles/sedi-*.json @dhh1128
+/docs/profiles/ @dhh1128

@@ -278,7 +278,16 @@ def test_raw_values_are_shake256_of_the_label():
 
 @pytest.fixture
 def tree(tmp_path):
+    return _copy_tree(tmp_path)
+
+
+def _copy_tree(tmp_path):
+    """The generator's inputs: the scenarios, and the vocabulary and suite version the layered
+    profile is checked against."""
     shutil.copytree(ROOT / "scenarios", tmp_path / "scenarios")
+    (tmp_path / "profiles").mkdir()
+    shutil.copy(ROOT / "profiles" / "features.json", tmp_path / "profiles")
+    shutil.copy(ROOT / "pyproject.toml", tmp_path)
     return tmp_path
 
 
@@ -323,7 +332,7 @@ def test_generate_accepts_a_documented_gap(tree):
 @pytest.mark.parametrize("layer", ["cesr", "keri"])
 def test_generate_skips_the_clause_coverage_triage_sidecar(tmp_path, layer):
     """scenarios/<layer>/triage.json belongs to scripts/clause-coverage, not to the generator."""
-    shutil.copytree(ROOT / "scenarios", tmp_path / "scenarios")
+    _copy_tree(tmp_path)
     (tmp_path / "scenarios" / layer / "triage.json").write_text(
         json.dumps({"about": "Not a scenario.", "entries": {}}))
     assert regenerate.generate(tmp_path) == regenerate.generate(ROOT)

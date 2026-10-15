@@ -13,9 +13,11 @@ with a byte bound and checked against a hand-written mirror of the schema, which
 tests/test_result_schema.py proves agrees with the schema. Then meaning: the file must sit at the
 path its report implies, its provenance must be a kind the directory may hold (the committed
 results/ tree holds only submitted results, so no pull request can claim that CI reproduced it),
-and the report must agree with itself: every case in the named profile, each case's outcome what
-its assertions imply, and the summary and verdict what the runner's own summarize computes from
-the cases. A hand-edited verdict is therefore refused rather than published.
+and the report must agree with itself and with the suite: every case in the named profile, or for
+a layered profile in it or a prerequisite, each case's outcome what its assertions imply, the
+summary and verdict what the runner's own summarize computes from the cases, and a layered
+profile's claim what the runner's make_claim computes from the cases, the hello and the suite's
+profile file. A hand-edited verdict or claim is therefore refused rather than published.
 """
 
 import argparse
@@ -37,7 +39,8 @@ from keri_conformance.errors import (
     RunnerError,
 )
 from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, read_json
-from keri_conformance.run import summarize
+from keri_conformance.profiles import load_profile
+from keri_conformance.run import make_claim, summarize
 from keri_conformance.shapes import (
     Check,
     all_of,
@@ -132,6 +135,15 @@ SUMMARY = obj({"counts": mapping(mapping(TALLY)), "should": TALLY, "should_faile
                "should_warning": nullable(string()), "not_supported_active": STRINGS,
                "self_agreement_passes": COUNT})
 
+# A layered profile's claim (docs/design.md, Targets and profiles), present exactly when the
+# report's profile is layered; its content is re-derived from the cases and hello, not trusted.
+CLAIM = obj({"profile": string(PROFILE), "version": string(min_length=1),
+             "prerequisites": all_of(mapping(enum(*VERDICTS[:-1])),
+                                     predicate(bool, "a non-empty object")),
+             "own_verdict": enum(*INTEROP_VERDICTS),
+             "missing": obj({"operations": STRINGS, "features": STRINGS}),
+             "verdict": enum("interoperable", "not-interoperable", "incomplete")})
+
 REPORT = obj({
     "report_version": enum(1), "runner_version": LABEL, "suite_version": string(SUITE_VERSION),
     "protocol_version": POSITIVE, "supported_protocols": array(POSITIVE, min_items=1),
@@ -142,7 +154,7 @@ REPORT = obj({
     "aborted": nullable(obj({"code": string(), "reason": string(), "problems": STRINGS,
                              "at_case": string(), "exit_code": integer()})),
     "probes": mapping(string()), "summary": SUMMARY, "cases": array(CASE),
-})
+}, {"claim": CLAIM})
 
 RESULT: Check = obj({"result_version": enum(1), "provenance": PROVENANCE, "report": REPORT})
 
@@ -187,7 +199,11 @@ def _case_outcome(entry: dict) -> str:
     return "pass" if outcomes <= {"pass", "not-applicable"} else "inconsistent"
 
 
-def _meaning_problem(report: dict) -> str | None:
+# The suite whose profiles a result is checked against: this checkout.
+SUITE = Path(__file__).resolve().parent.parent
+
+
+def _meaning_problem(report: dict, suite=SUITE) -> str | None:
     impl = report["hello"]["implementation"]
     for field in ("name", "version"):
         if slug(impl[field]) is None:
@@ -204,15 +220,23 @@ def _meaning_problem(report: dict) -> str | None:
         return "its declared_features are not the features its hello declares"
     if report["composes"] != hello.get("composes", []):
         return "its composes is not what its hello composes"
-    profile = report["filters"]["profile"]
+    name = report["filters"]["profile"]
+    try:
+        profile = load_profile(suite, name)
+    except RunnerError as exc:
+        return f"its profile cannot be read from the suite: {exc.message}"
+    claim = report.get("claim")
+    if profile.layered != (claim is not None):
+        return (f"the profile {name} is {'layered' if profile.layered else 'not layered'}, so "
+                f"its report {'must' if profile.layered else 'must not'} carry a claim")
     seen = set()
     for entry in report["cases"]:
         if entry["id"] in seen:
             return f"the case {entry['id']} is listed twice"
         seen.add(entry["id"])
-        if entry["profile"] != profile:
+        if entry["profile"] not in profile.members:
             return (f"the case {entry['id']} is in the profile {json.dumps(entry['profile'])}, "
-                    f"but the report was run for {profile}")
+                    f"but the report was run for {name}")
         assertion_ids: set[str] = set()
         for record in entry["assertions"]:
             if record["id"] in assertion_ids:
@@ -226,6 +250,10 @@ def _meaning_problem(report: dict) -> str | None:
             return (f"the case {entry['id']} has the outcome {entry['outcome']}, which its "
                     "assertions' outcomes do not imply")
     summary, verdict = summarize(report["cases"])
+    if claim is not None:
+        if claim != make_claim(profile, report["cases"], report["hello"]):
+            return "its claim is not the one its cases, hello and profile imply"
+        verdict = claim["verdict"]
     if report["aborted"] is not None:
         verdict = "aborted"
     if report["summary"] != summary:
@@ -235,7 +263,7 @@ def _meaning_problem(report: dict) -> str | None:
     return None
 
 
-def result_problem(doc) -> str | None:
+def result_problem(doc, suite=SUITE) -> str | None:
     """None if `doc` may be published, else a sentence fragment saying why not. Shape is checked
     before meaning, so the meaning checks can rely on every field being present and typed."""
     try:
@@ -253,7 +281,7 @@ def result_problem(doc) -> str | None:
         date.fromisoformat(doc["provenance"]["date"])
     except ValueError:
         return f"provenance.date {doc['provenance']['date']} is not a day on the calendar"
-    return _meaning_problem(doc["report"])
+    return _meaning_problem(doc["report"], suite)
 
 
 @dataclass(frozen=True)
