@@ -645,3 +645,6 @@ def test_an_or_group_still_needs_each_member_issued_as_asked():
 def test_a_stamp_must_name_a_moment_that_exists():
     assert not iss._is_stamp("2026-99-99T99:99:99.999999+99:99")
     assert not iss._is_stamp("2026-02-30T00:00:00.000000+00:00")
+    assert not iss._is_stamp("2026-01-01T00:00:00.000000+00:60")
+    assert not iss._is_stamp("2026-01-01T00:00:00.000000+24:00")
+    assert iss._is_stamp("2026-01-01T00:00:00.000000-23:59")

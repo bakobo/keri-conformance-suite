@@ -322,7 +322,7 @@ def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
     return prefix, trunk, []
 
 
-STAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}(Z|[+-]\d{2}:\d{2})")
+STAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}(Z|[+-]([01]\d|2[0-3]):[0-5]\d)")
 
 
 def _is_salt(text) -> bool:
