@@ -97,8 +97,8 @@
     },
     {
       "id": "edge-said",
-      "reading": "An edge must carry its far node's SAID in d; an edge without d is not valid.",
-      "basis": "Daniel's answer to the profile interview, Q2: the edge's d is required.",
+      "reading": "An edge block must carry its own SAID in d, first in the block; an edge without d, or whose d is not the SAID of its block, is not valid.",
+      "basis": "ACDC line 1154 makes an edge block's d optional and, when present, the SAID of its block; Daniel's answer to the profile interview, Q2, makes it required.",
       "overturn": "Specification text that makes an edge's d optional.",
       "tick": "3nch",
       "decided": "8g9vtxvc"
