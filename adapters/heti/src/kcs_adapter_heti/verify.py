@@ -180,9 +180,15 @@ def _blinder(attachments: bytes) -> str | None:
 MAX_GROUPS = 64
 
 
-def _letter(code: bytes) -> bool:
-    """Whether a group code's selector is an ASCII letter, as every CESR group code's is."""
-    return len(code) == 1 and code.isalpha() and code.isascii()
+# The groups an ACDC's attachments carry in a bundle, which the adapter may trim: a seal source
+# couple pointing at the sealing event, and a disclosed blinded state block. Any other code, a
+# defined one included, leaves the stream to heti as it came.
+TRIMMABLE = (b"S", b"a")
+
+
+def _trimmable(code: bytes) -> bool:
+    """Whether a group's selector is one the adapter may trim (TRIMMABLE)."""
+    return code in TRIMMABLE
 
 
 def well_formed(attachments: bytes) -> bool:
@@ -205,9 +211,9 @@ def well_formed(attachments: bytes) -> bool:
             read += 1
             if read > MAX_GROUPS:
                 return False
-            if attachments.startswith(b"--", i) and _letter(attachments[i + 2:i + 3]):
+            if attachments.startswith(b"--", i) and _trimmable(attachments[i + 2:i + 3]):
                 i += 8 + _count(attachments[i + 3:i + 8]) * 4
-            elif (attachments.startswith(b"-", i) and _letter(attachments[i + 1:i + 2])
+            elif (attachments.startswith(b"-", i) and _trimmable(attachments[i + 1:i + 2])
                   and len(attachments) >= i + 4):
                 i += 4 + _count(attachments[i + 2:i + 4]) * 4
             else:

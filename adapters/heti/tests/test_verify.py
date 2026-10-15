@@ -170,6 +170,8 @@ def test_a_presented_acdc_with_trailing_bytes_goes_to_heti_as_it_came():
     (b"-CAB" + b"-SAC", False),  # an inner group's count reaches past the end
     (b"-CAA" + b"", True), (b"-CAB-S", False),
     (b"-CAB-\xffAA", False), (b"-CAC--\xffAAAAA", False),  # a group code that is no letter
+    (b"-CAB-dAA", False), (b"-CAB-KAA", False),  # a code an ACDC bundle does not attach
+    (b"-CAB-aAA", True), (b"-CAC--aAAAAA", True),
 ])
 def test_well_formed_attachments(attachments, expected):
     assert verify.well_formed(attachments) == expected
