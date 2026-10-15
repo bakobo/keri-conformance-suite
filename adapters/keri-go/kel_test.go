@@ -204,8 +204,13 @@ func TestARepeatedEventIsSeenAgainAndAConflictingOneRejected(t *testing.T) {
 	fork := *id
 	ixnA := id.interact(json.RawMessage(`{"d":"EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}`))
 	ixnB := fork.interact()
+	// keri-go accepts either branch on its own; the refusal of the second is the adapter's.
+	must(keri.ValidateSignedKEL([][]byte{icp, ixnB}))
 	res := process(t, icp, ixnA, icp, ixnA, ixnB)
 	assertReadings(t, res, "seen/seen/trunk", "seen/seen/trunk", "seen/seen/trunk", "seen/seen/trunk", "rejected/rejected/off")
+	if !strings.HasPrefix(res["dispositions"].([]any)[4].(map[string]any)["reason"].(string), routing) {
+		t.Fatalf("the refusal must say it is the adapter's: %v", res["dispositions"])
+	}
 	if keyState(t, res, id.prefix)["said"] != id.said {
 		t.Fatalf("%v", res["key_states"])
 	}
@@ -306,6 +311,7 @@ func TestMalformedProcessRequests(t *testing.T) {
 		`{"id":3,"op":"keri.process","messages":{}}`,
 		`{"id":3,"op":"keri.process","messages":[{"source":"x"}]}`,
 		`{"id":3,"op":"keri.process","messages":[{"stream":"zz"}]}`,
+		`{"id":3,"op":"keri.process","messages":[{"stream":null}]}`,
 		`{"id":3,"op":"keri.process","messages":[7]}`,
 	} {
 		kind, msg := errorOf(t, answer(t, line))

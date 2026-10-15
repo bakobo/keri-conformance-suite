@@ -1,6 +1,6 @@
 # keri-go adapter
 
-Connects grapeid/keri-go, a KERI implementation in Go, to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse`, `cesr.encode` and `keri.process`. keri-go validates a whole key log at a time and has no per-message processor, so the adapter supplies the routing that `keri.process` needs and declares it: `composes` is `["keri.routing"]`. Every verdict, accept or reject, is keri-go's. The design decision is node `3t0efrq7` in [`this.i`](../../this.i).
+Connects grapeid/keri-go, a KERI implementation in Go, to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse`, `cesr.encode` and `keri.process`. keri-go validates a whole key log at a time and has no per-message processor, so the adapter supplies the routing that `keri.process` needs and declares it: `composes` is `["keri.routing"]`. Every acceptance is keri-go's. Every rejection is keri-go's too, except three that the routing makes, each reported with a reason that begins "refused by the adapter's routing, not by keri-go": a delegated event, a message that is not a key event, and an event keri-go would accept at a sequence number another seen event already holds (see `keri.process` below). The design decision is node `3t0efrq7` in [`this.i`](../../this.i).
 
 ## What it tests, pinned
 
@@ -72,11 +72,11 @@ The adapter hands the stream to keri-go's `ParseKELStream`, which splits it into
 For each delivered message, in order, starting from empty state per request:
 
 1. `ParseKELStream` must find exactly one message in it, `DetectVersion` must read its version string, and `ParseEvent` must read it. Anything else is `rejected`.
-2. Only `icp`, `rot` and `ixn` are routed. A `dip` or `drt`, a receipt, and any other message is `rejected`, with a reason saying so.
-3. The event is routed to its identifier's log of seen messages. If its sequence number is beyond the end of the log, the candidate log is the log plus the event; if the position is already held by the same event (same SAID), the candidate is the log up to that position plus this delivery; if it is held by a different event, the delivery is `rejected`, because nothing supersedes.
+2. Only `icp`, `rot` and `ixn` are routed. A `dip` or `drt`, a receipt, and any other message is `rejected` by the adapter, with a reason saying so. The runner sends no case that needs them, because the features they would need are not declared.
+3. The event is routed to its identifier's log of seen messages. If its sequence number is beyond the end of the log, the candidate log is the log plus the event; if that position is already held, the candidate is the log up to that position plus this delivery.
 4. keri-go's `ValidateSignedKEL` must accept the candidate log. It checks every event's fields, version-string size, SAID, derivation, thresholds, sequence, prior digest, pre-rotation, and controller signatures against the key state in force.
 5. If the witness threshold in force once the event is applied is not zero, keri-go's `ReceiptsMeetThreshold` must count at least that many valid receipt couples, from the witnesses in force, attached to the delivery.
-6. If both pass the message is `seen` and, unless it repeats a seen event, appended to the log; otherwise it is `rejected`, with keri-go's reason.
+6. If either refuses, the message is `rejected` with keri-go's reason. If both pass and the position was held by a different seen event, the adapter rejects it: keri-go has no rule for choosing between two branches it accepts, and the adapter supersedes nothing (`kel.recovery` is not declared). Otherwise the message is `seen` and, unless it repeats a seen event, appended to the log.
 
 Nothing is escrowed, so a message's reading after the last delivery is its reading on arrival, and `trunk` is `true` exactly when the message is seen.
 
@@ -84,7 +84,7 @@ Nothing is escrowed, so a message's reading after the last delivery is its readi
 
 | Value | Source |
 |---|---|
-| Accept or reject of each delivery | keri-go: `ParseKELStream`, `DetectVersion`, `ParseEvent`, `ValidateSignedKEL`, `ReceiptsMeetThreshold`; the adapter decides only which log a message joins and refuses what it does not route |
+| Accept or reject of each delivery | keri-go: `ParseKELStream`, `DetectVersion`, `ParseEvent`, `ValidateSignedKEL`, `ReceiptsMeetThreshold`; the adapter decides which log a message joins, and makes the three routing refusals named at the top |
 | End of an event's body, for `ReceiptsMeetThreshold` | The size in the version string, read by keri-go's `ParseVersionString`; `ValidateSignedKEL` has already checked that it equals the length of the body keri-go framed |
 | Witnesses and witness threshold in force | Replayed by the adapter from `b`, `br`, `ba` and `bt` as keri-go's `ParseEvent` read them, as keri-go's own `ValidateKEL` does internally without exporting the result |
 | `key_states`: `sn`, `said` | The last seen event, as `ParseEvent` read it |

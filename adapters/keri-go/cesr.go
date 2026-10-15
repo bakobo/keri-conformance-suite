@@ -29,10 +29,12 @@ var encodable = map[string]bool{
 }
 
 func hexField(request map[string]json.RawMessage, field string) ([]byte, *opError) {
-	var text string
-	if err := json.Unmarshal(request[field], &text); err != nil {
+	// A pointer, because JSON null decodes into a string as "" without error.
+	var value *string
+	if err := json.Unmarshal(request[field], &value); err != nil || value == nil {
 		return nil, harness(eMalformed, "%q must be a lowercase hex string.", field)
 	}
+	text := *value
 	for _, c := range text {
 		if !('0' <= c && c <= '9' || 'a' <= c && c <= 'f') {
 			return nil, harness(eMalformed, "%q must be a lowercase hex string.", field)

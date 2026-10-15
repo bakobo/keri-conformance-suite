@@ -102,6 +102,8 @@ func TestUnreadableLinesGetANullID(t *testing.T) {
 		``, `   `, `not json`, `[1,2]`, `"x"`, `{"op":"hello"}`, `{"id":-1,"op":"hello"}`,
 		`{"id":1.5,"op":"hello"}`, `{"id":"7","op":"hello"}`, `{"id":null,"op":"hello"}`,
 		`{"id":18446744073709551616,"op":"hello"}`, `{"id":1} trailing`,
+		`{"id":1,"op":"hello","supported":[1]}]`, `{"id":1,"op":"hello","supported":[1]}}`,
+		`{"id":1,"op":"hello","supported":[1]} {}`,
 	} {
 		r := answer(t, line)
 		if r["id"] != nil {

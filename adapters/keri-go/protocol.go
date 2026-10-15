@@ -140,17 +140,19 @@ func respond(id json.RawMessage, result any, e *opError) []byte {
 func handleLine(line []byte, log io.Writer) (out []byte) {
 	var request map[string]json.RawMessage
 	dec := json.NewDecoder(bytes.NewReader(line))
-	if err := dec.Decode(&request); err != nil || request == nil || dec.More() {
+	var extra json.RawMessage
+	if err := dec.Decode(&request); err != nil || request == nil || dec.Decode(&extra) != io.EOF {
 		return respond(nil, nil, harness(eMalformed, "The request line is not a JSON object."))
 	}
 	id, ok := requestID(request)
 	if !ok {
 		return respond(nil, nil, harness(eMalformed, "The request has no id that is a non-negative integer."))
 	}
-	var op string
-	if err := json.Unmarshal(request["op"], &op); err != nil {
+	var opField *string
+	if err := json.Unmarshal(request["op"], &opField); err != nil || opField == nil {
 		return respond(id, nil, harness(eMalformed, "The request has no string op."))
 	}
+	op := *opField
 	handler, known := ops[op]
 	if !known {
 		switch op {

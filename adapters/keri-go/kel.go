@@ -16,6 +16,9 @@ import (
 // superseded, so a reading never changes after delivery, and everything the adapter does not
 // route is rejected rather than judged by adapter code.
 
+// routing prefixes the reason of every rejection the adapter makes itself, rather than keri-go.
+const routing = "refused by the adapter's routing, not by keri-go: "
+
 // kelLog is one identifier's seen messages, in sequence-number order.
 type kelLog struct {
 	messages [][]byte
@@ -80,9 +83,9 @@ func (v *validator) deliver(raw []byte) string {
 	switch ev.Ilk {
 	case "icp", "rot", "ixn":
 	case "dip", "drt":
-		return "this adapter does not route delegated events (kel.delegation is not declared)"
+		return routing + "delegated events are not routed (kel.delegation is not declared)"
 	default:
-		return fmt.Sprintf("a %q is not a key event this adapter routes", ev.Ilk)
+		return fmt.Sprintf("%sa %q is not a key event this adapter routes", routing, ev.Ilk)
 	}
 
 	log := v.logs[ev.Identifier]
@@ -90,11 +93,8 @@ func (v *validator) deliver(raw []byte) string {
 		log = &kelLog{}
 	}
 	prior := log.messages
-	if ev.SN < uint64(len(log.events)) {
-		if log.events[ev.SN].SAID != ev.SAID {
-			return fmt.Sprintf("sequence number %d already holds the seen event %s, and this "+
-				"adapter supersedes nothing", ev.SN, log.events[ev.SN].SAID)
-		}
+	occupied := ev.SN < uint64(len(log.events))
+	if occupied {
 		prior = log.messages[:ev.SN]
 	}
 	candidate := append(append([][]byte(nil), prior...), raw)
@@ -103,6 +103,13 @@ func (v *validator) deliver(raw []byte) string {
 	}
 	if reason := witnessed(raw, ev, log.events[:len(prior)]); reason != "" {
 		return reason
+	}
+	// keri-go accepts this event in its place. If a different seen event already holds that
+	// place, keri-go has no rule for choosing between the two, and the adapter supersedes nothing.
+	if occupied && log.events[ev.SN].SAID != ev.SAID {
+		return fmt.Sprintf("%skeri-go accepts this event at sequence number %d, which already "+
+			"holds the seen event %s, and the adapter supersedes nothing", routing, ev.SN,
+			log.events[ev.SN].SAID)
 	}
 	if len(prior) == len(log.events) {
 		if len(log.events) == 0 {
