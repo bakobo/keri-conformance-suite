@@ -108,9 +108,6 @@ def test_matrix_cells_carry_verdict_counts_and_a_link():
     assert "2026\\-10\\-09" in index
 
 
-def test_a_profile_a_row_lacks_is_marked_not_run():
-    index = S.render_results(_two_versions())["results/index.md"]
-    assert "not run" in index
 
 
 def test_detail_page_states_the_claim_and_every_case():
@@ -537,3 +534,40 @@ def test_detail_labels_link_to_their_explanations():
         slugs = {re.sub(r"[^a-z0-9 -]", "", h.lower()).strip().replace(" ", "-")
                  for h in re.findall(r"^#+ (.*)$", source, re.MULTILINE)}
         assert not anchor or anchor in slugs, (label, link)
+
+
+# --- why a cell is empty --------------------------------------------------------------------------
+
+
+def test_an_empty_cell_says_why():
+    # _two_versions' keripy row at 0.1.0 ran keri-v1.0.1 only, with an adapter offering cesr.parse.
+    ops = {"cesr-v1.0": frozenset({"cesr.parse", "cesr.encode"}),
+           "keri-v1.0.1": frozenset({"keri.process"})}
+    index = S.render_results(_two_versions(), profile_ops=ops)["results/index.md"]
+    assert "| not run" not in index
+    # cesrox (cesr.parse) has no keri.process, so keri-v1.0.1 does not apply to it.
+    assert "not applicable: the adapter offers no keri\\.process" in index
+    # keripy's adapter offers cesr.parse, so cesr-v1.0 applies; nobody published that run.
+    assert "no result published" in index
+
+
+def test_an_empty_cell_for_a_profile_with_unknown_operations_says_only_that_none_is_published():
+    index = S.render_results(_two_versions())["results/index.md"]
+    assert "| not run" not in index and "not applicable" not in index
+    assert "no result published" in index
+
+
+def test_profile_operations_come_from_the_profiles_cases(tmp_path):
+    (tmp_path / "profiles").mkdir()
+    (tmp_path / "cases" / "keri").mkdir(parents=True)
+    (tmp_path / "profiles" / "keri-x.json").write_text(json.dumps(
+        {"name": "keri-x", "cases": ["KERI-0001", "KERI-0002"]}))
+    (tmp_path / "profiles" / "features.json").write_text(json.dumps({"features": {}}))
+    for cid, op in (("KERI-0001", "keri.process"), ("KERI-0002", "exn.verify")):
+        (tmp_path / "cases" / "keri" / f"{cid}.json").write_text(json.dumps({"operation": op}))
+    assert S.profile_operations(tmp_path) == {"keri-x": frozenset({"keri.process", "exn.verify"})}
+
+
+def test_the_real_profiles_have_operations():
+    ops = S.profile_operations(ROOT)
+    assert ops["cesr-v1.0"] and ops["keri-v1.0.1"] >= {"keri.process"}

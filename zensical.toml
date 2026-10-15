@@ -35,7 +35,7 @@ nav = [
     { "Overview" = "coverage/README.md" },
     { "CESR" = "coverage/cesr.md" },
     { "KERI" = "coverage/keri.md" },
-    { "Assessment, October 2026" = "coverage/assessment-2026-10.md" },
+    { "Self-assessment" = "coverage/assessment-2026-10.md" },
   ] },
 ]
 

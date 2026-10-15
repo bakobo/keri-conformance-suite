@@ -1,6 +1,6 @@
-/* Site colours, taken from keri.one: its bronze (#986c32) as the primary colour, its olive green
-   (#61783e) as the accent, and its dark olive (rgb(29, 38, 0)) for table headers. zensical.toml
-   selects these with primary = "custom" and accent = "custom". */
+/* Site colours, taken from keri.one: its bronze (#986c32) as the primary colour and its olive green
+   (#61783e) as the accent and the table header colour. zensical.toml selects these with
+   primary = "custom" and accent = "custom". */
 
 [data-md-color-primary="custom"] {
   --md-primary-fg-color: #986c32;
@@ -29,14 +29,14 @@
 
 /* Tables: a dark header row set apart from the data, and alternate rows shaded. */
 :root {
-  --kcs-table-head-bg: #2a3410;
-  --kcs-table-head-fg: #f5f0e4;
+  --kcs-table-head-bg: #61783e;
+  --kcs-table-head-fg: #ffffff;
   --kcs-table-stripe: rgba(152, 108, 50, 0.07);
   --kcs-table-hover: rgba(97, 120, 62, 0.12);
 }
 
 [data-md-color-scheme="slate"] {
-  --kcs-table-head-bg: #3d4a1c;
+  --kcs-table-head-bg: #4f6332;
   --kcs-table-head-fg: #f5f0e4;
   --kcs-table-stripe: rgba(210, 167, 106, 0.06);
   --kcs-table-hover: rgba(156, 184, 116, 0.12);

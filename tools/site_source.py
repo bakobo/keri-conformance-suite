@@ -222,7 +222,33 @@ def _composes(report: dict) -> str:
     return text(", ".join(report["composes"])) if report["composes"] else "nothing"
 
 
-def _version_tables(results: list[Result], prefix: str) -> list[str]:
+def _empty_cell(row: dict[str, Result], profile: str, profile_ops: dict) -> str:
+    """Why a row has no result for `profile`: the adapter offers none of the operations the
+    profile's cases use, or nobody has published that run."""
+    needed = profile_ops.get(profile)
+    offered = set()
+    for result in row.values():
+        offered.update(result.doc["report"]["hello"]["operations"])
+    if needed and not needed & offered:
+        return f"not applicable: the adapter offers no {text(', '.join(sorted(needed)))}"
+    return "no result published"
+
+
+def profile_operations(repo) -> dict[str, frozenset]:
+    """The adapter operations each profile's cases use, read from profiles/ and cases/."""
+    repo, ops = Path(repo), {}
+    for path in sorted((repo / "profiles").glob("*.json")):
+        profile = read_json(path, MAX_RESULT_BYTES)
+        if "cases" not in profile:
+            continue
+        ops[profile["name"]] = frozenset(
+            read_json(repo / "cases" / cid.split("-")[0].lower() / f"{cid}.json",
+                      MAX_RESULT_BYTES)["operation"]
+            for cid in profile["cases"])
+    return ops
+
+
+def _version_tables(results: list[Result], prefix: str, profile_ops: dict) -> list[str]:
     """The matrix and the detail table for results that all ran against one suite version."""
     profiles = sorted({r.doc["report"]["filters"]["profile"] for r in results})
     rows: dict[tuple, dict[str, Result]] = {}
@@ -234,7 +260,7 @@ def _version_tables(results: list[Result], prefix: str) -> list[str]:
     for row in rows.values():
         first = next(iter(row.values()))
         label = _row_label(first, f"{prefix}{first.path.parts[0]}/index.md")
-        cells = [_cell(row[p].doc["report"], prefix + _page(row[p])) if p in row else "not run"
+        cells = [_cell(row[p].doc["report"], prefix + _page(row[p])) if p in row else _empty_cell(row, p, profile_ops)
                  for p in profiles]
         lines.append(f"| {label} | " + " | ".join(cells) + " |")
     lines += ["", "| Implementation | Profile | Adapter | Composes | Self-agreement | Date |",
@@ -266,19 +292,19 @@ Results are grouped by the suite version they ran against, and no table compares
 """
 
 
-def _index(results: list[Result]) -> str:
+def _index(results: list[Result], profile_ops: dict) -> str:
     lines = [INDEX_INTRO]
     if not results:
         lines.append("No results have been published yet.\n")
         return "\n".join(lines)
     for version, group in _by_suite_version(results):
         lines += [_version_heading(version), ""]
-        lines += _version_tables(group, "")
+        lines += _version_tables(group, "", profile_ops)
         lines.append("")
     return "\n".join(lines)
 
 
-def _implementation_page(results: list[Result]) -> str:
+def _implementation_page(results: list[Result], profile_ops: dict) -> str:
     # Headings hold only path segments: Zensical 0.0.69 copies a page's first heading into <title>
     # with its entities decoded, so result text in a heading would reach the page unescaped.
     first = min(results, key=_sort_key)
@@ -289,7 +315,7 @@ def _implementation_page(results: list[Result]) -> str:
     for version, group in _by_suite_version(results):
         lines += [_version_heading(version), ""]
         own = f"](../{group[0].path.parts[0]}/"
-        lines += [line.replace(own, "](") for line in _version_tables(group, "../")]
+        lines += [line.replace(own, "](") for line in _version_tables(group, "../", profile_ops)]
         lines.append("")
     return "\n".join(lines)
 
@@ -385,7 +411,7 @@ def _detail_page(result: Result) -> str:
     return "\n".join(lines) + "\n"
 
 
-def render_results(results: list[Result]) -> dict[str, str]:
+def render_results(results: list[Result], profile_ops: dict | None = None) -> dict[str, str]:
     """Every results page, keyed by its path in the site source, with each result's file beside
     its page so a reader can check the page against it. Every result must have come through
     load_results; each is checked again here, so the links built from its provenance and its path
@@ -399,7 +425,7 @@ def render_results(results: list[Result]) -> dict[str, str]:
             raise RunnerError(E_RESULT_PATH, f"The result at {result.path.as_posix()[:200]} "
                                              "is not at the path its report implies.")
     _distinct_slugs(results)
-    pages = {f"{RESULTS_DIR}/index.md": _index(results)}
+    pages = {f"{RESULTS_DIR}/index.md": _index(results, profile_ops or {})}
     by_impl: dict[str, list[Result]] = defaultdict(list)
     for result in results:
         by_impl[result.path.parts[0]].append(result)
@@ -408,7 +434,7 @@ def render_results(results: list[Result]) -> dict[str, str]:
         pages[f"{RESULTS_DIR}/{page[:-3]}.json"] = json.dumps(
             result.doc, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     for impl, group in by_impl.items():
-        pages[f"{RESULTS_DIR}/{impl}/index.md"] = _implementation_page(group)
+        pages[f"{RESULTS_DIR}/{impl}/index.md"] = _implementation_page(group, profile_ops or {})
     return dict(sorted(pages.items()))
 
 
@@ -489,7 +515,7 @@ def assemble(repo, out, results: list[Result]) -> None:
     readme = (repo / "README.md").read_text(encoding="utf-8")
     (out / "index.md").write_text(rewrite_links(readme, "README.md", "index.md"),
                                   encoding="utf-8")
-    for relative, content in render_results(results).items():
+    for relative, content in render_results(results, profile_operations(repo)).items():
         target = out / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content, encoding="utf-8")
