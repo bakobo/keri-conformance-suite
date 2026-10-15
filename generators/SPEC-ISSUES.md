@@ -195,6 +195,13 @@ Against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb
 - **The specification should state** that a validator MUST reject a KERI body that is not the canonical (compact, unique-label) serialization its SAID is taken over.
 - **Effect.** The generator's model refuses such a body as not modelled rather than grading it (`keri_model.intrinsic`), so no case depends on the reading, and no duplicate-label case is built. The duplicate-label divergence is a reason to rule L253's field-order obligation (K-I-field-order) a validator rule.
 
+### K-I5. Value rules that bind only a producer (lines 323, 335, 353, 539, 1252)
+
+- **Text.** Line 323: an inception's sequence number "MUST be `0`", later events' "MUST be 1 greater than the previous event", and "The maximum value of a sequence number MUST be `ffffffffffffffffffffffffffffffff`". Line 335: "The Key, `k` field value MUST NOT be empty." Line 353: "A given AID MUST NOT appear more than once in any Backer list" and witness AIDs "MUST be non-transferable"; line 1252: "Witnesses MUST use only nontransferable identifiers". Line 539: key event message types "MUST be one of the following `[icp, rot, ixn, dip, drt]`".
+- **Gap.** Each sentence defines a value a producer must emit. None says what a validator does with a message that breaks it, and line 1737's list of structure checks names only the SAID, "the appearance of fields" and prior event digests. Two of them have a safety edge: a backer list that repeats a witness lets one witness meet a threshold of two, and a sequence number above the maximum is read as a small one by a parser that keeps only its low 128 bits.
+- **Effect.** The cases refuse each at SHOULD, inferred (`inferred_from` names the producer sentence), and grade the key state the refusal leaves at the same level: KERI-0106, KERI-0107, KERI-0108, KERI-0112, KERI-0113, KERI-0114, KERI-0115, KERI-0116. A field set or order that breaks its type's field-order sentence is graded MUST, because line 1737 names the appearance of fields (KERI-0109 to KERI-0111), and a backer threshold larger than the backer list is graded MUST, because line 345 states it as a condition for the event to be valid (KERI-0105).
+- **The specification should state** that a validator MUST NOT accept an event that breaks any of these value rules. The cases would then be re-issued at MUST under new ids.
+
 ## The specification against itself
 
 ### K-C1. Receipts and the drop rule (line 1266 against lines 1266, 1286, 1782)

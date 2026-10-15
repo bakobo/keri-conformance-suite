@@ -1,0 +1,87 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The Key, `k` field value MUST NOT be empty.",
+        "section": "Key list field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#key-list-field"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence defines the key list's value; no validator-facing sentence names an empty one. That a validator should not accept an establishment event with an empty key list is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 335,
+        "quote": "The Key, `k` field value MUST NOT be empty.",
+        "section": "Key list field"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 1 (empty-keys).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The Key, `k` field value MUST NOT be empty.",
+        "section": "Key list field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#key-list-field"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence defines the key list's value; no validator-facing sentence names an empty one. That a validator should not accept an establishment event with an empty key list is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 335,
+        "quote": "The Key, `k` field value MUST NOT be empty.",
+        "section": "Key list field"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 1 (empty-keys).",
+      "phase": "final"
+    }
+  ],
+  "description": "A signed inception whose key list is empty, with signing threshold 1 and a signature at index 0. Line 335 says the key list must not be empty, so a validator should not accept it.",
+  "id": "KERI-0115",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141445f2e222c2274223a22696370222c2264223a22454d45772d68764c2d45793357797655633978536f694e7a437a376b52464d6e7a345154686f4c6e514c3466222c2269223a22454d45772d68764c2d45793357797655633978536f694e7a437a376b52464d6e7a345154686f4c6e514c3466222c2273223a2230222c226b74223a2231222c226b223a5b5d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b41574141423863766237735376427765564568304f59596177596e7a6d374a57436466727157614635396343476277694e56484d385a564b6a362d75676d33714f7764677a724b5063464c515468753471484f656959476b414c"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/tamper.json#KS-BT16"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Inception with an empty key list"
+}

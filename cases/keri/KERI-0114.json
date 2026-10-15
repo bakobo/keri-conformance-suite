@@ -1,0 +1,169 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.",
+        "section": "Key event messages",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#key-event-messages"
+      },
+      "expected": "not-seen",
+      "id": "a3",
+      "inferred_from": {
+        "inference": "The sentence defines the values a key event's type may take; no sentence says what a validator does with a message whose type is none of them. That a validator should not accept such a message is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 539,
+        "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.",
+        "section": "Key event messages"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 1 (ilk).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.",
+        "section": "Key event messages",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#key-event-messages"
+      },
+      "expected": "not-seen",
+      "id": "a4",
+      "inferred_from": {
+        "inference": "The sentence defines the values a key event's type may take; no sentence says what a validator does with a message whose type is none of them. That a validator should not accept such a message is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 539,
+        "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.",
+        "section": "Key event messages"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 1 (ilk).",
+      "phase": "final"
+    },
+    {
+      "aid": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.",
+        "section": "Key event messages",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#key-event-messages"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+        ],
+        "nt": "1",
+        "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+        "sn": 0,
+        "wits": []
+      },
+      "id": "a5",
+      "if_seen": 0,
+      "inferred_from": {
+        "inference": "The sentence defines the values a key event's type may take; no sentence says what a validator does with a message whose type is none of them. That a validator should not accept such a message is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 539,
+        "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.",
+        "section": "Key event messages"
+      },
+      "level": "SHOULD"
+    }
+  ],
+  "description": "An accepted inception, then a signed message with an interaction's fields and values whose type is ixx, which is not a key event type. Line 539 lists the key event types, so a validator should not accept it.",
+  "id": "KERI-0114",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414134354a76747a5f43547044354a4c7a444b67666e326b75316f7738624d465f412d58387a65314f51567164494d37376630365368715731735537375245486d7776584368774a54686f6f6b50394742464272623443"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a22697878222c2264223a224544633665637a7750526c46664e43394933714937674864364a524e744e3643436749464e457a5439576964222c2269223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2273223a2231222c2270223a22454a31535447696e625a4b4246552d345654494430696864366550322d7a5464676d7734705f656b6d436f6f222c2261223a5b5d7d2d4341582d4b4157414141666338424f437263346f596d73425f5a38494635715564424543452d654a726d4a6b7a776f5735454779765a563738686e41757161515736704b544f63645148565a4f377253793175675f6c5a646b356b53334941"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/tamper.json#KS-BT15"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Message with an unknown type"
+}
