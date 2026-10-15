@@ -270,7 +270,9 @@ def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
                 nt = _threshold(body.get("nt"))
                 if len(nxt) > MAX_KEYS:
                     return prefix, trunk, [f"{where} commits to more than {MAX_KEYS} next keys"]
-                if not nxt or nt < 1:
+                if not isinstance(nxt, list) or not all(_is_digest(x) for x in nxt):
+                    return prefix, trunk, [f"{where}'s next-key commitments are not digests"]
+                if not nxt or not 1 <= nt <= len(nxt):
                     return prefix, trunk, [(f"{where} commits to no next keys, so its "
                                             "identifier is not transferable")]
             threshold = _threshold(body.get("kt")) if ilk != "ixn" else kt
@@ -281,6 +283,14 @@ def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
             return prefix, trunk, [f"{where} cannot be verified: {exc}"]
         trunk.append(body)
     return prefix, trunk, []
+
+
+def _is_digest(text) -> bool:
+    try:
+        raw_of(text, "E", 32)
+    except Unread:
+        return False
+    return True
 
 
 def sealed(trunk: list[dict], rd: str, n: str, d: str) -> str | None:
@@ -468,9 +478,18 @@ def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None) -> li
     if far is None or got.get("n") != far.get("d"):
         return [f"the edge {label} does not name the credential asked for"]
     default = ["I2I" if _issuee(far) else "NI2I"]
-    if _ops(got.get("o", default)) != _ops(want.get("o", default)):
+    asked, issued_ops = _ops(want.get("o")), _ops(got.get("o"))
+    # An absent or empty o reads as the default (ACDC line 1197); an o the request names must be
+    # issued as named.
+    if asked:
+        matches = issued_ops == asked
+    else:
+        matches = issued_ops in ([], default)
+    if not matches:
         return [f"the edge {label}'s operators are not the ones asked for"]
-    ops = _ops(want.get("o", default))
+    ops = asked or default
+    if any(op not in UNARY for op in ops):
+        return [f"the edge {label} has an operator outside {', '.join(UNARY)}"]
     relation = next((op for op in reversed(ops) if op in ("I2I", "NI2I", "DI2I")), None)
     holds = True
     if relation in ("I2I", "DI2I"):
@@ -482,13 +501,16 @@ def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None) -> li
 
 
 def _ops(o) -> list:
+    """An edge's o as its list of operators; absent is the empty list."""
+    if o is None:
+        return []
     return o if isinstance(o, list) else [o]
 
 
 def _blocks_verify(value) -> bool:
     """Whether every SAIDed block in ``value``, at any depth, verifies against its own SAID."""
     if isinstance(value, dict):
-        if is_saided(value) and block_said(value) != value["d"]:
+        if "d" in value and (not is_saided(value) or block_said(value) != value["d"]):
             return False
         return all(_blocks_verify(v) for v in value.values())
     if isinstance(value, list):
@@ -520,7 +542,7 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
     try:
         if acdc_said(body) != body.get("d"):
             problems.append("the ACDC's SAID does not verify")
-        elif not all(_blocks_verify(body.get(section)) for section in ("a", "e", "r")):
+        elif not all(_blocks_verify(body.get(section)) for section in ("a", "A", "e", "r")):
             problems.append("a SAIDed block in the ACDC does not verify against its own SAID")
     except (TypeError, ValueError, AttributeError):
         problems.append("the ACDC's SAID cannot be computed")

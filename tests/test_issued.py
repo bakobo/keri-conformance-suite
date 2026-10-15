@@ -472,3 +472,33 @@ def test_a_signature_index_that_is_not_base64_is_unreadable():
     sig = w.sig_group(b"x", [(0, "a")])
     with pytest.raises(iss.Unread, match="not Base64"):
         iss.signatures(w.outer(sig[:5] + "!" + sig[6:]).encode())
+
+
+@pytest.mark.parametrize("asked,issued,kwargs,words", [
+    ({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR, "o": []}}, {}, None),
+    ({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR, "o": []}},
+     {"near_issuer": "issuer"}, "do not hold"),
+    ({"le": {"credential": "c", "o": ["I2I", "XYZ"]}},
+     {"le": {"d": "", "n": FAR, "o": ["I2I", "XYZ"]}}, {}, "operator outside"),
+    ({"le": {"credential": "c", "o": "I2I"}}, {"le": {"d": "", "n": FAR}}, {},
+     "not the ones asked"),
+])
+def test_empty_unknown_and_omitted_operators(asked, issued, kwargs, words):
+    problems = edged(asked, issued, **kwargs)
+    assert (problems == []) if words is None else any(words in p for p in problems), problems
+
+
+def test_a_said_field_that_is_not_a_string_and_a_false_aggregate_block_fail():
+    def number(r, c, p):
+        c.update(acdc=rebuilt(p, a={**p["acdc"]["a"], "inner": {"d": 123, "x": 1}}))
+    assert any("does not verify against its own SAID" in x for x in acdc_problems(number))
+
+    def aggregate(r, c, p):
+        c.update(acdc=rebuilt(p, A=["x", {"d": "E" + "A" * 43, "y": 1}]))
+    assert any("does not verify against its own SAID" in x for x in acdc_problems(aggregate))
+
+
+@pytest.mark.parametrize("fields", [{"n": ["not-a-digest"]}, {"nt": "2"}, {"nt": "0"}])
+def test_a_next_key_commitment_that_cannot_be_used_fails(fields):
+    problems = failed(icp_with(**fields))
+    assert "not digests" in problems[0] or "not transferable" in problems[0]
