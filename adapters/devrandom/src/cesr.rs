@@ -12,8 +12,6 @@ use serde_json::{Value, json};
 use crate::protocol::OpError;
 
 pub const E_BINARY: &str = "e.feature.unsupported.binary-domain.f";
-pub const E_CODE: &str = "e.feature.unsupported.code.f";
-pub const E_ENCODE: &str = "e.input.format.encode-refused.f";
 
 /// The work bounds handed to devrandom's framer. The runner already bounds every request; these
 /// are generous enough never to be what decides a case, and exist because the framer takes no
@@ -109,7 +107,18 @@ pub fn parse(stream: &[u8]) -> Value {
     json!({"accepted": {"consumed": consumed}})
 }
 
-/// cesr.encode: devrandom's `MatterBuilder` for the code, in the text domain.
+/// The class of a refusal: the variant name of devrandom's error, prefixed by its type.
+fn class(kind: &str, debug: &str) -> String {
+    let variant = debug
+        .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+        .next()
+        .unwrap_or(kind);
+    format!("{kind}::{variant}")
+}
+
+/// cesr.encode: devrandom's `MatterBuilder` for the code, in the text domain. A code devrandom's
+/// table does not have, a raw value the builder refuses, and a code the builder cannot size are
+/// devrandom's refusals, answered as rejections (docs/adapter-protocol.md, `cesr.encode`).
 pub fn encode(code: &str, raw: &[u8], binary: bool) -> Result<Value, OpError> {
     if binary {
         return Err(OpError::Unsupported(format!(
@@ -117,22 +126,24 @@ pub fn encode(code: &str, raw: &[u8], binary: bool) -> Result<Value, OpError> {
              builder has no binary-domain output."
         )));
     }
-    let code = MatterCode::from_str(code).map_err(|_| {
-        OpError::Unsupported(format!(
-            "{E_CODE}: devrandom's primitive code table has no code {code:?}."
-        ))
-    })?;
-    let matter = MatterBuilder::new()
-        .with_code(code)
-        .with_raw(raw)
-        .map_err(|e| {
-            OpError::Unsupported(format!("{E_ENCODE}: devrandom refused the raw value: {e}."))
-        })?
-        .build()
-        .map_err(|e| {
-            OpError::Unsupported(format!("{E_ENCODE}: devrandom refused to encode: {e}."))
-        })?;
-    Ok(json!({"encoded": hex(matter.to_qb64().as_bytes())}))
+    let refused = |class: String, reason: String| {
+        eprintln!("devrandom refused to encode {code:?}: {reason}");
+        Ok(json!({"reject": {"class": class}}))
+    };
+    let Ok(matter_code) = MatterCode::from_str(code) else {
+        return refused(
+            "ParsingError::UnknownCode".to_string(),
+            "no such code".to_string(),
+        );
+    };
+    let builder = match MatterBuilder::new().with_code(matter_code).with_raw(raw) {
+        Ok(builder) => builder,
+        Err(e) => return refused(class("ParsingError", &format!("{e:?}")), format!("{e}")),
+    };
+    match builder.build() {
+        Ok(matter) => Ok(json!({"encoded": hex(matter.to_qb64().as_bytes())})),
+        Err(e) => refused(class("MatterBuildError", &format!("{e:?}")), format!("{e}")),
+    }
 }
 
 pub fn hex(bytes: &[u8]) -> String {

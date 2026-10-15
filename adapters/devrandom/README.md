@@ -58,7 +58,7 @@ devrandom's CESR layer accepts a `-V` frame nested inside another; its message l
 
 ## cesr.encode
 
-`MatterBuilder::new().with_code(code).with_raw(raw).build()` and its `to_qb64()`, with the code parsed by `MatterCode::from_str`. The builder encodes fixed-size codes only; a variable-size code, a raw value of the wrong length and an unknown code are answered `unsupported` with devrandom's reason (`e.input.format.encode-refused.f`, `e.feature.unsupported.code.f`), and the binary domain is answered `unsupported` (`e.feature.unsupported.binary-domain.f`). No case is sent today: every `cesr.encode` case requires `cesr.genus-2.00`.
+`MatterBuilder::new().with_code(code).with_raw(raw).build()` and its `to_qb64()`, with the code parsed by `MatterCode::from_str`. A code devrandom's table does not have, a raw value of the wrong length or empty, and a variable-size code (the builder encodes fixed-size codes only) are devrandom's refusals, answered as the protocol's rejection result with the error's variant as its class, for example `MatterBuildError::Validation` or `ParsingError::UnknownCode`. The binary domain is answered `unsupported` (`e.feature.unsupported.binary-domain.f`): that limit is the adapter's, which encodes in the text domain only. No case is sent today: every `cesr.encode` case requires `cesr.genus-2.00`.
 
 ## keri.process
 
@@ -78,6 +78,22 @@ Each request starts a fresh host (`src/kel.rs`). Messages are delivered in order
 - Receipts: a receipt of a seen event is judged endorsement by endorsement, a witness signature by `Witnessing::receipt` against the event's governing witness set, a couple by `cesr::crypto::verify` with the couple's prefix as the key, and a transferable endorsement by `ReceiptedEvent::endorsed_by` against the receiptor's seen establishment event, after `ReceiptedEvent::named_by` checks that the receipt names that event. A receipt of a held event has each witness signature and couple verified the same way and is then attached to the event, a couple at its signer's position in the governing witness set (`Witnessing::witness_index`), which is keripy's promotion of a witness's couple and the two-call recipe devrandom's receipt module documents; the event is then re-driven, and the fold verifies every attached signature again. The governing witness set of a held rotation is the head's, with the rotation's cuts removed and its additions appended in order, as a rotation defines it; a wrong position could only make a valid receipt fail, never a forged one pass. A receipt of an event the host does not hold is held.
 
 **Readings.** An event message reads by the SAID of its event: `seen` if the host accepted that event, `pending` if it holds it, `duplicitous` or `rejected` otherwise. So a later valid copy of an event makes an earlier forged copy read `seen` at the end, as the keripy adapter reads keripy's database by SAID. `trunk` is true for a seen event that is still on its KEL's trunk. A receipt reads `seen` when every endorsement verified against the seen event, or when it was attached to a held event that was then accepted; `pending` while held; `rejected` when an endorsement failed. A receipt is never on the trunk. `key_states` gives each KEL's head: `sn`, `said`, `keys`, `kt` (a hex number, or fractions as a list per clause and a flat list for one clause), `ndigs`, `nt`, `wits`, `bt` in hex, and `delegator`. `reason` carries the library's rejection or the host's reason for holding.
+
+## Results
+
+<!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+<!-- END generated results -->
+
+## CI and the committed results
+
+The `devrandom-adapter` job in `.github/workflows/ci.yml` installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0`, `keri-v1.0.1`, `keri-escrow` and `keripy-1x-interop`, under `results/devrandom-labs-cesr/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
+
+```sh
+uv run python scripts/reproduce-results check --adapter devrandom     # compare fresh runs with the committed results
+uv run python scripts/reproduce-results refresh --adapter devrandom   # replace them, from a clean tree
+```
+
+Every case in the three normative profiles requires `cesr.genus-2.00` or `keri.version-2.x`, so the runner sends none of them and each verdict is `no-evidence`: the accurate result for a KERI 1.x implementation. In `keripy-1x-interop`, the cases with a `decoded` assertion need `cesr.item-extents` and are not sent; the must-reject cases on KERI 1.0 streams are sent, and devrandom rejects them, as keripy 1.2.14 does.
 
 ## Errors
 

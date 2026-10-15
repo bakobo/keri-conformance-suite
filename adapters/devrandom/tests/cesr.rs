@@ -109,24 +109,29 @@ fn encode_uses_devrandoms_primitive_builder() {
         response["result"]["encoded"],
         hex(format!("E{}", "A".repeat(43)).as_bytes())
     );
-    for (code, raw, domain, prefix) in [
-        ("E", "00".repeat(32), "binary", cesr::E_BINARY),
-        ("!?", "00".repeat(32), "text", cesr::E_CODE),
-        ("E", "00".repeat(3), "text", cesr::E_ENCODE),
-        ("4B", "00".repeat(3), "text", cesr::E_ENCODE),
-        ("E", String::new(), "text", cesr::E_ENCODE),
+    let binary = ask(
+        json!({"id": 3, "op": "cesr.encode", "code": "E", "raw": "00".repeat(32), "domain": "binary"}),
+    );
+    assert_eq!(binary["error"]["kind"], "unsupported", "{binary}");
+    assert!(
+        binary["error"]["message"]
+            .as_str()
+            .unwrap()
+            .starts_with(cesr::E_BINARY)
+    );
+    for (code, raw) in [
+        ("!?", "00".repeat(32)),
+        ("E", "00".repeat(3)),
+        ("4B", "00".repeat(3)),
+        ("E", String::new()),
     ] {
         let response =
-            ask(json!({"id": 3, "op": "cesr.encode", "code": code, "raw": raw, "domain": domain}));
-        assert_eq!(
-            response["error"]["kind"], "unsupported",
-            "{code}: {response}"
-        );
+            ask(json!({"id": 3, "op": "cesr.encode", "code": code, "raw": raw, "domain": "text"}));
+        let class = response["result"]["reject"]["class"]
+            .as_str()
+            .unwrap_or_default();
         assert!(
-            response["error"]["message"]
-                .as_str()
-                .unwrap()
-                .starts_with(prefix),
+            class.contains("::") && !class.ends_with("::"),
             "{code}: {response}"
         );
     }
