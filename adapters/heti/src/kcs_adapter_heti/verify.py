@@ -1,0 +1,242 @@
+"""acdc.verify through heti's public verifier, Lockbox.verify_acdc.
+
+For every request the adapter builds a fresh lockbox in a temporary directory and hands heti the
+bundle in the forms heti's API takes:
+
+- **KELs.** heti learns another identifier's key state only by resolving its OOBI
+  (Lockbox.add_other). The adapter serves each KEL of the bundle, its deliveries concatenated in
+  order under the prefix its events name, from a loopback HTTP server it starts for the request,
+  and resolves one OOBI per prefix. Nothing outside the bundle is served or fetched: the server
+  answers only with the bundle's own bytes and stops with the request.
+- **Schemas** go to Lockbox.learn_schema, one by one; a schema heti refuses is left out.
+- **Registry events** are grouped by registry. heti takes a registry's chain as one
+  genus/version code followed by its events' bodies, and the disclosed blinded state blocks
+  separately, as the fields of each block without its group code (Lockbox.verify_acdc's
+  ``tel`` and ``blinders``).
+- **Far nodes** go in ``far``, each with its own registry's chain and disclosures, so heti walks
+  the edges itself.
+
+heti answers a verified ACDC with an AcdcVerdict and refuses everything else by raising a
+BakoboError with a code (heti's docs/anchored-api.md). The adapter reads the code: a retryable
+code, a missing input (``e.input.missing``) or an unsupported feature (``e.feature.unsupported``)
+is ``incomplete``, because heti could not evaluate something; any other code is ``invalid``.
+
+heti bounds how old its own observation of a key state may be by ``recency``; the bundle is the
+whole world and the adapter consults no clock, so it passes a recency far beyond any request's
+life, which makes the bound inert.
+"""
+
+import asyncio
+import base64
+import json
+import pathlib
+import re
+import sys
+import tempfile
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+from heti.anchored.produce import Lockbox, new_recovery_code
+
+E_MALFORMED = "e.input.format.request.f"
+GENUS = b"-_AAACAA"
+HEX = re.compile(r"(?:[0-9a-f]{2})*")
+# A version string of a 2.00 body: protocol, version, genus version, kind, size, terminator.
+VERSION = re.compile(rb'\{"v":"([A-Z]{4})[A-Za-z0-9_-]{6}([A-Z]{4})([A-Za-z0-9_-]{4})\.')
+# A passcode heti accepts; the lockbox lives only for one request in a temporary directory.
+PASSCODE = "kcs-adapter-heti-ephemeral-lockbox"
+# Ten years in seconds: far past any request, so heti's recency bound never applies.
+RECENCY = 10 * 365 * 24 * 3600
+# The group code that leads a disclosed blinded state block in an attachments group.
+BLINDED = re.compile(rb"-a[A-Za-z0-9_-]{2}")
+INCOMPLETE_PREFIXES = ("e.input.missing", "e.feature.unsupported")
+
+
+class Malformed(Exception):
+    pass
+
+
+def _streams(request, field) -> list[bytes]:
+    values = request.get(field)
+    if not isinstance(values, list):
+        raise Malformed(f'{E_MALFORMED}: "{field}" must be a list.')
+    out = []
+    for value in values:
+        stream = value.get("stream") if isinstance(value, dict) else None
+        if not isinstance(stream, str) or not HEX.fullmatch(stream):
+            raise Malformed(f'{E_MALFORMED}: every entry in "{field}" must be an object whose '
+                            '"stream" is a lowercase hex string.')
+        out.append(bytes.fromhex(stream))
+    return out
+
+
+def _schemas(request) -> list[bytes]:
+    values = request.get("schemas")
+    if not isinstance(values, list) or not all(isinstance(v, str) and HEX.fullmatch(v)
+                                               for v in values):
+        raise Malformed(f'{E_MALFORMED}: every entry in "schemas" must be a lowercase hex '
+                        "string.")
+    return [bytes.fromhex(v) for v in values]
+
+
+def _presented(request) -> bytes:
+    presented = request.get("presented")
+    stream = presented.get("stream") if isinstance(presented, dict) else None
+    if not isinstance(stream, str) or not HEX.fullmatch(stream):
+        raise Malformed(f'{E_MALFORMED}: "presented" must be an object whose "stream" is a '
+                        "lowercase hex string.")
+    return bytes.fromhex(stream)
+
+
+def split(stream: bytes) -> tuple[dict, bytes, bytes] | None:
+    """A genus-pinned stream's body as JSON, its raw bytes and its attachments, or None when its
+    version string does not frame a JSON body."""
+    body = stream[len(GENUS):] if stream.startswith(GENUS) else stream
+    match = VERSION.match(body)
+    if not match or match.group(2) != b"JSON":
+        return None
+    size = int.from_bytes(base64.urlsafe_b64decode(b"A" * 4 + match.group(3)), "big")
+    raw = body[:size]
+    try:
+        sad = json.loads(raw)
+    except ValueError:
+        return None
+    return (sad, raw, body[size:]) if isinstance(sad, dict) else None
+
+
+def kels(streams: list[bytes]) -> dict[str, bytes]:
+    """Each prefix's deliveries, concatenated in delivery order. A stream whose body does not
+    frame names no prefix, so it cannot be served under one and is left out."""
+    out: dict[str, bytes] = {}
+    for stream in streams:
+        parts = split(stream)
+        if parts and isinstance(parts[0].get("i"), str):
+            out[parts[0]["i"]] = out.get(parts[0]["i"], b"") + stream
+    return out
+
+
+def registries(streams: list[bytes]) -> dict[str, dict]:
+    """Each registry's event bodies and disclosed blinded state blocks, by the registry's SAID."""
+    out: dict[str, dict] = {}
+    for stream in streams:
+        parts = split(stream)
+        if parts is None:
+            continue
+        sad, raw, attachments = parts
+        rd = sad.get("rd") if sad.get("t") != "rip" else sad.get("d")
+        if not isinstance(rd, str):
+            continue
+        group = out.setdefault(rd, {"bodies": [], "blinders": []})
+        group["bodies"].append(raw)
+        blinder = _blinder(attachments)
+        if blinder:
+            group["blinders"].append(blinder)
+    return out
+
+
+def _blinder(attachments: bytes) -> str | None:
+    """The fields of the first disclosed blinded state block in an attachments group."""
+    match = BLINDED.search(attachments)
+    return attachments[match.end():].decode("ascii", "replace") if match else None
+
+
+def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
+    """An ACDC with its registry's chain, and its disclosures when it has any. heti reads an ACDC
+    with nothing after it and finds the issuer's seal in the KEL itself, so the ACDC goes to heti
+    as its genus/version code and body. Its attachments only point at the sealing event or carry
+    a disclosure, which goes with the registry's. A stream that does not frame goes as it came,
+    for heti to refuse."""
+    parts = split(stream)
+    if parts is None:
+        return (stream, None)
+    sad, raw, attachments = parts
+    acdc = GENUS + raw
+    group = regs.get(sad.get("rd"))
+    if not group:
+        return (acdc, None)
+    blinders = group["blinders"] + [b for b in [_blinder(attachments)] if b]
+    tel = GENUS + b"".join(group["bodies"])
+    return (acdc, tel, blinders) if blinders else (acdc, tel)
+
+
+class _Kels(BaseHTTPRequestHandler):
+    served: dict[str, bytes] = {}
+
+    def do_GET(self):  # noqa: N802 - the name http.server calls
+        parts = [p for p in self.path.split("/") if p]
+        body = self.served.get(parts[1]) if len(parts) >= 2 and parts[0] == "oobi" else None
+        self.send_response(200 if body else 404)
+        self.send_header("Content-Type", "application/cesr")
+        self.send_header("Content-Length", str(len(body or b"")))
+        self.end_headers()
+        self.wfile.write(body or b"")
+
+    def log_message(self, format, *args):  # noqa: A002 - http.server's signature
+        pass
+
+
+def _server(served: dict[str, bytes]) -> ThreadingHTTPServer:
+    handler = type("Kels", (_Kels,), {"served": served})
+    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server
+
+
+def grade(error) -> str:
+    code = getattr(error, "code", "") or ""
+    if getattr(error, "retryable", False) or code.startswith(INCOMPLETE_PREFIXES):
+        return "incomplete"
+    return "invalid"
+
+
+async def _judge(home: pathlib.Path, served, schemas, regs, far, presented) -> dict:
+    server = _server(served)
+    box = Lockbox.create(path=home, passcode=PASSCODE, recovery=new_recovery_code())
+    try:
+        for raw in schemas:
+            try:
+                box.learn_schema(raw=raw)
+            except Exception as exc:  # noqa: BLE001 - a schema heti refuses is not in its world
+                print(f"heti refused a schema: {type(exc).__name__}: {exc}", file=sys.stderr)
+        port = server.server_address[1]
+        for aid in served:
+            try:
+                await box.add_other(oobi=f"http://127.0.0.1:{port}/oobi/{aid}")
+            except Exception as exc:  # noqa: BLE001 - a KEL heti refuses is not in its world
+                print(f"heti refused the KEL of {aid}: {type(exc).__name__}: {exc}",
+                      file=sys.stderr)
+        acdc, *rest = evidence(presented, regs)
+        tel = rest[0] if rest else None
+        blinders = rest[1] if len(rest) > 1 else None
+        try:
+            verdict = await box.verify_acdc(acdc=acdc, tel=tel, recency=RECENCY,
+                                            blinders=blinders, far=far or None)
+        except Exception as exc:  # noqa: BLE001 - heti refuses by raising
+            code = getattr(exc, "code", None)
+            if code is None:
+                raise
+            return {"verdict": grade(exc), "reason": f"{code}: {exc}", "registry": None,
+                    "edges": []}
+        head = None
+        if verdict.registry is not None:
+            head = {"rd": verdict.registry, "n": verdict.head_sn, "d": verdict.head_said,
+                    "td": verdict.said, "ts": verdict.state}
+        return {"verdict": "valid", "reason": "heti verified the ACDC", "registry": head,
+                "edges": []}
+    finally:
+        box.close()
+        server.shutdown()
+        server.server_close()
+
+
+def verify(request) -> dict:
+    kel_streams = _streams(request, "kels")
+    registry_streams = _streams(request, "registry")
+    acdc_streams = _streams(request, "acdcs")
+    schemas = _schemas(request)
+    presented = _presented(request)
+    regs = registries(registry_streams)
+    far = [evidence(s, regs) for s in acdc_streams]
+    with tempfile.TemporaryDirectory(prefix="kcs-adapter-heti-") as home:
+        return asyncio.run(_judge(pathlib.Path(home) / "lockbox", kels(kel_streams), schemas,
+                                  regs, far, presented))
