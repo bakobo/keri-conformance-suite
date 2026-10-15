@@ -1,14 +1,10 @@
-"""The CI level-2 baseline comparison: a regression fails, an improvement must update the
-baseline, and an unchanged run passes. The baseline records the verdict, every case's outcome
-and failure kind, and every assertion's outcome."""
+"""The outcome comparison behind scripts/reproduce-results check: a regression fails, an
+improvement must refresh the committed result, and an unchanged run matches. What is compared is
+the verdict, every case's outcome and failure kind, and every assertion's outcome."""
 
 import json
-import runpy
-import sys
 
-import pytest
-
-from kcs_adapter_keripy import baseline
+from tools import outcomes as baseline
 
 IMPL = {"name": "keripy", "version": "2", "commit": "abc"}
 
@@ -36,7 +32,6 @@ def summary(**kw):
 
 def test_summarize_keeps_verdict_case_outcomes_failure_kinds_and_assertions():
     assert summary() == {
-        "format": 2,
         "profile": "cesr-v1.0",
         "implementation": IMPL,
         "verdict": "conformant",
@@ -135,71 +130,19 @@ def test_the_interop_verdicts_are_ones_kcs_reports():
 
 def test_an_aborted_run_is_a_regression_even_against_an_aborted_baseline():
     regressions, _ = baseline.compare(summary(verdict="aborted"), base_report(verdict="aborted"))
-    assert regressions == ["verdict: aborted (an aborted run never satisfies the baseline)"]
+    assert regressions == ["verdict: aborted (an aborted run never matches a committed result)"]
 
 
-# -- the command line
-
-@pytest.fixture
-def files(tmp_path):
-    base, rep = tmp_path / "baseline.json", tmp_path / "report.json"
-    base.write_text(json.dumps(summary()))
-    return base, rep
+# -- reading the files
 
 
-def run(*args):
-    return baseline.main([*map(str, args)])
+def test_a_committed_result_is_read_as_the_summary_of_its_report(tmp_path):
+    path = tmp_path / "result.json"
+    path.write_text(json.dumps({"result_version": 1, "provenance": {}, "report": base_report()}))
+    assert baseline.read_committed(path) == summary()
 
 
-def test_main_exits_zero_when_the_run_matches(files, capsys):
-    base, rep = files
-    rep.write_text(json.dumps(base_report()))
-    assert run("compare", base, rep) == 0
-    assert "matches the baseline" in capsys.readouterr().out
-
-
-def test_main_exits_one_on_a_regression(files, capsys):
-    base, rep = files
-    rep.write_text(json.dumps(report(case("CESR-0001"),
-                                     case("CESR-0022", "fail", "exited", a1="fail"))))
-    assert run("compare", base, rep) == 1
-    out = capsys.readouterr().out
-    assert "e.state.conflict.baseline-regression.f: CESR-0022: failure none -> exited" in out
-
-
-def test_main_exits_one_on_an_improvement_until_the_baseline_is_updated(files, capsys):
-    base, rep = files
-    rep.write_text(json.dumps(report(case("CESR-0001"), case("CESR-0022"))))
-    assert run("compare", base, rep) == 1
-    assert "e.state.conflict.baseline-stale.f" in capsys.readouterr().out
-    assert run("write", base, rep) == 0
-    assert run("compare", base, rep) == 0
-
-
-def test_main_fails_an_aborted_run(files, capsys):
-    base, rep = files
-    rep.write_text(json.dumps(base_report(verdict="aborted")))
-    assert run("compare", base, rep) == 1
-    assert "verdict: aborted (an aborted run never satisfies" in capsys.readouterr().out
-
-
-def test_write_refuses_to_record_an_aborted_report(files, capsys):
-    base, rep = files
-    before = base.read_text()
-    rep.write_text(json.dumps(base_report(verdict="aborted")))
-    assert run("write", base, rep) == 1
-    assert "e.input.range.aborted-report.f" in capsys.readouterr().err
-    assert base.read_text() == before
-
-
-def test_main_refuses_bad_usage(capsys):
-    assert baseline.main(["frobnicate"]) == 2
-    assert "e.input.format.usage.f" in capsys.readouterr().err
-
-
-@pytest.mark.filterwarnings("ignore:.*found in sys.modules:RuntimeWarning")
-def test_it_runs_as_a_module(monkeypatch):
-    monkeypatch.setattr(sys, "argv", ["baseline"])
-    with pytest.raises(SystemExit) as info:
-        runpy.run_module("kcs_adapter_keripy.baseline", run_name="__main__")
-    assert info.value.code == 2
+def test_a_report_is_read_and_checked(tmp_path):
+    path = tmp_path / "report.json"
+    path.write_text(json.dumps(base_report()))
+    assert baseline.read_report(path) == base_report()

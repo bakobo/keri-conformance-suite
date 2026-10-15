@@ -1,5 +1,5 @@
-"""The weekly check of this adapter against other keripy refs (this.i, "The keripy adapter is
-checked weekly against other keripy refs").
+"""The on-demand check of this adapter against other keripy refs (this.i, "The keripy adapter is
+checked weekly against other keripy refs", revised 2026-10-15 to run on demand only).
 
     python -m kcs_adapter_keripy.refs run --refs FILE --state FILE --inputs HASH --suite DIR --work DIR
 
@@ -7,10 +7,12 @@ Reads the list of refs (adapters/keripy/refs.json), resolves each to a commit wi
 ls-remote, and skips a ref whose commit and suite inputs (HASH, computed by the workflow over
 cases, profiles, runner and adapter) both match the last completed run in the state file. Any
 other ref gets a fresh virtualenv with keripy at that commit and this adapter installed without
-its own keripy pin, and each of its profiles is run with kcs and compared with the committed
-baseline, ignoring only the implementation's commit. Any other difference fails the check, and
-so does a skipped ref whose last run differed. Exits 0 when every ref matched, 1 when any
-differed or could not be checked, 2 on a usage error. Standard library only.
+its own keripy pin, and each of its profiles is run with kcs and compared with the suite's
+committed keripy result for that profile (results/keripy/<version>/<profile>.json), ignoring only
+the implementation's commit. Any other difference fails the check, and so does a skipped ref
+whose last run differed. Exits 0 when every ref matched, 1 when any differed or could not be
+checked, 2 on a usage error. Standard library only, plus the suite's own outcome comparison
+(tools/outcomes.py), which is too; run it from the suite's root so that tools is importable.
 """
 
 import argparse
@@ -20,7 +22,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from kcs_adapter_keripy import baseline
+from tools import outcomes
 
 E_USAGE = "e.input.format.usage.f"
 E_REFS_FORMAT = "e.input.format.keripy-refs.f"
@@ -31,6 +33,7 @@ E_MISSING_REF = "e.input.missing.keripy-ref.f"
 E_COMMAND = "e.env.command.failed.r"
 E_INSTALL = "e.env.dependency.keripy-ref.r"
 E_DIFFERS = "e.state.conflict.keripy-ref-differs.f"
+E_NO_RESULT = "e.input.missing.keripy-result.f"
 E_WRITE_TRANSIENT = "e.env.filesystem.write.r"
 E_WRITE = "e.env.filesystem.write.f"
 W_STATE = "w.input.format.keripy-refs-state.f"
@@ -192,20 +195,32 @@ def fingerprint(item):
     return json.dumps(item, sort_keys=True)
 
 
+def committed_result(suite, profile):
+    """The suite's one committed keripy result for profile. Each keripy profile is run by exactly
+    one pinned keripy generation, so exactly one version directory holds it."""
+    found = sorted((Path(suite) / "results" / "keripy").glob(f"*/{profile}.json"))
+    if len(found) != 1:
+        raise CommandError(f"{E_NO_RESULT}: the suite holds {len(found)} committed keripy results "
+                           f"for {profile}, not one, so there is nothing unambiguous to compare "
+                           "with; refresh them with scripts/reproduce-results refresh.")
+    return found[0]
+
+
 def differences(base, report, sha):
-    """Every way report differs from the baseline summary base, except that it ran another
+    """Every way report differs from the committed result's summary base, except that it ran another
     keripy commit. The report must also say it ran keripy at sha, or nothing it says counts."""
     found = []
     implementation = report["hello"]["implementation"]
     if implementation.get("name") != "keripy" or implementation.get("commit") != sha:
         found.append(f"implementation: the report names {implementation.get('name')} at "
                      f"{implementation.get('commit')}, not keripy at {sha}")
-    regressions, improvements = baseline.compare(base, report)
+    regressions, improvements = outcomes.compare(base, report)
     return found + regressions + [line for line in improvements if not line.startswith(IDENTITY)]
 
 
 def check_ref(item, sha, suite, work, run):
-    """Install keripy at sha with this adapter and compare each profile with its baseline."""
+    """Install keripy at sha with this adapter and compare each profile with the committed
+    result."""
     suite, work = Path(suite), Path(work)
     venv = work / item["name"]
     python = venv / "bin" / "python"
@@ -235,9 +250,9 @@ def check_ref(item, sha, suite, work, run):
              "--adapter", str(venv / "bin" / "kcs-adapter-keripy"), "--profile", profile,
              "--report", str(report_path)], check=False)
         try:
-            base = baseline._baseline(adapter / f"baseline-{profile}.json")
-            report = baseline._report(report_path)
-        except baseline.InputError as exc:
+            base = outcomes.read_committed(committed_result(suite, profile))
+            report = outcomes.read_report(report_path)
+        except outcomes.InputError as exc:
             raise CommandError(f"{E_INSTALL}: {item['name']}: {profile} produced no usable "
                                f"report: {exc}") from exc
         found += [f"{profile}: {line}" for line in differences(base, report, sha)]
@@ -259,10 +274,10 @@ def check_all(refs, state, inputs, suite, work, run):
                 if prior["differences"]:
                     failed = True
                     lines.append(f"{E_DIFFERS}: {name}: unchanged at {sha} since the last run, "
-                                 "which differed from the baselines:")
+                                 "which differed from the committed results:")
                     lines += [f"    {d}" for d in prior["differences"]]
                 else:
-                    lines.append(f"{name}: unchanged at {sha}; matched the baselines last run.")
+                    lines.append(f"{name}: unchanged at {sha}; matched the committed results last run.")
                 continue
             found = check_ref(item, sha, suite, work, run)
         except CommandError as exc:
@@ -274,10 +289,10 @@ def check_all(refs, state, inputs, suite, work, run):
                        "config": fingerprint(item)}
         if found:
             failed = True
-            lines.append(f"{E_DIFFERS}: {name} at {sha} differs from the baselines:")
+            lines.append(f"{E_DIFFERS}: {name} at {sha} differs from the committed results:")
             lines += [f"    {d}" for d in found]
         else:
-            lines.append(f"{name}: keripy {sha} matches the baselines of "
+            lines.append(f"{name}: keripy {sha} matches the committed results of "
                          f"{', '.join(item['profiles'])}.")
     return (1 if failed else 0), state, lines
 
@@ -301,7 +316,7 @@ def main(argv=None) -> int:
     try:
         save_state(args.state, state)
     except OSError as exc:
-        transient = exc.errno in baseline.TRANSIENT_ERRNOS
+        transient = exc.errno in outcomes.TRANSIENT_ERRNOS
         print(f"{E_WRITE_TRANSIENT if transient else E_WRITE}: The state {args.state} could not "
               f"be written ({exc}).", file=sys.stderr)
         return 2

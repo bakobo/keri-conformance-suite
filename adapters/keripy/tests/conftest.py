@@ -10,6 +10,10 @@ from pathlib import Path
 
 import pytest
 
+# The keripy refs check compares with the suite's committed results through the suite's own
+# outcome comparison (tools/outcomes.py), which it imports from the suite root.
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+
 from kcs_adapter_keripy import keripy_api
 
 GENERATION = keripy_api.load().generation
