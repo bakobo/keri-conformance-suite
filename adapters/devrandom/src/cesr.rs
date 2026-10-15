@@ -26,15 +26,45 @@ pub const LIMITS: FrameLimits = FrameLimits {
     max_nesting_depth: 64,
 };
 
-/// A rejection result whose class names the variant of devrandom's error.
-fn reject(error: &ParseError) -> Value {
+/// The class of a refusal by devrandom: the name of the error's own type and its variant, both
+/// read from the error value, never asserted by the adapter.
+fn class_of<E: std::fmt::Debug>(error: &E) -> String {
+    let path = std::any::type_name::<E>();
+    let ty = path.rsplit("::").next().unwrap_or(path);
     let debug = format!("{error:?}");
     let variant = debug
         .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
         .next()
-        .unwrap_or("ParseError");
-    eprintln!("devrandom rejected the stream: {error}");
-    json!({"reject": {"class": format!("ParseError::{variant}")}})
+        .unwrap_or_default();
+    format!("{ty}::{variant}")
+}
+
+fn reject(class: String, reason: &str) -> Value {
+    eprintln!("devrandom rejected the stream: {reason}");
+    json!({"reject": {"class": class}})
+}
+
+/// Why a stream did not frame: an error devrandom raised, or the framer reporting no frame or a
+/// span the input does not hold, which the adapter names as its own observation rather than
+/// dressing it as a library error.
+enum Unframed {
+    Library(ParseError),
+    NoFrame(&'static str),
+}
+
+impl From<ParseError> for Unframed {
+    fn from(error: ParseError) -> Self {
+        Self::Library(error)
+    }
+}
+
+impl Unframed {
+    fn answer(&self) -> Value {
+        match self {
+            Self::Library(error) => reject(class_of(error), &error.to_string()),
+            Self::NoFrame(what) => reject(format!("MessageFramer::{what}"), what),
+        }
+    }
 }
 
 /// Decode every element of one group, so that a malformed primitive inside a group devrandom has
@@ -44,48 +74,68 @@ fn reject(error: &ParseError) -> Value {
 /// opaquely by devrandom and are left as its framer took them.
 fn decode(group: CesrGroup) -> Result<(), ParseError> {
     macro_rules! elements {
-        ($($variant:ident),*) => {
+        ([$($counted:ident),*], [$($opaque:ident),*]) => {
             match group {
-                $(CesrGroup::$variant(g) => g.iter().try_for_each(|e| e.map(drop)),)*
+                $(CesrGroup::$counted(g) => g.iter().try_for_each(|e| e.map(drop)),)*
                 CesrGroup::AttachmentGroup(frame) => {
                     frame.into_iter().try_for_each(|inner| decode(inner?))
                 }
-                _ => Ok(()),
+                $(CesrGroup::$opaque(_) => Ok(()),)*
             }
         };
     }
+    // Every variant is named, so a group kind added to cesr-stream fails to compile here rather
+    // than being accepted unread.
     elements!(
-        ControllerIdxSigs,
-        WitnessIdxSigs,
-        NonTransReceiptCouples,
-        TransReceiptQuadruples,
-        FirstSeenReplayCouples,
-        TransIdxSigGroups,
-        SealSourceCouples,
-        TransLastIdxSigGroups,
-        SealSourceTriples,
-        DigestSealSingles,
-        MerkleRootSealSingles,
-        SealSourceLastSingles,
-        BackerRegistrarSealCouples,
-        TypedDigestSealCouples,
-        BlindedStateQuadruples,
-        BoundStateSextuples,
-        TypedMediaQuadruples
+        [
+            ControllerIdxSigs,
+            WitnessIdxSigs,
+            NonTransReceiptCouples,
+            TransReceiptQuadruples,
+            FirstSeenReplayCouples,
+            TransIdxSigGroups,
+            SealSourceCouples,
+            TransLastIdxSigGroups,
+            SealSourceTriples,
+            DigestSealSingles,
+            MerkleRootSealSingles,
+            SealSourceLastSingles,
+            BackerRegistrarSealCouples,
+            TypedDigestSealCouples,
+            BlindedStateQuadruples,
+            BoundStateSextuples,
+            TypedMediaQuadruples
+        ],
+        [
+            PathedMaterialCouples,
+            GenericGroup,
+            BodyWithAttachmentGroup,
+            NonNativeBodyGroup,
+            ESSRPayloadGroup,
+            DatagramSegmentGroup,
+            ESSRWrapperGroup,
+            FixBodyGroup,
+            MapBodyGroup,
+            GenericMapGroup,
+            GenericListGroup
+        ]
     )
 }
 
 /// Frame one message (a body and its attachments, or a bare group) at the head of `input` with
 /// devrandom's framer, decode its attachment groups with devrandom's V1 group parser, and return
 /// the number of bytes the message took.
-fn frame_one(input: &[u8]) -> Result<usize, ParseError> {
+fn frame_one(input: &[u8]) -> Result<usize, Unframed> {
     let span = MessageFramer::new(LIMITS)
         .advance(input, true)?
-        .ok_or(ParseError::Truncated { missing: 1 })?;
+        .ok_or(Unframed::NoFrame("NoFrameAtEndOfInput"))?;
     let frame = input
         .get(..span.total_len)
-        .ok_or(ParseError::Truncated { missing: 1 })?;
-    let attachments = &frame[span.body_len.unwrap_or(0).min(frame.len())..];
+        .filter(|f| !f.is_empty())
+        .ok_or(Unframed::NoFrame("SpanOutsideInput"))?;
+    let attachments = frame
+        .get(span.body_len.unwrap_or(0)..)
+        .ok_or(Unframed::NoFrame("SpanOutsideInput"))?;
     for group in Groups::<V1>::over(attachments) {
         decode(group?)?;
     }
@@ -99,21 +149,11 @@ pub fn parse(stream: &[u8]) -> Value {
     let mut consumed = 0;
     while consumed < stream.len() {
         match frame_one(&stream[consumed..]) {
-            Ok(0) => return reject(&ParseError::Truncated { missing: 1 }),
             Ok(n) => consumed += n,
-            Err(error) => return reject(&error),
+            Err(unframed) => return unframed.answer(),
         }
     }
     json!({"accepted": {"consumed": consumed}})
-}
-
-/// The class of a refusal: the variant name of devrandom's error, prefixed by its type.
-fn class(kind: &str, debug: &str) -> String {
-    let variant = debug
-        .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
-        .next()
-        .unwrap_or(kind);
-    format!("{kind}::{variant}")
 }
 
 /// cesr.encode: devrandom's `MatterBuilder` for the code, in the text domain. A code devrandom's
@@ -138,11 +178,11 @@ pub fn encode(code: &str, raw: &[u8], binary: bool) -> Result<Value, OpError> {
     };
     let builder = match MatterBuilder::new().with_code(matter_code).with_raw(raw) {
         Ok(builder) => builder,
-        Err(e) => return refused(class("ParsingError", &format!("{e:?}")), format!("{e}")),
+        Err(e) => return refused(class_of(&e), format!("{e}")),
     };
     match builder.build() {
         Ok(matter) => Ok(json!({"encoded": hex(matter.to_qb64().as_bytes())})),
-        Err(e) => refused(class("MatterBuildError", &format!("{e:?}")), format!("{e}")),
+        Err(e) => refused(class_of(&e), format!("{e}")),
     }
 }
 

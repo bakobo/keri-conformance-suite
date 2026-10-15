@@ -214,7 +214,10 @@ jobs:
           python-version: "3.12"
           enable-cache: true
       - name: Install the pinned Rust toolchain
-        run: rustup toolchain install 1.95.0 --profile minimal --component clippy,rustfmt
+        working-directory: adapters/devrandom
+        run: |
+          rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" \
+            --profile minimal --component clippy --component rustfmt
       - name: Sync the runner
         run: uv sync --locked
       # --locked refuses a Cargo.lock that does not match Cargo.toml's exact pins.

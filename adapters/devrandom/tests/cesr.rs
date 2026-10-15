@@ -119,20 +119,19 @@ fn encode_uses_devrandoms_primitive_builder() {
             .unwrap()
             .starts_with(cesr::E_BINARY)
     );
-    for (code, raw) in [
-        ("!?", "00".repeat(32)),
-        ("E", "00".repeat(3)),
-        ("4B", "00".repeat(3)),
-        ("E", String::new()),
+    // Each class is read from the error devrandom raised: its type and variant.
+    for (code, raw, class) in [
+        ("!?", "00".repeat(32), "ParsingError::UnknownCode"),
+        ("E", "00".repeat(3), "MatterBuildError::Validation"),
+        ("4B", "00".repeat(3), "MatterBuildError::Validation"),
+        ("E", String::new(), "ParsingError::EmptyStream"),
     ] {
         let response =
             ask(json!({"id": 3, "op": "cesr.encode", "code": code, "raw": raw, "domain": "text"}));
-        let class = response["result"]["reject"]["class"]
-            .as_str()
-            .unwrap_or_default();
-        assert!(
-            class.contains("::") && !class.ends_with("::"),
-            "{code}: {response}"
+        assert_eq!(
+            response["result"],
+            json!({"reject": {"class": class}}),
+            "{code}"
         );
     }
 }
