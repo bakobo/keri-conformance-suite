@@ -96,7 +96,7 @@ def test_refresh_writes_maintainer_run_results_and_the_readme_tables(repo):
     assert (repo / "results/betaimpl/3/cesr-v1.0.json").is_file()
     table = (repo / ALPHA.readme).read_text()
     assert table.startswith("intro\n\n" + P.BEGIN) and table.endswith(P.END + "\n\nmore\n")
-    assert ("| keripy 2.1.0.dev1 | `cesr-v1.0` | conformant | 1 / 0 | 0 / 0 | 0 | "
+    assert ("| keripy 2.1.0.dev1 | `cesr-v1.0` | conformant | 1 / 0 | 0 / 0 | 0 / 0 | 0 | "
             f"[2026-10-15, suite {head[:8]}](../../results/keripy/2.1.0.dev1/cesr-v1.0.json) |"
             in table)
     assert "betaimpl" not in table and "betaimpl" in (repo / BETA.readme).read_text()
@@ -309,7 +309,9 @@ def test_reproduce_writes_reproduced_results_into_a_directory(repo, tmp_path):
 def test_kcs_run_drives_the_runner(tmp_path):
     out = tmp_path / "report.json"
     P.kcs_run(ROOT, f"{sys.executable} {FAKES / 'good.py'}", "cesr-strict", out)
-    assert json.loads(out.read_text())["filters"]["profile"] == "cesr-strict"
+    filters = json.loads(out.read_text())["filters"]
+    # No path on the machine that ran it reaches a committed result.
+    assert filters == {"profile": "cesr-strict", "cases_dir": "cases"}
 
 
 # --- command line --------------------------------------------------------------------------------

@@ -105,8 +105,9 @@ def _today() -> str:
 def kcs_run(repo: Path, executable: Path, profile: str, report: Path) -> None:
     """Run one profile against one adapter with this environment's runner. kcs exits non-zero
     for every verdict but conformant, which is a result rather than a failure here; whether a
-    report was written is what the callers judge."""
-    subprocess.run([sys.executable, "-m", "keri_conformance", "run", "--suite", str(repo),
+    report was written is what the callers judge. The suite is named relative to the checkout,
+    so the report records its cases directory as `cases` rather than a path on this machine."""
+    subprocess.run([sys.executable, "-m", "keri_conformance", "run", "--suite", ".",
                     "--adapter", str(executable), "--profile", profile, "--report", str(report)],
                    cwd=repo, check=False)
 
@@ -306,8 +307,9 @@ def render_table(results, readme: str) -> str:
     adapters = {i.adapter for i in INSTANCES if i.readme == readme}
     rows = [BEGIN, "",
             ("| Implementation | Profile | Verdict | Active MUST pass / fail | "
-             "Active SHOULD pass / fail | Active cases not supported | Result |"),
-            "| --- | --- | --- | --- | --- | --- | --- |"]
+             "Active SHOULD pass / fail | Active INTEROP pass / fail | "
+             "Active cases not supported | Result |"),
+            "| --- | --- | --- | --- | --- | --- | --- | --- |"]
     for result in results:
         report, provenance = result.doc["report"], result.doc["provenance"]
         if provenance["kind"] != "maintainer-run" or report["hello"]["adapter"]["name"] not in adapters:
@@ -316,6 +318,7 @@ def render_table(results, readme: str) -> str:
         rows.append(f"| {_cell(impl['name'])} {_cell(impl['version'])} | "
                     f"`{report['filters']['profile']}` | {report['verdict']} | "
                     f"{_counts(report, 'MUST')} | {_counts(report, 'SHOULD')} | "
+                    f"{_counts(report, 'INTEROP')} | "
                     f"{len(report['summary']['not_supported_active'])} | "
                     f"[{provenance['date']}, suite {provenance['commit'][:8]}]"
                     f"(../../results/{result.path.as_posix()}) |")
