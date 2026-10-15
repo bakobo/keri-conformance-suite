@@ -55,6 +55,38 @@ A result for an implementation version and profile that is already published is 
 
 Results are grouped by the suite version they ran against, and no table compares results from different suite versions, because a later suite version can add cases that an earlier pass never faced. Each cell gives the verdict and the active MUST and SHOULD assertions that passed and failed, because a conformance claim is never the MUST verdict alone (see Versioning in [the design](design.md)). Each result's page also lists the behaviours its adapter composes, the passes that are only keripy agreeing with cases it generated (self-agreement), and every case with its outcome.
 
+The terms a result's page uses are explained below. Each case id on a page links to the case file the run used: for a reproduced result, the file at the suite commit CI ran; for a submitted result, which names no suite commit, the file on `main`.
+
+### Verdict
+
+A run of a normative profile gets one of five verdicts, decided by the MUST assertions of its active cases alone:
+
+- `conformant`: every active MUST assertion that was evaluated passed, and at least one did.
+- `not-conformant`: at least one active MUST assertion failed.
+- `incomplete`: none failed, but at least one uses a check this runner version cannot evaluate.
+- `no-evidence`: no active MUST assertion passed or failed, so the run shows nothing. This is what a run gets when the adapter declared none of the features the profile's cases need, so the runner sent it none of them.
+- `aborted`: the run stopped part way, because a restarted adapter refused the handshake or changed it. The page gives the reason, and the report holds the cases completed before it stopped.
+
+A run of a non-normative profile, such as `keripy-1x-interop`, gets an interoperability verdict instead, by the same rule applied to its INTEROP assertions: `interoperable`, `not-interoperable`, `incomplete` or `no-evidence`. It is never a conformance claim ([Practice in the design](design.md#practice)).
+
+Every verdict is scoped to the cases the runner sent, which are the ones whose features the adapter declared.
+
+### Assertion counts
+
+Each case makes several assertions, each at a requirement level: MUST, SHOULD, or INTEROP for an assertion that rests on common practice rather than a clause. A page counts the assertions of active cases at each level by outcome: `pass`, `fail`, `not-applicable` (a conditional assertion whose condition did not hold), `not-implemented` (this runner version cannot evaluate it) and `not-supported` (its case was not sent). Draft and disputed cases are run and deprecated cases skipped, and all three are listed but never counted. SHOULD results are always shown beside the verdict, because in the KERI layer a validator that accepts nothing passes every MUST assertion, and only its SHOULD failures give it away.
+
+### Composes
+
+The behaviours the adapter supplies itself rather than delegating to the implementation, such as escrowing out-of-order events on top of a library that only verifies them. A result that composes something is a claim about the implementation and the adapter together, never about the implementation alone. `nothing` means every behaviour tested is the implementation's own. The adapter declares these in its handshake ([the `hello` message](adapter-protocol.md#hello)).
+
+### Self-agreement
+
+A pass where keripy both produced the case's expected value and is the implementation under test. It shows only that keripy agrees with itself, so the page counts such passes separately. Most cases' expected values are computed from the specification, not by keripy, and those passes are never self-agreement.
+
+### Cases not supported
+
+Active cases the runner did not send, because they need a feature or an operation the adapter did not declare. They count neither for nor against the verdict, which is why a verdict is scoped to the features the adapter declared. The Notes column of the page's case table names what each one was missing.
+
 ## Building the site locally
 
 The site is built by [Zensical](https://zensical.org), pinned exactly in `pyproject.toml`'s `site` dependency group because it is still before its first major release. Its input is plain markdown, assembled by `scripts/site-source` from the README, `docs/` and the results, so the generator can be replaced without touching the content.

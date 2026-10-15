@@ -83,8 +83,8 @@ def _two_versions():
 def test_index_has_one_matrix_per_suite_version_newest_first():
     index = S.render_results(_two_versions())["results/index.md"]
     headings = re.findall(r"^## (.*)$", index, re.MULTILINE)
-    assert headings == ["Suite version 0\\.1\\.0", "Suite version 0\\.0\\.1"]
-    newer, older = index.split("## Suite version 0\\.0\\.1")
+    assert headings == ["Suite version 0\\.1\\.0", "Current suite version (0\\.0\\.1)"]
+    newer, older = index.split("## Current suite version (0\\.0\\.1)")
     assert "cesrox" in newer and "cesrox" not in older
     # Each table sits under exactly one suite version heading.
     assert newer.count("| Implementation |") == 2 and older.count("| Implementation |") == 2
@@ -131,9 +131,10 @@ def test_detail_page_states_the_claim_and_every_case():
     assert page.startswith("# keripy 2\\.1\\.0\\.dev1, profile cesr\\-1\\.0\n")
     assert '!!! warning "Submitted claim, not reproduced"' in page
     assert "Jane Maintainer" in page and SUBMITTED["pull_request"] in page
-    assert "| Verdict | aborted |" in page
+    assert "| [Verdict](../../../publishing-results.md#verdict) | aborted |" in page
     assert "it stopped &lt;here&gt;" in page
-    assert "| CESR\\-0002 | active | cesr\\.parse | fail |" in page
+    assert (f"| [CESR\\-0002]({S.REPO_URL}/blob/main/cases/cesr/CESR-0002.json) | active | "
+            "cesr\\.parse | fail |") in page
     assert "failure: timeout" in page
     assert "it &lt;b&gt;accepted&lt;/b&gt;" in page and "<b>" not in page
     assert "x" * 300 not in page
@@ -155,7 +156,7 @@ def test_implementation_page_lists_its_results_by_suite_version():
     pages = S.render_results(_two_versions())
     page = pages["results/keripy/index.md"]
     assert page.startswith("# keripy\n")
-    assert page.index("Suite version 0\\.1\\.0") < page.index("Suite version 0\\.0\\.1")
+    assert page.index("Suite version 0\\.1\\.0") < page.index("Current suite version (0\\.0\\.1)")
     assert "[keri\\-1\\.0](2.1.0.dev1/keri-1.0-reproduced.md)" in page
     assert "cesrox" not in page
 
@@ -344,7 +345,7 @@ def test_a_cell_gives_interop_results_and_unsupported_cases_when_there_are_any()
             "supported |") in index
     detail = S.render_results(loaded(doc))[
         "results/keripy/2.1.0.dev1/keripy-1x-interop-reproduced.md"]
-    assert "| Active INTEROP assertions | 1 passed, 0 failed (1 not\\-supported, 1 pass) |" in detail
+    assert "| [Active INTEROP assertions](../../../publishing-results.md#assertion-counts) | 1 passed, 0 failed (1 not\\-supported, 1 pass) |" in detail
     assert "INTEROP" not in S.render_results(loaded(result()))[
         "results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
     assert "Interoperability" not in detail
@@ -359,7 +360,7 @@ def test_an_interop_verdict_beside_a_conformance_verdict_is_shown_apart_from_it(
     assert ("[conformant](keripy/2.1.0.dev1/cesr-1.0-reproduced.md) · MUST 1 pass, 0 fail · "
             "SHOULD 0 pass, 0 fail · INTEROP 0 pass, 1 fail (not\\-interoperable) |"
             ) in pages["results/index.md"]
-    assert ("| Interoperability (never part of the verdict) | not\\-interoperable |"
+    assert ("| [Interoperability (never part of the verdict)](../../../design.md#practice) | not\\-interoperable |"
             in pages["results/keripy/2.1.0.dev1/cesr-1.0-reproduced.md"])
 
 
@@ -468,3 +469,71 @@ def test_render_accepts_one_raw_identity_under_each_slug():
     a = result(report(name="Foo Bar"))
     b = result(report(name="Foo Bar"), provenance=REPRODUCED)
     assert "results/foo-bar/index.md" in S.render_results(loaded(a, b))
+
+
+# --- reader aids ---------------------------------------------------------------------------------
+
+
+def test_only_the_current_suite_version_is_called_current(monkeypatch):
+    monkeypatch.setattr(S, "CURRENT_SUITE_VERSION", "0.1.0")
+    index = S.render_results(_two_versions())["results/index.md"]
+    headings = re.findall(r"^## (.*)$", index, re.MULTILINE)
+    assert headings == ["Current suite version (0\\.1\\.0)", "Suite version 0\\.0\\.1"]
+
+
+def test_case_ids_link_to_the_case_files_the_run_used():
+    rep = report([case("CESR-0001"), case("CESR-0003", outcome="not-supported",
+                                          records=[record(outcome="not-supported")])])
+    rep["summary"]["not_supported_active"] = ["CESR-0003"]
+    reproduced = S.render_results(loaded(result(rep, REPRODUCED)))
+    page = reproduced["results/keripy/2.1.0.dev1/cesr-1.0-reproduced.md"]
+    at = f"{S.REPO_URL}/blob/{REPRODUCED['commit']}/cases/cesr"
+    assert f"| [CESR\\-0001]({at}/CESR-0001.json) | active |" in page
+    assert "| [Active cases not supported](" in page
+    assert f"| [CESR\\-0003]({at}/CESR-0003.json) |" in page.split("## Cases")[0]
+    submitted = S.render_results(loaded(result(rep, SUBMITTED)))
+    page = submitted["results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
+    assert f"[CESR\\-0001]({S.REPO_URL}/blob/main/cases/cesr/CESR-0001.json)" in page
+
+
+@pytest.mark.parametrize("case_id,linked", [
+    ("KERI-0012", "cases/keri/KERI-0012.json"),
+    ("ACDC-0001", "cases/acdc/ACDC-0001.json"),
+    ("IPEX-0001", "cases/ipex/IPEX-0001.json"),
+    ("CESR-12", None),
+    ("cesr-0001", None),
+    ("CESR-0001x", None),
+    ("CESR-0001](javascript:x)", None),
+])
+def test_only_a_well_formed_case_id_becomes_a_link(case_id, linked):
+    cell = S._case_link(case_id, "main")
+    if linked:
+        assert cell.endswith(f"({S.REPO_URL}/blob/main/{linked})")
+    else:
+        assert cell == S.text(case_id)
+
+
+def test_detail_labels_link_to_their_explanations():
+    must = case("CESR-0001")
+    interop = case("CESR-0002", records=[record(level="INTEROP")])
+    rep = report([must, interop],
+                 aborted={"code": "e.x.f", "reason": "r", "problems": [], "at_case": "CESR-0002",
+                          "exit_code": 3})
+    page = S.render_results(loaded(result(rep, SUBMITTED)))[
+        "results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
+    claim = page.split("## Cases")[0]
+    labels = dict(re.findall(r"^\| \[([^\]]+)\]\(([^)]+)\) \|", claim, re.MULTILINE))
+    for label in ("Suite version", "Profile", "Verdict", "Active MUST assertions",
+                  "Active SHOULD assertions", "Active INTEROP assertions", "Composes",
+                  "Self-agreement", "Runner", "Active cases not supported", "Aborted"):
+        assert label in labels, label
+    assert "| Implementation |" in page and "| Adapter |" in page
+    # Every label links to a heading that exists in the page it names.
+    docs = ROOT / "docs"
+    for label, link in labels.items():
+        target, _, anchor = link.partition("#")
+        assert target.startswith("../../../"), label
+        source = (docs / target[len("../../../"):]).read_text(encoding="utf-8")
+        slugs = {re.sub(r"[^a-z0-9 -]", "", h.lower()).strip().replace(" ", "-")
+                 for h in re.findall(r"^#+ (.*)$", source, re.MULTILINE)}
+        assert anchor in slugs, (label, link)
