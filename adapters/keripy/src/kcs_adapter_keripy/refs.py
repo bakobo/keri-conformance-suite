@@ -216,12 +216,12 @@ def differences(base, report, sha):
     if implementation.get("name") != "keripy" or implementation.get("commit") != sha:
         found.append(f"implementation: the report names {implementation.get('name')} at "
                      f"{implementation.get('commit')}, not keripy at {sha}")
+    # The base is given the report's commit and version, so compare has nothing to say about
+    # them and no line it writes needs filtering out afterwards.
+    base = {**base, "implementation": {**base["implementation"],
+                                       **{field: implementation[field] for field in IDENTITY}}}
     regressions, improvements = outcomes.compare(base, report)
-    # Exactly the lines compare writes for those two fields, so a case whose id merely starts
-    # with the same words is still reported.
-    expected = {f"implementation {field}: {base['implementation'][field]} -> "
-                f"{implementation[field]}" for field in IDENTITY}
-    return [line for line in found + regressions + improvements if line not in expected]
+    return found + regressions + improvements
 
 
 def check_ref(item, sha, suite, work, run):

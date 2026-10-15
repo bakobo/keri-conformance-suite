@@ -137,6 +137,14 @@ class TestDifferences:
         now = report("cesr-v1.0", SHA_A, case("CESR-0001"), case("implementation version: x"))
         assert refs.differences(base, now, SHA_A) == ["implementation version: x: new case"]
 
+    def test_a_case_whose_line_reads_like_a_version_change_is_still_a_difference(self):
+        base = outcomes.summarize(report("cesr-v1.0", "pinned", case("implementation version")))
+        now = report("cesr-v1.0", SHA_A, case("implementation version", "fail", a1="fail"),
+                     verdict="not-conformant")
+        now["hello"]["implementation"]["version"] = "fail"
+        base["implementation"]["version"] = "outcome pass"
+        assert "implementation version: outcome pass -> fail" in refs.differences(base, now, SHA_A)
+
     def test_a_regression_is_reported(self):
         base = outcomes.summarize(report("cesr-v1.0", "pinned"))
         now = report("cesr-v1.0", SHA_A, case("CESR-0001", "fail", a1="fail"),
