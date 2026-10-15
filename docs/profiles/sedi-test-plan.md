@@ -114,7 +114,8 @@ Every requirement below gets a failing test before the code that satisfies it. N
   - edge `d` equal to the far node's own SAID where it should not be.
 - **Operators.** The SEDI set over one-hop and two-hop chains and diamonds, with AND and OR groups. Operator-shape cases, each with a positive pair:
   - unknown members are `incomplete`: `[I2I, XYZ]`, `[1]`, `o` as an object;
-  - contradictory or empty ones are `invalid`: `o: []`, an empty AND, an empty OR, `[I2I, NI2I]`, `[[I2I]]`.
+  - an empty AND, an empty OR and `[[I2I]]` are `invalid` (choice operator-shape, 599d5f5f);
+  - `o: []` reads as an absent `o` and `[I2I, NI2I]` as `NI2I`, as ACDC lines 1197 and 1186 say, each with a case that fails only if the shape is graded otherwise.
 - **Exclusions**, from 43rj9wfc, each with its JSON, Ed25519 or Blake3 twin:
   - a CBOR or MessagePack ACDC;
   - a non-Ed25519 signature;

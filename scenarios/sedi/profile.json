@@ -128,6 +128,14 @@
       "decided": "8g9vtxvc"
     },
     {
+      "id": "operator-shape",
+      "reading": "An empty o reads as an absent one and gets the default operator; among conflicting unary operators the latest wins, so [I2I, NI2I] is NI2I. An empty AND or OR edge-group and a nested list such as [[I2I]] are invalid.",
+      "basis": "ACDC lines 1197 and 1186 settle the empty o and the conflicting list; the text says nothing of an empty group or a nested list, which sedi-1 treats as malformed instructions, not unevaluable ones.",
+      "overturn": "Specification text that gives an empty edge-group or a nested operator list a meaning.",
+      "tick": "6ljr",
+      "decided": "599d5f5f"
+    },
+    {
       "id": "presenter-binding",
       "reading": "A presented ACDC is valid only when its presenter, the sender of the presentation's last exchange message, is its issuee a.i, or for an aggregate the issuee at A[1].i.",
       "basis": "Lines 312 and 344 make presentation by the issuee a capability, and no clause obliges a validator to check it; without the check, anyone who has seen a credential can present it as theirs.",

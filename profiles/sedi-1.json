@@ -137,6 +137,18 @@
       "tick": "6ljr"
     },
     {
+      "basis": "ACDC lines 1197 and 1186 settle the empty o and the conflicting list; the text says nothing of an empty group or a nested list, which sedi-1 treats as malformed instructions, not unevaluable ones.",
+      "cases": {
+        "negative": [],
+        "positive": []
+      },
+      "decided": "599d5f5f",
+      "id": "operator-shape",
+      "overturn": "Specification text that gives an empty edge-group or a nested operator list a meaning.",
+      "reading": "An empty o reads as an absent one and gets the default operator; among conflicting unary operators the latest wins, so [I2I, NI2I] is NI2I. An empty AND or OR edge-group and a nested list such as [[I2I]] are invalid.",
+      "tick": "6ljr"
+    },
+    {
       "basis": "Lines 312 and 344 make presentation by the issuee a capability, and no clause obliges a validator to check it; without the check, anyone who has seen a credential can present it as theirs.",
       "cases": {
         "negative": [],
