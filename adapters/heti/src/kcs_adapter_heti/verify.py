@@ -98,7 +98,7 @@ def split(stream: bytes) -> tuple[dict, bytes, bytes] | None:
     raw = body[:size]
     try:
         sad = json.loads(raw)
-    except ValueError:
+    except (ValueError, RecursionError):  # a body nested past the parser's depth frames nothing
         return None
     return (sad, raw, body[size:]) if isinstance(sad, dict) else None
 

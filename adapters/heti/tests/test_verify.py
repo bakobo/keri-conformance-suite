@@ -223,3 +223,11 @@ def test_an_rd_that_is_not_a_string_names_no_registry():
 
 def test_a_disclosure_that_is_not_text_is_left_out():
     assert verify._blinder(b"-CAB-aAB\xff\xff\xff\xff") is None
+
+
+def test_a_body_nested_past_the_parsers_depth_frames_nothing():
+    deep = b'{"v":"ACDCCAACAAJSONAAAA.","x":' + b"[" * 100000 + b"]" * 100000 + b"}"
+    deep = sized(deep)
+    assert verify.split(verify.GENUS + deep) is None
+    result = verify.verify(request("direct", presented={"stream": (verify.GENUS + deep).hex()}))
+    assert result["verdict"] == "invalid"
