@@ -373,10 +373,10 @@ def test_check_reports_a_stale_readme_table(repo):
 # --- readmes -------------------------------------------------------------------------------------
 
 def test_the_table_lists_only_its_own_adapters_maintainer_runs(repo):
+    refresh(repo)
     committed(repo, result(report(version="1|2"), MAINTAINER_RUN))
     committed(repo, result(report(name="claimed"), SUBMITTED))
-    assert P.update_readmes(repo) == ["rewrote the results table in adapters/alpha/README.md",
-                                      "rewrote the results table in adapters/beta/README.md"]
+    assert P.update_readmes(repo) == ["rewrote the results table in adapters/alpha/README.md"]
     table = (repo / ALPHA.readme).read_text()
     assert "| keripy 1\\|2 | `cesr-v1.0` |" in table and "claimed" not in table
     assert P.update_readmes(repo) == []
@@ -384,6 +384,7 @@ def test_the_table_lists_only_its_own_adapters_maintainer_runs(repo):
 
 
 def test_a_maintainer_run_result_from_an_adapter_not_shipped_is_refused(repo):
+    refresh(repo)
     stranger = report(name="other")
     stranger["hello"]["adapter"]["name"] = "kcs-adapter-elsewhere"
     committed(repo, result(stranger, MAINTAINER_RUN))
@@ -395,6 +396,17 @@ def test_a_maintainer_run_result_from_an_adapter_not_shipped_is_refused(repo):
         (f"{P.E_UNSHIPPED}: results/other/2.1.0.dev1/cesr-v1.0.json is labelled maintainer-run "
          'but names the adapter "kcs-adapter-elsewhere", which this repository does not ship; '
          "a result from any other adapter is submitted")]
+
+
+def test_a_shipped_adapter_profile_without_a_committed_result_is_reported(repo):
+    refresh(repo)
+    assert P.check_readmes(repo) == []
+    (repo / "results/keripy/2.1.0.dev1/keri-v1.0.1.json").unlink()
+    P.update_readmes(repo)  # a table regenerated to match the deletion does not hide it
+    assert P.check_readmes(repo) == [
+        (f"{P.E_UNCOMMITTED}: alpha keri-v1.0.1: results/ holds no maintainer-run result from "
+         "kcs-adapter-keripy for keri-v1.0.1; restore it with scripts/reproduce-results refresh "
+         "--adapter alpha")]
 
 
 def test_a_readme_that_cannot_be_read_is_a_coded_error(repo):
@@ -525,6 +537,8 @@ def test_main_reports_a_fault(repo, fake_runs, capsys):
 
 
 def test_main_readmes(repo, capsys):
+    refresh(repo)
+    (repo / BETA.readme).write_text(TABLE)
     assert main(repo, "readmes", "--check") == 1
     assert main(repo, "readmes") == 0
     assert "rewrote" in capsys.readouterr().out

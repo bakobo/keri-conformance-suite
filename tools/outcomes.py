@@ -143,6 +143,12 @@ def _is_str(value):
     return isinstance(value, str)
 
 
+def _one_of(value, allowed) -> bool:
+    """value is one of the strings in allowed. A JSON array or object is unhashable, so it is
+    ruled out before the set lookup rather than raising TypeError from it."""
+    return isinstance(value, str) and value in allowed
+
+
 def _implementation_problem(implementation):
     if not isinstance(implementation, dict):
         return "the implementation is not an object"
@@ -162,7 +168,7 @@ def _assertions_problem(where, assertions):
         if assertion["id"] in seen:
             return f"{where} has the assertion {assertion['id']} twice"
         seen.add(assertion["id"])
-        if assertion.get("outcome") not in ASSERTION_OUTCOMES:
+        if not _one_of(assertion.get("outcome"), ASSERTION_OUTCOMES):
             return f"{where}/{assertion['id']} has an unknown outcome"
     return None
 
@@ -174,11 +180,11 @@ def _case_problem(entry, seen):
     if cid in seen:
         return f"the case {cid} appears twice"
     seen.add(cid)
-    if entry.get("outcome") not in CASE_OUTCOMES:
+    if not _one_of(entry.get("outcome"), CASE_OUTCOMES):
         return f"the case {cid} has an unknown outcome"
     failure = entry.get("failure")
     if failure is not None and (not isinstance(failure, dict)
-                                or failure.get("kind") not in FAILURE_KINDS):
+                                or not _one_of(failure.get("kind"), FAILURE_KINDS)):
         return f"the case {cid} has a failure that is not an object with a known kind"
     return _assertions_problem(cid, entry.get("assertions"))
 
@@ -195,7 +201,7 @@ def report_problem(report):
     problem = _implementation_problem(hello.get("implementation"))
     if problem:
         return problem
-    if report.get("verdict") not in VERDICTS:
+    if not _one_of(report.get("verdict"), VERDICTS):
         return "its verdict is not one kcs reports"
     if not isinstance(report.get("cases"), list):
         return "its cases are not a list"

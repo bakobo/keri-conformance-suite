@@ -82,6 +82,11 @@ def _broken_reports():
         broken(f"implementation-{field}-not-string",
                lambda r, f=field: r["hello"]["implementation"].update({f: None}))
     broken("verdict-unknown", lambda r: r.update(verdict="great"))
+    broken("verdict-a-list", lambda r: r.update(verdict=[]))
+    broken("case-outcome-an-object", lambda r: r["cases"][0].update(outcome={}))
+    broken("failure-kind-a-list", lambda r: r["cases"][0].update(failure={"kind": []}))
+    broken("assertion-outcome-a-list",
+           lambda r: r["cases"][0]["assertions"][0].update(outcome=["pass"]))
     broken("cases-not-list", lambda r: r.update(cases={}))
     broken("case-not-object", lambda r: r["cases"].append("x"))
     broken("case-id-not-string", lambda r: r["cases"][0].update(id=1))

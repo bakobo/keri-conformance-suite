@@ -22,8 +22,9 @@ so the suite commit a result names is the code that produced it. check builds an
 and compares each run, outcome by outcome, with the committed maintainer-run result
 (tools/outcomes.py); any difference fails, an improvement included, until a refresh records it.
 readmes renders the README tables from the committed results without running anything; with
---check it fails when one is stale or when a maintainer-run result names an adapter this
-repository does not ship, which CI checks. reproduce is for the on-demand workflow: it builds and
+--check it fails when one is stale, when a maintainer-run result names an adapter this
+repository does not ship, or when a shipped adapter build lacks a committed result for one of its
+profiles, which CI checks. reproduce is for the on-demand workflow: it builds and
 runs every adapter, writes the results labelled reproduced into OUT, which is never committed,
 and compares those same runs with the committed results.
 
@@ -428,7 +429,7 @@ def update_readmes(repo) -> list[str]:
     return changed
 
 
-def _unshipped(repo: Path) -> list[str]:
+def _unshipped(repo: Path) -> list[str]:  # ~3loh
     """A maintainer-run result says the suite's maintainer ran an adapter this repository ships;
     one naming any other adapter is a claim mislabelled, so it is refused."""
     shipped = {i.adapter for i in INSTANCES}
@@ -440,9 +441,22 @@ def _unshipped(repo: Path) -> list[str]:
             and r.doc["report"]["hello"]["adapter"]["name"] not in shipped]
 
 
+def _missing(repo: Path) -> list[str]:
+    """Every shipped adapter build has a committed maintainer-run result for each profile it is
+    run against. CI never reruns the adapters, so without this a pull request could delete one
+    and regenerate the README table to match, and nothing would notice."""
+    have = {(r.doc["report"]["hello"]["adapter"]["name"], r.doc["report"]["filters"]["profile"])
+            for r in load_results(repo / "results", kinds=COMMITTED_KINDS)
+            if r.doc["provenance"]["kind"] == "maintainer-run"}
+    return [f"{E_UNCOMMITTED}: {i.name} {profile}: results/ holds no maintainer-run result from "
+            f"{i.adapter} for {profile}; restore it with scripts/reproduce-results refresh "
+            f"--adapter {i.name}"
+            for i in INSTANCES for profile in i.profiles if (i.adapter, profile) not in have]
+
+
 def check_readmes(repo) -> list[str]:
     repo = Path(repo)
-    return _unshipped(repo) + [
+    return _unshipped(repo) + _missing(repo) + [
         f"{E_STALE}: the results table in {readme} does not match results/; rewrite it with "
         "scripts/reproduce-results readmes"
         for readme, (text, wanted) in _readmes(repo).items() if text != wanted]
