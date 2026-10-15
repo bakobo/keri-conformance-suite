@@ -1538,7 +1538,8 @@
               "properties": {
                 "check": {
                   "enum": [
-                    "encoded"
+                    "encoded",
+                    "rejected"
                   ]
                 }
               }

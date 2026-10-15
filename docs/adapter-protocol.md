@@ -114,6 +114,14 @@ Encode a primitive.
 
 `encoded` is the encoding as hex bytes, like every other binary value: for the text domain those are the bytes of the Base64 characters, and for the binary domain they are the raw encoded bytes.
 
+An implementation may refuse to encode: a raw value whose length does not fit the code, or a code it does not know. That refusal is a result, not an error, and has the same form as a `cesr.parse` rejection, with an informative class:
+
+```json
+{"id": 2, "result": {"reject": {"class": "InvalidSizeError"}}}
+```
+
+A case that asserts the value must be refused passes on any rejection and fails on an encoding. A case that asserts an encoding fails on a rejection. An `unsupported` error is not a refusal: it fails every assertion in the case, as every error does, so an adapter whose implementation refused the input must answer with the rejection.
+
 ## `keri.process`
 
 Deliver a sequence of messages, in order, to a fresh validator, and report what happened.

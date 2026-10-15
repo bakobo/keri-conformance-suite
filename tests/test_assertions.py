@@ -118,6 +118,28 @@ def test_encoded_compares_exactly():
     assert (missing.outcome, missing.actual) == ("fail", None)
 
 
+def test_encoded_fails_on_a_refusal_and_says_so():
+    assertion = {"id": "a1", "check": "encoded", "level": "MUST", "expected": "0aff"}
+    refusal = {"reject": {"class": "InvalidSizeError"}}
+    evaluation = evaluate(assertion, refusal)
+    assert (evaluation.outcome, evaluation.actual) == ("fail", refusal)
+    assert "refused" in evaluation.detail and "InvalidSizeError" in evaluation.detail
+
+
+def test_rejected_passes_a_refusal_to_encode():
+    refusal = {"reject": {"class": "InvalidSizeError"}}
+    evaluation = evaluate({"id": "a1", "check": "rejected", "level": "MUST"}, refusal)
+    assert evaluation == Evaluation("pass", refusal)
+
+
+def test_rejected_fails_on_an_encoding():
+    # An encoder that produces bytes for a value it must refuse has accepted it.
+    encoding = {"encoded": "0aff"}
+    evaluation = evaluate({"id": "a1", "check": "rejected", "level": "MUST"}, encoding)
+    assert (evaluation.outcome, evaluation.actual) == ("fail", encoding)
+    assert "encoded" in evaluation.detail and "refused" in evaluation.detail
+
+
 # --- disposition --------------------------------------------------------------------------------
 
 

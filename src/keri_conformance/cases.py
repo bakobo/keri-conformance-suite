@@ -109,7 +109,7 @@ CHECK_FORMS = {
 # The checks that can apply to each operation's result.
 OPERATION_CHECKS = {
     "cesr.parse": ("decoded", "rejected"),
-    "cesr.encode": ("encoded",),
+    "cesr.encode": ("encoded", "rejected"),
     "keri.process": ("disposition", "trunk", "key_state"),
     "keri.emit": ("emitted_body", "signatures_verify", "attachments_equivalent"),
     "acdc.verify": ("verdict", "registry_reported", "registry_state", "edge_reported",

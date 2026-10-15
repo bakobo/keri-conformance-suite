@@ -80,13 +80,17 @@ EXN_VERDICT = obj({"on_delivery": enum(*EXN_READINGS), "verdict": enum(*EXN_READ
 
 ERROR = obj({"kind": enum("harness", "unsupported"), "message": string()})
 
+# A rejection names an informative class (docs/design.md, CESR): a stream the parser refused, or a
+# raw value the encoder refused to encode under the requested code.
+REJECTION = obj({"reject": obj({"class": string()})})
+
 RESULTS = {
     # "accepted" is the summary an adapter without cesr.item-extents gives for a stream its
     # implementation accepted; the runner also bounds "consumed" by the stream (session.py).
     "cesr.parse": keyed({"items": obj({"items": array(ITEM)}),
-                         "reject": obj({"reject": obj({"class": string()})}),
+                         "reject": REJECTION,
                          "accepted": obj({"accepted": obj({"consumed": OFFSET})})}),
-    "cesr.encode": obj({"encoded": HEX_STRING}),
+    "cesr.encode": keyed({"encoded": obj({"encoded": HEX_STRING}), "reject": REJECTION}),
     "keri.process": obj({
         "dispositions": array(DISPOSITION),
         "key_states": mapping(KEY_STATE),

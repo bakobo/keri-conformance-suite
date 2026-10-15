@@ -25,9 +25,11 @@ def test_short_number():
     assert cesr.encode("M", "0102", "text") == {"encoded": b"MAEC".hex()}
 
 
+@pytest.mark.parametrize("domain", ["text", "binary"])
 @pytest.mark.parametrize("code,raw", [("D", "00"), ("#", "00" * 32), ("Zz", "00")])
-def test_keripy_refusing_the_input_is_an_unsupported_error_naming_its_class(code, raw):
-    with pytest.raises(cesr.Unsupported) as info:
-        cesr.encode(code, raw, "text")
-    assert "e.input.format.encode-refused.f" in str(info.value)
-    assert "keripy raised" in str(info.value)
+def test_keripy_refusing_the_input_is_a_rejection_naming_its_class(code, raw, domain, capsys):
+    result = cesr.encode(code, raw, domain)
+    assert list(result) == ["reject"]
+    klass = result["reject"]["class"]
+    assert isinstance(klass, str) and klass
+    assert f"keripy refused to encode: {klass}" in capsys.readouterr().err

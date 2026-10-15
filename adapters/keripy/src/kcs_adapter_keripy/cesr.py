@@ -11,8 +11,6 @@ from kcs_adapter_keripy.errors import Rejection, Unsupported, keri
 
 __all__ = ["Unsupported", "encode", "parse"]
 
-E_ENCODE_REFUSED = "e.input.format.encode-refused.f"
-
 _API = None
 
 
@@ -35,12 +33,13 @@ def parse(stream: bytes) -> dict:
 
 
 def encode(code: str, raw_hex: str, domain: str) -> dict:
-    """The cesr.encode result: keripy's Matter encoding of raw under code, as hex."""
+    """The cesr.encode result: keripy's Matter encoding of raw under code, as hex, or keripy's
+    refusal to encode it, as a rejection whose class is keripy's exception class."""
     matter_class = api().Matter
     try:
         matter = keri(matter_class, raw=bytes.fromhex(raw_hex), code=code)
         encoded = keri(lambda: matter.qb64b if domain == "text" else matter.qb2)
     except Rejection as rejection:
-        raise Unsupported(f"{E_ENCODE_REFUSED}: keripy raised {rejection.klass} encoding raw "
-                          f"bytes under code {code!r}: {rejection}") from rejection
+        print(f"keripy refused to encode: {rejection.klass}: {rejection}", file=sys.stderr)
+        return {"reject": {"class": rejection.klass}}
     return {"encoded": bytes(encoded).hex()}
