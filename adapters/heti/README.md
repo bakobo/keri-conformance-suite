@@ -24,7 +24,8 @@ For each request the adapter builds a fresh lockbox in a temporary directory and
 
 - **KELs.** heti learns another identifier's key state only by resolving its OOBI. So the adapter starts a loopback HTTP server for the request, serves each KEL in the bundle under the prefix its events name, and resolves one OOBI per prefix. The server answers only with the bundle's own bytes and stops when the request ends, so the bundle stays the whole world: nothing outside it is served or fetched.
 - **Schemas** are learned one by one; one heti refuses is left out.
-- **Registry events** are grouped by registry. heti takes a registry's chain as one genus/version code followed by the events' bodies, and the disclosed blinded state blocks separately.
+- **Registry events** are grouped by registry. heti takes a registry's chain as one genus/version code followed by the events' bodies, and the disclosed blinded state blocks separately, as each block's fields without its group code. The adapter finds those blocks by reading the attachment groups by their counts.
+- **ACDCs** go to heti as their genus/version code and body. heti reads an ACDC with nothing after it and finds the issuer's seal in the KEL itself, so attachments that only point at the sealing event are left off; a disclosure attached to an ACDC goes with its registry's.
 - **Far nodes** are passed with their own registries, so heti walks the edges itself.
 
 heti answers a verified ACDC with a verdict and refuses everything else by raising an error with a code. The adapter maps:
@@ -38,3 +39,11 @@ heti bounds the age of its own key-state observation by a `recency` it is given.
 ## Declared features
 
 `acdc.version-2.x`, `acdc.edges`, `acdc.registry.bup`, `cesr.genus-2.00`, `cesr.serialization.json`, `crypto.ed25519`, `kel.basic`, `kel.delegation` and `keri.version-2.x`: what heti does itself inside `acdc.verify`. heti refuses `upd` registries by name, so `acdc.registry.upd` is not declared.
+
+## Tests
+
+```sh
+cd adapters/heti && uv run pytest --cov=kcs_adapter_heti --cov-branch
+```
+
+The tests drive heti itself, over bundles in `tests/fixtures/bundles.json`, which are data the suite's generator once produced; the adapter imports nothing from `generators/`. Branch coverage is 100%.

@@ -48,8 +48,6 @@ VERSION = re.compile(rb'\{"v":"([A-Z]{4})[A-Za-z0-9_-]{6}([A-Z]{4})([A-Za-z0-9_-
 PASSCODE = "kcs-adapter-heti-ephemeral-lockbox"
 # Ten years in seconds: far past any request, so heti's recency bound never applies.
 RECENCY = 10 * 365 * 24 * 3600
-# The group code that leads a disclosed blinded state block in an attachments group.
-BLINDED = re.compile(rb"-a[A-Za-z0-9_-]{2}")
 INCOMPLETE_PREFIXES = ("e.input.missing", "e.feature.unsupported")
 
 
@@ -135,10 +133,42 @@ def registries(streams: list[bytes]) -> dict[str, dict]:
     return out
 
 
+B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+
+
+def _count(text: bytes) -> int:
+    return sum(B64.index(chr(c)) << 6 * i for i, c in enumerate(reversed(text)))
+
+
+def groups(attachments: bytes) -> list[tuple[bytes, bytes]]:
+    """The groups in an attachments group, as (code, contents): each group code with its count
+    of quadlets, small (``-X##``) or big (``--X#####``), read by its count rather than by a search,
+    so text inside one group is never mistaken for another. Stops at anything it cannot read."""
+    out, i = [], 0
+    if attachments.startswith(b"--C"):
+        i = 8
+    elif attachments.startswith(b"-C"):
+        i = 4
+    while i < len(attachments):
+        head = attachments[i:i + 8]
+        try:
+            if head.startswith(b"--"):
+                code, size, i = head[:3], _count(head[3:8]) * 4, i + 8
+            elif head.startswith(b"-"):
+                code, size, i = head[:2], _count(head[2:4]) * 4, i + 4
+            else:
+                break
+        except ValueError:
+            break
+        out.append((code, attachments[i:i + size]))
+        i += size
+    return out
+
+
 def _blinder(attachments: bytes) -> str | None:
     """The fields of the first disclosed blinded state block in an attachments group."""
-    match = BLINDED.search(attachments)
-    return attachments[match.end():].decode("ascii", "replace") if match else None
+    found = [body for code, body in groups(attachments) if code in (b"-a", b"--a")]
+    return found[0].decode("ascii") if found else None
 
 
 def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
