@@ -553,6 +553,180 @@
           ]
         }
       ]
+    },
+    {
+      "id": "KERI-0140",
+      "key": "KS-MR18",
+      "status": "draft",
+      "title": "Three weights of one third, all signed",
+      "description": "An inception with keys [a0, b0, c0] and signing threshold [1/3, 1/3, 1/3], signed by all three, then an interaction signed by all three. The weights sum to exactly one, and line 1419 requires rational fraction summation, so each event satisfies its threshold and a validator should accept both.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": [
+            "1/3",
+            "1/3",
+            "1/3"
+          ],
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": [
+            "1/3",
+            "1/3",
+            "1/3"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0141",
+      "key": "KS-MR19",
+      "status": "draft",
+      "title": "Three weights of one third, two signed",
+      "description": "An inception with keys [a0, b0, c0] and signing threshold [1/3, 1/3, 1/3], signed only by a0 and b0. The signed weights sum to 2/3, short of one (line 1419), so a validator must not accept it (line 1258); as a threshold shortfall it should keep it (line 1266).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": [
+            "1/3",
+            "1/3",
+            "1/3"
+          ],
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": [
+            "1/3",
+            "1/3",
+            "1/3"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "b0"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0142",
+      "key": "KS-MR20",
+      "status": "draft",
+      "title": "Ten weights of one tenth, all signed",
+      "description": "An inception with ten keys, each of weight 1/10, signed by all ten. The weights sum to exactly one in rational arithmetic, which line 1419 requires so that threshold satisfaction avoids floating-point rounding errors; in binary floating point the same sum is slightly less than one. A validator should accept the inception.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "k0",
+            "k1",
+            "k2",
+            "k3",
+            "k4",
+            "k5",
+            "k6",
+            "k7",
+            "k8",
+            "k9"
+          ],
+          "kt": [
+            "1/10",
+            "1/10",
+            "1/10",
+            "1/10",
+            "1/10",
+            "1/10",
+            "1/10",
+            "1/10",
+            "1/10",
+            "1/10"
+          ],
+          "next": [
+            "a1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "k0",
+            "k1",
+            "k2",
+            "k3",
+            "k4",
+            "k5",
+            "k6",
+            "k7",
+            "k8",
+            "k9"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
     }
   ]
 }

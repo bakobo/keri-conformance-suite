@@ -5,9 +5,10 @@ the exact bytes a case delivers, and the model decides each message's readings b
 of the procedure that applies:
 
 1. intrinsic failure (the stream does not parse, the type is not a key event's, the fields are
-   not the type's, the SAID does not match, an inception's ``d`` and ``i`` differ, a sequence
+   not the type's, the SAID does not match by the algorithm its own code names, an inception's ``d`` and ``i`` differ, a sequence
    number is out of range, a key list is empty, a backer list repeats an AID or names a
-   transferable witness, an inception's backer threshold exceeds its backer list);
+   transferable witness, an inception's backer threshold exceeds its backer list, a rotation
+   carries an inception-only configuration trait);
 2. no verifiable controller signature (none attached, or the key state needed to verify is held
    and none verifies);
 3. forbidden by state the validator holds (establishment-only, do-not-delegate, any event after a
@@ -39,10 +40,10 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from functools import cache
 
-from . import b64, ed25519, encoding
+from . import b64, digests, ed25519, encoding
 from .decoding import Parser, Rejected
 from .errors import ScenarioError
-from .keri_events import DUMMY, ESTABLISHMENT, FIELDS, INCEPTIONS, ROTATIONS, digest, sized
+from .keri_events import DUMMY, ESTABLISHMENT, FIELDS, INCEPTIONS, ROTATIONS, sized
 from .tables import Tables
 
 POLICIES = ("all", "thresholds", "none")
@@ -53,6 +54,8 @@ VERSION_STEPS = (3, 5)
 CANONICAL_HEX = re.compile(r"0|[1-9a-f][0-9a-f]*")  # line 323: hex with no leading zeros
 BASIC_CODES = ("D", "B")  # transferable and non-transferable Ed25519 prefixes
 MAX_SN = 2 ** 128 - 1  # line 323
+# The configuration-traits table, lines 369-373. keripy ignores them in a rotation. ~4fsy
+INCEPTION_ONLY_TRAITS = ("EO", "DND", "DID")
 
 
 @cache
@@ -171,11 +174,6 @@ def _names(receipt: Parsed, ev: Parsed) -> bool:
     return (receipt.said, receipt.pre, receipt.sn) == (ev.said, ev.pre, ev.sn)
 
 
-def _code(t: Tables, text: str) -> str:
-    """The derivation code of a qualified primitive, by the master table's selector rules."""
-    return text[:2] if text[:1].isdigit() else text[:1]
-
-
 def digest_codes(t: Tables) -> set[str]:
     return {c for c, prim in t.primitives.items() if "Digest" in prim.description}
 
@@ -201,7 +199,7 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
         return None
     self_addressing = False
     if ilk in INCEPTIONS:
-        code = _code(t, p.pre)
+        code = digests.code_of(p.pre)
         if code in digest_codes(t):
             self_addressing = True
         elif code not in BASIC_CODES:
@@ -215,7 +213,9 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
     fields["d"] = DUMMY
     if self_addressing:
         fields["i"] = DUMMY
-    if digest(t, sized(fields)) != p.said:
+    # Recomputed with the algorithm the claimed SAID's own code names (CESR line 1194), so a value
+    # computed with another algorithm, or a code no algorithm here computes, does not verify.
+    if not digests.verifies(t, p.said, sized(fields)):
         return "said"
     if ilk in INCEPTIONS and p.sn != 0:
         return "inception-sn"
@@ -228,25 +228,46 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
     return None
 
 
+def _check_bt_modelled(bt) -> None:
+    if not _canonical_hex(bt):
+        raise ScenarioError(f"A backer threshold of {bt!r}, which is not hex without leading "
+                            f"zeros (line 345), is not modelled.")
+
+
+def _check_witness_code_modelled(code: str) -> None:
+    if code not in BASIC_CODES:
+        raise ScenarioError(f"A witness prefix with code {code!r} is not modelled.")
+
+
 def _establishment_values(t: Tables, p: Parsed) -> str | None:
     """The value rules of an establishment event's own body: a key list that is not empty (line
-    335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), and
-    an inception's backer threshold no larger than its backer list (line 345). A rotation's
-    threshold is checked against the effective list, which depends on state, at step 4."""
+    335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), an
+    inception's backer threshold no larger than its backer list (line 345), and no
+    inception-only configuration trait in a rotation (lines 367-373). A rotation's threshold is
+    checked against the effective list, which depends on state, at step 4."""
+    traits = p.body["c"]
+    if not isinstance(traits, list) or not all(isinstance(x, str) for x in traits):
+        raise ScenarioError(f"Configuration traits of {traits!r}, which are not a list of "
+                            f"strings (line 367), are not modelled.")
+    # First of the value rules: it is the one whose sentence says drop, so a weaker rule failing
+    # on the same body must not hide it. Being a MUST, it is graded only on a body whose backer
+    # fields the model can read; otherwise the body is refused as not modelled, as below.
+    if p.ilk in ROTATIONS and set(traits) & set(INCEPTION_ONLY_TRAITS):
+        _check_bt_modelled(p.body["bt"])
+        for prefix in p.body["ba"]:
+            _check_witness_code_modelled(digests.code_of(prefix))
+        return "trait-inception-only"
     if not p.body["k"]:
         return "empty-keys"
-    if not _canonical_hex(p.body["bt"]):
-        raise ScenarioError(f"A backer threshold of {p.body['bt']!r}, which is not hex without "
-                            f"leading zeros (line 345), is not modelled.")
+    _check_bt_modelled(p.body["bt"])
     lists = [p.body["b"]] if p.ilk in INCEPTIONS else [p.body["br"], p.body["ba"]]
     if any(len(set(backers)) != len(backers) for backers in lists):
         return "backer-duplicate"
     for prefix in lists[-1]:
-        code = _code(t, prefix)
+        code = digests.code_of(prefix)
+        _check_witness_code_modelled(code)
         if code == "D":
             return "witness-transferable"
-        if code != "B":
-            raise ScenarioError(f"A witness prefix with code {code!r} is not modelled.")
     # A rotation's bt above its effective list waits at step 4 as a shortfall instead. ~5y5t
     if p.ilk in INCEPTIONS and int(p.body["bt"], 16) > len(p.body["b"]):
         return "backer-threshold"
@@ -310,8 +331,9 @@ class Model:
 
     # -- helpers -------------------------------------------------------------------------------
 
-    def _digest(self, text: str) -> str:
-        return digest(self.t, text.encode("ascii"))
+    def commits(self, next_digest: str, key: str) -> bool:
+        """Whether a next-key digest commits to a qualified key, by the digest's own code."""
+        return digests.verifies(self.t, next_digest, key.encode("ascii"))
 
     def _live(self, said: str) -> list[int]:
         """Messages for the event ``said`` that are seen or kept: their signatures pool."""
@@ -460,12 +482,12 @@ class Model:
             est = kel.est_before(p.sn)
             prior_n, prior_nt = est.body["n"], est.body["nt"]
             exposed = {j for j, d in enumerate(prior_n)
-                       if any(self._digest(k) == d for k in p.body["k"])}
+                       if any(self.commits(d, k) for k in p.body["k"])}
             if not prior_n or not satisfies(prior_nt, exposed, len(prior_n)):
                 return "pre-rotation"
             ondexes = {s.ondex for s in verified if s.ondex is not None
                        and s.ondex < len(prior_n)
-                       and self._digest(keys[s.index]) == prior_n[s.ondex]}
+                       and self.commits(prior_n[s.ondex], keys[s.index])}
             if not satisfies(prior_nt, ondexes, len(prior_n)):
                 return "signing-threshold"
             if not satisfies(p.body["kt"], indices, len(keys)):

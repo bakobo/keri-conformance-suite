@@ -1,0 +1,372 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a3",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a4",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a5",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 2,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a6",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 2,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a7",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 3,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a8",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 3,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a9",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 4,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a10",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 4,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a11",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 5,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a12",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 5,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "aid": "EO5hP6149reiQ7bNH6gcIkn3rFosseojpuWiJbAy4BqV",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DBouoyhRFcLABT5rU6bUe6f6Es8KP7Orvx2PE6VKSZ0M",
+          "DA5knoOjIzhakP9ufTOUZ2aOPnNvFmsYDuJojQDs2REe",
+          "DEI3mZE4N1qMhj929u2z49K-qRtuwONn66itOPEFKxtm",
+          "DGfQD8-K34Mb4VMYc9S8rzfmt8cZWaKAI2tG-RuD8OuC",
+          "DKtdYPwaNcSySiN-sjppklaJoYTrTa11r1VVsWUz34WV"
+        ],
+        "kt": [
+          "1/2",
+          "1/2",
+          "1/2",
+          "0",
+          "0"
+        ],
+        "ndigs": [
+          "EDh53BjVW0hT8xxJdK9Y_sFE5uNpiEW-CcsXWW_ohSpQ",
+          "EIr3vCEFqwSq0u8nCj8T2RBpPvi2eIYOz2nM0JMB_JpF",
+          "EPOEaiAVUxT7lqGhg8_eZduN2vQslD3snT7TLEygyWKN",
+          "ELi6B6y9Z-WPkLHk8wZqzIAfJwok055xPm3BsxJqFhrx",
+          "EK2R5p4OChR7iW0I6fXWkE_i86PZGSlmklmcCUKZx7Fs"
+        ],
+        "nt": [
+          "1/2",
+          "1/2",
+          "1/2",
+          "1/4",
+          "1/4"
+        ],
+        "said": "EMPgdoof0pCE846u--Wp2nDCfkPXN_URstNwDXqJsrsR",
+        "sn": 5,
+        "wits": []
+      },
+      "id": "a13",
+      "if_seen": 5,
+      "level": "MUST"
+    }
+  ],
+  "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The inception is signed by r0 and r1; each rotation is signed as its commentary requires: rotation 2 by all of r10, r8 and r9 (line 1537), rotation 4 by r18, r20 and the newly added r21, and rotation 5 by r22, r16 and r17 for rotation authority and r22 and r25 for signing authority (line 1543). Every event satisfies both thresholds, so a validator should accept the whole KEL.",
+  "id": "KERI-0132",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414c642e222c2274223a22696370222c2264223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c2269223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c2273223a2230222c226b74223a5b22312f32222c22312f32222c22312f32222c22312f34222c22312f34225d2c226b223a5b22444b7543456273643754716451584744473263424534746f356235324e4d6a4e54415065546a48717855555a222c22444563464b7646672d5a5531586d78675451345a6d796d74684d364e69624f4d61447a6453324c6c7a357370222c224445723566366b68746c764a57582d6437677269646f73505065464d725646647541434a7462504d4963376a222c22444c4f6570754c703647554e663672465777345149317447533155433067786e73326b784878556a58707a6f222c22444471546467554a4862635a586e454a74787a6266794f63534b36355646694b7a7a44685a326c7572723641225d2c226e74223a5b22312f32222c22312f32222c22312f32222c22312f34222c22312f34225d2c226e223a5b22454830304f756d6b6d5978774e6f51693038384247723837706937784e635a557a4c614d504e5567595a496c222c22454b6e464d6c357061745f46446d55534a6e4a58505356494d7557553149687a534a4149714d35564847646f222c22454855626d4d6244725f4f55516f7747397266315f516f7a54496931584a6e6b59547052677265586e324e4d222c22454a5671734d694c655269472d676f372d476a6131614e74392d36487957494468784a756e73615948584b5a222c22454151616e64416e46785862634d30524744424c585569736f31356a6a576c3857667a5035763563454f764f225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341742d4b41734141426669695477565a5976336544507661777769612d6335584d6d6268347a2d55664546593950706a7778564d613270664631373974385f32496e37754a76417956666b6f393344454e45716e796d4361754750514d454142437938795151594f4f6c627135742d654e56565370716b6d6b55397461616b69316e7a73483362466231676d5a5672416e37654c535647524e726646777859514f5445586d744d5472344433504b6d775961676f774c"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414b762e222c2274223a22726f74222c2264223a22454630767557556371744474744149504765394b745633557969745f433966454f696b575f4865585a725343222c2269223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c2273223a2231222c2270223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c226b74223a5b22312f32222c22312f32222c22312f32225d2c226b223a5b22444d2d327136632d6c624b657a4f373366305742383046624239595478664439534a504e37666c5979774244222c2244484e50564d6b4956504a47723839784f554d6a6270484b5879336c6d4d7a38364250364674525f734e5946222c22444336636e6b4e3332796f3657563132794f494f496f576847546669673977556268474a774143662d486975225d2c226e74223a5b22312f32222c22312f32222c22312f32222c22312f34222c22312f34225d2c226e223a5b224547705841364d43424158656c6b4d4e4c714d3167664872425931636130424c3332724b776a5967335a716a222c22454e666c4c4f414c6562333933326a78672d4a5f6a58384641515f6c3276767139436b6a656e53612d42786c222c22454239637156697256356e647746773957653431752d652d654c6a3147356d373741386d6e754a62624b6973222c22454a5671734d694c655269472d676f372d476a6131614e74392d36487957494468784a756e73615948584b5a222c22454151616e64416e46785862634d30524744424c585569736f31356a6a576c3857667a5035763563454f764f225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4342442d4b4243414142736e4f563258465062452d48673859593550414b525f354779463330694f6c56506449307a6a4b49583430674574754459557447683434424e7064454d68336c4164653978556f6e55734f5248585a57337645514b41424374637844344151583070356b57674f6f5f484541736a496469654351796a7152734e35614a445a657078552d774b41507654494d657142456a47306b45787a434f71564d504c73756b59326b4130704f67735a514f414342766a464a4b465749505736516671653149647a54623179536c49475461424f774b396d6d5166506d786d6975384772346571686d62476d747851696f534363774476756d316b4359322d39797945626234724a594c"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414b762e222c2274223a22726f74222c2264223a22454d384531536b2d4e45394f68587578785f7461585953314430305771426a44324f566377555f362d594146222c2269223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c2273223a2232222c2270223a22454630767557556371744474744149504765394b745633557969745f433966454f696b575f4865585a725343222c226b74223a5b22312f32222c22312f32222c22312f32225d2c226b223a5b22444c4f6b353170444454344b646b6f724d63716d3249744552333466344e5573305f306f71514c736e565334222c22445030326266654a6f366451684857484c56687465743272494d456f726d6d54306a33315430424e6772745f222c2244444f474f6c5a344c6e6a64646a7477316a4a6b5f4542553737467337466d56677053664c58474b4d474a35225d2c226e74223a5b22312f32222c22312f32222c22312f32222c22312f34222c22312f34225d2c226e223a5b2245436e6668515952526d6d6a4c57557432345a433374377a6d55644b6a46555f797030592d4f314a744a4774222c224543372d346e57725a6a503055766c634b656f6363377a4b7373724c5f7662714771736b6f576a7847752d64222c2245497968705f4c7a3172377556425a6144443558644f4c2d777558713235544e656b783669775478572d3167222c22454e743859646c664468516c6f726a3266327a6e6b327462525f7a4130345f426d344d61746b3748534d486f222c2245464e614f62464d4c59742d41384d766954615763435552776f6a54687072416b496173365f534c4b514932225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4342462d4b4245414142486f725661667664364a646136686171414f67634f466a445749646d416b756f387877616b3139794d3733453335716d3350672d3077516f555667394a69764e6d6870614e4f5f6b7434642d626470527a44574d43324141424144446f7a426f386242504c4b426a4462346d565f7557334754706251714575556a41624d5a4c6d74716a7a484252725a386c7470574d527a4c4d75614537536f63664d57753172754a314331733056696d57354945454132414143414544576274536273576f727076595a61716936555f614642387a754a79704e637a5675684f334765537838643659384a354a785f5849675941367258673476414668337743554547475172746c494544384c5151526743"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414b762e222c2274223a22726f74222c2264223a22454c4c66644d356272563255614a596732704676654553654e593872584557636b516641383843527856665a222c2269223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c2273223a2233222c2270223a22454d384531536b2d4e45394f68587578785f7461585953314430305771426a44324f566377555f362d594146222c226b74223a5b22312f32222c22312f32222c22312f32225d2c226b223a5b224446613852696c712d7578586565683079477547535374784a56424963544c4c586850326679704243316856222c22444457716357723538704738706e473061514e466932547162623248366c77306a566e5176714d68545f3977222c22444238756137586639494270514f4a753756454f796c3835426b4c59714f473548625f6d4456385572476d50225d2c226e74223a5b22312f32222c22312f32222c22312f32222c22312f34222c22312f34225d2c226e223a5b224543645f3933313255376b7a5579534a68344a6479573736306b545270394966514b744d6751356644694148222c22454a4a4736693768386c4e384255683965467234614a44353361542d373448337a5849634f484e4872394b72222c2245425f79786d79794c35746d6d3747794630755f33384c32774a4b6870725f70395f7156597656396b556437222c22454e743859646c664468516c6f726a3266327a6e6b327462525f7a4130345f426d344d61746b3748534d486f222c2245464e614f62464d4c59742d41384d766954615763435552776f6a54687072416b496173365f534c4b514932225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4342442d4b424341414131305046756b425f6f657052316149704b5f46557a4d74304c4733635734416a356e7841677037584a764e4f50486771447566574e39794548354b6469756f56627a346c5548724379376343535863485369364545414243445f5a785778745a7a50614236437776594c2d55634c3548614f5a4a7764646a4f566263674d4a637435303330455130557149656d5948736d49664e4567656f7769334f7a6a2d7779544e595576364d485f58304f414343414a4c524742324466794d52524557416c384f51325052424b526e5f7349696557784c5863316f52336a667a446d55794672453251545a644a66596371686d314f384354504a47544b7446523063664766434b304e"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414b762e222c2274223a22726f74222c2264223a22454c7235794e3368614477717a4e784a44306c456834774b37513132706d5a4c39625f6d4552726951365647222c2269223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c2273223a2234222c2270223a22454c4c66644d356272563255614a596732704676654553654e593872584557636b516641383843527856665a222c226b74223a5b22312f32222c22312f32222c22312f32225d2c226b223a5b22444a5730716877495251703866597876484e3478374650394b6d783375454b6a65754747556e3545684a4f44222c2244426d70477054396a5568434d6f634854473370646d7854734949596e37436d2d65662d7a2d665532446678222c22444f65546232684c68306659316f494c4a585f4a6b6842565f4669585652413971496f5670624e486e736847225d2c226e74223a5b22312f32222c22312f32222c22312f32222c22312f34222c22312f34225d2c226e223a5b22454445316d6c71617836716637394a7850477749674d316f31485478674a6e32454e496c7159664c32616f79222c22454b55726b684b595233494765474b6e5842505f7130696d7455463651676e75455841324170555670413975222c22455045557577386e4356715032365f556a6a4d326747662d3670587439596d7a7a7076704e59677438325343222c22454e743859646c664468516c6f726a3266327a6e6b327462525f7a4130345f426d344d61746b3748534d486f222c2245464e614f62464d4c59742d41384d766954615763435552776f6a54687072416b496173365f534c4b514932225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4342452d4b4244414141574257586e3149676b517857507166364e5f313130462d7a3638325250455a496c372d6b4c382d6e377a4f662d7665495671556f2d4b646855586e49734f3337627238584662415841476a42784c3171515952674c32414142414342485779785a785a3250444a4967493658434831456e375f58444267416f674532684b7166484632565354457335304f59776f395548544430692d55494b66314b4b736e596f4a6b6b6856554e635036796c70614d4a42434362646f646848706c4e637475645f6569586b575f695f57717a753651453975364a447730532d576875505f583030764b526836684169646b514c38415f444f645a3178497561366753384c4e5a6951675077485149"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414d562e222c2274223a22726f74222c2264223a22454d5067646f6f6630704345383436752d2d5770326e4443666b50584e5f555273744e774458714a73727352222c2269223a22454f356850363134397265695137624e48366763496b6e3372466f7373656f6a707557694a62417934427156222c2273223a2235222c2270223a22454c7235794e3368614477717a4e784a44306c456834774b37513132706d5a4c39625f6d4552726951365647222c226b74223a5b22312f32222c22312f32222c22312f32222c2230222c2230225d2c226b223a5b2244426f756f79685246634c414254357255366255653666364573384b50374f72767832504536564b535a304d222c224441356b6e6f4f6a497a68616b50397566544f555a32614f506e4e76466d735944754a6f6a51447332524565222c22444549336d5a45344e31714d686a39323975327a34394b2d71527475774f4e6e363669744f5045464b78746d222c224447665144382d4b33344d6234564d5963395338727a666d7438635a57614b41493274472d527544384f7543222c22444b7464595077614e63537953694e2d736a70706b6c614a6f59547254613131723156567357557a33345756225d2c226e74223a5b22312f32222c22312f32222c22312f32222c22312f34222c22312f34225d2c226e223a5b224544683533426a56573068543878784a644b39595f73464535754e706945572d4363735857575f6f68537051222c224549723376434546717753713075386e436a385432524270507669326549594f7a326e4d304a4d425f4a7046222c2245504f4561694156557854376c71476867385f655a64754e327651736c4433736e5437544c45796779574b4e222c22454c6936423679395a2d57506b4c486b38775a717a4941664a776f6b30353578506d334273784a7146687278222c22454b32523570344f4368523769573049366658576b455f693836505a47536c6d6b6c6d6343554b5a78374673225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d43425a2d4b4259414142773667455a6d5938465a375045633865554a545869346c566138356e596f71314c74365f31496766707763695041757242505956784e344c7466546134766a6f356a654f4c4f4d6d3849667443746b706c722d3446424241455a36796f654b5245494357684b707349395544617975724d367a62585252726e6a63466c426a535871464d76722d6977485253433962766c4168424f6843646e497233586b72617732757171445862714232674141444338666f4654585f46633052396658596833507a2d41716d79523141753361497a7776576b416f3977374c414e483549756767377a354f4d6d67756341636a7a4f6b4647743044746e5a52515f4c61616976344d4d4441454254666537677948672d3052586477654675384d6962614a7a485167426768646a314d565652696d6a324c4232356f546d696a6830646e70363130706737724761662d573658534c633969625165324a3057564b6f4f"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/prerotation.json#KS-MR10"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.multisig.weighted",
+      "kel.partial-rotation",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "The specification's reserve rotation example"
+}

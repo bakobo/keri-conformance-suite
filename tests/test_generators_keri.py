@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT))
 from generators.spec_tables import (
     b64,
     build,
+    digests,
     keri_build,
     keri_events,
     keri_model,
@@ -858,3 +859,185 @@ def test_a_sequence_number_that_is_not_canonical_hex_is_not_modelled(sn):
 def test_an_empty_key_list_is_refused_before_the_backer_threshold_is_read():
     events = [{**ICP, "keys": [], "tamper": {"fields": {"set": {"bt": []}}}}]
     assert tags(events, [msg("icp", [{"key": "a0", "index": 0}])]) == [["1/empty-keys"] * 2]
+
+
+# -- digest agility ----------------------------------------------------------------------------
+# Each event's SAID, digest prefix and next-key digests use the algorithm its "digest" code names
+# (CESR lines 1186 and 1194, KERI line 1713); the model recomputes each with the code it carries.
+
+def agile(code, **icp_tamper):
+    icp = {**ICP, "digest": code, **({"tamper": icp_tamper} if icp_tamper else {})}
+    return [icp, ev("rot1", "rot", keys=["a1"], next=["a2"], digest=code)]
+
+
+@pytest.mark.parametrize("code", ["F", "I"])
+def test_an_events_digests_use_the_algorithm_its_code_names(code):
+    eb = keri_events.EventBuilder(T, agile(code))
+    icp, rot = eb.event("icp"), eb.event("rot1")
+    for e in (icp, rot):
+        blank = dict(e.body, d=keri_events.DUMMY)
+        if e.ilk == "icp":
+            blank["i"] = keri_events.DUMMY
+        assert e.said.startswith(code)
+        assert digests.verifies(T, e.said, keri_events.sized(blank))
+        assert all(n.startswith(code) for n in e.body["n"])
+    assert icp.pre == icp.said and rot.body["p"] == icp.said
+    assert digests.verifies(T, icp.body["n"][0], keri_events.verkey(T, "a1").encode())
+
+
+@pytest.mark.parametrize("code", ["F", "I"])
+def test_a_kel_in_another_digest_algorithm_is_accepted(code):
+    deliveries = [msg("icp", ["a0"]), msg("rot1", ["a1"])]
+    assert tags(agile(code), deliveries) == [[A, A], [A, A]]
+
+
+def test_next_key_digests_are_checked_with_their_own_code():
+    events = [{**ICP, "digest": "I"}, ev("rot1", "rot", keys=["a9"], next=["a2"], digest="I")]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a9"])])[1] == ["4/pre-rotation"] * 2
+
+
+@pytest.mark.parametrize("code,value", [("I", "E"), ("E", "I"), ("F", "I")])
+def test_a_said_computed_with_another_algorithm_than_its_code_names_fails(code, value):
+    events = [{**ICP, "digest": code, "tamper": {"said_digest": value}}]
+    eb = keri_events.EventBuilder(T, events)
+    icp = eb.event("icp")
+    assert icp.said.startswith(code) and icp.pre == icp.said
+    blank = dict(icp.body, d=keri_events.DUMMY, i=keri_events.DUMMY)
+    data = keri_events.sized(blank)
+    assert icp.said == keri_events.encoding.primitive(T, code, digests.raw(value, data))
+    assert not digests.verifies(T, icp.said, data)
+    assert tags(events, [msg("icp", ["a0"])]) == [["1/said"] * 2]
+
+
+def test_a_said_digest_tamper_must_name_another_algorithm():
+    with pytest.raises(ScenarioError, match="said_digest"):
+        keri_events.EventBuilder(T, [{**ICP, "digest": "I", "tamper": {"said_digest": "I"}}]
+                                 ).event("icp")
+
+
+def test_a_digest_code_the_generators_cannot_compute_is_refused():
+    with pytest.raises(ScenarioError, match="names no digest algorithm"):
+        keri_events.EventBuilder(T, [{**ICP, "digest": "D"}]).event("icp")
+
+
+def test_a_seen_digest_algorithm_is_a_gated_feature_with_an_ungated_companion():
+    deliveries = [msg("icp", ["a0"], expect=[A, A]), msg("rot1", ["a1"], expect=[A, A])]
+    with pytest.raises(ScenarioError, match="must name a companion"):
+        make_all(case(agile("I"), copy.deepcopy(deliveries)))
+    gated, companion = make_all(case(agile("I"), copy.deepcopy(deliveries), companion=COMPANION))
+    assert "crypto.sha2-256" in gated["targets"]["features"]
+    assert all(a["level"] != "MUST" for a in gated["assertions"])
+    assert not set(companion["targets"]["features"]) & set(keri_build.GATED)
+    assert all(a["level"] == "MUST" for a in companion["assertions"])
+    built = make_all(case(agile("F"), copy.deepcopy(deliveries), companion=COMPANION))[0]
+    assert "crypto.blake2b-256" in built["targets"]["features"]
+
+
+def test_a_mislabelled_said_needs_no_digest_feature_and_keeps_its_must():
+    events = [{**ICP, "digest": "I", "tamper": {"said_digest": "E"}}]
+    built = make_all(case(events, [msg("icp", ["a0"], expect=["1/said"] * 2)]))
+    assert len(built) == 1
+    assert not {"crypto.sha2-256", "crypto.blake2b-256"} & set(built[0]["targets"]["features"])
+    levels = [a["level"] for a in built[0]["assertions"] if a["check"] == "disposition"]
+    assert levels and set(levels) == {"MUST"}
+
+
+def test_a_said_digest_tamper_cannot_hide_an_unknown_event_code():
+    with pytest.raises(ScenarioError, match="'D' names no digest algorithm"):
+        keri_events.EventBuilder(T, [{**ICP, "digest": "D", "tamper": {"said_digest": "E"}}]
+                                 ).event("icp")
+
+
+@pytest.mark.parametrize("code", ["G", "H"])
+def test_a_seen_digest_algorithm_with_no_feature_is_refused(code):
+    """Blake2s-256 and SHA3-256 are computed but have no feature yet, so a case whose accepted
+    messages use one could not be declined by a validator without it; it is refused until one is
+    added."""
+    deliveries = [msg("icp", ["a0"], expect=[A, A]), msg("rot1", ["a1"], expect=[A, A])]
+    with pytest.raises(ScenarioError, match="has no feature"):
+        make_all(case(agile(code), deliveries, companion=COMPANION))
+
+
+def test_a_said_that_is_not_text_is_refused_not_a_crash():
+    """Found by the codex hostile pass on #40: the code lookup read a list's first character."""
+    s = streams([ICP, ev("ixn1", "ixn")], [msg("icp", ["a0"]), msg("ixn1", ["a0"])])
+    p = keri_model.parse(T, s[1])
+    body = keri_events.sized(dict(p.body, d=[]))
+    bad = keri_events.GENUS_CODE.encode() + body + s[1][len(keri_events.GENUS_CODE) + len(p.raw):]
+    assert keri_model.run(T, [s[0], bad], "all").outcome[1].tag == "1/said"
+
+
+@pytest.mark.parametrize("trait", ["EO", "DND", "DID"])
+@pytest.mark.parametrize("ilk", ["rot", "drt"])
+def test_a_rotation_carrying_an_inception_only_trait_is_an_intrinsic_failure(trait, ilk):
+    """Lines 367-373: EO, DND and DID may appear only in an inception, and a validator drops an
+    event that breaks its traits' constraints. The body alone shows it, so no state is needed."""
+    events = [ICP, ev("rot1", ilk, keys=["a1"], next=["a2"], c=["RB", trait])]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == \
+        ["1/trait-inception-only"] * 2
+    # It is refused on arrival, before the validator holds the inception it would extend.
+    assert tags(events, [msg("rot1", ["a1"])]) == [["1/trait-inception-only"] * 2]
+
+
+def test_a_rotation_may_carry_traits_that_are_not_inception_only():
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["RB", "NRB"])]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == [A, A]
+
+
+def test_a_rotation_carrying_an_inception_only_trait_is_rejected_at_must():
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"])]
+    built = make(case(events, [msg("icp", ["a0"], [A, A]),
+                               msg("rot1", ["a1"], ["1/trait-inception-only"] * 2)]))
+    refusal = [a for a in built["assertions"] if a.get("message") == 1]
+    assert [(a["phase"], a["expected"], a["level"], a["clause"]) for a in refusal] == [
+        ("initial", "rejected", "MUST", CLAUSES["traits-drop"][1]),
+        ("final", "not-seen", "MUST", CLAUSES["traits-drop"][1])]
+    state = next(a for a in built["assertions"] if a["check"] == "key_state")
+    assert state["level"] == "MUST" and state["expected"]["keys"] == [
+        keri_events.verkey(T, "a0")]
+
+
+@pytest.mark.parametrize("c", ["EO", [{"bad": "EO"}], [["EO"]], None])
+def test_configuration_traits_that_are_not_a_list_of_strings_are_not_modelled(c):
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"],
+                      tamper={"fields": {"set": {"c": c}}})]
+    with pytest.raises(ScenarioError, match="Configuration traits"):
+        tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])
+
+
+def test_an_inception_only_trait_is_refused_before_the_other_value_rules():
+    """The trait refusal is the one graded rejected at MUST, so a weaker value rule failing on
+    the same body must not hide it."""
+    events = [ICP, ev("rot1", "rot", keys=[], next=["a2"], c=["EO"], ba=["w1", "w1"])]
+    deliveries = [msg("icp", ["a0"]), msg("rot1", [{"key": "a1", "index": 0}])]
+    assert tags(events, deliveries)[1] == ["1/trait-inception-only"] * 2
+
+
+def test_an_inceptions_configuration_traits_must_also_be_a_list_of_strings():
+    """Otherwise a string such as "EOX" would read as carrying EO through a substring test."""
+    with pytest.raises(ScenarioError, match="Configuration traits"):
+        tags([{**ICP, "tamper": {"fields": {"set": {"c": "EOX"}}}}], [msg("icp", ["a0"])])
+
+
+@pytest.mark.parametrize("fields,match", [
+    ({"bt": []}, "backer threshold"),
+    ({"ba": ["1AAA" + "A" * 44]}, "witness prefix"),
+])
+def test_an_inception_only_trait_does_not_grade_a_body_the_model_cannot_read(fields, match):
+    """The trait refusal is graded MUST, so it is never reached on a body the model would
+    otherwise refuse to model."""
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"],
+                      tamper={"fields": {"set": fields}})]
+    with pytest.raises(ScenarioError, match=match):
+        tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])
+
+
+def test_an_inception_only_trait_is_graded_on_a_body_whose_witnesses_the_model_can_read():
+    """A transferable witness code is one the model reads (it refuses it as a SHOULD), so the
+    trait refusal, being stronger, still decides; a removed witness's code is not read at all."""
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"], bt="1",
+                      tamper={"fields": {"set": {"ba": [keri_events.verkey(T, "w1")],
+                                                 "br": ["1AAA" + "A" * 44]}}})]
+    assert keri_events.verkey(T, "w1").startswith("D")
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == \
+        ["1/trait-inception-only"] * 2
