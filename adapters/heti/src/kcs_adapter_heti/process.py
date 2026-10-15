@@ -11,7 +11,10 @@ message's own event by its SAID (``as_of=d``): with the messages delivered so fa
 reading, and with all of them for the final one. A message's d is only what it claims, so when
 the messages carry more than one body under one event's SAID, heti is asked about each body with
 the copies carrying another body left out: a corrupt copy is not reported seen because a valid
-copy of its SAID was, while copies with one body still combine their signatures. heti answering means it accepted the event:
+copy of its SAID was, while copies with one body still combine their signatures. heti refuses
+the whole evidence when any segment does not begin with a genus/version code, so a message that
+does not, or that names no event, is offered to heti only in the question about itself. heti
+answering means it accepted the event:
 ``seen``. heti checks for duplicity only after it has found the event, so a duplicity refusal also
 means ``seen``. Any other retryable refusal means heti could not establish the event yet:
 ``pending``. Every other refusal is ``rejected``.
@@ -31,6 +34,10 @@ from kcs_adapter_heti import verify
 
 E_MALFORMED = "e.input.format.request.f"
 E_PERSPECTIVE = "e.feature.unsupported.perspective.f"
+E_TOO_MANY = "e.feature.unsupported.message-count.f"
+# The most messages the adapter replays. Every message costs two replays of up to all of them, so
+# the work grows with the square of this; the cases deliver at most a handful.
+MAX_MESSAGES = 64
 HEX = re.compile(r"(?:[0-9a-f]{2})*")
 KEY_EVENTS = ("icp", "rot", "ixn", "dip", "drt")
 DUPLICITY = "e.state.conflict.duplicity"
@@ -63,6 +70,9 @@ def _messages(request) -> list[bytes]:
             raise Malformed(f'{E_MALFORMED}: every entry in "messages" must be an object whose '
                             '"stream" is a lowercase hex string.')
         out.append(bytes.fromhex(stream))
+    if len(out) > MAX_MESSAGES:
+        raise Unsupported(f"{E_TOO_MANY}: This adapter replays at most {MAX_MESSAGES} messages "
+                          f"in one request, and this one has {len(out)}.")
     return out
 
 
@@ -78,19 +88,29 @@ def _validator(request):
 def event(stream: bytes) -> tuple[str, str, str, bytes] | None:
     """The message's type, identifier, SAID and body: what to ask heti about. None when its body
     does not frame or does not name an identifier and a SAID."""
-    parts = verify.split(stream)
+    try:
+        parts = verify.split(stream)
+    except RecursionError:  # a body nested too deeply to read names nothing
+        parts = None
     sad, body = (parts[0], parts[1]) if parts else ({}, b"")
     t, i, d = sad.get("t"), sad.get("i"), sad.get("d")
     return (t, i, d, body) if isinstance(i, str) and isinstance(d, str) else None
 
 
-def _without_other_bodies(ident, idents, streams) -> list[bytes]:
-    """The streams, less the key events claiming the same event with a different body. A receipt
-    names the event it receipts in the same fields and is kept."""
+def _readable(stream, ident) -> bool:
+    """Whether heti can take this message as evidence without refusing all of it: it begins with
+    the genus/version code and names an event."""
+    return ident is not None and stream.startswith(verify.GENUS)
+
+
+def _evidence_for(ident, idents, streams) -> list[bytes]:
+    """The streams to ask heti about one message with: itself, and every other readable stream
+    except a key event claiming the same event with a different body. A receipt names the event
+    it receipts in the same fields and is kept."""
     _, aid, said, body = ident
     return [s for s, other in zip(streams, idents)
-            if other is None or other[0] not in KEY_EVENTS or other[1:3] != (aid, said)
-            or other[3] == body]
+            if other is ident or _readable(s, other) and (
+                other[0] not in KEY_EVENTS or other[1:3] != (aid, said) or other[3] == body)]
 
 
 def _evidence(streams) -> Evidence:
@@ -105,7 +125,7 @@ def reading(ident, idents, streams) -> tuple[str, str | None]:
     t, aid, said, _ = ident
     if t not in KEY_EVENTS:
         return "rejected", NOT_A_KEY_EVENT
-    evidence = _evidence(_without_other_bodies(ident, idents, streams))
+    evidence = _evidence(_evidence_for(ident, idents, streams))
     try:
         resolve_key_state(aid=aid, evidence=evidence, as_of=said)
     except ValueError as exc:
@@ -155,5 +175,6 @@ def process(request) -> dict:
             disposition["reason"] = why_final or why
         dispositions.append(disposition)
     aids = dict.fromkeys(ident[1] for ident in idents if ident and ident[0] in KEY_EVENTS)
-    states = {aid: state for aid in aids if (state := key_state(aid, streams)) is not None}
+    readable = [s for s, ident in zip(streams, idents) if _readable(s, ident)]
+    states = {aid: state for aid in aids if (state := key_state(aid, readable)) is not None}
     return {"dispositions": dispositions, "key_states": states}

@@ -53,6 +53,8 @@ heti has no per-message KEL processor in its public API (this.i 8uucj49z). Its p
 
 A message's `d` is only what it claims. When the messages carry more than one body under one event's SAID, heti is asked about each body with the copies carrying another body left out, so a corrupt copy is not reported seen because a valid copy of its SAID was, while copies with one body still combine their signatures.
 
+heti refuses all of the evidence when any segment does not begin with a genus/version code. So a message that does not, or whose body names no event, is offered to heti only in the question about itself, and is left out of every other. A request may carry at most 64 messages (`process.MAX_MESSAGES`), because every message costs two replays of up to all of them; a longer one gets an `unsupported` error (`e.feature.unsupported.message-count.f`).
+
 `key_states` is heti's answer for each identifier a key event names, with every message as evidence. heti refuses to report a key state for a duplicitous identifier, so such an identifier is left out, and the cases that expect the state of the first-seen branch fail on it.
 
 What the adapter cannot get from heti, and so does not claim:

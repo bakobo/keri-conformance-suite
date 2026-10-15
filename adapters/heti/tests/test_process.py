@@ -107,6 +107,32 @@ def test_a_message_naming_no_event_is_rejected_without_asking_heti(stream):
     assert result["key_states"] == {}
 
 
+def test_a_message_heti_refuses_as_evidence_does_not_spoil_the_others():
+    stream = bytes.fromhex(KELS["in-order"][0])
+    unpinned = stream.removeprefix(process.verify.GENUS).hex()
+    result = process.process(request(messages=[KELS["in-order"][0], "00", unpinned]))
+    assert readings(result) == [("seen", "seen", True), ("rejected", "rejected", False),
+                                ("rejected", "rejected", False)]
+    assert "e.input.missing" in result["dispositions"][2]["reason"]
+    assert len(result["key_states"]) == 1
+
+
+def test_a_body_nested_too_deeply_to_read_names_no_event():
+    tail = b'","t":"icp","x":' + b"[" * 100000 + b"]" * 100000 + b"}"
+    size = len(b'{"v":"KERICAACAAJSONAAAA.') + len(tail)
+    digits = "".join(process.verify.B64[size >> 6 * n & 63] for n in (3, 2, 1, 0)).encode()
+    body = b'{"v":"KERICAACAAJSON' + digits + b"." + tail
+    result = process.process(request(messages=[(process.verify.GENUS + body).hex()]))
+    assert readings(result) == [("rejected", "rejected", False)]
+
+
+def test_more_messages_than_the_adapter_replays_is_refused():
+    response = json.loads(protocol.handle_line(json.dumps(
+        request(messages=KELS["in-order"][:1] * (process.MAX_MESSAGES + 1))).encode()))
+    assert response["error"]["kind"] == "unsupported"
+    assert process.E_TOO_MANY in response["error"]["message"]
+
+
 def test_an_identifier_heti_cannot_parse_is_rejected():
     stream = bytes.fromhex(KELS["in-order"][0])
     sad = process.verify.split(stream)[0]
