@@ -180,7 +180,7 @@ def check_bytes(case) -> list[str]:
 
 def _breaks_body(tamper: dict) -> bool:
     fields = tamper.get("fields", {})
-    return bool({"d", "i"} & set(tamper) or {"add", "remove", "swap"} & set(fields)
+    return bool({"d", "i", "said_digest"} & set(tamper) or {"add", "remove", "swap"} & set(fields)
                 or "t" in fields.get("set", {}))
 
 

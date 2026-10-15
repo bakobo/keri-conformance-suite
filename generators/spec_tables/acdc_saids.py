@@ -40,7 +40,7 @@ import json
 import math
 from dataclasses import dataclass
 
-from . import b64, blake3, encoding
+from . import b64, digests, encoding
 from .errors import ScenarioError
 from .tables import Tables
 
@@ -108,7 +108,7 @@ def serialize(value, readings: Readings = DEFAULT) -> bytes:
 
 
 def digest(t: Tables, data: bytes) -> str:
-    return encoding.primitive(t, "E", blake3.digest(data))
+    return digests.qualified(t, "E", data)
 
 
 def sized(sad: dict, readings: Readings = DEFAULT) -> dict:
