@@ -360,6 +360,258 @@
           ]
         }
       ]
+    },
+    {
+      "id": "KERI-0084",
+      "key": "AS-01",
+      "status": "draft",
+      "title": "Interaction after a rotation signed by the rotated-out key",
+      "description": "An inception with key a0 committing to a1, a rotation to a1, then an interaction at the next sequence number signed by a0 at index 0. The interaction's controlling keys are the rotation's (line 1737), and a0's signature does not verify against a1, so the interaction carries no verifiable controller signature and a validator must drop it (line 1266). The key state stays the rotation's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            {
+              "key": "a0",
+              "index": 0
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0085",
+      "key": "AS-02a",
+      "status": "draft",
+      "title": "Rotation that exposes the next key but is signed only by the current key",
+      "description": "An inception with key a0 committing to a1, then a rotation to [a0, a1] with signing threshold 1, signed only by a0. The rotation's keys include the pre-rotated a1, and a0's signature satisfies the new signing threshold, but a0 is not among the prior next keys, so nothing satisfies the prior next threshold and a validator must not accept the rotation (lines 1262 and 1494). As a threshold shortfall it should keep it. The key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a0",
+            "a1"
+          ],
+          "kt": "1",
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            {
+              "key": "a0",
+              "code": "A"
+            }
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "sig-threshold-rot"
+        }
+      }
+    },
+    {
+      "id": "KERI-0086",
+      "key": "AS-02b",
+      "status": "draft",
+      "title": "Rotation that keeps the current key and omits the next key",
+      "description": "An inception with key a0 committing to a1, then a rotation whose key list is [a0] alone, signed by a0. The rotation's keys include no subset of the prior next keys, so a validator must not accept it (line 1494), even though its one signature verifies against its own key list. The key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            {
+              "key": "a0",
+              "code": "A"
+            }
+          ],
+          "expect": [
+            "4/pre-rotation",
+            "4/pre-rotation"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "prerotation"
+        }
+      }
+    },
+    {
+      "id": "KERI-0087",
+      "key": "AS-02c",
+      "status": "draft",
+      "title": "Rotation to the next key signed by the current key",
+      "description": "An inception with key a0 committing to a1, then a rotation to [a1] signed by a0 at index 0. A rotation's signatures are verified against its own key list, so a0's signature does not verify against a1 and the rotation carries no verifiable controller signature; a validator must drop it (line 1266). The key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            {
+              "key": "a0",
+              "index": 0,
+              "code": "A"
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -699,6 +699,102 @@
           "source_seal": "Dixn2"
         }
       ]
+    },
+    {
+      "id": "KERI-0090",
+      "key": "AS-05",
+      "status": "draft",
+      "title": "Delegating seal in a KEL other than the named delegator's",
+      "description": "Two identifiers D and F, then a delegated inception naming D as its delegator, whose delegating seal is anchored only by an interaction in F's KEL. The seal must be in the delegator's KEL (line 1612), and D's KEL holds none, so a validator must not accept the delegated inception, even when the attachment points at F's anchoring interaction.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Ficp",
+          "aid": "F",
+          "t": "icp",
+          "keys": [
+            "f0"
+          ],
+          "next": [
+            "f1"
+          ]
+        },
+        {
+          "name": "Fixn1",
+          "aid": "F",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Ficp",
+          "sigs": [
+            "f0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Fixn1",
+          "sigs": [
+            "f0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "source_seal": "Fixn1",
+          "expect": [
+            "4/delegation",
+            "4/delegation"
+          ]
+        }
+      ]
     }
   ]
 }

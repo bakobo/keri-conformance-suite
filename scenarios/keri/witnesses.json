@@ -511,6 +511,48 @@
           "clause": "wit-list-order"
         }
       }
+    },
+    {
+      "id": "KERI-0089",
+      "key": "AS-03b",
+      "status": "draft",
+      "title": "Witness signature indexed past the witness list",
+      "description": "An inception with one witness and witness threshold 1, signed by its controller, carrying the witness's signature indexed 3 against a one-witness list. Position 3 holds no witness, so the signature counts toward nothing and the witness threshold is not met; a validator must not accept the inception, and as a threshold shortfall it should keep it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1"
+          ],
+          "bt": "1"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "wigs": [
+            {
+              "key": "w1",
+              "index": 3
+            }
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ]
+        }
+      ]
     }
   ]
 }
