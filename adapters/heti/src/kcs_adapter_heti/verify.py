@@ -35,6 +35,7 @@ import sys
 import tempfile
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import ClassVar
 
 from heti.anchored.produce import Lockbox, new_recovery_code
 
@@ -91,7 +92,7 @@ def _presented(request) -> bytes:
 def split(stream: bytes) -> tuple[dict, bytes, bytes] | None:
     """A genus-pinned stream's body as JSON, its raw bytes and its attachments, or None when its
     version string does not frame a JSON body."""
-    body = stream[len(GENUS):] if stream.startswith(GENUS) else stream
+    body = stream.removeprefix(GENUS)
     match = VERSION.match(body)
     if not match or match.group(2) != b"JSON":
         return None
@@ -160,9 +161,9 @@ def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
 
 
 class _Kels(BaseHTTPRequestHandler):
-    served: dict[str, bytes] = {}
+    served: ClassVar[dict[str, bytes]] = {}
 
-    def do_GET(self):  # noqa: N802 - the name http.server calls
+    def do_GET(self):
         parts = [p for p in self.path.split("/") if p]
         body = self.served.get(parts[1]) if len(parts) >= 2 and parts[0] == "oobi" else None
         self.send_response(200 if body else 404)
@@ -171,7 +172,7 @@ class _Kels(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body or b"")
 
-    def log_message(self, format, *args):  # noqa: A002 - http.server's signature
+    def log_message(self, format, *args):
         pass
 
 
@@ -211,7 +212,7 @@ async def _judge(home: pathlib.Path, served, schemas, regs, far, presented) -> d
         try:
             verdict = await box.verify_acdc(acdc=acdc, tel=tel, recency=RECENCY,
                                             blinders=blinders, far=far or None)
-        except Exception as exc:  # noqa: BLE001 - heti refuses by raising
+        except Exception as exc:
             code = getattr(exc, "code", None)
             if code is None:
                 raise
