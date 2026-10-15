@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "7548f0674af6065f47df0f05d3784fca03e17247",
+    "commit": "b270e09296a924794b4f1f8d909299351e46a1e4",
     "date": "2026-10-15"
   },
   "report": {
@@ -75,6 +75,15 @@
         "disputed": {
           "MUST": {
             "fail": 2
+          }
+        },
+        "draft": {
+          "MUST": {
+            "fail": 3,
+            "not-supported": 1
+          },
+          "SHOULD": {
+            "pass": 3
           }
         }
       },
@@ -2275,6 +2284,358 @@
       {
         "id": "CESR-0042",
         "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "signify-ts rejected the stream: malformed-body: The message body at byte 0 is not valid JSON.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "malformed-body"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "CESR-0058",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "signify-ts rejected the stream: malformed-body: The message body at byte 0 is not valid JSON.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "fail",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 4,
+                "start": 309
+              },
+              {
+                "code": "-J",
+                "end": 317,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 3,
+                "start": 313
+              },
+              {
+                "code": "4B",
+                "end": 329,
+                "kind": "primitive",
+                "raw": "6ffbe25bdb94",
+                "start": 317
+              }
+            ],
+            "actual": {
+              "reject": {
+                "class": "malformed-body"
+              }
+            },
+            "detail": "The adapter did not report decoded items.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0059",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "signify-ts rejected the stream: malformed-body: The message body at byte 0 is not valid JSON.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "fail",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 4,
+                "start": 309
+              },
+              {
+                "code": "-J",
+                "end": 317,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 3,
+                "start": 313
+              },
+              {
+                "code": "5B",
+                "end": 329,
+                "kind": "primitive",
+                "raw": "4f89969083",
+                "start": 317
+              }
+            ],
+            "actual": {
+              "reject": {
+                "class": "malformed-body"
+              }
+            },
+            "detail": "The adapter did not report decoded items.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0060",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "signify-ts rejected the stream: malformed-body: The message body at byte 0 is not valid JSON.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "fail",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 4,
+                "start": 309
+              },
+              {
+                "code": "-J",
+                "end": 317,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 3,
+                "start": 313
+              },
+              {
+                "code": "6B",
+                "end": 329,
+                "kind": "primitive",
+                "raw": "d9fe5a9d",
+                "start": 317
+              }
+            ],
+            "actual": {
+              "reject": {
+                "class": "malformed-body"
+              }
+            },
+            "detail": "The adapter did not report decoded items.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0061",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 6,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 307,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 6,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 310,
+                "group_end": 340,
+                "kind": "counter",
+                "size": 10,
+                "start": 307
+              },
+              {
+                "code": "-J",
+                "end": 313,
+                "group_end": 340,
+                "kind": "counter",
+                "size": 9,
+                "start": 310
+              },
+              {
+                "code": "4B",
+                "end": 322,
+                "kind": "primitive",
+                "raw": "d494c2f3b061",
+                "start": 313
+              },
+              {
+                "code": "5B",
+                "end": 331,
+                "kind": "primitive",
+                "raw": "07ab0c870c",
+                "start": 322
+              },
+              {
+                "code": "6B",
+                "end": 340,
+                "kind": "primitive",
+                "raw": "c890d197",
+                "start": 331
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0062",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "signify-ts rejected the stream: malformed-body: The message body at byte 0 is not valid JSON.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "malformed-body"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "CESR-0063",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "signify-ts rejected the stream: malformed-body: The message body at byte 0 is not valid JSON.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "malformed-body"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "CESR-0066",
+        "status": "draft",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
