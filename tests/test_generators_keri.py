@@ -858,3 +858,33 @@ def test_a_sequence_number_that_is_not_canonical_hex_is_not_modelled(sn):
 def test_an_empty_key_list_is_refused_before_the_backer_threshold_is_read():
     events = [{**ICP, "keys": [], "tamper": {"fields": {"set": {"bt": []}}}}]
     assert tags(events, [msg("icp", [{"key": "a0", "index": 0}])]) == [["1/empty-keys"] * 2]
+
+
+@pytest.mark.parametrize("trait", ["EO", "DND", "DID"])
+@pytest.mark.parametrize("ilk", ["rot", "drt"])
+def test_a_rotation_carrying_an_inception_only_trait_is_an_intrinsic_failure(trait, ilk):
+    """Lines 367-373: EO, DND and DID may appear only in an inception, and a validator drops an
+    event that breaks its traits' constraints. The body alone shows it, so no state is needed."""
+    events = [ICP, ev("rot1", ilk, keys=["a1"], next=["a2"], c=["RB", trait])]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == \
+        ["1/trait-inception-only"] * 2
+    # It is refused on arrival, before the validator holds the inception it would extend.
+    assert tags(events, [msg("rot1", ["a1"])]) == [["1/trait-inception-only"] * 2]
+
+
+def test_a_rotation_may_carry_traits_that_are_not_inception_only():
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["RB", "NRB"])]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == [A, A]
+
+
+def test_a_rotation_carrying_an_inception_only_trait_is_rejected_at_must():
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"])]
+    built = make(case(events, [msg("icp", ["a0"], [A, A]),
+                               msg("rot1", ["a1"], ["1/trait-inception-only"] * 2)]))
+    refusal = [a for a in built["assertions"] if a.get("message") == 1]
+    assert [(a["phase"], a["expected"], a["level"], a["clause"]) for a in refusal] == [
+        ("initial", "rejected", "MUST", CLAUSES["traits-drop"][1]),
+        ("final", "not-seen", "MUST", CLAUSES["traits-drop"][1])]
+    state = next(a for a in built["assertions"] if a["check"] == "key_state")
+    assert state["level"] == "MUST" and state["expected"]["keys"] == [
+        keri_events.verkey(T, "a0")]

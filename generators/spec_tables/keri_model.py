@@ -7,7 +7,8 @@ of the procedure that applies:
 1. intrinsic failure (the stream does not parse, the type is not a key event's, the fields are
    not the type's, the SAID does not match, an inception's ``d`` and ``i`` differ, a sequence
    number is out of range, a key list is empty, a backer list repeats an AID or names a
-   transferable witness, an inception's backer threshold exceeds its backer list);
+   transferable witness, an inception's backer threshold exceeds its backer list, a rotation
+   carries an inception-only configuration trait);
 2. no verifiable controller signature (none attached, or the key state needed to verify is held
    and none verifies);
 3. forbidden by state the validator holds (establishment-only, do-not-delegate, any event after a
@@ -53,6 +54,8 @@ VERSION_STEPS = (3, 5)
 CANONICAL_HEX = re.compile(r"0|[1-9a-f][0-9a-f]*")  # line 323: hex with no leading zeros
 BASIC_CODES = ("D", "B")  # transferable and non-transferable Ed25519 prefixes
 MAX_SN = 2 ** 128 - 1  # line 323
+# The configuration-traits table, lines 369-373. keripy ignores them in a rotation. ~4fsy
+INCEPTION_ONLY_TRAITS = ("EO", "DND", "DID")
 
 
 @cache
@@ -230,9 +233,10 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
 
 def _establishment_values(t: Tables, p: Parsed) -> str | None:
     """The value rules of an establishment event's own body: a key list that is not empty (line
-    335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), and
-    an inception's backer threshold no larger than its backer list (line 345). A rotation's
-    threshold is checked against the effective list, which depends on state, at step 4."""
+    335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), an
+    inception's backer threshold no larger than its backer list (line 345), and no
+    inception-only configuration trait in a rotation (lines 367-373). A rotation's threshold is
+    checked against the effective list, which depends on state, at step 4."""
     if not p.body["k"]:
         return "empty-keys"
     if not _canonical_hex(p.body["bt"]):
@@ -250,6 +254,8 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     # A rotation's bt above its effective list waits at step 4 as a shortfall instead. ~5y5t
     if p.ilk in INCEPTIONS and int(p.body["bt"], 16) > len(p.body["b"]):
         return "backer-threshold"
+    if p.ilk in ROTATIONS and set(p.body["c"]) & set(INCEPTION_ONLY_TRAITS):
+        return "trait-inception-only"
     return None
 
 
