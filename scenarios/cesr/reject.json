@@ -439,11 +439,170 @@
         }
       ],
       "truncate": 5
+    },
+    {
+      "id": "CESR-0062",
+      "key": "reject-genus-code-opening-signature-group",
+      "status": "draft",
+      "title": "Reject a controller signature group whose first element is a genus/version code",
+      "description": "After a KERI 2.0 inception, an attachments group holds a -K whose framed material is the genus/version code -_AAACAA followed by one indexed signature, with -K's size counting both. -K is not one of the codes that allow a genus/version override, so the code has no override meaning there (line 816), and a -K's framed material is indexed signatures, which -_AAACAA is not. A parser that treated the code as an override would skip it and accept the group, as it must inside -C (CESR-0029). The specification states no parser-side rule for this stream; the stream breaks the cited MUST, and the assertion that a parser rejects it is graded SHOULD on the inference recorded in inferred_from.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-K",
+              "items": [
+                {
+                  "literal": "-_AAACAA"
+                },
+                {
+                  "indexed": "A",
+                  "raw": "kcs/cesr/g/k-sig",
+                  "index": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "clause": "genus-override-none",
+          "level": "SHOULD",
+          "inferred_from": "genus-override-none",
+          "note": "Informative class: unknown-code or unsupported."
+        }
+      ]
+    },
+    {
+      "id": "CESR-0063",
+      "key": "reject-genus-code-opening-trans-sig-group",
+      "status": "draft",
+      "title": "Reject a transferable signature group whose first element is a genus/version code",
+      "description": "After a KERI 2.0 inception, an attachments group holds a -X (transferable indexed signature group) whose framed material is the genus/version code -_AAACAA, then the prefix, sequence number, digest and controller signature group -X carries. -X does not allow a genus/version override, so the code has no override meaning (line 816), and it stands where -X's prefix must be. A parser that treated the code as an override would skip it and accept the group. The specification states no parser-side rule for this stream; the stream breaks the cited MUST, and the assertion that a parser rejects it is graded SHOULD on the inference recorded in inferred_from.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-X",
+              "items": [
+                {
+                  "literal": "-_AAACAA"
+                },
+                {
+                  "primitive": "E",
+                  "raw": "kcs/cesr/g/x-pre"
+                },
+                {
+                  "primitive": "0A",
+                  "raw": "kcs/cesr/g/x-snu"
+                },
+                {
+                  "primitive": "E",
+                  "raw": "kcs/cesr/g/x-dig"
+                },
+                {
+                  "group": "-K",
+                  "items": [
+                    {
+                      "indexed": "A",
+                      "raw": "kcs/cesr/g/x-sig",
+                      "index": 0
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "clause": "genus-override-none",
+          "level": "SHOULD",
+          "inferred_from": "genus-override-none",
+          "note": "Informative class: unknown-code or unsupported."
+        }
+      ]
+    },
+    {
+      "id": "CESR-0066",
+      "key": "reject-text-pad",
+      "status": "draft",
+      "title": "Reject a text-domain primitive containing '='",
+      "description": "After a KERI 2.0 inception, an attachments group holds a nontransferable receipt couple whose B prefix is BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=: its last character is the Base64 pad character '=', which CESR never uses because every CESR primitive is composable. The text domain uses only the URL- and filename-safe Base64 alphabet (line 93), which has no '='. The specification states no parser-side rule for this stream; the stream breaks the cited MUST, and the assertion that a parser rejects it is graded SHOULD on the inference recorded in inferred_from.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "alpha"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-M",
+              "items": [
+                {
+                  "literal": "BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+                },
+                {
+                  "primitive": "0B",
+                  "raw": "kcs/cesr/t/reject-text-pad"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "rejected",
+          "clause": "text-alphabet",
+          "level": "SHOULD",
+          "inferred_from": "text-alphabet",
+          "note": "Informative class: bad-frame-start."
+        }
+      ]
     }
   ],
   "id_gaps": [
     {
       "number": 36,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 64,
+      "reason": "Allocated; not in this tree."
+    },
+    {
+      "number": 65,
       "reason": "Allocated; not in this tree."
     }
   ]

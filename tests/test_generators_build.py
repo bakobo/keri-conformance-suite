@@ -359,8 +359,17 @@ def test_write_removes_owned_files_that_are_no_longer_generated(tmp_path):
 
 
 def test_regenerating_after_a_scenario_is_deleted_leaves_a_clean_tree(tree):
+    cesr = tree / "scenarios" / "cesr"
+    removed = []
     for name in ("strict.json", "keripy1x.json"):
-        (tree / "scenarios" / "cesr" / name).unlink()
+        scenario = json.loads((cesr / name).read_text())
+        removed += [int(c["id"].split("-")[1]) for c in scenario["cases"]]
+        removed += [g["number"] for g in scenario.get("id_gaps", [])]
+        (cesr / name).unlink()
+    # Cases with higher ids remain, so the ids the deleted scenarios held become documented gaps.
+    reject = json.loads((cesr / "reject.json").read_text())
+    reject["id_gaps"] += [{"number": n, "reason": "Deleted by this test."} for n in removed]
+    (cesr / "reject.json").write_text(json.dumps(reject, indent=2, ensure_ascii=False) + "\n")
     regenerate.write(tree, regenerate.generate(ROOT))  # the full catalogue, as committed
     files = regenerate.generate(tree)
     regenerate.write(tree, files)

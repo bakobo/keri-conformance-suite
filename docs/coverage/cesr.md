@@ -52,7 +52,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 > The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)].
 
-<span class="kcs-mark kcs-uncovered">○</span> [Line 93](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L93) · MUST · validator · not covered
+<span class="kcs-mark kcs-uncovered">○</span> [Line 93](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L93) · MUST · validator · cited by [CESR-0066](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0066.json) (inferred, draft) · 1 SHOULD assertion
 
 #### Conversions
 
@@ -400,7 +400,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 > The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser.
 
-<span class="kcs-mark kcs-uncovered">○</span> [Line 816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) · MUST · validator, security · not covered
+<span class="kcs-mark kcs-uncovered">○</span> [Line 816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) · MUST · validator, security · cited by [CESR-0062](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0062.json) (inferred, draft), [CESR-0063](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0063.json) (inferred, draft) · 2 SHOULD assertions
 
 > In other words, the parser MUST only treat the genus/version count code, especially as an override, when it appears as the first count code within the framed material of an overrideable universal count code.
 
@@ -440,7 +440,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 > A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.
 
-<span class="kcs-mark kcs-covered">●</span> [Line 878](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L878) · MUST · validator · covered by [CESR-0016](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0016.json) · 1 MUST assertion · positive only
+<span class="kcs-mark kcs-covered">●</span> [Line 878](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L878) · MUST · validator · covered by [CESR-0016](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0016.json), [CESR-0058](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0058.json) (draft), [CESR-0059](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0059.json) (draft), [CESR-0060](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0060.json) (draft), [CESR-0061](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0061.json) (draft) · 5 MUST assertions · positive only
 
 #### Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)
 

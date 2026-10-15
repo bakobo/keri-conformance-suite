@@ -1160,6 +1160,180 @@
         "summary": "The specification lets a count code count zero quadlets (the small count code's two size characters provide 'counts from 0 to 4095', and the size MUST count the quadlets in the group, which here are none), so an attachments group of size 0 after a body is well formed and ends at its own count code. keripy main (9a8b7aa7) rejects it: after taking the empty -C, msgParsator peeks for a genus/version code inside the group and the empty substream raises ShortageError, reported as SizedGroupError (src/keri/core/parsing.py, the 'peek for version change' extraction after AttachmentGroup). keripy's own comment there says a message with no attachments MUST have at least an empty AttachmentGroup, so this looks like a keripy defect rather than a reading of the text; it rejects a stream, so it is not a security matter.",
         "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-01; not yet raised with keripy or the CESR specification working group."
       }
+    },
+    {
+      "id": "CESR-0058",
+      "key": "variable-lead-0",
+      "status": "draft",
+      "title": "Parse a variable-size primitive with no lead bytes",
+      "description": "After a KERI 2.0 inception, an attachments group holds a generic list (-J) of one 6-byte value with code 4B (Bytes, lead size 0): 6 bytes need no lead bytes to fill whole triplets, and the code's two size characters count the 2 triplets of lead bytes and value together. The parser must take the value's length from the size characters and strip the lead bytes.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-J",
+              "items": [
+                {
+                  "variable": "B",
+                  "raw": "kcs/cesr/v/variable-lead-0",
+                  "length": 6
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "master-table"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0059",
+      "key": "variable-lead-1",
+      "status": "draft",
+      "title": "Parse a variable-size primitive with one lead byte",
+      "description": "After a KERI 2.0 inception, an attachments group holds a generic list (-J) of one 5-byte value with code 5B (Bytes, lead size 1): 5 bytes need one lead byte to fill whole triplets, and the code's two size characters count the 2 triplets of lead bytes and value together. The parser must take the value's length from the size characters and strip the lead bytes.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-J",
+              "items": [
+                {
+                  "variable": "B",
+                  "raw": "kcs/cesr/v/variable-lead-1",
+                  "length": 5
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "master-table"
+        }
+      ]
+    },
+    {
+      "id": "CESR-0060",
+      "key": "variable-lead-2",
+      "status": "draft",
+      "title": "Parse a variable-size primitive with two lead bytes",
+      "description": "After a KERI 2.0 inception, an attachments group holds a generic list (-J) of one 4-byte value with code 6B (Bytes, lead size 2): 4 bytes need two lead bytes to fill whole triplets, and the code's two size characters count the 2 triplets of lead bytes and value together. The parser must take the value's length from the size characters and strip the lead bytes. The text of this table says both that it encodes raw binaries with a pad size of 0 and that it encodes those with a pad size of 2; the case follows the second, the table's title and line 539, and records the first in spec_conflicts.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-J",
+              "items": [
+                {
+                  "variable": "B",
+                  "raw": "kcs/cesr/v/variable-lead-2",
+                  "length": 4
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "master-table",
+          "spec_conflicts": [
+            "lead2-pad-553"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CESR-0061",
+      "key": "variable-lead-binary",
+      "status": "draft",
+      "title": "Parse variable-size primitives with zero, one and two lead bytes in the binary domain",
+      "description": "After a KERI 2.0 inception, a binary-domain attachments group holds a generic list (-J) of three Bytes values of 6, 5 and 4 bytes, with codes 4B, 5B and 6B. In the binary domain each code's size counts triplets, so each value's end follows from its size and its lead bytes from its selector. The 6B table's text conflicts with itself about its pad size, as in CESR-0060.",
+      "operation": "cesr.parse",
+      "stream": [
+        {
+          "genus": "AAA",
+          "major": 2,
+          "minor": 0,
+          "domain": "binary"
+        },
+        {
+          "message": "beta"
+        },
+        {
+          "group": "-C",
+          "items": [
+            {
+              "group": "-J",
+              "items": [
+                {
+                  "variable": "B",
+                  "raw": "kcs/cesr/v/bin-0",
+                  "length": 6
+                },
+                {
+                  "variable": "B",
+                  "raw": "kcs/cesr/v/bin-1",
+                  "length": 5
+                },
+                {
+                  "variable": "B",
+                  "raw": "kcs/cesr/v/bin-2",
+                  "length": 4
+                }
+              ]
+            }
+          ],
+          "domain": "binary"
+        }
+      ],
+      "assertions": [
+        {
+          "check": "decoded",
+          "clause": "master-table",
+          "spec_conflicts": [
+            "lead2-pad-553"
+          ]
+        }
+      ]
     }
   ]
 }

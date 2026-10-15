@@ -12,7 +12,7 @@ cd generators/keripy1x_check && uv run python check.py --report /tmp/keripy1x-re
 - `generators/keripy_check` pins keripy main at `9a8b7aa70960f16fe7acffd8cf7901941ac912a1` (Python 3.14). Every `cesr.parse` case goes through keripy's own `Parser.msgParsator`, framed, once per message: keripy handles the leading genus/version code, reaps and verifies each body with `Serdery` (so a body with a wrong SAID or field set is refused), and extracts the attachments. Every `cesr.encode` case goes through keripy's `Matter`.
 - `generators/keripy1x_check` pins keripy 1.2.14 (`bab95c16e949b61398129a3e41a8f68bad84c94f`, Python 3.12) and runs the `keripy-1x-interop` cases through keripy 1.2.14's `Parser.msgParsator`, with a recording stand-in for the `Kevery` it dispatches to, so it sees what the Parser extracted and runs no KERI validation.
 
-Last run: 2026-10-01, all cases in `cases/cesr/`.
+Last run: 2026-10-15, all cases in `cases/cesr/`.
 
 ## What keripy's Parser can and cannot report
 
@@ -36,7 +36,13 @@ Two further limits:
 - **What the specification says.** A small count code's two size characters "provide counts from 0 to 4095", and "The size component MUST count the Quadlets/triplets in its following group." An attachments group of size 0 after a body is therefore well formed and ends at its own count code.
 - **What keripy does.** keripy main rejects it with `SizedGroupError`. After taking the empty `-C`, `msgParsator` peeks for a genus/version code inside the group, and the empty substream raises `ShortageError` (`src/keri/core/parsing.py`, the "peek for version change" extraction after `AttachmentGroup`). keripy's own comment in the same method says a message with no attachments "MUST have at least empty AttachmentGroup", so this looks like a keripy defect rather than a reading of the text. It rejects a stream, so it is not a security matter.
 
-No other `cesr-v1.0` or `cesr-strict` case disagrees. Every encoding, every decoded structure (to the extent keripy can report it), and every must-reject case agrees with keripy main. Every `keripy-1x-interop` case agrees with keripy 1.2.14, including its must-reject cases (where keripy's Parser yields for more bytes on a framed stream, the check counts that as the rejection the adapter protocol's end-of-input rule makes it), apart from CESR-0048, which is skipped there because it is a genus 2.00 stream that 1.2.14 does not implement. CESR-0048 agrees with keripy main, which implements the 1.00 override inside `-C` and reverts after it.
+### CESR-0058 to CESR-0061: variable-size primitives in a generic list (draft)
+
+- **What the specification says.** The master table, under "A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.", defines the Bytes codes `4B`, `5B` and `6B` (lead sizes 0, 1 and 2) and the universal count code `-J##`, "Generic list mixed types". Nothing in the text limits which groups an attachments group (`-C`) may hold, so these cases carry each variable-size value in a `-J` inside the `-C` after a KERI 2.0 inception, and the reference parser decodes them.
+- **What keripy does.** keripy main's Parser rejects all four streams with `TypeError: attribute name must be string, not 'NoneType'`: its attachment dispatch table (`Parser.Methods` in `src/keri/core/parsing.py`) has no entry for a generic list inside an attachments group, so the lookup returns `None` and `getattr` fails. `Parser.allParsator` catches the exception and flushes the stream, so it is a rejection, not a crash. keripy therefore says nothing about how it reads the variable-size codes themselves.
+- **Open question.** Whether an attachments group may carry a generic list is not stated either way. These cases are draft; if they are promoted they need either a `dispute` record (keripy contradicts the reading above) or a ruling that a generic list is not an attachment, in which case they are deprecated and the values move to a container keripy reads.
+
+No other `cesr-v1.0` or `cesr-strict` case disagrees. Of the draft cases added on 2026-10-15, CESR-0062 and CESR-0063 (a genus/version code opening a `-K` and a `-X`, which do not allow an override) and CESR-0066 (a `=` pad character in a text-domain primitive) agree: keripy rejects each with `SizedGroupError`. Every encoding, every decoded structure (to the extent keripy can report it), and every must-reject case agrees with keripy main. Every `keripy-1x-interop` case agrees with keripy 1.2.14, including its must-reject cases (where keripy's Parser yields for more bytes on a framed stream, the check counts that as the rejection the adapter protocol's end-of-input rule makes it), apart from CESR-0048, which is skipped there because it is a genus 2.00 stream that 1.2.14 does not implement. CESR-0048 agrees with keripy main, which implements the 1.00 override inside `-C` and reverts after it.
 
 ## keripy main on keripy 1.x streams (not a case disagreement)
 
@@ -61,6 +67,7 @@ Not disagreements with keripy. Under the suite's policy, assertions affected by 
 - **The genus/version code's count.** The universal table lists `-_AAA###` with a count length of 3 (line 806); the KERI table lists `-_AAACAA` with none and a note that it is 0; "Protocol genus/version table" says the code "MUST NOT provide a count" (line 609). The cases report it as a `genus` item with no size.
 - **Genus/version code in headings.** The Annex indexed table is headed "for genus/version `--AAACAA`"; everywhere else the code is `-_AAACAA`.
 - **Version rendering.** The version-string section renders `CAQ` as `2.16` (line 1142) and, for the genus version, as `1.16` (line 1144). The adapter protocol pins its own rendering.
+- **Pad size of the `6` variable-size table.** Line 553 says both that the table encodes raw binaries with a pad size of 0 and that it encodes those with a pad size of 2. The cases follow the second, which agrees with the table's title and line 539 (C4 in `generators/SPEC-ISSUES.md`).
 - **Version label.** The commit tagged `v1.0` carries "Specification Status: v1.1" in `spec/spec-head.md`.
 
 # Disagreements between the KERI cases and keripy
