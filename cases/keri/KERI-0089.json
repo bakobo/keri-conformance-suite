@@ -49,7 +49,7 @@
       "phase": "final"
     }
   ],
-  "description": "An inception with one witness and witness threshold 1, signed by its controller, carrying the witness's signature indexed 3 against a one-witness list. Position 3 holds no witness, so the signature counts toward nothing and the witness threshold is not met; a validator must not accept the inception, and as a threshold shortfall it should keep it.",
+  "description": "An inception with one witness and witness threshold 1, signed by its controller, carrying the witness's signature indexed 3 against a one-witness list. Position 3 holds no witness, so the signature counts toward nothing and the witness threshold is not met; a validator must not accept the inception (line 1264), and as a threshold shortfall it should keep it.",
   "id": "KERI-0089",
   "input": {
     "messages": [

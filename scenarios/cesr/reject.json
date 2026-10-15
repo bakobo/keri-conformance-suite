@@ -445,7 +445,7 @@
       "key": "reject-genus-code-opening-signature-group",
       "status": "draft",
       "title": "Reject a controller signature group whose first element is a genus/version code",
-      "description": "After a KERI 2.0 inception, an attachments group holds a -K whose framed material is the genus/version code -_AAACAA followed by one indexed signature, with -K's size counting both. -K is not one of the codes that allow a genus/version override, so the code has no override meaning there (line 816), and a -K's framed material is indexed signatures, which -_AAACAA is not. A parser that treated the code as an override would skip it and accept the group, as it must inside -C (CESR-0029). The specification states no parser-side rule for this stream; the stream breaks the cited MUST, and the assertion that a parser rejects it is graded SHOULD on the inference recorded in inferred_from.",
+      "description": "After a KERI 2.0 inception, an attachments group holds a -K whose framed material is the genus/version code -_AAACAA followed by one indexed signature, with -K's size counting both. -K is not one of the codes that allow a genus/version override, so the code has no override meaning there (line 816), and a -K's framed material is indexed signatures, which -_AAACAA is not. A parser that treated the code as an override would skip it and accept the group, as it must inside -C (CESR-0029). Line 816 binds the parser but says only what the code is not; that the parser rejects the group follows from the group's typed material, so the assertion is graded SHOULD on the inference recorded in inferred_from.",
       "operation": "cesr.parse",
       "stream": [
         {
@@ -490,7 +490,7 @@
       "key": "reject-genus-code-opening-trans-sig-group",
       "status": "draft",
       "title": "Reject a transferable signature group whose first element is a genus/version code",
-      "description": "After a KERI 2.0 inception, an attachments group holds a -X (transferable indexed signature group) whose framed material is the genus/version code -_AAACAA, then the prefix, sequence number, digest and controller signature group -X carries. -X does not allow a genus/version override, so the code has no override meaning (line 816), and it stands where -X's prefix must be. A parser that treated the code as an override would skip it and accept the group. The specification states no parser-side rule for this stream; the stream breaks the cited MUST, and the assertion that a parser rejects it is graded SHOULD on the inference recorded in inferred_from.",
+      "description": "After a KERI 2.0 inception, an attachments group holds a -X (transferable indexed signature group) whose framed material is the genus/version code -_AAACAA, then the prefix, sequence number, digest and controller signature group -X carries. -X does not allow a genus/version override, so the code has no override meaning (line 816), and it stands where -X's prefix must be. A parser that treated the code as an override would skip it and accept the group. Line 816 binds the parser but says only what the code is not; that the parser rejects the group follows from the group's typed material, so the assertion is graded SHOULD on the inference recorded in inferred_from.",
       "operation": "cesr.parse",
       "stream": [
         {
