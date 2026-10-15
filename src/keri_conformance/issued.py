@@ -83,7 +83,10 @@ def raw_of(text: str, code: str, size: int) -> bytes:
     if not isinstance(text, str) or len(text) != width or not text.startswith(code) or \
             any(c not in B64 for c in text):
         raise Unread(f"{text!r} is not a {code} primitive")
-    return base64.urlsafe_b64decode("A" * len(code) + text[len(code):])[pad:]
+    raw = base64.urlsafe_b64decode("A" * len(code) + text[len(code):])[pad:]
+    if qb64(code, raw) != text:
+        raise Unread(f"{text!r} is not the canonical encoding of a {code} primitive")
+    return raw
 
 
 def digest(data: bytes) -> str:
@@ -478,6 +481,8 @@ def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None) -> li
     if far is None or got.get("n") != far.get("d"):
         return [f"the edge {label} does not name the credential asked for"]
     default = ["I2I" if _issuee(far) else "NI2I"]
+    if "o" in got and not _operator_shape(got["o"]):
+        return [f"the edge {label}'s o is neither an operator nor a list of operators"]
     asked, issued_ops = _ops(want.get("o")), _ops(got.get("o"))
     # An absent or empty o reads as the default (ACDC line 1197); an o the request names must be
     # issued as named.
@@ -500,6 +505,10 @@ def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None) -> li
                               "credentials issued")]
 
 
+def _operator_shape(o) -> bool:
+    return isinstance(o, str) or (isinstance(o, list) and all(isinstance(x, str) for x in o))
+
+
 def _ops(o) -> list:
     """An edge's o as its list of operators; absent is the empty list."""
     if o is None:
@@ -516,6 +525,22 @@ def _blocks_verify(value) -> bool:
     if isinstance(value, list):
         return all(_blocks_verify(v) for v in value)
     return True
+
+
+def _aggregate_verifies(aggregate) -> bool:
+    """Whether an aggregate is its AGID and its members, each a block or a block's SAID, with
+    the AGID the digest of the members' SAIDs."""
+    if not isinstance(aggregate, list) or len(aggregate) < 2:
+        return False
+    saids = []
+    for member in aggregate[1:]:
+        if isinstance(member, dict):
+            saids.append(block_said(member))
+        elif _is_digest(member):
+            saids.append(member)
+        else:
+            return False
+    return digest(serialize([DUMMY] + saids)) == aggregate[0]
 
 
 def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema: str,
@@ -544,6 +569,8 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
             problems.append("the ACDC's SAID does not verify")
         elif not all(_blocks_verify(body.get(section)) for section in ("a", "A", "e", "r")):
             problems.append("a SAIDed block in the ACDC does not verify against its own SAID")
+        elif "A" in body and not _aggregate_verifies(body["A"]):
+            problems.append("the ACDC's aggregate does not verify against its AGID")
     except (TypeError, ValueError, AttributeError):
         problems.append("the ACDC's SAID cannot be computed")
     if body.get("i") != issuer:

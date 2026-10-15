@@ -502,3 +502,28 @@ def test_a_said_field_that_is_not_a_string_and_a_false_aggregate_block_fail():
 def test_a_next_key_commitment_that_cannot_be_used_fails(fields):
     problems = failed(icp_with(**fields))
     assert "not digests" in problems[0] or "not transferable" in problems[0]
+
+
+def test_an_aggregate_must_verify_against_its_agid():
+    member = {"d": "", "y": 1}
+    member["d"] = iss.block_said(member)
+    good = [iss.digest(iss.serialize([iss.DUMMY, member["d"]])), member]
+    assert iss._aggregate_verifies(good)
+    assert iss._aggregate_verifies([good[0], member["d"]])
+    for bad in ([("E" + "A" * 43), member], [good[0], "not-a-digest"], ["x"], "x"):
+        assert not iss._aggregate_verifies(bad)
+
+    def forged(r, c, p):
+        c.update(acdc=rebuilt(p, A=["E" + "A" * 43, member]))
+    assert any("AGID" in x for x in acdc_problems(forged))
+
+
+def test_an_edge_operator_of_the_wrong_shape_fails():
+    for o in (None, 7, ["I2I", 7]):
+        problems = edged({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR, "o": o}})
+        assert any("neither an operator" in p for p in problems), o
+
+
+def test_a_primitive_must_be_canonically_encoded():
+    with pytest.raises(iss.Unread, match="canonical"):
+        iss.raw_of("EZ" + "A" * 42, "E", 32)
