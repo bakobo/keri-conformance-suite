@@ -67,8 +67,8 @@ This is the central limitation. Affinidi's parser returns attachments as decoded
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-15, suite 4c8f32c9](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/cesr-v1.0.json) |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite 4c8f32c9](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keripy-1x-interop.json) |
+| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-15, suite a7d4802b](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/cesr-v1.0.json) |
+| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite a7d4802b](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 
