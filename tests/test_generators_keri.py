@@ -888,3 +888,25 @@ def test_a_rotation_carrying_an_inception_only_trait_is_rejected_at_must():
     state = next(a for a in built["assertions"] if a["check"] == "key_state")
     assert state["level"] == "MUST" and state["expected"]["keys"] == [
         keri_events.verkey(T, "a0")]
+
+
+@pytest.mark.parametrize("c", ["EO", [{"bad": "EO"}], [["EO"]], None])
+def test_configuration_traits_that_are_not_a_list_of_strings_are_not_modelled(c):
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"],
+                      tamper={"fields": {"set": {"c": c}}})]
+    with pytest.raises(ScenarioError, match="Configuration traits"):
+        tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])
+
+
+def test_an_inception_only_trait_is_refused_before_the_other_value_rules():
+    """The trait refusal is the one graded rejected at MUST, so a weaker value rule failing on
+    the same body must not hide it."""
+    events = [ICP, ev("rot1", "rot", keys=[], next=["a2"], c=["EO"], ba=["w1", "w1"])]
+    deliveries = [msg("icp", ["a0"]), msg("rot1", [{"key": "a1", "index": 0}])]
+    assert tags(events, deliveries)[1] == ["1/trait-inception-only"] * 2
+
+
+def test_an_inceptions_configuration_traits_must_also_be_a_list_of_strings():
+    """Otherwise a string such as "EOX" would read as carrying EO through a substring test."""
+    with pytest.raises(ScenarioError, match="Configuration traits"):
+        tags([{**ICP, "tamper": {"fields": {"set": {"c": "EOX"}}}}], [msg("icp", ["a0"])])

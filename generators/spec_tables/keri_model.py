@@ -237,6 +237,14 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     inception's backer threshold no larger than its backer list (line 345), and no
     inception-only configuration trait in a rotation (lines 367-373). A rotation's threshold is
     checked against the effective list, which depends on state, at step 4."""
+    traits = p.body["c"]
+    if not isinstance(traits, list) or not all(isinstance(x, str) for x in traits):
+        raise ScenarioError(f"Configuration traits of {traits!r}, which are not a list of "
+                            f"strings (line 367), are not modelled.")
+    # First of the value rules: it is the one whose sentence says drop, so a weaker rule failing
+    # on the same body must not hide it.
+    if p.ilk in ROTATIONS and set(traits) & set(INCEPTION_ONLY_TRAITS):
+        return "trait-inception-only"
     if not p.body["k"]:
         return "empty-keys"
     if not _canonical_hex(p.body["bt"]):
@@ -254,8 +262,6 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     # A rotation's bt above its effective list waits at step 4 as a shortfall instead. ~5y5t
     if p.ilk in INCEPTIONS and int(p.body["bt"], 16) > len(p.body["b"]):
         return "backer-threshold"
-    if p.ilk in ROTATIONS and set(p.body["c"]) & set(INCEPTION_ONLY_TRAITS):
-        return "trait-inception-only"
     return None
 
 
