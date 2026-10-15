@@ -965,3 +965,79 @@ def test_a_said_that_is_not_text_is_refused_not_a_crash():
     body = keri_events.sized(dict(p.body, d=[]))
     bad = keri_events.GENUS_CODE.encode() + body + s[1][len(keri_events.GENUS_CODE) + len(p.raw):]
     assert keri_model.run(T, [s[0], bad], "all").outcome[1].tag == "1/said"
+
+
+@pytest.mark.parametrize("trait", ["EO", "DND", "DID"])
+@pytest.mark.parametrize("ilk", ["rot", "drt"])
+def test_a_rotation_carrying_an_inception_only_trait_is_an_intrinsic_failure(trait, ilk):
+    """Lines 367-373: EO, DND and DID may appear only in an inception, and a validator drops an
+    event that breaks its traits' constraints. The body alone shows it, so no state is needed."""
+    events = [ICP, ev("rot1", ilk, keys=["a1"], next=["a2"], c=["RB", trait])]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == \
+        ["1/trait-inception-only"] * 2
+    # It is refused on arrival, before the validator holds the inception it would extend.
+    assert tags(events, [msg("rot1", ["a1"])]) == [["1/trait-inception-only"] * 2]
+
+
+def test_a_rotation_may_carry_traits_that_are_not_inception_only():
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["RB", "NRB"])]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == [A, A]
+
+
+def test_a_rotation_carrying_an_inception_only_trait_is_rejected_at_must():
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"])]
+    built = make(case(events, [msg("icp", ["a0"], [A, A]),
+                               msg("rot1", ["a1"], ["1/trait-inception-only"] * 2)]))
+    refusal = [a for a in built["assertions"] if a.get("message") == 1]
+    assert [(a["phase"], a["expected"], a["level"], a["clause"]) for a in refusal] == [
+        ("initial", "rejected", "MUST", CLAUSES["traits-drop"][1]),
+        ("final", "not-seen", "MUST", CLAUSES["traits-drop"][1])]
+    state = next(a for a in built["assertions"] if a["check"] == "key_state")
+    assert state["level"] == "MUST" and state["expected"]["keys"] == [
+        keri_events.verkey(T, "a0")]
+
+
+@pytest.mark.parametrize("c", ["EO", [{"bad": "EO"}], [["EO"]], None])
+def test_configuration_traits_that_are_not_a_list_of_strings_are_not_modelled(c):
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"],
+                      tamper={"fields": {"set": {"c": c}}})]
+    with pytest.raises(ScenarioError, match="Configuration traits"):
+        tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])
+
+
+def test_an_inception_only_trait_is_refused_before_the_other_value_rules():
+    """The trait refusal is the one graded rejected at MUST, so a weaker value rule failing on
+    the same body must not hide it."""
+    events = [ICP, ev("rot1", "rot", keys=[], next=["a2"], c=["EO"], ba=["w1", "w1"])]
+    deliveries = [msg("icp", ["a0"]), msg("rot1", [{"key": "a1", "index": 0}])]
+    assert tags(events, deliveries)[1] == ["1/trait-inception-only"] * 2
+
+
+def test_an_inceptions_configuration_traits_must_also_be_a_list_of_strings():
+    """Otherwise a string such as "EOX" would read as carrying EO through a substring test."""
+    with pytest.raises(ScenarioError, match="Configuration traits"):
+        tags([{**ICP, "tamper": {"fields": {"set": {"c": "EOX"}}}}], [msg("icp", ["a0"])])
+
+
+@pytest.mark.parametrize("fields,match", [
+    ({"bt": []}, "backer threshold"),
+    ({"ba": ["1AAA" + "A" * 44]}, "witness prefix"),
+])
+def test_an_inception_only_trait_does_not_grade_a_body_the_model_cannot_read(fields, match):
+    """The trait refusal is graded MUST, so it is never reached on a body the model would
+    otherwise refuse to model."""
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"],
+                      tamper={"fields": {"set": fields}})]
+    with pytest.raises(ScenarioError, match=match):
+        tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])
+
+
+def test_an_inception_only_trait_is_graded_on_a_body_whose_witnesses_the_model_can_read():
+    """A transferable witness code is one the model reads (it refuses it as a SHOULD), so the
+    trait refusal, being stronger, still decides; a removed witness's code is not read at all."""
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"], bt="1",
+                      tamper={"fields": {"set": {"ba": [keri_events.verkey(T, "w1")],
+                                                 "br": ["1AAA" + "A" * 44]}}})]
+    assert keri_events.verkey(T, "w1").startswith("D")
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == \
+        ["1/trait-inception-only"] * 2

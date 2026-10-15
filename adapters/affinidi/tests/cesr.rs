@@ -2,7 +2,7 @@
 //! written out here so this crate stays self-contained.
 
 use kcs_adapter_affinidi::cesr;
-use kcs_adapter_affinidi::protocol::{OpError, handle_line};
+use kcs_adapter_affinidi::protocol::handle_line;
 use serde_json::{Value, json};
 
 /// A keripy KERI 1.0 JSON inception, 299 bytes, framed by `KERI10JSON00012b_`.
@@ -150,17 +150,14 @@ fn encode_binary_returns_the_raw_encoded_bytes() {
 }
 
 #[test]
-fn encode_refusals_are_unsupported_errors_naming_affinidis_error() {
+fn encode_refusals_are_rejections_naming_affinidis_error() {
     for (code, raw) in [("D", "00"), ("~", KEY)] {
         let response = encode(code, raw, "text");
-        assert_eq!(response["error"]["kind"], "unsupported", "{response}");
-        let message = response["error"]["message"].as_str().unwrap();
-        assert!(
-            message.starts_with(cesr::E_ENCODE_REFUSED)
-                && message.contains("CesrError::")
-                && message.ends_with('.'),
-            "{message}"
-        );
+        let class = response["result"]["reject"]["class"]
+            .as_str()
+            .unwrap_or_else(|| panic!("not a rejection: {response}"));
+        assert!(class.starts_with("CesrError::"), "{response}");
+        assert_eq!(response["result"].as_object().unwrap().len(), 1);
     }
 }
 
@@ -170,8 +167,10 @@ fn the_operations_can_be_called_directly() {
         cesr::parse(b"").unwrap(),
         json!({"accepted": {"consumed": 0}})
     );
-    assert!(matches!(
-        cesr::encode("D", vec![0], false),
-        Err(OpError::Unsupported(_))
-    ));
+    assert!(
+        cesr::encode("D", vec![0], false).unwrap()["reject"]["class"]
+            .as_str()
+            .unwrap()
+            .starts_with("CesrError::")
+    );
 }

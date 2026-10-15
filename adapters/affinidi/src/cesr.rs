@@ -12,7 +12,6 @@ use serde_json::{Value, json};
 
 use crate::protocol::OpError;
 
-pub const E_ENCODE_REFUSED: &str = "e.input.format.encode-refused.f";
 pub const E_INCONSISTENT: &str = "e.self.unknown.measurement.f";
 
 /// The name of an error's enum variant, from its derived `Debug` form: `CoreError::ParseError`.
@@ -87,11 +86,14 @@ pub fn encode(code: &str, raw: Vec<u8>, binary: bool) -> Result<Value, OpError> 
     });
     match encoded {
         Ok(bytes) => Ok(json!({"encoded": hex(&bytes)})),
-        Err(error) => Err(OpError::Unsupported(format!(
-            "{E_ENCODE_REFUSED}: Affinidi refused to encode code {}: {}: {error}.",
-            Value::String(code.to_string()),
-            class_of("CesrError", &error)
-        ))),
+        // A refusal is a result, not an error (docs/adapter-protocol.md, cesr.encode).
+        Err(error) => {
+            eprintln!(
+                "Affinidi refused to encode code {}: {error}",
+                Value::String(code.to_string())
+            );
+            Ok(json!({"reject": {"class": class_of("CesrError", &error)}}))
+        }
     }
 }
 
