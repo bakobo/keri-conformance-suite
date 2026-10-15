@@ -141,6 +141,12 @@ def test_nothing_is_post_extraction_for_a_parser_that_does_not_dispatch():
     assert not rec.post_extraction(measure.kering.ValidationError("framing"), b"")
 
 
+def test_no_framing_error_keripy_raises_is_a_validation_error():
+    # post_extraction tells a 1.2.14 dispatch failure from a framing failure by class: every
+    # framing error msgParsator raises itself is an ExtractionError subclass.
+    assert not issubclass(measure.kering.ExtractionError, measure.kering.ValidationError)
+
+
 @pytest.mark.parametrize("generation,dispatches", [("main", False), ("1.x", True)])
 def test_only_keripy_1_x_dispatches_inside_its_parser(generation, dispatches):
     api = {"main": keripy_api.Main, "1.x": keripy_api.OneX}[generation]
