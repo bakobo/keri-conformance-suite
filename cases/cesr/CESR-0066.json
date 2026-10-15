@@ -1,0 +1,52 @@
+{
+  "assertions": [
+    {
+      "check": "rejected",
+      "clause": {
+        "commit": "037129608b9e6960858b752019ac273d40d7386c",
+        "quote": "The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)].",
+        "section": "Concrete Domain representations",
+        "spec": "cesr",
+        "url": "https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md#concrete-domain-representations"
+      },
+      "id": "a1",
+      "inferred_from": {
+        "inference": "A parser should reject a text-domain primitive that contains a character outside the URL- and filename-safe Base64 alphabet, such as the standard alphabet's '+' and '/' or the '=' pad character.",
+        "line": 93,
+        "quote": "The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)].",
+        "section": "Concrete Domain representations"
+      },
+      "level": "SHOULD",
+      "note": "Informative class: bad-frame-start."
+    }
+  ],
+  "description": "After a KERI 2.0 inception, an attachments group holds a nontransferable receipt couple whose B prefix is BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=: its last character is the Base64 pad character '=', which CESR never uses because every CESR primitive is composable. The text domain uses only the URL- and filename-safe Base64 alphabet (line 93), which has no '='. The specification states no parser-side rule for this stream; the stream breaks the cited MUST, and the assertion that a parser rejects it is graded SHOULD on the inference recorded in inferred_from.",
+  "id": "CESR-0066",
+  "input": {
+    "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414147352e222c2274223a22696370222c2264223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2269223a2245444d356d54517a6e324b37496773393972555a7577783235595f4b727a746c722d75726d38627354377435222c2273223a2230222c226b74223a2232222c226b223a5b22444358516c42303037556d4c73757044497a5f414443393857375a68635a614d6a746632545f2d6e644c5933222c2244504a2d7230792d494c7a53764b2d763466776257494a79476a41675a4b483335336a72454b4839506f725f222c22444e42373568385f4d454c64735053754172685a72397864765533587047635053374a5042454a7a68714c6e225d2c226e74223a2231222c226e223a5b22454f7a756e384f61316c4b714c5f772d4b55783270666d3659435f596d41793431674a663331476449505345225d2c226274223a2231222c2262223a5b2242426a4a45346d5454655f496c675a39426d4d724c6f684d47745443477073466b5033744449666d72736838225d2c2263223a5b5d2c2261223a5b5d7d2d4341692d4d4168424141414141414141414141414141414141414141414141414141414141414141414141414141414141413d304242724133787236413345726f717843663635714a7170467a556f594962514241785239584d4377626d6d3664616c41754f42566c377048616b49726346587a355971594344576a76353175745a5839744c79576a5077"
+  },
+  "operation": "cesr.parse",
+  "profile": "cesr-v1.0",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-spec-tables",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/cesr/reject.json#reject-text-pad"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Reject a text-domain primitive containing '='"
+}

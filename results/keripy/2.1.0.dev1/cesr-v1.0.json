@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "cc7aff7ffc715deb692c6d091399588343adff9c",
+    "commit": "b270e09296a924794b4f1f8d909299351e46a1e4",
     "date": "2026-10-15"
   },
   "report": {
@@ -105,6 +105,14 @@
         "disputed": {
           "MUST": {
             "fail": 2
+          }
+        },
+        "draft": {
+          "MUST": {
+            "fail": 4
+          },
+          "SHOULD": {
+            "pass": 3
           }
         }
       },
@@ -3336,6 +3344,479 @@
             "actual": {
               "reject": {
                 "class": "ShortageError"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "CESR-0058",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "fail",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 4,
+                "start": 309
+              },
+              {
+                "code": "-J",
+                "end": 317,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 3,
+                "start": 313
+              },
+              {
+                "code": "4B",
+                "end": 329,
+                "kind": "primitive",
+                "raw": "6ffbe25bdb94",
+                "start": 317
+              }
+            ],
+            "actual": [
+              {
+                "kind": "genus",
+                "start": 0,
+                "end": 8,
+                "code": "-_AAACAA",
+                "genus": "AAA",
+                "version": "2.00"
+              },
+              {
+                "kind": "message",
+                "start": 8,
+                "end": 309,
+                "proto": "KERI",
+                "version": "2.0",
+                "serialization": "JSON",
+                "size": 301
+              },
+              {
+                "kind": "counter",
+                "start": 309,
+                "end": 313,
+                "code": "-C",
+                "size": 4,
+                "group_end": 329
+              },
+              {
+                "kind": "counter",
+                "start": 313,
+                "end": 317,
+                "code": "-J",
+                "size": 3,
+                "group_end": 317
+              }
+            ],
+            "detail": "The decoded items differ from the expected items.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0059",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "fail",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 4,
+                "start": 309
+              },
+              {
+                "code": "-J",
+                "end": 317,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 3,
+                "start": 313
+              },
+              {
+                "code": "5B",
+                "end": 329,
+                "kind": "primitive",
+                "raw": "4f89969083",
+                "start": 317
+              }
+            ],
+            "actual": [
+              {
+                "kind": "genus",
+                "start": 0,
+                "end": 8,
+                "code": "-_AAACAA",
+                "genus": "AAA",
+                "version": "2.00"
+              },
+              {
+                "kind": "message",
+                "start": 8,
+                "end": 309,
+                "proto": "KERI",
+                "version": "2.0",
+                "serialization": "JSON",
+                "size": 301
+              },
+              {
+                "kind": "counter",
+                "start": 309,
+                "end": 313,
+                "code": "-C",
+                "size": 4,
+                "group_end": 329
+              },
+              {
+                "kind": "counter",
+                "start": 313,
+                "end": 317,
+                "code": "-J",
+                "size": 3,
+                "group_end": 317
+              }
+            ],
+            "detail": "The decoded items differ from the expected items.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0060",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "fail",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 4,
+                "start": 309
+              },
+              {
+                "code": "-J",
+                "end": 317,
+                "group_end": 329,
+                "kind": "counter",
+                "size": 3,
+                "start": 313
+              },
+              {
+                "code": "6B",
+                "end": 329,
+                "kind": "primitive",
+                "raw": "d9fe5a9d",
+                "start": 317
+              }
+            ],
+            "actual": [
+              {
+                "kind": "genus",
+                "start": 0,
+                "end": 8,
+                "code": "-_AAACAA",
+                "genus": "AAA",
+                "version": "2.00"
+              },
+              {
+                "kind": "message",
+                "start": 8,
+                "end": 309,
+                "proto": "KERI",
+                "version": "2.0",
+                "serialization": "JSON",
+                "size": 301
+              },
+              {
+                "kind": "counter",
+                "start": 309,
+                "end": 313,
+                "code": "-C",
+                "size": 4,
+                "group_end": 329
+              },
+              {
+                "kind": "counter",
+                "start": 313,
+                "end": 317,
+                "code": "-J",
+                "size": 3,
+                "group_end": 317
+              }
+            ],
+            "detail": "The decoded items differ from the expected items.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0061",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "fail",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 6,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 307,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 6,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 310,
+                "group_end": 340,
+                "kind": "counter",
+                "size": 10,
+                "start": 307
+              },
+              {
+                "code": "-J",
+                "end": 313,
+                "group_end": 340,
+                "kind": "counter",
+                "size": 9,
+                "start": 310
+              },
+              {
+                "code": "4B",
+                "end": 322,
+                "kind": "primitive",
+                "raw": "d494c2f3b061",
+                "start": 313
+              },
+              {
+                "code": "5B",
+                "end": 331,
+                "kind": "primitive",
+                "raw": "07ab0c870c",
+                "start": 322
+              },
+              {
+                "code": "6B",
+                "end": 340,
+                "kind": "primitive",
+                "raw": "c890d197",
+                "start": 331
+              }
+            ],
+            "actual": [
+              {
+                "kind": "genus",
+                "start": 0,
+                "end": 6,
+                "code": "-_AAACAA",
+                "genus": "AAA",
+                "version": "2.00"
+              },
+              {
+                "kind": "message",
+                "start": 6,
+                "end": 307,
+                "proto": "KERI",
+                "version": "2.0",
+                "serialization": "JSON",
+                "size": 301
+              },
+              {
+                "kind": "counter",
+                "start": 307,
+                "end": 310,
+                "code": "-C",
+                "size": 10,
+                "group_end": 340
+              },
+              {
+                "kind": "counter",
+                "start": 310,
+                "end": 313,
+                "code": "-J",
+                "size": 9,
+                "group_end": 313
+              }
+            ],
+            "detail": "The decoded items differ from the expected items.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0062",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "keripy rejected the stream: SizedGroupError: Error processing attachment group of size={eags}\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "SizedGroupError"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "CESR-0063",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "keripy rejected the stream: SizedGroupError: Error processing attachment group of size={eags}\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "SizedGroupError"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "CESR-0066",
+        "status": "draft",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "keripy rejected the stream: SizedGroupError: Error processing attachment group of size={eags}\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "SizedGroupError"
               }
             },
             "detail": null,

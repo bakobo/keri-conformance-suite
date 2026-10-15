@@ -57,6 +57,20 @@ The suite's policy (decided 2026-10-01):
 - **The specification should state** that a parser MUST reject a body shorter than the size its version string declares, once the input is known to be complete.
 - **Re-issued at MUST if stated:** CESR-0042.
 
+### I8. A text-domain character outside the URL-safe alphabet (line 93)
+
+- **Text.** "Concrete Domain representations", line 93: "The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)]." The same paragraph says CESR does not use `=` for any purpose.
+- **Gap.** This binds what a text-domain stream contains. Nothing says a parser must reject a primitive containing the standard alphabet's `+` or `/` or the pad character `=`.
+- **The specification should state** that a parser MUST reject text-domain material containing any character outside the URL- and filename-safe alphabet.
+- **Re-issued at MUST if stated:** CESR-0066.
+
+### I9. A genus/version code opening a group that does not allow an override (line 816)
+
+- **Text.** "Universal Code table genus/version codes that allow genus/version override", line 816: "The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser." It adds that the code's interpretation "depends on the framed material context in which it appears".
+- **Gap.** This forbids the override reading but does not say what the code then is. Where the framed material must be indexed signatures (`-K`) or a fixed sequence of primitives (`-X`), the code fits none of them, so rejecting the group is inferred. In a generic list (`-J`), whose members may be anything, the line 818 example suggests the code is simply a list member, but the text does not say how a parser reports or handles it, so the suite has no case for that context yet.
+- **The specification should state** what a parser does with a genus/version code at the start of a non-overrideable group: reject the group where the group's material is typed, and, for generic groups, whether the code is an ordinary member.
+- **Re-issued at MUST if stated:** CESR-0062 (`-K`), CESR-0063 (`-X`).
+
 ## Spec-internal conflicts (cases stay MUST and active)
 
 ### C1. What a count code's size counts (line 591 against lines 674, 714 and 1103)
@@ -81,6 +95,12 @@ The suite's policy (decided 2026-10-01):
 - **Text.** The universal table (line 806) lists `-_AAA###` with Count Length `3*`, and the note at lines 808-809 says this "isn't a count of items". The KERI table lists `-_AAACAA` with no count length, and its note says the count lengths are 0. Line 609: "A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets".
 - **Correction.** Drop the count length from the universal row, or say that `###` are version digits.
 - **Effect on the suite.** None on any case. The adapter protocol reports a genus/version code as a `genus` item with no size, following line 609; keripy stores the version as a count of 8192.
+
+### C4. The pad size of the small variable-size table with 2 lead bytes (line 553)
+
+- **The rule the cases follow.** The table's title, "Small variable-length raw-size table with 2 lead bytes", line 539 ("These three tables use 0, 1, or 2 lead bytes as appropriate given the pad size of 0, 1, or 2"), and the last sentence of line 553 ("All are raw binary Primitives with a pad size of 2 that each includes 2 lead bytes.") all say the `6` selector's table encodes raw values with a pad size of 2.
+- **Conflicting text.** Line 553 also says "Only raw binaries with a pad size of 0 are encoded with this table.", which repeats line 545's sentence for the `4` selector.
+- **Recorded in:** CESR-0060 and CESR-0061 (`spec_conflicts`, `lead2-pad-553`).
 
 ## Gaps the suite tests outside the normative profile
 

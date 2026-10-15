@@ -157,8 +157,8 @@ def check_bytes(case) -> list[str]:
                         notes.append(f"message {i} ({name}): keripy's Verfer says {kind} "
                                      f"{siger.index} does not verify over {sig['over']}")
         if keys is not None:
-            # A genuine (non-forged) signature verifies against one of the event's keys, whatever
-            # index it is attached at; a forged one against none. The index is keripy's business.
+            # A genuine signature verifies against one of the event's keys, whatever index it is
+            # attached at; a bad one against none. The index is keripy's business.
             for siger, bad in zip(exts.sigers, forged, strict=True):
                 ok = any(Verfer(qb64=k).verify(siger.raw, signed) for k in keys)
                 if ok == bool(bad):
@@ -169,8 +169,10 @@ def check_bytes(case) -> list[str]:
         if wits and exts.wigers:
             wit_keys = _witness_keys(case, spec, name)
             for wiger, bad in zip(exts.wigers, wforged, strict=True):
-                ok = Verfer(qb64=wit_keys[wiger.index]).verify(wiger.raw, signed)
-                if ok == bool(bad):
+                # An index past the witness list names no witness, so nothing verifies there.
+                inside = wiger.index < len(wit_keys)
+                ok = inside and Verfer(qb64=wit_keys[wiger.index]).verify(wiger.raw, signed)
+                if ok == bool(bad or not inside):
                     notes.append(f"message {i} ({name}): keripy's Verfer says witness "
                                  f"signature {wiger.index} {'verifies' if ok else 'fails'}")
     return notes
