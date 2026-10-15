@@ -10,7 +10,7 @@ so a prerequisite passed in some other run never counts.
 
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from keri_conformance.errors import (
@@ -29,10 +29,8 @@ NAME = string(f"^{PROFILE_NAME.pattern}$")
 TOKEN = string(min_length=1)
 
 
-
 def _unread(value, path):
     """A field the generator checks and the runner only carries."""
-    return
 
 
 # The fields the runner reads from a layered profile. The generated file carries more (its basis,
@@ -53,6 +51,9 @@ class Profile:
     prerequisites: tuple[str, ...] = ()
     operations: tuple[str, ...] = ()
     features: tuple[str, ...] = ()
+    # For a layered profile: each member's case ids, from its profile file. A layered run must
+    # send exactly these, so a claim cannot rest on cases other than the ones the profile names.
+    manifests: dict[str, tuple[str, ...]] = field(default_factory=dict, compare=False)
 
     @property
     def layered(self) -> bool:
@@ -96,13 +97,35 @@ def load_profile(suite, name: str) -> Profile:
     problem = LAYERED(doc, "")
     if problem:
         raise RunnerError(E_PROFILE_FORMAT, f"The layered profile {name} is malformed: {problem}.")
+    manifests = {name: tuple(doc["cases"])}
     for prerequisite in doc["prerequisites"]:
-        if prerequisite == name or "prerequisites" in _read(suite, prerequisite):
+        flat = _read(suite, prerequisite) if prerequisite != name else doc
+        if "prerequisites" in flat:
             raise RunnerError(E_PROFILE_FORMAT,
                               f"The layered profile {name} names {prerequisite} as a "
                               "prerequisite, which is itself layered; layers do not nest.")
+        problem = array(TOKEN)(flat.get("cases"), f"{prerequisite}.cases")
+        if problem:
+            raise RunnerError(E_PROFILE_FORMAT, f"The prerequisite profile {prerequisite} of "
+                                                f"{name} is malformed: {problem}.")
+        manifests[prerequisite] = tuple(flat["cases"])
     return Profile(name, doc["version"], tuple(doc["prerequisites"]),
-                   tuple(doc["requires"]["operations"]), tuple(doc["requires"]["features"]))
+                   tuple(doc["requires"]["operations"]), tuple(doc["requires"]["features"]),
+                   manifests)
+
+
+def manifest_problem(profile: Profile, case_ids: dict[str, set[str]]) -> str | None:
+    """None if, for every member of a layered profile, the cases that claim it are exactly the
+    ones its profile file lists; otherwise what differs. ``case_ids`` maps a profile name to the
+    ids of the cases that name it."""
+    for member, listed in profile.manifests.items():
+        have, want = case_ids.get(member, set()), set(listed)
+        if have != want:
+            parts = [f"missing {', '.join(sorted(want - have))}" if want - have else "",
+                     f"not listed {', '.join(sorted(have - want))}" if have - want else ""]
+            return (f"the cases for {member} are not the ones its profile file lists ("
+                    + "; ".join(p for p in parts if p) + ")")
+    return None
 
 
 def claim_verdict(own: str, prerequisites: dict[str, str], missing: bool) -> str:

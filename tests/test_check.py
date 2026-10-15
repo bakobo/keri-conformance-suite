@@ -21,8 +21,8 @@ def probes(argv, vocabulary, timeout=5.0):
 
 def test_probe_names_are_stable():
     assert PROBES == ("hello", "id-echo", "malformed-request", "unknown-op", "statelessness",
-                      "quiescence", "issue-malformed", "present-malformed", "issue-determinism",
-                      "present-independence")
+                      "quiescence", "issue-malformed", "present-malformed",
+                      "presentation-malformed", "issue-determinism", "present-independence")
 
 
 def test_a_good_adapter_passes_every_available_probe(vocabulary):
@@ -30,7 +30,8 @@ def test_a_good_adapter_passes_every_available_probe(vocabulary):
     assert [result[n].status for n in PROBES] == ["pass", "pass", "pass", "pass",
                                                   "not-yet-available", "not-yet-available",
                                                   "not-applicable", "not-applicable",
-                                                  "not-applicable", "not-applicable"]
+                                                  "not-applicable", "not-applicable",
+                                                  "not-applicable"]
     assert "acdc.issue" in result["issue-malformed"].reason
     assert "error" in result["malformed-request"].reason
     assert all(p.reason for p in result.values())
@@ -116,7 +117,8 @@ def test_a_refused_hello_fails_and_skips_the_rest(vocabulary):
     result = probes(bad("hello-crash"), vocabulary)
     assert result["hello"].status == "fail"
     assert [result[n].status for n in PROBES[1:4]] == ["not-run"] * 3
-    assert [result[n].status for n in PROBES[6:8]] == ["not-run"] * 2
+    assert [result[n].status for n in PROBES[6:9]] == ["not-run"] * 3
+    assert [result[n].status for n in PROBES[9:]] == ["not-yet-available"] * 2
     assert all(result[n].reason for n in PROBES)
 
 
@@ -125,7 +127,8 @@ def test_a_refused_hello_fails_and_skips_the_rest(vocabulary):
 ISSUER_HELLO = {
     "protocol": 1, "adapter": {"name": "issuer-adapter", "version": "1"},
     "implementation": {"name": "issuer", "version": "1", "commit": "c"},
-    "operations": ["cesr.parse", "acdc.issue", "acdc.present"], "features": [],
+    "operations": ["cesr.parse", "acdc.issue", "acdc.present", "acdc.verify"],
+    "features": ["acdc.presentation"],
 }
 ECHO = {"match": {"op": "cesr.parse"}, "result": {"reject": {"class": "truncated"}}}
 
@@ -139,13 +142,15 @@ def test_an_issuer_that_errors_on_malformed_requests_passes(vocabulary, write_js
     result = probes(issuer(write_json), vocabulary)  # every unmatched request gets an error
     assert result["issue-malformed"].status == "pass"
     assert result["present-malformed"].status == "pass"
+    assert result["presentation-malformed"].status == "pass"
     assert result["issue-determinism"].status == "not-yet-available"
     assert result["present-independence"].status == "not-yet-available"
     assert check_exit_code(list(result.values())) == 0
 
 
 @pytest.mark.parametrize(("op", "probe"), [("acdc.issue", "issue-malformed"),
-                                           ("acdc.present", "present-malformed")])
+                                           ("acdc.present", "present-malformed"),
+                                           ("acdc.verify", "presentation-malformed")])
 @pytest.mark.parametrize("answer", [
     {"result": {"refused": {"reason": "no template"}}},
     {"result": {"acdc": "7b7d", "registry": []}},
@@ -261,3 +266,11 @@ def test_a_hello_that_changes_on_restart_fails_the_issuer_probe_that_restarted(v
     assert result["issue-malformed"].status == "fail"
     assert result["present-malformed"].status == "fail"
     assert errors.E_ADAPTER_HELLO_CHANGED in result["present-malformed"].reason
+
+
+def test_the_presentation_probe_needs_the_feature_as_well_as_the_op(vocabulary, write_json):
+    hello = write_json("hello.json", {**ISSUER_HELLO, "features": []})
+    table = write_json("table.json", [ECHO])
+    result = probes(good("--table", table, "--hello", hello), vocabulary)
+    assert result["presentation-malformed"].status == "not-applicable"
+    assert "acdc.presentation" in result["presentation-malformed"].reason

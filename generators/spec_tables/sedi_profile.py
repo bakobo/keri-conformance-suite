@@ -81,12 +81,13 @@ def _source_problem(source, *, operations, features, profiles) -> str | None:
         return f"its status must be one of {', '.join(STATUSES)}"
     prerequisites = source["prerequisites"]
     if (not isinstance(prerequisites, list) or not prerequisites
-            or any(p not in profiles for p in prerequisites)):
+            or any(not isinstance(p, str) or p not in profiles for p in prerequisites)):
         return f"its prerequisites must be a non-empty list of the profiles {sorted(profiles)}"
     requires = source["requires"]
     if not (isinstance(requires, dict) and set(requires) == {"operations", "features"}
-            and all(isinstance(requires[k], list) for k in requires)):
-        return "its requires must list operations and features"
+            and all(isinstance(requires[k], list)
+                    and all(isinstance(v, str) for v in requires[k]) for k in requires)):
+        return "its requires must list operations and features, by name"
     unknown = [o for o in requires["operations"] if o not in operations]
     unknown += [f for f in requires["features"] if f not in features]
     if unknown:
@@ -121,8 +122,11 @@ def _polarity(assertion: dict) -> str:
 
 def _exercised(source: dict, cases: list[dict], pins: dict) -> dict[str, dict[str, list[str]]]:
     ids = {c["id"] for c in source["choices"]}
-    commits = {spec: pin["commit"] for spec, pin in pins["specs"].items()}
-    allowed = {*commits.values(), *(d["commit"] for d in source["drafts"].values())}
+    # A quoted basis may cite its own specification's pinned commit, or a draft commit in the
+    # same repository, never another specification's.
+    allowed = {spec: {pin["commit"], *(d["commit"] for d in source["drafts"].values()
+                                       if d["repository"] == pin["repository"])}
+               for spec, pin in pins["specs"].items()}
     matrix = {cid: {"positive": [], "negative": []} for cid in ids}
     for case in cases:
         for assertion in case["assertions"]:
@@ -136,8 +140,8 @@ def _exercised(source: dict, cases: list[dict], pins: dict) -> dict[str, dict[st
                 raise ScenarioError(f"{where} names {', '.join(unknown)}, which "
                                     f"{source['name']} does not choose.")
             basis = assertion.get("basis")
-            if isinstance(basis, dict) and basis["commit"] not in allowed and not any(
-                    c.startswith(basis["commit"]) for c in allowed):
+            if isinstance(basis, dict) and not any(
+                    c.startswith(basis["commit"]) for c in allowed.get(basis["spec"], ())):
                 raise ScenarioError(f"{where} quotes the {basis['spec']} text at "
                                     f"{basis['commit']}, which {source['name']} does not pin.")
             polarity = _polarity(assertion)

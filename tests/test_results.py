@@ -229,14 +229,15 @@ def test_an_aborted_report_must_say_aborted():
 
 LAYERED = {"name": "lay", "version": "1", "prerequisites": ["cesr-1.0"],
            "requires": {"operations": ["cesr.parse"], "features": ["kel.delegation"]},
-           "cases": []}
+           "cases": ["CESR-0004"]}
 
 
 @pytest.fixture
 def suite(tmp_path):
     root = tmp_path / "suite"
     (root / "profiles").mkdir(parents=True)
-    for name, doc in (("lay", LAYERED), ("cesr-1.0", {"name": "cesr-1.0", "cases": []})):
+    for name, doc in (("lay", LAYERED), ("cesr-1.0", {"name": "cesr-1.0",
+                                                       "cases": ["CESR-0001"]})):
         (root / "profiles" / f"{name}.json").write_text(json.dumps(doc), encoding="utf-8")
     return root
 
@@ -289,6 +290,12 @@ def test_a_layered_result_may_hold_only_its_own_and_its_prerequisites_cases(suit
 
 def test_a_result_for_a_profile_the_suite_does_not_define_is_refused(suite):
     assert "no profile named" in R.result_problem(result(report(profile="cesr-9")), suite)
+
+
+def test_a_layered_result_must_hold_every_case_its_profiles_name(suite):
+    doc = layered_result()
+    del doc["report"]["cases"][0]
+    assert "missing CESR-0001" in R.result_problem(doc, suite)
 
 
 def test_the_claim_verdict_is_the_report_verdict(suite):

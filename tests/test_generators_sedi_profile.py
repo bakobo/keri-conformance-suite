@@ -18,7 +18,12 @@ OPERATIONS = {"cesr.parse", "keri.process", "exn.verify", "acdc.verify", "acdc.i
 FEATURES = set(json.loads((ROOT / "profiles" / "features.json").read_text())["features"])
 PROFILES = {"cesr-1.0", "keri-1.0", "acdc-1.0"}
 ACDC = "4a543c549fd9811c23bf97b0daaf48400f4005c2"
-PINS = {"suite": "0.0.1", "specs": {"acdc": {"repository": "r", "tag": "v1.0", "commit": ACDC}}}
+KERI = "71cb54ebb445dd9d8cb33cd29a5f50894fafc569"
+PINS = {"suite": "0.0.1", "specs": {
+    "acdc": {"repository": SOURCE["drafts"]["acdc-main"]["repository"], "tag": "v1.0",
+             "commit": ACDC},
+    "keri": {"repository": "https://github.com/trustoverip/kswg-keri-specification",
+             "tag": "v1.0.1", "commit": KERI}}}
 SMALL = {**SOURCE, "choices": [c for c in SOURCE["choices"]
                                if c["id"] in ("tel-sequence", "revoked")]}
 
@@ -95,6 +100,18 @@ def test_a_quoted_basis_must_be_at_a_pinned_commit(commit):
     build(cases=[case])
 
 
+@pytest.mark.parametrize(("spec", "commit"), [
+    ("acdc", KERI),  # another specification's pin
+    ("keri", SOURCE["drafts"]["acdc-main"]["commit"]),  # a draft of another repository
+    ("cesr", ACDC),  # a specification the profile does not pin
+])
+def test_a_quoted_basis_must_cite_its_own_specifications_pin(spec, commit):
+    case = verdict_case("ACDC-0901", "valid", ["revoked"],
+                        basis={"text": "t", "spec": spec, "commit": commit})
+    with pytest.raises(ScenarioError, match="does not pin"):
+        build(cases=[case])
+
+
 def _mutated(path, value):
     source = copy.deepcopy(SMALL)
     target = source
@@ -116,6 +133,8 @@ def _mutated(path, value):
     (("prerequisites",), ["acdc-9"], "prerequisites"),
     (("requires",), {"operations": []}, "requires must list"),
     (("requires", "features"), "x", "requires must list"),
+    (("requires", "operations"), [{}], "requires must list"),
+    (("prerequisites",), [{}], "prerequisites"),
     (("requires", "operations"), ["acdc.revoke"], "acdc.revoke"),
     (("requires", "features"), ["acdc.everything"], "acdc.everything"),
     (("drafts", "acdc-main", "commit"), "9d80942", "drafts"),

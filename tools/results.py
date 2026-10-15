@@ -39,7 +39,7 @@ from keri_conformance.errors import (
     RunnerError,
 )
 from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, read_json
-from keri_conformance.profiles import load_profile
+from keri_conformance.profiles import load_profile, manifest_problem
 from keri_conformance.run import make_claim, summarize
 from keri_conformance.shapes import (
     Check,
@@ -251,6 +251,12 @@ def _meaning_problem(report: dict, suite=SUITE) -> str | None:
                     "assertions' outcomes do not imply")
     summary, verdict = summarize(report["cases"])
     if claim is not None:
+        named: dict[str, set[str]] = {}
+        for entry in report["cases"]:
+            named.setdefault(entry["profile"], set()).add(entry["id"])
+        problem = manifest_problem(profile, named)
+        if problem:
+            return problem
         if claim != make_claim(profile, report["cases"], report["hello"]):
             return "its claim is not the one its cases, hello and profile imply"
         verdict = claim["verdict"]

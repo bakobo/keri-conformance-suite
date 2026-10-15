@@ -28,7 +28,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
 
 - Every choice has an id, a reading, a basis, an overturning condition and the keri-sow tick that tracks the ambiguity.
 - A generator test refuses any SEDI case whose assertion rests on neither a choice nor a clause.
-- A choice-to-case matrix is generated from the scenario file. Every choice must name at least one positive case id and one negative case id, and the build fails if either is empty. The minimum per choice:
+- A choice-to-case matrix is generated from the scenario file. Every choice must name at least one positive case id and one negative case id. While the profile's version is draft, the generator lists every empty side; it refuses to make a version active with one (this.i 47yreej2), so the profile can land in steps without hiding the gap. The minimum per choice:
   - 57ud: n+1 accepted; a gap, a repeated n, and n+2 after a `bup`.
   - 5qcy: a single anchored head accepted. A higher event that is not anchored is ignored, and so is a higher event whose chain is broken. Two events anchored at one n are refused.
   - 3b5o: the Blinder derivation accepted; a different path radix, an uppercase hex path and a wrong stretch tier are refused. The choice record states the KDF parameters, the entropy floor of the KDF's input and the reasoning for both. Its overturning condition includes a cost floor. The issuer refuses an empty salt, a salt below the floor, and one salt reused across two credentials. The spec-question draft for 3b5o argues strength as well as bytes.
@@ -49,7 +49,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
 
 - `schema/adapter-protocol.schema.json` gains `acdc.issue` and `acdc.present`, and an optional presentation context on `acdc.verify` (the grant exn stream and the verifier's AID, per 09snlyre). It also gains the holder's refusal result, `{"refused": {"reason": …}}`.
 - Valid and invalid fixtures for every new request and result shape are run through the Python validator and one non-Python validator.
-- The feature vocabulary gains `acdc.issue`, `acdc.present` and `acdc.verify.presentation`. An adapter lacking a feature gets `incomplete` on the cases that need it. Those cases are never silently skipped.
+- The feature vocabulary gains `acdc.presentation` (this.i 4xw8k0hg), and `acdc.registry.upd`. The two new operations need no feature, because the runner sends a case only to an adapter that lists its operation. A case the adapter is not sent leaves its profile's share of a claim at best `incomplete`; it is never silently skipped.
 - New `kcs check-adapter` probes:
   - Malformed `acdc.issue` and `acdc.present` requests, an unknown disclosure choice, and a malformed presentation context each get an error response, not a crash.
   - A mock adapter that crashes on a malformed request fails check-adapter.

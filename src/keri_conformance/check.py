@@ -3,8 +3,8 @@
 The probes check what the runner can check from the outside with no KERI material: that hello is
 valid, that ids are echoed, that a request line that is not JSON gets an error response whose id
 is null and the adapter then answers the next request, and that an unknown op gets an error; and,
-for an adapter that lists acdc.issue or acdc.present, that a request of that op the protocol cannot
-read gets an error rather than a result. The statelessness and quiescence probes need real KERI
+for an adapter that lists acdc.issue or acdc.present, or declares acdc.presentation, that a request
+the protocol cannot read gets an error rather than a result. The statelessness and quiescence probes need real KERI
 streams from the keripy generator, which does not exist yet, so they are reported as not yet
 available rather than faked.
 """
@@ -18,16 +18,23 @@ from keri_conformance.jsonfile import loads
 from keri_conformance.session import AdapterSession, Failure, parse_response
 
 PROBES = ("hello", "id-echo", "malformed-request", "unknown-op", "statelessness", "quiescence",
-          "issue-malformed", "present-malformed", "issue-determinism", "present-independence")
-# The probes for the issuer and holder operations, run only against an adapter that lists the
-# operation, and the probes for them that need a real issuance to send.
-OP_PROBES = (("issue-malformed", "acdc.issue"), ("present-malformed", "acdc.present"))
+          "issue-malformed", "present-malformed", "presentation-malformed", "issue-determinism",
+          "present-independence")
+# The probes for the issuer and holder operations and the presentation context, each run only
+# against an adapter that lists the operation (and declares the feature, where one is named), and
+# the probes for them that need a real issuance to send.
+OP_PROBES = (("issue-malformed", "acdc.issue", None), ("present-malformed", "acdc.present", None),
+             ("presentation-malformed", "acdc.verify", "acdc.presentation"))
 OP_NOT_YET = (("issue-determinism", "acdc.issue"), ("present-independence", "acdc.present"))
 NOT_YET_ACDC = ("This probe sends a real issuance, taken from the suite's first acdc.issue case, "
                 "which does not exist yet.")
-# Requests this protocol cannot read: an issuance with no ACDC template, and a presentation in
-# a disclosure form the protocol does not define.
+# Requests this protocol cannot read: an issuance with no ACDC template, a presentation in a
+# disclosure form the protocol does not define, and a verification whose presentation context
+# names no message and no verifier.
 MALFORMED = {
+    "acdc.verify": {"perspective": {"role": "validator"}, "kels": [], "registry": [],
+                    "schemas": [], "acdcs": [], "presented": {"stream": "2d4b"},
+                    "presentation": {"messages": [], "verifier": ""}},
     "acdc.issue": {"kels": [], "seeds": {}, "registry": []},
     "acdc.present": {"perspective": {"role": "holder"}, "kels": [], "registry": [], "schemas": [],
                      "acdcs": [], "held": {"stream": "2d4b"},
@@ -127,9 +134,13 @@ def _probe_malformed_op(session: AdapterSession, op: str) -> tuple[bool, str]:
 
 def _op_probes(session: AdapterSession) -> list[Probe]:
     results = []
-    for name, op in OP_PROBES:
+    for name, op, feature in OP_PROBES:
         if op not in session.hello["operations"]:
             results.append(Probe(name, "not-applicable", f"The adapter does not list {op}."))
+            continue
+        if feature is not None and feature not in session.hello["features"]:
+            results.append(Probe(name, "not-applicable",
+                                 f"The adapter does not declare {feature}."))
             continue
         try:
             session.ensure_running()
@@ -157,7 +168,8 @@ def check_adapter(session: AdapterSession) -> list[Probe]:
                   for name in PROBES[1:4]),
                 *(Probe(name, "not-yet-available", NOT_YET) for name in PROBES[4:6]),
                 *(Probe(name, "not-run", "The hello probe failed, so this probe was not run.")
-                  for name in PROBES[6:])]
+                  for name in PROBES[6:9]),
+                *(Probe(name, "not-yet-available", NOT_YET_ACDC) for name in PROBES[9:])]
     results = [Probe("hello", "pass", "The adapter's hello is valid and its features are in "
                                       "the vocabulary.")]
     for name, probe in (("id-echo", _probe_echo), ("malformed-request", _probe_malformed),

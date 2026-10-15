@@ -290,7 +290,7 @@ The bundle is `acdc.verify`'s, with `held`, the ACDC fully expanded as its holde
 
 `presented` is the presentation as `acdc.verify` takes its `presented`: the ACDC in the chosen form with the attachments that carry or point to its issuer's commitment, beginning with the genus/version code. It must contain nothing the form hides: no hidden attribute value, no salt of a hidden block, no undisclosed blinded state and no hidden issuee block, in any encoding. A holder refuses to present an ACDC that a verifier would refuse, with `refused`, and refuses a disclosure that the ACDC or its schema cannot satisfy. It never answers with a presentation other than the one asked for.
 
-A refusal judges the inputs, so it is only for a request the adapter could read. An `acdc.issue` request without its templates, or an `acdc.present` request whose `form` this protocol does not define, cannot be read, and gets an error response, never `refused`; `kcs check-adapter` probes both.
+A refusal judges the inputs, so it is only for a request the adapter could read. An `acdc.issue` request without its templates, or an `acdc.present` request whose `form` this protocol does not define, cannot be read, and gets an error response, never `refused`. So does an `acdc.verify` request whose `presentation` names no message or no verifier. `kcs check-adapter` probes all three.
 
 ## `exn.verify`
 

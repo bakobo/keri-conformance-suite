@@ -9,7 +9,7 @@ import pytest
 from conftest import ROOT, assertion, good, make_case
 
 from keri_conformance import cli, errors
-from keri_conformance.profiles import Profile, claim_verdict, load_profile
+from keri_conformance.profiles import Profile, claim_verdict, load_profile, manifest_problem
 
 INTEROP_VERDICTS = ("interoperable", "not-interoperable", "incomplete", "no-evidence")
 BASIS = "Hand-built for the runner's tests."
@@ -150,6 +150,15 @@ STRAY = make_case("CESR-0201", "cesr.parse", {"stream": "00"}, [assertion("rejec
                   profile="other")
 
 
+def manifest(suite, *cases):
+    """List each case in its profile's file, as the generator would."""
+    for name in ("base", "other", "lay"):
+        path = suite / "profiles" / f"{name}.json"
+        doc = json.loads(path.read_text())
+        doc["cases"] = sorted(c["id"] for c in cases if c["profile"] == name)
+        path.write_text(json.dumps(doc), encoding="utf-8")
+
+
 def run(suite, cases, tmp_path, profile="lay"):
     report = tmp_path / "report.json"
     code = cli.main(["run", "--adapter", shlex.join(good()), "--suite", str(suite),
@@ -165,8 +174,9 @@ def test_a_layered_run_reports_its_claim(suite, cases_dir, tmp_path, capsys, own
     if missing:
         write(suite, "lay", {**LAYERED, "requires": {"operations": ["cesr.parse", "acdc.issue"],
                                                     "features": ["kel.delegation"]}})
-    cases = cases_dir(*BASE_CASES[prerequisite], *OWN_CASES[own], STRAY)
-    code, report = run(suite, cases, tmp_path)
+    chosen = [*BASE_CASES[prerequisite], *OWN_CASES[own], STRAY]
+    manifest(suite, *chosen)
+    code, report = run(suite, cases_dir(*chosen), tmp_path)
     claim = report["claim"]
     want = expected_claim(own, prerequisite, missing)
     assert claim["verdict"] == report["verdict"] == want
@@ -184,8 +194,9 @@ def test_a_layered_run_reports_its_claim(suite, cases_dir, tmp_path, capsys, own
 
 
 def test_a_layered_claim_is_never_worded_as_conformance(suite, cases_dir, tmp_path, capsys):
-    cases = cases_dir(*BASE_CASES["conformant"], *OWN_CASES["interoperable"])
-    _code, report = run(suite, cases, tmp_path)
+    chosen = [*BASE_CASES["conformant"], *OWN_CASES["interoperable"]]
+    manifest(suite, *chosen)
+    _code, report = run(suite, cases_dir(*chosen), tmp_path)
     assert report["verdict"] in INTEROP_VERDICTS
     verdict_line = next(line for line in capsys.readouterr().out.splitlines()
                         if line.startswith("verdict:"))
@@ -201,3 +212,56 @@ def test_an_unknown_profile_is_refused_before_any_case_runs(suite, cases_dir, tm
     code, report = run(suite, cases_dir(*BASE_CASES["conformant"]), tmp_path, profile="sedi-9")
     assert code == errors.EXIT_USAGE and report is None
     assert errors.E_PROFILE_UNKNOWN in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("change", ["missing", "extra"])
+def test_a_layered_run_refuses_cases_its_profiles_do_not_name(suite, cases_dir, tmp_path,
+                                                               capsys, change):
+    chosen = [*BASE_CASES["conformant"], *OWN_CASES["interoperable"]]
+    manifest(suite, *chosen)
+    if change == "missing":
+        chosen = chosen[:1]
+    else:
+        chosen.append(make_case("CESR-0102", "cesr.parse", {"stream": "2d4b"},
+                                [assertion("rejected", level="INTEROP", basis=BASIS)],
+                                profile="lay"))
+    code, report = run(suite, cases_dir(*chosen), tmp_path)
+    assert code == errors.EXIT_FAULT and report is None
+    err = capsys.readouterr().err
+    assert errors.E_PROFILE_CASES in err
+    assert ("missing CESR-0101" if change == "missing" else "not listed CESR-0102") in err
+
+
+@pytest.mark.parametrize("member", ["base", "lay"])
+def test_an_unsent_case_leaves_its_profile_incomplete(suite, cases_dir, tmp_path, member):
+    unsent = make_case("KERI-0009", "keri.process",
+                       {"perspective": {"role": "validator"},
+                        "messages": [{"stream": "7b7d", "source": "controller"}]},
+                       [assertion("disposition", message=0, phase="final", expected="seen",
+                                  **({} if member == "base" else
+                                     {"level": "INTEROP", "basis": BASIS}))],
+                       features=["kel.delegation"], profile=member)
+    chosen = [*BASE_CASES["conformant"], *OWN_CASES["interoperable"], unsent]
+    manifest(suite, *chosen)
+    _code, report = run(suite, cases_dir(*chosen), tmp_path)
+    claim = report["claim"]
+    if member == "base":
+        assert claim["prerequisites"] == {"base": "incomplete"}
+    else:
+        assert claim["own_verdict"] == "incomplete"
+    assert claim["verdict"] == "incomplete"
+
+
+def test_a_prerequisite_whose_case_list_is_malformed_is_a_runner_fault(suite):
+    write(suite, "base", {"name": "base", "cases": "CESR-0001"})
+    with pytest.raises(errors.RunnerError) as info:
+        load_profile(suite, "lay")
+    assert info.value.code == errors.E_PROFILE_FORMAT
+
+
+def test_the_manifest_check_names_what_differs():
+    profile = Profile("lay", "1", ("base",), manifests={"lay": ("A",), "base": ("B", "C")})
+    assert manifest_problem(profile, {"lay": {"A"}, "base": {"B", "C"}}) is None
+    problem = manifest_problem(profile, {"lay": {"A", "D"}, "base": {"B"}})
+    assert problem is not None and "not listed D" in problem
+    assert "missing C" in manifest_problem(profile, {"lay": {"A"}, "base": {"B"}})

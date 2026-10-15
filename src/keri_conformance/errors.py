@@ -37,6 +37,7 @@ E_REPORT_WRITE_TRANSIENT = "e.env.filesystem.report.r"
 E_PROFILE_UNKNOWN = "e.input.missing.profile.f"
 E_PROFILE_FORMAT = "e.self.config.profile.f"
 E_PROFILE_READ_TRANSIENT = "e.env.filesystem.profile.r"
+E_PROFILE_CASES = "e.state.conflict.profile-cases.f"
 E_CHECK_NOT_IMPLEMENTED = "e.feature.unsupported.check.f"
 E_EVALUATION_INCOMPLETE = "e.feature.unsupported.evaluation.f"
 
