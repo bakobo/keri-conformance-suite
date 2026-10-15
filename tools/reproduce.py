@@ -126,11 +126,13 @@ def _today() -> str:
 
 def build_adapter(repo: Path, instance: Instance) -> None:
     """Build `instance` from its lockfile, as its README and CI do. Each step's output goes to
-    this process's own, so a failure explains itself."""
+    this process's own, so a failure explains itself. The suite's own virtual environment is not
+    passed on: an adapter's uv project has its own."""
+    inherited = {k: v for k, v in os.environ.items() if k != "VIRTUAL_ENV"}
     for directory, argv, env in instance.build:
         try:
             done = subprocess.run(list(argv), cwd=repo / directory,
-                                  env={**os.environ, **dict(env)}, check=False)
+                                  env={**inherited, **dict(env)}, check=False)
         except OSError as exc:
             raise RunnerError(E_BUILD, f"{instance.name} could not be built: {argv[0]} could not "
                                        f"be started ({exc}). Install the toolchain its README "

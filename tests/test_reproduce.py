@@ -255,11 +255,14 @@ def _instance(*steps):
     return P.Instance("x", steps, "bin/x", ("cesr-v1.0",), "kcs-adapter-x", "README.md")
 
 
-def test_build_adapter_runs_each_step_in_its_directory_with_its_environment(tmp_path):
+def test_build_adapter_runs_each_step_in_its_directory_with_its_environment(tmp_path,
+                                                                           monkeypatch):
+    monkeypatch.setenv("VIRTUAL_ENV", "/the/suite/.venv")
     (tmp_path / "a").mkdir()
-    script = ("import os, pathlib; pathlib.Path('out.txt').write_text(os.environ['KCS_X'])")
+    script = ("import os, pathlib; pathlib.Path('out.txt').write_text("
+              "os.environ['KCS_X'] + str(os.environ.get('VIRTUAL_ENV')))")
     P.build_adapter(tmp_path, _instance(P._step("a", sys.executable, "-c", script, KCS_X="1")))
-    assert (tmp_path / "a" / "out.txt").read_text() == "1"
+    assert (tmp_path / "a" / "out.txt").read_text() == "1None"
 
 
 def test_a_failing_build_step_is_a_coded_error(tmp_path):
