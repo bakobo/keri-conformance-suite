@@ -7,16 +7,14 @@ import importlib.metadata
 import json
 import sys
 
-from kcs_adapter_heti import issue, verify
+from kcs_adapter_heti import issue, process, verify
 
 PROTOCOL = 1
 ADAPTER = {"name": "kcs-adapter-heti", "version": "0.1.0"}
-OPERATIONS = ["acdc.verify", "acdc.issue"]
-# What heti does itself inside acdc.verify (README.md, "Declared features"). heti refuses upd
-# registries by name, so acdc.registry.upd is not declared.
-FEATURES = ["acdc.edges", "acdc.registry.bup", "acdc.version-2.x", "cesr.genus-2.00",
-            "cesr.serialization.json", "crypto.ed25519", "kel.basic", "kel.delegation",
-            "keri.version-2.x"]
+OPERATIONS = ["acdc.verify", "acdc.issue", "keri.process"]
+# What heti does itself inside acdc.verify and keri.process (README.md, "Declared features").
+# heti refuses upd registries by name, so acdc.registry.upd is not declared.
+FEATURES = sorted({"acdc.edges", "acdc.registry.bup", "acdc.version-2.x", *process.FEATURES})
 
 # The longest request line the adapter reads, in bytes, not counting its newline. A longer line
 # is answered with an error whose id is null and is skipped without being held in memory.
@@ -30,8 +28,7 @@ E_UNDECLARED_OP = "e.feature.unsupported.undeclared-op.f"
 E_VERSION = "e.feature.unsupported.protocol-version.f"
 E_INTERNAL = "e.self.unknown.f"
 # Operations of protocol version 1 this adapter does not implement.
-UNDECLARED = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit", "exn.verify",
-              "acdc.present")
+UNDECLARED = ("cesr.parse", "cesr.encode", "keri.emit", "exn.verify", "acdc.present")
 
 
 class Unsupported(Exception):
@@ -61,7 +58,8 @@ def hello(request):
             "operations": list(OPERATIONS), "features": list(FEATURES), "composes": []}
 
 
-OPS = {"hello": hello, "acdc.verify": verify.verify, "acdc.issue": issue.issue}
+OPS = {"hello": hello, "acdc.verify": verify.verify, "acdc.issue": issue.issue,
+       "keri.process": process.process}
 
 
 def handle(request):
@@ -79,7 +77,7 @@ def handle(request):
                                       f"protocol version {PROTOCOL}.")
     except verify.Malformed as exc:
         return _error(rid, "harness", str(exc))
-    except Unsupported as exc:
+    except (Unsupported, process.Unsupported) as exc:
         return _error(rid, "unsupported", str(exc))
     except Exception as exc:  # noqa: BLE001 - an adapter bug must still produce one response
         return _error(rid, "harness", f"{E_INTERNAL}: The adapter failed with "

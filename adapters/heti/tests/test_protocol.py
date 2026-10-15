@@ -12,9 +12,9 @@ def answer(request) -> dict:
     return json.loads(protocol.handle_line(json.dumps(request).encode()))
 
 
-def test_hello_names_heti_and_declares_verify_and_issue():
+def test_hello_names_heti_and_declares_its_operations():
     result = answer({"id": 0, "op": "hello", "protocol": 1, "supported": [1]})["result"]
-    assert result["protocol"] == 1 and result["operations"] == ["acdc.verify", "acdc.issue"]
+    assert result["protocol"] == 1 and result["operations"] == ["acdc.verify", "acdc.issue", "keri.process"]
     assert result["implementation"]["name"] == "heti"
     assert len(result["implementation"]["commit"]) == 40
     assert "acdc.registry.upd" not in result["features"] and result["composes"] == []
@@ -38,7 +38,7 @@ def test_an_installation_without_a_direct_url_reports_an_unknown_commit(monkeypa
 
 
 @pytest.mark.parametrize("request_,kind,code", [
-    ({"id": 1, "op": "keri.process"}, "unsupported", protocol.E_UNDECLARED_OP),
+    ({"id": 1, "op": "keri.emit"}, "unsupported", protocol.E_UNDECLARED_OP),
     ({"id": 1, "op": "frobnicate"}, "harness", protocol.E_UNKNOWN_OP),
     ({"id": 1, "op": 7}, "harness", protocol.E_MALFORMED),
     ({"id": 1, "op": "acdc.verify", "kels": 7}, "harness", protocol.E_MALFORMED),
