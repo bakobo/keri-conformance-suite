@@ -36,7 +36,24 @@ def _request(request) -> tuple[list[str], list[bytes], list[dict]]:
             and isinstance(c.get("edges", {}), dict) for c in credentials):
         raise verify.Malformed(f'{E_MALFORMED}: "credentials" must be a non-empty list of '
                                "credentials, each naming roles the request creates.")
+    names = [c["name"] for c in credentials]
+    if len(set(names)) != len(names):
+        raise verify.Malformed(f"{E_MALFORMED}: a credential name appears twice.")
+    for credential in credentials:
+        if any(n not in names or n == credential["name"]
+               for n in _named(credential.get("edges", {}))):
+            raise verify.Malformed(f"{E_MALFORMED}: an edge of {credential['name']!r} names no "
+                                   "other credential the request issues.")
     return roles, schemas, credentials
+
+
+def _named(edges) -> list:
+    """The credential names an edge section asked for names."""
+    out = []
+    for label, value in edges.items():
+        if label != "o" and isinstance(value, dict):
+            out += [value.get("credential")] if "credential" in value else _named(value)
+    return out
 
 
 def far_first(credentials: list[dict]) -> list[dict]:

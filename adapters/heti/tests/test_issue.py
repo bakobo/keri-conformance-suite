@@ -61,7 +61,10 @@ def test_heti_issues_a_chain_far_node_first():
     acdc = verify.split(bytes.fromhex(result["credentials"]["guardian"]["acdc"]))[0]
     core = verify.split(bytes.fromhex(result["credentials"]["core"]["acdc"]))[0]
     assert acdc["e"]["core"]["n"] == core["d"] and acdc["e"]["core"]["o"] == "I2I"
-    assert verify.verify(bundle(result, "guardian", far=("core",)))["verdict"] == "valid"
+    verdict = verify.verify(bundle(result, "guardian", far=("core",)))
+    assert verdict["verdict"] == "valid"
+    assert verdict["edges"] == [{"near": acdc["d"], "path": "e.core", "n": core["d"],
+                                 "valid": True}]
 
 
 def test_an_edge_group_keeps_its_operator():
@@ -77,13 +80,23 @@ def test_heti_refuses_an_issuance_it_cannot_make():
     assert "refused" in result and "e." in result["refused"]["reason"]
 
 
-def test_an_edge_to_a_credential_never_issued_passes_through_to_heti():
-    """The case contract refuses such a request; given one anyway, the adapter passes the name
-    through and heti, which does not resolve an edge at issuance, writes it as asked."""
-    result = issue.issue(request(credential("n", edges={"le": {"credential": "nope"}})))
-    acdc = verify.split(bytes.fromhex(result["credentials"]["n"]["acdc"]))[0]
-    assert acdc["e"]["le"]["n"] == "nope"
+@pytest.mark.parametrize("edges", [{"le": {"credential": "nope"}},
+                                   {"g": {"le": {"credential": "nope"}}},
+                                   {"le": {"credential": "n"}}])
+def test_an_edge_to_a_credential_the_request_does_not_issue_is_malformed(edges):
+    with pytest.raises(verify.Malformed, match="names no other credential"):
+        issue.issue(request(credential("n", edges=edges)))
+
+
+def test_a_credential_name_given_twice_is_malformed():
+    with pytest.raises(verify.Malformed, match="twice"):
+        issue.issue(request(credential("n"), credential("n")))
+
+
+def test_edges_for_heti_pass_through_what_they_cannot_resolve():
+    assert issue.edges({"le": {"credential": "nope"}}, {}, {}) == {"le": {"n": "nope", "s": ""}}
     assert issue.edges({"x": 7}, {}, {}) == {"x": 7}
+    assert issue._named({"o": "OR", "x": 7, "le": {"credential": "a"}}) == ["a"]
 
 
 def test_far_first_tolerates_cycles_and_unknown_names():

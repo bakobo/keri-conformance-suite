@@ -166,19 +166,39 @@ def groups(attachments: bytes) -> list[tuple[bytes, bytes]]:
 
 
 def _blinder(attachments: bytes) -> str | None:
-    """The fields of the first disclosed blinded state block in an attachments group."""
+    """The fields of the first disclosed blinded state block in an attachments group; None when
+    there is none, or when it is not text, which heti then judges without."""
     found = [body for code, body in groups(attachments) if code in (b"-a", b"--a")]
-    return found[0].decode("ascii") if found else None
+    try:
+        return found[0].decode("ascii") if found else None
+    except UnicodeDecodeError:
+        return None
+
+
+def well_formed(attachments: bytes) -> bool:
+    """Whether what follows a body is nothing, or exactly one attachments group whose count
+    measures all of it."""
+    if not attachments:
+        return True
+    try:
+        if attachments.startswith(b"--C"):
+            return 8 + _count(attachments[3:8]) * 4 == len(attachments)
+        if attachments.startswith(b"-C"):
+            return 4 + _count(attachments[2:4]) * 4 == len(attachments)
+    except ValueError:
+        return False
+    return False
 
 
 def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
     """An ACDC with its registry's chain, and its disclosures when it has any. heti reads an ACDC
     with nothing after it and finds the issuer's seal in the KEL itself, so the ACDC goes to heti
     as its genus/version code and body. Its attachments only point at the sealing event or carry
-    a disclosure, which goes with the registry's. A stream that does not frame goes as it came,
-    for heti to refuse."""
+    a disclosure, which goes with the registry's. A stream that does not frame, or whose body is
+    followed by anything but one well-formed attachments group, goes as it came, for heti to
+    refuse."""
     parts = split(stream)
-    if parts is None:
+    if parts is None or not well_formed(parts[2]):
         return (stream, None)
     sad, raw, attachments = parts
     acdc = GENUS + raw
@@ -253,11 +273,39 @@ async def _judge(home: pathlib.Path, served, schemas, regs, far, presented) -> d
             head = {"rd": verdict.registry, "n": verdict.head_sn, "d": verdict.head_said,
                     "td": verdict.said, "ts": verdict.state}
         return {"verdict": "valid", "reason": "heti verified the ACDC", "registry": head,
-                "edges": []}
+                "edges": walked_edges([acdc] + [f[0] for f in far], verdict.walked)}
     finally:
         box.close()
         server.shutdown()
         server.server_close()
+
+
+def edge_blocks(e, path: str = "e") -> list[tuple[str, dict]]:
+    """Every edge block in an edge section, as (label path, block): a map with an n."""
+    if not isinstance(e, dict):
+        return []
+    if isinstance(e.get("n"), str):
+        return [(path, e)]
+    return [p for k, v in e.items() if k not in ("d", "u", "o")
+            for p in edge_blocks(v, f"{path}.{k}")]
+
+
+def walked_edges(streams: list[bytes], walked) -> list[dict]:
+    """The edges heti evaluated: for a verified ACDC whose far nodes heti walked, every edge, of
+    the presented ACDC or of a far node, that points at a node heti walked, each valid. heti
+    reports the nodes it walked, not a result per edge, so an edge it left unwalked (E1E without
+    far nodes) is not reported."""
+    if not walked:
+        return []
+    out = []
+    for stream in streams:
+        parts = split(stream)
+        if parts is None:
+            continue
+        sad = parts[0]
+        out += [{"near": sad.get("d"), "path": path, "n": block["n"], "valid": True}
+                for path, block in edge_blocks(sad.get("e")) if block["n"] in walked]
+    return out
 
 
 def verify(request) -> dict:

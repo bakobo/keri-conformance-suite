@@ -152,3 +152,33 @@ def test_the_kel_server_answers_only_for_prefixes_it_holds():
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_a_presented_acdc_with_trailing_bytes_goes_to_heti_as_it_came():
+    stream = bytes.fromhex(BUNDLES["direct"]["presented"]["stream"])
+    assert verify.evidence(stream + b"HOSTILE", {}) == (stream + b"HOSTILE", None)
+    result = verify.verify(request("direct", presented={"stream": (stream + b"HOSTILE").hex()}))
+    assert result["verdict"] == "invalid"
+
+
+@pytest.mark.parametrize("attachments,expected", [
+    (b"", True), (b"-CAB-SAA", True), (b"--CAAAAB-SAA", True), (b"-CAB-SAAjunk", False),
+    (b"--CAAAAB", False), (b"-C!!", False), (b"junk", False),
+])
+def test_well_formed_attachments(attachments, expected):
+    assert verify.well_formed(attachments) == expected
+
+
+def test_a_disclosure_that_is_not_text_is_left_out():
+    assert verify._blinder(b"-CAB-aAB\xff\xff\xff\xff") is None
+
+
+def test_walked_edges_report_only_what_heti_walked():
+    stream = bytes.fromhex(BUNDLES["chain"]["presented"]["stream"])
+    near = verify.split(stream)[0]
+    far = [p for _, p in verify.edge_blocks(near["e"])][0]["n"]
+    assert verify.walked_edges([stream, b"junk"], (far,)) == [
+        {"near": near["d"], "path": "e.le", "n": far, "valid": True}]
+    assert verify.walked_edges([stream], None) == []
+    assert verify.walked_edges([stream], ("Eother",)) == []
+    assert verify.edge_blocks("Ecompact") == []
