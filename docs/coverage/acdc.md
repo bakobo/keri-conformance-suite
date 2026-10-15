@@ -12,1550 +12,1550 @@ The pinned text is [spec/spec-body.md at 4a543c549fd9](https://github.com/trusto
 
 #### Ordered Nested Field Maps
 
-[Line 4 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#ordered-nested-field-maps).
+[Line 4 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L4).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 10 | MUST | validator | 0 | 0 | 0 | — | — | — | ACDCs MUST use insertion-ordered field maps for canonical serialization/deserialization. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [10](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L10) | ACDCs MUST use insertion-ordered field maps for canonical serialization/deserialization. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Top-Level Fields
 
-[Line 12 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#top-level-fields).
+[Line 12 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L12).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 14 | MUST | validator | 0 | 0 | 0 | — | — | — | Some fields are OPTIONAL but all fields that appear MUST appear in a defined order. |
-| 14 | MUST | untestable: A statement about what the section defines, not an obligation on any party. | 0 | 0 | 0 | — | — | — | This section defines which fields are REQUIRED and which are OPTIONAL. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [14](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L14) | Some fields are OPTIONAL but all fields that appear MUST appear in a defined order. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [14](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L14) | This section defines which fields are REQUIRED and which are OPTIONAL. | MUST | untestable: A statement about what the section defines, not an obligation on any party. | 0 | 0 | 0 | — | — | — |
 
 #### Field Ordering
 
-[Line 30 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#field-ordering).
+[Line 30 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L30).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 32 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0008 (inferred, draft) | When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [32](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L32) | When present, the top-level fields MUST appear in the following order: `[v, t, d, u, i, rd, s, a, A, e, r]`. | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0008 (inferred, draft) |
 
 #### Required Fields
 
-[Line 34 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#required-fields).
+[Line 34 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L34).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 36 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The following fields are REQUIRED `[v, d, i, s]` i.e. they MUST appear in any ACDC (not to be confused with other message types in the ACDC protocol). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [36](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L36) | The following fields are REQUIRED `[v, d, i, s]` i.e. they MUST appear in any ACDC (not to be confused with other message types in the ACDC protocol). | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Other Reserved Fields
 
-[Line 38 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#other-reserved-fields).
+[Line 38 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L38).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 40 | MUST | untestable: Reserves labels for the specification's own use; it states no condition on an ACDC beyond the rules that define each label. | 0 | 0 | 0 | — | — | — | The following table defines non-top-level fields whose labels MUST be reserved. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [40](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L40) | The following table defines non-top-level fields whose labels MUST be reserved. | MUST | untestable: Reserves labels for the specification's own use; it states no condition on an ACDC beyond the rules that define each label. | 0 | 0 | 0 | — | — | — |
 
 #### Compact Labels
 
-[Line 56 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#compact-labels).
+[Line 56 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L56).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 58 | MUST | validator | 0 | 0 | 0 | — | — | — | The primary field labels are compact in that they MUST use only one or at most two characters. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [58](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L58) | The primary field labels are compact in that they MUST use only one or at most two characters. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Version String Field
 
-[Line 60 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#version-string-field).
+[Line 60 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L60).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 62 | MUST | validator | 0 | 0 | 0 | — | — | — | The Version String, `v`, field MUST be the first field in any top-level ACDC field map encoded in JSON, CBOR, or MGPK [[RFC4627](#RFC4627)] [[12](#CBOR)] [[13](#RFC8949)] [[14](#MGPK)]. |
-| 62 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0064 (draft) | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. |
-| 64 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0009 (inferred, draft) | The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol. |
-| 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the ACDC protocol [[1](#CESR)] used by the associated message. |
-| 64 | MUST | validator | 0 | 0 | 0 | — | — | — | The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)]. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [62](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L62) | The Version String, `v`, field MUST be the first field in any top-level ACDC field map encoded in JSON, CBOR, or MGPK [[RFC4627](#RFC4627)] [[12](#CBOR)] [[13](#RFC8949)] [[14](#MGPK)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [62](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L62) | A Stream parser SHOULD use the Version String to extract and deserialize (deterministically) any serialized Stream of ACDC Message bodies. | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0064 (draft) |
+| [64](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L64) | The protocol field, `PPPP` value in the Version String MUST be `ACDC` for the ACDC protocol. | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0009 (inferred, draft) |
+| [64](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L64) | The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the ACDC protocol [[1](#CESR)] used by the associated message. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [64](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L64) | The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Legacy Version String Field Format
 
-[Line 66 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#legacy-version-string-field-format).
+[Line 66 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L66).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 68 | MUST | validator | 0 | 0 | 0 | — | — | — | Compliant ACDC version 2.XX implementations MUST support the old ACDC version 1.x Version String format to properly verify Message bodies created with 1.x format events. |
-| 68 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol field, `PPPP` value in the version string MUST be `ACDC` for the ACDC protocol. |
-| 68 | MUST | validator | 0 | 0 | 0 | — | — | — | The version field, `vv`, MUST encode the old version of the ACDC protocol [[1](#CESR)]. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [68](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L68) | Compliant ACDC version 2.XX implementations MUST support the old ACDC version 1.x Version String format to properly verify Message bodies created with 1.x format events. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [68](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L68) | The protocol field, `PPPP` value in the version string MUST be `ACDC` for the ACDC protocol. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [68](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L68) | The version field, `vv`, MUST encode the old version of the ACDC protocol [[1](#CESR)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Message Type Field
 
-[Line 70 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#message-type-field).
+[Line 70 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L70).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
-| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
-| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
-| 72 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [72](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L72) | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [72](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L72) | It MUST be present in messages with any other message type, regardless of the kind of serialization. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [72](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L72) | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [72](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L72) | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Self-addressing Identifier (SAID) Fields
 
-[Line 75 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#self-addressing-identifier-said-fields).
+[Line 75 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L75).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 79 | MUST | validator | 0 | 0 | 0 | — | — | — | More specifically, special top-level ACDC fields MUST have for their value either a serialized field map or the SAID of that field map. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [79](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L79) | More specifically, special top-level ACDC fields MUST have for their value either a serialized field map or the SAID of that field map. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Autonomic IDentifier (AID) Fields
 
-[Line 93 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#autonomic-identifier-aid-fields).
+[Line 93 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L93).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 95 | MUST | validator | 0 | 0 | 0 | — | — | — | Some fields, such as the `i`, Issuer identifier field, MUST each have an [[ref: AID]] as its value. |
-| 95 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)]. |
-| 95 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Each AID SHOULD have set of one or more Controllers who each control a private key. |
-| 95 | MUST | untestable: States that no relationship is required; there is nothing to test. | 0 | 0 | 0 | — | — | — | No shared or trusted relationship between the Controllers and Verifiers is REQUIRED. |
-| 95 | MUST | validator, security | 0 | 7 | 0 | SHOULD 7 | — | ACDC-0018 (inferred, draft), ACDC-0019 (inferred, draft), ACDC-0020 (inferred, draft), ACDC-0021 (inferred, draft), ACDC-0022 (inferred, draft), ACDC-0023 (inferred, draft), ACDC-0066 (inferred, draft) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [95](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L95) | Some fields, such as the `i`, Issuer identifier field, MUST each have an [[ref: AID]] as its value. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [95](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L95) | An AID MUST be derived from one or more `(public, private)` key pairs using asymmetric or public-key cryptography to create verifiable digital signatures [[52](#DSig)]. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [95](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L95) | Each AID SHOULD have set of one or more Controllers who each control a private key. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [95](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L95) | No shared or trusted relationship between the Controllers and Verifiers is REQUIRED. | MUST | untestable: States that no relationship is required; there is nothing to test. | 0 | 0 | 0 | — | — | — |
+| [95](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L95) | The verifiable key state for AIDs MUST be established with the KERI protocol [[2](#KERI)]. | MUST | validator, security | 0 | 7 | 0 | SHOULD 7 | — | ACDC-0018 (inferred, draft), ACDC-0019 (inferred, draft), ACDC-0020 (inferred, draft), ACDC-0021 (inferred, draft), ACDC-0022 (inferred, draft), ACDC-0023 (inferred, draft), ACDC-0066 (inferred, draft) |
 
 #### Datetime, `dt` Fields
 
-[Line 97 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#datetime-dt-fields).
+[Line 97 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L97).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 98 | MUST | validator | 0 | 0 | 0 | — | — | — | The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [98](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L98) | The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Partially Disclosable Attribute Section Field
 
-[Line 104 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#partially-disclosable-attribute-section-field).
+[Line 104 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L104).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 106 | MUST | validator | 0 | 0 | 0 | — | — | — | An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [106](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L106) | An ACDC MUST not have both an `a` field and an `A` field (see next section) when it has either. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Selectively Disclosable Aggregate Section Field
 
-[Line 108 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#selectively-disclosable-aggregate-section-field).
+[Line 108 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L108).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 110 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0006 (inferred, draft) | An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [110](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L110) | An ACDC MUST not have both a non-empty `a` field value and a non-empty `A` field value (see next section) when it has either. | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0006 (inferred, draft) |
 
 #### Most compact form SAID
 
-[Line 130 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#most-compact-form-said).
+[Line 130 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L130).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 134 | MUST | validator, security | 0 | 0 | 0 | — | — | — | However, for the sake of verifiability, each section or block that is compactable MUST have only one SAID regardless of how many different variants its `oneOf` compositions allow. |
-| 134 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, there MUST be one and only one unambiguous way to compute the SAID of a compactifiable section or block with compactifiable nested blocks. |
-| 140 | MUST | validator | 0 | 0 | 0 | — | — | — | This compact form MUST appear as the first variant in the `oneOf` subschema list for its labeled field. |
-| 142 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Its SAID MUST be computed on the full expanded representation of the block. |
-| 142 | MUST | validator, security | 0 | 0 | 0 | — | — | — | These are special cases, and the most detailed variant of the subblock MUST be the fully expanded form. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [134](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L134) | However, for the sake of verifiability, each section or block that is compactable MUST have only one SAID regardless of how many different variants its `oneOf` compositions allow. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [134](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L134) | Therefore, there MUST be one and only one unambiguous way to compute the SAID of a compactifiable section or block with compactifiable nested blocks. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [140](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L140) | This compact form MUST appear as the first variant in the `oneOf` subschema list for its labeled field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [142](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L142) | Its SAID MUST be computed on the full expanded representation of the block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [142](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L142) | These are special cases, and the most detailed variant of the subblock MUST be the fully expanded form. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Public ACDC
 
-[Line 158 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#public-acdc).
+[Line 158 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L158).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 160 | SHOULD | untestable: Considering an ACDC public is a classification that acdc.verify does not report. | 0 | 0 | 0 | — | — | — | Thus, an ACDC without a top-level UUID, `u`, field SHOULD be considered a public (non-confidential) ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [160](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L160) | Thus, an ACDC without a top-level UUID, `u`, field SHOULD be considered a public (non-confidential) ACDC. | SHOULD | untestable: Considering an ACDC public is a classification that acdc.verify does not report. | 0 | 0 | 0 | — | — | — |
 
 #### Type-is-schema
 
-[Line 180 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#type-is-schema).
+[Line 180 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L180).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 182 | MUST | validator | 0 | 0 | 0 | — | — | — | ACDC's use of JSON Schema MUST be in accordance with the ACDC-defined profile as defined herein. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [182](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L182) | ACDC's use of JSON Schema MUST be in accordance with the ACDC-defined profile as defined herein. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Schema ID Field Label
 
-[Line 184 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-id-field-label).
+[Line 184 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L184).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 186 | MUST | validator, security | 0 | 0 | 0 | — | — | — | This field value MUST be the SAID of the schema. |
-| 186 | MUST | validator, security | 0 | 0 | 0 | — | — | — | There are several ACDC supported formats for the value of the top-level id, `$id`, field but all of the formats MUST include the SAID of the Schema (see below). |
-| 186 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Correspondingly, the value of the top-level schema, `s`, field MUST be the SAID included in the schema's top-level `$id` field. |
-| 188 | MUST | untestable: Every CESR digest code has at least 128 bits of strength, so no well-formed schema SAID can violate it., security | 0 | 0 | 0 | — | — | — | The digest algorithm employed for generating [[ref: Schema]] SAIDs MUST have an approximate cryptographic strength of 128 bits. |
-| 188 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The [[3](#SAID)] MUST be generated in compliance with the ToIP SAID internet draft specification and MUST be encoded using CESR. |
-| 190 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of the id, `$id`, field in any ACDC bundled subschema resource MUST include the SAID of that subschema using one of the formats described below. |
-| 190 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The subschema so bundled MUST be verifiable against its referenced and embedded SAID value. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [186](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L186) | This field value MUST be the SAID of the schema. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [186](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L186) | There are several ACDC supported formats for the value of the top-level id, `$id`, field but all of the formats MUST include the SAID of the Schema (see below). | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [186](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L186) | Correspondingly, the value of the top-level schema, `s`, field MUST be the SAID included in the schema's top-level `$id` field. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [188](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L188) | The digest algorithm employed for generating [[ref: Schema]] SAIDs MUST have an approximate cryptographic strength of 128 bits. | MUST | untestable: Every CESR digest code has at least 128 bits of strength, so no well-formed schema SAID can violate it., security | 0 | 0 | 0 | — | — | — |
+| [188](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L188) | The [[3](#SAID)] MUST be generated in compliance with the ToIP SAID internet draft specification and MUST be encoded using CESR. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [190](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L190) | The value of the id, `$id`, field in any ACDC bundled subschema resource MUST include the SAID of that subschema using one of the formats described below. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [190](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L190) | The subschema so bundled MUST be verifiable against its referenced and embedded SAID value. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Static (Immutable) Schema
 
-[Line 192 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#static-immutable-schema).
+[Line 192 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L192).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | For security reasons, the full Schema of an ACDC MUST be completely self-contained and statically fixed (immutable) for that ACDC. |
-| 194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | This means that dynamic Schema references or dynamic Schema generation mechanisms MUST NOT be used, i.e are not allowed. |
-| 200 | MUST | validator, security | 0 | 0 | 0 | — | — | — | To prevent both forms of attack, all Schemas MUST be static, i.e., Schemas MUST be SADs and therefore verifiable against their SAIDs. |
-| 202 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | To elaborate, the serialization of a static schema SHOULD be self-contained. |
-| 202 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, all ACDC-compliant Schemas MUST be SADs. |
-| 202 | MUST | validator, security | 0 | 0 | 0 | — | — | — | In other words, the Schema MUST therefore be SAIDified. |
-| 206 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0014 (inferred, draft) | ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable. |
-| 210 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the top-level id field, `$id`, MUST be a bare SAID. |
-| 220 | MUST | validator, security | 0 | 0 | 0 | — | — | — | To clarify, ACDCs MUST NOT use complex JSON Schema references which allow dynamically generated Schema resources to be obtained from online JSON Schema Libraries [[41](#ref41)] [[42](#JSchCx)]. |
-| 222 | MUST | validator, security | 0 | 0 | 0 | — | — | — | ACDCs MUST use static JSON Schema (i.e., SAIDifiable Schema). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [194](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L194) | For security reasons, the full Schema of an ACDC MUST be completely self-contained and statically fixed (immutable) for that ACDC. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [194](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L194) | This means that dynamic Schema references or dynamic Schema generation mechanisms MUST NOT be used, i.e are not allowed. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [200](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L200) | To prevent both forms of attack, all Schemas MUST be static, i.e., Schemas MUST be SADs and therefore verifiable against their SAIDs. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [202](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L202) | To elaborate, the serialization of a static schema SHOULD be self-contained. | SHOULD | validator, security | 0 | 0 | 0 | — | — | — |
+| [202](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L202) | Therefore, all ACDC-compliant Schemas MUST be SADs. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [202](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L202) | In other words, the Schema MUST therefore be SAIDified. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [206](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L206) | ACDC Sub-Schema indicated by non-local URI references (`$id` or `$ref`) MUST NOT be used because they are not cryptographically end-verifiable. | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0014 (inferred, draft) |
+| [210](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L210) | The value of the top-level id field, `$id`, MUST be a bare SAID. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [220](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L220) | To clarify, ACDCs MUST NOT use complex JSON Schema references which allow dynamically generated Schema resources to be obtained from online JSON Schema Libraries [[41](#ref41)] [[42](#JSchCx)]. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [222](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L222) | ACDCs MUST use static JSON Schema (i.e., SAIDifiable Schema). | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Schema dialect
 
-[Line 224 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-dialect).
+[Line 224 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L224).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 226 | MUST | validator | 0 | 0 | 0 | — | — | — | The Schema dialect for ACDC 1.0 MUST be JSON Schema 2020-12 and is indicated by the identifier `"https://json-schema.org/draft/2020-12/schema"`  [[10](#JSch)] [[11](#JSch_202012)]. |
-| 226 | MUST | untestable: Which tooling a validator runs internally is not observable through an adapter. | 0 | 0 | 0 | — | — | — | The Validator MUST control the tooling code dialect used for Schema validation and hence the tooling dialect version actually used. |
-| 226 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0016 (draft) | A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail. |
-| 226 | MUST | untestable: An adapter never fetches anything, so treating the $schema string as an identifier and not as a location cannot be told apart in a case. | 0 | 0 | 0 | — | — | — | The string MUST be treated simply as an identifier that communicates the intended dialect to be processed by the Schema validation tool. |
-| 226 | MUST | validator | 0 | 0 | 0 | — | — | — | When provided, the top-level `$schema` field value for ACDC version 1.0 MUST be "https://json-schema.org/draft/2020-12/schema". |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [226](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L226) | The Schema dialect for ACDC 1.0 MUST be JSON Schema 2020-12 and is indicated by the identifier `"https://json-schema.org/draft/2020-12/schema"`  [[10](#JSch)] [[11](#JSch_202012)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [226](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L226) | The Validator MUST control the tooling code dialect used for Schema validation and hence the tooling dialect version actually used. | MUST | untestable: Which tooling a validator runs internally is not observable through an adapter. | 0 | 0 | 0 | — | — | — |
+| [226](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L226) | A mismatch between the supported tooling code dialect version and the `$schema` string value SHOULD cause the validation to fail. | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0016 (draft) |
+| [226](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L226) | The string MUST be treated simply as an identifier that communicates the intended dialect to be processed by the Schema validation tool. | MUST | untestable: An adapter never fetches anything, so treating the $schema string as an identifier and not as a location cannot be told apart in a case. | 0 | 0 | 0 | — | — | — |
+| [226](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L226) | When provided, the top-level `$schema` field value for ACDC version 1.0 MUST be "https://json-schema.org/draft/2020-12/schema". | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Schema Versioning
 
-[Line 228 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-versioning).
+[Line 228 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L228).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 230 | MUST | validator | 0 | 0 | 0 | — | — | — | Each schema MUST have at the top level a version field with the field label `version`. |
-| 230 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the `version` field MUST be a semantic version string in the dotted decimal notation of the form "major.minor.patch". |
-| 230 | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0017 (draft) | Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field. |
-| 232 | SHOULD | untestable: No case can present two different schemas with one SAID without a digest collision. | 0 | 0 | 0 | — | — | — | Any copy of a schema that verifies against the same SAID given by the Schema ID, `$id` field value, SHOULD be assumed to be identical to any other copy that verifies to the same SAID by virtue of the strong collision resistance of the digest employed. |
-| 234 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | To avoid confusion, any change to the Schema that changes the value of the `$id` MUST also be reflected in a correspondingly unique value of its `version` field. |
-| 236 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | To comply with the semantic versioning rules, a backward incompatible Schema MUST have a higher major version number in its `version` field value than any backward incompatible version. |
-| 238 | MUST | validator, security | 0 | 0 | 0 | — | — | — | As discussed below in the Edge section, an Edge block MAY have a Schema, `s` field, which indicates that the ACDC node the edge points to MUST validate against the schema indicated by the Edge's Schema, `s` field value. |
-| 238 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | If the Edge's schema does not validate against the ACDC node pointed to by the edge, then the Edge's schema is backward incompatible and MUST have a higher major version number than the ACDC's schema (node pointed to by the edge). |
-| 238 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | In this latter case, ACDCs issued under the old major version MUST either be revoked and reissued to comply with the new major version schema, or the Edge's schema MUST include a `oneOf` composition that accepts either old or new major versions. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [230](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L230) | Each schema MUST have at the top level a version field with the field label `version`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [230](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L230) | The value of the `version` field MUST be a semantic version string in the dotted decimal notation of the form "major.minor.patch". | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [230](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L230) | Therefore, a given ACDC SHOULD properly pass the JSON Schema validation process regardless of the value of its schema `version` field. | SHOULD | validator | 1 | 0 | 0 | SHOULD 1 | — | ACDC-0017 (draft) |
+| [232](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L232) | Any copy of a schema that verifies against the same SAID given by the Schema ID, `$id` field value, SHOULD be assumed to be identical to any other copy that verifies to the same SAID by virtue of the strong collision resistance of the digest employed. | SHOULD | untestable: No case can present two different schemas with one SAID without a digest collision. | 0 | 0 | 0 | — | — | — |
+| [234](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L234) | To avoid confusion, any change to the Schema that changes the value of the `$id` MUST also be reflected in a correspondingly unique value of its `version` field. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [236](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L236) | To comply with the semantic versioning rules, a backward incompatible Schema MUST have a higher major version number in its `version` field value than any backward incompatible version. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [238](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L238) | As discussed below in the Edge section, an Edge block MAY have a Schema, `s` field, which indicates that the ACDC node the edge points to MUST validate against the schema indicated by the Edge's Schema, `s` field value. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [238](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L238) | If the Edge's schema does not validate against the ACDC node pointed to by the edge, then the Edge's schema is backward incompatible and MUST have a higher major version number than the ACDC's schema (node pointed to by the edge). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [238](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L238) | In this latter case, ACDCs issued under the old major version MUST either be revoked and reissued to comply with the new major version schema, or the Edge's schema MUST include a `oneOf` composition that accepts either old or new major versions. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
 
 #### Schema Availability
 
-[Line 240 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-availability).
+[Line 240 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L240).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 242 | MUST | untestable: A general statement of intent with no condition a case could check. | 0 | 0 | 0 | — | — | — | ACDCs MUST be verifiable when available. |
-| 242 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Although a given ACDC application domain or ecosystem governance framework (EGF) may impose schema availability constraints, this ACDC specification itself does not impose any specific availability requirements on Issuers other than schema caches SHOULD be sufficiently available for the intended application of their associated ACDCs. |
-| 242 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | The Issuer of an ACDC is REQUIRED to satisfy any availability constraints on its Schema that MAY be imposed by the application domain or ecosystem. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [242](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L242) | ACDCs MUST be verifiable when available. | MUST | untestable: A general statement of intent with no condition a case could check. | 0 | 0 | 0 | — | — | — |
+| [242](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L242) | Although a given ACDC application domain or ecosystem governance framework (EGF) may impose schema availability constraints, this ACDC specification itself does not impose any specific availability requirements on Issuers other than schema caches SHOULD be sufficiently available for the intended application of their associated ACDCs. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [242](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L242) | The Issuer of an ACDC is REQUIRED to satisfy any availability constraints on its Schema that MAY be imposed by the application domain or ecosystem. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
 
 #### Composable JSON Schema
 
-[Line 244 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#composable-json-schema).
+[Line 244 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L244).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 246 | MUST | validator, security | 2 | 0 | 0 | MUST 2 | — | ACDC-0012 (draft), ACDC-0013 (draft) | The provided ACDC MUST validate against an allowed combination of the composed variants. |
-| 246 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Validator determines what decomposed variants the provided ACDC MUST also validate against. |
-| 248 | MUST | validator, security | 1 | 0 | 0 | MUST 1 | — | ACDC-0010 (draft) | Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID. |
-| 248 | MUST | validator, security | 0 | 0 | 0 | — | — | — | It also MUST validate against one of its specified `oneOf` variants. |
-| 250 | MUST | validator, security | 3 | 11 | 0 | MUST 3, SHOULD 11 | — | ACDC-0001 (inferred, draft), ACDC-0002 (inferred, draft), ACDC-0007 (draft), ACDC-0011 (draft), ACDC-0015 (draft), ACDC-0024 (inferred, draft), ACDC-0025 (inferred, draft), ACDC-0043 (inferred, draft), ACDC-0048 (inferred, draft), ACDC-0059 (inferred, draft), ACDC-0062 (inferred, draft), ACDC-0065 (inferred, draft), ACDC-0067 (inferred, draft), ACDC-0072 (inferred, draft) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. |
-| 250 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | In contrast, the compliance of the provided composed schema for an expected ACDC type SHOULD be enforced by the Validator. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [246](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L246) | The provided ACDC MUST validate against an allowed combination of the composed variants. | MUST | validator, security | 2 | 0 | 0 | MUST 2 | — | ACDC-0012 (draft), ACDC-0013 (draft) |
+| [246](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L246) | The Validator determines what decomposed variants the provided ACDC MUST also validate against. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [248](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L248) | Nonetheless, the provided schema, whether self-contained, attached, or cached MUST validate as a SAD against its provided SAID. | MUST | validator, security | 1 | 0 | 0 | MUST 1 | — | ACDC-0010 (draft) |
+| [248](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L248) | It also MUST validate against one of its specified `oneOf` variants. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [250](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L250) | The compliance of the provided non-schema attribute, `a`, edge, `e`, and rule, `r`, sections MUST be enforced by validating against the composed Schema. | MUST | validator, security | 3 | 11 | 0 | MUST 3, SHOULD 11 | — | ACDC-0001 (inferred, draft), ACDC-0002 (inferred, draft), ACDC-0007 (draft), ACDC-0011 (draft), ACDC-0015 (draft), ACDC-0024 (inferred, draft), ACDC-0025 (inferred, draft), ACDC-0043 (inferred, draft), ACDC-0048 (inferred, draft), ACDC-0059 (inferred, draft), ACDC-0062 (inferred, draft), ACDC-0065 (inferred, draft), ACDC-0067 (inferred, draft), ACDC-0072 (inferred, draft) |
+| [250](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L250) | In contrast, the compliance of the provided composed schema for an expected ACDC type SHOULD be enforced by the Validator. | SHOULD | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Cargo, `cargo` field
 
-[Line 284 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#cargo-cargo-field).
+[Line 284 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L284).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 286 | MUST | validator | 0 | 0 | 0 | — | — | — | These MUST be serializable using a serialization that is compatible with the serialization kind of the ACDC that conveys them. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [286](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L286) | These MUST be serializable using a serialization that is compatible with the serialization kind of the ACDC that conveys them. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Targeted Attribute Section
 
-[Line 310 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#targeted-attribute-section).
+[Line 310 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L310).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 316 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Issuee MUST be designated by the `i` field value at the top-level of the attribute `a`, field block. |
-| 318 | MUST | validator | 0 | 0 | 0 | — | — | — | The ACDC MUST be "issued by" an Issuer and MUST be "issued to" an Issuee. |
-| 318 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, because the Issuee, `i`, field value MUST be an AID, by definition, there is a provable Controller of that AID. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [316](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L316) | The Issuee MUST be designated by the `i` field value at the top-level of the attribute `a`, field block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [318](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L318) | The ACDC MUST be "issued by" an Issuer and MUST be "issued to" an Issuee. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [318](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L318) | To elaborate, because the Issuee, `i`, field value MUST be an AID, by definition, there is a provable Controller of that AID. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Targeted private-attribute section example
 
-[Line 336 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#targeted-private-attribute-section-example).
+[Line 336 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L336).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 338 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | The semantics of the Issuee SHOULD be defined by the Credential Frameworks in an associated Ecosystem Goveranance Framework (EGF) for the ACDC. |
-| 342 | SHOULD | validator, security | 0 | 0 | 0 | — | — | — | Later disclosure of the uncompacted Attribute block SHOULD be verified against its SAID, `d`, field that was provided in the compact form as the value of the top-level Attribute section, `a`, field. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [338](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L338) | The semantics of the Issuee SHOULD be defined by the Credential Frameworks in an associated Ecosystem Goveranance Framework (EGF) for the ACDC. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [342](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L342) | Later disclosure of the uncompacted Attribute block SHOULD be verified against its SAID, `d`, field that was provided in the compact form as the value of the top-level Attribute section, `a`, field. | SHOULD | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Targeted Public-attribute Section Example
 
-[Line 425 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#targeted-public-attribute-section-example).
+[Line 425 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L425).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 499 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | The semantics of the issuance SHOULD be defined by the Credential Frameworks of the EGF. |
-| 501 | MUST | untestable: Considering an ACDC public is a classification that acdc.verify does not report. | 0 | 0 | 0 | — | — | — | Thus, an ACDC without a UUID, `u` field in its Attributes block MUST be considered a Public-Attribute ACDC even when expressed in compact form. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [499](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L499) | The semantics of the issuance SHOULD be defined by the Credential Frameworks of the EGF. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [501](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L501) | Thus, an ACDC without a UUID, `u` field in its Attributes block MUST be considered a Public-Attribute ACDC even when expressed in compact form. | MUST | untestable: Considering an ACDC public is a classification that acdc.verify does not report. | 0 | 0 | 0 | — | — | — |
 
 #### Selectively disclosable Aggregate of attribute blocks
 
-[Line 690 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#selectively-disclosable-aggregate-of-attribute-blocks).
+[Line 690 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L690).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 692 | MUST | validator | 0 | 0 | 0 | — | — | — | All fields in a given block MUST be disclosed together as a set. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [692](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L692) | All fields in a given block MUST be disclosed together as a set. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Edge Section
 
-[Line 1047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#edge-section).
+[Line 1047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1047).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1051 | MUST | validator | 0 | 0 | 0 | — | — | — | The Edge Section itself MUST have a "oneOf" composition with only its SAID so that the Edge Section MUST be expressable in the most compact form as merely its SAID. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1051](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1051) | The Edge Section itself MUST have a "oneOf" composition with only its SAID so that the Edge Section MUST be expressable in the most compact form as merely its SAID. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Block Types
 
-[Line 1054 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#block-types).
+[Line 1054 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1054).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | Nested Edge-groups, when present, with one exception, MUST appear as locally unique labeled blocks nested within another Edge-group. |
-| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | When present, it MUST appear at the top-level of the ACDC. |
-| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | The presence of an Edge Section is OPTIONAL, An Edge is indicated by the REQUIRED presence of a node, `n` field in the non-compact variant of its subschema. |
-| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge MUST contain a node, `n` field. |
-| 1058 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge-group MUST NOT have a node, `n` field. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1058](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1058) | Nested Edge-groups, when present, with one exception, MUST appear as locally unique labeled blocks nested within another Edge-group. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1058](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1058) | When present, it MUST appear at the top-level of the ACDC. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1058](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1058) | The presence of an Edge Section is OPTIONAL, An Edge is indicated by the REQUIRED presence of a node, `n` field in the non-compact variant of its subschema. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1058](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1058) | An Edge MUST contain a node, `n` field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1058](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1058) | An Edge-group MUST NOT have a node, `n` field. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### ACDCs as secure graph fragments of a globally distributed property graph (PG)
 
-[Line 1060 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdcs-as-secure-graph-fragments-of-a-globally-distributed-property-graph-pg).
+[Line 1060 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1060).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1066 | MUST | validator | 0 | 0 | 0 | — | — | — | To enable both the node and its connecting edge to be globally uniquely resolvable, each Edge's block MUST also have a SAID, `d`, field. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1066](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1066) | To enable both the node and its connecting edge to be globally uniquely resolvable, each Edge's block MUST also have a SAID, `d`, field. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Edge-group
 
-[Line 1072 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#edge-group).
+[Line 1072 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1072).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1085 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge-group MUST NOT have a node, `n`, field. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1085](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1085) | An Edge-group MUST NOT have a node, `n`, field. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### SAID, `d` field
 
-[Line 1087 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#said-d-field).
+[Line 1087 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1087).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1089 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Edge-group block. |
-| 1089 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1089](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1089) | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Edge-group block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1089](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1089) | The value of this field MUST be the SAID of its enclosing block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### UUID, `u` field
 
-[Line 1091 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field).
+[Line 1091 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1091).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1093 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge-group block following the SAID, `d`, field. |
-| 1093 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1093](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1093) | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge-group block following the SAID, `d`, field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1093](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1093) | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
 
 #### Operator, `o` field
 
-[Line 1095 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#operator-o-field).
+[Line 1095 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1095).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1097 | MUST | validator | 0 | 0 | 0 | — | — | — | The Operator, `o` field MUST appear immediately following the SAID, `d` field, and UUID, `u` field (when present) in the Edge-group block. |
-| 1110 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When the Operator, `o`, field is missing in an Edge-group block, the default value for the Operator, `o`, field MUST be the `AND` Operator. |
-| 1114 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid. |
-| 1114 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | If any links between the head and the tail are broken (invalid), then the head is itself MUST be invalid. |
-| 1116 | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — | Typically, in a given EGF (ecosystem governance framework), all branches from the head MUST be valid for the head node to be valid. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1097](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1097) | The Operator, `o` field MUST appear immediately following the SAID, `d` field, and UUID, `u` field (when present) in the Edge-group block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1110](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1110) | When the Operator, `o`, field is missing in an Edge-group block, the default value for the Operator, `o`, field MUST be the `AND` Operator. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [1114](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1114) | Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+| [1114](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1114) | If any links between the head and the tail are broken (invalid), then the head is itself MUST be invalid. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+| [1116](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1116) | Typically, in a given EGF (ecosystem governance framework), all branches from the head MUST be valid for the head node to be valid. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
 
 #### Weight, `w` field
 
-[Line 1118 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#weight-w-field).
+[Line 1118 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1118).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1120 | MUST | validator | 0 | 0 | 0 | — | — | — | The Weight, `w` field, is OPTIONAL but when present, it MUST appear immediately following all of the SAID, `d` field, UUID, `u` field (when present), and Operator, `o` field (when present) in the Edge-group block. |
-| 1120 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level Edge-group MUST NOT have a weight, `w` field, because it is not a member of another Edge-group. |
-| 1122 | MUST | untestable: Reserves a label; it states no condition a validator could find violated in an ACDC. | 0 | 0 | 0 | — | — | — | To simplify the semantics for such Operators, the Weight, `w`, field MUST be the reserved field label for weighting. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1120](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1120) | The Weight, `w` field, is OPTIONAL but when present, it MUST appear immediately following all of the SAID, `d` field, UUID, `u` field (when present), and Operator, `o` field (when present) in the Edge-group block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1120](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1120) | The top-level Edge-group MUST NOT have a weight, `w` field, because it is not a member of another Edge-group. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1122](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1122) | To simplify the semantics for such Operators, the Weight, `w`, field MUST be the reserved field label for weighting. | MUST | untestable: Reserves a label; it states no condition a validator could find violated in an ACDC. | 0 | 0 | 0 | — | — | — |
 
 #### Labeled nested edge and edge-group fields
 
-[Line 1124 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#labeled-nested-edge-and-edge-group-fields).
+[Line 1124 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1124).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1126 | MUST | validator | 0 | 0 | 0 | — | — | — | Such labeled nested Edge or Edge-group fields MUST appear after all of any fields with a reserved field label. |
-| 1128 | MUST | validator | 0 | 0 | 0 | — | — | — | Each nested Edge or Edge-group block within an Edge-group including the top-level Edge Section Edge-group MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. |
-| 1128 | MUST | validator | 0 | 0 | 0 | — | — | — | To clarify, each nested block in every Edge-group MUST have its own field with its own local (to the ACDC) label. |
-| 1130 | MUST | validator | 0 | 0 | 0 | — | — | — | Note that each nested block MUST NOT include a type field. |
-| 1130 | MUST | untestable: Restates that an ACDC has a schema, covered at line 36, and advises schema authors on modelling edge types; neither half names a check. | 0 | 0 | 0 | — | — | — | Because ACDCs MUST have a Schema, they SHOULD leverage it to provide property graph edge types with a cleaner separation of concerns. |
-| 1132 | MUST | validator | 0 | 0 | 0 | — | — | — | Each labeled Edge and Edge-group type MUST be defined by the subschema designated by its label. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1126](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1126) | Such labeled nested Edge or Edge-group fields MUST appear after all of any fields with a reserved field label. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1128](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1128) | Each nested Edge or Edge-group block within an Edge-group including the top-level Edge Section Edge-group MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1128](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1128) | To clarify, each nested block in every Edge-group MUST have its own field with its own local (to the ACDC) label. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1130](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1130) | Note that each nested block MUST NOT include a type field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1130](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1130) | Because ACDCs MUST have a Schema, they SHOULD leverage it to provide property graph edge types with a cleaner separation of concerns. | MUST | untestable: Restates that an ACDC has a schema, covered at line 36, and advises schema authors on modelling edge types; neither half names a check. | 0 | 0 | 0 | — | — | — |
+| [1132](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1132) | Each labeled Edge and Edge-group type MUST be defined by the subschema designated by its label. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Edge
 
-[Line 1134 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#edge).
+[Line 1134 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1134).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1136 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge MUST be represented as a block (field map) with two exceptions. |
-| 1149 | MUST | validator | 0 | 0 | 0 | — | — | — | An Edge block MUST have a node, `n`, field. |
-| 1149 | MUST | validator | 0 | 0 | 0 | — | — | — | To clarify, each Edge block MUST have a node, `n`, field and MAY have any combination of SAID, `d`, UUID, `u`, schema, `s`, operator, `o`, or weight, `w` fields. |
-| 1149 | MUST | validator | 0 | 0 | 0 | — | — | — | When present the order of appearance of these fields MUST be as follows: `[d, u, n, s, o, w]'. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1136](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1136) | An Edge MUST be represented as a block (field map) with two exceptions. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1149](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1149) | An Edge block MUST have a node, `n`, field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1149](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1149) | To clarify, each Edge block MUST have a node, `n`, field and MAY have any combination of SAID, `d`, UUID, `u`, schema, `s`, operator, `o`, or weight, `w` fields. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1149](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1149) | When present the order of appearance of these fields MUST be as follows: `[d, u, n, s, o, w]'. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### SAID, `d` field
 
-[Line 1152 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#said-d-field-1).
+[Line 1152 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1152).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1154 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but, when present, MUST appear as the first field in the Edge block. |
-| 1154 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1154](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1154) | The SAID, `d` field is optional but, when present, MUST appear as the first field in the Edge block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1154](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1154) | The value of this field MUST be the SAID of its enclosing block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Compact edge
 
-[Line 1156 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#compact-edge).
+[Line 1156 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1156).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1158 | MUST | validator | 0 | 0 | 0 | — | — | — | The schema for that edge's label MUST indicate that the edge value is the edge block SAID by using a `oneOf` composition of the compact form and the expanded form. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1158](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1158) | The schema for that edge's label MUST indicate that the edge value is the edge block SAID by using a `oneOf` composition of the compact form and the expanded form. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### UUID, `u` field
 
-[Line 1160 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field-1).
+[Line 1160 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1160).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1162 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge block following the SAID, `d`, field. |
-| 1162 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1162](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1162) | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Edge block following the SAID, `d`, field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1162](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1162) | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
 
 #### Node, `n` field
 
-[Line 1168 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#node-n-field).
+[Line 1168 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1168).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1170 | MUST | validator | 0 | 0 | 0 | — | — | — | When an Edge block does not include a SAID, `d` field, then the node, `n` field MUST appear as the first field in the block. |
-| 1174 | MUST | validator, security | 4 | 17 | 0 | MUST 4, SHOULD 30 | — | ACDC-0043 (inferred, draft), ACDC-0044 (inferred, draft), ACDC-0046 (inferred, draft), ACDC-0047 (draft), ACDC-0048 (inferred, draft), ACDC-0049 (inferred, draft), ACDC-0051 (inferred, draft), ACDC-0053 (inferred, draft), ACDC-0055 (inferred, draft), ACDC-0057 (inferred, draft), ACDC-0058 (draft), ACDC-0059 (inferred, draft), ACDC-0060 (inferred, draft), ACDC-0062 (inferred, draft), ACDC-0068 (inferred, draft), ACDC-0070 (inferred, draft), ACDC-0072 (inferred, draft), ACDC-0073 (inferred, draft), ACDC-0074 (draft), ACDC-0075 (inferred, draft), ACDC-0076 (draft) | In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema. |
-| 1174 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When the (near node) Edge block's schema, `s` field is present (see below), then the far node MUST also validate against the Schema indicated by the near node Edge block's Schema, `s` field value. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1170](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1170) | When an Edge block does not include a SAID, `d` field, then the node, `n` field MUST appear as the first field in the block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1174](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1174) | In order for a given Edge to be valid, at the very least, a Validator MUST confirm that the SAID of the provided far node ACDC matches the node, `n` field value given in the near node ACDC Edge block and MUST confirm that the provided far node ACDC satisfies its own schema. | MUST | validator, security | 4 | 17 | 0 | MUST 4, SHOULD 30 | — | ACDC-0043 (inferred, draft), ACDC-0044 (inferred, draft), ACDC-0046 (inferred, draft), ACDC-0047 (draft), ACDC-0048 (inferred, draft), ACDC-0049 (inferred, draft), ACDC-0051 (inferred, draft), ACDC-0053 (inferred, draft), ACDC-0055 (inferred, draft), ACDC-0057 (inferred, draft), ACDC-0058 (draft), ACDC-0059 (inferred, draft), ACDC-0060 (inferred, draft), ACDC-0062 (inferred, draft), ACDC-0068 (inferred, draft), ACDC-0070 (inferred, draft), ACDC-0072 (inferred, draft), ACDC-0073 (inferred, draft), ACDC-0074 (draft), ACDC-0075 (inferred, draft), ACDC-0076 (draft) |
+| [1174](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1174) | When the (near node) Edge block's schema, `s` field is present (see below), then the far node MUST also validate against the Schema indicated by the near node Edge block's Schema, `s` field value. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Schema, `s` field
 
-[Line 1176 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-s-field).
+[Line 1176 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1176).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1178 | MUST | validator | 0 | 0 | 0 | — | — | — | When present, the Schema `s` field MUST appear immediately following the node `n` field in the Edge sub-block. |
-| 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The far node ACDC MUST also validate against an Edge block's schema, `s` field when present. |
-| 1178 | MUST | validator, security | 3 | 0 | 0 | MUST 3 | — | ACDC-0050 (draft), ACDC-0052 (draft), ACDC-0054 (draft) | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. |
-| 1178 | MUST | validator, security | 0 | 0 | 0 | — | — | — | However, when the Schema SAIDs differ, two Schema validation runs MUST be performed. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1178](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1178) | When present, the Schema `s` field MUST appear immediately following the node `n` field in the Edge sub-block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1178](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1178) | The far node ACDC MUST also validate against an Edge block's schema, `s` field when present. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [1178](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1178) | To clarify, the Validator, after validating that the provided far node ACDC indicated by the node, `n` field satisfies its (the far ACDC's) own Schema, MUST also confirm that far node ACDC passes Schema validation with respect to the Edge's `s` field value. | MUST | validator, security | 3 | 0 | 0 | MUST 3 | — | ACDC-0050 (draft), ACDC-0052 (draft), ACDC-0054 (draft) |
+| [1178](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1178) | However, when the Schema SAIDs differ, two Schema validation runs MUST be performed. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Operator, `o` field
 
-[Line 1184 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#operator-o-field-1).
+[Line 1184 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1184).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1186 | MUST | validator | 0 | 0 | 0 | — | — | — | The Operator, `o` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, node, `n` field, or schema, `s` field (when present) in the Edge block. |
-| 1192 | MUST | validator, security | 0 | 0 | 0 | — | — | — | \|`I2I`\| Issuer-To-Issuee, The Issuer AID of this ACDC MUST be the Issuee AID of the node this Edge points to.  \| Yes \| |
-| 1194 | MUST | validator, security | 0 | 0 | 0 | — | — | — | \|`DI2I`\| Delegated-Issuer-To-Issuee, The Issuer AID of this ACDC MUST be either the Issuee AID or a delegated AID of the Issuee AID of the node this Edge points to. \| No \| |
-| 1199 | MUST | validator, security | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge is a targeted ACDC, i.e., has an Issuee, then the `I2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
-| 1201 | MUST | validator | 0 | 0 | 0 | — | — | — | If the node pointed to by the Edge block is an Untargeted ACDC i.e., does not have an Issuee, then the `NI2I` Operator MUST be appended to the Operator, `o`, field's effective list value. |
-| 1205 | MUST | validator, security | 5 | 0 | 0 | MUST 5 | — | ACDC-0045 (draft), ACDC-0056 (draft), ACDC-0061 (draft), ACDC-0069 (draft), ACDC-0071 (draft) | The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points. |
-| 1205 | MUST | validator, security | 5 | 0 | 0 | MUST 5 | — | ACDC-0045 (draft), ACDC-0056 (draft), ACDC-0061 (draft), ACDC-0069 (draft), ACDC-0071 (draft) | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
-| 1207 | MUST | validator | 0 | 0 | 0 | — | — | — | In other words, any REQUIREMENT that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID, if any, of the node the Edge points to is relaxed (not applicable). |
-| 1209 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1186](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1186) | The Operator, `o` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, node, `n` field, or schema, `s` field (when present) in the Edge block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1192](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1192) | \|`I2I`\| Issuer-To-Issuee, The Issuer AID of this ACDC MUST be the Issuee AID of the node this Edge points to.  \| Yes \| | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [1194](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1194) | \|`DI2I`\| Delegated-Issuer-To-Issuee, The Issuer AID of this ACDC MUST be either the Issuee AID or a delegated AID of the Issuee AID of the node this Edge points to. \| No \| | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [1199](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1199) | If the node pointed to by the Edge is a targeted ACDC, i.e., has an Issuee, then the `I2I` Operator MUST be appended to the Operator, `o`, field's effective list value. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [1201](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1201) | If the node pointed to by the Edge block is an Untargeted ACDC i.e., does not have an Issuee, then the `NI2I` Operator MUST be appended to the Operator, `o`, field's effective list value. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1205](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1205) | The `I2I` unary operator, when present, means that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID of the node to which the Edge points. | MUST | validator, security | 5 | 0 | 0 | MUST 5 | — | ACDC-0045 (draft), ACDC-0056 (draft), ACDC-0061 (draft), ACDC-0069 (draft), ACDC-0071 (draft) |
+| [1205](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1205) | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. | MUST | validator, security | 5 | 0 | 0 | MUST 5 | — | ACDC-0045 (draft), ACDC-0056 (draft), ACDC-0061 (draft), ACDC-0069 (draft), ACDC-0071 (draft) |
+| [1207](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1207) | In other words, any REQUIREMENT that the Issuer AID of the current ACDC in which the Edge resides MUST be the Issuee AID, if any, of the node the Edge points to is relaxed (not applicable). | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1209](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1209) | Therefore, to be valid, the ACDC node pointed to by this Edge MUST be a Targeted ACDC. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Weight, `w` field.
 
-[Line 1213 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#weight-w-field-1).
+[Line 1213 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1213).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1215 | MUST | validator | 0 | 0 | 0 | — | — | — | The Weight, `w` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, Node, `n` field, Schema, `s` field, or Operator, `o` field (when present) in the Edge block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1215](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1215) | The Weight, `w` field MUST appear immediately following the SAID, `d` field, UUID, `u` field, Node, `n` field, Schema, `s` field, or Operator, `o` field (when present) in the Edge block. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Labeled property fields
 
-[Line 1219 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#labeled-property-fields).
+[Line 1219 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1219).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1221 | MUST | validator | 0 | 0 | 0 | — | — | — | Labeled property fields MUST appear after all of any fields with a reserved field label. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1221](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1221) | Labeled property fields MUST appear after all of any fields with a reserved field label. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Simple compact edge
 
-[Line 1223 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#simple-compact-edge).
+[Line 1223 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1223).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1225 | MUST | untestable: Requires prose in a schema's description, which no validator interprets. | 0 | 0 | 0 | — | — | — | The Schema for that Edge's label MUST indicate in its description that the Edge value is a Far Node SAID, not the Edge block SAID. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1225](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1225) | The Schema for that Edge's label MUST indicate in its description that the Edge value is a Far Node SAID, not the Edge block SAID. | MUST | untestable: Requires prose in a schema's description, which no validator interprets. | 0 | 0 | 0 | — | — | — |
 
 #### Rule Section
 
-[Line 1237 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#rule-section).
+[Line 1237 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1237).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1243 | MUST | validator | 0 | 0 | 0 | — | — | — | The Rule Section itself MUST have a "oneOf" composition with only its SAID so that the Rule Section MUST be expressable in the most compact form as merely its SAID. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1243](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1243) | The Rule Section itself MUST have a "oneOf" composition with only its SAID so that the Rule Section MUST be expressable in the most compact form as merely its SAID. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### SAID, `d` field
 
-[Line 1269 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#said-d-field-2).
+[Line 1269 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1269).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1271 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Rule-group block. |
-| 1271 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1271](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1271) | The SAID, `d` field is optional but when it appears it MUST appear as the first field in the Rule-group block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1271](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1271) | The value of this field MUST be the SAID of its enclosing block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### UUID, `u` field
 
-[Line 1273 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field-2).
+[Line 1273 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1273).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1275 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule-group block following the SAID, `d`, field. |
-| 1275 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1275](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1275) | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule-group block following the SAID, `d`, field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1275](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1275) | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy (nominally). | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
 
 #### Labeled nested rule and rule-group fields
 
-[Line 1277 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#labeled-nested-rule-and-rule-group-fields).
+[Line 1277 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1277).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1279 | MUST | validator | 0 | 0 | 0 | — | — | — | Labeled nested Rule or Rule-group fields MUST appear after all of any fields with a reserved field label. |
-| 1281 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, each nested Rule or Rule-group block MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. |
-| 1283 | MUST | validator | 0 | 0 | 0 | — | — | — | Note that each nested block MUST NOT include a type field. |
-| 1285 | MUST | validator | 0 | 0 | 0 | — | — | — | Each labeled Rule type MUST be defined by the subschema designated by its label. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1279](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1279) | Labeled nested Rule or Rule-group fields MUST appear after all of any fields with a reserved field label. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1281](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1281) | To elaborate, each nested Rule or Rule-group block MUST be labeled with a locally unique non-reserved field label that indicates the type of the nested block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1283](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1283) | Note that each nested block MUST NOT include a type field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1285](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1285) | Each labeled Rule type MUST be defined by the subschema designated by its label. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Rule
 
-[Line 1288 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#rule).
+[Line 1288 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1288).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1300 | MUST | validator | 0 | 0 | 0 | — | — | — | A Rule MUST have a Legal, `l`, field. |
-| 1300 | MUST | validator | 0 | 0 | 0 | — | — | — | A Rule MUST NOT have any other fields. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1300](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1300) | A Rule MUST have a Legal, `l`, field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1300](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1300) | A Rule MUST NOT have any other fields. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### SAID, `d` field
 
-[Line 1302 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#said-d-field-3).
+[Line 1302 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1302).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1303 | MUST | validator | 0 | 0 | 0 | — | — | — | The SAID, `d` field is optional, but when it appears, it MUST appear as the first field in the Clause block. |
-| 1303 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The value of this field MUST be the SAID of its enclosing block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1303](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1303) | The SAID, `d` field is optional, but when it appears, it MUST appear as the first field in the Clause block. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1303](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1303) | The value of this field MUST be the SAID of its enclosing block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Compact Rule
 
-[Line 1305 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#compact-rule).
+[Line 1305 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1305).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1307 | MUST | validator | 0 | 0 | 0 | — | — | — | The Schema for that clause's label MUST indicate that the clause field value is the clause block SAID by using a `oneOf` composition of the compact form and the expanded form. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1307](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1307) | The Schema for that clause's label MUST indicate that the clause field value is the clause block SAID by using a `oneOf` composition of the compact form and the expanded form. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### UUID, `u` field
 
-[Line 1309 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field-3).
+[Line 1309 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1309).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1311 | MUST | validator | 0 | 0 | 0 | — | — | — | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule Section block following the SAID, `d` field. |
-| 1311 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1311](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1311) | The UUID, `u` field is optional, but when it appears, it MUST appear as the second field in the Rule Section block following the SAID, `d` field. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1311](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1311) | The value of this field MUST be a cryptographic strength salty-nonce with approximately 128 bits of entropy. | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
 
 #### Simple Compact Rule
 
-[Line 1321 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#simple-compact-rule).
+[Line 1321 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1321).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1323 | MUST | untestable: Requires prose in a schema's description, which no validator interprets. | 0 | 0 | 0 | — | — | — | The Schema for that Rule's label MUST indicate in its description that the Rule value is Legal Language, not a SAID. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1323](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1323) | The Schema for that Rule's label MUST indicate in its description that the Rule value is Legal Language, not a SAID. | MUST | untestable: Requires prose in a schema's description, which no validator interprets. | 0 | 0 | 0 | — | — | — |
 
 #### Binding to Key State at Time of ACDC State Change
 
-[Line 1661 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#binding-to-key-state-at-time-of-acdc-state-change).
+[Line 1661 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1661).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1669 | MUST | validator, security | 0 | 12 | 0 | SHOULD 12 | — | ACDC-0025 (inferred, draft), ACDC-0026 (inferred, draft), ACDC-0027 (inferred, draft), ACDC-0028 (inferred, draft), ACDC-0030 (inferred, draft), ACDC-0032 (inferred, draft), ACDC-0033 (inferred, draft), ACDC-0035 (inferred, draft), ACDC-0036 (inferred, draft), ACDC-0037 (inferred, draft), ACDC-0039 (inferred, draft), ACDC-0041 (inferred, draft) | The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal. |
-| 1669 | MUST | validator, security | 0 | 8 | 0 | SHOULD 8 | — | ACDC-0028 (inferred, draft), ACDC-0029 (inferred, draft), ACDC-0030 (inferred, draft), ACDC-0031 (inferred, draft), ACDC-0035 (inferred, draft), ACDC-0038 (inferred, draft), ACDC-0040 (inferred, draft), ACDC-0042 (inferred, draft) | Update events in the Registry's TEL MUST also be anchored. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1669](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1669) | The SAID of this event MUST be anchored in the Issuer's KEL as the Registry proof seal. | MUST | validator, security | 0 | 12 | 0 | SHOULD 12 | — | ACDC-0025 (inferred, draft), ACDC-0026 (inferred, draft), ACDC-0027 (inferred, draft), ACDC-0028 (inferred, draft), ACDC-0030 (inferred, draft), ACDC-0032 (inferred, draft), ACDC-0033 (inferred, draft), ACDC-0035 (inferred, draft), ACDC-0036 (inferred, draft), ACDC-0037 (inferred, draft), ACDC-0039 (inferred, draft), ACDC-0041 (inferred, draft) |
+| [1669](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1669) | Update events in the Registry's TEL MUST also be anchored. | MUST | validator, security | 0 | 8 | 0 | SHOULD 8 | — | ACDC-0028 (inferred, draft), ACDC-0029 (inferred, draft), ACDC-0030 (inferred, draft), ACDC-0031 (inferred, draft), ACDC-0035 (inferred, draft), ACDC-0038 (inferred, draft), ACDC-0040 (inferred, draft), ACDC-0042 (inferred, draft) |
 
 #### Graduated Disclosure
 
-[Line 1745 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#graduated-disclosure).
+[Line 1745 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1745).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1761 | MUST | validator | 0 | 0 | 0 | — | — | — | The Schema for the block MUST include a `oneOf` composition Operator that validates against both the compact and full versions of the block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1761](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1761) | The Schema for the block MUST include a `oneOf` composition Operator that validates against both the compact and full versions of the block. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Contractually Protected Disclosure
 
-[Line 1781 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#contractually-protected-disclosure).
+[Line 1781 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1781).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1790 | MUST | untestable: A contractual obligation on later disclosers; whether the terms bind anyone is a legal question no case can check. | 0 | 0 | 0 | — | — | — | The terms-of-use of the original disclosure as applied to the original Disclosee MUST be applied by each subsequent Discloser to each subsequent Disclosee via each of the subsequent disclosures. |
-| 1792 | MUST | untestable: A contractual obligation on the party responsible for a contingent disclosure; no case can check it. | 0 | 0 | 0 | — | — | — | When that contingency is met, then the Contingent Disclosure MUST be made by the party whose responsibility it is to satisfy that disclosure obligation. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1790](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1790) | The terms-of-use of the original disclosure as applied to the original Disclosee MUST be applied by each subsequent Discloser to each subsequent Disclosee via each of the subsequent disclosures. | MUST | untestable: A contractual obligation on later disclosers; whether the terms bind anyone is a legal question no case can check. | 0 | 0 | 0 | — | — | — |
+| [1792](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1792) | When that contingency is met, then the Contingent Disclosure MUST be made by the party whose responsibility it is to satisfy that disclosure obligation. | MUST | untestable: A contractual obligation on the party responsible for a contingent disclosure; no case can check it. | 0 | 0 | 0 | — | — | — |
 
 #### Overview
 
-[Line 1916 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#overview).
+[Line 1916 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1916).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1922 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The transaction events MUST be sealed (anchored or bound) in a KEL using transaction event seals, whose JSON representation MUST be as follows. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1922](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1922) | The transaction events MUST be sealed (anchored or bound) in a KEL using transaction event seals, whose JSON representation MUST be as follows. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Registry Inception event fields
 
-[Line 1983 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#registry-inception-event-fields).
+[Line 1983 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1983).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1985 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields for the Registry-Inception, `rip` event , given by their labels, MUST appear in the following order, `[v, t, d, u, i, n, dt]`. |
-| 1985 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `rip`. |
-| 1985 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the sequence number field, `s` MUST be the hex encoded string for the integer 0. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1985](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1985) | The fields for the Registry-Inception, `rip` event , given by their labels, MUST appear in the following order, `[v, t, d, u, i, n, dt]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1985](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1985) | The value of the Message type, `t` field MUST be `rip`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1985](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1985) | The value of the sequence number field, `s` MUST be the hex encoded string for the integer 0. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Blindable Update event fields
 
-[Line 1987 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blindable-update-event-fields).
+[Line 1987 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1987).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1989 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields for the Blindable-Update, `bup` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, b]`. |
-| 1989 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `bup`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1989](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1989) | The fields for the Blindable-Update, `bup` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, b]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1989](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1989) | The value of the Message type, `t` field MUST be `bup`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Update event fields
 
-[Line 1991 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#update-event-fields).
+[Line 1991 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1991).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1993 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields for the Update, `upd` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, ta, ts]`. |
-| 1993 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of the Message type, `t` field MUST be `upd`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1993](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1993) | The fields for the Update, `upd` event , given by their labels, MUST appear in the following order, `[v, t, d, rd, n, p, dt, ta, ts]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [1993](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1993) | The value of the Message type, `t` field MUST be `upd`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Version String, `v` field
 
-[Line 1997 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#version-string-v-field).
+[Line 1997 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1997).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1999 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type MUST be `ACDC`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1999](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1999) | The protocol type MUST be `ACDC`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Message type, `t` field
 
-[Line 2001 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#message-type-t-field).
+[Line 2001 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2001).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2003 | MUST | validator | 0 | 0 | 0 | — | — | — | The Message type, `t` field value MUST be  one of the Message types in the table above. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2003](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2003) | The Message type, `t` field value MUST be  one of the Message types in the table above. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### SAID, `d` field
 
-[Line 2005 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#said-d-field-4).
+[Line 2005 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2005).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2007 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The SAID, `d` field value MUST be the SAID of its enclosing block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2007](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2007) | The SAID, `d` field value MUST be the SAID of its enclosing block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### UUID, `u` field
 
-[Line 2009 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field-4).
+[Line 2009 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2009).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2011 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The UUID, `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2011](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2011) | The UUID, `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
 
 #### Issuer, `i` field
 
-[Line 2013 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuer-i-field).
+[Line 2013 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2013).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2015 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0038 (inferred, draft) | The Issuer, `i` field value MUST be the AID of the Issuer. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2015](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2015) | The Issuer, `i` field value MUST be the AID of the Issuer. | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0038 (inferred, draft) |
 
 #### Registry SAID, `rd` field
 
-[Line 2017 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#registry-said-rd-field).
+[Line 2017 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2017).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2019 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Registry SAID, `rd` field value MUST be the value of the SAID, `d` field of the Registry Inception, `rip` event. |
-| 2019 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Update events MUST include the Registry SAID, `rd` field so that they can be verifiably associated with the Registry (TEL). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2019](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2019) | The Registry SAID, `rd` field value MUST be the value of the SAID, `d` field of the Registry Inception, `rip` event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [2019](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2019) | Update events MUST include the Registry SAID, `rd` field so that they can be verifiably associated with the Registry (TEL). | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Sequence number, `n` field
 
-[Line 2021 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#sequence-number-n-field).
+[Line 2021 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2021).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2023 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The sequence number, `n` field value MUST be a hex-encoded string with no leading zeros of a zero-based strictly monotonically increasing integer. |
-| 2023 | MUST | validator | 0 | 0 | 0 | — | — | — | The first (zeroth) transaction event in a given Registry (TEL) MUST have a sequence number of 0 or `0` hex. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2023](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2023) | The sequence number, `n` field value MUST be a hex-encoded string with no leading zeros of a zero-based strictly monotonically increasing integer. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [2023](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2023) | The first (zeroth) transaction event in a given Registry (TEL) MUST have a sequence number of 0 or `0` hex. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Prior event SAID, `p` field
 
-[Line 2025 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#prior-event-said-p-field).
+[Line 2025 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2025).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2027 | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0032 (inferred, draft) | The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2027](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2027) | The prior event SAID, `p` field value MUST be the SAID, `d` field value of the immediately prior event in the TEL. | MUST | validator, security | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0032 (inferred, draft) |
 
 #### Datetime, `dt` field
 
-[Line 2029 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#datetime-dt-field).
+[Line 2029 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2029).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2031 | MUST | validator | 0 | 0 | 0 | — | — | — | The datetime, `dt` field value MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). |
-| 2031 | MUST | out-of-scope | 0 | 0 | 0 | — | — | — | This MUST be the datetime of the issuance of the transaction event relative to the clock of the issuer. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2031](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2031) | The datetime, `dt` field value MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2031](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2031) | This MUST be the datetime of the issuance of the transaction event relative to the clock of the issuer. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
 
 #### Transaction state, `ts` field
 
-[Line 2039 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#transaction-state-ts-field).
+[Line 2039 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2039).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2041 | MUST | untestable: The specification does not define the registry's set of states, so no case can say a value is outside it. | 0 | 0 | 0 | — | — | — | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2041](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2041) | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. | MUST | untestable: The specification does not define the registry's set of states, so no case can say a value is outside it. | 0 | 0 | 0 | — | — | — |
 
 #### Blinded attribute, `b` field
 
-[Line 2043 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blinded-attribute-b-field).
+[Line 2043 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2043).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2045 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The blinded attribute, `b` field value MUST be the SAID of the blinded attribute block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2045](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2045) | The blinded attribute, `b` field value MUST be the SAID of the blinded attribute block. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Blinded Attribute Block
 
-[Line 2047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blinded-attribute-block).
+[Line 2047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2047).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2058 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields MUST appear in the following order: `[d, u, td, ts]`. |
-| 2062 | MUST | validator | 0 | 5 | 0 | SHOULD 5 | — | ACDC-0025 (inferred, draft), ACDC-0026 (inferred, draft), ACDC-0027 (inferred, draft), ACDC-0036 (inferred, draft), ACDC-0037 (inferred, draft) | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2058](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2058) | The fields MUST appear in the following order: `[d, u, td, ts]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2062](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2062) | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization that MUST use one of the CESR group or count codes labeled `BlindedStateQuadruples` with code format `-a##` or `BigBlindedStateQuadruples` with code format `--a######`. | MUST | validator | 0 | 5 | 0 | SHOULD 5 | — | ACDC-0025 (inferred, draft), ACDC-0026 (inferred, draft), ACDC-0027 (inferred, draft), ACDC-0036 (inferred, draft), ACDC-0037 (inferred, draft) |
 
 #### BLID, `d` field
 
-[Line 2064 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blid-d-field).
+[Line 2064 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2064).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2066 | MUST | validator, security | 0 | 2 | 0 | SHOULD 2 | — | ACDC-0039 (inferred, draft), ACDC-0041 (inferred, draft) | The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2066](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2066) | The blinding SAID, BLID, `b` field value MUST be calculated as a cryptographic strength digest on the CESR serialization of the concatenation of block field values. | MUST | validator, security | 0 | 2 | 0 | SHOULD 2 | — | ACDC-0039 (inferred, draft), ACDC-0041 (inferred, draft) |
 
 #### UUID, `u` field
 
-[Line 2071 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field-5).
+[Line 2071 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2071).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2073 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | When not empty, the UUID `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). |
-| 2079 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | When the `u` field value is derived from a shared secret salt, the derivation algorithm MUST preserve the approximately 128 bits of cryptographic strength. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2073](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2073) | When not empty, the UUID `u` field value MUST be a cryptographic strength salty nonce with approximately 128 bits of entropy (nominally). | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
+| [2079](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2079) | When the `u` field value is derived from a shared secret salt, the derivation algorithm MUST preserve the approximately 128 bits of cryptographic strength. | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
 
 #### Transaction ACDC SAID, `td` field
 
-[Line 2083 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#transaction-acdc-said-td-field-1).
+[Line 2083 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2083).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2087 | MUST | validator | 0 | 0 | 0 | — | — | — | When the transaction ACDC SAID, `ts`, field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2087](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2087) | When the transaction ACDC SAID, `ts`, field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Transaction state, `ts` field
 
-[Line 2090 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#transaction-state-ts-field-1).
+[Line 2090 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2090).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2092 | MUST | untestable: The specification does not define the registry's set of states, so no case can say a value is outside it. | 0 | 0 | 0 | — | — | — | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. |
-| 2094 | MUST | validator | 0 | 0 | 0 | — | — | — | When the transaction state `ts` field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2092](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2092) | The transaction state, `ts` field value MUST be a string from a small finite set of strings that delimit the possible values of the transaction state for the Registry. | MUST | untestable: The specification does not define the registry's set of states, so no case can say a value is outside it. | 0 | 0 | 0 | — | — | — |
+| [2094](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2094) | When the transaction state `ts` field value is a placeholder, it is indicated by the empty string, i.e., "", which MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Blinded State Disclosure
 
-[Line 2127 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blinded-state-disclosure).
+[Line 2127 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2127).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2135 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Each new event published by the Issuer in the Registry MUST increment the sequence number and hence the blinding factor, but MAY or MAY not change the actual blinded state. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2135](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2135) | Each new event published by the Issuer in the Registry MUST increment the sequence number and hence the blinding factor, but MAY or MAY not change the actual blinded state. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Blinded State Registry Example
 
-[Line 2234 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blinded-state-registry-example).
+[Line 2234 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2234).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2282 | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — | The shared secret salt MUST have approximately 128 bits of cryptographic entropy. |
-| 2286 | MUST | validator, security | 0 | 0 | 0 | — | — | — | Consequently, it knows that the value of the ACDC, SAID, `td` field MUST be either the empty string placeholder or the real ACDC SAID given above. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2282](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2282) | The shared secret salt MUST have approximately 128 bits of cryptographic entropy. | MUST | untestable: Entropy is a property of how a value was generated; one value in fixed input cannot show how much it has. | 0 | 0 | 0 | — | — | — |
+| [2286](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2286) | Consequently, it knows that the value of the ACDC, SAID, `td` field MUST be either the empty string placeholder or the real ACDC SAID given above. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Bound Blinded Attribute Block
 
-[Line 2427 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#bound-blinded-attribute-block).
+[Line 2427 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2427).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2446 | MUST | validator | 0 | 0 | 0 | — | — | — | The fields MUST appear in the following order `[d, u, td, ts, bn, bd]`. |
-| 2452 | MUST | validator | 0 | 0 | 0 | — | — | — | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization and MUST use one of the CESR group or count codes labeled `BoundStateSextuples` with code format `-b##` or `BigBoundStateSextuples` with code format `--b######`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2446](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2446) | The fields MUST appear in the following order `[d, u, td, ts, bn, bd]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2452](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2452) | It MAY be provided as an attachment to some message, such as the associate ACDC, as part of a CESR serialization and MUST use one of the CESR group or count codes labeled `BoundStateSextuples` with code format `-b##` or `BigBoundStateSextuples` with code format `--b######`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Bound Issuee Key Event Sequence Number, `bn` Field
 
-[Line 2455 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#bound-issuee-key-event-sequence-number-bn-field).
+[Line 2455 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2455).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2457 | MUST | validator | 0 | 0 | 0 | — | — | — | The bound Issuee key event sequence number, `tn`, field value MUST be a CESR encoded non-negative integer. |
-| 2457 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When not a placeholder, it MUST be the value of the `s` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. |
-| 2459 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be CESR-encoded as the CESR encoding for the integer value of 0. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2457](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2457) | The bound Issuee key event sequence number, `tn`, field value MUST be a CESR encoded non-negative integer. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2457](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2457) | When not a placeholder, it MUST be the value of the `s` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [2459](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2459) | It MUST be CESR-encoded as the CESR encoding for the integer value of 0. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Bound Issuee Key Event SAID, `bd` Field
 
-[Line 2474 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#bound-issuee-key-event-said-bd-field).
+[Line 2474 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2474).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2476 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When not a placeholder, the bound Issuee key event SAID, `bd`, field value MUST be the value of the `d` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. |
-| 2478 | MUST | validator | 0 | 0 | 0 | — | — | — | When the bound Issuee key event SAID, `bd`, field value is a placeholder as indicated by the empty string, i.e., "", it MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2476](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2476) | When not a placeholder, the bound Issuee key event SAID, `bd`, field value MUST be the value of the `d` field in the current key event in the KEL of the Issuee AID's KEL at the time of publication of the associated blindable statue update, `bup`, event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [2478](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2478) | When the bound Issuee key event SAID, `bd`, field value is a placeholder as indicated by the empty string, i.e., "", it MUST be CESR encoded as the CESR `Empty` primitive code with value `1AAP`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Performance and Scalability
 
-[Line 2699 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#performance-and-scalability).
+[Line 2699 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2699).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2703 | MUST | untestable: Describes document-based verifiable credentials for contrast; it binds nothing in ACDC. | 0 | 0 | 0 | — | — | — | Higher-up nodes in the graph with many lower-level nodes need only be transmitted, verified, and cached once per every node or leaf in the branch not redundantly re-transmitted and re-verified for each node or leaf as is the case for document-based Verifiable Credentials where the whole equivalent of the branched (graph) structure MUST be contained in one document. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2703](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2703) | Higher-up nodes in the graph with many lower-level nodes need only be transmitted, verified, and cached once per every node or leaf in the branch not redundantly re-transmitted and re-verified for each node or leaf as is the case for document-based Verifiable Credentials where the whole equivalent of the branched (graph) structure MUST be contained in one document. | MUST | untestable: Describes document-based verifiable credentials for contrast; it binds nothing in ACDC. | 0 | 0 | 0 | — | — | — |
 
 #### Cryptographic Strength
 
-[Line 2707 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#cryptographic-strength).
+[Line 2707 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2707).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2709 | MUST | untestable: A design principle for every cryptographic operation, with no single check a case could make. | 0 | 0 | 0 | — | — | — | Any subsequent cryptographic operations MUST preserve that minimum level of cryptographic strength. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2709](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2709) | Any subsequent cryptographic operations MUST preserve that minimum level of cryptographic strength. | MUST | untestable: A design principle for every cryptographic operation, with no single check a case could make. | 0 | 0 | 0 | — | — | — |
 
 #### Selective Disclosure
 
-[Line 2721 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#selective-disclosure).
+[Line 2721 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2721).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2735 | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0063 (inferred, draft) | To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2735](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2735) | To clarify, not all instances of an ACDC MUST employ the minimal Selective Disclosure mechanisms as described herein but all ACDC implementations MUST support any instance of an ACDC that employs the minimal Selective Disclosure mechanisms as described above. | MUST | validator | 0 | 1 | 0 | SHOULD 1 | — | ACDC-0063 (inferred, draft) |
 
 #### Basic Bulk Issuance Procedure
 
-[Line 2787 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#basic-bulk-issuance-procedure).
+[Line 2787 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2787).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2805 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The Issuer MUST anchor in its KEL an issuance proof digest seal of the set of bulk-issued ACDCs either directly or indirectly via an ACDC Registry (TEL). |
-| 2840 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | Consequently, a Discloser (Issuee) SHOULD NOT disclose the registry SAID until after contractual protection is in place, i.e., the Disclosee has agreed to the terms in the ACDC's Rule Section or not provide and `rd` field value in the ACDC at all. |
-| 2852 | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — | A bulk-issued TEL SHOULD use a blinded, blindable state update, `bup` message. |
-| 2879 | MUST | untestable: Describes what a forger would have to do, not an obligation on any party. | 0 | 0 | 0 | — | — | — | Whereas any KEL that has changed its Key State via a Rotation MUST be forked before the Rotation. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2805](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2805) | The Issuer MUST anchor in its KEL an issuance proof digest seal of the set of bulk-issued ACDCs either directly or indirectly via an ACDC Registry (TEL). | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+| [2840](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2840) | Consequently, a Discloser (Issuee) SHOULD NOT disclose the registry SAID until after contractual protection is in place, i.e., the Disclosee has agreed to the terms in the ACDC's Rule Section or not provide and `rd` field value in the ACDC at all. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [2852](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2852) | A bulk-issued TEL SHOULD use a blinded, blindable state update, `bup` message. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+| [2879](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2879) | Whereas any KEL that has changed its Key State via a Rotation MUST be forked before the Rotation. | MUST | untestable: Describes what a forger would have to do, not an obligation on any party. | 0 | 0 | 0 | — | — | — |
 
 #### Independent Registry Bulk-Issued ACDCs
 
-[Line 2895 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#independent-registry-bulk-issued-acdcs).
+[Line 2895 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2895).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2901 | MUST | validator, security | 0 | 0 | 0 | — | — | — | In this case, the bulk issuance process MUST be augmented so that each uniquely identified copy of the ACDC with a unique Issuee AID also gets its own TEL entry. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2901](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2901) | In this case, the bulk issuance process MUST be augmented so that each uniquely identified copy of the ACDC with a unique Issuee AID also gets its own TEL entry. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Independent Registry Transaction Event Seals Using Merkle Tree Roots
 
-[Line 2914 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#independent-registry-transaction-event-seals-using-merkle-tree-roots).
+[Line 2914 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2914).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2916 | MUST | validator, security | 0 | 0 | 0 | — | — | — | When using a TEL as an ACDC state Registry for a bulk-issued set, each event in the TEL MUST be bound with an anchoring seal in the Issuer's KEL. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2916](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2916) | When using a TEL as an ACDC state Registry for a bulk-issued set, each event in the TEL MUST be bound with an anchoring seal in the Issuer's KEL. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Message Type Field
 
-[Line 2964 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#message-type-field-1).
+[Line 2964 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2964).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
-| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
-| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
-| 2966 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2966](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2966) | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2966](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2966) | It MUST be present in messages with any other message type, regardless of the kind of serialization. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2966](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2966) | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2966](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2966) | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### ACDC as a top-level field map in CESR native format
 
-[Line 2968 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdc-as-a-top-level-field-map-in-cesr-native-format).
+[Line 2968 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2968).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2970 | MUST | validator | 0 | 0 | 0 | — | — | — | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`, appears as a top-level field map, it MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. |
-| 2970 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2970](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2970) | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`, appears as a top-level field map, it MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2970](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2970) | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### ACDC as a top-level set of fixed fields in CESR native format
 
-[Line 2974 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdc-as-a-top-level-set-of-fixed-fields-in-cesr-native-format).
+[Line 2974 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2974).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`,  appears as a top-level set of fixed fields, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
-| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
-| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | The value of either or both the `a` and `A` field MUST be empty. |
-| 2976 | MUST | validator | 0 | 0 | 0 | — | — | — | To clarify, both the `a` and `A` field values MUST not be non-empty, one or the other or both MUST be empty. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2976](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2976) | When an ACDC message of type `acm` in CESR native format, i.e. the serialization kind is `CESR`,  appears as a top-level set of fixed fields, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2976](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2976) | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2976](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2976) | The value of either or both the `a` and `A` field MUST be empty. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2976](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2976) | To clarify, both the `a` and `A` field values MUST not be non-empty, one or the other or both MUST be empty. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### ACDC Message Fields
 
-[Line 2980 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdc-message-fields).
+[Line 2980 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2980).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2982 | MUST | validator | 0 | 0 | 0 | — | — | — | One important feature of the fields maps used by ACDC is that they all MUST include a field with a SAID (self-addressing ID) using the SAID protocol [[ref: SAID]]. |
-| 2984 | MUST | validator | 0 | 0 | 0 | — | — | — | For some message types, some fields are optional, but all fields that appear MUST appear in this order, `[v, t, d, u, i, s, a, A, e, r]`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2982](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2982) | One important feature of the fields maps used by ACDC is that they all MUST include a field with a SAID (self-addressing ID) using the SAID protocol [[ref: SAID]]. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [2984](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2984) | For some message types, some fields are optional, but all fields that appear MUST appear in this order, `[v, t, d, u, i, s, a, A, e, r]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Message Type Field
 
-[Line 3000 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#message-type-field-2).
+[Line 3000 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3000).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. |
-| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST be present in messages with any other message type, regardless of the kind of serialization. |
-| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. |
-| 3002 | MUST | validator | 0 | 0 | 0 | — | — | — | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3002](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3002) | It MUST be present in any `acm` message that uses a CESR serialization kind, namely JSON, CBOR, and MGPK,. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3002](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3002) | It MUST be present in messages with any other message type, regardless of the kind of serialization. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3002](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3002) | The protocol type in either the version string of non-CESR-native serialization kinds or the version field for native CESR serialization kind MUST be `ACDC`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3002](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3002) | To elaborate, the message type field MUST appear in all native CESR messages; it MAY only not appear in non-CESR-native serialization kinds of `acm` type messages. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### ACDC of type `acm` as a top-level field map in CESR native format
 
-[Line 3004 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdc-of-type-acm-as-a-top-level-field-map-in-cesr-native-format).
+[Line 3004 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3004).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | It MUST appear as a top-level field map that MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. |
-| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. |
-| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | When field `a` appears then field `A` MUST NOT appear. |
-| 3006 | MUST | validator | 0 | 0 | 0 | — | — | — | Likewise, when field `A` appears, then field `a` MUST NOT appear. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3006](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3006) | It MUST appear as a top-level field map that MUST use either of the CESR count codes, `-G##` or  `--G#####` at the top-level. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3006](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3006) | The top-level fields (labels and values) that appear MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, A, e, r]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3006](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3006) | When field `a` appears then field `A` MUST NOT appear. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3006](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3006) | Likewise, when field `A` appears, then field `a` MUST NOT appear. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### ACDC of type `act` as a top-level set of fixed fields in CESR native format
 
-[Line 3010 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdc-of-type-act-as-a-top-level-set-of-fixed-fields-in-cesr-native-format).
+[Line 3010 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3010).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3012 | MUST | validator | 0 | 0 | 0 | — | — | — | An ACDC message of message type `act` in CESR native format, i.e., the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. |
-| 3012 | MUST | validator | 0 | 0 | 0 | — | — | — | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
-| 3012 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, e, r]`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3012](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3012) | An ACDC message of message type `act` in CESR native format, i.e., the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3012](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3012) | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3012](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3012) | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, a, e, r]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### ACDC of type `acg` as a top-level set of fixed fields in CESR native format
 
-[Line 3016 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdc-of-type-acg-as-a-top-level-set-of-fixed-fields-in-cesr-native-format).
+[Line 3016 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3016).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3018 | MUST | validator | 0 | 0 | 0 | — | — | — | An ACDC message of message type `acg` in CESR native format, i.e. the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. |
-| 3018 | MUST | validator | 0 | 0 | 0 | — | — | — | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. |
-| 3018 | MUST | validator | 0 | 0 | 0 | — | — | — | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, A, e, r]`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3018](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3018) | An ACDC message of message type `acg` in CESR native format, i.e. the serialization kind is `CESR`,  MUST appear as a top-level set of fixed fields. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3018](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3018) | Therefore, it MUST use either of the CESR count codes, `-F##` or  `--F#####` at the top-level. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3018](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3018) | The top-level field values (no labels) MUST appear in the following order: `[ v, t, d, u, i, rd, s, A, e, r]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Section Message Types
 
-[Line 3063 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#section-message-types).
+[Line 3063 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3063).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3067 | MUST | validator | 0 | 0 | 0 | — | — | — | Emptiness for field values that MUST have a string value is indicated by an empty string. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3067](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3067) | Emptiness for field values that MUST have a string value is indicated by an empty string. | MUST | validator | 0 | 0 | 0 | — | — | — |
 
 #### Section Message top-level fields
 
-[Line 3069 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#section-message-top-level-fields).
+[Line 3069 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3069).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3082 | MUST | validator | 0 | 0 | 0 | — | — | — | Each section Message MUST have Version String, `v`, Message type, `t`,  and SAID, `d` fields in that order. |
-| 3092 | MUST | validator, security | 0 | 0 | 0 | — | — | — | The embedded section block's SAID, `d` field in the respective section top-level field MUST match the section field value in the associated ACDC when in most compact form. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3082](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3082) | Each section Message MUST have Version String, `v`, Message type, `t`,  and SAID, `d` fields in that order. | MUST | validator | 0 | 0 | 0 | — | — | — |
+| [3092](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3092) | The embedded section block's SAID, `d` field in the respective section top-level field MUST match the section field value in the associated ACDC when in most compact form. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
 
 #### Accreditation ACDC
 
-[Line 3657 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#accreditation-acdc).
+[Line 3657 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3657).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3698 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
-| 3851 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
-| 4004 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
-| 4114 | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3698](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3698) | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — |
+| [3851](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3851) | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — |
+| [4004](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L4004) | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — |
+| [4114](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L4114) | This ACDC in whole or in part MUST NOT be shared with any other entity besides the intended recipient." | MUST | untestable: Legal language inside a worked example's rule section, not an obligation of the specification. | 0 | 0 | 0 | — | — | — |
 
 ### Permissions (MAY and OPTIONAL)
 
 #### Other Reserved Fields
 
-[Line 38 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#other-reserved-fields).
+[Line 38 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L38).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 41 | MAY | unassessed | 0 | 0 | 0 | — | — | — | These MAY appear at other levels besides the top-level of an ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [41](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L41) | These MAY appear at other levels besides the top-level of an ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Version String Field
 
-[Line 60 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#version-string-field).
+[Line 60 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L60).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 62 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Each ACDC Message body in a Stream MAY use a different serialization type. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [62](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L62) | Each ACDC Message body in a Stream MAY use a different serialization type. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Self-addressing Identifier (SAID) Fields
 
-[Line 75 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#self-addressing-identifier-said-fields).
+[Line 75 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L75).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 77 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Some fields in ACDCs MAY have for their value either a field map or a SAID. |
-| 77 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Any nested field map that includes a SAID field (i.e., is, therefore, a SAD) MAY be compacted into its SAID. |
-| 77 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The uncompacted blocks for each associated SAID MAY be attached or cached to optimize bandwidth and availability without decreasing security. |
-| 79 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Moreover, the value of top-level `s`, `a`, `e`, and `r` fields MAY be replaced by the SAID of their associated field map. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [77](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L77) | Some fields in ACDCs MAY have for their value either a field map or a SAID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [77](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L77) | Any nested field map that includes a SAID field (i.e., is, therefore, a SAD) MAY be compacted into its SAID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [77](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L77) | The uncompacted blocks for each associated SAID MAY be attached or cached to optimize bandwidth and availability without decreasing security. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [79](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L79) | Moreover, the value of top-level `s`, `a`, `e`, and `r` fields MAY be replaced by the SAID of their associated field map. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Registry SAID Field
 
-[Line 83 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#registry-said-field).
+[Line 83 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L83).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 85 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When the registry SAID, `rd` field is used at the top level for the Issuer's registry, a registry SAID, `rd` field that appears nested in the Attributed, `a`, or Aggregate, `A`, section MAY be used for some other registry, such as an application-specific or Issuer-specific registry. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [85](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L85) | When the registry SAID, `rd` field is used at the top level for the Issuer's registry, a registry SAID, `rd` field that appears nested in the Attributed, `a`, or Aggregate, `A`, section MAY be used for some other registry, such as an application-specific or Issuer-specific registry. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Universally Unique Identifier (UUID) Fields
 
-[Line 87 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#universally-unique-identifier-uuid-fields).
+[Line 87 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L87).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 91 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A UUID, `u` field, MAY optionally appear in any block (field map) at any level of an ACDC. |
-| 91 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Thus, the whole ACDC, not merely some block within the ACDC, MAY be disclosed in a correlation-minimizing (what some call privacy-preserving) manner. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [91](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L91) | A UUID, `u` field, MAY optionally appear in any block (field map) at any level of an ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [91](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L91) | Thus, the whole ACDC, not merely some block within the ACDC, MAY be disclosed in a correlation-minimizing (what some call privacy-preserving) manner. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Autonomic IDentifier (AID) Fields
 
-[Line 93 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#autonomic-identifier-aid-fields).
+[Line 93 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L93).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 95 | MAY | unassessed | 0 | 0 | 0 | — | — | — | By virtue of their private key(s), the Controllers MAY make statements on behalf of the associated AID backed by uniquely verifiable commitments via digital signatures on those statements. |
-| 95 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Any entity then MAY verify those signatures using the associated set of public keys. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [95](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L95) | By virtue of their private key(s), the Controllers MAY make statements on behalf of the associated AID backed by uniquely verifiable commitments via digital signatures on those statements. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [95](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L95) | Any entity then MAY verify those signatures using the associated set of public keys. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Datetime, `dt` Fields
 
-[Line 97 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#datetime-dt-fields).
+[Line 97 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L97).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 98 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Other datetime fields MAY include an expiration datetime or the like. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [98](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L98) | Other datetime fields MAY include an expiration datetime or the like. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Partially Disclosable Attribute Section Field
 
-[Line 104 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#partially-disclosable-attribute-section-field).
+[Line 104 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L104).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 106 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The top-level Attribute section `a`, field value MAY have as its value a nested field map. |
-| 106 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Each level of nesting MAY be fully expanded or represented by its SAID. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [106](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L106) | The top-level Attribute section `a`, field value MAY have as its value a nested field map. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [106](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L106) | Each level of nesting MAY be fully expanded or represented by its SAID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Partially Disclosable Rule Section field
 
-[Line 116 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#partially-disclosable-rule-section-field).
+[Line 116 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L116).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 118 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The top-level Rule section `r`, field value provides both human and machine readable legal language that MAY be associated with the ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [118](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L118) | The top-level Rule section `r`, field value provides both human and machine readable legal language that MAY be associated with the ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### ACDC Variants
 
-[Line 120 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdc-variants).
+[Line 120 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L120).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 122 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A given variant MAY be Targeted (Untargeted). |
-| 126 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Furthermore, a given variant MAY be either *Targeted* or *Untargeted* based on the presence of the Issuee field in the Attribute or Attribute aggregate sections. |
-| 126 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Similarly, any variant with an Attribute section MAY have nested sub-blocks within the Attribute section that are either compact or non-compact. |
-| 126 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The type of disclosure a given variant supports MAY be dependent on how the different sections appear in the ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [122](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L122) | A given variant MAY be Targeted (Untargeted). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [126](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L126) | Furthermore, a given variant MAY be either *Targeted* or *Untargeted* based on the presence of the Issuee field in the Attribute or Attribute aggregate sections. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [126](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L126) | Similarly, any variant with an Attribute section MAY have nested sub-blocks within the Attribute section that are either compact or non-compact. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [126](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L126) | The type of disclosure a given variant supports MAY be dependent on how the different sections appear in the ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Most compact form SAID
 
-[Line 130 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#most-compact-form-said).
+[Line 130 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L130).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 132 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When compact, any section or nested block MAY be represented merely by its SAID [[10](#JSch)] [[39](#JSchCp)]. |
-| 142 | MAY | unassessed | 0 | 0 | 0 | — | — | — | It MAY then be represented in the compact form but using the SAID computed on its fully expanded form. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [132](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L132) | When compact, any section or nested block MAY be represented merely by its SAID [[10](#JSch)] [[39](#JSchCp)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [142](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L142) | It MAY then be represented in the compact form but using the SAID computed on its fully expanded form. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Private ACDC
 
-[Line 162 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#private-acdc).
+[Line 162 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L162).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 164 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Thus, an ACDC with a sufficiently high entropy top-level UUID, `u`, field MAY be considered a private (confidential) ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [164](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L164) | Thus, an ACDC with a sufficiently high entropy top-level UUID, `u`, field MAY be considered a private (confidential) ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Metadata ACDC
 
-[Line 166 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#metadata-acdc).
+[Line 166 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L166).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 168 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Nonetheless, the Discloser MAY make a non-repudiable cryptographic commitment to the metadata SAID in order to initiate a contractually protected exchange without leaking correlation to the actual ACDC to be disclosed. |
-| 168 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A Disclosee MAY verify the other metadata information in the metadata ACDC before agreeing to any restrictions imposed by the future disclosure. |
-| 168 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The top-level Attribute section, `a`, field value, or the top-level Attribute aggregate, `A` field value of a metadata ACDC, MAY be empty or missing so that its value is not correlatable across disclosures (presentations). |
-| 170 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Similarly, an Issuer MAY use a metadata ACDC to get agreement to a contractual waiver expressed in the Rules section with a potential Issuee prior to issuance. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [168](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L168) | Nonetheless, the Discloser MAY make a non-repudiable cryptographic commitment to the metadata SAID in order to initiate a contractually protected exchange without leaking correlation to the actual ACDC to be disclosed. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [168](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L168) | A Disclosee MAY verify the other metadata information in the metadata ACDC before agreeing to any restrictions imposed by the future disclosure. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [168](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L168) | The top-level Attribute section, `a`, field value, or the top-level Attribute aggregate, `A` field value of a metadata ACDC, MAY be empty or missing so that its value is not correlatable across disclosures (presentations). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [170](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L170) | Similarly, an Issuer MAY use a metadata ACDC to get agreement to a contractual waiver expressed in the Rules section with a potential Issuee prior to issuance. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Static (Immutable) Schema
 
-[Line 192 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#static-immutable-schema).
+[Line 192 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L192).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 204 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The JSON Schema specification allows complex Schema references that MAY include non-local URI references [[41](#ref41)] [[42](#JSchCx)] [[15](#ref15)] [[16](#RFC8820)]. |
-| 206 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The value of the underlying Schema resource so referenced MAY change (mutate). |
-| 208 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A URI that includes a SAID MAY be used to securely reference a remote or distributed SAIDified schema resource because that resource is fixed (immutable, nonmalleable) and verifiable to both the SAID in the reference and the embedded SAID in the resource so referenced. |
-| 212 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The value of any relative URI references for schema as provided by a `$ref` keyword MAY be resolved against a virtual base URI constructed from top-level `$id` field bare SAID value. |
-| 214 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The `sad:` URI scheme MAY be used to directly indicate a URI resource that safely returns a verifiable SAD. |
-| 216 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Therefore, OOBI URLs MAY be used as non-local URI references for JSON Schema [[4](#OOBI)] [[15](#ref15)] [[16](#RFC8820)]. |
-| 218 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The `did:` URI scheme ([W3C DID](#W3C_DID)) MAY be used safely to prefix non-local URI references that act to namespace SAIDs expressed as DID URIs or DID URLs. |
-| 222 | MAY | unassessed | 0 | 0 | 0 | — | — | — | These MAY include internal relative references using the `$ref` keyword to other parts of a fully self-contained static (SAIDified) Schema or references to static (SAIDified) external Schema parts. |
-| 222 | MAY | unassessed | 0 | 0 | 0 | — | — | — | As indicated above, these references MAY be bare SAIDs, DID URIs or URLs (`did:` scheme), SAD URIs (`sad:` scheme), or OOBI URLs [[4](#OOBI)]. |
-| 222 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The static schema, in whole or in part, MAY be attached to the ACDC itself or provided via a highly available cache or data store. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [204](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L204) | The JSON Schema specification allows complex Schema references that MAY include non-local URI references [[41](#ref41)] [[42](#JSchCx)] [[15](#ref15)] [[16](#RFC8820)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [206](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L206) | The value of the underlying Schema resource so referenced MAY change (mutate). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [208](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L208) | A URI that includes a SAID MAY be used to securely reference a remote or distributed SAIDified schema resource because that resource is fixed (immutable, nonmalleable) and verifiable to both the SAID in the reference and the embedded SAID in the resource so referenced. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [212](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L212) | The value of any relative URI references for schema as provided by a `$ref` keyword MAY be resolved against a virtual base URI constructed from top-level `$id` field bare SAID value. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [214](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L214) | The `sad:` URI scheme MAY be used to directly indicate a URI resource that safely returns a verifiable SAD. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [216](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L216) | Therefore, OOBI URLs MAY be used as non-local URI references for JSON Schema [[4](#OOBI)] [[15](#ref15)] [[16](#RFC8820)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [218](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L218) | The `did:` URI scheme ([W3C DID](#W3C_DID)) MAY be used safely to prefix non-local URI references that act to namespace SAIDs expressed as DID URIs or DID URLs. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [222](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L222) | These MAY include internal relative references using the `$ref` keyword to other parts of a fully self-contained static (SAIDified) Schema or references to static (SAIDified) external Schema parts. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [222](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L222) | As indicated above, these references MAY be bare SAIDs, DID URIs or URLs (`did:` scheme), SAD URIs (`sad:` scheme), or OOBI URLs [[4](#OOBI)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [222](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L222) | The static schema, in whole or in part, MAY be attached to the ACDC itself or provided via a highly available cache or data store. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Schema Versioning
 
-[Line 228 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-versioning).
+[Line 228 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L228).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 236 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The JSON Schema for an ACDC MAY use composition operators (see below). |
-| 238 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Consequently, the version of the Edge's schema `s` field value MAY differ from the version of the Schema `s` field value in the ACDC node pointed to by that edge. |
-| 238 | MAY | unassessed | 0 | 0 | 0 | — | — | — | This means the Edge's schema version MAY have a higher minor version number than the ACDC's schema version (node pointed to by the Edge). |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [236](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L236) | The JSON Schema for an ACDC MAY use composition operators (see below). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [238](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L238) | Consequently, the version of the Edge's schema `s` field value MAY differ from the version of the Schema `s` field value in the ACDC node pointed to by that edge. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [238](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L238) | This means the Edge's schema version MAY have a higher minor version number than the ACDC's schema version (node pointed to by the Edge). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Schema Availability
 
-[Line 240 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#schema-availability).
+[Line 240 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L240).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 242 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The composed, detailed (uncompacted) (bundled) static Schema for an ACDC MAY be cached or attached. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [242](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L242) | The composed, detailed (uncompacted) (bundled) static Schema for an ACDC MAY be cached or attached. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Composable JSON Schema
 
-[Line 244 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#composable-json-schema).
+[Line 244 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L244).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 246 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When compact, any one of these sections MAY be represented merely by its SAID [[10](#JSch)] [[39](#JSchCp)]. |
-| 246 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Decomposed variants MAY be dependent on the type of Graduated Disclosure. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [246](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L246) | When compact, any one of these sections MAY be represented merely by its SAID [[10](#JSch)] [[39](#JSchCp)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [246](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L246) | Decomposed variants MAY be dependent on the type of Graduated Disclosure. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Attribute Section Variants
 
-[Line 302 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#attribute-section-variants).
+[Line 302 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L302).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 308 | MAY | unassessed | 0 | 0 | 0 | — | — | — | These four variants MAY appear in combination. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [308](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L308) | These four variants MAY appear in combination. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Targeted Attribute Section
 
-[Line 310 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#targeted-attribute-section).
+[Line 310 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L310).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 312 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Targeted ACDCs MAY be used for many different purposes, these include but are not limited too: entitlements, authorizations, or delegations directed at the Target. |
-| 312 | MAY | unassessed | 0 | 0 | 0 | — | — | — | In other words, a targeted ACDC provides a container for authentic data that MAY also be used as some form of entitlement, such as a credential that is verifiably bound to the Issuee as targeted by the Issuer. |
-| 312 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Furthermore, by virtue of the Targeted Issuee's provable control over its AID, the Targeted ACDC MAY be verifiably presented (disclosed) by the Controller of the Issuee AID. |
-| 316 | MAY | unassessed | 0 | 0 | 0 | — | — | — | In some use cases, for example, an Issuee MAY be called the Holder; in others, the Subject of the ACDC. |
-| 318 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Therefore, the Issuee Controller MAY make non-repudiable verifiable commitments to an issuance either directly via ephemeral digital signatures on behalf of its AID or indirectly by anchoring the SAID of the issuance in its KEL (Key Event Long). |
-| 318 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Therefore, any use of the ACDC by the Issuee MAY be securely attributed to the Issuee. |
-| 320 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Importantly, the presence of an Issuee, `i`, field means that the associated Issuee MAY make authoritative verifiable presentations or disclosures of the ACDC. |
-| 322 | MAY | unassessed | 0 | 0 | 0 | — | — | — | In addition, because the Issuee is a specified counterparty, the Issuer MAY engage in a contract with the Issuee that the Issuee agrees to by virtue of its non-repudiable signature on an offer of the ACDC prior to its issuance. |
-| 322 | MAY | unassessed | 0 | 0 | 0 | — | — | — | This agreement MAY be a pre-condition to the issuance and thereby MAY impose liability waivers or other terms of use on that Issuee. |
-| 324 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Likewise, the presence of an Issuee, `i`, field means that the Issuer MAY use the ACDC as a contractual vehicle for conveying authorization to the Issuee. |
-| 324 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Thereby, an Issuer MAY delegate authority to an Issuee who MAY then become a verifiably authorized Issuer who in turn MAY delegate that authority (or attenuation of that authority) to some other verifiably authorized Issuee and so forth. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [312](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L312) | Targeted ACDCs MAY be used for many different purposes, these include but are not limited too: entitlements, authorizations, or delegations directed at the Target. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [312](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L312) | In other words, a targeted ACDC provides a container for authentic data that MAY also be used as some form of entitlement, such as a credential that is verifiably bound to the Issuee as targeted by the Issuer. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [312](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L312) | Furthermore, by virtue of the Targeted Issuee's provable control over its AID, the Targeted ACDC MAY be verifiably presented (disclosed) by the Controller of the Issuee AID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [316](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L316) | In some use cases, for example, an Issuee MAY be called the Holder; in others, the Subject of the ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [318](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L318) | Therefore, the Issuee Controller MAY make non-repudiable verifiable commitments to an issuance either directly via ephemeral digital signatures on behalf of its AID or indirectly by anchoring the SAID of the issuance in its KEL (Key Event Long). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [318](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L318) | Therefore, any use of the ACDC by the Issuee MAY be securely attributed to the Issuee. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [320](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L320) | Importantly, the presence of an Issuee, `i`, field means that the associated Issuee MAY make authoritative verifiable presentations or disclosures of the ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [322](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L322) | In addition, because the Issuee is a specified counterparty, the Issuer MAY engage in a contract with the Issuee that the Issuee agrees to by virtue of its non-repudiable signature on an offer of the ACDC prior to its issuance. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [322](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L322) | This agreement MAY be a pre-condition to the issuance and thereby MAY impose liability waivers or other terms of use on that Issuee. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [324](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L324) | Likewise, the presence of an Issuee, `i`, field means that the Issuer MAY use the ACDC as a contractual vehicle for conveying authorization to the Issuee. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [324](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L324) | Thereby, an Issuer MAY delegate authority to an Issuee who MAY then become a verifiably authorized Issuer who in turn MAY delegate that authority (or attenuation of that authority) to some other verifiably authorized Issuee and so forth. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Untargeted Attribute Section
 
-[Line 330 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#untargeted-attribute-section).
+[Line 330 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L330).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 332 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The data in the Attribute section MAY be considered an undirected verifiable attestation or observation by the Issuer. |
-| 332 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Consequently, the Rules section MAY provide only contractual obligations on implied counterparties while still expressing contractual obligations or waivers of obligations on the Issuer. |
-| 334 | MAY | unassessed | 0 | 0 | 0 | — | — | — | An observer, such as a sensor that controls an AID, MAY make verifiable, nonrepudiable measurements and publish them as ACDCs. |
-| 334 | MAY | unassessed | 0 | 0 | 0 | — | — | — | These MAY be chained together to provide provenance of a chain of custody of any data. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [332](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L332) | The data in the Attribute section MAY be considered an undirected verifiable attestation or observation by the Issuer. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [332](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L332) | Consequently, the Rules section MAY provide only contractual obligations on implied counterparties while still expressing contractual obligations or waivers of obligations on the Issuer. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [334](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L334) | An observer, such as a sensor that controls an AID, MAY make verifiable, nonrepudiable measurements and publish them as ACDCs. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [334](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L334) | These MAY be chained together to provide provenance of a chain of custody of any data. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Targeted private-attribute section example
 
-[Line 336 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#targeted-private-attribute-section-example).
+[Line 336 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L336).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 342 | MAY | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, when an ACDC includes a sufficiently high entropy UUID, `u`, field at the top level of its Attributes block then the ACDC MAY be considered a private-attributes ACDC when expressed in compact form, that is, the Attribute block is represented by its SAID, `d`, field and the value of its top-level Attribute section, `a`, field is the value of the nested SAID, `d`, field from the uncompacted version of the Attribute block. |
-| 342 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A verifiable commitment MAY be made to the compact form of the ACDC without leaking details of the Attributes. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [342](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L342) | To elaborate, when an ACDC includes a sufficiently high entropy UUID, `u`, field at the top level of its Attributes block then the ACDC MAY be considered a private-attributes ACDC when expressed in compact form, that is, the Attribute block is represented by its SAID, `d`, field and the value of its top-level Attribute section, `a`, field is the value of the nested SAID, `d`, field from the uncompacted version of the Attribute block. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [342](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L342) | A verifiable commitment MAY be made to the compact form of the ACDC without leaking details of the Attributes. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Edge Section
 
-[Line 1047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#edge-section).
+[Line 1047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1047).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1049 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The Edge Section, `e` field MAY appear as a top-level block within the ACDC and denotes the start of subsequent Edge-groups. |
-| 1049 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The Edge Section has several reserved fields that MAY appear as top-level fields within its block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1049](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1049) | The Edge Section, `e` field MAY appear as a top-level block within the ACDC and denotes the start of subsequent Edge-groups. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1049](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1049) | The Edge Section has several reserved fields that MAY appear as top-level fields within its block. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Block Types
 
-[Line 1054 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#block-types).
+[Line 1054 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1054).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1056 | MAY | unassessed | 0 | 0 | 0 | — | — | — | There are two types of field maps or blocks that MAY appear as values of fields within the Edge Section, `e` field either at the top level of the Edge block itself or nested. |
-| 1056 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Edges MAY only appear as locally unique labeled (using non-reserved labels) blocks nested within an Edge-group. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1056](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1056) | There are two types of field maps or blocks that MAY appear as values of fields within the Edge Section, `e` field either at the top level of the Edge block itself or nested. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1056](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1056) | Edges MAY only appear as locally unique labeled (using non-reserved labels) blocks nested within an Edge-group. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### ACDCs as secure graph fragments of a globally distributed property graph (PG)
 
-[Line 1060 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#acdcs-as-secure-graph-fragments-of-a-globally-distributed-property-graph-pg).
+[Line 1060 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1060).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1070 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The discovery of a service endpoint URL that provides database access to a copy of the ACDC MAY be bootstrapped via an OOBI (Out-Of-Band-Introduction) that links the service endpoint URL to the SAID of the ACDC or by the SAID of the Edge that points to the SAID of that ACDC [[4](#OOBI)]. |
-| 1070 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Alternatively, the Issuer MAY provide as an attachment at the time of issuance a copy of the referenced ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1070](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1070) | The discovery of a service endpoint URL that provides database access to a copy of the ACDC MAY be bootstrapped via an OOBI (Out-Of-Band-Introduction) that links the service endpoint URL to the SAID of the ACDC or by the SAID of the Edge that points to the SAID of that ACDC [[4](#OOBI)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1070](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1070) | Alternatively, the Issuer MAY provide as an attachment at the time of issuance a copy of the referenced ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Operator, `o` field
 
-[Line 1095 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#operator-o-field).
+[Line 1095 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1095).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1114 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When the top-level Edge-group, the Edge Section includes only one Edge, the logic for evaluating the validity of the enclosing ACDC (near node) with respect to the validity of the connected far node ACDC pointed to by that edge MAY be considered a link in a provenance chain. |
-| 1114 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When any node in a provenance chain is invalid, an Edge pointing to that node MAY also be invalid. |
-| 1114 | MAY | unassessed | 0 | 0 | 0 | — | — | — | If a node has an invalid Edge, then the node MAY also be invalid. |
-| 1116 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When the top-level Edge-group, the Edge Section includes more than one Edge directly or indirectly (as nested Edge(s) in nested Edge-group), then the logic for evaluating the validity of the enclosing ACDC (near node) with respect to the validity of all the connected far node ACDCs pointed to by those Edges MAY be a provenance tree. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1114](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1114) | When the top-level Edge-group, the Edge Section includes only one Edge, the logic for evaluating the validity of the enclosing ACDC (near node) with respect to the validity of the connected far node ACDC pointed to by that edge MAY be considered a link in a provenance chain. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1114](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1114) | When any node in a provenance chain is invalid, an Edge pointing to that node MAY also be invalid. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1114](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1114) | If a node has an invalid Edge, then the node MAY also be invalid. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1116](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1116) | When the top-level Edge-group, the Edge Section includes more than one Edge directly or indirectly (as nested Edge(s) in nested Edge-group), then the logic for evaluating the validity of the enclosing ACDC (near node) with respect to the validity of all the connected far node ACDCs pointed to by those Edges MAY be a provenance tree. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Weight, `w` field
 
-[Line 1118 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#weight-w-field).
+[Line 1118 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1118).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1122 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A Edge-group with a weight MAY provide an aggregate of weighted directed Edges. |
-| 1122 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Weighted directed Edges MAY represent degrees of confidence or likelihood. |
-| 1122 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The Weight, `w` field provides a reserved label that MAY be the primary weight on an Edge group to be applied by the Operator of its enclosing Edge-group. |
-| 1122 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Other fields with other labels (labeled Edge-group properties) MAY provide other types of weights, but having a default label, namely `w`, simplifies the default definitions of weighted Operators. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1122](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1122) | A Edge-group with a weight MAY provide an aggregate of weighted directed Edges. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1122](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1122) | Weighted directed Edges MAY represent degrees of confidence or likelihood. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1122](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1122) | The Weight, `w` field provides a reserved label that MAY be the primary weight on an Edge group to be applied by the Operator of its enclosing Edge-group. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1122](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1122) | Other fields with other labels (labeled Edge-group properties) MAY provide other types of weights, but having a default label, namely `w`, simplifies the default definitions of weighted Operators. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Labeled nested edge and edge-group fields
 
-[Line 1124 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#labeled-nested-edge-and-edge-group-fields).
+[Line 1124 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1124).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1126 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Edge-groups and Edges nested within a given Edge-group MAY appear as labeled fields whose labels are not any of the reserved field labels for either Edge-groups or Edges, namely, `[d, u, n, s, o, w]'. |
-| 1128 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The field's value MAY be either an Edge sub-block or when in compact form, a string. |
-| 1130 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Notwithstanding this separation, an Edge block MAY include a constraint on the type of the ACDC to which that Edge points by including the SAID of the schema of the pointed-to ACDC as a property of that edge (see below). |
-| 1132 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A main distinguishing feature of a property graph (PG) including ACDCs is that both nodes and Edges MAY have a set of properties [[56](#PGM)] [[57](#Dots)] [[58](#KG)]. |
-| 1132 | MAY | unassessed | 0 | 0 | 0 | — | — | — | These MAY include modifiers that influence how the connected node is to be combined or place a constraint on the allowed type(s) of connected nodes. |
-| 1132 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Additional properties MAY be inferred from the properties of an enclosing Edge-group's block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1126](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1126) | Edge-groups and Edges nested within a given Edge-group MAY appear as labeled fields whose labels are not any of the reserved field labels for either Edge-groups or Edges, namely, `[d, u, n, s, o, w]'. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1128](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1128) | The field's value MAY be either an Edge sub-block or when in compact form, a string. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1130](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1130) | Notwithstanding this separation, an Edge block MAY include a constraint on the type of the ACDC to which that Edge points by including the SAID of the schema of the pointed-to ACDC as a property of that edge (see below). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1132](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1132) | A main distinguishing feature of a property graph (PG) including ACDCs is that both nodes and Edges MAY have a set of properties [[56](#PGM)] [[57](#Dots)] [[58](#KG)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1132](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1132) | These MAY include modifiers that influence how the connected node is to be combined or place a constraint on the allowed type(s) of connected nodes. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1132](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1132) | Additional properties MAY be inferred from the properties of an enclosing Edge-group's block. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Edge
 
-[Line 1134 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#edge).
+[Line 1134 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1134).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1149 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The SAID, `d`, UUID, `u`, schema, `s`, operator, `o`, and weight, `w`  fields are OPTIONAL. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1149](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1149) | The SAID, `d`, UUID, `u`, schema, `s`, operator, `o`, and weight, `w`  fields are OPTIONAL. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### UUID, `u` field
 
-[Line 1160 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field-1).
+[Line 1160 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1160).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1165 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Private ACDCs (nodes) and Private Edges MAY be combined to better protect the privacy of the information in a distributed property graph. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1165](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1165) | Private ACDCs (nodes) and Private Edges MAY be combined to better protect the privacy of the information in a distributed property graph. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Operator, `o` field
 
-[Line 1184 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#operator-o-field-1).
+[Line 1184 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1184).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1193 | MAY | unassessed | 0 | 0 | 0 | — | — | — | \|`NI2I`\| Not-Issuer-To-Issuee, The Issuer AID of this ACDC MAY or MAY not be the Issuee AID of the node that this Edge points to. \|  No \| |
-| 1207 | MAY | unassessed | 0 | 0 | 0 | — | — | — | To clarify, when operative (present), the `NI2I` Operator means that both an Untargeted ACDC or Targeted ACDC, as the node pointed to by the Edge, MAY be valid even when Untargeted or if Targeted even when the Issuer of the ACDC in which the Edge appears is not the Issuee AID, of that node to which the Edge points. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1193](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1193) | \|`NI2I`\| Not-Issuer-To-Issuee, The Issuer AID of this ACDC MAY or MAY not be the Issuee AID of the node that this Edge points to. \|  No \| | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1207](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1207) | To clarify, when operative (present), the `NI2I` Operator means that both an Untargeted ACDC or Targeted ACDC, as the node pointed to by the Edge, MAY be valid even when Untargeted or if Targeted even when the Issuer of the ACDC in which the Edge appears is not the Issuee AID, of that node to which the Edge points. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Weight, `w` field.
 
-[Line 1213 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#weight-w-field-1).
+[Line 1213 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1213).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1215 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The weighted directed Edges within an enclosing Edge-group MAY be aggregated when that Edge-group's Operator performs some type of weighted average. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1215](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1215) | The weighted directed Edges within an enclosing Edge-group MAY be aggregated when that Edge-group's Operator performs some type of weighted average. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Simple compact edge
 
-[Line 1223 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#simple-compact-edge).
+[Line 1223 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1223).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1225 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When an Edge sub-block has only one field, that is, its node, `n` field, i.e., it has no other properties, then the Edge block MAY use an alternate simplified, compact form where the labeled Edge field value is the value of its node, `n,` field. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1225](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1225) | When an Edge sub-block has only one field, that is, its node, `n` field, i.e., it has no other properties, then the Edge block MAY use an alternate simplified, compact form where the labeled Edge field value is the value of its node, `n,` field. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Rule Section
 
-[Line 1237 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#rule-section).
+[Line 1237 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1237).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1241 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The labels on the Rules MAY follow a structured naming or numbering convention. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1241](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1241) | The labels on the Rules MAY follow a structured naming or numbering convention. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Block Types
 
-[Line 1245 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#block-types-1).
+[Line 1245 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1245).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1247 | MAY | unassessed | 0 | 0 | 0 | — | — | — | There are two types of field maps or blocks that MAY appear as values of fields within the Rule Section, `r` field either at the top level of the Rule block itself or nested. |
-| 1247 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Rules MAY only appear as locally unique labeled (using non-reserved labels)  blocks nested within an Rule-Group. |
-| 1249 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Nested Rule-groups MAY only appear as locally unique labeled blocks nested within another Rule-group. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1247](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1247) | There are two types of field maps or blocks that MAY appear as values of fields within the Rule Section, `r` field either at the top level of the Rule block itself or nested. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1247](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1247) | Rules MAY only appear as locally unique labeled (using non-reserved labels)  blocks nested within an Rule-Group. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1249](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1249) | Nested Rule-groups MAY only appear as locally unique labeled blocks nested within another Rule-group. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Rule-group
 
-[Line 1255 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#rule-group).
+[Line 1255 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1255).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1267 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A Rule-group MAY have a Legal, `l`, field and MAY have a SAID, `d` field. |
-| 1267 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When the Rule-group has a SAID, `d` field it MAY also have a UUID, `u` field. |
-| 1267 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A Rule-group MAY have one or more other labeled fields whose values represent nested Rules or Rule-groups. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1267](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1267) | A Rule-group MAY have a Legal, `l`, field and MAY have a SAID, `d` field. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1267](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1267) | When the Rule-group has a SAID, `d` field it MAY also have a UUID, `u` field. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1267](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1267) | A Rule-group MAY have one or more other labeled fields whose values represent nested Rules or Rule-groups. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Labeled nested rule and rule-group fields
 
-[Line 1277 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#labeled-nested-rule-and-rule-group-fields).
+[Line 1277 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1277).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1281 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The field's value MAY be either the Rule or Rule-group block or, in compact form, a string. |
-| 1285 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A main distinguishing feature of a property graph (PG) including ACDCs is that both nodes and Edges MAY have a set of properties [[56](#PGM)][[57](#Dots)][[58](#KG)]. |
-| 1285 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Each Rule-group's block MAY provide its additional properties vis-a-vis a property graph as labeled fields. |
-| 1285 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Additional properties MAY be inferred from the properties of an enclosing Rule-group block. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1281](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1281) | The field's value MAY be either the Rule or Rule-group block or, in compact form, a string. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1285](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1285) | A main distinguishing feature of a property graph (PG) including ACDCs is that both nodes and Edges MAY have a set of properties [[56](#PGM)][[57](#Dots)][[58](#KG)]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1285](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1285) | Each Rule-group's block MAY provide its additional properties vis-a-vis a property graph as labeled fields. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1285](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1285) | Additional properties MAY be inferred from the properties of an enclosing Rule-group block. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Rule
 
-[Line 1288 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#rule).
+[Line 1288 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1288).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1300 | MAY | unassessed | 0 | 0 | 0 | — | — | — | And MAY have a SAID, `d` field. |
-| 1300 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When the Rule has a SAID, `d` field, it MAY also have a UUID, `u` field. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1300](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1300) | And MAY have a SAID, `d` field. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1300](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1300) | When the Rule has a SAID, `d` field, it MAY also have a UUID, `u` field. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Simple Compact Rule
 
-[Line 1321 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#simple-compact-rule).
+[Line 1321 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1321).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1323 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When a Rule block has only one field, that is, its legal, `l` field, i.e., it has no other properties, then the rule block MAY use an alternate simplified, compact form where the block is represented as a single rule field and that labeled rule field value is what would have been the value of the block's legal, `l` field when not in simple compact form. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1323](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1323) | When a Rule block has only one field, that is, its legal, `l` field, i.e., it has no other properties, then the rule block MAY use an alternate simplified, compact form where the block is represented as a single rule field and that labeled rule field value is what would have been the value of the block's legal, `l` field when not in simple compact form. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Binding to Key State at Time of ACDC State Change
 
-[Line 1661 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#binding-to-key-state-at-time-of-acdc-state-change).
+[Line 1661 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1661).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1669 | MAY | unassessed | 0 | 0 | 0 | — | — | — | An update event in the TEL MAY include the SAID of the ACDC, either blinded or unblinded. |
-| 1671 | MAY | unassessed | 0 | 0 | 0 | — | — | — | This reference MAY be attached to the presentation or MAY be provided Out-Of-Band. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1669](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1669) | An update event in the TEL MAY include the SAID of the ACDC, either blinded or unblinded. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1671](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1671) | This reference MAY be attached to the presentation or MAY be provided Out-Of-Band. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Graduated Disclosure
 
-[Line 1745 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#graduated-disclosure).
+[Line 1745 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1745).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1761 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Disclosure of the SAID makes a verifiable commitment to its data that MAY be more fully disclosed later. |
-| 1771 | MAY | unassessed | 0 | 0 | 0 | — | — | — | This means that the selectively disclosable set can be provided as an ordered list of elements, yet one or more of its elements MAY be disclosed in any order so that the original order does not leak information. |
-| 1775 | MAY | unassessed | 0 | 0 | 0 | — | — | — | All the Graduated Disclosure mechanisms MAY be used in combination. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1761](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1761) | Disclosure of the SAID makes a verifiable commitment to its data that MAY be more fully disclosed later. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1771](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1771) | This means that the selectively disclosable set can be provided as an ordered list of elements, yet one or more of its elements MAY be disclosed in any order so that the original order does not leak information. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1775](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1775) | All the Graduated Disclosure mechanisms MAY be used in combination. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Contractually Protected Disclosure
 
-[Line 1781 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#contractually-protected-disclosure).
+[Line 1781 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1781).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1788 | MAY | unassessed | 0 | 0 | 0 | — | — | — | But those contractual terms MAY also include provisions that protect against liability or other concerns, not merely disclosure to third parties. |
-| 1790 | MAY | unassessed | 0 | 0 | 0 | — | — | — | These MAY be specific terms of use or other consensual constraints. |
-| 1790 | MAY | unassessed | 0 | 0 | 0 | — | — | — | These terms MAY be applied to subsequent disclosures by the Disclosee that follow the data (hence chain-link). |
-| 1792 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The responsible party MAY be the Discloser, or it MAY be some other party, such as an escrow agent. |
-| 1792 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The Contingent Disclosure clause MAY reference a cryptographic commitment to a private ACDC or private Attribute ACDC (Partial Disclosure) that satisfies via its Full Disclosure the Contingent Disclosure requirement. |
-| 1792 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Contingent Disclosure MAY be used to limit the actual disclosure of personally identifying information (PII) to a just-in-time, need-to-know basis (i.e., upon the contingency) and not a priori. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1788](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1788) | But those contractual terms MAY also include provisions that protect against liability or other concerns, not merely disclosure to third parties. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1790](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1790) | These MAY be specific terms of use or other consensual constraints. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1790](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1790) | These terms MAY be applied to subsequent disclosures by the Disclosee that follow the data (hence chain-link). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1792](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1792) | The responsible party MAY be the Discloser, or it MAY be some other party, such as an escrow agent. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1792](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1792) | The Contingent Disclosure clause MAY reference a cryptographic commitment to a private ACDC or private Attribute ACDC (Partial Disclosure) that satisfies via its Full Disclosure the Contingent Disclosure requirement. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1792](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1792) | Contingent Disclosure MAY be used to limit the actual disclosure of personally identifying information (PII) to a just-in-time, need-to-know basis (i.e., upon the contingency) and not a priori. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Issuance and Presentation Exchange (IPEX)
 
-[Line 1795 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuance-and-presentation-exchange-ipex).
+[Line 1795 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1795).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1797 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A single protocol is able to work for both types of exchanges by recognizing that all exchanges (both issuance and presentation) MAY be modeled as the disclosure of information by a Discloser to a Disclosee. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1797](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1797) | A single protocol is able to work for both types of exchanges by recognizing that all exchanges (both issuance and presentation) MAY be modeled as the disclosure of information by a Discloser to a Disclosee. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Commitments via SAID
 
-[Line 1820 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#commitments-via-said).
+[Line 1820 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1820).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1822 | MAY | unassessed | 0 | 0 | 0 | — | — | — | To clarify, because all variants share the same top-level structure as the compact variant, a signature on any variant MAY be used to verify the Issuer's commitment to any other variant either directly or indirectly, in whole or in part, on a top-level section-by-section basis. |
-| 1824 | MAY | unassessed | 0 | 0 | 0 | — | — | — | To elaborate, the SAID of a given variant is useful even when it is not the SAID of the variant the Issuer signed because, during Graduated Disclosure, the Discloser MAY choose to sign or seal that given variant to fulfill a given step in an IPEX Graduated Disclosure transaction. |
-| 1826 | MAY | unassessed | 0 | 0 | 0 | — | — | — | For example, the metadata variant of an ACDC will have a different SAID than the compact variant because some of the top-level field values MAY be empty in the metadata variant. |
-| 1828 | MAY | unassessed | 0 | 0 | 0 | — | — | — | This proof MAY be satisfied either against the Discloser's signature or seal on the actual disclosed SAD or against the Discloser's signature or seal on the SAID of the actual disclosed SAD. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1822](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1822) | To clarify, because all variants share the same top-level structure as the compact variant, a signature on any variant MAY be used to verify the Issuer's commitment to any other variant either directly or indirectly, in whole or in part, on a top-level section-by-section basis. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1824](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1824) | To elaborate, the SAID of a given variant is useful even when it is not the SAID of the variant the Issuer signed because, during Graduated Disclosure, the Discloser MAY choose to sign or seal that given variant to fulfill a given step in an IPEX Graduated Disclosure transaction. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1826](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1826) | For example, the metadata variant of an ACDC will have a different SAID than the compact variant because some of the top-level field values MAY be empty in the metadata variant. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1828](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1828) | This proof MAY be satisfied either against the Discloser's signature or seal on the actual disclosed SAD or against the Discloser's signature or seal on the SAID of the actual disclosed SAD. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Issuer Commitment Rules
 
-[Line 1841 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuer-commitment-rules).
+[Line 1841 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1841).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1854 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Proof of Issuance (PoI) MAY be provided by disclosing the SAID of the most compact variant and the verifiable commitment (signature or seal) by the Issuer on that SAID. |
-| 1856 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Proof of Disclosure (PoD) MAY be provided by disclosing the SAD of the most compact variant and then recursively disclosing (expanding) the nested SADs of each of the blocks of the most compact variant as needed for the promised disclosure. |
-| 1858 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Thus, for any disclosed variant of an ACDC, the Disclosee MAY need only verify one PoI as defined above, and MAY need to verify a specific PoD for a given disclosed variant as defined above. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1854](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1854) | Proof of Issuance (PoI) MAY be provided by disclosing the SAID of the most compact variant and the verifiable commitment (signature or seal) by the Issuer on that SAID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1856](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1856) | Proof of Disclosure (PoD) MAY be provided by disclosing the SAD of the most compact variant and then recursively disclosing (expanding) the nested SADs of each of the blocks of the most compact variant as needed for the promised disclosure. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1858](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1858) | Thus, for any disclosed variant of an ACDC, the Disclosee MAY need only verify one PoI as defined above, and MAY need to verify a specific PoD for a given disclosed variant as defined above. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Disclosure-specific (Bespoke) Issued ACDCs
 
-[Line 1860 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#disclosure-specific-bespoke-issued-acdcs).
+[Line 1860 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1860).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1862 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Furthermore, Attributes in other ACDCs pointed to by Edges in the bespoke ACDC MAY be addressed by Attributes in the bespoke ACDC using JSON Pointer or [[xref: kmg-1, cesr-sad-path, CESR-SAD-Path]] proof references that are relative to the node SAID in the Edge [[6](#RFC6901)] [[xref: kmg-1, proof-id, Proof-ID]]. |
-| 1864 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When the only purpose of the bespoke ACDC is to augment the contractual obligations associated with the disclosure, then the Attribute section, `a`, field value of the bespoke ACDC MAY be empty, or it MAY include properties whose only purpose is to support the bespoke contractual language. |
-| 1866 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Similarly, this approach effectively enables a type of rich presentation or combined disclosure where multiple ACDCs MAY be referenced by edges in the bespoke ACDC that each contributes some Attribute(s) to the effective set of Attributes referenced in the bespoke ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1862](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1862) | Furthermore, Attributes in other ACDCs pointed to by Edges in the bespoke ACDC MAY be addressed by Attributes in the bespoke ACDC using JSON Pointer or [[xref: kmg-1, cesr-sad-path, CESR-SAD-Path]] proof references that are relative to the node SAID in the Edge [[6](#RFC6901)] [[xref: kmg-1, proof-id, Proof-ID]]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1864](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1864) | When the only purpose of the bespoke ACDC is to augment the contractual obligations associated with the disclosure, then the Attribute section, `a`, field value of the bespoke ACDC MAY be empty, or it MAY include properties whose only purpose is to support the bespoke contractual language. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1866](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1866) | Similarly, this approach effectively enables a type of rich presentation or combined disclosure where multiple ACDCs MAY be referenced by edges in the bespoke ACDC that each contributes some Attribute(s) to the effective set of Attributes referenced in the bespoke ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Overview
 
-[Line 1916 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#overview).
+[Line 1916 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1916).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1918 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A transaction event seal MAY also include the transaction event's sequence number to make it easier to look up and verify. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1918](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1918) | A transaction event seal MAY also include the transaction event's sequence number to make it easier to look up and verify. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Registry Message Types and Fields
 
-[Line 1952 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#registry-message-types-and-fields).
+[Line 1952 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1952).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1962 | MAY | unassessed | 0 | 0 | 0 | — | — | — | A Registry MAY be used in either a blinded or unblinded fashion or both, depending on the type of state update used. |
-| 1962 | MAY | unassessed | 0 | 0 | 0 | — | — | — | It MAY be used in either a private (blinded) or public (unblinded) manner. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1962](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1962) | A Registry MAY be used in either a blinded or unblinded fashion or both, depending on the type of state update used. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [1962](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1962) | It MAY be used in either a private (blinded) or public (unblinded) manner. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Registry SAID, `rd` field
 
-[Line 2017 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#registry-said-rd-field).
+[Line 2017 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2017).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2019 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The ACDC managed by the Registry MAY also includes a reference to the Registry in the ADCD's own Registry SAID, `rd` field, thereby providing secure discovery of the Registry when given the ACDC. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2019](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2019) | The ACDC managed by the Registry MAY also includes a reference to the Registry in the ADCD's own Registry SAID, `rd` field, thereby providing secure discovery of the Registry when given the ACDC. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Blinded Attribute Block
 
-[Line 2047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blinded-attribute-block).
+[Line 2047 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2047).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2062 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When provided as an attachment, multiple blinded attribute blocks MAY be included in a given group. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2062](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2062) | When provided as an attachment, multiple blinded attribute blocks MAY be included in a given group. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### BLID, `d` field
 
-[Line 2064 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blid-d-field).
+[Line 2064 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2064).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2068 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The BLID, `d` field should typically use the Blake3 Digest code `E`, but any of the cryptographic strength digest codes of length 44 characters in the qb64 Text domain MAY be used. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2068](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2068) | The BLID, `d` field should typically use the Blake3 Digest code `E`, but any of the cryptographic strength digest codes of length 44 characters in the qb64 Text domain MAY be used. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### UUID, `u` field
 
-[Line 2071 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#uuid-u-field-5).
+[Line 2071 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2071).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2075 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When used in public (unblinded) mode, the UUID, `u` field value MAY be the empty nonce value. |
-| 2077 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When used in public unblinded mode, the UUID, `u` field value MAY be the CESR `Empty` primitive code with value `1AAP`. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2075](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2075) | When used in public (unblinded) mode, the UUID, `u` field value MAY be the empty nonce value. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [2077](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2077) | When used in public unblinded mode, the UUID, `u` field value MAY be the CESR `Empty` primitive code with value `1AAP`. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Blinded State Disclosure
 
-[Line 2127 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blinded-state-disclosure).
+[Line 2127 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2127).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2135 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The Issuer MAY provide an authenticated service endpoint for the Discloser to which the Discloser can make a signed request to update the blind. |
-| 2137 | MAY | unassessed | 0 | 0 | 0 | — | — | — | In those cases, the Issuer MAY choose to define an empty state and an empty ACDC SAID as known placeholder values. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2135](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2135) | The Issuer MAY provide an authenticated service endpoint for the Discloser to which the Discloser can make a signed request to update the blind. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [2137](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2137) | In those cases, the Issuer MAY choose to define an empty state and an empty ACDC SAID as known placeholder values. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Blinded State Registry Example
 
-[Line 2234 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#blinded-state-registry-example).
+[Line 2234 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2234).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2250 | MAY | unassessed | 0 | 0 | 0 | — | — | — | In this latter case, a presentation of the ACDC MAY attach the `rd` field value and a reference to the TEL event. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2250](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2250) | In this latter case, a presentation of the ACDC MAY attach the `rd` field value and a reference to the TEL event. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Bound Blinded Attribute Block
 
-[Line 2427 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#bound-blinded-attribute-block).
+[Line 2427 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2427).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2452 | MAY | unassessed | 0 | 0 | 0 | — | — | — | When provided as an attachment, multiple blinded attribute blocks MAY be included in a given group. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2452](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2452) | When provided as an attachment, multiple blinded attribute blocks MAY be included in a given group. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Performance and Scalability
 
-[Line 2699 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#performance-and-scalability).
+[Line 2699 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2699).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2701 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Later receipt of the data MAY be verified against the SAID. |
-| 2701 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The actual detailed ACDC in whole or in part MAY then be cached or provided on-demand or just-in-time. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2701](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2701) | Later receipt of the data MAY be verified against the SAID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [2701](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2701) | The actual detailed ACDC in whole or in part MAY then be cached or provided on-demand or just-in-time. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Bulk-issued Private ACDCs
 
-[Line 2765 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#bulk-issued-private-acdcs).
+[Line 2765 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2765).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2769 | MAY | unassessed | 0 | 0 | 0 | — | — | — | The Issuer MAY make a cryptographically verifiable commitment to every member of the bulk-issued set by making a commitment to the bulk-issued aggregate value ‘B’ defined below. |
-| 2769 | MAY | unassessed | 0 | 0 | 0 | — | — | — | This commitment MAY be a seal in the Issuer's KEL or may be the value of the `td` field in a Registry TEL event. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2769](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2769) | The Issuer MAY make a cryptographically verifiable commitment to every member of the bulk-issued set by making a commitment to the bulk-issued aggregate value ‘B’ defined below. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [2769](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2769) | This commitment MAY be a seal in the Issuer's KEL or may be the value of the `td` field in a Registry TEL event. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Basic Bulk Issuance Procedure
 
-[Line 2787 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#basic-bulk-issuance-procedure).
+[Line 2787 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2787).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 2840 | MAY | unassessed | 0 | 0 | 0 | — | — | — | In this latter case, the `rd` field value MAY be attached to a presentation or provided out-of-band. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [2840](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2840) | In this latter case, the `rd` field value MAY be attached to a presentation or provided out-of-band. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 #### Section Message Types
 
-[Line 3063 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#section-message-types).
+[Line 3063 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3063).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 3067 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Emptiness for field values that MAY accept a field map is indicated by an empty field map. |
-| 3067 | MAY | unassessed | 0 | 0 | 0 | — | — | — | Emptiness for field values that MAY accept a list is indicated by an empty list. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [3067](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3067) | Emptiness for field values that MAY accept a field map is indicated by an empty field map. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+| [3067](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L3067) | Emptiness for field values that MAY accept a list is indicated by an empty list. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
 
 ### Practice (any keyword, in text that states common practice)
 
 #### Issuance and Presentation Exchange (IPEX)
 
-[Line 1795 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuance-and-presentation-exchange-ipex).
+[Line 1795 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1795).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1797 | SHOULD | practice | 0 | 0 | 0 | — | — | — | This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1797](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1797) | This specification is not exhaustive, it is only normative in the sense that it specifies the message types and routes that SHOULD be used in either issuance or presentation exchanges. | SHOULD | practice | 0 | 0 | 0 | — | — | — |
 
 #### IPEX Protocol Messages
 
-[Line 1805 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#ipex-protocol-messages).
+[Line 1805 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1805).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1807 | MUST | practice | 0 | 0 | 0 | — | — | — | The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message. |
-| 1807 | SHOULD | practice | 0 | 0 | 0 | — | — | — | The notional semantics of each route indicate how the message SHOULD be used in an exchange. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1807](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1807) | The REQUIRED routes MUST appear as values of the route, `r` field in the enclosing exchange message. | MUST | practice | 0 | 0 | 0 | — | — | — |
+| [1807](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1807) | The notional semantics of each route indicate how the message SHOULD be used in an exchange. | SHOULD | practice | 0 | 0 | 0 | — | — | — |
 
 #### Commitments via SAID
 
-[Line 1820 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#commitments-via-said).
+[Line 1820 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1820).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1822 | MUST | practice, security | 0 | 0 | 0 | — | — | — | In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified. |
-| 1828 | SHOULD | practice | 0 | 0 | 0 | — | — | — | To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed. |
-| 1828 | SHOULD | practice, security | 0 | 0 | 0 | — | — | — | In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD. |
-| 1832 | SHOULD | practice | 0 | 0 | 0 | — | — | — | Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure. |
-| 1832 | SHOULD | practice | 0 | 0 | 0 | — | — | — | To restate, there are two proofs that a Discloser SHOULD provide. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1822](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1822) | In the latter, the SAID as digest MUST first be verified against its SAD, and then the signature or seal on the SAID MAY be verified. | MUST | practice, security | 0 | 0 | 0 | — | — | — |
+| [1828](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1828) | To elaborate, an IPEX transaction is between the Discloser and Disclosee, who both SHOULD make non-repudiable commitments to each other via signing or sealing variants of the ACDC to be disclosed. | SHOULD | practice | 0 | 0 | 0 | — | — | — |
+| [1828](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1828) | In addition, the Disclosee SHOULD typically require proof of issuance via a non-repudiable signature or seal by the Issuer on a variant of the disclosed SAD that is verifiable (directly or indirectly) against the variant that is the disclosed SAD. | SHOULD | practice, security | 0 | 0 | 0 | — | — | — |
+| [1832](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1832) | Consequently, the IPEX protocol SHOULD specify how a validator does validation of any variant in a Graduated Disclosure. | SHOULD | practice | 0 | 0 | 0 | — | — | — |
+| [1832](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1832) | To restate, there are two proofs that a Discloser SHOULD provide. | SHOULD | practice | 0 | 0 | 0 | — | — | — |
 
 #### Issuer Commitment Rules
 
-[Line 1841 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md#issuer-commitment-rules).
+[Line 1841 of the specification](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1841).
 
-| Line | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases | Sentence |
-|---:|:---|:---|---:|---:|---:|:---|:---|:---|:---|
-| 1843 | MUST | practice, security | 0 | 0 | 0 | — | — | — | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). |
-| 1850 | SHOULD | practice | 0 | 0 | 0 | — | — | — | An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants. |
+| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
+|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
+| [1843](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1843) | The Issuer MUST provide a signature or seal on the SAID of the most compact form variant defined by the Schema of the ACDC (see the "most compact form" algorithm above). | MUST | practice, security | 0 | 0 | 0 | — | — | — |
+| [1850](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1850) | An Issuer SHOULD provide signatures or seals on the SAIDs of other variants and on the SADs of other variants. | SHOULD | practice | 0 | 0 | 0 | — | — | — |
 
 ### Quotes that match no keyword sentence
 
 These quotes are cited by cases but contain no keyword sentence of the pinned text, usually because the sentence states its rule without an uppercase keyword.
 
-| Cases | Cited as | Line | Quote |
-|:---|:---|---:|:---|
-| ACDC-0063 | inference | 714 | This list is then serialized as a list in whatever serialization kind is used by the enclosing ACDC (CESR, JSON, CBOR, MGPK). |
-| ACDC-0018, ACDC-0019, ACDC-0020, ACDC-0021, ACDC-0022, ACDC-0066 | inference | 1663 | To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly. |
-| ACDC-0029, ACDC-0031, ACDC-0035, ACDC-0038, ACDC-0040, ACDC-0042 | inference | 1669 | This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL. |
-| ACDC-0025, ACDC-0026, ACDC-0027, ACDC-0036, ACDC-0037 | inference | 2062 | A group consists of its count code followed by one or more Blinded attribute blocks, where each block is composed of a concatenation of the four fields serialized in order as CESR primitives that are appropriate for the BLID, UUID, ACDC SAID, and transaction state string fields in that block. |
-| ACDC-0039, ACDC-0041 | inference | 2066 | A BLID is effectively a type of SAID. |
+| Line | Quote | Cases | Cited as |
+|---:|:---|:---|:---|
+| [714](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L714) | This list is then serialized as a list in whatever serialization kind is used by the enclosing ACDC (CESR, JSON, CBOR, MGPK). | ACDC-0063 | inference |
+| [1663](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1663) | To protect against later forgery in the event of a future compromise of the Issuer's signing keys, the Issuer must anchor an *issuance* proof digest seal to the ACDC in its KEL either directly or indirectly. | ACDC-0018, ACDC-0019, ACDC-0020, ACDC-0021, ACDC-0022, ACDC-0066 | inference |
+| [1669](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L1669) | This binds the state of that ACDC to the Issuer's Key State at the time of the update event in the TEL. | ACDC-0029, ACDC-0031, ACDC-0035, ACDC-0038, ACDC-0040, ACDC-0042 | inference |
+| [2062](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2062) | A group consists of its count code followed by one or more Blinded attribute blocks, where each block is composed of a concatenation of the four fields serialized in order as CESR primitives that are appropriate for the BLID, UUID, ACDC SAID, and transaction state string fields in that block. | ACDC-0025, ACDC-0026, ACDC-0027, ACDC-0036, ACDC-0037 | inference |
+| [2066](https://github.com/trustoverip/kswg-acdc-specification/blob/4a543c549fd9811c23bf97b0daaf48400f4005c2/spec/spec-body.md?plain=1#L2066) | A BLID is effectively a type of SAID. | ACDC-0039, ACDC-0041 | inference |
