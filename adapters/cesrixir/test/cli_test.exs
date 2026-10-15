@@ -5,11 +5,11 @@ defmodule KcsAdapterCesrixir.CLITest do
 
   defp io(test_pid), do: %{write: &send(test_pid, {:wrote, IO.iodata_to_binary(&1)}), halt: &send(test_pid, {:halted, &1})}
 
-  test "the loop answers each complete line in order and halts with 0 at end of input" do
+  test "the loop answers each split line in order and halts with 0 at end of input" do
     me = self()
-    loop = spawn(fn -> CLI.loop(Lines.new(), io(me)) end)
-    send(loop, {:chunk, ~s({"id":1,"op":"hello","protocol":1}\n{"id":2,)})
-    send(loop, {:chunk, ~s("op":"x"}\n{"id":3)})
+    loop = spawn(fn -> CLI.loop(io(me)) end)
+    send(loop, {:split, {:line, ~s({"id":1,"op":"hello","protocol":1})}})
+    send(loop, {:split, {:line, ~s({"id":2,"op":"x"})}})
     send(loop, :eof)
     assert_receive {:wrote, one}, 5_000
     assert_receive {:wrote, two}, 5_000
@@ -20,14 +20,18 @@ defmodule KcsAdapterCesrixir.CLITest do
     refute_received {:wrote, _}
   end
 
-  test "the reader forwards chunks, then end of input, then halts after the grace period" do
+  test "the reader splits input into lines, drops an oversize one as it arrives, and halts after the grace period" do
     port = make_ref()
     me = self()
-    reader = spawn(fn -> CLI.read(port, me, &send(me, {:halted, &1}), 10) end)
-    send(reader, {port, {:data, "abc"}})
+    reader = spawn(fn -> CLI.read(port, Lines.new(4), me, &send(me, {:halted, &1}), 10) end)
+    send(reader, {port, {:data, "ab\nc"}})
+    send(reader, {port, {:data, "defghij"}})
+    send(reader, {port, {:data, "\nxyz"}})
     send(reader, {port, :eof})
-    assert_receive {:chunk, "abc"}
+    assert_receive {:split, {:line, "ab"}}
+    assert_receive {:split, :oversize}
     assert_receive :eof
+    refute_received {:split, _}
     assert_receive {:halted, 0}, 1_000
   end
 

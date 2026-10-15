@@ -91,6 +91,34 @@ defmodule KcsAdapterCesrixir.ParseTest do
     assert {:error, %{"kind" => "harness"}} = Parse.report("-JAB1AAM", [])
   end
 
+  test "a genus 1.00 group's members are read back with cesrixir's 1.00 table" do
+    assert %{"items" => [%{"code" => "-V", "size" => 11}, %{"code" => "E", "start" => 4, "end" => 48}]} = parse("-VAL" <> digest())
+  end
+
+  describe "reading a group's members back with cesrixir's decoder" do
+    setup do
+      {:ok, e} = Cesr.Primitive.CD_E_Blake3_256.new(<<0::256>>)
+      {:ok, group} = Cesr.CountCodeKERIv2.CD_A_GenericGroup.new([e])
+      %{group: group}
+    end
+
+    test "agrees in the binary domain", %{group: group} do
+      bytes = Cesr.CesrElement.to_binary(group)
+      assert Parse.read_back?(group, 0, :binary, bytes, :keri_aaacaa)
+    end
+
+    test "disagrees when the bytes at a member's place are not that member", %{group: group} do
+      text = Cesr.CesrElement.to_b64(group)
+      other = binary_part(text, 0, 4) <> "F" <> binary_part(text, 5, byte_size(text) - 5)
+      refute Parse.read_back?(group, 0, :text, other, :keri_aaacaa)
+    end
+
+    test "disagrees when a member cannot be encoded" do
+      group = %Cesr.CountCodeKERIv2.CD_A_GenericGroup{cesr_elements: [OrdMap.new([{"a", 1}])]}
+      refute Parse.read_back?(group, 0, :text, "-AAA", :keri_aaacaa)
+    end
+  end
+
   test "binary-domain encoding uses cesrixir's binary encoder" do
     {:ok, e} = Cesr.Primitive.CD_E_Blake3_256.new(<<0::256>>)
     assert Parse.encode(e, :binary) == Base.url_decode64!(digest())

@@ -8,8 +8,15 @@ defmodule KcsAdapterCesrixir.MixProject do
       elixir: "~> 1.19",
       start_permanent: false,
       deps: deps(),
-      # -noinput keeps the shell's tty driver off standard input, which the adapter reads itself
-      escript: [main_module: KcsAdapterCesrixir.Main, name: "kcs-adapter-cesrixir", emu_args: "-noinput"],
+      # -noinput keeps the shell's tty driver off standard input, which the adapter reads itself.
+      # The scheduler counts bound the VM's threads whatever the host's CPU count, so the
+      # launcher's --pids-limit (which counts threads) never stops it starting; the adapter answers
+      # one request at a time and needs no more.
+      escript: [
+        main_module: KcsAdapterCesrixir.Main,
+        name: "kcs-adapter-cesrixir",
+        emu_args: "-noinput +S 2:2 +SDcpu 2:2 +SDio 2"
+      ],
       elixirc_paths: if(Mix.env() == :test, do: ["lib", "test/support"], else: ["lib"]),
       test_coverage: [summary: [threshold: 100], ignore_modules: [KcsAdapterCesrixir.Vectors, KcsAdapterCesrixir.Main]]
     ]

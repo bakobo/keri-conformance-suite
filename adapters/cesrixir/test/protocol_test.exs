@@ -44,8 +44,21 @@ defmodule KcsAdapterCesrixir.ProtocolTest do
       end
     end
 
+    test "the id of a line, when it has a usable one" do
+      assert Protocol.request_id(~s({"id":3,"op":"x"})) == 3
+      assert Protocol.request_id(~s({"id":-3})) == nil
+      assert Protocol.request_id("garbage") == nil
+    end
+
     test "the largest id JSON readers agree on is echoed" do
       assert %{"id" => 9_007_199_254_740_991} = respond(%{"id" => 9_007_199_254_740_991, "op" => "hello", "protocol" => 1})
+    end
+
+    test "an error message that is not UTF-8 is escaped, so the response is still JSON" do
+      body = KcsAdapterCesrixir.Errors.harness("e.x.f", <<255, 0>>)
+      assert body["message"] == "e.x.f: <<255, 0>>"
+      assert Jason.encode!(body)
+      assert KcsAdapterCesrixir.Errors.unsupported("e.x.f", <<255>>)["message"] == "e.x.f: <<255>>"
     end
 
     test "an oversize line" do

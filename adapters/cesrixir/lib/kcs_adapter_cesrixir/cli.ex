@@ -1,13 +1,17 @@
 defmodule KcsAdapterCesrixir.CLI do
   @moduledoc """
   The adapter's main loop. Standard input is read in chunks through a port on file descriptor 0,
-  so a request line is never held beyond the limit. A reader process owns the port and forwards
-  chunks and end of input, in order, to the loop, which answers each request in a fresh process.
+  owned by a reader process that splits it into request lines as it arrives, so no more than the
+  request limit of any one line is ever held: the bytes of a longer line are dropped as they come.
+  The reader sends each complete line, and then end of input, to the loop, which answers each line
+  in a fresh process.
 
   At end of input the loop exits with status 0 once it has answered every complete line. The
   reader also starts a timer then, and exits after `grace_ms` milliseconds whatever the loop is
-  doing. That bound is what stops the container when the runner kills the docker client over a
-  hung request, because the client's death closes the container's standard input.
+  doing. The runner sends one request at a time and closes standard input only after its last
+  answer, unless it is abandoning the adapter, so the timer cuts short only a request the runner
+  has given up on. That bound is what stops the container when the runner kills the docker client
+  over a hung request, because the client's death closes the container's standard input.
   """
 
   alias KcsAdapterCesrixir.{Errors, Lines, Protocol}
@@ -17,11 +21,12 @@ defmodule KcsAdapterCesrixir.CLI do
   def grace_ms, do: @grace_ms
 
   @doc false
-  def read(port, loop_pid, halt, grace_ms) do
+  def read(port, lines, loop_pid, halt, grace_ms) do
     receive do
       {^port, {:data, chunk}} ->
-        send(loop_pid, {:chunk, chunk})
-        read(port, loop_pid, halt, grace_ms)
+        {done, lines} = Lines.feed(lines, chunk)
+        Enum.each(done, &send(loop_pid, {:split, &1}))
+        read(port, lines, loop_pid, halt, grace_ms)
 
       {^port, :eof} ->
         send(loop_pid, :eof)
@@ -31,12 +36,11 @@ defmodule KcsAdapterCesrixir.CLI do
   end
 
   @doc false
-  def loop(lines, io) do
+  def loop(io) do
     receive do
-      {:chunk, chunk} ->
-        {done, lines} = Lines.feed(lines, chunk)
-        Enum.each(done, &io.write.([Jason.encode!(answer(&1)), "\n"]))
-        loop(lines, io)
+      {:split, split} ->
+        io.write.([Jason.encode!(answer(split)), "\n"])
+        loop(io)
 
       :eof ->
         # anything after the last newline is an incomplete request, and is dropped

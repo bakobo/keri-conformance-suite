@@ -23,22 +23,31 @@ defmodule KcsAdapterCesrixir.Protocol do
 
   @doc "The response to one request line."
   def respond(line) do
-    case {decode(line), request_id(line)} do
-      {{:ok, request}, id} when id != nil ->
-        answer(id, handle(request))
+    case decode(line) do
+      {:ok, request} ->
+        case id_of(request) do
+          nil -> malformed()
+          id -> answer(id, handle(request))
+        end
 
       _ ->
-        answer(nil, {:error, Errors.harness(Errors.malformed(), "the request is not a JSON object with an id that is an integer from 0 to 2^53 - 1.")})
+        malformed()
     end
   end
 
   @doc "The request's id, or nil when the line has no usable one."
   def request_id(line) do
     case decode(line) do
-      {:ok, %{"id" => id}} when is_integer(id) and id >= 0 and id <= @max_id -> id
-      _ -> nil
+      {:ok, request} -> id_of(request)
+      :error -> nil
     end
   end
+
+  defp id_of(%{"id" => id}) when is_integer(id) and id >= 0 and id <= @max_id, do: id
+  defp id_of(_), do: nil
+
+  defp malformed,
+    do: answer(nil, {:error, Errors.harness(Errors.malformed(), "the request is not a JSON object with an id that is an integer from 0 to 2^53 - 1.")})
 
   @doc "The response to a line longer than the request limit."
   def oversize do

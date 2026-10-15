@@ -2,10 +2,9 @@
 # sources; bin/kcs-adapter-cesrixir runs it. See README.md.
 #
 # Both stages use the official elixir image, pinned by digest (tag 1.19.5-otp-28-slim, pushed
-# 2026-09-02). cesrixir's mix.exs needs Elixir ~> 1.19.
-ARG ELIXIR_IMAGE=elixir:1.19.5-otp-28-slim@sha256:597474ac81f0d0bfa4d67546c2591a033315a2b9e6ab2f1a22824af9c913066a
-
-FROM ${ELIXIR_IMAGE} AS deps
+# 2026-09-02). cesrixir's mix.exs needs Elixir ~> 1.19. The digest is written out in each FROM, not
+# taken from a build argument, so that bin/image-tag's digest of this file names the base image.
+FROM elixir:1.19.5-otp-28-slim@sha256:597474ac81f0d0bfa4d67546c2591a033315a2b9e6ab2f1a22824af9c913066a AS deps
 # The slim image has no CA certificates, and fetching from hex.pm needs them. The packages are
 # checked against mix.lock's checksums whatever the transport.
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
@@ -29,7 +28,7 @@ COPY --from=suite profiles/features.json /suite/profiles/
 ENV KCS_SUITE=/suite KCS_ESCRIPT=/src/kcs-adapter-cesrixir
 RUN MIX_ENV=test mix test --cover
 
-FROM ${ELIXIR_IMAGE} AS adapter
+FROM elixir:1.19.5-otp-28-slim@sha256:597474ac81f0d0bfa4d67546c2591a033315a2b9e6ab2f1a22824af9c913066a AS adapter
 COPY --from=build /src/kcs-adapter-cesrixir /usr/local/bin/kcs-adapter-cesrixir
 USER 65534:65534
 ENTRYPOINT ["/usr/local/bin/kcs-adapter-cesrixir"]

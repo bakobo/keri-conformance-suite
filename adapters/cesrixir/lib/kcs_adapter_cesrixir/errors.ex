@@ -16,8 +16,11 @@ defmodule KcsAdapterCesrixir.Errors do
   def replay_mismatch, do: "e.self.unknown.replay-mismatch.f"
 
   @doc "A harness error response body."
-  def harness(code, text), do: %{"kind" => "harness", "message" => "#{code}: #{text}"}
+  def harness(code, text), do: %{"kind" => "harness", "message" => "#{code}: #{printable(text)}"}
 
   @doc "An unsupported error response body."
-  def unsupported(code, text), do: %{"kind" => "unsupported", "message" => "#{code}: #{text}"}
+  def unsupported(code, text), do: %{"kind" => "unsupported", "message" => "#{code}: #{printable(text)}"}
+
+  # Messages may carry text from cesrixir, and a response must be valid UTF-8 to be JSON at all.
+  defp printable(text), do: if(String.valid?(text), do: text, else: inspect(text))
 end

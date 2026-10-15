@@ -17,7 +17,7 @@ defmodule KcsAdapterCesrixir.Parse do
   """
 
   alias Cesr.CesrElement
-  alias Cesr.CodeTable.UniversalProtocolGenusTable
+  alias Cesr.CodeTable.{KeriCodeTableV1, KeriCodeTableV2, KeriIndexCodeTable, UniversalProtocolGenusTable}
   alias Cesr.Index.{OneCharIndexedPrimitiveGenerator, TwoCharIndexedPrimitiveGenerator}
   alias Cesr.Utility.Base64Indicies
   alias KcsAdapterCesrixir.Errors
@@ -81,13 +81,11 @@ defmodule KcsAdapterCesrixir.Parse do
         span = binary_part(stream, pos, stop - pos)
         domain = if binary_part(span, 0, 1) == "-", do: :text, else: :binary
 
-        case reencode(element, domain) do
-          ^span ->
-            {group_items, ^stop} = element_items(element, pos, domain)
-            walk(stream, stop, genus, [element | elements], Enum.reverse(group_items, items), vouched)
-
-          _ ->
-            walk(stream, stop, genus, [element | elements], items, false)
+        if reencode(element, domain) == span and read_back?(element, pos, domain, stream, genus) do
+          {group_items, ^stop} = element_items(element, pos, domain)
+          walk(stream, stop, genus, [element | elements], Enum.reverse(group_items, items), vouched)
+        else
+          walk(stream, stop, genus, [element | elements], items, false)
         end
 
       {:error, _} ->
@@ -95,11 +93,45 @@ defmodule KcsAdapterCesrixir.Parse do
     end
   end
 
+  # The encoder is the adapter's measuring tool here, not the operation under test: cesrixir has
+  # already accepted the stream, so an encoder that cannot encode what the decoder returned leaves
+  # the adapter unable to vouch for offsets, and the answer is the summary.
   defp reencode(element, domain) do
     encode(element, domain)
   rescue
     _ -> :unencodable
   end
+
+  # Checks each member of a group against cesrixir's decoder: from where the encoding lengths place
+  # the member, the code-table reader cesrixir's group consumers call must read back exactly that
+  # member and consume exactly its encoding. Nested groups are checked the same way.
+  @doc false
+  def read_back?(%{cesr_elements: members} = group, pos, domain, stream, genus) do
+    header = byte_size(encode(group, domain)) - Enum.sum(Enum.map(members, &byte_size(encode(&1, domain))))
+
+    {agree, _} =
+      Enum.reduce(members, {true, pos + header}, fn member, {agree, at} ->
+        size = byte_size(encode(member, domain))
+        rest = binary_part(stream, at, byte_size(stream) - at)
+        left = byte_size(rest) - size
+        read = read(reader(member, genus), domain, rest)
+        ok = match?({{:ok, ^member}, <<_::binary-size(left)>>}, read) and read_back?(member, at, domain, stream, genus)
+        {agree and ok, at + size}
+      end)
+
+    agree
+  rescue
+    _ -> false
+  end
+
+  def read_back?(_primitive, _pos, _domain, _stream, _genus), do: true
+
+  defp reader(%{index: _}, _genus), do: KeriIndexCodeTable
+  defp reader(_member, :keri_aaabaa), do: KeriCodeTableV1
+  defp reader(_member, :keri_aaacaa), do: KeriCodeTableV2
+
+  defp read(table, :text, bytes), do: table.get_T(bytes)
+  defp read(table, :binary, bytes), do: table.get_B(bytes)
 
   @doc false
   def encode(element, :text), do: CesrElement.to_b64(element)

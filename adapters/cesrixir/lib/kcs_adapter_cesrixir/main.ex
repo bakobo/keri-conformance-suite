@@ -15,10 +15,10 @@ defmodule KcsAdapterCesrixir.Main do
     spawn(fn ->
       port = Port.open({:fd, 0, 1}, [:binary, :stream, :eof])
       send(loop_pid, {:port, port})
-      CLI.read(port, loop_pid, &System.halt/1, CLI.grace_ms())
+      CLI.read(port, Lines.new(), loop_pid, &System.halt/1, CLI.grace_ms())
     end)
 
     port = receive(do: ({:port, port} -> port))
-    CLI.loop(Lines.new(), %{write: &Port.command(port, &1), halt: &System.halt/1})
+    CLI.loop(%{write: &Port.command(port, &1), halt: &System.halt/1})
   end
 end
