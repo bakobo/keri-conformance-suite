@@ -40,7 +40,7 @@ fn hello_negotiates_the_highest_version_both_speak_from_supported() {
     assert_eq!(
         result["implementation"],
         json!({"name": "devrandom-labs/cesr",
-               "version": "keri-rs 0.1.0, keri-codec 0.10.0, keri-events 0.6.0, cesr-rs 0.12.0, cesr-stream 0.7.0",
+               "version": "keri-rs-v0.1.0",
                "commit": "5704a43817bbb1645a69761d18efec06269330cf"})
     );
     assert_eq!(

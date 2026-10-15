@@ -276,6 +276,7 @@ The adapters in this repository are working examples, each a small program in it
 - [`adapters/keripy`](../adapters/keripy), in Python, for keripy, with a second instance for keripy 1.2.14 in [`adapters/keripy/keripy-1.2.14`](../adapters/keripy/keripy-1.2.14).
 - [`adapters/keriox`](../adapters/keriox), in Rust, for keriox.
 - [`adapters/affinidi`](../adapters/affinidi), in Rust, for Affinidi's keri-core and cesr crates.
+- [`adapters/devrandom`](../adapters/devrandom), in Rust, for devrandom-labs/cesr, a sans-IO library of verdict functions; its `keri.process` composes the routing, escrow, delegation-evidence lookup and superseding rewind the library leaves to its caller.
 - [`adapters/signify-ts`](../adapters/signify-ts), in TypeScript, for signify-ts.
 
 Report what the implementation did, not what the case expects. An adapter must never read a case's expected value; the runner never sends it one.

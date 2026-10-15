@@ -16,9 +16,12 @@ pub const OPERATIONS: [&str; 3] = ["cesr.parse", "cesr.encode", "keri.process"];
 
 /// The implementation under test, as pinned in Cargo.toml and Cargo.lock. All five crates of the
 /// devrandom-labs/cesr workspace that the adapter links were published from one commit, the tag
-/// `keri-rs-v0.1.0`. `tests/pins.rs` checks every version against Cargo.lock and every crate's
-/// `.cargo_vcs_info.json` against the commit, so these cannot drift from what is actually built.
+/// `keri-rs-v0.1.0`, which `hello` reports as the version. `tests/pins.rs` checks every version
+/// against Cargo.lock and every crate's `.cargo_vcs_info.json` against the commit, so these cannot
+/// drift from what is actually built.
 pub const IMPLEMENTATION_NAME: &str = "devrandom-labs/cesr";
+/// The tag in https://github.com/devrandom-labs/cesr whose commit published every crate below.
+pub const IMPLEMENTATION_VERSION: &str = "keri-rs-v0.1.0";
 pub const IMPLEMENTATION_COMMIT: &str = "5704a43817bbb1645a69761d18efec06269330cf";
 pub const CRATES: [(&str, &str); 5] = [
     ("keri-rs", "0.1.0"),
@@ -141,16 +144,14 @@ fn hex_field(request: &Map<String, Value>, field: &str) -> Result<Vec<u8>, OpErr
         })
 }
 
-/// The implementation identity: the workspace, every crate version linked, and the one commit
-/// they were all published from, so that moving any pin changes the identity results record.
+/// The implementation identity: the workspace, the release tag every linked crate was published
+/// from, and its commit. A tag rather than the five crate versions, because those join into a
+/// version longer than a results path segment may be (tools/results.py, `slug`); `CRATES` and
+/// tests/pins.rs tie the tag to every version actually linked.
 pub fn implementation() -> Value {
-    let versions: Vec<String> = CRATES
-        .iter()
-        .map(|(name, version)| format!("{name} {version}"))
-        .collect();
     json!({
         "name": IMPLEMENTATION_NAME,
-        "version": versions.join(", "),
+        "version": IMPLEMENTATION_VERSION,
         "commit": IMPLEMENTATION_COMMIT,
     })
 }

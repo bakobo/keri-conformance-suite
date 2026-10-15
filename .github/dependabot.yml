@@ -22,3 +22,16 @@ updates:
     directory: "/adapters/affinidi"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "cargo"
+    directory: "/adapters/devrandom"
+    schedule:
+      interval: "weekly"
+    # The adapter pins the five crates devrandom-labs published together at tag keri-rs-v0.1.0
+    # (adapters/devrandom/README.md); moving them is a change to what is being tested, made by
+    # hand with every pin and the reported tag and commit together, not a routine bump.
+    ignore:
+      - dependency-name: "keri-rs"
+      - dependency-name: "keri-codec"
+      - dependency-name: "keri-events"
+      - dependency-name: "cesr-rs"
+      - dependency-name: "cesr-stream"
