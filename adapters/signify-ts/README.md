@@ -23,7 +23,7 @@ cd adapters/signify-ts && npm ci && npm run typecheck && npm run coverage
 
 # from the repository root
 uv run kcs check-adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts"
-uv run kcs run --adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts" --profile cesr-1.0
+uv run kcs run --adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts" --profile cesr-v1.0
 ```
 
 `bin/kcs-adapter-signify-ts` starts Node with `--disable-wasm-trap-handler`. signify-ts signs and verifies through libsodium compiled to WebAssembly, and V8's default trap handler reserves guard regions far larger than the 4 GiB address-space limit the runner sets, so without the flag the adapter dies at startup with "Out of memory: Cannot allocate Wasm memory". With it, V8 bounds-checks WebAssembly memory accesses instead. `tests/stdio.test.ts` starts the launcher under that limit with `prlimit` when `prlimit` is available.
@@ -75,15 +75,15 @@ The adapter checks its arithmetic against the parser wherever both exist: a coun
 
 ## CI and the baseline
 
-CI level 2 (`docs/design.md`) for this adapter is the `signify-ts-adapter` job in `.github/workflows/ci.yml`. It installs the Node version `.node-version` names, runs `npm ci` (which refuses a `package-lock.json` that does not match `package.json`), typechecks, runs the tests with the 100% branch gate, runs `kcs check-adapter`, and then runs `kcs run` for `cesr-1.0` and for `keripy-1x-interop` and compares each report with its baseline, `baseline-cesr-1.0.json` and `baseline-keripy-1x-interop.json`, using the keripy adapter's standard-library comparison tool. A regression fails, and so does an improvement until the baseline is updated in the same change.
+CI level 2 (`docs/design.md`) for this adapter is the `signify-ts-adapter` job in `.github/workflows/ci.yml`. It installs the Node version `.node-version` names, runs `npm ci` (which refuses a `package-lock.json` that does not match `package.json`), typechecks, runs the tests with the 100% branch gate, runs `kcs check-adapter`, and then runs `kcs run` for `cesr-v1.0` and for `keripy-1x-interop` and compares each report with its baseline, `baseline-cesr-v1.0.json` and `baseline-keripy-1x-interop.json`, using the keripy adapter's standard-library comparison tool. A regression fails, and so does an improvement until the baseline is updated in the same change.
 
 ```sh
-uv run kcs run --adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts" --profile cesr-1.0 --report /tmp/r.json
-PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/signify-ts/baseline-cesr-1.0.json /tmp/r.json
+uv run kcs run --adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts" --profile cesr-v1.0 --report /tmp/r.json
+PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/signify-ts/baseline-cesr-v1.0.json /tmp/r.json
 uv run kcs run --adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts" --profile keripy-1x-interop --report /tmp/i.json
 PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/signify-ts/baseline-keripy-1x-interop.json /tmp/i.json
 ```
 
-The committed `cesr-1.0` baseline at `c5bc46a` is `not-conformant`: 16 cases pass, 17 fail and 8 are not sent. The 8 need `cesr.domain.binary`. The 7 `cesr.encode` cases in the text domain pass. Every `cesr.parse` case in this profile opens with a top-level genus/version code (`-_AAACAA`) before its first message, and `parse()` cannot read one there: it looks for a version string anywhere in the first 128 bytes rather than at the start, finds the message's own version string 8 bytes in, takes the message to start at byte 0, and rejects the body as `malformed-body`. So all 17 cases that expect decoded items fail, and the 9 must-reject cases pass for that reason rather than for the defect each one tests. Those 9 passes are not evidence about the parser yet.
+The committed `cesr-v1.0` baseline at `c5bc46a` is `not-conformant`: 16 cases pass, 17 fail and 8 are not sent. The 8 need `cesr.domain.binary`. The 7 `cesr.encode` cases in the text domain pass. Every `cesr.parse` case in this profile opens with a top-level genus/version code (`-_AAACAA`) before its first message, and `parse()` cannot read one there: it looks for a version string anywhere in the first 128 bytes rather than at the start, finds the message's own version string 8 bytes in, takes the message to start at byte 0, and rejects the body as `malformed-body`. So all 17 cases that expect decoded items fail, and the 9 must-reject cases pass for that reason rather than for the defect each one tests. Those 9 passes are not evidence about the parser yet.
 
 In `keripy-1x-interop` the five must-reject cases on KERI 1.0 streams (CESR-0049, CESR-0050, CESR-0052, CESR-0054, CESR-0057) are rejected and pass, as are the three item-counted 1.00 cases CESR-0045, CESR-0046 and CESR-0047, whose decoded items match. CESR-0048 fails, for the leading genus/version code above, so the verdict is `not-interoperable`, the verdict a non-normative profile gets instead of a conformance one. In `cesr-strict` both cases pass and the verdict is `interoperable`; that profile has no committed baseline here, as for the other adapters.

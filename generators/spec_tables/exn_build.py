@@ -1,6 +1,6 @@
 """Build exchange-message cases (``exn.verify``) from scenarios, and grade them.
 
-Exchange messages are KERI messages, so their cases are KERI cases in the ``keri-1.0`` profile
+Exchange messages are KERI messages, so their cases are KERI cases in the ``keri-v1.0.1`` profile
 (docs/design.md, IPEX). Everything here follows the KERI specification v1.0.1
 (``spec_source.KERI``), reusing the key-event machinery of ``keri_events`` and ``keri_model``:
 

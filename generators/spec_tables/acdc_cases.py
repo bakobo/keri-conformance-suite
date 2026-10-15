@@ -52,7 +52,7 @@ from .keri_events import WIRE as KERI_WIRE
 GENERATOR_NAME = "kcs-gen-acdc"
 GENERATOR_VERSION = "0.1.0"
 SCHEMA_VERSION = 1
-PROFILE = "acdc-1.0"
+PROFILE = "acdc-v1.0"
 WIRE = "ACDCCAACAAJSON"
 BASE_FEATURES = ("acdc.version-2.x", "cesr.genus-2.00", "cesr.serialization.json",
                  "crypto.ed25519", "kel.basic", "keri.version-2.x")

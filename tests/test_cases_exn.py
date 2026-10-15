@@ -61,7 +61,7 @@ def test_case_validates_against_the_case_schema_and_loads_through_the_runner(cid
 @pytest.mark.parametrize("cid", sorted(CASES))
 def test_profile_features_and_provenance(cid):
     case = CASES[cid]
-    assert case["profile"] == "keri-1.0"
+    assert case["profile"] == "keri-v1.0.1"
     assert set(case["targets"]["features"]) <= set(FEATURES)
     assert set(exn_build.FEATURES_BASE) <= set(case["targets"]["features"])
     assert case["targets"]["wire"] == ["CESR-2.00", keri_events.WIRE]

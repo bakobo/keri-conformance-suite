@@ -41,6 +41,11 @@ FAKE2 = dataclasses.replace(FAKE, tag="v10", commit="e" * 40)
 FAKE2_TEXT = FAKE_TEXT.replace("A parser MAY stop.", "A parser MUST stop.")
 
 
+def line_link(n, pin=FAKE):
+    """A report's Line cell: the line number, linked to that line of the raw pinned text."""
+    return f"[{n}]({pin.repo}/blob/{pin.commit}/{pin.file}?plain=1#L{n})"
+
+
 def clause(quote, pin=FAKE):
     return {"spec": pin.label, "commit": pin.commit, "quote": quote, "section": "x", "url": "u"}
 
@@ -383,8 +388,8 @@ def test_generate_reports_the_triage_of_each_occurrence_of_a_repeated_sentence(t
                                           judged("out-of-scope", section="Logging",
                                                  occurrence=2)]}))
     text = cc.generate(root)["docs/coverage/fake.md"].decode()
-    logs = [line for line in text.splitlines() if line.endswith(f"| {LOG} |")]
-    assert [line.split(" | ")[2] for line in logs] == ["validator", "unassessed", "out-of-scope"]
+    logs = [cells for cells in map(cc.split_row, text.splitlines()) if cells[1:2] == [LOG]]
+    assert [cells[3] for cells in logs] == ["validator", "unassessed", "out-of-scope"]
 
 
 def test_a_repeated_sentence_with_a_missing_disambiguator_fails_generate(tree, monkeypatch):
@@ -496,14 +501,26 @@ def test_every_keyword_sentence_has_exactly_one_row_in_order():
 # --- Rendering ----------------------------------------------------------------------------------
 
 
+_LINE_CELL = re.compile(r"\[(\d+)\]\(\S+\?plain=1#L\1\)")
+
+
 def report_rows(markdown):
-    """(line, sentence) for every sentence row of a rendered per-spec report."""
+    """(line, sentence) for every sentence row of a rendered per-spec report: a row of ten cells
+    whose first is a line linked to the raw text, and whose second is the sentence."""
     out = []
     for line in markdown.splitlines():
         cells = cc.split_row(line)
-        if cells and cells[0].isdigit():
-            out.append((int(cells[0]), cells[-1]))
+        m = _LINE_CELL.fullmatch(cells[0]) if len(cells) == 10 else None
+        if m:
+            out.append((int(m.group(1)), cells[1]))
     return out
+
+
+def test_report_rows_reads_only_sentence_rows():
+    sentence = "| " + line_link(5) + " | It MUST hold. | MUST |" + " x |" * 7
+    unmapped = "| " + line_link(6) + " | A quote. | KERI-0001 | clause |"
+    head = "| Line | Sentence |" + " x |" * 8
+    assert report_rows(f"{sentence}\n{unmapped}\n{head}") == [(5, "It MUST hold.")]
 
 
 def test_a_table_cell_escapes_pipes_and_split_row_reads_it_back():
@@ -538,8 +555,10 @@ def test_the_spec_report_starts_with_the_notice_and_lists_sections_in_order():
     assert text.startswith(cc.NOTICE)
     assert text.index("Parsing") < text.index("Keys")
     assert text.index("### Obligations") < text.index("### Permissions")
-    assert "https://github.com/example/fake-spec/blob/" + "f" * 40 + "/spec/spec-body.md#parsing" \
-        in text
+    # A section's line links to the raw text at its heading, which is line 3 of FAKE_TEXT.
+    assert ("[Line 3 of the specification](https://github.com/example/fake-spec/blob/" + "f" * 40
+            + "/spec/spec-body.md?plain=1#L3).") in text
+    assert "spec-body.md#parsing" not in text
     assert report_rows(text) == [  # spec order, obligations first
         (s.line, s.text) for s in cc.keyword_sentences(FAKE_TEXT) if s.level != "MAY"
     ] + [(5, "A parser MAY stop.")]
@@ -547,18 +566,29 @@ def test_the_spec_report_starts_with_the_notice_and_lists_sections_in_order():
 
 def test_the_spec_report_rows_carry_triage_counts_polarity_and_case_marks():
     text = cc.render_spec("fake", measured())
-    (bad_code,) = [line for line in text.splitlines() if line.endswith("refuse a bad code. |")]
-    assert bad_code == ("| 5 | MUST | validator, security | 2 | 2 | 0 | MUST 2, SHOULD 2 | both "
-                        "| KERI-0001, KERI-0002, KERI-0004 (inferred) "
-                        "| A parser MUST refuse a bad code. |")
-    (secret,) = [line for line in text.splitlines() if line.endswith("keys secret. |")]
-    assert "| unassessed | 1 | 0 | 1 | MUST 1 | — | KERI-0003 (disputed) |" in secret
+    (bad_code,) = [line for line in text.splitlines() if "refuse a bad code. |" in line]
+    # The sentence comes second, so a reader can tell rows apart without scrolling right.
+    assert bad_code == (f"| {line_link(5)} | A parser MUST refuse a bad code. | MUST "
+                        "| validator, security | 2 | 2 | 0 | MUST 2, SHOULD 2 | both "
+                        "| KERI-0001, KERI-0002, KERI-0004 (inferred) |")
+    (secret,) = [line for line in text.splitlines() if "keys secret. |" in line]
+    assert secret.endswith("| unassessed | 1 | 0 | 1 | MUST 1 | — | KERI-0003 (disputed) |")
+
+
+def test_the_sentence_table_head_puts_the_sentence_after_the_line():
+    head, rule = cc._TABLE_HEAD.splitlines()
+    assert cc.split_row(head) == ["Line", "Sentence", "Level", "Triage", "Direct", "Inferred",
+                                  "Disputed", "Assertions", "Polarity", "Cases"]
+    assert cc.split_row(rule) == ["---:", ":---", ":---", ":---", "---:", "---:", "---:", ":---",
+                                  ":---", ":---"]
 
 
 def test_the_spec_report_lists_unmapped_quotes():
     text = cc.render_spec("fake", measured())
     assert "### Quotes that match no keyword sentence" in text
-    assert "| KERI-0004 | inference | 11 | A plain line with no keyword. |" in text
+    assert "| Line | Quote | Cases | Cited as |\n|---:|:---|:---|:---|\n" in text
+    assert (f"| {line_link(11)} | A plain line with no keyword. | KERI-0004 | inference |"
+            in text)
 
 
 def test_a_spec_report_with_nothing_unmapped_says_so():
@@ -575,7 +605,7 @@ def test_a_triage_reason_is_escaped_like_any_other_cell():
                if "SHOULD log it." in line]
     cells = cc.split_row(line)
     assert len(cells) == 10
-    assert cells[2] == "untestable: Logs | are private."
+    assert cells[3] == "untestable: Logs | are private."
 
 
 def test_an_untestable_triage_shows_its_reason():
@@ -617,6 +647,16 @@ def test_the_index_has_the_notice_a_column_per_pin_and_a_row_per_measure():
     assert "| Obligations covered by an active case | 2 |" in index
     assert "| Security-bearing obligations not covered | 0 |" in index
     assert "scripts/clause-coverage" in index
+
+
+def test_the_index_puts_the_summary_after_its_first_paragraph_and_the_details_after_that():
+    index = cc.render_index(measured())
+    first, rest = cc.INDEX_PROSE.split("\n\n", 1)
+    assert first.startswith("This directory measures")
+    summary = index.index("| Measure |")
+    assert index.index(first) < summary < index.index("## Details") < index.index(rest)
+    assert index.index("## Summary") < summary
+    assert index.endswith(rest)
 
 
 # --- Generation, writing and checking -----------------------------------------------------------
@@ -933,9 +973,9 @@ def test_the_spec_report_lists_practice_sentences_in_their_own_part():
     obligations, rest = text.split("### Permissions")
     permissions, practice = rest.split("### Practice")
     assert "SHOULD log it." not in obligations and "MAY stop." not in permissions
-    assert "| practice | 0 | 0 | 0 | INTEROP 1 | negative | IPEX-0001 (basis) " \
-           "| A parser SHOULD log it. |" in practice
-    assert "| practice | 0 | 0 | 0 | — | — | — | A parser MAY stop. |" in practice
+    assert "| A parser SHOULD log it. | SHOULD | practice | 0 | 0 | 0 | INTEROP 1 | negative " \
+           "| IPEX-0001 (basis) |" in practice
+    assert "| A parser MAY stop. | MAY | practice | 0 | 0 | 0 | — | — | — |" in practice
     assert "3 MUST, 1 SHOULD and 0 MAY or OPTIONAL, and 2 triaged as practice" in text
 
 

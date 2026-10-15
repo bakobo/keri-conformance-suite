@@ -67,7 +67,7 @@ The suite's policy (decided 2026-10-01):
   - Line 714, "Encoding scheme format symbol table": "When part of a Count Code determines the count of following Primitives or groups of Primitives".
   - Line 1103, "Examples": "where `##` is replaced by the two-character Base64 count of the number of complex groups". The example's own values follow line 591: `-XBf` is 95 quadlets for one group, and `-KBC` is 66 quadlets for three signatures.
 - **Correction.** Make the two legends read "the number of following quadlets or triplets", and make the example say `##` is the number of quadlets in the group. Counting items rather than quadlets is the defect that motivated the suite: a September 2026 survey of Rust implementations found counters that do it, and that left their streams and keripy's mutually unreadable. Whether those implementations took the item reading from these legends is not known.
-- **Cases recording it:** every decoded `cesr-1.0` assertion, CESR-0012 to CESR-0031. They already rest on a MUST, so none is re-issued.
+- **Cases recording it:** every decoded `cesr-v1.0` assertion, CESR-0012 to CESR-0031. They already rest on a MUST, so none is re-issued.
 
 ### C2. The size of indexed code `3A######` (line 702 against line 1086)
 
@@ -95,13 +95,13 @@ The suite's policy (decided 2026-10-01):
 
 - **Text.** Lines 609 and 814-818 scope a genus/version override to its enclosing `-A`/`-B`/`-C` group. Line 814: "Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code."
 - **Effect.** That an override ends with its group is observable only by switching to a different table, and the specification defines only genus 2.00. CESR-0029 tests the switch to the same table (MUST). CESR-0048 tests that a 1.00 override ends with its group, but the 1.00 table comes from keripy, so it sits in `keripy-1x-interop`.
-- **The specification should** define the 1.00 table or a second table; then CESR-0048's shape could be issued at MUST in `cesr-1.0`.
+- **The specification should** define the 1.00 table or a second table; then CESR-0048's shape could be issued at MUST in `cesr-v1.0`.
 
 ### G3. Unassigned codes that carry their own size
 
 - **Text.** Line 599 requires only that a small count code's type be a letter. Line 618 says old parsers "will break" on new codes, which describes rather than requires.
 - **Effect.** A parser can skip `-dAB` or `4ZAB` by its size. The suite expects rejection only in the non-normative `cesr-strict` profile: CESR-0043 and CESR-0044.
-- **The specification should state** that a parser MUST reject a code its genus/version does not assign, including one whose size it can read. If it does, CESR-0043 and CESR-0044 are re-issued at MUST in `cesr-1.0`.
+- **The specification should state** that a parser MUST reject a code its genus/version does not assign, including one whose size it can read. If it does, CESR-0043 and CESR-0044 are re-issued at MUST in `cesr-v1.0`.
 
 ### G4. What an ondex on a current-only signature means
 
@@ -145,7 +145,7 @@ Against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb
 ### K-G4. Escrow other than for threshold shortfalls has no text (lines 1266, 1286, 1612)
 
 - **Text.** The only escrow obligation is line 1266, for an event whose signatures do not satisfy its thresholds ("SHOULD escrow the event while waiting for other signatures to arrive"). Nothing says what a validator does with an event whose prior event it has not seen, or a delegated event whose delegating seal it has not seen (line 1612 says only that it must not be accepted before then). Line 1286 says a validator "can escrow" a receipt for an event it has not received, without a keyword.
-- **Effect.** That such an event is not accepted on arrival is graded at MUST in `keri-1.0` (KERI-0016, KERI-0018, KERI-0031). That it is kept and accepted later is graded only in the non-normative `keri-escrow` profile, at INTEROP (KERI-0017, KERI-0019, KERI-0032). The generator checks every graded assertion under three keep policies (keep every not-yet-acceptable event, keep only threshold shortfalls, keep nothing) and refuses an assertion in `keri-1.0` that only an escrowing validator would satisfy. No case delivers a receipt before its event.
+- **Effect.** That such an event is not accepted on arrival is graded at MUST in `keri-v1.0.1` (KERI-0016, KERI-0018, KERI-0031). That it is kept and accepted later is graded only in the non-normative `keri-escrow` profile, at INTEROP (KERI-0017, KERI-0019, KERI-0032). The generator checks every graded assertion under three keep policies (keep every not-yet-acceptable event, keep only threshold shortfalls, keep nothing) and refuses an assertion in `keri-v1.0.1` that only an escrowing validator would satisfy. No case delivers a receipt before its event.
 - **The specification should state** a level (SHOULD, or MAY given the DDoS warning at line 1286) for keeping out-of-order events, delegated events awaiting their seal, and early receipts.
 
 ### K-G5. A copy of an accepted event (line 1788)
@@ -246,7 +246,7 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 ### A-G4. The IPEX section is non-normative but contains keywords (line 1797)
 
 - Text. "This section is non-normative" (line 1797) is followed by MUST and SHOULD sentences (lines 1807, 1822, 1828 and 1843). Line 1822, which says to verify a SAID against its content before trusting a signature on the SAID, is needed outside IPEX.
-- Effect. No case cites the IPEX section. IPEX messages are graded as KERI exchange messages, in `keri-1.0`.
+- Effect. No case cites the IPEX section. IPEX messages are graded as KERI exchange messages, in `keri-v1.0.1`.
 - The specification should say which of those sentences are normative, and move the ones that are out of the non-normative section.
 
 ### A-G5. Line 68's scope: what "support the old Version String format" covers
@@ -259,14 +259,14 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 ### A-G6. Registry duplicity (lines 2023, 2027)
 
 - Text. Nothing says what a validator does with two anchored updates at one sequence number.
-- Effect. Not graded in `acdc-1.0`.
+- Effect. Not graded in `acdc-v1.0`.
 - The specification should state it, as KERI's first-seen rule does for key events.
 
 ### A-G7. Whether an edge's failure propagates (lines 1114, 1116, 1211)
 
 - Text. Line 1114: "When any node in a provenance chain is invalid, an Edge pointing to that node MAY also be invalid. If a node has an invalid Edge, then the node MAY also be invalid." The same paragraph continues: "Typically, in a given EGF (ecosystem governance framework), all links from the node at the head at one end of a chain to the tail at the other end MUST be valid in order for the node (head) to be valid." Line 1116 says the same of trees. Line 1211's `NOT` operator inverts a far node's validity.
 - Gap. A MUST inside "Typically, in a given EGF" binds no one in particular, and the MAYs leave both propagations, from a far node to its edge and from an edge to its near node, to the reader. Line 1211 implies more than the MAY: it makes an edge valid under `NOT` exactly when its far node is invalid, for any reason, which presupposes that without `NOT` an edge's validity follows its far node's. Line 1114 (MAY) and line 1211 therefore imply different edge semantics.
-- Effect. Each edge is graded at MUST on the checks lines 1174, 1178, 1199, 1201 and 1205 require of it. Propagation is informative in `acdc-1.0`, and the reading in which a chain must be wholly valid is graded in the non-normative profile `acdc-chain-strict`. That decoupling rests on line 1114 alone and is provisional; no first-batch case depends on it, and cases that use `NOT` wait until the text says which semantics holds.
+- Effect. Each edge is graded at MUST on the checks lines 1174, 1178, 1199, 1201 and 1205 require of it. Propagation is informative in `acdc-v1.0`, and the reading in which a chain must be wholly valid is graded in the non-normative profile `acdc-chain-strict`. That decoupling rests on line 1114 alone and is provisional; no first-batch case depends on it, and cases that use `NOT` wait until the text says which semantics holds.
 - The specification should state the default propagation a validator applies when no EGF says otherwise, with a keyword, and how `NOT` interacts with a far node that is invalid for a reason other than the edge's own checks.
 
 ### A-G8. A BLID is a SAID only by analogy (lines 2066, 2141)
@@ -356,7 +356,7 @@ Against the ACDC specification v1.0 (tag `v1.0`, commit `4a543c549fd9811c23bf97b
 
 ## Editorial (ACDC)
 
-- Line 226 calls JSON Schema 2020-12 "The Schema dialect for ACDC 1.0", naming the specification version where the protocol version, 2.00, is meant. The profile `acdc-1.0` shares the hazard and says so.
+- Line 226 calls JSON Schema 2020-12 "The Schema dialect for ACDC 1.0", naming the specification version where the protocol version, 2.00, is meant. The profile `acdc-v1.0` shares the hazard and says so.
 - The example at line 1874 uses the version string `ACDC10JSON00011c_`.
 - The accreditation schema in the worked examples requires a `score` attribute (line 3760) that its own example ACDC (line 3679 onwards) does not carry, and it uses `additionalProperties`, so the example ACDC does not validate against its own schema. The generator reproduces the example's SAIDs but does not use the pair as a schema-validity case.
 

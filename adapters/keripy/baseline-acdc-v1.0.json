@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "implementation": {
     "name": "keripy",
     "version": "2.1.0.dev1",

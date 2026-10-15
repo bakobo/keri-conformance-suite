@@ -208,7 +208,7 @@ CLAUSES = build.resolve_clauses(
 
 def _case(**over):
     case = {
-        "id": "CESR-9999", "key": "k", "title": "t", "description": "d", "profile": "cesr-1.0",
+        "id": "CESR-9999", "key": "k", "title": "t", "description": "d", "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "stream": [{"genus": "AAA", "major": 2, "minor": 0},
                    {"group": "-J", "items": [{"primitive": "D", "raw": "x"}]}],
@@ -293,7 +293,7 @@ def _copy_tree(tmp_path):
 
 def _scenario(tree, name, cases, **extra):
     path = tree / "scenarios" / "cesr" / name
-    path.write_text(json.dumps({"about": "test", "profile": "cesr-1.0", "cases": cases, **extra}))
+    path.write_text(json.dumps({"about": "test", "profile": "cesr-v1.0", "cases": cases, **extra}))
 
 
 def test_generate_refuses_a_duplicate_case_id(tree):
@@ -342,8 +342,8 @@ def test_generate_with_no_scenarios_produces_only_empty_profiles(tmp_path):
     (tmp_path / "scenarios" / "cesr").mkdir(parents=True)
     shutil.copy(ROOT / "scenarios" / "cesr" / "clauses.json", tmp_path / "scenarios" / "cesr")
     files = regenerate.generate(tmp_path)
-    assert sorted(files) == ["profiles/acdc-1.0.json", "profiles/cesr-1.0.json", "profiles/cesr-strict.json",
-                             "profiles/keri-1.0.json", "profiles/keri-escrow.json",
+    assert sorted(files) == ["profiles/acdc-v1.0.json", "profiles/cesr-strict.json", "profiles/cesr-v1.0.json",
+                             "profiles/keri-escrow.json", "profiles/keri-v1.0.1.json",
                              "profiles/keripy-1x-interop.json"]
 
 
@@ -359,7 +359,7 @@ def test_differences_names_missing_extra_and_differing_files():
 def test_write_removes_owned_files_that_are_no_longer_generated(tmp_path):
     regenerate.write(tmp_path, {"cases/cesr/CESR-0001.json": b"{}\n",
                                 "cases/cesr/CESR-0002.json": b"{}\n",
-                                "profiles/cesr-1.0.json": b"[]\n",
+                                "profiles/cesr-v1.0.json": b"[]\n",
                                 "profiles/features.json": b"{}\n"})
     regenerate.write(tmp_path, {"cases/cesr/CESR-0001.json": b"{}\n"})
     assert regenerate.committed(tmp_path) == {"cases/cesr/CESR-0001.json": b"{}\n"}
@@ -378,7 +378,7 @@ def test_regenerating_after_a_scenario_is_deleted_leaves_a_clean_tree(tree):
 
 
 def test_write_and_committed_round_trip(tmp_path):
-    files = {"cases/cesr/CESR-0001.json": b"{}\n", "profiles/cesr-1.0.json": b"[]\n"}
+    files = {"cases/cesr/CESR-0001.json": b"{}\n", "profiles/cesr-v1.0.json": b"[]\n"}
     regenerate.write(tmp_path, files)
     assert regenerate.committed(tmp_path) == files
 
@@ -545,10 +545,10 @@ def test_a_case_id_that_is_not_cesr_nnnn_is_refused_before_any_path_is_built(tre
 @pytest.mark.parametrize("content", [
     b"\xff\xfe not utf-8",
     b"[1, 2]",
-    b'{"profile": "cesr-1.0"}',
-    b'{"profile": "cesr-1.0", "cases": [3]}',
+    b'{"profile": "cesr-v1.0"}',
+    b'{"profile": "cesr-v1.0", "cases": [3]}',
     b'{"profile": 7, "cases": []}',
-    b'{"profile": "cesr-1.0", "cases": [], "id_gaps": [{"nope": 1}]}',
+    b'{"profile": "cesr-v1.0", "cases": [], "id_gaps": [{"nope": 1}]}',
 ], ids=["not-utf8", "not-object", "no-cases", "case-not-object", "profile-not-string",
         "bad-gap"])
 def test_a_scenario_of_the_wrong_shape_is_a_coded_error(tree, content):
@@ -623,7 +623,7 @@ def test_the_script_is_a_thin_entry_point_to_the_package():
 
 def test_a_scenario_value_of_the_wrong_type_is_a_coded_error(tree):
     path = tree / "scenarios" / "cesr" / "zz.json"
-    path.write_text(json.dumps({"profile": "cesr-1.0", "cases": [
+    path.write_text(json.dumps({"profile": "cesr-v1.0", "cases": [
         {"id": "CESR-0099", "title": "t", "description": "d", "operation": "cesr.encode",
          "code": "E", "raw": 1, "domain": "text",
          "assertions": [{"check": "encoded", "clause": "version-string-extract"}]}]}))

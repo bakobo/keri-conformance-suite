@@ -102,7 +102,7 @@ def test_profile_features_wire_and_provenance(cid):
     assert set(acdc_cases.BASE_FEATURES) <= features
     assert case["targets"]["wire"][0] == "CESR-2.00" and case["targets"]["wire"][-1] == \
         acdc_cases.WIRE
-    assert case["profile"] == "acdc-1.0" and case["status"] == "draft"
+    assert case["profile"] == "acdc-v1.0" and case["status"] == "draft"
     assert {a["level"] for a in case["assertions"]} <= {"MUST", "SHOULD"}
     assert case["provenance"]["generator"]["name"] == acdc_cases.GENERATOR_NAME
     assert case["provenance"]["reference"] is None
@@ -168,8 +168,8 @@ def test_the_model_reads_the_committed_bytes_as_the_case_says(cid, texts):
 
 
 def test_profile_lists_exactly_the_cases():
-    profile = json.loads((ROOT / "profiles" / "acdc-1.0.json").read_text(encoding="utf-8"))
-    assert profile["name"] == "acdc-1.0" and profile["about"] and profile["normative"] is True
+    profile = json.loads((ROOT / "profiles" / "acdc-v1.0.json").read_text(encoding="utf-8"))
+    assert profile["name"] == "acdc-v1.0" and profile["about"] and profile["normative"] is True
     assert profile["cases"] == sorted(CASES)
     assert profile["spec"]["tag"] == "v1.0" and profile["spec"]["commit"] == \
         spec_source.ACDC.commit

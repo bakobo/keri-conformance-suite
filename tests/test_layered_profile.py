@@ -38,9 +38,9 @@ def write(root, name, doc):
 # --- reading a profile ----------------------------------------------------------------------------
 
 def test_a_flat_profile_is_read_from_the_suite():
-    profile = load_profile(ROOT, "cesr-1.0")
-    assert profile == Profile("cesr-1.0")
-    assert not profile.layered and profile.members == ("cesr-1.0",)
+    profile = load_profile(ROOT, "cesr-v1.0")
+    assert profile == Profile("cesr-v1.0")
+    assert not profile.layered and profile.members == ("cesr-v1.0",)
 
 
 def test_a_layered_profile_names_its_prerequisites_and_requirements(suite):

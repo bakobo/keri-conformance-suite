@@ -16,7 +16,7 @@ SOURCE = json.loads((ROOT / "scenarios" / "sedi" / "profile.json").read_text(enc
 OPERATIONS = {"cesr.parse", "keri.process", "exn.verify", "acdc.verify", "acdc.issue",
               "acdc.present"}
 FEATURES = set(json.loads((ROOT / "profiles" / "features.json").read_text())["features"])
-PROFILES = {"cesr-1.0", "keri-1.0", "acdc-1.0"}
+PROFILES = {"cesr-v1.0", "keri-v1.0.1", "acdc-v1.0"}
 ACDC = "4a543c549fd9811c23bf97b0daaf48400f4005c2"
 KERI = "71cb54ebb445dd9d8cb33cd29a5f50894fafc569"
 PINS = {"suite": "0.0.1", "specs": {
@@ -47,7 +47,7 @@ FILLED = [verdict_case("ACDC-0901", "valid", ["tel-sequence", "revoked"]),
 def test_the_committed_source_builds_and_lists_every_unexercised_choice():
     doc, unfilled = build(SOURCE)
     assert doc["name"] == "sedi-1" and doc["status"] == "draft" and doc["normative"] is False
-    assert doc["prerequisites"] == ["cesr-1.0", "keri-1.0", "acdc-1.0"]
+    assert doc["prerequisites"] == ["cesr-v1.0", "keri-v1.0.1", "acdc-v1.0"]
     assert len(unfilled) == 2 * len(SOURCE["choices"])
     assert doc["pins"]["drafts"] == SOURCE["drafts"]
     assert all(c["cases"] == {"positive": [], "negative": []} for c in doc["choices"])
@@ -240,10 +240,10 @@ def test_a_released_version_keeps_the_suite_version_it_was_released_with(tree):
 
 def test_the_generator_hands_the_profile_only_its_own_cases(tree):
     case = verdict_case("ACDC-0901", "valid", ["revoked"])
-    other = {**verdict_case("ACDC-0902", "valid", ["revoked"]), "profile": "acdc-1.0"}
+    other = {**verdict_case("ACDC-0902", "valid", ["revoked"]), "profile": "acdc-v1.0"}
     files = {"cases/acdc/ACDC-0901.json": json.dumps(case).encode(),
              "cases/acdc/ACDC-0902.json": json.dumps(other).encode(),
-             "profiles/acdc-1.0.json": b"{}"}
+             "profiles/acdc-v1.0.json": b"{}"}
     doc, _ = regenerate.sedi(tree, files)
     assert doc["cases"] == ["ACDC-0901"]
 

@@ -28,7 +28,7 @@ CASE_DIR = ROOT / "cases" / "cesr"
 CASE_FILES = sorted(CASE_DIR.glob("*.json"))
 CASES = {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in CASE_FILES}
 HEX = re.compile(r"^([0-9a-f]{2})*$")
-NORMATIVE = "cesr-1.0"
+NORMATIVE = "cesr-v1.0"
 INTEROP = "keripy-1x-interop"
 STRICT = "cesr-strict"
 

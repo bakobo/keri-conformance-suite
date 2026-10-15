@@ -20,7 +20,7 @@ def case(cid, outcome="pass", failure=None, **assertions):
                            for aid, out in (assertions or {"a1": "pass"}).items()]}
 
 
-def report(*cases, profile="cesr-1.0", commit="abc", verdict="conformant"):
+def report(*cases, profile="cesr-v1.0", commit="abc", verdict="conformant"):
     return {"filters": {"profile": profile},
             "hello": {"implementation": {**IMPL, "commit": commit}},
             "verdict": verdict, "cases": list(cases)}
@@ -37,7 +37,7 @@ def summary(**kw):
 def test_summarize_keeps_verdict_case_outcomes_failure_kinds_and_assertions():
     assert summary() == {
         "format": 2,
-        "profile": "cesr-1.0",
+        "profile": "cesr-v1.0",
         "implementation": IMPL,
         "verdict": "conformant",
         "cases": {
@@ -99,7 +99,7 @@ def test_an_assertion_that_disappears_is_a_regression():
 
 def test_a_different_profile_is_a_regression():
     regressions, _ = baseline.compare(summary(), base_report(profile="other"))
-    assert regressions == ["profile: cesr-1.0 -> other"]
+    assert regressions == ["profile: cesr-v1.0 -> other"]
 
 
 def test_a_different_implementation_commit_needs_the_baseline_updated():

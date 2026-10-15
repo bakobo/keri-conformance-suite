@@ -174,7 +174,7 @@
       "security": true
     },
     {
-      "basis": "Utah's KERI-012 asks for positive, negative and unresolved outcomes, which a relying party acts on as accept, reject and retry; acdc-1.0 leaves the distinction informative.",
+      "basis": "Utah's KERI-012 asks for positive, negative and unresolved outcomes, which a relying party acts on as accept, reject and retry; acdc-v1.0 leaves the distinction informative.",
       "cases": {
         "negative": [],
         "positive": []
@@ -185,7 +185,7 @@
       "reading": "A verdict is graded three ways: invalid when a check failed, incomplete when something the verdict needs is absent or cannot be evaluated, and never valid in either case."
     },
     {
-      "basis": "acdc-1.0 grades acceptance as an inferred SHOULD; without this, an adapter answering incomplete or invalid to everything would pass every sedi-1 refusal.",
+      "basis": "acdc-v1.0 grades acceptance as an inferred SHOULD; without this, an adapter answering incomplete or invalid to everything would pass every sedi-1 refusal.",
       "cases": {
         "negative": [],
         "positive": []
@@ -275,9 +275,9 @@
     "suite": "0.0.1"
   },
   "prerequisites": [
-    "cesr-1.0",
-    "keri-1.0",
-    "acdc-1.0"
+    "cesr-v1.0",
+    "keri-v1.0.1",
+    "acdc-v1.0"
   ],
   "requires": {
     "features": [

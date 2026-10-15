@@ -257,7 +257,7 @@ BASE_CASES += [
                assertion("edge_reported", name="a5", level="SHOULD", near="EAcd", path="e.le"),
                assertion("edge_valid", name="a6", near="EAcd", path="e.le.qvi",
                          expected=False)],
-              profile="acdc-1.0", features=["acdc.version-2.x"]),
+              profile="acdc-v1.0", features=["acdc.version-2.x"]),
     make_case("KERI-0003", "exn.verify",
               {"perspective": {"role": "validator"},
                "kels": [{"stream": "7b7d", "source": "issuer"}],

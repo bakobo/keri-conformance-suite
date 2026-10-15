@@ -75,7 +75,7 @@
     "KERI-0082",
     "KERI-0083"
   ],
-  "name": "keri-1.0",
+  "name": "keri-v1.0.1",
   "normative": true,
   "spec": {
     "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",

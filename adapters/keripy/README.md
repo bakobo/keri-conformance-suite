@@ -8,7 +8,7 @@ The adapter does not read, reuse or import anything from `generators/`. keripy g
 
 | Instance | Project | keripy | Python | Profile it is meant for |
 |---|---|---|---|---|
-| keripy main | `adapters/keripy/` | main, commit `9a8b7aa70960f16fe7acffd8cf7901941ac912a1` (reports version 2.1.0.dev1) | 3.14 | `cesr-1.0` |
+| keripy main | `adapters/keripy/` | main, commit `9a8b7aa70960f16fe7acffd8cf7901941ac912a1` (reports version 2.1.0.dev1) | 3.14 | `cesr-v1.0` |
 | keripy 1.2.14 | `adapters/keripy/keripy-1.2.14/` | tag `1.2.14`, commit `bab95c16e949b61398129a3e41a8f68bad84c94f` | 3.12 | `keripy-1x-interop` |
 
 Both are uv projects with their own lockfiles. The package lives in `adapters/keripy/`; its keripy-main pin carries the marker `python_version >= '3.14'`, so it applies only in the main instance's Python 3.14 environment. The 1.2.14 project installs the same package by path on Python 3.12, where that marker drops the main pin, and pins keripy 1.2.14 itself. To pin a different keripy, change the commit in the relevant `pyproject.toml` and run `uv lock`.
@@ -19,7 +19,7 @@ cd adapters/keripy/keripy-1.2.14 && uv sync      # keripy 1.2.14
 
 # from the repository root
 uv run kcs check-adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy"
-uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile cesr-1.0
+uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile cesr-v1.0
 uv run kcs run --adapter "$PWD/adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy" --profile keripy-1x-interop
 ```
 
@@ -49,16 +49,16 @@ uv run coverage combine .coverage.main .coverage.onex && uv run coverage report 
 
 ## CI and the baseline
 
-CI level 2 (`docs/design.md`) for this adapter is the `keripy-adapter` job in `.github/workflows/ci.yml`. It builds both instances from their lockfiles: Python 3.14 with keripy main, and Python 3.12 with keripy 1.2.14. It runs the adapter's tests in each and gates on their combined branch coverage being 100%, then runs `kcs check-adapter` on both. Finally it runs `kcs run --profile cesr-1.0` on keripy main against `baseline-cesr-1.0.json`, and `kcs run --profile keripy-1x-interop` on keripy 1.2.14 against `baseline-keripy-1x-interop.json`. Each baseline records the verdict, every case's outcome and failure kind (`timeout`, `exited`, `malformed`, `error-harness` and so on, or none), and every assertion's outcome, as last recorded. The comparison is `python -m kcs_adapter_keripy.baseline compare`, and it fails in two cases:
+CI level 2 (`docs/design.md`) for this adapter is the `keripy-adapter` job in `.github/workflows/ci.yml`. It builds both instances from their lockfiles: Python 3.14 with keripy main, and Python 3.12 with keripy 1.2.14. It runs the adapter's tests in each and gates on their combined branch coverage being 100%, then runs `kcs check-adapter` on both. Finally it runs `kcs run --profile cesr-v1.0` on keripy main against `baseline-cesr-v1.0.json`, and `kcs run --profile keripy-1x-interop` on keripy 1.2.14 against `baseline-keripy-1x-interop.json`. Each baseline records the verdict, every case's outcome and failure kind (`timeout`, `exited`, `malformed`, `error-harness` and so on, or none), and every assertion's outcome, as last recorded. The comparison is `python -m kcs_adapter_keripy.baseline compare`, and it fails in two cases:
 - **A regression:** a different profile, an aborted run, or a verdict change other than to conformant (or, for a non-normative profile, to interoperable). Also any case or assertion outcome that changed to anything but pass, a case or assertion that disappeared, or a failure kind that appeared or changed. A case that starts crashing therefore fails the gate even though it still fails and the verdict is unchanged.
 - **An improvement:** a verdict that became conformant or interoperable, a new pass, a failure kind that went away, a new case or assertion, or a different keripy commit. This must be recorded in the same change:
 
 ```sh
-uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile cesr-1.0 --report /tmp/r.json
-adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline write adapters/keripy/baseline-cesr-1.0.json /tmp/r.json
+uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile cesr-v1.0 --report /tmp/r.json
+adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline write adapters/keripy/baseline-cesr-v1.0.json /tmp/r.json
 ```
 
-The tool reads at most 64 MiB of a report or baseline (`baseline.MAX_FILE_BYTES`). A larger file is refused with `e.input.range.file-size.f`; a cesr-1.0 report is well under 1 MiB.
+The tool reads at most 64 MiB of a report or baseline (`baseline.MAX_FILE_BYTES`). A larger file is refused with `e.input.range.file-size.f`; a cesr-v1.0 report is well under 1 MiB.
 
 The committed baseline is keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, verdict conformant: every active assertion passes, and the two disputed cases, CESR-0022 and CESR-0031, fail. The keripy 1.2.14 baseline for `keripy-1x-interop` records CESR-0045 to CESR-0048 as not-supported, because each has a `decoded` assertion and this build does not declare `cesr.item-extents` (CESR-0048 also needs `cesr.genus-2.00`), and the five must-reject cases as passing; its verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped to the cases sent. Its must-reject cases (CESR-0049 onward) pass because keripy 1.2.14 is the reference their expectations come from: it raises for the unassigned code, and its parser asks for more bytes on the truncated streams, which the adapter reports as a rejection under the end-of-input rule.
 
@@ -152,18 +152,18 @@ Initial readings are taken at quiescence after each message's own delivery, fina
 
 The adapter's `reading` returns `rejected` for a message it finds in neither keripy's seen state nor any escrow table, so a pass on a `rejected` assertion shows that keripy kept the message nowhere, not which rule dropped it; that is what the case grades, as with the self-agreement note.
 
-**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, `keri-1.0` is conformant: every active case passes, with every active MUST and SHOULD assertion passing and none failing. That includes the active exchange-message cases, which run through `exn.verify` (below). The four disputed exchange-message cases, KERI-0068, KERI-0072, KERI-0073 and KERI-0074, fail: keripy main accepts no `xip`, and it checks neither `p` nor `x` on a route with no handler (`generators/DISAGREEMENTS.md`). `keri-escrow`'s 3 cases pass; its verdict is `interoperable`, because its assertions are INTEROP and a non-normative profile gets an interoperability verdict instead of a conformance one. The baselines are `baseline-keri-1.0.json` and `baseline-keri-escrow.json`, written with the baseline tool from fresh runs, and are re-recorded whenever the cases move. The `keripy-adapter` job in `.github/workflows/ci.yml` compares both against fresh runs, as it does `cesr-1.0` and `keripy-1x-interop`.
+**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, `keri-v1.0.1` is conformant: every active case passes, with every active MUST and SHOULD assertion passing and none failing. That includes the active exchange-message cases, which run through `exn.verify` (below). The four disputed exchange-message cases, KERI-0068, KERI-0072, KERI-0073 and KERI-0074, fail: keripy main accepts no `xip`, and it checks neither `p` nor `x` on a route with no handler (`generators/DISAGREEMENTS.md`). `keri-escrow`'s 3 cases pass; its verdict is `interoperable`, because its assertions are INTEROP and a non-normative profile gets an interoperability verdict instead of a conformance one. The baselines are `baseline-keri-v1.0.1.json` and `baseline-keri-escrow.json`, written with the baseline tool from fresh runs, and are re-recorded whenever the cases move. The `keripy-adapter` job in `.github/workflows/ci.yml` compares both against fresh runs, as it does `cesr-v1.0` and `keripy-1x-interop`.
 
 ```sh
-uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile keri-1.0 --report /tmp/r.json
-adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare adapters/keripy/baseline-keri-1.0.json /tmp/r.json
+uv run kcs run --adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy" --profile keri-v1.0.1 --report /tmp/r.json
+adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare adapters/keripy/baseline-keri-v1.0.1.json /tmp/r.json
 ```
 
 ## acdc.verify
 
 `acdc.verify` (keripy main only) never answers `valid`, and the adapter declares no `acdc.*` feature, so the runner sends it no ACDC case. That is failing closed, not a gap in the adapter: keripy main has no entry point that judges an ACDC 2.00 against a bundle.
 
-**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, all 76 `acdc-1.0` cases are not-supported, because every one requires `acdc.version-2.x`, which this adapter does not declare; the verdict is `no-evidence`. The cases are draft, so none would decide a verdict yet. The baseline is `baseline-acdc-1.0.json`, written with the baseline tool from a fresh run, and the `keripy-adapter` job in `.github/workflows/ci.yml` compares it against a fresh run.
+**Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, all 76 `acdc-v1.0` cases are not-supported, because every one requires `acdc.version-2.x`, which this adapter does not declare; the verdict is `no-evidence`. The cases are draft, so none would decide a verdict yet. The baseline is `baseline-acdc-v1.0.json`, written with the baseline tool from a fresh run, and the `keripy-adapter` job in `.github/workflows/ci.yml` compares it against a fresh run.
 
 What keripy main has, at the pinned commit:
 

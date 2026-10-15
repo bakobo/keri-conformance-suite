@@ -40,7 +40,7 @@ E_BASELINE_FORMAT = "e.input.format.baseline.f"
 TRANSIENT_ERRNOS = frozenset({errno.EAGAIN, errno.EWOULDBLOCK, errno.EINTR, errno.EBUSY,
                               errno.ENOSPC, errno.EDQUOT, errno.EIO, errno.ETIMEDOUT})
 FORMAT = 2
-# The largest report or baseline this tool reads. A cesr-1.0 report is well under 1 MiB.
+# The largest report or baseline this tool reads. A cesr-v1.0 report is well under 1 MiB.
 MAX_FILE_BYTES = 64 * 1024 * 1024
 ABORTED = "aborted"
 NONE = "none"  # how a missing failure kind is written in a comparison line

@@ -1,6 +1,6 @@
 {
   "about": "ACDC scenarios for step 1 of the decision procedure (docs/design.md, ACDC): framing, field rules and SAIDs. Fixtures are bundle fragments in the form generators/spec_tables/acdc_build.py reads; each case changes one and lists every check the decision procedure fails.",
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "fixtures": {
     "direct": {
       "events": [

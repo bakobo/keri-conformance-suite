@@ -7,7 +7,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
 ## Rules that apply to every item
 
 - **Positive pairs.** Every refusal, `incomplete` or `invalid`, has a positive twin that differs from it only in the defect, as in the rest of the suite.
-- **Grading.** sedi-1 grades `valid` at INTEROP on every positive. Otherwise an adapter that answers `incomplete` or `invalid` to everything passes, because acdc-1.0 grades `valid` only as an inferred SHOULD.
+- **Grading.** sedi-1 grades `valid` at INTEROP on every positive. Otherwise an adapter that answers `incomplete` or `invalid` to everything passes, because acdc-v1.0 grades `valid` only as an inferred SHOULD.
 - **Oracles.** A case whose output is deterministic declares `oracle: bytes`, and a generator check enforces it. A case may grade by verdict only when the bytes cannot be fixed, and then the verdict comes from the suite's own model (3lq4zrr3).
 - **Determinism.** Every seed, salt, stamp and KDF parameter is fixed in the scenario. `regenerate --check` covers the cases, the profile manifest and `generators/DISAGREEMENTS.md`.
 - **Embargo.** The suite's embargo rule (5cz9hck0) applies before anything reaches this public tree. Every sedi-1 and sedi-1x-interop case carries a triage line stating its security consequence. A case that has one is run first against every adapter in the private mirror. It moves to the public tree only when no released implementation fails it. heti counts as a released implementation, even though Bakobo builds it. The same gate covers `DISAGREEMENTS.md` entries, defect reproductions and spec-question drafts.
@@ -15,7 +15,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
 ## 1. The profile manifest and the claim
 
 - `profiles/sedi-1.json` is generated from a scenario file, and `regenerate --check` fails on drift. The manifest declares:
-  - its version and its prerequisite profiles (`cesr-1.0`, `keri-1.0`, `acdc-1.0`, whose `keri-1.0` carries the exchange-message cases KERI-0068 to KERI-0083);
+  - its version and its prerequisite profiles (`cesr-v1.0`, `keri-v1.0.1`, `acdc-v1.0`, whose `keri-v1.0.1` carries the exchange-message cases KERI-0068 to KERI-0083);
   - the suite version and each spec commit it pins, by full hash;
   - the features an adapter must declare, its choices, and its maxima (item 13).
 - The runner refuses a sedi-1 claim unless the prerequisites' MUSTs passed in the same run. A table-driven test crosses each prerequisite outcome (pass, fail, incomplete, no-evidence, not run, or passed only in an earlier run) with each sedi-1 outcome. It asserts the exact claim text and exit code for every cell.
@@ -129,7 +129,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
 
 ## 7. IPEX practice cases
 
-The exchange-message cases in `keri-1.0` are a sedi-1 prerequisite. On top of them, INTEROP cases with a cited basis, each with its positive pair:
+The exchange-message cases in `keri-v1.0.1` are a sedi-1 prerequisite. On top of them, INTEROP cases with a cited basis, each with its positive pair:
 - a grant embedding an ACDC with the issuer's KEL attached;
 - a grant and admit pair whose `p` matches;
 - an admit naming the wrong grant;
@@ -143,7 +143,7 @@ The apply, offer and agree messages are out of scope for sedi-1 v1, and `docs/pr
 - **Triples.** Each unresolved cause gets three cases: the complete bundle (`valid`), the same bundle with the one item removed (`incomplete`), and the same bundle with the item present but corrupted (`invalid`). The causes are a missing KEL, registry event, far node or schema; an unknown operator; an unsupported registry kind; and an undecidable edge.
 - **Precedence**, per 3g4le6js. Each `incomplete` cause is combined with a broken SAID, a revocation and a failed `I2I`, and each combination expects `invalid`.
 - **KEL state.** A KEL with a gap, a stale KEL (evaluation point before the anchor), and an absent KEL each map to their stated verdicts.
-- **Always-X self-tests.** Three adapters, always-valid, always-invalid and always-incomplete, each fail sedi-1. The same test asserts that acdc-1.0 passes always-invalid and always-incomplete at MUST, so the difference between the two profiles stays visible.
+- **Always-X self-tests.** Three adapters, always-valid, always-invalid and always-incomplete, each fail sedi-1. The same test asserts that acdc-v1.0 passes always-invalid and always-incomplete at MUST, so the difference between the two profiles stays visible.
 - **Nested-edge defects** are enumerated, each with its own case id and positive twin:
   - a far-node SAID mismatch at depth 2;
   - a schema mismatch at depth 2;
