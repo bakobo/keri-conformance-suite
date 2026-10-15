@@ -1,0 +1,34 @@
+[package]
+name = "kcs-adapter-devrandom"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95.0"
+license = "Apache-2.0"
+description = "KERI conformance suite adapter (protocol v1) for devrandom-labs/cesr"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "kcs-adapter-devrandom"
+path = "src/main.rs"
+
+[dependencies]
+keri-rs = { version = "=0.1.0", features = ["std", "wire"] }
+keri-codec = { version = "=0.10.0", features = ["std"] }
+keri-events = { version = "=0.6.0", features = ["std"] }
+cesr-rs = { version = "=0.12.0", features = ["std", "core", "crypto", "b64"] }
+cesr-stream = { version = "=0.7.0", features = ["std"] }
+serde_json = "1"
+
+[profile.dev]
+# Panics inside devrandom are caught and reported; they must unwind, never abort.
+panic = "unwind"
+
+# The tests derive keys with devrandom's salty custodian, whose argon2 key stretching is very slow
+# unoptimized. Only the key-derivation crates are optimized; nothing on the validation path is.
+[profile.dev.package.argon2]
+opt-level = 3
+
+[profile.dev.package.blake2]
+opt-level = 3
