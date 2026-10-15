@@ -85,10 +85,15 @@ def test_encoding_validates():
     valid(respond({"id": 3, "op": "cesr.encode", "code": "M", "raw": "0102", "domain": "text"}))
 
 
+def test_encode_refusal_validates():
+    response = valid(respond({"id": 3, "op": "cesr.encode", "code": "#", "raw": "00",
+                              "domain": "text"}))
+    assert set(response["result"]) == {"reject"}
+
+
 @pytest.mark.parametrize("message", [
     {"id": 4, "op": "kcs.no-such-op"},
     {"id": 4, "op": "keri.process"},
-    {"id": 4, "op": "cesr.encode", "code": "#", "raw": "00", "domain": "text"},
     {"id": 4, "op": "hello", "protocol": 9, "supported": [9]},
 ])
 def test_error_responses_validate(message):

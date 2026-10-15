@@ -39,6 +39,8 @@ GOOD = [
     make_case("CESR-0005", "cesr.parse", {"stream": ""},
               [{"id": "a1", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x"}],
               status="disputed"),
+    make_case("CESR-0006", "cesr.encode", {"code": "D", "raw": "00", "domain": "text"},
+              [assertion("rejected")]),
 ]
 
 

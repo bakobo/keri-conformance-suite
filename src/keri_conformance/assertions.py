@@ -101,10 +101,16 @@ def _rejected(assertion, result):
         return _fail(result, f"The implementation accepted the stream, consuming "
                              f"{result['accepted'].get('consumed')} bytes of it, where it must "
                              "have rejected it.")
+    if "encoded" in result:
+        return _fail(result, "The implementation encoded the value, where it must have refused "
+                             "to encode it.")
     return _fail(result, "The adapter did not reject the stream.")
 
 
 def _encoded(assertion, result):
+    if "reject" in result:
+        return _fail(result, f"The implementation refused to encode the value "
+                             f"({result['reject'].get('class')}), where it must have encoded it.")
     encoded = result.get("encoded")
     if strict_equal(encoded, assertion["expected"]):
         return Evaluation("pass", encoded)

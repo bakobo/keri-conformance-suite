@@ -536,6 +536,7 @@
     "result_rejected": {
       "type": "object",
       "additionalProperties": false,
+      "description": "A rejection: for cesr.parse, the implementation refused the stream; for cesr.encode, it refused to encode the raw value under the requested code. The class is informative, and a rejected assertion holds whatever class is reported.",
       "required": [
         "reject"
       ],

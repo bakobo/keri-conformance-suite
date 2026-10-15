@@ -60,7 +60,7 @@ A rejection names a class — for example, truncated input, an unknown code, or 
 
 Some implementations parse a stream correctly but never say where each item lay: they hand back decoded values without offsets. An adapter must not work the offsets out itself, from counts or code tables, because then the adapter's parsing is what gets tested. So reporting item extents is a feature, `cesr.item-extents`, and every case with a decoded-structure assertion requires it. An adapter without it may answer a stream its implementation accepts with a summary instead: the number of bytes consumed, and nothing about the items. A case whose assertions are all rejections does not require the feature, so such an adapter still gives real evidence where it matters most: a summary for a stream that must be rejected fails the assertion, because the implementation accepted it.
 
-The CESR layer also has an encoding operation: given a code and raw bytes, produce the text or binary encoding.
+The CESR layer also has an encoding operation: given a code and raw bytes, produce the text or binary encoding. An encoder may refuse instead, for example a raw value whose length does not fit the code, and the refusal is reported as a rejection with an informative class, as for a stream. So an encoding case can assert either the exact encoding or that the value must be refused.
 
 ### KERI
 

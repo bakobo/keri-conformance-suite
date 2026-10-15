@@ -382,7 +382,8 @@ RESULT_DEFS = {
     "cesr.parse": {"oneOf": [{"$ref": "#/$defs/result_decoded"},
                              {"$ref": "#/$defs/result_rejected"},
                              {"$ref": "#/$defs/result_accepted"}]},
-    "cesr.encode": {"$ref": "#/$defs/result_encoded"},
+    "cesr.encode": {"oneOf": [{"$ref": "#/$defs/result_encoded"},
+                              {"$ref": "#/$defs/result_rejected"}]},
     "keri.process": {"$ref": "#/$defs/result_processed"},
     "keri.emit": {"$ref": "#/$defs/result_emitted"},
     "acdc.verify": {"$ref": "#/$defs/result_verified"},
@@ -403,6 +404,7 @@ BASE_RESULTS = [
     ("cesr.parse", {"reject": {"class": "truncated"}}),
     ("cesr.parse", {"accepted": {"consumed": 479}}),
     ("cesr.encode", {"encoded": "0aff"}),
+    ("cesr.encode", {"reject": {"class": "InvalidSizeError"}}),
     ("keri.process", {"dispositions": [{"initial": "pending", "final": "seen", "trunk": True,
                                         "reason": "partially signed"},
                                        {"initial": "seen", "final": "seen", "trunk": False}],
@@ -473,7 +475,7 @@ SAMPLE_ASSERTIONS = {a["check"]: a for case in BASE_CASES for a in case["asserti
                      if a["level"] != "INTEROP"}
 OPERATION_CHECKS = {
     "cesr.parse": {"decoded", "rejected"},
-    "cesr.encode": {"encoded"},
+    "cesr.encode": {"encoded", "rejected"},
     "keri.process": {"disposition", "trunk", "key_state"},
     "keri.emit": {"emitted_body", "signatures_verify", "attachments_equivalent"},
     "acdc.verify": {"verdict", "registry_reported", "registry_state", "edge_reported",
