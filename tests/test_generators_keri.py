@@ -946,3 +946,13 @@ def test_a_said_digest_tamper_cannot_hide_an_unknown_event_code():
     with pytest.raises(ScenarioError, match="'D' names no digest algorithm"):
         keri_events.EventBuilder(T, [{**ICP, "digest": "D", "tamper": {"said_digest": "E"}}]
                                  ).event("icp")
+
+
+@pytest.mark.parametrize("code", ["G", "H"])
+def test_a_seen_digest_algorithm_with_no_feature_is_refused(code):
+    """Blake2s-256 and SHA3-256 are computed but have no feature yet, so a case whose accepted
+    messages use one could not be declined by a validator without it; it is refused until one is
+    added."""
+    deliveries = [msg("icp", ["a0"], expect=[A, A]), msg("rot1", ["a1"], expect=[A, A])]
+    with pytest.raises(ScenarioError, match="has no feature"):
+        make_all(case(agile(code), deliveries, companion=COMPANION))

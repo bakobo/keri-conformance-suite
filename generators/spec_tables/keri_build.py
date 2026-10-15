@@ -205,9 +205,14 @@ def _digest_features(ideal) -> set[str]:
         if "seen" not in (ideal.initial[i].state, ideal.outcome[i].state) or p.ilk == "rct":
             continue
         for text in (p.said, p.pre, p.body.get("p", ""), *p.body.get("n", [])):
-            feature = DIGEST_FEATURES.get(digests.code_of(text))
-            if feature:
-                features.add(feature)
+            code = digests.code_of(text)
+            if code not in digests.ALGORITHMS or code == digests.DEFAULT:
+                continue
+            if code not in DIGEST_FEATURES:
+                raise ScenarioError(f"Digest code {code!r} has no feature, so a validator without "
+                                    f"its algorithm could not decline a case that accepts it. Add "
+                                    f"one to profiles/features.json and DIGEST_FEATURES first.")
+            features.add(DIGEST_FEATURES[code])
     return features
 
 
