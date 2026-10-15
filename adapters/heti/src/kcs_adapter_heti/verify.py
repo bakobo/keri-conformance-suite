@@ -115,11 +115,14 @@ def kels(streams: list[bytes]) -> dict[str, bytes]:
 
 
 def registries(streams: list[bytes]) -> dict[str, dict]:
-    """Each registry's event bodies and disclosed blinded state blocks, by the registry's SAID."""
+    """Each registry's event bodies and disclosed blinded state blocks, by the registry's SAID. An
+    event the adapter cannot pass on whole (no genus/version code, or anything but one well-formed
+    attachments group after its body) is left out, so heti judges without it (docs/adapter-
+    protocol.md, acdc.verify: an element that cannot be read is judged without)."""
     out: dict[str, dict] = {}
     for stream in streams:
         parts = split(stream)
-        if parts is None:
+        if parts is None or not stream.startswith(GENUS) or not well_formed(parts[2]):
             continue
         sad, raw, attachments = parts
         rd = sad.get("rd") if sad.get("t") != "rip" else sad.get("d")
@@ -212,15 +215,31 @@ def well_formed(attachments: bytes) -> bool:
             if read > MAX_GROUPS:
                 return False
             if attachments.startswith(b"--", i) and _trimmable(attachments[i + 2:i + 3]):
-                i += 8 + _count(attachments[i + 3:i + 8]) * 4
+                code, head, size = attachments[i + 2:i + 3], 8, _count(attachments[i + 3:i + 8])
             elif (attachments.startswith(b"-", i) and _trimmable(attachments[i + 1:i + 2])
                   and len(attachments) >= i + 4):
-                i += 4 + _count(attachments[i + 2:i + 4]) * 4
+                code, head, size = attachments[i + 1:i + 2], 4, _count(attachments[i + 2:i + 4])
             else:
                 return False
+            contents = attachments[i + head:i + head + size * 4]
+            if len(contents) != size * 4 or not _contents_read(code, contents):
+                return False
+            i += head + size * 4
         return i == len(attachments)
     except ValueError:
         return False
+
+
+def _contents_read(code: bytes, contents: bytes) -> bool:
+    """Whether a trimmable group's contents are what its code says: Base64 text throughout, and
+    for seal source couples (-S) a whole number of couples, each a 128-bit sequence number (0A)
+    and a Blake3-256 SAID (E)."""
+    if any(chr(c) not in B64 for c in contents):
+        return False
+    if code == b"S":
+        couples = [contents[n:n + 68] for n in range(0, len(contents), 68)]
+        return all(len(c) == 68 and c[:2] == b"0A" and c[24:25] == b"E" for c in couples)
+    return True
 
 
 def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
@@ -231,11 +250,12 @@ def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
     followed by anything but one well-formed attachments group, goes as it came, for heti to
     refuse."""
     parts = split(stream)
-    if parts is None or not well_formed(parts[2]):
+    if parts is None or not stream.startswith(GENUS) or not well_formed(parts[2]):
         return (stream, None)
     sad, raw, attachments = parts
     acdc = GENUS + raw
-    group = regs.get(sad.get("rd"))
+    rd = sad.get("rd")
+    group = regs.get(rd) if isinstance(rd, str) else None
     if not group:
         return (acdc, None)
     blinders = group["blinders"] + [b for b in [_blinder(attachments)] if b]

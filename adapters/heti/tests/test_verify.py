@@ -165,7 +165,10 @@ def test_a_presented_acdc_with_trailing_bytes_goes_to_heti_as_it_came():
     (b"", True), (b"-CAB-SAA", True), (b"--CAAAAB-SAA", True), (b"-CAB-SAAjunk", False),
     (b"--CAAAAB", False), (b"-C!!", False), (b"junk", False),
     (b"-CAB" + b"xxxx", False),  # the outer count holds, but its contents are no group
-    (b"-CAC" + b"-SAB" + b"AAAA", True),
+    (b"-CAC" + b"-SAB" + b"AAAA", False),  # an -S group must hold whole seal source couples
+    (b"-CAS-SAR" + b"0A" + b"A" * 22 + b"E" + b"A" * 43, True),
+    (b"-CAS-SAR" + b"0A" + b"A" * 22 + b"X" + b"A" * 43, False),
+    (b"-CAC-aAB" + b"\xff" * 4, False),
     (b"-CAC" + b"--SAAAAA", True),
     (b"-CAB" + b"-SAC", False),  # an inner group's count reaches past the end
     (b"-CAA" + b"", True), (b"-CAB-S", False),
@@ -185,6 +188,33 @@ def test_an_attachments_group_of_too_many_groups_is_not_trimmed():
     fits = verify.MAX_GROUPS
     outer = b"-C" + (verify.B64[fits // 64] + verify.B64[fits % 64]).encode()
     assert verify.well_formed(outer + group * fits)
+
+
+def test_a_stream_without_its_genus_code_goes_to_heti_as_it_came():
+    stream = bytes.fromhex(BUNDLES["direct"]["presented"]["stream"])
+    assert verify.evidence(stream[8:], {}) == (stream[8:], None)
+
+
+def test_a_registry_event_that_cannot_be_passed_on_whole_is_left_out():
+    streams = [bytes.fromhex(r["stream"]) for r in BUNDLES["issued"]["registry"]]
+    whole = verify.registries(streams)
+    rd = next(iter(whole))
+    assert len(whole[rd]["bodies"]) == 2
+    damaged = verify.registries([streams[0], streams[1] + b"HOSTILE"])
+    assert len(damaged[rd]["bodies"]) == 1 and damaged[rd]["blinders"] == []
+    assert verify.registries([streams[0][8:]]) == {}
+
+
+def sized(body: bytes) -> bytes:
+    """A JSON body whose version string declares its own size."""
+    size = "".join(verify.B64[(len(body) >> s) & 63] for s in (18, 12, 6, 0))
+    return body.replace(b"AAAA.", size.encode() + b".", 1)
+
+
+def test_an_rd_that_is_not_a_string_names_no_registry():
+    body = sized(b'{"v":"ACDCCAACAAJSONAAAA.","t":"acm","d":"Ex","rd":[]}')
+    assert verify.split(verify.GENUS + body)[0]["rd"] == []
+    assert verify.evidence(verify.GENUS + body, {"x": {}}) == (verify.GENUS + body, None)
 
 
 def test_a_disclosure_that_is_not_text_is_left_out():

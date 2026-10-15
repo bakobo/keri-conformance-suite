@@ -34,6 +34,8 @@ heti answers a verified ACDC with a verdict and refuses everything else by raisi
 
 heti bounds the age of its own key-state observation by a `recency` it is given. The adapter consults no clock, so it passes ten years, which makes the bound inert.
 
+heti's API takes no expected schema, so the request's optional `expect_schema` is not passed on, and the cases that send it (a SHOULD, ACDC line 250) are graded on heti's verdict alone. An element of the bundle the adapter cannot pass on whole (a stream without its genus/version code, or with anything after its body but one well-formed attachments group of seal source couples and disclosures) is left out, as the protocol says for an element that cannot be read. A presented ACDC in that state goes to heti as it came, for heti to refuse.
+
 `registry` reports heti's judged head for a verified ACDC. `edges` is empty, because heti reports which far nodes it walked, not a result per edge.
 
 ## acdc.issue
