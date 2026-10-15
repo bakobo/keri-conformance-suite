@@ -245,3 +245,14 @@ def test_generate_refuses_an_exchange_scenario_in_the_profile(ktree):
     _kscenario(ktree, [_one()], operation="exn.verify")
     with pytest.raises(ScenarioError, match="only keri.process cases"):
         regenerate.generate(ktree)
+
+
+def test_a_1x_body_under_genus_2_00_framing_is_not_modelled():
+    """Neither wire defines a KERI 1.0 body with CESR 2.00 attachments, so the model refuses to
+    grade one rather than accept it."""
+    one = streams([ICP], [msg("icp", ["a0"])])[0]
+    body = keri_model.parse(T, one).raw
+    two = keri_events.EventBuilder(T, [ICP]).message(msg("icp", ["a0"])).stream
+    attachments = two[len(keri_events.GENUS_CODE) + len(keri_model.parse(T, two).raw):]
+    with pytest.raises(ScenarioError, match="1.x body in a stream framed as 2.x"):
+        keri_model.parse(T, keri_events.GENUS_CODE.encode() + body + attachments)

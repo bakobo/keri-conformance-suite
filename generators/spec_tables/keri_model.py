@@ -147,6 +147,11 @@ def parse(t: Tables, stream: bytes) -> Parsed:
     raw = stream[m["start"]:m["end"]]
     body = json.loads(raw)
     p = Parsed(body=body, raw=raw, wire=wire_of(raw))
+    if p.wire is not wire:
+        # A body of one KERI version under the other's attachment framing: neither wire this
+        # model knows defines it, so it is refused as not modelled rather than graded.
+        raise ScenarioError(f"A KERI {p.wire.name} body in a stream framed as {wire.name} is not "
+                            f"modelled.")
     kinds = {code: kind for kind, code in wire.groups.items()}
     group, pending = None, []
     for it in items:
