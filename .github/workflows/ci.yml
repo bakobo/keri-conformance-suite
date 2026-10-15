@@ -300,3 +300,25 @@ jobs:
           npm run coverage
       - name: Probe the adapter
         run: uv run kcs check-adapter "$PWD/adapters/signify-ts/bin/kcs-adapter-signify-ts"
+
+  # The cesrixir adapter (adapters/cesrixir/README.md). It runs in the official elixir image pinned
+  # by digest: bin/build fetches the hex packages mix.lock pins, compiles with warnings as errors,
+  # runs the adapter's tests with the 100% line gate inside the image, and builds the adapter image,
+  # which the probe then runs through its launcher with no network.
+  cesrixir-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Sync the runner
+        run: uv sync --locked
+      - name: Build and test the adapter image at its pins
+        run: adapters/cesrixir/bin/build --progress plain
+      - name: Probe the adapter
+        run: uv run kcs check-adapter "$PWD/adapters/cesrixir/bin/kcs-adapter-cesrixir"
