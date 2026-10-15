@@ -100,3 +100,8 @@ def test_a_code_the_model_cannot_compute_does_not_verify():
     assert not digests.verifies(T, "0D" + "A" * 86, b"content")
     assert not digests.verifies(T, "D" + "A" * 43, b"content")
     assert not digests.verifies(T, "", b"content")
+
+
+@pytest.mark.parametrize("claimed", [[], None, 7, {"d": "E"}])
+def test_a_claimed_digest_that_is_not_text_does_not_verify(claimed):
+    assert not digests.verifies(T, claimed, b"content")

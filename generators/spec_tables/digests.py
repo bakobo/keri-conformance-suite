@@ -59,8 +59,11 @@ def code_of(text: str) -> str:
     return text[:2] if text[:1].isdigit() else text[:1]
 
 
-def verifies(t: Tables, claimed: str, data: bytes) -> bool:
-    """Whether ``claimed`` is the digest of ``data`` by the algorithm its own code names."""
+def verifies(t: Tables, claimed: object, data: bytes) -> bool:
+    """Whether ``claimed`` is the digest of ``data`` by the algorithm its own code names. A
+    claimed value that is not text, as a malformed body can carry, is no digest at all."""
+    if not isinstance(claimed, str):
+        return False
     code = code_of(claimed)
     if code not in ALGORITHMS:
         return False

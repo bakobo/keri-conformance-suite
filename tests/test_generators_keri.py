@@ -956,3 +956,12 @@ def test_a_seen_digest_algorithm_with_no_feature_is_refused(code):
     deliveries = [msg("icp", ["a0"], expect=[A, A]), msg("rot1", ["a1"], expect=[A, A])]
     with pytest.raises(ScenarioError, match="has no feature"):
         make_all(case(agile(code), deliveries, companion=COMPANION))
+
+
+def test_a_said_that_is_not_text_is_refused_not_a_crash():
+    """Found by the codex hostile pass on #40: the code lookup read a list's first character."""
+    s = streams([ICP, ev("ixn1", "ixn")], [msg("icp", ["a0"]), msg("ixn1", ["a0"])])
+    p = keri_model.parse(T, s[1])
+    body = keri_events.sized(dict(p.body, d=[]))
+    bad = keri_events.GENUS_CODE.encode() + body + s[1][len(keri_events.GENUS_CODE) + len(p.raw):]
+    assert keri_model.run(T, [s[0], bad], "all").outcome[1].tag == "1/said"
