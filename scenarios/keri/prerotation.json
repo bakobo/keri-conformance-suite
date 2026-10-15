@@ -612,6 +612,1666 @@
           ]
         }
       ]
+    },
+    {
+      "id": "KERI-0127",
+      "key": "KS-MR05",
+      "status": "draft",
+      "title": "Rotation meeting the prior next threshold but not its own",
+      "description": "An inception committing to a1, then a rotation to [a1, x1] with signing threshold 2, signed only by a1. a1's signature satisfies the prior next threshold, but one signature does not meet the rotation's own threshold, and a rotation must satisfy both (lines 1262 and 1494). A validator must not accept it; as a threshold shortfall it should keep it (line 1266). The key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "x1"
+          ],
+          "kt": "2",
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0128",
+      "key": "KS-MR06",
+      "status": "draft",
+      "title": "Rotation meeting its own threshold but not the prior next",
+      "description": "An inception committing to a1 and b1 with next threshold 2, then a rotation to [a1, b1] with signing threshold 1, signed only by a1. The signature meets the rotation's own threshold, but one of the two exposed next keys does not satisfy the prior next threshold of 2, and a rotation must satisfy both (lines 1262 and 1494). A validator must not accept it; as a threshold shortfall it should keep it (line 1266).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1",
+            "b1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "b1"
+          ],
+          "kt": "1",
+          "next": [
+            "a2",
+            "b2"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0129",
+      "key": "KS-MR07",
+      "status": "draft",
+      "title": "Rotation signed only by a key that was never pre-rotated",
+      "description": "An inception committing to a1, then a rotation to [a1, x1] with signing threshold 1, signed only by x1 with a current-only signature. The rotation exposes a1, so its keys satisfy the pre-rotation commitment, and x1's signature meets the rotation's own threshold, but no signature by an exposed next key satisfies the prior next threshold (lines 1262 and 1494). A validator must not accept a rotation that only a newly added key signed; as a threshold shortfall it should keep it (line 1266).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "x1"
+          ],
+          "kt": "1",
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "x1"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0130",
+      "key": "KS-MR08",
+      "status": "draft",
+      "title": "Weighted next threshold met by a partial rotation",
+      "description": "An inception committing to a1, b1 and c1 with next threshold [1/2, 1/2, 1/2], then a rotation that exposes a1 and b1 only, with signing threshold 2, signed by both, and commits to c1 again in its next keys. The two exposed keys' weights sum to one, which satisfies the prior next threshold (lines 1419 and 1494), and their signatures meet the rotation's own threshold, so a validator should accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "b1"
+          ],
+          "kt": "2",
+          "next": [
+            "a2",
+            "b2",
+            "c1"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1",
+            "b1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0131",
+      "key": "KS-MR09",
+      "status": "draft",
+      "title": "Weighted next threshold short by one signature",
+      "description": "An inception committing to a1, b1 and c1 with next threshold [1/2, 1/2, 1/2], then a rotation to [a1, b1] with signing threshold 1, signed only by a1. The rotation's keys could satisfy the prior next threshold, and a1's signature meets its own threshold, but the signed weight toward the prior next threshold is 1/2, short of one (lines 1262, 1419 and 1494). A validator must not accept it; as a threshold shortfall it should keep it (line 1266).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "b1"
+          ],
+          "kt": "1",
+          "next": [
+            "a2",
+            "b2",
+            "c1"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0132",
+      "key": "KS-MR10",
+      "status": "draft",
+      "title": "The specification's reserve rotation example",
+      "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The inception is signed by r0 and r1; each rotation is signed as its commentary requires: rotation 2 by all of r10, r8 and r9 (line 1537), rotation 4 by r18, r20 and the newly added r21, and rotation 5 by r22, r16 and r17 for rotation authority and r22 and r25 for signing authority (line 1543). Every event satisfies both thresholds, so a validator should accept the whole KEL.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "r0",
+            "r1",
+            "r2",
+            "r3",
+            "r4"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ],
+          "next": [
+            "r5",
+            "r6",
+            "r7",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r10",
+            "r11",
+            "r12",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot2",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r10",
+            "r8",
+            "r9"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r13",
+            "r14",
+            "r15",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot3",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r13",
+            "r14",
+            "r15"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r18",
+            "r19",
+            "r20",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot4",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r18",
+            "r20",
+            "r21"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r22",
+            "r23",
+            "r24",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot5",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r22",
+            "r25",
+            "r26",
+            "r16",
+            "r17"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "0",
+            "0"
+          ],
+          "next": [
+            "r27",
+            "r28",
+            "r29",
+            "r30",
+            "r31"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "r0",
+            "r1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot2",
+          "sigs": [
+            "r10",
+            "r8",
+            "r9"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot3",
+          "sigs": [
+            "r13",
+            "r14",
+            "r15"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot4",
+          "sigs": [
+            "r18",
+            "r20",
+            "r21"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot5",
+          "sigs": [
+            "r22",
+            "r25",
+            "r16",
+            "r17"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0133",
+      "key": "KS-MR11",
+      "status": "draft",
+      "title": "Reserve rotation 2 without one of its reserve keys",
+      "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The first three events are delivered, with rotation 2 signed by r10 and r8 only. Those two meet its own threshold, but line 1537 says the rotation MUST be signed by all three of r10, r8 and r9, because r8 and r9 weigh only 1/4 each in the prior next threshold, so the signed weight there is 3/4. A validator must not accept rotation 2 (line 1262); as a threshold shortfall it should keep it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "r0",
+            "r1",
+            "r2",
+            "r3",
+            "r4"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ],
+          "next": [
+            "r5",
+            "r6",
+            "r7",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r10",
+            "r11",
+            "r12",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot2",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r10",
+            "r8",
+            "r9"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r13",
+            "r14",
+            "r15",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "r0",
+            "r1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot2",
+          "sigs": [
+            "r10",
+            "r8"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0134",
+      "key": "KS-MR12",
+      "status": "draft",
+      "title": "Reserve rotation 5 signed without signing authority",
+      "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The whole KEL is delivered, with rotation 5 signed only by r22, r16 and r17. They satisfy the prior next threshold, but r16 and r17 weigh 0 in the rotation's own threshold, so the signed weight there is 1/2 (line 1543). A validator must not accept rotation 5 (line 1262); as a threshold shortfall it should keep it, and the key state stays rotation 4's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "r0",
+            "r1",
+            "r2",
+            "r3",
+            "r4"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ],
+          "next": [
+            "r5",
+            "r6",
+            "r7",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r10",
+            "r11",
+            "r12",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot2",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r10",
+            "r8",
+            "r9"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r13",
+            "r14",
+            "r15",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot3",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r13",
+            "r14",
+            "r15"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r18",
+            "r19",
+            "r20",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot4",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r18",
+            "r20",
+            "r21"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r22",
+            "r23",
+            "r24",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot5",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r22",
+            "r25",
+            "r26",
+            "r16",
+            "r17"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "0",
+            "0"
+          ],
+          "next": [
+            "r27",
+            "r28",
+            "r29",
+            "r30",
+            "r31"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "r0",
+            "r1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot2",
+          "sigs": [
+            "r10",
+            "r8",
+            "r9"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot3",
+          "sigs": [
+            "r13",
+            "r14",
+            "r15"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot4",
+          "sigs": [
+            "r18",
+            "r20",
+            "r21"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot5",
+          "sigs": [
+            "r22",
+            "r16",
+            "r17"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0135",
+      "key": "KS-MR13",
+      "status": "draft",
+      "title": "Reserve rotation 5 signed without rotation authority",
+      "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The whole KEL is delivered, with rotation 5 signed only by r22, r25 and r26. They meet the rotation's own threshold, but r25 and r26 were never pre-rotated, so the signed weight toward the prior next threshold is r22's 1/2 (line 1543). A validator must not accept rotation 5 (line 1262); as a threshold shortfall it should keep it, and the key state stays rotation 4's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "r0",
+            "r1",
+            "r2",
+            "r3",
+            "r4"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ],
+          "next": [
+            "r5",
+            "r6",
+            "r7",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r10",
+            "r11",
+            "r12",
+            "r8",
+            "r9"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot2",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r10",
+            "r8",
+            "r9"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r13",
+            "r14",
+            "r15",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot3",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r13",
+            "r14",
+            "r15"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r18",
+            "r19",
+            "r20",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot4",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r18",
+            "r20",
+            "r21"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "r22",
+            "r23",
+            "r24",
+            "r16",
+            "r17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        },
+        {
+          "name": "rot5",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "r22",
+            "r25",
+            "r26",
+            "r16",
+            "r17"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "0",
+            "0"
+          ],
+          "next": [
+            "r27",
+            "r28",
+            "r29",
+            "r30",
+            "r31"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2",
+            "1/4",
+            "1/4"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "r0",
+            "r1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "r5",
+            "r6",
+            "r7"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot2",
+          "sigs": [
+            "r10",
+            "r8",
+            "r9"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot3",
+          "sigs": [
+            "r13",
+            "r14",
+            "r15"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot4",
+          "sigs": [
+            "r18",
+            "r20",
+            "r21"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot5",
+          "sigs": [
+            "r22",
+            "r25",
+            "r26"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0136",
+      "key": "KS-MR14",
+      "status": "draft",
+      "title": "The specification's custodial rotation example",
+      "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception is signed by the first custodian's c0 and c1. Each rotation is signed by two of the owner's exposed rotation keys, whose dual-indexed signatures satisfy the prior next threshold, and by two of the new custodian's keys, whose current-only signatures meet the new signing threshold, in which the owner's keys weigh 0 (line 1574). A validator should accept the whole KEL.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "c0",
+            "c1",
+            "c2"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c3",
+            "c4",
+            "c5"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "c3",
+            "c4",
+            "c5",
+            "c6",
+            "c7",
+            "c8"
+          ],
+          "kt": [
+            "0",
+            "0",
+            "0",
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c9",
+            "c10",
+            "c11"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "rot2",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "c9",
+            "c10",
+            "c11",
+            "c12",
+            "c13",
+            "c14"
+          ],
+          "kt": [
+            "0",
+            "0",
+            "0",
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c15",
+            "c16",
+            "c17"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "c0",
+            "c1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "c3",
+            "c4",
+            "c6",
+            "c7"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot2",
+          "sigs": [
+            "c9",
+            "c10",
+            "c12",
+            "c13"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0137",
+      "key": "KS-MR15",
+      "status": "draft",
+      "title": "Custodial rotation signed only by the new custodian",
+      "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception and rotation 1 are delivered, with the rotation signed only by the new custodian's c6, c7 and c8. They meet the new signing threshold, but the custodian holds no rotation authority: no signature satisfies the prior next threshold, which only the owner's keys can (lines 1262 and 1574). A validator must not accept the rotation; as a threshold shortfall it should keep it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "c0",
+            "c1",
+            "c2"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c3",
+            "c4",
+            "c5"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "c3",
+            "c4",
+            "c5",
+            "c6",
+            "c7",
+            "c8"
+          ],
+          "kt": [
+            "0",
+            "0",
+            "0",
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c9",
+            "c10",
+            "c11"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "c0",
+            "c1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "c6",
+            "c7",
+            "c8"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0138",
+      "key": "KS-MR16",
+      "status": "draft",
+      "title": "Custodial rotation signed only by the owner",
+      "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception and rotation 1 are delivered, with the rotation signed only by the owner's c3, c4 and c5. They satisfy the prior next threshold, but they weigh 0 in the new signing threshold, so the rotation must also be signed by two of the new custodian's keys (line 1574). A validator must not accept it (line 1262); as a threshold shortfall it should keep it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "c0",
+            "c1",
+            "c2"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c3",
+            "c4",
+            "c5"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "c3",
+            "c4",
+            "c5",
+            "c6",
+            "c7",
+            "c8"
+          ],
+          "kt": [
+            "0",
+            "0",
+            "0",
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c9",
+            "c10",
+            "c11"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "c0",
+            "c1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "c3",
+            "c4",
+            "c5"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0139",
+      "key": "KS-MR17",
+      "status": "draft",
+      "title": "Interaction signed only by keys of zero weight",
+      "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception and rotation 1 are accepted, then an interaction is signed only by the owner's c3, c4 and c5, which are current keys of weight 0 after the rotation (line 1574). Their signatures verify but carry no signing authority, so the interaction does not meet the signing threshold (lines 1258 and 1419). A validator must not accept it; as a threshold shortfall it should keep it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "c0",
+            "c1",
+            "c2"
+          ],
+          "kt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c3",
+            "c4",
+            "c5"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "c3",
+            "c4",
+            "c5",
+            "c6",
+            "c7",
+            "c8"
+          ],
+          "kt": [
+            "0",
+            "0",
+            "0",
+            "1/2",
+            "1/2",
+            "1/2"
+          ],
+          "next": [
+            "c9",
+            "c10",
+            "c11"
+          ],
+          "nt": [
+            "1/2",
+            "1/2",
+            "1/2"
+          ]
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "c0",
+            "c1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "c3",
+            "c4",
+            "c6",
+            "c7"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            "c3",
+            "c4",
+            "c5"
+          ],
+          "expect": [
+            "4/signing-threshold",
+            "4/signing-threshold"
+          ]
+        }
+      ]
     }
   ]
 }
