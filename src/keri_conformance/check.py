@@ -33,7 +33,9 @@ NOT_YET_ACDC = ("This probe sends a real issuance, taken from the suite's first 
 # names no message and no verifier.
 _VERIFY = {"perspective": {"role": "validator"}, "kels": [], "registry": [], "schemas": [],
            "acdcs": [], "presented": {"stream": "2d4b"}}
-_CONTEXT = {"messages": [{"stream": "2d4b", "source": "holder"}], "verifier": "EKcsProbeVerifier"}
+# The verifier is a well-formed Blake3-256 AID (code E, 44 characters), so a control the adapter
+# refuses is refused for something other than an unreadable AID.
+_CONTEXT = {"messages": [{"stream": "2d4b", "source": "holder"}], "verifier": "E" + "A" * 43}
 # A well-formed request an op's malformed variants are measured against: an adapter must answer it
 # with a result, so that an error on a variant shows the variant's own defect was read, not that
 # the adapter refuses the request whatever its context.
@@ -134,14 +136,16 @@ def _ask(session: AdapterSession, op: str, fields: dict):
 
 
 def _probe_malformed_op(session: AdapterSession, op: str) -> tuple[bool, str]:
-    if op in CONTROL:
-        outcome = _ask(session, op, CONTROL[op])
-        if isinstance(outcome, Failure):
-            return False, (f"The adapter did not answer a well-formed {op} request with a "
-                           f"result, so its errors cannot show it reads the request's fields: "
-                           f"{outcome.detail}")
     variants = MALFORMED[op] if isinstance(MALFORMED[op], list) else [MALFORMED[op]]
     for n, fields in enumerate(variants):
+        # The control goes before every variant, so an error on the variant is shown to be the
+        # variant's own, not an adapter that has stopped answering anything.
+        if op in CONTROL:
+            outcome = _ask(session, op, CONTROL[op])
+            if isinstance(outcome, Failure):
+                return False, (f"The adapter did not answer a well-formed {op} request with a "
+                               f"result, so its errors cannot show it reads the request's "
+                               f"fields: {outcome.detail}")
         outcome = _ask(session, op, fields)
         if not isinstance(outcome, Failure):
             return False, (f"The adapter answered a malformed {op} request (variant {n}) with a "

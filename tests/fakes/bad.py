@@ -183,6 +183,23 @@ def main():
                 sys.exit(6)
             send({"id": request["id"], "error": {"kind": "harness", "message": "op"}})
         return
+    if MODE == "one-shot-verify":
+        # Answers its first acdc.verify with a verdict and every later request with an error, as
+        # an adapter that stops answering would.
+        request = read_request()
+        send({"id": request["id"], "result": {
+            **HELLO, "operations": [*HELLO["operations"], "acdc.verify"],
+            "features": [*HELLO["features"], "acdc.presentation"]}})
+        answered = False
+        for line in sys.stdin.buffer:
+            request = json.loads(line)
+            if request.get("op") == "acdc.verify" and not answered:
+                answered = True
+                send({"id": request["id"], "result": {"verdict": "invalid", "registry": None,
+                                                      "edges": []}})
+            else:
+                send({"id": request["id"], "error": {"kind": "harness", "message": "gone"}})
+        return
     if MODE == "leak":
         hello()
         for seen, line in enumerate(sys.stdin.buffer):

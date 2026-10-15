@@ -295,3 +295,14 @@ def test_each_malformed_context_field_is_probed_on_its_own(vocabulary, write_jso
     result = probes(issuer(write_json, answered), vocabulary)
     assert result["presentation-malformed"].status == "fail"
     assert "variant" in result["presentation-malformed"].reason
+
+
+def test_an_adapter_that_answers_only_once_fails_the_presentation_probe(vocabulary):
+    # The control goes before every variant, so errors after the first answer show nothing.
+    result = probes(bad("one-shot-verify"), vocabulary)
+    assert result["presentation-malformed"].status == "fail"
+    assert "well-formed" in result["presentation-malformed"].reason
+
+
+def test_the_control_names_a_well_formed_verifier_aid():
+    assert len(CONTEXT["verifier"]) == 44 and CONTEXT["verifier"][0] == "E"
