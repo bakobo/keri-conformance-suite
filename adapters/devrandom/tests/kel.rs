@@ -1175,3 +1175,44 @@ fn a_receipt_naming_the_wrong_sequence_number_is_not_attached_to_a_held_event() 
     );
     assert!(reason(&result, 1).contains("Stale"), "{result}");
 }
+
+#[test]
+fn combining_many_signatures_on_a_held_event_stays_linear() {
+    let (mut alice, icp) = Controller::incept(1, Options::default());
+    let ixn = alice.ixn(vec![]);
+    let (mallory, _) = Controller::incept(9, Options::default());
+    let forged = mallory.sigs(&ixn).remove(0);
+    let raw = forged.raw().to_vec();
+    // Thousands of distinct unverifiable signatures, delivered three times while the event is held.
+    let many: Vec<_> = (0..4000u32)
+        .map(|i| {
+            let mut r = raw.clone();
+            r[..4].copy_from_slice(&i.to_be_bytes());
+            cesr::core::primitives::Siger::new(
+                cesr::core::indexer::IndexerBuilder::new()
+                    .with_code(cesr::core::indexer::code::IndexedSigCode::Ed25519Big)
+                    .with_index(0)
+                    .and_then(|b| b.with_raw(r))
+                    .unwrap(),
+            )
+        })
+        .collect();
+    let stream = bare(&ixn, &[sig_group(&many)]);
+    let stream_once = |e: &keri_codec::SerializedEvent,
+                       sigs: &[cesr::core::primitives::Siger<'_>]| {
+        bare(e, &[sig_group(sigs)])
+    };
+    let started = std::time::Instant::now();
+    let result = process(&[stream.clone(), stream.clone(), stream]);
+    assert!(started.elapsed().as_secs() < 10, "{:?}", started.elapsed());
+    assert_eq!(readings(&result)[0].1, "pending", "{result}");
+    // Once its KEL arrives, devrandom verifies every one of them, once, and refuses the event.
+    let started = std::time::Instant::now();
+    let result = process(&[stream_once(&ixn, &many), alice.frame(&icp)]);
+    assert!(started.elapsed().as_secs() < 10, "{:?}", started.elapsed());
+    assert_eq!(
+        readings(&result)[0],
+        r("pending", "rejected", false),
+        "{result}"
+    );
+}

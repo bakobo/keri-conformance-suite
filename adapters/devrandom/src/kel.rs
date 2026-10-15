@@ -224,9 +224,13 @@ struct Candidate<'e> {
     seal: Option<(u128, String)>,
 }
 
+/// Add to `into` each signature of `from` it does not already hold, by encoding. Linear in both:
+/// each encoding is computed once and looked up in a set, because a hostile message may carry as
+/// many signatures as the framer's limits allow.
 fn merge<'e>(into: &mut Vec<Siger<'e>>, from: &[Siger<'e>]) {
+    let mut held: HashSet<String> = into.iter().map(Siger::to_qb64).collect();
     for sig in from {
-        if !into.iter().any(|s| s.to_qb64() == sig.to_qb64()) {
+        if held.insert(sig.to_qb64()) {
             into.push(sig.clone());
         }
     }

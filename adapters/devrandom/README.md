@@ -35,7 +35,7 @@ uv run kcs check-adapter "$PWD/adapters/devrandom/target/debug/kcs-adapter-devra
 uv run kcs run --adapter "$PWD/adapters/devrandom/target/debug/kcs-adapter-devrandom" --profile keripy-1x-interop
 ```
 
-The tests derive keys with devrandom's salty custodian, whose argon2 key stretching is slow when unoptimized, so `Cargo.toml` optimizes the `argon2` and `blake2` crates in the debug profile. Nothing on the validation path is optimized differently from a debug build.
+`Cargo.toml` optimizes every dependency in the debug profile, as devrandom ships them in a release build, while the profile keeps its overflow checks and debug assertions. Unoptimized, signature verification takes milliseconds per signature, so a hostile message carrying thousands of signatures would time out on the build rather than on the library; the adapter itself stays a quick debug build.
 
 ## Declared features
 

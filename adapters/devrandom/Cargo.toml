@@ -25,10 +25,9 @@ serde_json = "1"
 # Panics inside devrandom are caught and reported; they must unwind, never abort.
 panic = "unwind"
 
-# The tests derive keys with devrandom's salty custodian, whose argon2 key stretching is very slow
-# unoptimized. Only the key-derivation crates are optimized; nothing on the validation path is.
-[profile.dev.package.argon2]
-opt-level = 3
-
-[profile.dev.package.blake2]
+# Dependencies are optimized, as devrandom ships them in a release build, while keeping the debug
+# profile's overflow checks and debug assertions, so hostile input still trips them. Unoptimized,
+# signature verification alone takes milliseconds per signature, which would make the adapter's
+# timing a property of the build rather than of the library.
+[profile.dev.package."*"]
 opt-level = 3
