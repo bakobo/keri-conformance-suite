@@ -763,6 +763,15 @@ impl<'e> Host<'e> {
     fn attach(&mut self, message: &'e ReceiptMessage<'e>, said: &str) -> Receipted {
         let candidate = &self.candidates[said];
         let event = self.event(candidate.delivery);
+        let receipted = ReceiptedEvent {
+            prefix: event.event.prefix(),
+            sn: event.event.sn(),
+            said: event.event.said(),
+            signed_bytes: event.body,
+        };
+        if let Err(error) = receipted.named_by(message.receipt()) {
+            return Receipted::Rejected(format!("{error:?}"));
+        }
         let Some((governing, toad)) = self.governing(&event.event) else {
             return Receipted::Held;
         };

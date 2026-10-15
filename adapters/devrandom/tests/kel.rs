@@ -1152,3 +1152,26 @@ fn a_receipt_with_no_endorsement_is_refused_by_the_message_layer() {
         "{result}"
     );
 }
+
+#[test]
+fn a_receipt_naming_the_wrong_sequence_number_is_not_attached_to_a_held_event() {
+    let w = Witness::new(30);
+    let (alice, icp) = witnessed(1, &w);
+    let said = icp.said().to_qb64();
+    let wrong = receipt(
+        &alice.prefix(),
+        1,
+        &said,
+        &[couple_group(&w, icp.as_bytes())],
+    );
+    let result = process(&[alice.frame(&icp), wrong]);
+    assert_eq!(
+        readings(&result),
+        [
+            r("pending", "pending", false),
+            r("rejected", "rejected", false)
+        ],
+        "{result}"
+    );
+    assert!(reason(&result, 1).contains("Stale"), "{result}");
+}
