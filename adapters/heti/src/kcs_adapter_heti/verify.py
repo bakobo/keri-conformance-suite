@@ -175,6 +175,16 @@ def _blinder(attachments: bytes) -> str | None:
         return None
 
 
+# The most groups an attachments group may hold for the adapter to trim it; one with more goes to
+# heti as it came, so a request cannot make the adapter read millions of empty groups.
+MAX_GROUPS = 64
+
+
+def _letter(code: bytes) -> bool:
+    """Whether a group code's selector is an ASCII letter, as every CESR group code's is."""
+    return len(code) == 1 and code.isalpha() and code.isascii()
+
+
 def well_formed(attachments: bytes) -> bool:
     """Whether what follows a body is nothing, or exactly one attachments group whose count
     measures all of it and whose contents are groups that, read by their own counts, measure all
@@ -190,11 +200,15 @@ def well_formed(attachments: bytes) -> bool:
             return False
         if start + size != len(attachments):
             return False
-        i = start
+        i, read = start, 0
         while i < len(attachments):
-            if attachments.startswith(b"--", i):
+            read += 1
+            if read > MAX_GROUPS:
+                return False
+            if attachments.startswith(b"--", i) and _letter(attachments[i + 2:i + 3]):
                 i += 8 + _count(attachments[i + 3:i + 8]) * 4
-            elif attachments.startswith(b"-", i) and len(attachments) >= i + 4:
+            elif (attachments.startswith(b"-", i) and _letter(attachments[i + 1:i + 2])
+                  and len(attachments) >= i + 4):
                 i += 4 + _count(attachments[i + 2:i + 4]) * 4
             else:
                 return False

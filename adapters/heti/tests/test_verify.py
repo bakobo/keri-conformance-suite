@@ -169,9 +169,20 @@ def test_a_presented_acdc_with_trailing_bytes_goes_to_heti_as_it_came():
     (b"-CAC" + b"--SAAAAA", True),
     (b"-CAB" + b"-SAC", False),  # an inner group's count reaches past the end
     (b"-CAA" + b"", True), (b"-CAB-S", False),
+    (b"-CAB-\xffAA", False), (b"-CAC--\xffAAAAA", False),  # a group code that is no letter
 ])
 def test_well_formed_attachments(attachments, expected):
     assert verify.well_formed(attachments) == expected
+
+
+def test_an_attachments_group_of_too_many_groups_is_not_trimmed():
+    many = verify.MAX_GROUPS + 1
+    group = b"-S" + verify.B64[0].encode() * 2
+    outer = b"-C" + (verify.B64[many // 64] + verify.B64[many % 64]).encode()
+    assert not verify.well_formed(outer + group * many)
+    fits = verify.MAX_GROUPS
+    outer = b"-C" + (verify.B64[fits // 64] + verify.B64[fits % 64]).encode()
+    assert verify.well_formed(outer + group * fits)
 
 
 def test_a_disclosure_that_is_not_text_is_left_out():
