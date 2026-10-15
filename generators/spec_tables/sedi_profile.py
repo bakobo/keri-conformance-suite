@@ -111,11 +111,17 @@ def _source_problem(source, *, operations, features, profiles) -> str | None:
     return None
 
 
+# An issuance that must succeed accepts; one that must be refused refuses.
+POLARITY = {"issued": "positive", "anchor_signed": "positive", "issue_refused": "negative"}
+
+
 def _polarity(assertion: dict) -> str:
     """Whether a correct implementation's answer to the assertion accepts (positive) or refuses
     (negative). A check without a polarity cannot exercise a choice, so a new check must say."""
     if assertion["check"] == "verdict":
         return "positive" if assertion["expected"] == "valid" else "negative"
+    if assertion["check"] in POLARITY:
+        return POLARITY[assertion["check"]]
     raise ScenarioError(f"the check {assertion['check']} has no polarity, so a sedi case cannot "
                         "use it until sedi_profile says whether it accepts or refuses.")
 

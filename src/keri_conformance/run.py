@@ -108,7 +108,7 @@ def run_case(session: AdapterSession, case: dict) -> dict:
                           and reference["implementation"] == hello["implementation"]["name"])
         records = []
         for assertion in case["assertions"]:
-            evaluation = evaluate(assertion, outcome.result)
+            evaluation = evaluate(assertion, outcome.result, case["input"])
             records.append(_record(assertion, evaluation.outcome, evaluation.actual,
                                    evaluation.detail,
                                    self_reference and evaluation.outcome == "pass"))

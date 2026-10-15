@@ -202,12 +202,12 @@ def test_the_presentation_feature_is_not_composable():
     assert features["features"]["acdc.presentation"]["composable"] is False
 
 
-def test_no_case_may_use_the_new_operations_until_their_inputs_exist():
-    # A case's input is what the runner sends; these operations get case inputs and checks with
-    # their first cases, and until then the case schema and the runner refuse such a case.
-    assert "acdc.issue" not in INPUTS and "acdc.present" not in INPUTS
+def test_no_case_may_present_until_the_holder_cases_exist():
+    # acdc.present gets case inputs and checks with its first cases, and until then the case
+    # schema and the runner refuse such a case. acdc.issue has them (tests/test_issuance.py).
+    assert "acdc.present" not in INPUTS and "acdc.issue" in INPUTS
     case = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
-    assert "acdc.issue" not in case["properties"]["operation"]["enum"]
+    assert "acdc.present" not in case["properties"]["operation"]["enum"]
 
 
 # --- what a result must match in its request ------------------------------------------------------

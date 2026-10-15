@@ -267,6 +267,20 @@ BASE_CASES += [
                assertion("exn_verdict", name="a2", level="SHOULD", message=1,
                          expected="accepted")]),
 ]
+BASE_CASES += [
+    make_case("ACDC-0002", "acdc.issue",
+              {"kels": [{"stream": "7b7d", "source": "issuer"}], "seeds": {"DKey": "00"},
+               "acdc": {"v": "", "d": ""},
+               "registry": [{"event": {"t": "upd"}},
+                            {"event": {"t": "bup"}, "blind": {"salt": "0ABz", "state": {}}}],
+               "anchor": {"event": {"t": "ixn"}}},
+              [assertion("issued", expected={"acdc": "7b7d", "registry": [
+                  {"event": "7b01", "blind": None}, {"event": "7b02", "blind": "7b03"}],
+                  "anchor_body": "7b04"}),
+               assertion("anchor_signed", name="a2", expected=["DKey"]),
+               assertion("issue_refused", name="a3", level="SHOULD")],
+              profile="sedi-1"),
+]
 BASE_CASES[5]["dag"] = {"root": "EAcd", "edges": [
     {"near": "EAcd", "path": "e.le", "n": "EFar"},
     {"near": "EFar", "path": "e.qvi", "n": "EQvi"}]}
@@ -294,14 +308,19 @@ def test_case_checks_agree_with_the_case_schema(base):
     found = disagreements(mutations(base), case_problem, CASE_VALIDATOR)
     # Reachability from the presented ACDC is a runtime rule the schema cannot state; renaming an
     # edge's near node strands it (see the test below).
-    found = [f for f in found if "cannot reach" not in (case_problem(f[2]) or "")]
+    # So are an issuance case's agreement with its own input (tests/test_issuance.py): one expected
+    # registry event per requested one, an anchoring body when an anchor is asked for, and a seed
+    # for every signer.
+    runtime = ("cannot reach", "registry events that do not match", "anchoring body exactly",
+               "no seed in its input", "does not ask for")
+    found = [f for f in found if not any(r in (case_problem(f[2]) or "") for r in runtime)]
     assert found == [], found[:3]
 
 
 SEMANTIC = [
     ("status", "disputed"), ("status", "deprecated"), ("operation", "cesr.encode"),
     ("operation", "keri.process"), ("operation", "keri.emit"), ("operation", "cesr.parse"),
-    ("operation", "acdc.verify"), ("operation", "exn.verify"),
+    ("operation", "acdc.verify"), ("operation", "exn.verify"), ("operation", "acdc.issue"),
 ]
 
 
@@ -492,6 +511,7 @@ OPERATION_CHECKS = {
     "acdc.verify": {"verdict", "registry_reported", "registry_state", "edge_reported",
                     "edge_valid"},
     "exn.verify": {"exn_verdict"},
+    "acdc.issue": {"issued", "issue_refused", "anchor_signed"},
 }
 
 

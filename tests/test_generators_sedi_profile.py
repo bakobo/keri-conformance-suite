@@ -268,3 +268,12 @@ def test_one_case_cannot_exercise_a_choice_both_ways():
     case["assertions"].append({**case["assertions"][0], "id": "a2", "expected": "not-valid"})
     with pytest.raises(ScenarioError, match="both ways"):
         build(cases=[case])
+
+
+@pytest.mark.parametrize(("check", "side"), [("issued", "positive"), ("anchor_signed", "positive"),
+                                            ("issue_refused", "negative")])
+def test_issuance_checks_exercise_a_choice_by_their_polarity(check, side):
+    case = verdict_case("ACDC-0901", "valid", ["revoked"])
+    case["assertions"][0]["check"] = check
+    doc, _ = build(cases=[case])
+    assert next(c for c in doc["choices"] if c["id"] == "revoked")["cases"][side] == ["ACDC-0901"]

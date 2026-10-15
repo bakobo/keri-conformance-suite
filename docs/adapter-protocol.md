@@ -262,6 +262,8 @@ Issue one ACDC: build it, build the registry events that issue it, and build and
 
 `acdc` is the ACDC as built from the template, fully expanded, as JSON bytes in hex with no attachments. `registry` has one entry per requested event, in order: the event's bytes, and the blinded state block's bytes when a `blind` was requested, otherwise `null`. `anchor` is the signed anchoring event as a hex stream with its attachments, beginning with the genus/version code as a `keri.emit` stream does, and is present exactly when `anchor` was requested.
 
+The runner frames `anchor` by its version string, after any genus/version code, and compares the body with the case's. It then checks that the attachments carry, for each signing key the case names, that key's signature over the body at its index, as an Ed25519 indexed signature in the text or binary domain; how the signatures are grouped is up to the implementation. It computes each signature from the case's own seed, never from a key the adapter supplies, so its work is bounded by the case, and it refuses a body that declares more than 64 KiB before it signs anything.
+
 An implementation that refuses to issue from these inputs, because a salt is empty or too short, a seed is malformed, or a template asks for something its rules forbid, answers `refused` with an informative `reason`. A refusal is a result, not an error, so a case can require one: a case that must be refused fails when the adapter issues anything, and a case that must be issued fails when the adapter refuses.
 
 ## `acdc.present`
