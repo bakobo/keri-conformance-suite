@@ -161,7 +161,9 @@ def kcs_run(repo: Path, executable: Path, profile: str, report: Path) -> None:
 
 def _git(repo: Path, *args: str) -> str:
     try:
-        done = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True,
+        # surrogateescape: git prints a path's raw bytes, which need not be UTF-8.
+        done = subprocess.run(["git", "-C", str(repo), *args], capture_output=True,
+                              encoding="utf-8", errors="surrogateescape",
                               check=False)
     except OSError as exc:
         raise RunnerError(E_GIT, f"git could not be started: {exc}.") from exc

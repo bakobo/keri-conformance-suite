@@ -132,6 +132,11 @@ class TestDifferences:
         now["hello"]["implementation"]["version"] = "1.3.6"
         assert refs.differences(base, now, SHA_A) == []
 
+    def test_a_case_named_like_an_identity_line_is_still_a_difference(self):
+        base = outcomes.summarize(report("cesr-v1.0", "pinned"))
+        now = report("cesr-v1.0", SHA_A, case("CESR-0001"), case("implementation version: x"))
+        assert refs.differences(base, now, SHA_A) == ["implementation version: x: new case"]
+
     def test_a_regression_is_reported(self):
         base = outcomes.summarize(report("cesr-v1.0", "pinned"))
         now = report("cesr-v1.0", SHA_A, case("CESR-0001", "fail", a1="fail"),
