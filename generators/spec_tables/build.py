@@ -23,7 +23,7 @@ parses the stream back with the reference parser and requires the two to agree.
 import hashlib
 import json
 
-from . import GENERATOR_NAME, GENERATOR_VERSION, b64, blake3, encoding, spec_source
+from . import GENERATOR_NAME, GENERATOR_VERSION, b64, digests, encoding, spec_source
 from .decoding import Legacy, Parser, Rejected
 from .errors import ScenarioError
 from .tables import Tables
@@ -232,7 +232,7 @@ class StreamBuilder:
             "v": vs(0), "t": "icp", "d": dummy, "i": dummy, "s": "0",
             "kt": m["kt"], "k": [key(x) for x in m["keys"]],
             "nt": m["nt"],
-            "n": [encoding.primitive(self.t, "E", blake3.digest(key(x).encode()))
+            "n": [digests.qualified(self.t, "E", key(x).encode())
                   for x in m["next"]],
             "bt": m.get("bt", "0"),
             "b": [encoding.primitive(self.t, "B", raw_bytes(x, 32)) for x in m.get("witnesses", [])],
@@ -243,7 +243,7 @@ class StreamBuilder:
             return json.dumps(fields, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
         fields["v"] = vs(len(ser()))
-        said = encoding.primitive(self.t, "E", blake3.digest(ser()))
+        said = digests.qualified(self.t, "E", ser())
         fields["d"] = fields["i"] = said
         body = ser()
         self.wire.add(_wire_of(fields["v"], bool(m.get("legacy"))))

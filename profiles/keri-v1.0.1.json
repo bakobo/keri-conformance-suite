@@ -97,7 +97,13 @@
     "KERI-0113",
     "KERI-0114",
     "KERI-0115",
-    "KERI-0116"
+    "KERI-0116",
+    "KERI-0117",
+    "KERI-0118",
+    "KERI-0119",
+    "KERI-0120",
+    "KERI-0121",
+    "KERI-0122"
   ],
   "name": "keri-v1.0.1",
   "normative": true,
