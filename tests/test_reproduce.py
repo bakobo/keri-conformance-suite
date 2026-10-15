@@ -505,7 +505,7 @@ def test_main_refresh_needs_a_maintainer(repo, fake_runs, capsys, monkeypatch):
 
 
 def test_main_refresh_outside_git_is_a_fault(tmp_path, fake_runs, capsys):
-    assert main(tmp_path, "refresh") == 4
+    assert main(tmp_path, "refresh", "--maintainer", "Someone") == 4
     assert P.E_GIT in capsys.readouterr().err
 
 
