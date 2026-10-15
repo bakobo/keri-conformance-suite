@@ -23,6 +23,8 @@ defmodule KcsAdapterCesrixir.CLITest do
     assert String.ends_with?(one, "\n")
     assert_receive {:halted, 0}, 5_000
     assert_received :progress
+    assert_received :progress
+    refute_received :progress
     refute_received {:wrote, _}
   end
 
@@ -41,23 +43,24 @@ defmodule KcsAdapterCesrixir.CLITest do
     assert_receive {:halted, 0}, 1_000
   end
 
-  test "the grace period outlasts the runner's 60-second request timeout" do
-    assert CLI.grace_ms() > 60_000
+  test "the grace period is 65 seconds, longer than the runner's 60-second request timeout" do
+    assert CLI.grace_ms() == 65_000
   end
 
   test "after end of input each answer restarts the grace period" do
     port = make_ref()
     me = self()
-    reader = spawn(fn -> CLI.read(port, Lines.new(), me, &send(me, {:halted, &1}), 150) end)
+    reader = spawn(fn -> CLI.read(port, Lines.new(), me, &send(me, {:halted, &1}), 600) end)
     send(reader, :answered)
     send(reader, {port, :eof})
     assert_receive :eof
-    for _ <- 1..3 do
-      Process.sleep(100)
+    # four answers 200 ms apart span 800 ms, longer than one 600 ms grace
+    for _ <- 1..4 do
+      Process.sleep(200)
       send(reader, :answered)
     end
     refute_received {:halted, _}
-    assert_receive {:halted, 0}, 1_000
+    assert_receive {:halted, 0}, 2_000
   end
 
   test "an oversize line is answered" do
