@@ -231,6 +231,17 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
     return None
 
 
+def _check_bt_modelled(bt) -> None:
+    if not _canonical_hex(bt):
+        raise ScenarioError(f"A backer threshold of {bt!r}, which is not hex without leading "
+                            f"zeros (line 345), is not modelled.")
+
+
+def _check_witness_code_modelled(code: str) -> None:
+    if code not in BASIC_CODES:
+        raise ScenarioError(f"A witness prefix with code {code!r} is not modelled.")
+
+
 def _establishment_values(t: Tables, p: Parsed) -> str | None:
     """The value rules of an establishment event's own body: a key list that is not empty (line
     335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), an
@@ -242,23 +253,24 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
         raise ScenarioError(f"Configuration traits of {traits!r}, which are not a list of "
                             f"strings (line 367), are not modelled.")
     # First of the value rules: it is the one whose sentence says drop, so a weaker rule failing
-    # on the same body must not hide it.
+    # on the same body must not hide it. Being a MUST, it is graded only on a body whose backer
+    # fields the model can read; otherwise the body is refused as not modelled, as below.
     if p.ilk in ROTATIONS and set(traits) & set(INCEPTION_ONLY_TRAITS):
+        _check_bt_modelled(p.body["bt"])
+        for prefix in p.body["ba"]:
+            _check_witness_code_modelled(_code(t, prefix))
         return "trait-inception-only"
     if not p.body["k"]:
         return "empty-keys"
-    if not _canonical_hex(p.body["bt"]):
-        raise ScenarioError(f"A backer threshold of {p.body['bt']!r}, which is not hex without "
-                            f"leading zeros (line 345), is not modelled.")
+    _check_bt_modelled(p.body["bt"])
     lists = [p.body["b"]] if p.ilk in INCEPTIONS else [p.body["br"], p.body["ba"]]
     if any(len(set(backers)) != len(backers) for backers in lists):
         return "backer-duplicate"
     for prefix in lists[-1]:
         code = _code(t, prefix)
+        _check_witness_code_modelled(code)
         if code == "D":
             return "witness-transferable"
-        if code != "B":
-            raise ScenarioError(f"A witness prefix with code {code!r} is not modelled.")
     # A rotation's bt above its effective list waits at step 4 as a shortfall instead. ~5y5t
     if p.ilk in INCEPTIONS and int(p.body["bt"], 16) > len(p.body["b"]):
         return "backer-threshold"

@@ -910,3 +910,27 @@ def test_an_inceptions_configuration_traits_must_also_be_a_list_of_strings():
     """Otherwise a string such as "EOX" would read as carrying EO through a substring test."""
     with pytest.raises(ScenarioError, match="Configuration traits"):
         tags([{**ICP, "tamper": {"fields": {"set": {"c": "EOX"}}}}], [msg("icp", ["a0"])])
+
+
+@pytest.mark.parametrize("fields,match", [
+    ({"bt": []}, "backer threshold"),
+    ({"ba": ["1AAA" + "A" * 44]}, "witness prefix"),
+])
+def test_an_inception_only_trait_does_not_grade_a_body_the_model_cannot_read(fields, match):
+    """The trait refusal is graded MUST, so it is never reached on a body the model would
+    otherwise refuse to model."""
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"],
+                      tamper={"fields": {"set": fields}})]
+    with pytest.raises(ScenarioError, match=match):
+        tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])
+
+
+def test_an_inception_only_trait_is_graded_on_a_body_whose_witnesses_the_model_can_read():
+    """A transferable witness code is one the model reads (it refuses it as a SHOULD), so the
+    trait refusal, being stronger, still decides; a removed witness's code is not read at all."""
+    events = [ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], c=["EO"], bt="1",
+                      tamper={"fields": {"set": {"ba": [keri_events.verkey(T, "w1")],
+                                                 "br": ["1AAA" + "A" * 44]}}})]
+    assert keri_events.verkey(T, "w1").startswith("D")
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a1"])])[1] == \
+        ["1/trait-inception-only"] * 2
