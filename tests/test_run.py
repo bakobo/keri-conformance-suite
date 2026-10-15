@@ -591,6 +591,43 @@ def test_a_summary_answering_a_decoded_case_restarts_the_adapter(cases_dir, tmp_
     assert alive_at_close == [False]
 
 
+# --- an encoder's refusal ------------------------------------------------------------------------
+
+MUST_REFUSE = make_case("CESR-0013", "cesr.encode", {"code": "D", "raw": "00", "domain": "text"},
+                        [assertion("rejected")])
+REFUSAL = {"reject": {"class": "InvalidSizeError"}}
+
+
+def _encode_table(write_json, body):
+    return write_json("encode.json", [{"match": {"op": "cesr.encode"}, **body}])
+
+
+@pytest.mark.parametrize(("case", "body", "outcome"), [
+    (MUST_REFUSE, {"result": REFUSAL}, "pass"),
+    (MUST_REFUSE, {"result": {"encoded": "10"}}, "fail"),
+    (PASSING[2], {"result": REFUSAL}, "fail"),
+], ids=["refusal-passes-must-refuse", "encoding-fails-must-refuse", "refusal-fails-encoded"])
+def test_an_encode_refusal_is_graded_as_a_result(case, body, outcome, cases_dir, tmp_path,
+                                                 write_json):
+    code, report = run(good("--table", _encode_table(write_json, body)), cases_dir(case),
+                       tmp_path)
+    entry = report["cases"][0]
+    assert entry["failure"] is None
+    assert {a["outcome"] for a in entry["assertions"]} == {outcome}
+    assert code == (errors.EXIT_CONFORMANT if outcome == "pass" else errors.EXIT_FAILED)
+
+
+def test_an_unsupported_error_is_no_answer_to_a_must_refuse_encode_case(cases_dir, tmp_path,
+                                                                        write_json):
+    body = {"error": {"kind": "unsupported", "message": "refused"}}
+    code, report = run(good("--table", _encode_table(write_json, body)), cases_dir(MUST_REFUSE),
+                       tmp_path)
+    entry = report["cases"][0]
+    assert code == errors.EXIT_FAILED
+    assert entry["failure"]["kind"] == "error-unsupported"
+    assert [a["outcome"] for a in entry["assertions"]] == ["fail"]
+
+
 # --- Non-normative profiles: an interoperability verdict -----------------------------------------
 # A run whose cases carry only INTEROP assertions is a run of a non-normative profile (a profile is
 # normative exactly when every assertion cites a clause). Its verdict says whether the
