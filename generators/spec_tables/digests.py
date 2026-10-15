@@ -11,7 +11,7 @@ table, keyed by code:
 - ``E`` Blake3-256, with the suite's own BLAKE3 (``blake3.py``);
 - ``F`` Blake2b-256 and ``G`` Blake2s-256, the BLAKE2 parameter block with a 32-byte digest length
   (RFC 7693, section 2.5), which is not a truncated 512-bit digest; the CESR table names the
-  algorithms without saying which, and this is the reading keripy also uses;
+  algorithms without saying which, and this is the reading keripy also uses (~2ojl);
 - ``H`` SHA3-256 and ``I`` SHA2-256.
 
 The 512-bit digest codes are not computed, because no case uses one. Building with a code outside
