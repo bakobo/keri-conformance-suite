@@ -108,6 +108,45 @@ def test_a_parser_that_returns_without_consuming_is_an_adapter_bug(monkeypatch):
     assert "e.self.unknown.parse-stalled.f" in str(info.value)
 
 
+class _Dispatching:
+    dispatches = True
+
+    @staticmethod
+    def sniff(buf):
+        return measure.kering.Colds.msg
+
+
+def _after_a_message(api):
+    rec = measure.Recorder(api)
+    rec.messages = 1
+    return rec
+
+
+def test_a_post_extraction_error_is_a_validation_error_from_a_parser_that_dispatches():
+    rec = _after_a_message(_Dispatching())
+    assert rec.post_extraction(measure.kering.ValidationError("no kevery"), b"")
+
+
+def test_an_error_other_than_a_validation_error_is_never_post_extraction():
+    rec = _after_a_message(_Dispatching())
+    assert not rec.post_extraction(TypeError("framing"), b"")
+    assert not rec.post_extraction(measure.kering.ExtractionError("framing"), b"")
+
+
+def test_nothing_is_post_extraction_for_a_parser_that_does_not_dispatch():
+    class Framing(_Dispatching):
+        dispatches = False
+
+    rec = _after_a_message(Framing())
+    assert not rec.post_extraction(measure.kering.ValidationError("framing"), b"")
+
+
+@pytest.mark.parametrize("generation,dispatches", [("main", False), ("1.x", True)])
+def test_only_keripy_1_x_dispatches_inside_its_parser(generation, dispatches):
+    api = {"main": keripy_api.Main, "1.x": keripy_api.OneX}[generation]
+    assert api.dispatches is dispatches
+
+
 @pytest.mark.main
 def test_main_a_native_body_is_unsupported():
     from keri import kering
