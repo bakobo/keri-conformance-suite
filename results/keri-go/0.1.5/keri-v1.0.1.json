@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "44b60935612653b0f77ab66b4d71beba0390e064",
+    "commit": "48e3f6dca7a5c1bc5388a7411049e88f79cb6ee2",
     "date": "2026-10-15"
   },
   "report": {
@@ -80,7 +80,15 @@
         },
         "disputed": {
           "SHOULD": {
-            "not-supported": 8
+            "not-supported": 10
+          }
+        },
+        "draft": {
+          "SHOULD": {
+            "not-supported": 45
+          },
+          "MUST": {
+            "not-supported": 25
           }
         }
       },
@@ -5430,6 +5438,1148 @@
             "level": "MUST",
             "outcome": "not-supported",
             "expected": "rejected",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0100",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "rejected",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0101",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "rejected",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a7",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EMdVm3b4h2Rj3t-v5WQl6nVBFBHwhDbI-1ih9zDbA72L",
+              "sn": 1,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0102",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "kel.witness",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "1",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "sn": 0,
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ]
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0103",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "kel.witness",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "1",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "sn": 0,
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ]
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0104",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "kel.witness",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "1",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "sn": 0,
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ]
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0105",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "kel.witness",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0106",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "kel.witness",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0107",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "kel.witness",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0108",
+        "status": "disputed",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "kel.witness",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0109",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0110",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0111",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0112",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0113",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0114",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0115",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0116",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
             "actual": null,
             "detail": null,
             "self_agreement": false
