@@ -42,7 +42,7 @@ E_TOO_LARGE = "e.feature.unsupported.message-bytes.f"
 # The most bytes of messages the adapter replays, all messages together, for the same reason: a
 # replay copies every stream it is given. Case messages are a few hundred bytes each.
 MAX_MESSAGE_BYTES = 1024 * 1024
-HEX = re.compile(r"(?:[0-9a-f]{2})*")
+HEX = re.compile(r"[0-9a-f]*")
 KEY_EVENTS = ("icp", "rot", "ixn", "dip", "drt")
 DUPLICITY = "e.state.conflict.duplicity"
 NO_EVENT = ("The message does not frame a key event body with string i and d fields, so there is "
@@ -64,22 +64,24 @@ class Unsupported(Exception):
 
 
 def _messages(request) -> list[bytes]:
+    """The messages' bytes. Their number and size are bounded before any stream is read."""
     values = request.get("messages")
     if not isinstance(values, list):
         raise Malformed(f'{E_MALFORMED}: "messages" must be a list.')
+    if len(values) > MAX_MESSAGES:
+        raise Unsupported(f"{E_TOO_MANY}: This adapter replays at most {MAX_MESSAGES} messages "
+                          f"in one request, and this one has {len(values)}.")
+    streams = [v.get("stream") if isinstance(v, dict) else None for v in values]
+    size = sum(len(s) // 2 for s in streams if isinstance(s, str))
+    if size > MAX_MESSAGE_BYTES:
+        raise Unsupported(f"{E_TOO_LARGE}: This adapter replays at most {MAX_MESSAGE_BYTES} "
+                          f"bytes of messages in one request, and this one has {size}.")
     out = []
-    for value in values:
-        stream = value.get("stream") if isinstance(value, dict) else None
-        if not isinstance(stream, str) or not HEX.fullmatch(stream):
+    for stream in streams:
+        if not isinstance(stream, str) or len(stream) % 2 or not HEX.fullmatch(stream):
             raise Malformed(f'{E_MALFORMED}: every entry in "messages" must be an object whose '
                             '"stream" is a lowercase hex string.')
         out.append(bytes.fromhex(stream))
-    if len(out) > MAX_MESSAGES:
-        raise Unsupported(f"{E_TOO_MANY}: This adapter replays at most {MAX_MESSAGES} messages "
-                          f"in one request, and this one has {len(out)}.")
-    if (size := sum(map(len, out))) > MAX_MESSAGE_BYTES:
-        raise Unsupported(f"{E_TOO_LARGE}: This adapter replays at most {MAX_MESSAGE_BYTES} "
-                          f"bytes of messages in one request, and this one has {size}.")
     return out
 
 

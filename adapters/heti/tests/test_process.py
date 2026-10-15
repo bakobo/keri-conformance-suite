@@ -142,6 +142,16 @@ def test_more_bytes_than_the_adapter_replays_is_refused(monkeypatch):
     assert process.process(request(messages=["00" * 600, "00" * 400]))["dispositions"]
 
 
+def test_size_is_bounded_before_any_stream_is_read(monkeypatch):
+    monkeypatch.setattr(process, "MAX_MESSAGE_BYTES", 1000)
+    with pytest.raises(process.Unsupported, match=process.E_TOO_LARGE):
+        process._messages({"messages": [{"stream": "zz" * 1001}]})
+    with pytest.raises(process.Unsupported, match=process.E_TOO_MANY):
+        process._messages({"messages": [7] * (process.MAX_MESSAGES + 1)})
+    with pytest.raises(process.Malformed):
+        process._messages({"messages": [{"stream": "abc"}]})
+
+
 def test_an_identifier_heti_cannot_parse_is_rejected():
     stream = bytes.fromhex(KELS["in-order"][0])
     sad = process.verify.split(stream)[0]
