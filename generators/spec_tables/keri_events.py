@@ -152,9 +152,13 @@ def restructure(fields: dict, tamper: dict) -> dict:
         if label in STRUCTURAL:
             raise ScenarioError(f"The builder cannot remove {label!r}, which it needs to place "
                                 f"the SAID, prefix and sequence number.")
+        if label not in out:
+            raise ScenarioError(f"{label!r} is not a field of the body, so it cannot be removed.")
         out.pop(label)
     if "swap" in tamper:
         a, b = tamper["swap"]
+        if a == b:
+            raise ScenarioError(f"Swapping {a!r} with itself changes nothing.")
         labels = list(out)
         for label in (a, b):
             if label not in out:

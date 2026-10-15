@@ -715,6 +715,8 @@ def test_a_field_value_can_be_set_before_the_said_is_taken():
     ({"set": {"d": "E" + "A" * 43}}, "cannot set \\['d'\\]"),
     ({"add": {"i": "x"}}, "cannot add \\['i'\\]"),
     ({"add": {"a": []}}, "already has"),
+    ({"remove": ["zz"]}, "cannot be removed"),
+    ({"swap": ["a", "a"]}, "changes nothing"),
 ])
 def test_field_tampers_the_builder_cannot_apply_are_refused(tamper, match):
     with pytest.raises(ScenarioError, match=match):
