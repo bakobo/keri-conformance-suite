@@ -198,6 +198,77 @@ jobs:
       - name: Probe the adapter
         run: uv run kcs check-adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi"
 
+  # The keri-go adapter (adapters/keri-go/README.md). It builds the adapter against
+  # the exact module versions go.mod requires and go.sum locks (-mod=readonly refuses any change to
+  # either), runs go vet and the adapter's tests with every statement covered, and probes it.
+  keri-go-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: adapters/keri-go/go.mod
+          cache-dependency-path: adapters/keri-go/go.sum
+      - name: Sync the runner
+        run: uv sync --locked
+      - name: Build the keri-go adapter at its pin
+        working-directory: adapters/keri-go
+        run: |
+          go mod verify
+          go build -mod=readonly -o kcs-adapter-keri-go .
+      - name: Adapter vet and tests
+        working-directory: adapters/keri-go
+        run: |
+          test -z "$(gofmt -l .)"
+          go vet -mod=readonly ./...
+          go test -mod=readonly -coverprofile="$RUNNER_TEMP/keri-go.cov" ./...
+          go tool cover -func="$RUNNER_TEMP/keri-go.cov" | tail -1 | grep -q '100.0%'
+      - name: Probe the adapter
+        run: uv run kcs check-adapter "$PWD/adapters/keri-go/kcs-adapter-keri-go"
+
+  # The devrandom adapter (adapters/devrandom/README.md). It builds the adapter against its exact
+  # crates.io pins from Cargo.lock with the toolchain rust-toolchain.toml names, runs the
+  # adapter's own lint and tests, and probes it. rustup is preinstalled on ubuntu-latest, so no
+  # third-party action is needed for the toolchain.
+  devrandom-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install the pinned Rust toolchain
+        working-directory: adapters/devrandom
+        run: |
+          rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" \
+            --profile minimal --component clippy --component rustfmt
+      - name: Sync the runner
+        run: uv sync --locked
+      # --locked refuses a Cargo.lock that does not match Cargo.toml's exact pins.
+      - name: Build the devrandom adapter at its pins
+        working-directory: adapters/devrandom
+        run: cargo build --locked
+      - name: Adapter lint and tests
+        working-directory: adapters/devrandom
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo test --locked
+      - name: Probe the adapter
+        run: uv run kcs check-adapter "$PWD/adapters/devrandom/target/debug/kcs-adapter-devrandom"
+
   # The signify-ts adapter (adapters/signify-ts/README.md). It installs signify-ts from the git
   # commit package-lock.json pins (npm ci refuses a lock that does not match package.json),
   # typechecks the adapter and runs its tests with the 100% branch gate, and probes it. Node 24

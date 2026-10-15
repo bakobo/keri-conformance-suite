@@ -1,0 +1,234 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a3",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a4",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "not-seen",
+      "id": "a5",
+      "level": "MUST",
+      "message": 2,
+      "note": "Decision procedure step 4 (signing-threshold).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "pending",
+      "id": "a6",
+      "level": "SHOULD",
+      "message": 2,
+      "note": "Decision procedure step 4 (signing-threshold).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "not-seen",
+      "id": "a7",
+      "level": "MUST",
+      "message": 2,
+      "note": "Decision procedure step 4 (signing-threshold).",
+      "phase": "final"
+    },
+    {
+      "aid": "EPZueNeblXzOWY4OoYASxva2W28zs9TIRBM5nK486dVe",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DOz-OkNCUkDXQOcrnubFU3_k5suoidsrd7qN5O3bkyQA",
+          "DAyfqp5xfEdNnN3mEULRicle39WYH1AQoWplHuaYcm3n",
+          "DNIfgGRnL4o5kmujF0TNCNMKruaR2OFKfmxq5tcHAt1f",
+          "DL0EVm4_0Ozo4-MKH2waSyoAhZwMoHwkmiwJyDWenXPG",
+          "DKyiKZDb4llDtD6xSaRd3fhnHiBiUdSBLo3-MT7KDgzM",
+          "DMRblBB_ShRWDWAUdvIyFPIDZ4_clabQqSDq46ennC3F"
+        ],
+        "kt": [
+          "0",
+          "0",
+          "0",
+          "1/2",
+          "1/2",
+          "1/2"
+        ],
+        "ndigs": [
+          "ELVypCeXpDuNAPcEg0flTxDuB00ivwWNPxwieReI5Vod",
+          "EHl_bnp3-oVm7f0rUWMTUvZpCBCXwi5tbaDvTwnP1wJP",
+          "EGdejJAg6xLh4OPXmLPu3rXAHCdEtit3pJubvd8_GGLZ"
+        ],
+        "nt": [
+          "1/2",
+          "1/2",
+          "1/2"
+        ],
+        "said": "EEvapekNesfUv5UTj_7374J32d9cvAG-kxbmFqjMjABt",
+        "sn": 1,
+        "wits": []
+      },
+      "id": "a8",
+      "if_seen": 1,
+      "level": "MUST"
+    }
+  ],
+  "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception and rotation 1 are accepted, then an interaction is signed only by the owner's c3, c4 and c5, which are current keys of weight 0 after the rotation (line 1574). Their signatures verify but carry no signing authority, so the interaction does not meet the signing threshold (lines 1258 and 1419). A validator must not accept it; as a threshold shortfall it should keep it.",
+  "id": "KERI-0139",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141494a2e222c2274223a22696370222c2264223a2245505a75654e65626c587a4f5759344f6f594153787661325732387a7339544952424d356e4b343836645665222c2269223a2245505a75654e65626c587a4f5759344f6f594153787661325732387a7339544952424d356e4b343836645665222c2273223a2230222c226b74223a5b22312f32222c22312f32222c22312f32225d2c226b223a5b224442546f3357646742537863574f6f7447474f314f38754c642d43535f614c4a6f776a4a65506c2d61436e5f222c22444c65304a6a6f2d346e51514e3737736a59584e51654b6e4f415772705266766c4348563562635a48487a4d222c2244506a78734f6e4132442d4550467577523539577a3768343176714f556c7a73354e6a716832596c34316533225d2c226e74223a5b22312f32222c22312f32222c22312f32225d2c226e223a5b2245426a72755849446f4b6568627953383242476b5935336a61586f4941445a414d6c42504b4a5548734f4b30222c22454b2d51774f623144364f6e4e5a6c58666e6945524146736a466b726c2d4e457435366f70554676564f3570222c22454278585553384c4833347866423967415044686f496a776e4873344845524d4e5f4d766c6e7665766c6e6d225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341742d4b41734141437054764f716c357679794832445235353074527647734542426a4d2d73446d45636f384549496365412d476d63566e5f4172724a694437364c68764d65684e504c6f35474f6c45684d6e4f4c54363831786b416f4b4142444155514f73597141527330386b48556c455952695251636e30696f5875442d6343505965567a32486f6f776a6e6476477164695539512d3749396d305537644247624970736a4878696d5832574a37526e36423441"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414c652e222c2274223a22726f74222c2264223a224545766170656b4e65736655763555546a5f373337344a33326439637641472d6b78626d46716a4d6a414274222c2269223a2245505a75654e65626c587a4f5759344f6f594153787661325732387a7339544952424d356e4b343836645665222c2273223a2231222c2270223a2245505a75654e65626c587a4f5759344f6f594153787661325732387a7339544952424d356e4b343836645665222c226b74223a5b2230222c2230222c2230222c22312f32222c22312f32222c22312f32225d2c226b223a5b22444f7a2d4f6b4e43556b4458514f63726e75624655335f6b3573756f696473726437714e354f33626b795141222c2244417966717035786645644e6e4e336d45554c5269636c6533395759483141516f57706c48756159636d336e222c22444e49666747526e4c346f356b6d756a4630544e434e4d4b72756152324f464b666d78713574634841743166222c22444c3045566d345f304f7a6f342d4d4b4832776153796f41685a774d6f48776b6d69774a794457656e585047222c22444b79694b5a4462346c6c4474443678536152643366686e48694269556453424c6f332d4d54374b44677a4d222c22444d52626c42425f536852574457415564764979465049445a345f636c616251715344713436656e6e433346225d2c226e74223a5b22312f32222c22312f32222c22312f32225d2c226e223a5b22454c5679704365587044754e415063456730666c54784475423030697677574e507877696552654935566f64222c2245486c5f626e70332d6f566d3766307255574d5455765a7043424358776935746261447654776e5031774a50222c22454764656a4a416736784c68344f50586d4c5075337258414843644574697433704a75627664385f47474c5a225d2c226274223a2230222c226272223a5b5d2c226261223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d43425a2d4b4259414143437a3134374d6750453446645f4f6f78395579755776684173684d4176554c707235664f6279467a73324b477a764d4950517656755730684d55326b66594d37356d345a5051494953663853433763754c75346b484142416635735a41712d65393432454b3537496d523276353538516f6b4f38477469487450416571736d5544655970644b556650386d4f55784f796145353863586459525a54386e7274345f495a386a6a566a6a577030474244416e77364b5a4f7a6c4f6d3436586e66745f347a4c597a6b303859596c696545675a4c344d5f6f53366c554e425266376d54787633463736782d786e7a59315556766267304839417272426651396d70326948776f4e424542623870544f5a4d4a7635595f465561563671767a6d6d5a3466695978653072534e327750624f4b316c62694a4542475f5f69756e6c433363624f6642726d614e61784f437348585870495f6b365932674771375141"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a224547646e785243532d2d4658415f6c56384d6e556e67783664344c6561554e6641764e4e496d6f557a6f475a222c2269223a2245505a75654e65626c587a4f5759344f6f594153787661325732387a7339544952424d356e4b343836645665222c2273223a2232222c2270223a224545766170656b4e65736655763555546a5f373337344a33326439637641472d6b78626d46716a4d6a414274222c2261223a5b5d7d2d4342442d4b42434141414c492d5354702d41347270594e304e7337386e2d695f544a6152715a415f6a32414a62414b4a6150795473684b65506e37505171306e5f70536563615a58417266725531393567414459614b5165305856663945474142416e7a50464c5452723062574e5f6646756e5f4e743961674a464337724c507a30507a465658434570454942787a383174374539736344467347597059677432685839376e56777259466f53414c466d5244687963474143424c43564c65516c4b64786245366d43746a3979795330706f67534e436566547773334c6a65684a435a66574a476d4544744a50524665354f6c52574a66774f4c654b767056314d6c78366f4b686433627775617350"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/prerotation.json#KS-MR17"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.multisig.weighted",
+      "kel.partial-rotation",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Interaction signed only by keys of zero weight"
+}

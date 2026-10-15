@@ -80,6 +80,13 @@ describe('requests', () => {
         expect(Buffer.from(response.result.encoded, 'hex').toString('latin1')).toBe('E' + 'A'.repeat(43));
     });
 
+    it('answers a cesr.encode refusal as a rejection result, not an error', () => {
+        vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+        const response = ask({ id: 8, op: 'cesr.encode', code: 'E', raw: '00', domain: 'text' });
+        vi.restoreAllMocks();
+        expect(response).toEqual({ id: 8, result: { reject: { class: 'Error' } } });
+    });
+
     it.each([
         [{ op: 'cesr.parse' }, 'stream'],
         [{ op: 'cesr.parse', stream: 'ABCD' }, 'stream'],

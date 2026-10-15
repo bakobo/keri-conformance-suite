@@ -7,12 +7,12 @@ use std::panic::{self, AssertUnwindSafe};
 
 use serde_json::{Map, Value, json};
 
-use crate::cesr;
+use crate::{cesr, kel};
 
 pub const PROTOCOL: u64 = 1;
 pub const ADAPTER_NAME: &str = "kcs-adapter-affinidi";
 pub const ADAPTER_VERSION: &str = env!("CARGO_PKG_VERSION");
-pub const OPERATIONS: [&str; 2] = ["cesr.parse", "cesr.encode"];
+pub const OPERATIONS: [&str; 3] = ["cesr.parse", "cesr.encode", "keri.process"];
 
 /// The implementation under test, as pinned in Cargo.toml and Cargo.lock. `tests/pins.rs` checks
 /// these against Cargo.lock and against the `.cargo_vcs_info.json` that crates.io published with
@@ -25,11 +25,22 @@ pub const CESR_CRATE_COMMIT: &str = "b970cb01bdd1acd0530137b67460579e4624ab47";
 
 /// Features from profiles/features.json that Affinidi and this adapter together support. See
 /// README.md for why each of the others, cesr.item-extents included, is not declared.
-pub const FEATURES: [&str; 3] = [
+pub const FEATURES: [&str; 10] = [
     "cesr.genus-1.00",
     "cesr.serialization.json",
+    "crypto.ed25519",
+    "kel.basic",
+    "kel.delegation",
+    "kel.multisig.numeric",
+    "kel.multisig.weighted",
+    "kel.witness",
+    "keri.routing",
     "keri.version-1.x",
 ];
+
+/// The features in FEATURES that this adapter supplies itself rather than Affinidi: keri.process
+/// routes each message to the Kever call it needs (src/kel.rs).
+pub const COMPOSES: [&str; 1] = ["keri.routing"];
 
 /// The longest request line the adapter reads, in bytes, not counting its newline. A longer line
 /// is answered with an error whose id is null and is skipped without being held in memory.
@@ -76,19 +87,14 @@ pub fn guarded<T>(what: &str, f: impl FnOnce() -> Result<T, OpError>) -> Result<
     }
 }
 
-fn hex_field(request: &Map<String, Value>, field: &str) -> Result<Vec<u8>, OpError> {
-    let bad = || {
-        OpError::Malformed(format!(
-            "{E_MALFORMED}: \"{field}\" must be a lowercase hex string."
-        ))
-    };
-    let text = request.get(field).and_then(Value::as_str).ok_or_else(bad)?;
-    if text.len() % 2 != 0
+/// The bytes of a lowercase hex string, or None if it is not one.
+pub(crate) fn decode_hex(text: &str) -> Option<Vec<u8>> {
+    if !text.len().is_multiple_of(2)
         || !text
             .bytes()
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
     {
-        return Err(bad());
+        return None;
     }
     let nibble = |b: u8| {
         if b.is_ascii_digit() {
@@ -97,11 +103,24 @@ fn hex_field(request: &Map<String, Value>, field: &str) -> Result<Vec<u8>, OpErr
             b - b'a' + 10
         }
     };
-    Ok(text
-        .as_bytes()
-        .chunks(2)
-        .map(|p| nibble(p[0]) << 4 | nibble(p[1]))
-        .collect())
+    Some(
+        text.as_bytes()
+            .chunks(2)
+            .map(|p| nibble(p[0]) << 4 | nibble(p[1]))
+            .collect(),
+    )
+}
+
+fn hex_field(request: &Map<String, Value>, field: &str) -> Result<Vec<u8>, OpError> {
+    request
+        .get(field)
+        .and_then(Value::as_str)
+        .and_then(decode_hex)
+        .ok_or_else(|| {
+            OpError::Malformed(format!(
+                "{E_MALFORMED}: \"{field}\" must be a lowercase hex string."
+            ))
+        })
 }
 
 /// The implementation identity: both pinned crates, so that moving either pin changes the identity
@@ -135,7 +154,7 @@ fn hello(request: &Map<String, Value>) -> Result<Value, OpError> {
         "implementation": implementation(),
         "operations": OPERATIONS,
         "features": FEATURES,
-        "composes": [],
+        "composes": COMPOSES,
     }))
 }
 
@@ -179,7 +198,8 @@ pub fn handle(id: Value, request: &Map<String, Value>) -> Value {
         "hello" => hello(request),
         "cesr.parse" => parse(request),
         "cesr.encode" => encode(request),
-        "keri.process" | "keri.emit" => Err(OpError::Unsupported(format!(
+        "keri.process" => guarded("keri.process", || kel::process(request)),
+        "keri.emit" => Err(OpError::Unsupported(format!(
             "{E_UNDECLARED_OP}: This adapter does not implement {op} and did not declare it in hello."
         ))),
         _ => Err(OpError::Malformed(format!(

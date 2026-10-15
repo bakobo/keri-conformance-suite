@@ -9,6 +9,7 @@ it these tests skip, unless KCS_REQUIRE_SPEC=1 is set, when they fail instead.
 import json
 import os
 import pathlib
+import re
 import sys
 
 import pytest
@@ -28,7 +29,7 @@ ALL_CASES = {p.stem: json.loads(p.read_text(encoding="utf-8"))
              for p in sorted(CASE_DIR.glob("*.json"))}
 # Exchange-message cases are KERI cases too, checked by test_cases_exn.
 CASES = {cid: c for cid, c in ALL_CASES.items() if c["operation"] == "keri.process"}
-NORMATIVE, ESCROW = "keri-v1.0.1", "keri-escrow"
+NORMATIVE, ESCROW, INTEROP_1X = "keri-v1.0.1", "keri-escrow", "keripy-1x-interop"
 GATED = {"keri.escrow", "kel.recovery"}
 
 
@@ -80,6 +81,12 @@ def test_case_ids_are_contiguous_apart_from_documented_gaps():
 def test_assertion_quotes_the_pinned_keri_spec_verbatim(cid, a, spec):
     if a["level"] == "INTEROP":
         assert "clause" not in a and a["basis"]
+        basis = a["basis"]
+        if isinstance(basis, dict):  # a keripy-1x-interop basis quoting the step's sentence
+            assert basis["spec"] == "keri" and basis["commit"] == spec_source.KERI.commit
+            heading = spec_source.section_of_line(spec, spec_source.find_quote(spec, basis["quote"]))
+            assert basis["section"] == heading.text
+            assert basis["url"] == spec_source.file_url(heading.anchor, spec_source.KERI)
         return
     clause = a["clause"]
     assert clause["spec"] == "keri" and clause["commit"] == spec_source.KERI.commit
@@ -104,14 +111,20 @@ def test_profile_levels_features_and_provenance_agree(cid):
     levels = {a["level"] for a in case["assertions"]}
     features = set(case["targets"]["features"])
     assert features <= set(FEATURES)
-    assert {"kel.basic", "keri.version-2.x", "crypto.ed25519"} <= features
-    assert case["targets"]["wire"] == ["CESR-2.00", keri_events.WIRE]
+    if case["profile"] == INTEROP_1X:
+        assert {"kel.basic", "keri.version-1.x", "cesr.genus-1.00", "crypto.ed25519"} <= features
+        assert not {"keri.version-2.x", "cesr.genus-2.00"} & features
+        assert case["targets"]["wire"] == [keri_events.V1.cesr, keri_events.V1.target]
+        assert levels == {"INTEROP"} and case["status"] == "draft"
+    else:
+        assert {"kel.basic", "keri.version-2.x", "crypto.ed25519"} <= features
+        assert case["targets"]["wire"] == ["CESR-2.00", keri_events.WIRE]
     assert case["provenance"]["generator"]["name"] == "kcs-gen-keri"
     assert case["provenance"]["reference"] is None
     assert case["provenance"]["scenario"].startswith("scenarios/keri/")
     if case["profile"] == ESCROW:
         assert levels == {"INTEROP"} and "keri.escrow" in features
-    else:
+    elif case["profile"] != INTEROP_1X:
         assert case["profile"] == NORMATIVE and levels <= {"MUST", "SHOULD"}
 
 
@@ -176,11 +189,13 @@ def test_the_model_reads_the_committed_bytes_as_the_case_says(cid):
             assert model.key_state(a["aid"]) == a["expected"]
 
 
-@pytest.mark.parametrize("name", [NORMATIVE, ESCROW])
+@pytest.mark.parametrize("name", [NORMATIVE, ESCROW, INTEROP_1X])
 def test_profile_lists_exactly_its_cases(name):
     profile = json.loads((ROOT / "profiles" / f"{name}.json").read_text(encoding="utf-8"))
     assert profile["name"] == name and profile["about"]
-    assert profile["cases"] == sorted(cid for cid, c in ALL_CASES.items() if c["profile"] == name)
+    # keripy-1x-interop also lists CESR cases, which test_cases_cesr checks.
+    listed = [cid for cid in profile["cases"] if cid.startswith("KERI-")]
+    assert listed == sorted(cid for cid, c in ALL_CASES.items() if c["profile"] == name)
     assert profile["normative"] is (name == NORMATIVE)
     if name == NORMATIVE:
         assert profile["spec"]["tag"] == "v1.0.1"
@@ -197,3 +212,17 @@ def test_every_escrow_case_has_its_safety_half_in_the_normative_profile():
 
 def test_the_cached_keri_spec_is_the_pinned_text(spec):
     assert spec_source.sha256(spec) == spec_source.KERI.sha256
+
+
+def test_every_keripy_1x_case_mirrors_a_normative_case_on_the_same_deliveries():
+    """A 1.x KEL case is a keri-v1.0.1 scenario rebuilt on keripy 1.x's wire: it names the case it
+    mirrors, and delivers the same number of messages."""
+    for case in CASES.values():
+        if case["profile"] != INTEROP_1X:
+            continue
+        named = re.findall(r"mirroring (KERI-[0-9]{4})", case["description"])
+        if not named:  # a companion: its parent names the mirror
+            continue
+        twin = CASES[named[0]]
+        assert twin["profile"] == NORMATIVE
+        assert len(twin["input"]["messages"]) == len(case["input"]["messages"])

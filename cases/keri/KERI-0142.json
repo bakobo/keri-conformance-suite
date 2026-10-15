@@ -1,0 +1,136 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "aid": "EMQp1m4x0XGsEIKEKkQOSWqqoEZGKycPA08kI4h3zb6r",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DAfzi_IeybKJ02wVTPmpHFsvc45YmJ4YP8pfU-JxzaF_",
+          "DI3okNZKU591b33xW7c3p3fm3z9qFunHxMtx4t5JlzC2",
+          "DPh3AP3NXLD_92EappJ1ZzCzkGOjgFgBBVGVIvAvH5Sj",
+          "DG9Lm7SukhYP8rwKA4TTZzyrLGeWMnKQCXXnMR8o422v",
+          "DI0TOBLANF2C2bO6y9TZig2CzPO3yHNxqwpeBXUi1WQK",
+          "DL8zAwK8LorbMFdZ8z-uGfOmaS9gTcys6vcPvRvsapvm",
+          "DExkR2Tm4zmkBhA9RzSmLkkEz3onwBX5SkeX2I8ht1fk",
+          "DFoPGQDBCc3K7LzzS785iz3Ulhbs2UM_zUE8lS9TCqIs",
+          "DDaNua0Vko_YAl1IfpVTw4BXhrVulRzHiEhlSaSHtfkQ",
+          "DJ5Xd49VWYuWQ5qFEqmoJrXo3P2nswQBxKjI6Gp0dkKy"
+        ],
+        "kt": [
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10"
+        ],
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+        ],
+        "nt": "1",
+        "said": "EMQp1m4x0XGsEIKEKkQOSWqqoEZGKycPA08kI4h3zb6r",
+        "sn": 0,
+        "wits": []
+      },
+      "id": "a3",
+      "if_seen": 0,
+      "level": "MUST"
+    }
+  ],
+  "description": "An inception with ten keys, each of weight 1/10, signed by all ten. The weights sum to exactly one in rational arithmetic, which line 1419 requires so that threshold satisfaction avoids floating-point rounding errors; in binary floating point the same sum is slightly less than one. A validator should accept the inception.",
+  "id": "KERI-0142",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e41414d592e222c2274223a22696370222c2264223a22454d5170316d34783058477345494b454b6b514f535771716f455a474b7963504130386b493468337a623672222c2269223a22454d5170316d34783058477345494b454b6b514f535771716f455a474b7963504130386b493468337a623672222c2273223a2230222c226b74223a5b22312f3130222c22312f3130222c22312f3130222c22312f3130222c22312f3130222c22312f3130222c22312f3130222c22312f3130222c22312f3130222c22312f3130225d2c226b223a5b224441667a695f496579624b4a3032775654506d7048467376633435596d4a345950387066552d4a787a61465f222c224449336f6b4e5a4b5535393162333378573763337033666d337a397146756e48784d74783474354a6c7a4332222c22445068334150334e584c445f3932456170704a315a7a437a6b474f6a6746674242564756497641764835536a222c224447394c6d3753756b6859503872774b413454545a7a79724c4765574d6e4b514358586e4d52386f34323276222c22444930544f424c414e46324332624f367939545a696732437a504f3379484e7871777065425855693157514b222c22444c387a41774b384c6f72624d46645a387a2d7547664f6d615339675463797336766350765276736170766d222c224445786b5232546d347a6d6b42684139527a536d4c6b6b457a336f6e77425835536b6558324938687431666b222c2244466f50475144424363334b374c7a7a53373835697a33556c68627332554d5f7a5545386c53395443714973222c224444614e756130566b6f5f59416c31496670565477344258687256756c527a486945686c5361534874666b51222c22444a355864343956575975575135714645716d6f4a72586f3350326e73775142784b6a4936477030646b4b79225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4344642d4b44634141414541456f3062704c6b486f35706d6d3376345a5f4545676a61635774756d6e64394a4e704c74504d556267563144704b63646d53656e63514761363264744a37704d71534c4c512d4f61616674777476377a55554e414244754a5847465a562d5852763172566451726331587359635276465531396b7761445469556748426231446952504d35393844526b6f58324d7872517742487339424b59776f39356e75464d624d56616875754d6f424143427265464856326b325f54585745624c5361306e667461706462555a4a5177696d44413966792d5a4b6766747957374b6f7342657a5265545f3670754c724246525841597977314c6147724758555964426f7574734f414444305f5065774d6c6e346f5049487a764e78676170727874664953794f755f4c76655636424e4a4b59416a363552714c6f6945457758452d386d772d4564616c67724443555061463466365a742d6933716e6449554b41454147346d79444255496f425a336543465373422d45524c624273306f4d4b7457564a7041546949345550426f5a552d5572746b794265486330566d7741316c3664544b614c727250544d5a7364424b72347244304d4e41464454624f304d77515f5463766242454275327162616a574c4441594a3958576e6e42777244794c5732666d723434713370377a58313073562d4d6b646c33564b64745a6b4b324b715a564c33685337486e483432774341474178777a674a7a3965544a556275335a5931732d47634d746b554d4b367375626a49436f624543675174674552335f73316d2d564778542d6c364546665f78696855706535466465367850312d54506851536e6655454148426a454c484435673851795043367039724e6f7763454e7a69534a317546442d564c32515670686b42525932435f7431366b41597034624c4b6d7a64485a6d737a4d66765a704d482d36656b6d5f6e396e4d4b613842414944574b447667306751336a7a56763943794a5f47514b48576e56724476484b636e42485f444e647858586f486e6f50665156423639414d4f5662537530435263703952347872696c426d66434c327366347772525141414a42776867555764755a2d37595254726b386549397251763037434b41504c7265393259374651685a4e314a34483948725a554e5f6e473431426a323342724c65675f587749353648763849757365613957753479344b"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/signatures.json#KS-MR20"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.multisig.weighted",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Ten weights of one tenth, all signed"
+}
