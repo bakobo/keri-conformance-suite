@@ -655,3 +655,144 @@ def test_generate_refuses_a_companion_with_a_bad_id(ktree):
     _kscenario(ktree, [c])
     with pytest.raises(ScenarioError, match="'KERI-7' is not a case id"):
         regenerate.generate(ktree)
+
+
+# --- Tampering for gaps 4, 13 and 14 (docs/coverage/assessment-2026-10.md) -------------------
+
+WITNESSED = {**ICP, "wits": ["w1"], "bt": "1"}
+
+
+def body_of(stream: bytes) -> dict:
+    return keri_model.parse(T, stream).body
+
+
+def test_a_signature_can_be_made_over_another_events_bytes():
+    """Gap 4: the inception's valid signature attached to an interaction."""
+    events = [ICP, ev("ixn1", "ixn")]
+    deliveries = [msg("icp", ["a0"]), msg("ixn1", [{"key": "a0", "over": "icp"}])]
+    eb = keri_events.EventBuilder(T, events)
+    sig = keri_model.parse(T, eb.message(deliveries[1]).stream).sigs[0]
+    assert sig.raw == keri_events.signature("a0", eb.event("icp").raw)
+    assert tags(events, deliveries)[1] == ["2/unverified"] * 2
+
+
+def test_a_witness_signature_can_be_made_over_another_events_bytes():
+    events = [WITNESSED, ev("ixn1", "ixn")]
+    deliveries = [msg("icp", ["a0"], wigs=["w1"]),
+                  msg("ixn1", ["a0"], wigs=[{"key": "w1", "over": "icp"}])]
+    assert tags(events, deliveries)[1] == ["4/witness-threshold"] * 2
+
+
+@pytest.mark.parametrize("tamper,fields", [
+    ({"add": {"x": "1"}}, (*keri_events.FIELDS["ixn"], "x")),
+    ({"remove": ["a"]}, keri_events.FIELDS["ixn"][:-1]),
+    ({"swap": ["p", "s"]}, ("v", "t", "d", "i", "p", "s", "a")),
+])
+def test_top_level_fields_can_be_added_removed_or_reordered_under_a_correct_said(tamper, fields):
+    """Gap 14: the body is restructured before its SAID is taken, so the SAID still matches and
+    only the field rule can refuse it."""
+    events = [ICP, ev("ixn1", "ixn", tamper={"fields": tamper})]
+    deliveries = [msg("icp", ["a0"]), msg("ixn1", ["a0"])]
+    eb = keri_events.EventBuilder(T, events)
+    body = body_of(eb.message(deliveries[1]).stream)
+    assert tuple(body) == fields
+    check = dict(body, d=keri_events.DUMMY)
+    assert keri_events.digest(T, keri_events.sized(check)) == body["d"]
+    assert tags(events, deliveries)[1] == ["1/fields"] * 2
+
+
+def test_a_field_value_can_be_set_before_the_said_is_taken():
+    events = [{**ICP, "tamper": {"fields": {"set": {"t": "vcp"}}}}]
+    deliveries = [msg("icp", ["a0"])]
+    assert body_of(streams(events, deliveries)[0])["t"] == "vcp"
+    assert tags(events, deliveries) == [["1/ilk"] * 2]
+
+
+@pytest.mark.parametrize("tamper,match", [
+    ({"remove": ["d"]}, "cannot remove"),
+    ({"swap": ["a", "zz"]}, "not a field"),
+    ({"recolor": []}, "Unknown field tamper"),
+    ({"set": {"d": "E" + "A" * 43}}, "cannot set \\['d'\\]"),
+    ({"add": {"i": "x"}}, "cannot add \\['i'\\]"),
+    ({"add": {"a": []}}, "already has"),
+])
+def test_field_tampers_the_builder_cannot_apply_are_refused(tamper, match):
+    with pytest.raises(ScenarioError, match=match):
+        streams([{**ICP, "tamper": {"fields": tamper}}], [msg("icp", ["a0"])])
+
+
+def test_a_receipt_can_name_a_said_other_than_the_event_its_signatures_cover():
+    """Gap 13: the witness's signatures cover ixn1, but the receipt names another SAID, so they
+    cannot be attached to ixn1."""
+    events = [WITNESSED, ev("ixn1", "ixn")]
+    deliveries = [msg("icp", ["a0"], wigs=["w1"]), msg("ixn1", ["a0"]),
+                  {"receipt": "ixn1", "wrong_said": "elsewhere", "wigs": ["w1"]}]
+    eb = keri_events.EventBuilder(T, events)
+    rct = body_of(eb.message(deliveries[2]).stream)
+    assert rct["d"] == keri_events.label_digest(T, "elsewhere")
+    assert (rct["i"], rct["s"]) == (eb.event("ixn1").pre, "1")
+    assert tags(events, deliveries) == [[A, A], ["4/witness-threshold"] * 2, ["4/receipt"] * 2]
+    assert tags(events, deliveries, "none")[2] == ["4/receipt"] * 2
+
+
+def test_a_witness_can_be_given_a_transferable_prefix():
+    events = [{**WITNESSED, "tamper": {"transferable_wits": ["w1"]}}]
+    deliveries = [msg("icp", ["a0"], wigs=["w1"])]
+    assert body_of(streams(events, deliveries)[0])["b"] == [keri_events.verkey(T, "w1")]
+    assert tags(events, deliveries) == [["1/witness-transferable"] * 2]
+
+
+@pytest.mark.parametrize("events,deliveries,reason", [
+    ([{**ICP, "keys": []}], [msg("icp", [{"key": "a0", "index": 0}])], "empty-keys"),
+    ([ICP, ev("ixn1", "ixn", s=2 ** 128)], [msg("icp", ["a0"]), msg("ixn1", ["a0"])], "sn-max"),
+    ([{**ICP, "wits": ["w1", "w1"], "bt": "2"}],
+     [msg("icp", ["a0"], wigs=[{"key": "w1", "index": 0}, {"key": "w1", "index": 1}])],
+     "backer-duplicate"),
+    ([{**ICP, "wits": ["w1"], "bt": "2"}], [msg("icp", ["a0"], wigs=["w1"])],
+     "backer-threshold"),
+    ([ICP, ev("rot1", "rot", keys=["a1"], next=["a2"], ba=["w1", "w1"], bt="1")],
+     [msg("icp", ["a0"]), msg("rot1", ["a1"])], "backer-duplicate"),
+])
+def test_value_rules_are_intrinsic_failures(events, deliveries, reason):
+    assert tags(events, deliveries)[-1] == [f"1/{reason}"] * 2
+
+
+def test_a_witness_prefix_the_model_cannot_verify_is_not_modelled():
+    events = [{**WITNESSED, "tamper": {"fields": {"set": {"b": ["1AAA" + "A" * 44]}}}}]
+    with pytest.raises(ScenarioError, match="witness prefix with code '1A"):
+        tags(events, [msg("icp", ["a0"])])
+
+
+@pytest.mark.parametrize("reason,ilk,clause,inferred", [
+    ("fields", "icp", "icp-fields", None),
+    ("fields", "dip", "fields-order", None),
+    ("fields", "rct", "fields-order", None),
+    ("ilk", "vcp", "message-types", "producer-type"),
+    ("inception-sn", "icp", "sn-inception", "producer-sn-inception"),
+    ("sn", "ixn", "sn-increment", "producer-sn-increment"),
+    ("sn-max", "ixn", "sn-max", "producer-sn-max"),
+    ("empty-keys", "rot", "keys-nonempty", "producer-keys"),
+    ("backer-duplicate", "icp", "backer-unique", "producer-backer-unique"),
+    ("witness-transferable", "icp", "witness-nontransferable", "producer-witness"),
+    ("backer-threshold", "icp", "backer-threshold", None),
+])
+def test_structure_and_value_refusals_cite_their_own_sentence(reason, ilk, clause, inferred):
+    assert keri_build._not_seen_clause(reason, ilk) == (clause, inferred)
+
+
+def test_a_value_refusal_is_graded_should_with_its_inference_and_so_is_the_key_state():
+    built = make(case([ICP, ev("ixn1", "ixn", s=2 ** 128)],
+                      [msg("icp", ["a0"], [A, A]), msg("ixn1", ["a0"], ["1/sn-max"] * 2)]))
+    refusal = [a for a in built["assertions"] if a.get("message") == 1]
+    assert {a["level"] for a in refusal} == {"SHOULD"}
+    assert all(a["inferred_from"] == INFERENCES["producer-sn-max"] for a in refusal)
+    state = next(a for a in built["assertions"] if a["check"] == "key_state")
+    assert state["level"] == "SHOULD" and state["clause"] == CLAUSES["sn-max"][1]
+    assert state["inferred_from"] == INFERENCES["producer-sn-max"]
+
+
+def test_a_backer_threshold_above_the_backer_list_is_refused_at_must_and_never_pending():
+    built = make(case([{**ICP, "wits": ["w1"], "bt": "2"}],
+                      [msg("icp", ["a0"], ["1/backer-threshold"] * 2, wigs=["w1"])]))
+    assert [(a["expected"], a["level"]) for a in built["assertions"]] == [
+        ("not-seen", "MUST"), ("not-seen", "MUST")]
