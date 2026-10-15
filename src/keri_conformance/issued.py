@@ -48,6 +48,9 @@ MAX_STREAM = 1024 * 1024  # bytes in one KEL, one ACDC or one registry
 MAX_EVENTS = 64  # key events in one KEL, registry events in one registry
 MAX_SIGNATURES = 16  # controller signatures on one key event
 MAX_KEYS = 16  # signing keys or next-key digests in one establishment event
+# The deepest nesting of maps and lists the runner reads in a body, checked before it is parsed, so
+# no body can drive the parser or the runner's recursive walks into the interpreter's limit.
+MAX_NESTING = 64
 
 
 class Unread(Exception):
@@ -128,12 +131,36 @@ def frame(stream: bytes, protocol: bytes) -> tuple[dict, bytes, bytes]:
     if size > len(rest):
         raise Unread(f"a body declares {size} bytes, but only {len(rest)} follow")
     raw = rest[:size]
+    if _nesting(raw) > MAX_NESTING:
+        raise Unread(f"a body nests deeper than {MAX_NESTING} levels")
     try:
         body = json.loads(raw)
     except ValueError:
         raise Unread("a body is not JSON") from None
     # The body begins with '{', so JSON that reads is an object.
     return body, raw, rest[size:]
+
+
+def _nesting(raw: bytes) -> int:
+    """The deepest nesting of maps and lists in JSON text, counted without parsing it."""
+    depth = deepest = 0
+    in_string = escaped = False
+    for byte in raw:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif byte == 0x5C:  # backslash
+                escaped = True
+            elif byte == 0x22:  # quote
+                in_string = False
+        elif byte == 0x22:
+            in_string = True
+        elif byte in (0x7B, 0x5B):  # { [
+            depth += 1
+            deepest = max(deepest, depth)
+        elif byte in (0x7D, 0x5D):  # } ]
+            depth -= 1
+    return deepest
 
 
 def frames(stream: bytes, protocol: bytes) -> list[tuple[dict, bytes, bytes]]:
@@ -301,7 +328,8 @@ def sealed(trunk: list[dict], rd: str, n: str, d: str) -> str | None:
     else why not."""
     named = False
     for body in trunk:
-        for seal in body.get("a") or []:
+        seals = body.get("a")
+        for seal in seals if isinstance(seals, list) else []:
             if not isinstance(seal, dict) or seal.get("d") != d:
                 continue
             if seal in ({"s": n, "d": d}, {"i": rd, "s": n, "d": d}):

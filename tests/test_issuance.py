@@ -109,3 +109,12 @@ def test_kcs_run_grades_an_issuance(cases_dir, tmp_path, write_json):
     report = json.loads(report_path.read_text())
     assert [r["outcome"] for r in report["cases"][0]["assertions"]] == ["pass"]
     assert code == 0
+
+
+def test_an_answer_the_verifier_did_not_foresee_fails_the_check(monkeypatch):
+    def unforeseen(request, result):
+        raise TypeError("odd")
+
+    monkeypatch.setattr("keri_conformance.issued.grade", unforeseen)
+    evaluation = check("issued", RESULT)
+    assert evaluation.outcome == "fail" and "cannot be graded: TypeError" in evaluation.detail

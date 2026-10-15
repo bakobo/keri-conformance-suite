@@ -304,7 +304,13 @@ def _issued(assertion, result, case_input):
     """What was issued verifies and is what the case asked for (this.i 2u2ps8mt)."""
     if "refused" in result:
         return _fail(result, "The issuer refused to issue what it must issue.")
-    problems = issued.grade(case_input, result)
+    try:
+        problems = issued.grade(case_input, result)
+    except (issued.Unread, TypeError, ValueError, AttributeError, KeyError,
+            RecursionError) as exc:
+        # The verifier refuses what it cannot read check by check; this is the backstop for an
+        # adapter's answer it did not foresee, which fails the check rather than the run.
+        return _fail(None, f"What was issued cannot be graded: {type(exc).__name__}: {exc}.")
     if problems:
         return _fail({"problems": problems}, "What was issued does not verify as asked: "
                      + "; ".join(problems) + ".")

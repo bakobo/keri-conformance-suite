@@ -530,3 +530,15 @@ def test_an_edge_operator_of_the_wrong_shape_fails():
 def test_a_primitive_must_be_canonically_encoded():
     with pytest.raises(iss.Unread, match="canonical"):
         iss.raw_of("EZ" + "A" * 42, "E", 32)
+
+
+def test_a_body_nested_beyond_the_bound_is_unreadable():
+    deep = b'{"v":"KERICAACAAJSONAAAA.","x":' + b"[" * 70 + b"]" * 70 + b"}"
+    deep = deep.replace(b"AAAA.", iss.int_b64(len(deep), 4).encode() + b".", 1)
+    with pytest.raises(iss.Unread, match="nests deeper"):
+        iss.frame(deep, b"KERI")
+    assert iss._nesting(b'{"s":"[[[\\"[[","x":[1]}') == 2
+
+
+def test_a_seal_list_that_is_not_a_list_is_no_seal():
+    assert "not anchored" in iss.sealed([{"a": 123}], "Erd", "0", "Erd")
