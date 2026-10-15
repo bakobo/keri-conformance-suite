@@ -78,7 +78,7 @@
     "ACDC-0075",
     "ACDC-0076"
   ],
-  "name": "acdc-1.0",
+  "name": "acdc-v1.0",
   "normative": true,
   "spec": {
     "commit": "4a543c549fd9811c23bf97b0daaf48400f4005c2",

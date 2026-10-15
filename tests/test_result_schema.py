@@ -113,7 +113,7 @@ def _mutants():
         mutant = _rich()[1]
         mutant["provenance"]["run"] = url
         yield mutant
-    for profile in ["cesr-1.0", "Cesr", "-x", "x" * 64, "x" * 65, "keripy-1x-interop", "a/b"]:
+    for profile in ["cesr-v1.0", "Cesr", "-x", "x" * 64, "x" * 65, "keripy-1x-interop", "a/b"]:
         mutant = _rich()[0]
         mutant["report"]["filters"]["profile"] = profile
         yield mutant

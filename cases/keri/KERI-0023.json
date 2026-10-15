@@ -137,7 +137,7 @@
     }
   },
   "operation": "keri.process",
-  "profile": "keri-1.0",
+  "profile": "keri-v1.0.1",
   "provenance": {
     "generator": {
       "name": "kcs-gen-keri",

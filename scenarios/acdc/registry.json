@@ -1,6 +1,6 @@
 {
   "about": "ACDC scenarios for step 5 of the decision procedure (docs/design.md, ACDC): a blindable registry (rip and bup) and the verified head it gives.",
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "fixtures": {
     "issued": {
       "events": [

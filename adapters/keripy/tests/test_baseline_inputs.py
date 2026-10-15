@@ -130,7 +130,7 @@ def test_every_known_value_is_accepted():
 
 
 @pytest.mark.parametrize("content", [
-    '{"profile": "cesr-1.0"}',
+    '{"profile": "cesr-v1.0"}',
     json.dumps({**summary(), "format": 1}),
     json.dumps({**summary(), "profile": None}),
     json.dumps({**summary(), "verdict": "great"}),

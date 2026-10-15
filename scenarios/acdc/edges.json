@@ -1,6 +1,6 @@
 {
   "about": "ACDC scenarios for step 6 of the decision procedure (docs/design.md, ACDC, Edges): each edge in the provenance DAG graded on its own checks, with the I2I operator named explicitly.",
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "fixtures": {
     "chain": {
       "events": [

@@ -1,6 +1,6 @@
 {
   "about": "ACDC scenarios for steps 3 and 4 of the decision procedure (docs/design.md, ACDC): the issuer's key state and its commitment to the ACDC's most compact SAID.",
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "fixtures": {
     "direct": {
       "events": [

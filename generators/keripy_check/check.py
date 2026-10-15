@@ -39,7 +39,7 @@ from generators.spec_tables import tables
 
 KERIPY_COMMIT = "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
 TIMEOUT_SECONDS = 10
-PROFILES = ("cesr-1.0", "cesr-strict", "keripy-1x-interop")
+PROFILES = ("cesr-v1.0", "cesr-strict", "keripy-1x-interop")
 
 
 class Hang(Exception):

@@ -40,7 +40,7 @@ PASSING = [
                assertion("key_state", name="a2", level="SHOULD", if_seen=0, aid="EAbc",
                          expected=STATE)],
               features=["kel.basic"], reference={"implementation": "fake-impl", "commit": "0123abc"},
-              profile="keri-1.0"),
+              profile="keri-v1.0.1"),
 ]
 NOT_SUPPORTED = make_case("KERI-0002", "keri.process",
                           {"perspective": {"role": "validator"},
@@ -173,9 +173,9 @@ def test_an_unevaluable_must_is_incomplete(cases_dir, tmp_path):
 
 
 def test_the_profile_filter(cases_dir, tmp_path):
-    _code, report = run(good(), cases_dir(*PASSING), tmp_path, "--profile", "keri-1.0")
+    _code, report = run(good(), cases_dir(*PASSING), tmp_path, "--profile", "keri-v1.0.1")
     assert [c["id"] for c in report["cases"]] == ["KERI-0001"]
-    assert report["filters"]["profile"] == "keri-1.0"
+    assert report["filters"]["profile"] == "keri-v1.0.1"
 
 
 def test_an_undeclared_operation_is_not_supported_and_not_sent(cases_dir, tmp_path, write_json):

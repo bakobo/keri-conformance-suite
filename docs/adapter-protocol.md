@@ -228,7 +228,7 @@ The features these cases require are `acdc.version-2.x`, which every ACDC case r
 
 ## `exn.verify`
 
-Deliver KERI exchange messages and report whether each was accepted. Its cases belong to the KERI layer and the `keri-1.0` profile, and IPEX is tested through it, because the only normative text about an IPEX message is KERI's text about exchange messages; [`design.md`](design.md) explains why under IPEX.
+Deliver KERI exchange messages and report whether each was accepted. Its cases belong to the KERI layer and the `keri-v1.0.1` profile, and IPEX is tested through it, because the only normative text about an IPEX message is KERI's text about exchange messages; [`design.md`](design.md) explains why under IPEX.
 
 ```json
 {"id": 6, "op": "exn.verify", "perspective": {"role": "validator"},

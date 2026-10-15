@@ -22,7 +22,7 @@
     "raw": "ce8bc1dda5e6e9a29b05cb1105ab45a6eef3a9897e0fade012194553b35f84e767e82179574f4e36cb6e8af13717c31d83d35bcc05dacf33b0"
   },
   "operation": "cesr.encode",
-  "profile": "cesr-1.0",
+  "profile": "cesr-v1.0",
   "provenance": {
     "generator": {
       "name": "kcs-gen-spec-tables",

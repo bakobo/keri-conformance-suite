@@ -387,7 +387,7 @@ def atree(tmp_path):
     return tmp_path
 
 
-def _write(tree, cases, profile="acdc-1.0", **extra):
+def _write(tree, cases, profile="acdc-v1.0", **extra):
     (tree / "scenarios" / "acdc" / "t.json").write_text(json.dumps(
         {"profile": profile, "fixtures": STRUCTURE["fixtures"], "cases": cases, **extra}))
 
@@ -401,7 +401,7 @@ def test_generate_writes_acdc_cases_and_their_profile(atree):
            id_gaps=[{"number": 1, "reason": "test"}])
     (atree / "scenarios" / "acdc" / "triage.json").write_text('{"about": "x", "entries": {}}')
     files = regenerate.generate(atree)
-    assert json.loads(files["profiles/acdc-1.0.json"])["cases"] == ["ACDC-0002", "ACDC-0003"]
+    assert json.loads(files["profiles/acdc-v1.0.json"])["cases"] == ["ACDC-0002", "ACDC-0003"]
 
 
 @pytest.mark.parametrize("cases,match", [
@@ -423,14 +423,14 @@ def test_generate_refuses_a_companion_id_that_is_not_an_acdc_id(atree):
     c = {**one(EDGES, "KS-40"), "id": "ACDC-0002"}
     c["companion"]["id"] = "KERI-0003"
     (atree / "scenarios" / "acdc" / "t.json").write_text(json.dumps(
-        {"profile": "acdc-1.0", "fixtures": EDGES["fixtures"],
+        {"profile": "acdc-v1.0", "fixtures": EDGES["fixtures"],
          "cases": [{**one(EDGES, "KS-39"), "id": "ACDC-0001"}, c]}))
     with pytest.raises(ScenarioError, match="not a case id"):
         regenerate.generate(atree)
 
 
 def test_generate_refuses_another_profile_for_an_acdc_scenario(atree):
-    _write(atree, [_ks("KS-01", 1)], profile="keri-1.0")
+    _write(atree, [_ks("KS-01", 1)], profile="keri-v1.0.1")
     with pytest.raises(ScenarioError, match="unknown ACDC profile"):
         regenerate.generate(atree)
 

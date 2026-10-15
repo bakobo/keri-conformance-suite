@@ -41,7 +41,7 @@ AS_OF = {"EIss": 2, "EReg": 1}
 
 def acdc_case(case_id, assertions, *, presented="7b00", dag=DAG, **kwargs):
     bundle = {**BUNDLE, "presented": {"stream": GENUS + presented}}
-    case = make_case(case_id, "acdc.verify", bundle, assertions, profile="acdc-1.0",
+    case = make_case(case_id, "acdc.verify", bundle, assertions, profile="acdc-v1.0",
                      features=["acdc.version-2.x"], **kwargs)
     case["dag"] = copy.deepcopy(dag)
     case["as_of"] = dict(AS_OF)
@@ -53,7 +53,7 @@ def exn_case(case_id, assertions, *, messages=2, stream="7b7d", **kwargs):
                      {"perspective": {"role": "validator"},
                       "kels": [{"stream": GENUS + "7b7d", "source": "issuer"}],
                       "messages": [{"stream": GENUS + stream, "source": "issuer"}] * messages},
-                     assertions, profile="keri-1.0", **kwargs)
+                     assertions, profile="keri-v1.0.1", **kwargs)
 
 
 ALL_ACDC_CHECKS = [

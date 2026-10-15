@@ -25,7 +25,7 @@ CI runs the same checks on every pull request (`scripts/results check results`),
 1. Run the suite against your adapter, for one profile, and keep the report:
 
     ```sh
-    uv run kcs run --adapter /path/to/your-adapter --profile cesr-1.0 --report report.json
+    uv run kcs run --adapter /path/to/your-adapter --profile cesr-v1.0 --report report.json
     ```
 
 2. Open a pull request against this repository that says what you ran: the implementation, its version and commit, the adapter and where its source is, and the profile. Note the pull request's URL.

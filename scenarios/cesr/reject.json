@@ -1,6 +1,6 @@
 {
   "about": "cesr.parse cases that must be rejected, each a well-formed stream (a genus/version code, a KERI 2.0 inception framed by its version string, attachments) with exactly one thing broken. The specification states almost no parser-side rejection rule. Where it states the rule (line 1129), the assertion keeps that clause's level; where the rejection is only inferred from a producer-side MUST, the assertion is graded SHOULD and records the inference in inferred_from.",
-  "profile": "cesr-1.0",
+  "profile": "cesr-v1.0",
   "messages": {
     "alpha": {
       "proto": "KERI",

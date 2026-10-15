@@ -74,9 +74,9 @@ def _two_versions():
     old = result(report(suite_version="0.0.1"), REPRODUCED)
     new = result(report(suite_version="0.1.0", name="cesrox", version="0.1.8 (said 0.4.3)",
                         composes=["keri.escrow"]), SUBMITTED)
-    keri = result(report([case("KERI-0001", profile="keri-1.0",
+    keri = result(report([case("KERI-0001", profile="keri-v1.0.1",
                                records=[record(self_agreement=True)])],
-                         profile="keri-1.0", suite_version="0.1.0"), REPRODUCED)
+                         profile="keri-v1.0.1", suite_version="0.1.0"), REPRODUCED)
     return loaded(old, new, keri)
 
 
@@ -100,9 +100,9 @@ def test_matrix_labels_provenance_on_every_row():
 
 def test_matrix_cells_carry_verdict_counts_and_a_link():
     index = S.render_results(_two_versions())["results/index.md"]
-    assert ("[conformant](cesrox/0.1.8-said-0.4.3/cesr-1.0-submitted.md) "
+    assert ("[conformant](cesrox/0.1.8-said-0.4.3/cesr-v1.0-submitted.md) "
             "· MUST 1 pass, 0 fail · SHOULD 0 pass, 0 fail") in index
-    assert "[conformant](keripy/2.1.0.dev1/keri-1.0-reproduced.md)" in index
+    assert "[conformant](keripy/2.1.0.dev1/keri-v1.0.1-reproduced.md)" in index
     assert "keri\\.escrow" in index
     assert "1 self\\-agreement pass" in index
     assert "2026\\-10\\-09" in index
@@ -127,8 +127,8 @@ def test_detail_page_states_the_claim_and_every_case():
                "at_case": "CESR-0003", "exit_code": 3}
     doc = result(report([case(), failing, unsupported, agreeing], aborted=aborted), SUBMITTED)
     pages = S.render_results(loaded(doc))
-    page = pages["results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
-    assert page.startswith("# keripy 2\\.1\\.0\\.dev1, profile cesr\\-1\\.0\n")
+    page = pages["results/keripy/2.1.0.dev1/cesr-v1.0-submitted.md"]
+    assert page.startswith("# keripy 2\\.1\\.0\\.dev1, profile cesr\\-v1\\.0\n")
     assert '!!! warning "Submitted claim, not reproduced"' in page
     assert "Jane Maintainer" in page and SUBMITTED["pull_request"] in page
     assert "| [Verdict](../../../verdicts.md) | aborted |" in page
@@ -140,14 +140,14 @@ def test_detail_page_states_the_claim_and_every_case():
     assert "x" * 300 not in page
     assert "a2 \\(SHOULD\\): self\\-agreement" in page
     assert "missing cesr\\.native" in page and "missing operation cesr\\.encode" in page
-    assert "[the full report \\(JSON\\)](cesr-1.0-submitted.json)" in page
-    raw = pages["results/keripy/2.1.0.dev1/cesr-1.0-submitted.json"]
+    assert "[the full report \\(JSON\\)](cesr-v1.0-submitted.json)" in page
+    raw = pages["results/keripy/2.1.0.dev1/cesr-v1.0-submitted.json"]
     assert json.loads(raw) == doc
 
 
 def test_detail_page_for_a_reproduced_result():
     pages = S.render_results(loaded(result(provenance=REPRODUCED)))
-    page = pages["results/keripy/2.1.0.dev1/cesr-1.0-reproduced.md"]
+    page = pages["results/keripy/2.1.0.dev1/cesr-v1.0-reproduced.md"]
     assert '!!! success "Reproduced by CI"' in page
     assert REPRODUCED["run"] in page and "0" * 40 in page
 
@@ -157,7 +157,7 @@ def test_implementation_page_lists_its_results_by_suite_version():
     page = pages["results/keripy/index.md"]
     assert page.startswith("# keripy\n")
     assert page.index("Suite version 0\\.1\\.0") < page.index("Current suite version (0\\.0\\.1)")
-    assert "[keri\\-1\\.0](2.1.0.dev1/keri-1.0-reproduced.md)" in page
+    assert "[keri\\-v1\\.0\\.1](2.1.0.dev1/keri-v1.0.1-reproduced.md)" in page
     assert "cesrox" not in page
 
 
@@ -206,7 +206,7 @@ def test_assemble_builds_the_source_tree(repo, tmp_path):
     assert (out / "coverage" / "README.md").read_text() == "[d](../design.md)\n"
     assert (out / "picture.png").read_bytes() == b"\x89PNG"
     assert (out / "results" / "index.md").exists()
-    assert (out / "results" / "keripy" / "2.1.0.dev1" / "cesr-1.0-submitted.md").exists()
+    assert (out / "results" / "keripy" / "2.1.0.dev1" / "cesr-v1.0-submitted.md").exists()
     assert (out / S.MARKER).exists()
 
 
@@ -269,7 +269,7 @@ def test_main_refuses_a_reproduced_result_in_the_committed_tree(repo, tmp_path, 
     assert "e.rule.result.provenance.f" in capsys.readouterr().err
 
 
-def _baseline(repo, adapter, name, version, profile="cesr-1.0"):
+def _baseline(repo, adapter, name, version, profile="cesr-v1.0"):
     path = repo / "adapters" / adapter / f"baseline-{profile}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({"implementation": {"name": name, "version": version}}))
@@ -295,9 +295,9 @@ def test_main_refuses_a_submitted_name_that_collides_with_a_ci_baseline(repo, tm
 def test_main_refuses_an_unreadable_ci_baseline(repo, tmp_path, capsys):
     (repo / "results").mkdir()
     (repo / "adapters" / "x").mkdir(parents=True)
-    (repo / "adapters" / "x" / "baseline-cesr-1.0.json").write_text("{")
+    (repo / "adapters" / "x" / "baseline-cesr-v1.0.json").write_text("{")
     assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
-    assert "baseline-cesr-1.0.json" in capsys.readouterr().err
+    assert "baseline-cesr-v1.0.json" in capsys.readouterr().err
 
 
 @pytest.mark.parametrize("content", [{}, [], {"implementation": {"name": "x"}},
@@ -305,7 +305,7 @@ def test_main_refuses_an_unreadable_ci_baseline(repo, tmp_path, capsys):
 def test_main_refuses_a_ci_baseline_that_names_no_implementation(repo, tmp_path, capsys, content):
     (repo / "results").mkdir()
     (repo / "adapters" / "x").mkdir(parents=True)
-    (repo / "adapters" / "x" / "baseline-cesr-1.0.json").write_text(json.dumps(content))
+    (repo / "adapters" / "x" / "baseline-cesr-v1.0.json").write_text(json.dumps(content))
     assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
     assert "names no implementation" in capsys.readouterr().err
 
@@ -329,8 +329,8 @@ def test_headings_carry_only_path_segments():
     headings = [line for path, page in pages.items() if path.endswith(".md")
                 for line in page.splitlines() if line.startswith("# ")]
     assert sorted(headings) == ["# Results", "# title\\-script\\-x\\-script",
-                                "# title\\-script\\-x\\-script 1\\-beta, profile cesr\\-1\\.0"]
-    detail = pages["results/title-script-x-script/1-beta/cesr-1.0-submitted.md"]
+                                "# title\\-script\\-x\\-script 1\\-beta, profile cesr\\-v1\\.0"]
+    detail = pages["results/title-script-x-script/1-beta/cesr-v1.0-submitted.md"]
     assert "&lt;/title&gt;&lt;script&gt;x&lt;/script&gt;" in detail
 
 
@@ -347,7 +347,7 @@ def test_a_cell_gives_interop_results_and_unsupported_cases_when_there_are_any()
         "results/keripy/2.1.0.dev1/keripy-1x-interop-reproduced.md"]
     assert "| [Active INTEROP assertions](../../../reading-a-result.md#pass-and-fail-counts) | 1 passed, 0 failed (1 not\\-supported, 1 pass) |" in detail
     assert "INTEROP" not in S.render_results(loaded(result()))[
-        "results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
+        "results/keripy/2.1.0.dev1/cesr-v1.0-submitted.md"]
     assert "Interoperability" not in detail
 
 
@@ -357,11 +357,11 @@ def test_an_interop_verdict_beside_a_conformance_verdict_is_shown_apart_from_it(
     doc = result(report([must, interop]), REPRODUCED)
     assert doc["report"]["verdict"] == "conformant"
     pages = S.render_results(loaded(doc))
-    assert ("[conformant](keripy/2.1.0.dev1/cesr-1.0-reproduced.md) · MUST 1 pass, 0 fail · "
+    assert ("[conformant](keripy/2.1.0.dev1/cesr-v1.0-reproduced.md) · MUST 1 pass, 0 fail · "
             "SHOULD 0 pass, 0 fail · INTEROP 0 pass, 1 fail (not\\-interoperable) |"
             ) in pages["results/index.md"]
     assert ("| [Interoperability (never part of the verdict)](../../../design.md#practice) | not\\-interoperable |"
-            in pages["results/keripy/2.1.0.dev1/cesr-1.0-reproduced.md"])
+            in pages["results/keripy/2.1.0.dev1/cesr-v1.0-reproduced.md"])
 
 
 # --- hostile input ------------------------------------------------------------------------------
@@ -445,15 +445,15 @@ def test_render_refuses_a_result_whose_path_is_not_its_own():
 def test_render_refuses_two_implementation_names_that_share_a_slug():
     """Copilot on #18: pages and rows are keyed by slug, so two raw names that slug alike would
     share one page; the set is refused instead, naming both."""
-    a, b = result(report(name="Foo Bar")), result(report(name="Foo-Bar", profile="keri-1.0",
-                                                      cases=[case("KERI-0001", profile="keri-1.0")]))
+    a, b = result(report(name="Foo Bar")), result(report(name="Foo-Bar", profile="keri-v1.0.1",
+                                                      cases=[case("KERI-0001", profile="keri-v1.0.1")]))
     with pytest.raises(RunnerError) as exc:
         S.render_results(loaded(a, b))
     assert exc.value.code == S.E_RESULT_SLUG
     message = exc.value.message
     assert "Foo Bar" in message and "Foo-Bar" in message
-    assert "foo-bar/2.1.0.dev1/cesr-1.0.json" in message
-    assert "foo-bar/2.1.0.dev1/keri-1.0.json" in message
+    assert "foo-bar/2.1.0.dev1/cesr-v1.0.json" in message
+    assert "foo-bar/2.1.0.dev1/keri-v1.0.1.json" in message
 
 
 def test_render_refuses_two_versions_that_share_a_slug():
@@ -486,13 +486,13 @@ def test_case_ids_link_to_the_case_files_the_run_used():
                                           records=[record(outcome="not-supported")])])
     rep["summary"]["not_supported_active"] = ["CESR-0003"]
     reproduced = S.render_results(loaded(result(rep, REPRODUCED)))
-    page = reproduced["results/keripy/2.1.0.dev1/cesr-1.0-reproduced.md"]
+    page = reproduced["results/keripy/2.1.0.dev1/cesr-v1.0-reproduced.md"]
     at = f"{S.REPO_URL}/blob/{REPRODUCED['commit']}/cases/cesr"
     assert f"| [CESR\\-0001]({at}/CESR-0001.json) | active |" in page
     assert "| [Active cases not supported](" in page
     assert f"| [CESR\\-0003]({at}/CESR-0003.json) |" in page.split("## Cases")[0]
     submitted = S.render_results(loaded(result(rep, SUBMITTED)))
-    page = submitted["results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
+    page = submitted["results/keripy/2.1.0.dev1/cesr-v1.0-submitted.md"]
     assert f"[CESR\\-0001]({S.REPO_URL}/blob/main/cases/cesr/CESR-0001.json)" in page
 
 
@@ -520,7 +520,7 @@ def test_detail_labels_link_to_their_explanations():
                  aborted={"code": "e.x.f", "reason": "r", "problems": [], "at_case": "CESR-0002",
                           "exit_code": 3})
     page = S.render_results(loaded(result(rep, SUBMITTED)))[
-        "results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
+        "results/keripy/2.1.0.dev1/cesr-v1.0-submitted.md"]
     claim = page.split("## Cases")[0]
     labels = dict(re.findall(r"^\| \[([^\]]+)\]\(([^)]+)\) \|", claim, re.MULTILINE))
     for label in ("Suite version", "Profile", "Verdict", "Active MUST assertions",

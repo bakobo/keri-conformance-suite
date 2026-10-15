@@ -15,13 +15,13 @@ def record(aid="a1", level="MUST", outcome="pass", self_agreement=False, detail=
             "detail": detail, "self_agreement": self_agreement}
 
 
-def case(cid="CESR-0001", status="active", outcome="pass", records=None, profile="cesr-1.0"):
+def case(cid="CESR-0001", status="active", outcome="pass", records=None, profile="cesr-v1.0"):
     records = [record()] if records is None else records
     return {"id": cid, "status": status, "profile": profile, "operation": "cesr.parse",
             "failure": None, "stderr": "", "outcome": outcome, "assertions": records}
 
 
-def report(cases=None, *, profile="cesr-1.0", name="keripy", version="2.1.0.dev1",
+def report(cases=None, *, profile="cesr-v1.0", name="keripy", version="2.1.0.dev1",
            suite_version="0.0.1", composes=None, aborted=None):
     cases = [case()] if cases is None else cases
     summary, verdict = summarize(cases)

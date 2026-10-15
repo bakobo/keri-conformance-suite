@@ -43,7 +43,7 @@
     "CESR-0041",
     "CESR-0042"
   ],
-  "name": "cesr-1.0",
+  "name": "cesr-v1.0",
   "normative": true,
   "spec": {
     "commit": "037129608b9e6960858b752019ac273d40d7386c",
