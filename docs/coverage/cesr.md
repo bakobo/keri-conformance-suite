@@ -2,7 +2,7 @@
 
 # CESR clause coverage
 
-This report lists every sentence of the pinned CESR specification text that carries an RFC 2119 keyword, with the public cases whose assertions cite it. [README.md](README.md) explains how to read it and how it is generated.
+This report lists every sentence of the pinned CESR specification text that carries an RFC 2119 keyword, with the public cases whose assertions cite it. [README.md](README.md) explains how to read it and how it is generated. How to read an entry is explained in [Reading an entry](README.md#reading-an-entry).
 
 ## v1.0, commit 037129608b9e
 
@@ -14,348 +14,501 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 [Line 3 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L3).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [5](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L5) | All compliant encoded Primitives MUST be Composable. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [5](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L5) | All compliant encoded Primitives MUST be self-framing. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [7](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L7) | All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be Composable. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [7](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L7) | All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be self-framing. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> All compliant encoded Primitives MUST be Composable.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 5](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L5) · MUST · validator · not covered
+
+> All compliant encoded Primitives MUST be self-framing.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 5](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L5) · MUST · validator · not covered
+
+> All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be Composable.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 7](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L7) · MUST · validator · not covered
+
+> All Count Code groups of Primitives or other compositions of Primitives and Count code groups MUST be self-framing.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 7](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L7) · MUST · validator · not covered
 
 #### Transformations between Domains
 
 [Line 15 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L15).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [31](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L31) | All compliant implementations MUST support the transformations between all three domains. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> All compliant implementations MUST support the transformations between all three domains.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 31](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L31) · MUST · validator · not covered
 
 #### Concatenation composability property
 
 [Line 51 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L51).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [73](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L73) | Each and every Primitive or Count Code group of primitives MUST satisfy the [[ref: Concatenation Composability]] property. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Each and every Primitive or Count Code group of primitives MUST satisfy the [[ref: Concatenation Composability]] property.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 73](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L73) · MUST · validator · not covered
 
 #### Concrete Domain representations
 
 [Line 91 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L91).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [93](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L93) | The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 93](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L93) · MUST · validator · not covered
 
 #### Conversions
 
 [Line 124 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L124).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [196](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L196) | Therefore, in order to cleanly capture integer multiples of twenty-four bits of information, Primitive lengths MUST be integer multiples of either four Base64 text characters or three binary bytes in their respective Domains. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [198](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L198) | In other words, all Primitives MUST be aligned on 24-bit boundaries to satisfy the Composability property. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [198](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L198) | This means that the length of any Primitive in the ‘B’ domain MUST be an integer multiple of three binary bytes with a minimum length of three binary bytes. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [198](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L198) | Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Therefore, in order to cleanly capture integer multiples of twenty-four bits of information, Primitive lengths MUST be integer multiples of either four Base64 text characters or three binary bytes in their respective Domains.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 196](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L196) · MUST · validator · not covered
+
+> In other words, all Primitives MUST be aligned on 24-bit boundaries to satisfy the Composability property.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 198](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L198) · MUST · validator · not covered
+
+> This means that the length of any Primitive in the ‘B’ domain MUST be an integer multiple of three binary bytes with a minimum length of three binary bytes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 198](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L198) · MUST · validator · not covered
+
+> Likewise, this means that the length of any Primitive in the ‘T’ domain MUST be an integer multiple of four Base64 characters with a minimum length of four Base64 characters.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 198](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L198) · MUST · validator · not covered
 
 #### Stable Framing Codes in the text domain
 
 [Line 200 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L200).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [202](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L202) | The type portion of all compliant prepended Framing Codes MUST be stable in the Text domain. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The type portion of all compliant prepended Framing Codes MUST be stable in the Text domain.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 202](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L202) · MUST · out-of-scope · not covered
 
 #### Stable type encoding
 
 [Line 204 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L204).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [208](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L208) | Stability also requires that for a given type, the type coding portion MUST consume a fixed integral number of characters in the ‘T’ domain. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [210](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L210) | Therefore, the type portion MUST begin the Framing Code, and the type coding portion MUST consume a fixed integral number of characters in the 'T' domain. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> Stability also requires that for a given type, the type coding portion MUST consume a fixed integral number of characters in the ‘T’ domain.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 208](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L208) · MUST · out-of-scope · not covered
+
+> Therefore, the type portion MUST begin the Framing Code, and the type coding portion MUST consume a fixed integral number of characters in the 'T' domain.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 210](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L210) · MUST · out-of-scope · not covered
 
 #### Stable value encoding
 
 [Line 212 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L212).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [214](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L214) | The combination of Stable leading type encoding and Stable trailing value encoding means that any zero padding MUST appear in the middle of the Primitive, after the type code, but before the value. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [216](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L216) | Therefore the value portion of any primitive MUST be right aligned. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The combination of Stable leading type encoding and Stable trailing value encoding means that any zero padding MUST appear in the middle of the Primitive, after the type code, but before the value.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 214](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L214) · MUST · validator · not covered
+
+> Therefore the value portion of any primitive MUST be right aligned.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 216](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L216) · MUST · validator · not covered
 
 #### Code characters and lead bytes
 
 [Line 218 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L218).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [234](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L234) | Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined. | MUST | validator | 11 | 3 | 0 | MUST 11, SHOULD 3 | both | CESR-0001, CESR-0002, CESR-0003, CESR-0004, CESR-0005, CESR-0006, CESR-0007, CESR-0008, CESR-0009, CESR-0010, CESR-0011, CESR-0038 (inferred), CESR-0039 (inferred), CESR-0040 (inferred) |
+> Therefore all CESR primitives MUST employ [[ref: mid-padding]] as defined.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 234](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L234) · MUST · validator · covered by [CESR-0001](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0001.json), [CESR-0002](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0002.json), [CESR-0003](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0003.json), [CESR-0004](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0004.json), [CESR-0005](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0005.json), [CESR-0006](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0006.json), [CESR-0007](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0007.json), [CESR-0008](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0008.json), [CESR-0009](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0009.json), [CESR-0010](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0010.json), [CESR-0011](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0011.json), [CESR-0038](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0038.json) (inferred), [CESR-0039](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0039.json) (inferred), [CESR-0040](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0040.json) (inferred) · 11 MUST and 3 SHOULD assertions · both polarities
 
 #### Multiple code table approach
 
 [Line 236 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L236).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [240](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L240) | Each code table MUST be uniquely indicated by the first character of the type code in the 'T' domain. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> Each code table MUST be uniquely indicated by the first character of the type code in the 'T' domain.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 240](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L240) · MUST · out-of-scope · not covered
 
 #### Text Code Size
 
 [Line 244 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L244).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [268](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L268) | Because true Composability also requires that the ‘T’ domain value MUST be an integer multiple of 4 characters in length, the size of the text code MUST also be a function of the pad size, `ps`, and hence the length of the raw binary element, `N`. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [268](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L268) | Thus, the size of the text code in Base64 characters MUST be a function of the equivalent pad size determined by the length `N mod 3` of the raw binary value. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> Because true Composability also requires that the ‘T’ domain value MUST be an integer multiple of 4 characters in length, the size of the text code MUST also be a function of the pad size, `ps`, and hence the length of the raw binary element, `N`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 268](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L268) · MUST · out-of-scope · not covered
+
+> Thus, the size of the text code in Base64 characters MUST be a function of the equivalent pad size determined by the length `N mod 3` of the raw binary value.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 268](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L268) · MUST · out-of-scope · not covered
 
 #### Pre-padding a three-byte value
 
 [Line 334 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L334).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [344](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L344) | The prepended type code MUST be an integer multiple of four Base64 characters. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The prepended type code MUST be an integer multiple of four Base64 characters.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 344](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L344) · MUST · out-of-scope · not covered
 
 #### Count or Group Framing Codes
 
 [Line 360 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L360).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [364](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L364) | A Count Code is its own composable Primitive, and its length, therefore, MUST be an integer multiple of four characters in the Text domain or, equivalently, an integer multiple of three bytes in the Binary domain. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [364](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L364) | Because a Count Code's raw binary element value is empty and its length MUST be an integer multiple of four characters (three bytes), its pad size MUST always be 0. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A Count Code is its own composable Primitive, and its length, therefore, MUST be an integer multiple of four characters in the Text domain or, equivalently, an integer multiple of three bytes in the Binary domain.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 364](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L364) · MUST · validator · not covered
+
+> Because a Count Code's raw binary element value is empty and its length MUST be an integer multiple of four characters (three bytes), its pad size MUST always be 0.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 364](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L364) · MUST · validator · not covered
 
 #### Interleaved non-CESR serializations
 
 [Line 368 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L368).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [376](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L376) | When nesting inside CESR groups, a non-native CESR serializations MUST be encoded as a CESR primitive and then enclosed in a special count code for non-native messages. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> When nesting inside CESR groups, a non-native CESR serializations MUST be encoded as a CESR primitive and then enclosed in a special count code for non-native messages.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 376](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L376) · MUST · validator · not covered
 
 #### Performant resynchronization with unique start bits
 
 [Line 386 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L386).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [388](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L388) | A CESR Stream parser MUST support three specific interleaved serializations, namely, JSON, CBOR, and MGPK. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [390](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L390) | Together these impose the constraint that the boundary start bits for interleaved text CESR, binary CESR, JSON, CBOR, and MGPK MUST be mutually distinct. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [406](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L406) | The starting tritet of any cold start (restart) MUST begin with one of eight cases. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A CESR Stream parser MUST support three specific interleaved serializations, namely, JSON, CBOR, and MGPK.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 388](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L388) · MUST · validator · not covered
+
+> Together these impose the constraint that the boundary start bits for interleaved text CESR, binary CESR, JSON, CBOR, and MGPK MUST be mutually distinct.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 390](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L390) · MUST · out-of-scope · not covered
+
+> The starting tritet of any cold start (restart) MUST begin with one of eight cases.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 406](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L406) · MUST · validator · not covered
 
 #### Stream parsing rules
 
 [Line 423 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L423).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [427](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L427) | Each Stream MUST start (restart) with one of eight cases: | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [438](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L438) | When the first Tritet indicates, its JSON, CBOR, or MGPK, the mapping's first field MUST be a Version String that provides the additional information needed to parse the associated encoded field map serialization fully. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [440](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L440) | The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding. | MUST | validator | 1 | 1 | 0 | MUST 1, SHOULD 1 | both | CESR-0030, CESR-0041 (inferred) |
+> Each Stream MUST start (restart) with one of eight cases:
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 427](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L427) · MUST · validator · not covered
+
+> When the first Tritet indicates, its JSON, CBOR, or MGPK, the mapping's first field MUST be a Version String that provides the additional information needed to parse the associated encoded field map serialization fully.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 438](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L438) · MUST · validator · not covered
+
+> The Stream MUST resume with a frame starting byte that begins with one of the 8 Tritets, either another Count Code expressed in the ‘T’ or ‘B’ domain or a new JSON, CBOR, or MGPK encoded mapping or a new annotated encoding.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 440](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L440) · MUST · validator · covered by [CESR-0030](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0030.json), [CESR-0041](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0041.json) (inferred) · 1 MUST and 1 SHOULD assertions · both polarities
 
 #### Code table selectors
 
 [Line 476 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L476).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [478](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L478) | To efficiently parse a Stream of Primitives with types from multiple text code tables, the first character in the text code MUST determine which code table to use, either a default code table or a code table selector character when not the default code table. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [478](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L478) | Thus, the 1-character text code table MUST do double duty. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [478](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L478) | It MUST provide selectors for the different text code tables and MUST also provide type codes for the most popular Primitives that have a pad size of 1 that appears as the default code table. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [484](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L484) | To clarify, the first character of any Primitive MUST be either a selector or a 1-character code type. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) | The Count Code table MUST use the '-' character as its selector. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) | The Op Code table MUST use the '_' character as its selector. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) | The single code character table MUST use the characters [A-Z,a-z]. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) | The other 10 code tables MUST each use one the characters [0-9] as their selector. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> To efficiently parse a Stream of Primitives with types from multiple text code tables, the first character in the text code MUST determine which code table to use, either a default code table or a code table selector character when not the default code table.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 478](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L478) · MUST · validator · not covered
+
+> Thus, the 1-character text code table MUST do double duty.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 478](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L478) · MUST · out-of-scope · not covered
+
+> It MUST provide selectors for the different text code tables and MUST also provide type codes for the most popular Primitives that have a pad size of 1 that appears as the default code table.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 478](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L478) · MUST · out-of-scope · not covered
+
+> To clarify, the first character of any Primitive MUST be either a selector or a 1-character code type.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 484](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L484) · MUST · validator · not covered
+
+> The Count Code table MUST use the '-' character as its selector.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) · MUST · validator · not covered
+
+> The Op Code table MUST use the '_' character as its selector.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) · MUST · validator · not covered
+
+> The single code character table MUST use the characters [A-Z,a-z].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) · MUST · validator · not covered
+
+> The other 10 code tables MUST each use one the characters [0-9] as their selector.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) · MUST · validator · not covered
 
 #### Count Code tables
 
 [Line 579 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L579).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [581](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L581) | Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain. | MUST | validator, security | 2 | 0 | 0 | MUST 2 | positive | CESR-0024, CESR-0027 |
-| [591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) | Each Count Code MUST be aligned on a 24-bit boundary. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) | Count Codes MUST NOT have a value component but MUST have only type and size components. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) | The size component MUST count the Quadlets/triplets in its following group. | MUST | validator, security | 5 | 2 | 1 | MUST 5, SHOULD 2 | both | CESR-0015, CESR-0019, CESR-0025, CESR-0026, CESR-0031 (disputed), CESR-0032 (inferred), CESR-0033 (inferred) |
-| [591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) | Moreover, because Primitives are already guaranteed to be composable, Count Codes do not need to account for pad size because the Count Code MUST be aligned on a 24-bit boundary. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) | Each element in content of a Count Code group MUST be aligned on a 24-bit boundary. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) | The first selector MUST always be the `-` character as the initial selector. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) | When the second character is numeral `0` - `9` or the letters `-` or `_`, then it MUST be a secondary Count Code table selector. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) | When the second character is a letter in the range `A` - `Z` or `a` - `z`, then it MUST be a unique single-character Count Code. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Therefore, the count value MUST be invariant in either Domain and MUST be the number of Quadlets in the 'T' domain and the number of Triplets in the 'B' domain.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 581](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L581) · MUST · validator, security · covered by [CESR-0024](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0024.json), [CESR-0027](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0027.json) · 2 MUST assertions · positive only
+
+> Each Count Code MUST be aligned on a 24-bit boundary.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) · MUST · validator · not covered
+
+> Count Codes MUST NOT have a value component but MUST have only type and size components.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) · MUST · validator · not covered
+
+> The size component MUST count the Quadlets/triplets in its following group.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) · MUST · validator, security · covered by [CESR-0015](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0015.json), [CESR-0019](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0019.json), [CESR-0025](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0025.json), [CESR-0026](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0026.json), [CESR-0031](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0031.json) (disputed), [CESR-0032](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0032.json) (inferred), [CESR-0033](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0033.json) (inferred) · 5 MUST and 2 SHOULD assertions · both polarities
+
+> Moreover, because Primitives are already guaranteed to be composable, Count Codes do not need to account for pad size because the Count Code MUST be aligned on a 24-bit boundary.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) · MUST · validator · not covered
+
+> Each element in content of a Count Code group MUST be aligned on a 24-bit boundary.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 591](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L591) · MUST · validator · not covered
+
+> The first selector MUST always be the `-` character as the initial selector.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) · MUST · validator · not covered
+
+> When the second character is numeral `0` - `9` or the letters `-` or `_`, then it MUST be a secondary Count Code table selector.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) · MUST · validator · not covered
+
+> When the second character is a letter in the range `A` - `Z` or `a` - `z`, then it MUST be a unique single-character Count Code.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) · MUST · validator · not covered
 
 #### Small Count Code table
 
 [Line 597 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L597).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) | Codes in the small Count Code table MUST be each four characters long. | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | CESR-0034 (inferred) |
-| [599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) | The first character MUST be the selector `-`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) | The second character MUST be the Count Code type. the last two characters MUST be the count size as a Base64 encoded integer. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) | The Count Code type MUST be a letter `A` - `Z` or `a` - `z`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [601](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L601) | If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error. | MUST | validator | 0 | 1 | 0 | SHOULD 1 | negative | CESR-0037 (inferred) |
+> Codes in the small Count Code table MUST be each four characters long.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) · MUST · validator · covered by [CESR-0034](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0034.json) (inferred) · 1 SHOULD assertion · negative only
+
+> The first character MUST be the selector `-`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) · MUST · validator · not covered
+
+> The second character MUST be the Count Code type. the last two characters MUST be the count size as a Base64 encoded integer.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) · MUST · validator · not covered
+
+> The Count Code type MUST be a letter `A` - `Z` or `a` - `z`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 599](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L599) · MUST · validator · not covered
+
+> If the second character is not a letter but is a numeral `0` - `9` or `-` or `_`, then it MUST be either a selector for a different Count Code table or an error.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 601](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L601) · MUST · validator · covered by [CESR-0037](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0037.json) (inferred) · 1 SHOULD assertion · negative only
 
 #### Large Count Code table
 
 [Line 603 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L603).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) | Codes in the large Count Code table MUST be each 8 characters long. | MUST | validator | 1 | 1 | 0 | MUST 1, SHOULD 1 | both | CESR-0028, CESR-0035 (inferred) |
-| [605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) | The first two characters MUST be the selectors `--`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) | The next character MUST be the Count Code type. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) | The last five characters MUST be the count size as a Base64 encoded integer. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Codes in the large Count Code table MUST be each 8 characters long.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) · MUST · validator · covered by [CESR-0028](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0028.json), [CESR-0035](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0035.json) (inferred) · 1 MUST and 1 SHOULD assertions · both polarities
+
+> The first two characters MUST be the selectors `--`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) · MUST · validator · not covered
+
+> The next character MUST be the Count Code type.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) · MUST · validator · not covered
+
+> The last five characters MUST be the count size as a Base64 encoded integer.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 605](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L605) · MUST · validator · not covered
 
 #### Protocol genus/version table
 
 [Line 607 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L607).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [609](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L609) | A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets but MUST modify the protocol genus and Version of all the following Count Codes that either appear at the top level until another protocol and genus Count Code is provided or are inside a special enclosing Count Code group. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [609](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L609) | Universal count codes MUST be universal across all genera of Count Code tables. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [611](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L611) | The only table that all protocols MUST share (i.e., has identical values) is the protocol genus and version table (protocol table for short). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [611](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L611) | Secondly, for a given protocol genus, a protocol genus and version code MUST provide the Version of that given protocol's table set. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets but MUST modify the protocol genus and Version of all the following Count Codes that either appear at the top level until another protocol and genus Count Code is provided or are inside a special enclosing Count Code group.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 609](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L609) · MUST · validator, security · not covered
+
+> Universal count codes MUST be universal across all genera of Count Code tables.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 609](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L609) · MUST · out-of-scope · not covered
+
+> The only table that all protocols MUST share (i.e., has identical values) is the protocol genus and version table (protocol table for short).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 611](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L611) · MUST · out-of-scope · not covered
+
+> Secondly, for a given protocol genus, a protocol genus and version code MUST provide the Version of that given protocol's table set.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 611](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L611) · MUST · validator · not covered
 
 #### Protocol genus/version codes
 
 [Line 613 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L613).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [615](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L615) | The format for a protocol genus/version code MUST be as follows: `-_GGGVVV` where `GGG` represents the protocol genus and `VVV` represents the Version of that protocol genus. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [620](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L620) | When a Major change occurs, the Major version number MUST be incremented. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [622](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L622) | When a minor change occurs, the Minor version number MUST be incremented. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The format for a protocol genus/version code MUST be as follows: `-_GGGVVV` where `GGG` represents the protocol genus and `VVV` represents the Version of that protocol genus.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 615](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L615) · MUST · validator · not covered
+
+> When a Major change occurs, the Major version number MUST be incremented.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 620](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L620) · MUST · out-of-scope · not covered
+
+> When a minor change occurs, the Minor version number MUST be incremented.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 622](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L622) · MUST · out-of-scope · not covered
 
 #### Op Code table
 
 [Line 626 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L626).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [628](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L628) | The `_` selector MUST be reserved for the yet-to-be-defined opcode table or tables. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The `_` selector MUST be reserved for the yet-to-be-defined opcode table or tables.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 628](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L628) · MUST · out-of-scope · not covered
 
 #### Encoding scheme table
 
 [Line 632 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L632).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [634](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L634) | A given CESR protocol genus MUST use the table encoding schemes defined above and summarized in the following table: | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> A given CESR protocol genus MUST use the table encoding schemes defined above and summarized in the following table:
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 634](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L634) · MUST · out-of-scope · not covered
 
 #### Encoding Scheme Table
 
 [Line 638 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L638).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) | In this case, the Code Size MUST equal the size of the Selector, Type, and Value Size parts summed together. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> In this case, the Code Size MUST equal the size of the Selector, Type, and Value Size parts summed together.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) · MUST · out-of-scope · not covered
 
 #### Universal Code tables
 
 [Line 797 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L797).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [799](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L799) | All code tables for every protocol genus/version MUST implement the following tables: | MUST | validator | 0 | 0 | 0 | — | — | — |
+> All code tables for every protocol genus/version MUST implement the following tables:
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 799](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L799) · MUST · validator · not covered
 
 #### Universal Code table genus/version codes that allow genus/version override
 
 [Line 812 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L812).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [814](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L814) | All genera MUST have the following codes in their Count Code table. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [814](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L814) | Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code. | MUST | validator, security | 1 | 0 | 0 | MUST 1 | positive | CESR-0029 |
-| [814](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L814) | All other codes MUST NOT support this feature and are characterized as non-overrideable codes. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) | The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) | In other words, the parser MUST only treat the genus/version count code, especially as an override, when it appears as the first count code within the framed material of an overrideable universal count code. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) | Otherwise, there MUST be no special override meaning to the parser. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [820](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L820) | All genera MUST have the following codes in their Count Code table. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> All genera MUST have the following codes in their Count Code table.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 814](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L814) · MUST · validator · not covered
+
+> Should the first Group Code embedded in each of these groups be a genus/version code, then the parser MUST switch code tables to the code table given by that genus/version code.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 814](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L814) · MUST · validator, security · covered by [CESR-0029](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0029.json) · 1 MUST assertion · positive only
+
+> All other codes MUST NOT support this feature and are characterized as non-overrideable codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 814](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L814) · MUST · validator, security · not covered
+
+> The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) · MUST · validator, security · not covered
+
+> In other words, the parser MUST only treat the genus/version count code, especially as an override, when it appears as the first count code within the framed material of an overrideable universal count code.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) · MUST · validator, security · not covered
+
+> Otherwise, there MUST be no special override meaning to the parser.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) · MUST · validator, security · not covered
+
+> All genera MUST have the following codes in their Count Code table.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 820](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L820) · MUST · validator · not covered
 
 #### Universal Code table genus/version codes that do not allow genus/version override
 
 [Line 833 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L833).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [835](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L835) | All genera MUST have the following codes in their Count Code table. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> All genera MUST have the following codes in their Count Code table.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 835](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L835) · MUST · validator · not covered
 
 #### KERI/ACDC Protocol Stack Tables
 
 [Line 856 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L856).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [858](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L858) | A compliant implementation of KERI/ACDC MUST support the following codes | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A compliant implementation of KERI/ACDC MUST support the following codes
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 858](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L858) · MUST · validator · not covered
 
 #### Master code table for genus/version `-_AAACAA` (KERI/ACDC protocol stack Version 2.00)
 
 [Line 872 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L872).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [874](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L874) | This master table includes the REQUIRED Primitive and Count Code types for the KERI/ACDC protocol stack. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [878](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L878) | A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables. | MUST | validator | 1 | 0 | 0 | MUST 1 | positive | CESR-0016 |
+> This master table includes the REQUIRED Primitive and Count Code types for the KERI/ACDC protocol stack.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 874](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L874) · MUST · validator · not covered
+
+> A compliant KERI/ACDC genus MUST have the following codes in its Primitive and Count code tables.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 878](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L878) · MUST · validator · covered by [CESR-0016](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0016.json) · 1 MUST assertion · positive only
 
 #### Indexed code table for genus/version `--AAACAA` (KERI/ACDC protocol stack version 2.00)
 
 [Line 1066 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1066).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1068](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1068) | A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table. | MUST | validator | 6 | 0 | 1 | MUST 6 | positive | CESR-0017, CESR-0018, CESR-0020, CESR-0021, CESR-0022 (disputed), CESR-0023 |
+> A compliant KERI/ACDC genus MUST have the following codes in its contextual indexed code table.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1068](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1068) · MUST · validator · covered by [CESR-0017](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0017.json), [CESR-0018](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0018.json), [CESR-0020](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0020.json), [CESR-0021](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0021.json), [CESR-0022](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0022.json) (disputed), [CESR-0023](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0023.json) · 6 MUST assertions · positive only
 
 #### Version String field
 
 [Line 1123 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1123).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1125](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1125) | Non-CESR serializations, namely, JSON, CBOR, and MGPK when interleaved in a CESR Stream MUST have a Version String as their first field with field label, `v` (lower case "v"). | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Non-CESR serializations, namely, JSON, CBOR, and MGPK when interleaved in a CESR Stream MUST have a Version String as their first field with field label, `v` (lower case "v").
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1125](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1125) · MUST · validator · not covered
 
 #### Version 2.XX string field format
 
 [Line 1127 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1127).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) | The Version String, `v` field MUST be the first field in any top-level field map of any interleaved JSON, CBOR, or MGPK serialization. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) | A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps. | MUST | validator, security | 2 | 1 | 0 | MUST 2, SHOULD 1 | both | CESR-0012, CESR-0014, CESR-0042 (inferred) |
-| [1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) | Each field map in a Stream MUST use one of the serialization types from the JSON, CBOR, or MGPK set. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The Version String, `v` field MUST be the first field in any top-level field map of any interleaved JSON, CBOR, or MGPK serialization.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) · MUST · validator · not covered
+
+> A Stream parser MUST be able to use the Version String to extract and deserialize (deterministically) any serialized Stream field maps.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) · MUST · validator, security · covered by [CESR-0012](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0012.json), [CESR-0014](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0014.json), [CESR-0042](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0042.json) (inferred) · 2 MUST and 1 SHOULD assertions · both polarities
+
+> Each field map in a Stream MUST use one of the serialization types from the JSON, CBOR, or MGPK set.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) · MUST · validator · not covered
 
 #### Legacy Version 1.XX string field format
 
 [Line 1156 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1156).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1158](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1158) | Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events. | MUST | validator | 1 | 0 | 0 | MUST 1 | positive | CESR-0013 |
+> Compliant Version 2.XX implementations MUST support the old Version 1.XX Version String format to properly verify field maps created with 1.XX format events.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1158](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1158) · MUST · validator · covered by [CESR-0013](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0013.json) · 1 MUST assertion · positive only
 
 #### Self-addressing identifier (SAID)
 
 [Line 1176 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1176).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1180](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1180) | SAIDs MUST be encoded as a  CESR [CESR] Primitive. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1186](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1186) | In addition, a SAID MUST include a pre-pended derivation code that specifies the cryptographic algorithm used to generate the digest. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> SAIDs MUST be encoded as a  CESR [CESR] Primitive.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1180](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1180) · MUST · validator · not covered
+
+> In addition, a SAID MUST include a pre-pended derivation code that specifies the cryptographic algorithm used to generate the digest.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1186](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1186) · MUST · validator, security · not covered
 
 #### Generation and Verification Protocols
 
 [Line 1192 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1192).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1194](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1194) | The SAID verification protocol MUST be implemented as follows: | MUST | validator, security | 4 | 0 | 0 | MUST 4 | — | ACDC-0003 (draft), ACDC-0004 (draft), ACDC-0005 (draft), ACDC-0034 (draft) |
+> The SAID verification protocol MUST be implemented as follows:
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1194](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1194) · MUST · validator, security · cited by [ACDC-0003](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/acdc/ACDC-0003.json) (draft), [ACDC-0004](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/acdc/ACDC-0004.json) (draft), [ACDC-0005](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/acdc/ACDC-0005.json) (draft), [ACDC-0034](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/acdc/ACDC-0034.json) (draft) · 4 MUST assertions
 
 #### Description and Usage
 
 [Line 1406 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1406).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1434](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1434) | All path components MUST be an integer when the current context is an array. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> All path components MUST be an integer when the current context is an array.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1434](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1434) · MUST · out-of-scope · not covered
 
 ### Permissions (MAY and OPTIONAL)
 
@@ -363,69 +516,81 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 [Line 204 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L204).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [208](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L208) | Stable type coding in the ‘T’ domain translates to Stable type coding in the ‘B’ domain, except that the type coding portion of the Framing Code MAY or MAY NOT respect byte boundaries. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Stable type coding in the ‘T’ domain translates to Stable type coding in the ‘B’ domain, except that the type coding portion of the Framing Code MAY or MAY NOT respect byte boundaries.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 208](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L208) · MAY · unassessed · not covered
 
 #### Count or Group Framing Codes
 
 [Line 360 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L360).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [366](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L366) | To elaborate, Count Codes MAY be used as separators to better organize a Stream of Primitives or to interleave non-native (non-CESR) serializations. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> To elaborate, Count Codes MAY be used as separators to better organize a Stream of Primitives or to interleave non-native (non-CESR) serializations.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 366](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L366) · MAY · unassessed · not covered
 
 #### Code table selectors
 
 [Line 476 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L476).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) | In summary, a compliant CESR implementation MAY use up to 13 standard (non-special context) code tables. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> In summary, a compliant CESR implementation MAY use up to 13 standard (non-special context) code tables.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 487](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L487) · MAY · unassessed · not covered
 
 #### Count Code tables
 
 [Line 579 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L579).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) | Count Code tables MAY use a nested set of selectors. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) | The following character MAY be either a selector for another Count Code table or MAY be the type for the small Count Code table. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Count Code tables MAY use a nested set of selectors.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) · MAY · unassessed · not covered
+
+> The following character MAY be either a selector for another Count Code table or MAY be the type for the small Count Code table.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 594](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L594) · MAY · unassessed · not covered
 
 #### Protocol genus/version table
 
 [Line 607 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L607).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [609](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L609) | The protocol genus/version table is special because its codes modify the Count Code groups that MAY appear at the top level of the stream or the Count code groups that MAY appear inside three special (universal) enclosing Count Code groups. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [611](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L611) | All other entries in the small and large count code tables and all other tables MAY vary by protocol. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The protocol genus/version table is special because its codes modify the Count Code groups that MAY appear at the top level of the stream or the Count code groups that MAY appear inside three special (universal) enclosing Count Code groups.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 609](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L609) · MAY · unassessed · not covered
+
+> All other entries in the small and large count code tables and all other tables MAY vary by protocol.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 611](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L611) · MAY · unassessed · not covered
 
 #### Encoding Scheme Table
 
 [Line 638 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L638).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) | Special fixed-size codes MAY convey values in the value size part of the code. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) | This means the converted raw part MAY be empty. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) | In that case, a fixed-sized code but with a non-empty Value Size, the value of the Value Size part MAY have special meaning. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Special fixed-size codes MAY convey values in the value size part of the code.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) · MAY · unassessed · not covered
+
+> This means the converted raw part MAY be empty.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) · MAY · unassessed · not covered
+
+> In that case, a fixed-sized code but with a non-empty Value Size, the value of the Value Size part MAY have special meaning.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 660](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L660) · MAY · unassessed · not covered
 
 #### Indexed codes
 
 [Line 682 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L682).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [684](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L684) | A given CESR Protocol Genus MAY define other context-specific coding schemes. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> A given CESR Protocol Genus MAY define other context-specific coding schemes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 684](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L684) · MAY · unassessed · not covered
 
 #### Version 2.XX string field format
 
 [Line 1127 of the specification](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1127).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) | Each field map MAY have a different serialization type. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Each field map MAY have a different serialization type.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1129](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L1129) · MAY · unassessed · not covered
 
 ### Practice (any keyword, in text that states common practice)
 

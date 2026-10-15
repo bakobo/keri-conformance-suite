@@ -2,7 +2,7 @@
 
 # KERI clause coverage
 
-This report lists every sentence of the pinned KERI specification text that carries an RFC 2119 keyword, with the public cases whose assertions cite it. [README.md](README.md) explains how to read it and how it is generated.
+This report lists every sentence of the pinned KERI specification text that carries an RFC 2119 keyword, with the public cases whose assertions cite it. [README.md](README.md) explains how to read it and how it is generated. How to read an entry is explained in [Reading an entry](README.md#reading-an-entry).
 
 ## v1.0.1, commit 71cb54ebb445
 
@@ -14,847 +14,1321 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 [Line 8 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L8).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [17](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L17) | The execution of these functions, including the associated code and data, SHOULD be protected by the controller using best practices. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The execution of these functions, including the associated code and data, SHOULD be protected by the controller using best practices.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 17](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L17) · SHOULD · out-of-scope · not covered
 
 #### Indirect exchange via witnesses and watchers
 
 [Line 39 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L39).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [51](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L51) | These variants are, by nature, duplicitous; in order to be verifiable, a duplicitous variant MUST be properly fully signed and witnessed. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [53](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L53) | An honest validator MUST trust when there is no evidence of duplicity and MUST NOT trust when there is any evidence of duplicity unless and until the duplicity has been reconciled. | MUST | untestable: Trust is the relying party's decision about key state; the adapter protocol reports what a validator accepted, not whether it trusts the result., security | 0 | 0 | 0 | — | — | — |
+> These variants are, by nature, duplicitous; in order to be verifiable, a duplicitous variant MUST be properly fully signed and witnessed.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 51](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L51) · MUST · out-of-scope · not covered
+
+> An honest validator MUST trust when there is no evidence of duplicity and MUST NOT trust when there is any evidence of duplicity unless and until the duplicity has been reconciled.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 53](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L53) · MUST · untestable: Trust is the relying party's decision about key state; the adapter protocol reports what a validator accepted, not whether it trusts the result., security · not covered
 
 #### End-verifiable
 
 [Line 87 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L87).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [103](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L103) | End verifiability implies that the infrastructure needed to verify MUST be under the ultimate control of the verifier. | MUST | untestable: An architectural property of a deployment, with no behaviour of a validator for a case to observe. | 0 | 0 | 0 | — | — | — |
+> End verifiability implies that the infrastructure needed to verify MUST be under the ultimate control of the verifier.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 103](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L103) · MUST · untestable: An architectural property of a deployment, with no behaviour of a validator for a case to observe. · not covered
 
 #### Self-certifying identifier (SCID)
 
 [Line 105 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L105).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [107](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L107) | A basic SCID is ephemeral i.e., it does not support Rotation of its keypairs in the event of key weakness or compromise and therefore MUST be abandoned once the controlling private key becomes weakened or compromised from exposure. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> A basic SCID is ephemeral i.e., it does not support Rotation of its keypairs in the event of key weakness or compromise and therefore MUST be abandoned once the controlling private key becomes weakened or compromised from exposure.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 107](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L107) · MUST · out-of-scope · not covered
 
 #### Qualified Cryptographic Primitives
 
 [Line 117 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L117).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [119](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L119) | All Cryptographic primitives in KERI MUST be expressed using the CESR (Compact Event Streaming Representation) protocol [[1](#CESR)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> All Cryptographic primitives in KERI MUST be expressed using the CESR (Compact Event Streaming Representation) protocol [[1](#CESR)].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 119](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L119) · MUST · validator · not covered
 
 #### KERI’s secure bindings
 
 [Line 127 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L127).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [142](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L142) | The public key is derived from the private key or seed using a one-way derivation that MUST have a minimum cryptographic strength of approximately 128 bits (nominally). | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
-| [144](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L144) | Because the private key material MUST be kept secret (by definition), typically in a secure data store, the management of those secrets could be an important consideration. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
-| [148](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L148) | Associated with each identifier (AID) is incepting information that MUST include a list of the set of qualified public keys from the controlling keypairs. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L154) | Essentially, when non-transferable, the identifier's lifespan is ephemeral, not persistent, because any weakening or compromise of the controlling keypair means that the identifier MUST be abandoned. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The public key is derived from the private key or seed using a one-way derivation that MUST have a minimum cryptographic strength of approximately 128 bits (nominally).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 142](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L142) · MUST · out-of-scope, security · not covered
+
+> Because the private key material MUST be kept secret (by definition), typically in a secure data store, the management of those secrets could be an important consideration.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 144](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L144) · MUST · out-of-scope, security · not covered
+
+> Associated with each identifier (AID) is incepting information that MUST include a list of the set of qualified public keys from the controlling keypairs.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 148](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L148) · MUST · validator · not covered
+
+> Essentially, when non-transferable, the identifier's lifespan is ephemeral, not persistent, because any weakening or compromise of the controlling keypair means that the identifier MUST be abandoned.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L154) · MUST · out-of-scope · not covered
 
 #### Tetrad bindings
 
 [Line 162 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L162).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [172](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L172) | The Inception event MUST include the list of controlling public keys and a signature threshold and be signed by a set of private keys from the controlling keypairs that satisfy that threshold. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [172](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L172) | Additionally, for transferability (persistence across Rotation), the Inception event MUST include a list of digests of the set of pre-rotated public keys and a pre-rotated signature threshold that will become the controlling (signing) set of key keypairs and threshold after a Rotation. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [174](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L174) | A Rotation event MUST include a list of the set of pre-rotated public keys (not their digests), thereby exposing them, and be signed by a set of private keys from these newly exposed newly controlling but pre-rotated keypairs that satisfy the pre-rotated threshold. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [174](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L174) | The Rotation event MUST include a list of the digests of a new set of pre-rotated keys as well as the signature threshold for the set of pre-rotated keypairs. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [176](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L176) | Each event in a KEL MUST include an integer sequence number that is one greater than the previous event. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [176](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L176) | Each event after the Inception event also MUST include a cryptographic digest of the previous event. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [176](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L176) | The only valid Rotation event that MAY follow the Inception event MUST include the pre-rotated keys. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [178](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L178) | In KERI, there MUST be at most one valid KEL for any identifier or none at all. | MUST | validator, security | 0 | 4 | 0 | SHOULD 13 | both | KERI-0042 (inferred), KERI-0044 (inferred), KERI-0045 (inferred), KERI-0050 (inferred) |
+> The Inception event MUST include the list of controlling public keys and a signature threshold and be signed by a set of private keys from the controlling keypairs that satisfy that threshold.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 172](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L172) · MUST · validator, security · not covered
+
+> Additionally, for transferability (persistence across Rotation), the Inception event MUST include a list of digests of the set of pre-rotated public keys and a pre-rotated signature threshold that will become the controlling (signing) set of key keypairs and threshold after a Rotation.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 172](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L172) · MUST · validator · not covered
+
+> A Rotation event MUST include a list of the set of pre-rotated public keys (not their digests), thereby exposing them, and be signed by a set of private keys from these newly exposed newly controlling but pre-rotated keypairs that satisfy the pre-rotated threshold.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 174](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L174) · MUST · validator, security · not covered
+
+> The Rotation event MUST include a list of the digests of a new set of pre-rotated keys as well as the signature threshold for the set of pre-rotated keypairs.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 174](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L174) · MUST · validator · not covered
+
+> Each event in a KEL MUST include an integer sequence number that is one greater than the previous event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 176](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L176) · MUST · validator · not covered
+
+> Each event after the Inception event also MUST include a cryptographic digest of the previous event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 176](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L176) · MUST · validator · not covered
+
+> The only valid Rotation event that MAY follow the Inception event MUST include the pre-rotated keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 176](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L176) · MUST · validator, security · not covered
+
+> In KERI, there MUST be at most one valid KEL for any identifier or none at all.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 178](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L178) · MUST · validator, security · covered by [KERI-0042](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0042.json) (inferred), [KERI-0044](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0044.json) (inferred), [KERI-0045](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0045.json) (inferred), [KERI-0050](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0050.json) (inferred) · 13 SHOULD assertions · both polarities
 
 #### KERI field labels for data structures
 
 [Line 226 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L226).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [251](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L251) | A field label MAY have different values in different contexts but MUST NOT have a different field value type. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [253](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L253) | Because the order of field appearance MUST be enforced in all KERI data structures, whenever a field appears (in a given Message or block in a Message), the message in which a label appears MUST provide the necessary context to determine the meaning of that field fully and hence the field value type and associated semantics. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A field label MAY have different values in different contexts but MUST NOT have a different field value type.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 251](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L251) · MUST · validator · not covered
+
+> Because the order of field appearance MUST be enforced in all KERI data structures, whenever a field appears (in a given Message or block in a Message), the message in which a label appears MUST provide the necessary context to determine the meaning of that field fully and hence the field value type and associated semantics.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 253](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L253) · MUST · validator · not covered
 
 #### Special label ordering requirements
 
 [Line 259 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L259).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [261](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L261) | The top-level fields of each message type MUST appear in a specific order. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [261](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L261) | All top-level fields are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of each message type MUST appear in a specific order.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 261](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L261) · MUST · validator · not covered
+
+> All top-level fields are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 261](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L261) · MUST · validator · not covered
 
 #### Version string field
 
 [Line 263 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L263).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [265](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L265) | The version string, `v`, field MUST be the first field in any top-level KERI field map encoded in JSON, CBOR, or MGPK as a message body [[RFC4627](#RFC4627)] [[2](#CBOR)] [[RFC8949](#RFC8949)] [[3](#MessagePack)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [267](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L267) | To elaborate, the protocol field, `PPPP` value in the Version String MUST be `KERI` for the KERI protocol. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [267](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L267) | The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the KERI protocol [[1](#CESR)] used by the associated message. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [267](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L267) | The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The version string, `v`, field MUST be the first field in any top-level KERI field map encoded in JSON, CBOR, or MGPK as a message body [[RFC4627](#RFC4627)] [[2](#CBOR)] [[RFC8949](#RFC8949)] [[3](#MessagePack)].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 265](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L265) · MUST · validator · not covered
+
+> To elaborate, the protocol field, `PPPP` value in the Version String MUST be `KERI` for the KERI protocol.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 267](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L267) · MUST · validator · not covered
+
+> The protocol version field, `Mmm`, MUST encode the current major `M` and minor `mm` version of the KERI protocol [[1](#CESR)] used by the associated message.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 267](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L267) · MUST · validator · not covered
+
+> The CESR genus version field `Ggg` MUST encode the major `G` and minor `gg` version of the CESR protocol used to encode the associated message [[1](#CESR)].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 267](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L267) · MUST · validator · not covered
 
 #### Legacy version string field format
 
 [Line 271 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L271).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [273](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L273) | Compliant KERI version 2.XX implementations MUST support the old KERI version 1.x version string format to properly verify message bodies created with 1.x format events. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [273](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L273) | The protocol field, `PPPP` value in the version string MUST be `KERI` for the KERI protocol. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [273](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L273) | The version field, `vv`, MUST encode the old version of the KERI protocol [[1](#CESR)]. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Compliant KERI version 2.XX implementations MUST support the old KERI version 1.x version string format to properly verify message bodies created with 1.x format events.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 273](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L273) · MUST · validator · not covered
+
+> The protocol field, `PPPP` value in the version string MUST be `KERI` for the KERI protocol.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 273](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L273) · MUST · validator · not covered
+
+> The version field, `vv`, MUST encode the old version of the KERI protocol [[1](#CESR)].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 273](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L273) · MUST · validator · not covered
 
 #### Message type  field
 
 [Line 275 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L275).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [277](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L277) | The message type, `t` field value MUST be a three-character string that provides the message type. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The message type, `t` field value MUST be a three-character string that provides the message type.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 277](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L277) · MUST · validator · not covered
 
 #### SAID fields
 
 [Line 300 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L300).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [310](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L310) | When the prior `p` field appears in a key event message, then its value MUST be the SAID of the key event message whose sequence number is one less than the sequence number of its own key event message. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> When the prior `p` field appears in a key event message, then its value MUST be the SAID of the key event message whose sequence number is one less than the sequence number of its own key event message.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 310](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L310) · MUST · validator · not covered
 
 #### AID fields
 
 [Line 312 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L312).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [314](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L314) | Some fields, such as the `i` and `di` fields, MUST each have an AID as its value. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [318](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L318) | In those cases, its meaning SHOULD be determined by the context of its appearance. | SHOULD | untestable: Says how a reader interprets a field that appears in other places, with no behaviour a case could check. | 0 | 0 | 0 | — | — | — |
+> Some fields, such as the `i` and `di` fields, MUST each have an AID as its value.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 314](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L314) · MUST · validator · not covered
+
+> In those cases, its meaning SHOULD be determined by the context of its appearance.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 318](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L318) · SHOULD · untestable: Says how a reader interprets a field that appears in other places, with no behaviour a case could check. · not covered
 
 #### Sequence number field
 
 [Line 321 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L321).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [323](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L323) | The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [323](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L323) | The Sequence number value of all subsequent key events in a KEL MUST be 1 greater than the previous event. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [323](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L323) | The maximum value of a sequence number MUST be `ffffffffffffffffffffffffffffffff` which is the hex encoding of `2^128 - 1 = 340282366920938463463374607431768211455`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 323](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L323) · MUST · validator · not covered
+
+> The Sequence number value of all subsequent key events in a KEL MUST be 1 greater than the previous event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 323](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L323) · MUST · validator · not covered
+
+> The maximum value of a sequence number MUST be `ffffffffffffffffffffffffffffffff` which is the hex encoding of `2^128 - 1 = 340282366920938463463374607431768211455`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 323](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L323) · MUST · validator · not covered
 
 #### Key list field
 
 [Line 333 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L333).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [335](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L335) | The Key, `k` field value MUST NOT be empty. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> The Key, `k` field value MUST NOT be empty.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 335](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L335) · MUST · validator, security · not covered
 
 #### Next key digest list field
 
 [Line 338 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L338).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [340](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L340) | When the Next, `n` field value in an Inception or Delegated Inception event is an empty list, then the associated AID MUST be deemed non-transferable, and no more key events MUST be allowed in that KEL. | MUST | validator, security | 2 | 0 | 0 | MUST 4 | negative | KERI-0024, KERI-0025 |
-| [340](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L340) | When the Next, `n` field value in a Rotation or Delegated Rotation Event event is an empty list, then the associated AID MUST be deemed abandoned, and no more key events MUST be allowed in its KEL. | MUST | validator, security | 1 | 0 | 0 | MUST 2 | negative | KERI-0026 |
+> When the Next, `n` field value in an Inception or Delegated Inception event is an empty list, then the associated AID MUST be deemed non-transferable, and no more key events MUST be allowed in that KEL.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 340](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L340) · MUST · validator, security · covered by [KERI-0024](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0024.json), [KERI-0025](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0025.json) · 4 MUST assertions · negative only
+
+> When the Next, `n` field value in a Rotation or Delegated Rotation Event event is an empty list, then the associated AID MUST be deemed abandoned, and no more key events MUST be allowed in its KEL.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 340](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L340) · MUST · validator, security · covered by [KERI-0026](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0026.json) · 2 MUST assertions · negative only
 
 #### Backer threshold field
 
 [Line 343 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L343).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [345](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L345) | This is the number of backers in the backer list that MUST support a key event for it to be valid. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [349](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L349) | When the Backer, `b` field value is an empty list, then the Backer Threshold, bt, field value MUST be `0` (hex-encoded 0). | MUST | validator | 0 | 0 | 0 | — | — | — |
+> This is the number of backers in the backer list that MUST support a key event for it to be valid.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 345](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L345) · MUST · validator, security · not covered
+
+> When the Backer, `b` field value is an empty list, then the Backer Threshold, bt, field value MUST be `0` (hex-encoded 0).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 349](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L349) · MUST · validator · not covered
 
 #### Backer list
 
 [Line 351 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L351).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) | A given AID MUST NOT appear more than once in any Backer list. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) | When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A given AID MUST NOT appear more than once in any Backer list.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) · MUST · validator, security · not covered
+
+> When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) · MUST · validator · not covered
 
 #### Backer remove list
 
 [Line 356 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L356).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [358](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L358) | A given AID MUST not appear more than once in any Backer Remove list. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [358](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L358) | The AIDs in the Backer Remove, `br` list MUST be removed before any AIDs in the Backer Add, `ba` list are appended. | MUST | validator | 1 | 0 | 0 | MUST 1 | positive | KERI-0041 |
+> A given AID MUST not appear more than once in any Backer Remove list.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 358](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L358) · MUST · validator · not covered
+
+> The AIDs in the Backer Remove, `br` list MUST be removed before any AIDs in the Backer Add, `ba` list are appended.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 358](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L358) · MUST · validator · covered by [KERI-0041](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0041.json) · 1 MUST assertion · positive only
 
 #### Backer add list
 
 [Line 360 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L360).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [362](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L362) | A given AID MUST NOT appear more than once in any Backer Add list. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [362](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L362) | The AIDs in the Backer Add, `ba` list MUST NOT be appended until all AIDs in the Backer Remove, `br` list have been removed. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A given AID MUST NOT appear more than once in any Backer Add list.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 362](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L362) · MUST · validator, security · not covered
+
+> The AIDs in the Backer Add, `ba` list MUST NOT be appended until all AIDs in the Backer Remove, `br` list have been removed.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 362](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L362) · MUST · validator · not covered
 
 #### Configuration traits field
 
 [Line 365 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L365).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [367](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L367) | Some configuration traits MUST only appear in the Inception (delegated or not) for the KEL. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [367](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L367) | A Validator of an event MUST invalidate, i.e., drop any events that do not satisfy the constraints imposed by their configuration traits. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [371](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L371) | \|`EO`\| Establishment-Only \| True \|Only establishment events MUST appear in this KEL \| | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [372](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L372) | \|`DND`\| Do-Not-Delegate \| True \| This KEL MUST NOT act as a delegator of delegated AIDs\| | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [374](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L374) | \|`RB`\| Registrar-Backers \| False \| The backer list MUST provide registrar backer AIDs \| | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [377](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L377) | This means all events MUST be signed by first-time, one-time pre-rotated keys. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [377](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L377) | A Validator MUST invalidate, i.e., drop any non-establishment events. | MUST | validator, security | 2 | 0 | 0 | MUST 4 | negative | KERI-0027, KERI-0028 |
-| [379](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L379) | A Validator MUST invalidate, i.e., drop any delegated events whose Delegator has this configuration trait. | MUST | validator, security | 1 | 0 | 0 | MUST 2 | negative | KERI-0029 |
-| [383](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L383) | The event MUST also include Registrar Backer Seal for each registrar backer in the list. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Some configuration traits MUST only appear in the Inception (delegated or not) for the KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 367](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L367) · MUST · validator · not covered
+
+> A Validator of an event MUST invalidate, i.e., drop any events that do not satisfy the constraints imposed by their configuration traits.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 367](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L367) · MUST · validator, security · not covered
+
+> \|`EO`\| Establishment-Only \| True \|Only establishment events MUST appear in this KEL \|
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 371](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L371) · MUST · validator, security · not covered
+
+> \|`DND`\| Do-Not-Delegate \| True \| This KEL MUST NOT act as a delegator of delegated AIDs\|
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 372](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L372) · MUST · validator, security · not covered
+
+> \|`RB`\| Registrar-Backers \| False \| The backer list MUST provide registrar backer AIDs \|
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 374](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L374) · MUST · validator · not covered
+
+> This means all events MUST be signed by first-time, one-time pre-rotated keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 377](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L377) · MUST · validator, security · not covered
+
+> A Validator MUST invalidate, i.e., drop any non-establishment events.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 377](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L377) · MUST · validator, security · covered by [KERI-0027](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0027.json), [KERI-0028](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0028.json) · 4 MUST assertions · negative only
+
+> A Validator MUST invalidate, i.e., drop any delegated events whose Delegator has this configuration trait.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 379](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L379) · MUST · validator, security · covered by [KERI-0029](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0029.json) · 2 MUST assertions · negative only
+
+> The event MUST also include Registrar Backer Seal for each registrar backer in the list.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 383](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L383) · MUST · validator · not covered
 
 #### Seals
 
 [Line 393 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L393).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [401](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L401) | When a seal appears in a message whose serialization KIND is not CESR native, i.e. is one of JSON, CBOR, or MGPK then it MUST be encoded as a field map in the message's serialization format. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [403](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L403) | When a seal appears either as an attachment to a message of any serialization kind or inside a message whose serialization KIND is CESR native, then the seal MUST be encoded using CESR with the appropriate CESR count (group) code for that type of seal. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> When a seal appears in a message whose serialization KIND is not CESR native, i.e. is one of JSON, CBOR, or MGPK then it MUST be encoded as a field map in the message's serialization format.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 401](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L401) · MUST · validator · not covered
+
+> When a seal appears either as an attachment to a message of any serialization kind or inside a message whose serialization KIND is CESR native, then the seal MUST be encoded using CESR with the appropriate CESR count (group) code for that type of seal.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 403](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L403) · MUST · validator · not covered
 
 #### Source Event seal
 
 [Line 448 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L448).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [452](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L452) | The fields in an Event seal MUST appear in the following order `[ s, d]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The fields in an Event seal MUST appear in the following order `[ s, d]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 452](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L452) · MUST · validator · not covered
 
 #### Key Event seal
 
 [Line 465 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L465).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [467](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L467) | The fields in an Event seal MUST appear in the following order `[ i, s, d]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The fields in an Event seal MUST appear in the following order `[ i, s, d]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 467](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L467) · MUST · validator · not covered
 
 #### Registrar Backer seal
 
 [Line 492 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L492).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L494) | When a ledger backer or [[ref: Backer]]s are used as a secondary root-of-trust instead of a [[ref: Witness]] pool, then a backer seal is REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L494) | In addition to the backer seal, the establishment event that designates the backer MUST also include a configuration trait (see below) of `RB` for registrar backers. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [498](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L498) | The `d` field value in the seal MUST be the SAID of the associated metadata [[ref: SAD]] that provides the backer registrar metadata. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [498](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L498) | The nested `d` SAID of this `sd` block in the bare message MUST be the `d` field in the associated seal. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [500](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L500) | To reiterate, the seal MUST appear in the same establishment event that designates the registrar backer identifier as a backer identifier in the event's backer's list along with the config trait `RB`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> When a ledger backer or [[ref: Backer]]s are used as a secondary root-of-trust instead of a [[ref: Witness]] pool, then a backer seal is REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L494) · MUST · validator · not covered
+
+> In addition to the backer seal, the establishment event that designates the backer MUST also include a configuration trait (see below) of `RB` for registrar backers.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L494) · MUST · validator · not covered
+
+> The `d` field value in the seal MUST be the SAID of the associated metadata [[ref: SAD]] that provides the backer registrar metadata.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 498](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L498) · MUST · out-of-scope · not covered
+
+> The nested `d` SAID of this `sd` block in the bare message MUST be the `d` field in the associated seal.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 498](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L498) · MUST · out-of-scope · not covered
+
+> To reiterate, the seal MUST appear in the same establishment event that designates the registrar backer identifier as a backer identifier in the event's backer's list along with the config trait `RB`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 500](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L500) · MUST · validator · not covered
 
 #### Typed seal
 
 [Line 511 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L511).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [522](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L522) | The fields in a typed MUST appear in the following order `[ t, d]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The fields in a typed MUST appear in the following order `[ t, d]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 522](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L522) · MUST · validator · not covered
 
 #### Key event messages
 
 [Line 537 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L537).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [539](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L539) | A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 539](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L539) · MUST · validator · not covered
 
 #### Inception Event Message Body
 
 [Line 554 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L554).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) | The top-level fields of an Inception, `icp`, event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) | Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of an Inception, `icp`, event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) · MUST · validator · not covered
+
+> Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 556](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L556) · MUST · validator · not covered
 
 #### Delegated Inception Event Message Body
 
 [Line 621 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L621).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) | The top-level fields of a Delegated Inception, `dip` event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a, di]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) | Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Delegated Inception, `dip` event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a, di]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) · MUST · validator · not covered
+
+> Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 623](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L623) · MUST · validator · not covered
 
 #### Interaction Event Message Body
 
 [Line 625 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L625).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) | The top-level fields of an Interaction, `ixn` event message body MUST appear in the following order: `[ v, t, d, i, s, p, a]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) | Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of an Interaction, `ixn` event message body MUST appear in the following order: `[ v, t, d, i, s, p, a]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) · MUST · validator · not covered
+
+> Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 627](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L627) · MUST · validator · not covered
 
 #### Rotation Event Message Body
 
 [Line 663 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L663).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) | The top-level fields of a Rotation, `rot` event message body MUST appear in the following order: `[ v, t, d, i, s, p, kt, k, nt, n, bt, br, ba, c, a]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) | Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Rotation, `rot` event message body MUST appear in the following order: `[ v, t, d, i, s, p, kt, k, nt, n, bt, br, ba, c, a]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) · MUST · validator · not covered
+
+> Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 665](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L665) · MUST · validator · not covered
 
 #### Delegated Inception Event Message Body
 
 [Line 744 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L744).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) | The top-level fields of a Delegated Inception, `dip` event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a, di]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) | Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Delegated Inception, `dip` event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a, di]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) · MUST · validator · not covered
+
+> Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 746](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L746) · MUST · validator · not covered
 
 #### Delegated Rotation Event Message Body
 
 [Line 813 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L813).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) | The top-level fields of a Delegated Rotation, `drt` event message body MUST appear in the following order: `[ v, t, d, i, s, p, kt, k, nt, n, bt, br, ba, c, a]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) | Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Delegated Rotation, `drt` event message body MUST appear in the following order: `[ v, t, d, i, s, p, kt, k, nt, n, bt, br, ba, c, a]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) · MUST · validator · not covered
+
+> Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 815](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L815) · MUST · validator · not covered
 
 #### Receipt Message Body
 
 [Line 878 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L878).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [880](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L880) | The Receipt Message types MUST be as follows `[rct]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) | The top-level fields of a Receipt, `rct` message body MUST appear in the following order: `[ v, t, d, i, s]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The Receipt Message types MUST be as follows `[rct]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 880](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L880) · MUST · validator · not covered
+
+> The top-level fields of a Receipt, `rct` message body MUST appear in the following order: `[ v, t, d, i, s]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) · MUST · validator · not covered
+
+> Signatures and Seals MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 882](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L882) · MUST · validator · not covered
 
 #### Routed Messages
 
 [Line 913 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L913).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [915](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L915) | The Routed Messages MUST include a route, `r` field, and MAY include a return route, `rr` field. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [915](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L915) | The Routed Message types MUST be as follows `[qry, rpy, pro, bar, xip, exn]`. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The Routed Messages MUST include a route, `r` field, and MAY include a return route, `rr` field.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 915](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L915) · MUST · out-of-scope · not covered
+
+> The Routed Message types MUST be as follows `[qry, rpy, pro, bar, xip, exn]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 915](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L915) · MUST · out-of-scope · not covered
 
 #### Controller AID field
 
 [Line 965 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L965).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [967](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L967) | In those cases, its meaning SHOULD be determined by the context of its appearance. | SHOULD | untestable: Says how a reader interprets a field that appears in other places, with no behaviour a case could check. | 0 | 0 | 0 | — | — | — |
+> In those cases, its meaning SHOULD be determined by the context of its appearance.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 967](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L967) · SHOULD · untestable: Says how a reader interprets a field that appears in other places, with no behaviour a case could check. · not covered
 
 #### Prior event SAID field
 
 [Line 973 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L973).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [975](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L975) | When the prior `p` field appears in an exchange message, its value MUST be the SAID of the immediately preceding exchange message in that transaction. | MUST | validator, security | 0 | 1 | 1 | SHOULD 1 | — | KERI-0072 (inferred, disputed) |
-| [975](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L975) | When an exchange message is not part of a transaction, then the prior `p` field value MUST be the empty string. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> When the prior `p` field appears in an exchange message, its value MUST be the SAID of the immediately preceding exchange message in that transaction.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 975](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L975) · MUST · validator, security · cited by [KERI-0072](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0072.json) (inferred, disputed) · 1 SHOULD assertion
+
+> When an exchange message is not part of a transaction, then the prior `p` field value MUST be the empty string.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 975](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L975) · MUST · validator · not covered
 
 #### Exchange identifier field
 
 [Line 977 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L977).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [979](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L979) | The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction. | MUST | validator, security | 0 | 1 | 1 | SHOULD 1 | — | KERI-0073 (inferred, disputed) |
-| [979](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L979) | The first message MUST be an Exchange Inception message with type `xip`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [979](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L979) | When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string. | MUST | validator | 0 | 1 | 1 | SHOULD 1 | — | KERI-0074 (inferred, disputed) |
+> The [[ref: Exchange Identifier]] SAID, `x` field value MUST be the SAID, `d` field value of the first message in the set of exchange messages that constitute a transaction.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 979](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L979) · MUST · validator, security · cited by [KERI-0073](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0073.json) (inferred, disputed) · 1 SHOULD assertion
+
+> The first message MUST be an Exchange Inception message with type `xip`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 979](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L979) · MUST · validator · not covered
+
+> When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 979](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L979) · MUST · validator · cited by [KERI-0074](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0074.json) (inferred, disputed) · 1 SHOULD assertion
 
 #### Datetime, `dt` field
 
 [Line 982 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L982).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [983](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L983) | The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 983](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L983) · MUST · out-of-scope · not covered
 
 #### Query Message Body
 
 [Line 1006 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1006).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) | The top-level fields of a Query, `qry` message body MUST appear in the following order: `[ v, t, d, dt, r, rr, q]`. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) | All are REQUIRED. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) | No other top-level fields are allowed (MUST NOT appear). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Query, `qry` message body MUST appear in the following order: `[ v, t, d, dt, r, rr, q]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) · MUST · out-of-scope · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) · MUST · out-of-scope · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) · MUST · out-of-scope · not covered
+
+> Signatures and Seals MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1008](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1008) · MUST · out-of-scope · not covered
 
 #### Reply Message Body
 
 [Line 1044 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1044).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) | The top-level fields of a Reply, `rpy` message body MUST appear in the following order: `[ v, t, d, dt, r, a]`. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) | All are REQUIRED. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) | No other top-level fields are allowed (MUST NOT appear). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Reply, `rpy` message body MUST appear in the following order: `[ v, t, d, dt, r, a]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) · MUST · out-of-scope · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) · MUST · out-of-scope · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) · MUST · out-of-scope · not covered
+
+> Signatures and Seals MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1046](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1046) · MUST · out-of-scope · not covered
 
 #### Prod Message Body
 
 [Line 1081 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1081).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) | The top-level fields of a Prod, `pro` message body MUST appear in the following order: `[ v, t, d, dt, r, rr, q]`. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) | All are REQUIRED. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) | No other top-level fields are allowed (MUST NOT appear). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Prod, `pro` message body MUST appear in the following order: `[ v, t, d, dt, r, rr, q]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) · MUST · out-of-scope · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) · MUST · out-of-scope · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) · MUST · out-of-scope · not covered
+
+> Signatures and Seals MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1083](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1083) · MUST · out-of-scope · not covered
 
 #### Bare Message Body
 
 [Line 1116 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1116).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) | The top-level fields of a Reply, `bar` message body MUST appear in the following order: `[ v, t, d, dt, r, a]`. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) | All are REQUIRED. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) | No other top-level fields are allowed (MUST NOT appear). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The top-level fields of a Reply, `bar` message body MUST appear in the following order: `[ v, t, d, dt, r, a]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) · MUST · out-of-scope · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) · MUST · out-of-scope · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) · MUST · out-of-scope · not covered
+
+> Signatures and Seals MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1118](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1118) · MUST · out-of-scope · not covered
 
 #### Exchange Transaction Inception Message Body
 
 [Line 1152 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1152).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) | The top-level fields of an Exchange Transaction Incept, `xip` message body MUST appear in the following order: `[ v, t, d, u, i, ri, dt, r, q, a]`. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of an Exchange Transaction Incept, `xip` message body MUST appear in the following order: `[ v, t, d, u, i, ri, dt, r, q, a]`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) · MUST · validator · not covered
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) · MUST · validator · not covered
+
+> Signatures and Seals MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1154](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1154) · MUST · validator · not covered
 
 #### Exchange Message Body
 
 [Line 1195 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1195).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) | The top-level fields of an Exchange, `exn` message body MUST appear in the following order: `[ v, t, d, i, ri, x, p, dt, r, q, a]`. | MUST | validator | 1 | 0 | 0 | MUST 1 | negative | KERI-0071 |
-| [1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) | All are REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) | No other top-level fields are allowed (MUST NOT appear). | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) | Signatures and Seals MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The top-level fields of an Exchange, `exn` message body MUST appear in the following order: `[ v, t, d, i, ri, x, p, dt, r, q, a]`.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) · MUST · validator · covered by [KERI-0071](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0071.json) · 1 MUST assertion · negative only
+
+> All are REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) · MUST · validator · not covered
+
+> No other top-level fields are allowed (MUST NOT appear).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) · MUST · validator · not covered
+
+> Signatures and Seals MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1197](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1197) · MUST · validator · not covered
 
 #### Indexed Signatures
 
 [Line 1242 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1242).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1244](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1244) | Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) | This way, only the indexed signature MUST be attached, not the public key needed to verify the signature. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) | In this case, information about the associated key state for the signature MUST be attached. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) | In other cases, that latest key state is assumed, and only the AID of the signer is REQUIRED. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1252](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1252) | Witnesses MUST use only nontransferable identifiers, which include the controlling public key. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1256](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1256) | Recall that a prior next key digest MUST be exposed as a public key in the succeeding rotation event signing key list when used to sign. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1258](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1258) | A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid. | MUST | validator, security | 8 | 0 | 0 | MUST 13 | negative | KERI-0004, KERI-0008, KERI-0009, KERI-0045, KERI-0054, KERI-0056, KERI-0058, KERI-0065 |
-| [1260](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1260) | A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid. | MUST | validator, security | 5 | 6 | 3 | MUST 5, SHOULD 8 | both | KERI-0068 (inferred, disputed), KERI-0070, KERI-0072 (inferred, disputed), KERI-0073 (inferred, disputed), KERI-0077 (inferred), KERI-0078, KERI-0079 (inferred), KERI-0080, KERI-0081 (inferred), KERI-0082, KERI-0083 |
-| [1262](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1262) | A set of controller-indexed signatures on a rotation event (delegated or not) MUST at least satisfy both the current signing threshold and the prior next rotation threshold in order for that event to be accepted as valid. | MUST | validator, security | 1 | 0 | 0 | MUST 2 | negative | KERI-0022 |
-| [1264](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1264) | A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid. | MUST | validator, security | 7 | 0 | 0 | MUST 13 | negative | KERI-0037, KERI-0039, KERI-0040, KERI-0055, KERI-0059, KERI-0060, KERI-0061 |
-| [1266](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1266) | Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section). | MUST | validator, security | 16 | 0 | 0 | SHOULD 26 | both | KERI-0004, KERI-0005, KERI-0008, KERI-0009, KERI-0022, KERI-0037, KERI-0038, KERI-0039, KERI-0040, KERI-0045, KERI-0056, KERI-0058, KERI-0059, KERI-0060, KERI-0061, KERI-0066 |
-| [1266](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1266) | A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it). | MUST | validator, security | 5 | 0 | 0 | MUST 7 | negative | KERI-0006, KERI-0007, KERI-0020, KERI-0069, KERI-0076 |
+> Signatures and other information, when attached, MUST be attached to the Message body using CESR attachment codes.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1244](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1244) · MUST · validator · not covered
+
+> This way, only the indexed signature MUST be attached, not the public key needed to verify the signature.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) · MUST · validator · not covered
+
+> In this case, information about the associated key state for the signature MUST be attached.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) · MUST · validator · not covered
+
+> In other cases, that latest key state is assumed, and only the AID of the signer is REQUIRED.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) · MUST · validator · not covered
+
+> Witnesses MUST use only nontransferable identifiers, which include the controlling public key.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1252](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1252) · MUST · validator · not covered
+
+> Recall that a prior next key digest MUST be exposed as a public key in the succeeding rotation event signing key list when used to sign.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1256](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1256) · MUST · validator, security · not covered
+
+> A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1258](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1258) · MUST · validator, security · covered by [KERI-0004](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0004.json), [KERI-0008](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0008.json), [KERI-0009](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0009.json), [KERI-0045](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0045.json), [KERI-0054](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0054.json), [KERI-0056](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0056.json), [KERI-0058](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0058.json), [KERI-0065](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0065.json) · 13 MUST assertions · negative only
+
+> A set of controller-indexed signatures on a non-key event message (see below) MUST at least satisfy the signing threshold for the establishment event indicated by the event reference in the attachment group (which MAY or MAY NOT be the current signing threshold) to be accepted as valid.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1260](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1260) · MUST · validator, security · covered by [KERI-0068](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0068.json) (inferred, disputed), [KERI-0070](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0070.json), [KERI-0072](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0072.json) (inferred, disputed), [KERI-0073](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0073.json) (inferred, disputed), [KERI-0077](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0077.json) (inferred), [KERI-0078](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0078.json), [KERI-0079](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0079.json) (inferred), [KERI-0080](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0080.json), [KERI-0081](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0081.json) (inferred), [KERI-0082](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0082.json), [KERI-0083](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0083.json) · 5 MUST and 8 SHOULD assertions · both polarities
+
+> A set of controller-indexed signatures on a rotation event (delegated or not) MUST at least satisfy both the current signing threshold and the prior next rotation threshold in order for that event to be accepted as valid.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1262](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1262) · MUST · validator, security · covered by [KERI-0022](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0022.json) · 2 MUST assertions · negative only
+
+> A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1264](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1264) · MUST · validator, security · covered by [KERI-0037](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0037.json), [KERI-0039](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0039.json), [KERI-0040](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0040.json), [KERI-0055](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0055.json), [KERI-0059](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0059.json), [KERI-0060](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0060.json), [KERI-0061](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0061.json) · 13 MUST assertions · negative only
+
+> Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1266](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1266) · MUST · validator, security · covered by [KERI-0004](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0004.json), [KERI-0005](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0005.json), [KERI-0008](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0008.json), [KERI-0009](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0009.json), [KERI-0022](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0022.json), [KERI-0037](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0037.json), [KERI-0038](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0038.json), [KERI-0039](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0039.json), [KERI-0040](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0040.json), [KERI-0045](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0045.json), [KERI-0056](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0056.json), [KERI-0058](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0058.json), [KERI-0059](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0059.json), [KERI-0060](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0060.json), [KERI-0061](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0061.json), [KERI-0066](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0066.json) · 26 SHOULD assertions · both polarities
+
+> A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1266](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1266) · MUST · validator, security · covered by [KERI-0006](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0006.json), [KERI-0007](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0007.json), [KERI-0020](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0020.json), [KERI-0069](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0069.json), [KERI-0076](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0076.json) · 7 MUST assertions · negative only
 
 #### Non-indexed signatures
 
 [Line 1270 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1270).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1272](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1272) | In this case, additional information MUST be attached, such as the associated public key, in order for a validator to verify the signature. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1272](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1272) | This additional information MUST be in the form of a CESR group defined by a CESR group code. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> In this case, additional information MUST be attached, such as the associated public key, in order for a validator to verify the signature.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1272](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1272) · MUST · validator · not covered
+
+> This additional information MUST be in the form of a CESR group defined by a CESR group code.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1272](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1272) · MUST · validator · not covered
 
 #### Endorsements
 
 [Line 1274 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1274).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1276](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1276) | In this case, the attachment MUST include at least the AID of the endorser as well as any other information needed by the Validator to securely attribute the signature to its source and key state. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> In this case, the attachment MUST include at least the AID of the endorser as well as any other information needed by the Validator to securely attribute the signature to its source and key state.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1276](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1276) · MUST · validator · not covered
 
 #### Sealing
 
 [Line 1278 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1278).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1280](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1280) | Seals MUST include a cryptographic digest or digest proof of the serialized data. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1280](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1280) | This SHOULD be the SAID of the data when that data follows the SAID protocol, i.e., is a SAD [[1](#CESR)]. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+> Seals MUST include a cryptographic digest or digest proof of the serialized data.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1280](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1280) · MUST · validator · not covered
+
+> This SHOULD be the SAID of the data when that data follows the SAID protocol, i.e., is a SAD [[1](#CESR)].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1280](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1280) · SHOULD · out-of-scope · not covered
 
 #### KERI keypair labeling convention
 
 [Line 1294 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1294).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1302) | The sequence of keypairs that are authoritative (i.e., establish control authority) for an AID MUST be indexed by the zero-based integer-valued, strictly increasing by one, variable 'i'. | MUST | untestable: A notational convention for describing keypairs and events, not a property of any message. | 0 | 0 | 0 | — | — | — |
-| [1302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1302) | The sequence of Establishment events SHOULD be indexed by the zero-based integer-valued, strictly increasing by one, variable `j`. the associated key pair is denoted (A<sup>i,j</sup>, a<sup>i,j</sup>) When the set of controlling keypairs that are authoritative for a given Key state includes only one member, then `i = j` for every keypair, and only one index is needed. | SHOULD | untestable: A notational convention for describing keypairs and events, not a property of any message. | 0 | 0 | 0 | — | — | — |
+> The sequence of keypairs that are authoritative (i.e., establish control authority) for an AID MUST be indexed by the zero-based integer-valued, strictly increasing by one, variable 'i'.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1302) · MUST · untestable: A notational convention for describing keypairs and events, not a property of any message. · not covered
+
+> The sequence of Establishment events SHOULD be indexed by the zero-based integer-valued, strictly increasing by one, variable `j`. the associated key pair is denoted (A<sup>i,j</sup>, a<sup>i,j</sup>) When the set of controlling keypairs that are authoritative for a given Key state includes only one member, then `i = j` for every keypair, and only one index is needed.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1302) · SHOULD · untestable: A notational convention for describing keypairs and events, not a property of any message. · not covered
 
 #### Labelling the digest of the public key
 
 [Line 1323 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1323).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1325](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1325) | With pre-rotation, each public key from the set of pre-rotated keypairs MUST be hidden as a qualified cryptographic digest of that public key. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> With pre-rotation, each public key from the set of pre-rotated keypairs MUST be hidden as a qualified cryptographic digest of that public key.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1325](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1325) · MUST · validator · not covered
 
 #### Labelling key events in a KEL
 
 [Line 1339 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1339).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1341](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1341) | Finally, each Key event in a [[ref: KEL]] MUST have a zero-based integer-valued, strictly increasing by one, sequence number represented by the variable `k`. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> Finally, each Key event in a [[ref: KEL]] MUST have a zero-based integer-valued, strictly increasing by one, sequence number represented by the variable `k`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1341](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1341) · MUST · validator · not covered
 
 #### Pre-rotation
 
 [Line 1362 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1362).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1368](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1368) | To clarify, each Establishment event MUST include a list (ordered) of the qualified public keys from each of the current (initial) set of keypairs, a threshold for the current set, a list (ordered) of the qualified cryptographic digests of the qualified public keys from the next set of keypairs, and a threshold for the next set. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1368](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1368) | Each event MUST also include the AID itself as either a qualified public key or a qualified digest of the Inception event. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1370](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1370) | Each Non-establishment event MUST be signed by a threshold-satisficing subset of private keys from the current set of keypairs from the most recent Establishment event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> To clarify, each Establishment event MUST include a list (ordered) of the qualified public keys from each of the current (initial) set of keypairs, a threshold for the current set, a list (ordered) of the qualified cryptographic digests of the qualified public keys from the next set of keypairs, and a threshold for the next set.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1368](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1368) · MUST · validator · not covered
+
+> Each event MUST also include the AID itself as either a qualified public key or a qualified digest of the Inception event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1368](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1368) · MUST · validator · not covered
+
+> Each Non-establishment event MUST be signed by a threshold-satisficing subset of private keys from the current set of keypairs from the most recent Establishment event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1370](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1370) · MUST · validator, security · not covered
 
 #### Inception event pre-rotation
 
 [Line 1372 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1372).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1374](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1374) | The creator of the [[ref: Inception event]] MUST create two sets of keypairs, the current (initial) set and the next set. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1376](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1376) | Moreover, to be verifiably authoritative, the Inception event MUST be signed by a threshold-satisficing subset of the current (initial) set of private keys. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1376](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1376) | The Inception event MUST be verified against the attached signatures using the included current (initial) list of public keys. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1378](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1378) | There MUST be only one Establishment event that is an Inception event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1378](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1378) | All subsequent Establishment events MUST be Rotation events. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [1380](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1380) | In this case, both the `d` and `i` fields MUST have the same value. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1380](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1380) | This means the digest suite's [[xref: keri1, derivation-code, derivation code]], used for the `i` field MUST be the same for the `d` field. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1381](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1381) | Validation of an Inception event requires examining the `i` field's derivation code and if it is a digest-type then the `d` field MUST be identical otherwise the Inception event is invalid. | MUST | validator, security | 1 | 0 | 0 | MUST 2 | negative | KERI-0010 |
+> The creator of the [[ref: Inception event]] MUST create two sets of keypairs, the current (initial) set and the next set.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1374](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1374) · MUST · out-of-scope · not covered
+
+> Moreover, to be verifiably authoritative, the Inception event MUST be signed by a threshold-satisficing subset of the current (initial) set of private keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1376](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1376) · MUST · validator, security · not covered
+
+> The Inception event MUST be verified against the attached signatures using the included current (initial) list of public keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1376](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1376) · MUST · validator, security · not covered
+
+> There MUST be only one Establishment event that is an Inception event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1378](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1378) · MUST · validator, security · not covered
+
+> All subsequent Establishment events MUST be Rotation events.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1378](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1378) · MUST · validator · not covered
+
+> In this case, both the `d` and `i` fields MUST have the same value.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1380](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1380) · MUST · validator, security · not covered
+
+> This means the digest suite's [[xref: keri1, derivation-code, derivation code]], used for the `i` field MUST be the same for the `d` field.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1380](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1380) · MUST · validator, security · not covered
+
+> Validation of an Inception event requires examining the `i` field's derivation code and if it is a digest-type then the `d` field MUST be identical otherwise the Inception event is invalid.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1381](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1381) · MUST · validator, security · covered by [KERI-0010](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0010.json) · 2 MUST assertions · negative only
 
 #### Rotation using pre-rotation
 
 [Line 1385 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1385).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1387](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1387) | Unlike [[ref: Inception]], the creator of a Rotation event MUST create only one set of keypairs, the newly next set. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1387](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1387) | The list of newly current public keys MUST include the old next threshold-satisficing subset of old next public keys from the most recent prior Establishment event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1387](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1387) | The subset of old prior next keys that are included in the newly current set of public keys MUST be unhidden or unblinded because they appear as the public keys themselves and no longer appear as digests of the public keys. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1389](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1389) | Moreover, to be verifiably authoritative, the rotation event MUST be signed by a dual threshold-satisficing subset of the newly current set of private keys., meaning that the set of signatures on a Rotation event MUST satisfy two thresholds. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1389](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1389) | Therefore, the newly current set of public keys MUST include a satisfiable subset with respect to the old prior next threshold of public keys from the old prior next key list. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> Unlike [[ref: Inception]], the creator of a Rotation event MUST create only one set of keypairs, the newly next set.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1387](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1387) · MUST · out-of-scope · not covered
+
+> The list of newly current public keys MUST include the old next threshold-satisficing subset of old next public keys from the most recent prior Establishment event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1387](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1387) · MUST · validator, security · not covered
+
+> The subset of old prior next keys that are included in the newly current set of public keys MUST be unhidden or unblinded because they appear as the public keys themselves and no longer appear as digests of the public keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1387](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1387) · MUST · validator, security · not covered
+
+> Moreover, to be verifiably authoritative, the rotation event MUST be signed by a dual threshold-satisficing subset of the newly current set of private keys., meaning that the set of signatures on a Rotation event MUST satisfy two thresholds.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1389](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1389) · MUST · validator, security · not covered
+
+> Therefore, the newly current set of public keys MUST include a satisfiable subset with respect to the old prior next threshold of public keys from the old prior next key list.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1389](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1389) · MUST · validator, security · not covered
 
 #### Fractionally weighted threshold
 
 [Line 1417 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1417).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1419](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1419) | Satisfaction of any clause requires that the sum of the weights in that clause that corresponds to verified signatures on that event MUST sum to at least a weight of one. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1421](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1421) | Three weights mean there MUST be exactly three corresponding key pairs. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1423](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1423) | The public key's appearance order in a given key list and its associated threshold weight list MUST be the same. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> Satisfaction of any clause requires that the sum of the weights in that clause that corresponds to verified signatures on that event MUST sum to at least a weight of one.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1419](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1419) · MUST · validator, security · not covered
+
+> Three weights mean there MUST be exactly three corresponding key pairs.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1421](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1421) · MUST · validator, security · not covered
+
+> The public key's appearance order in a given key list and its associated threshold weight list MUST be the same.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1423](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1423) · MUST · validator, security · not covered
 
 #### General Pre-rotation
 
 [Line 1468 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1468).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1480](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1480) | More precisely, any Rotation event's current public key list MUST include both a satisfiable subset of the *prior-next* key list concerning the [[xref: keri1, prio-next-threshold, prior next threshold]] and a satisfiable set of public keys concerning its current threshold. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1482](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1482) | In other words, the current public key list MUST be satisfiable concerning both the *prior-next* and current thresholds. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1488](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1488) | To establish verifiable rotation control authority, the current key list MUST include a satisfiable subset of exposed (unblinded) pre-rotated next keys from the most recent prior Establishment event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1490](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1490) | To establish a Verifiable signing control authority, the current key list MUST also include a satisfiable subset of public keys. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1492](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1492) | When not identical, the Validator MUST perform the appropriate mathematical set operations to confirm compliance. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1494) | Recall that the public key's appearance order in a given key list and its associated threshold weight list MUST be the same. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1494) | A Validator, therefore, MUST confirm that the set of keys in the current key list truly includes a satisfiable subset of the prior next key list and that the current key list is satisfiable with respect to both the current and [[xref: keri1, prio-next-threshold, prior next threshold]]s. | MUST | validator, security | 2 | 0 | 0 | MUST 4 | both | KERI-0021, KERI-0022 |
-| [1494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1494) | Actual satisfaction means that the set of attached signatures MUST satisfy both prior-next and current thresholds as applied to their respective key lists. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> More precisely, any Rotation event's current public key list MUST include both a satisfiable subset of the *prior-next* key list concerning the [[xref: keri1, prio-next-threshold, prior next threshold]] and a satisfiable set of public keys concerning its current threshold.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1480](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1480) · MUST · validator, security · not covered
+
+> In other words, the current public key list MUST be satisfiable concerning both the *prior-next* and current thresholds.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1482](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1482) · MUST · validator, security · not covered
+
+> To establish verifiable rotation control authority, the current key list MUST include a satisfiable subset of exposed (unblinded) pre-rotated next keys from the most recent prior Establishment event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1488](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1488) · MUST · validator, security · not covered
+
+> To establish a Verifiable signing control authority, the current key list MUST also include a satisfiable subset of public keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1490](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1490) · MUST · validator, security · not covered
+
+> When not identical, the Validator MUST perform the appropriate mathematical set operations to confirm compliance.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1492](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1492) · MUST · validator, security · not covered
+
+> Recall that the public key's appearance order in a given key list and its associated threshold weight list MUST be the same.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1494) · MUST · validator, security · not covered
+
+> A Validator, therefore, MUST confirm that the set of keys in the current key list truly includes a satisfiable subset of the prior next key list and that the current key list is satisfiable with respect to both the current and [[xref: keri1, prio-next-threshold, prior next threshold]]s.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1494) · MUST · validator, security · covered by [KERI-0021](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0021.json), [KERI-0022](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0022.json) · 4 MUST assertions · both polarities
+
+> Actual satisfaction means that the set of attached signatures MUST satisfy both prior-next and current thresholds as applied to their respective key lists.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1494](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1494) · MUST · validator, security · not covered
 
 #### Reserve Rotation
 
 [Line 1501 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1501).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1529](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1529) | Threshold is the threshold of signatures that MUST be satisfied for validity. | MUST | untestable: Defines a column of the worked example's table; the threshold rules it refers to are stated at lines 1258 to 1264. | 0 | 0 | 0 | — | — | — |
-| [1537](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1537) | Therefore, A<sup>8</sup> and A<sup>9</sup> MUST be activated (pulled out of reserve) and included and exposed as both one-time rotation keys and newly current signing keys. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1537](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1537) | Nonetheless, the Rotation event \#2 MUST be signed by all three of A<sup>10</sup>, A<sup>8</sup>, and A<sup>9</sup> in order to satisfy the prior next threshold because in that threshold A<sup>8</sup>, and A<sup>9</sup>  only have a weight of 1/4. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1543](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1543) | For the [[ref: Rotation event]] to be valid, it MUST be signed by A<sup>22</sup>, A<sup>16</sup>, and A<sup>17</sup> in order to satisfy the prior next threshold for rotation authority and also MUST be signed by any two of A<sup>22</sup>, A<sup>25</sup>, and A<sup>26</sup> in order to satisfy the new current signing authority for the event itself. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> Threshold is the threshold of signatures that MUST be satisfied for validity.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1529](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1529) · MUST · untestable: Defines a column of the worked example's table; the threshold rules it refers to are stated at lines 1258 to 1264. · not covered
+
+> Therefore, A<sup>8</sup> and A<sup>9</sup> MUST be activated (pulled out of reserve) and included and exposed as both one-time rotation keys and newly current signing keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1537](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1537) · MUST · validator, security · not covered
+
+> Nonetheless, the Rotation event \#2 MUST be signed by all three of A<sup>10</sup>, A<sup>8</sup>, and A<sup>9</sup> in order to satisfy the prior next threshold because in that threshold A<sup>8</sup>, and A<sup>9</sup>  only have a weight of 1/4.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1537](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1537) · MUST · validator, security · not covered
+
+> For the [[ref: Rotation event]] to be valid, it MUST be signed by A<sup>22</sup>, A<sup>16</sup>, and A<sup>17</sup> in order to satisfy the prior next threshold for rotation authority and also MUST be signed by any two of A<sup>22</sup>, A<sup>25</sup>, and A<sup>26</sup> in order to satisfy the new current signing authority for the event itself.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1543](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1543) · MUST · validator, security · not covered
 
 #### Custodial Rotation
 
 [Line 1545 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1545).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1567](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1567) | Threshold is the threshold of signatures that MUST be satisfied for validity. | MUST | untestable: Defines a column of the worked example's table; the threshold rules it refers to are stated at lines 1258 to 1264. | 0 | 0 | 0 | — | — | — |
-| [1574](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1574) | This event MUST be signed by any two of A<sup>3</sup>, A<sup>4</sup>, and A<sup>5</sup> in order to satisfy the prior next threshold and also MUST be signed by any two A<sup>6</sup>, A<sup>7</sup>, and A<sup>8</sup> in order to satisfy the new current signing threshold. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> Threshold is the threshold of signatures that MUST be satisfied for validity.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1567](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1567) · MUST · untestable: Defines a column of the worked example's table; the threshold rules it refers to are stated at lines 1258 to 1264. · not covered
+
+> This event MUST be signed by any two of A<sup>3</sup>, A<sup>4</sup>, and A<sup>5</sup> in order to satisfy the prior next threshold and also MUST be signed by any two A<sup>6</sup>, A<sup>7</sup>, and A<sup>8</sup> in order to satisfy the new current signing threshold.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1574](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1574) · MUST · validator, security · not covered
 
 #### Surprise Quantum Attack Recovery (SQAR)
 
 [Line 1578 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1578).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1580](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1580) | In an SQAR rotation, the resultant signing authority MUST use post-quantum safe key pairs. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1598](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1598) | Threshold is the threshold of signatures that MUST be satisfied for validity. | MUST | untestable: Defines a column of the worked example's table; the threshold rules it refers to are stated at lines 1258 to 1264. | 0 | 0 | 0 | — | — | — |
+> In an SQAR rotation, the resultant signing authority MUST use post-quantum safe key pairs.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1580](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1580) · MUST · out-of-scope · not covered
+
+> Threshold is the threshold of signatures that MUST be satisfied for validity.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1598](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1598) · MUST · untestable: Defines a column of the worked example's table; the threshold rules it refers to are stated at lines 1258 to 1264. · not covered
 
 #### Cooperative Delegation
 
 [Line 1608 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1608).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1612](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1612) | A [[ref: Validator]] MUST be given or find the delegating seal in the delegator’s KEL before the event may be accepted as valid. | MUST | validator, security | 6 | 0 | 0 | MUST 11 | negative | KERI-0028, KERI-0031, KERI-0033, KERI-0034, KERI-0062, KERI-0063 |
-| [1612](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1612) | Both MUST participate. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1616](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1616) | The AID for a Delegatee AID (delegated identifier prefix) MUST be a fully qualified digest of its inception event, which includes a reference to the Delegator's AID. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> A [[ref: Validator]] MUST be given or find the delegating seal in the delegator’s KEL before the event may be accepted as valid.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1612](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1612) · MUST · validator, security · covered by [KERI-0028](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0028.json), [KERI-0031](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0031.json), [KERI-0033](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0033.json), [KERI-0034](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0034.json), [KERI-0062](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0062.json), [KERI-0063](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0063.json) · 11 MUST assertions · negative only
+
+> Both MUST participate.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1612](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1612) · MUST · validator, security · not covered
+
+> The AID for a Delegatee AID (delegated identifier prefix) MUST be a fully qualified digest of its inception event, which includes a reference to the Delegator's AID.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1616](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1616) · MUST · validator, security · not covered
 
 #### Non-establishment Dead-attack
 
 [Line 1636 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1636).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1638](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1638) | To protect against such an attack, a controller MUST propagate the event sufficiently widely enough that the attacker cannot eclipse all components, such as Watchers, that the validator may consult. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+> To protect against such an attack, a controller MUST propagate the event sufficiently widely enough that the attacker cannot eclipse all components, such as Watchers, that the validator may consult.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1638](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1638) · MUST · out-of-scope, security · not covered
 
 #### Establishment Dead-attack
 
 [Line 1642 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1642).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1650](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1650) | To protect against such an attack, a controller MUST propagate the event sufficiently widely enough that the attacker cannot eclipse all components, such as Watchers, that the validator may consult. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+> To protect against such an attack, a controller MUST propagate the event sufficiently widely enough that the attacker cannot eclipse all components, such as Watchers, that the validator may consult.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1650](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1650) · MUST · out-of-scope, security · not covered
 
 #### Cryptographic strength
 
 [Line 1696 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1696).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1698](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1698) | Any subsequent cryptographic operations MUST preserve that minimum level of cryptographic strength. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+> Any subsequent cryptographic operations MUST preserve that minimum level of cryptographic strength.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1698](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1698) · MUST · out-of-scope, security · not covered
 
 #### Post-Quantum Security
 
 [Line 1710 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1710).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1713) | Furthermore, hiding the pre-rotation public keys does not impose any additional storage burden on the controller because the controller MUST always be able to reproduce or recover the associated private keys to sign the associated rotation operation. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> Furthermore, hiding the pre-rotation public keys does not impose any additional storage burden on the controller because the controller MUST always be able to reproduce or recover the associated private keys to sign the associated rotation operation.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1713) · MUST · out-of-scope · not covered
 
 #### KERI Security Properties
 
 [Line 1715 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1715).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1719](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1719) | The eventuality of dead exploits of compromised signing keys SHOULD be mitigated because digital signatures may become less secure as computing and cryptographic technology advance over time (quantum or otherwise). | SHOULD | untestable: States a design goal rather than an obligation on any party. | 0 | 0 | 0 | — | — | — |
+> The eventuality of dead exploits of compromised signing keys SHOULD be mitigated because digital signatures may become less secure as computing and cryptographic technology advance over time (quantum or otherwise).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1719](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1719) · SHOULD · untestable: States a design goal rather than an obligation on any party. · not covered
 
 #### Verifier
 
 [Line 1736 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1736).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1737](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1737) | In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued. | MUST | validator, security | 34 | 3 | 0 | MUST 49, SHOULD 3 | both | KERI-0001, KERI-0002, KERI-0003, KERI-0008, KERI-0009, KERI-0011, KERI-0012, KERI-0013, KERI-0014, KERI-0015, KERI-0016, KERI-0018, KERI-0020, KERI-0023, KERI-0024, KERI-0025, KERI-0026, KERI-0027, KERI-0028, KERI-0029, KERI-0030, KERI-0031, KERI-0033, KERI-0034, KERI-0035, KERI-0036, KERI-0046 (inferred), KERI-0047 (inferred), KERI-0054, KERI-0055, KERI-0060, KERI-0061, KERI-0062, KERI-0063, KERI-0064, KERI-0065, KERI-0067 (inferred) |
-| [1737](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1737) | In other words, a verifier MUST also establish the control authority for the event at issuance. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1737](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1737) · MUST · validator, security · covered by [KERI-0001](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0001.json), [KERI-0002](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0002.json), [KERI-0003](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0003.json), [KERI-0008](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0008.json), [KERI-0009](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0009.json), [KERI-0011](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0011.json), [KERI-0012](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0012.json), [KERI-0013](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0013.json), [KERI-0014](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0014.json), [KERI-0015](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0015.json), [KERI-0016](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0016.json), [KERI-0018](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0018.json), [KERI-0020](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0020.json), [KERI-0023](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0023.json), [KERI-0024](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0024.json), [KERI-0025](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0025.json), [KERI-0026](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0026.json), [KERI-0027](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0027.json), [KERI-0028](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0028.json), [KERI-0029](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0029.json), [KERI-0030](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0030.json), [KERI-0031](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0031.json), [KERI-0033](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0033.json), [KERI-0034](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0034.json), [KERI-0035](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0035.json), [KERI-0036](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0036.json), [KERI-0046](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0046.json) (inferred), [KERI-0047](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0047.json) (inferred), [KERI-0054](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0054.json), [KERI-0055](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0055.json), [KERI-0060](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0060.json), [KERI-0061](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0061.json), [KERI-0062](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0062.json), [KERI-0063](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0063.json), [KERI-0064](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0064.json), [KERI-0065](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0065.json), [KERI-0067](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0067.json) (inferred) · 49 MUST and 3 SHOULD assertions · both polarities
+
+> In other words, a verifier MUST also establish the control authority for the event at issuance.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1737](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1737) · MUST · validator, security · not covered
 
 #### Validator
 
 [Line 1739 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1739).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1740](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1740) | Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures. | MUST | validator, security | 4 | 1 | 0 | MUST 7, SHOULD 2 | negative | KERI-0011, KERI-0012, KERI-0065, KERI-0067 (inferred), KERI-0075 |
+> Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1740](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1740) · MUST · validator, security · covered by [KERI-0011](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0011.json), [KERI-0012](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0012.json), [KERI-0065](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0065.json), [KERI-0067](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0067.json) (inferred), [KERI-0075](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0075.json) · 7 MUST and 2 SHOULD assertions · negative only
 
 #### Duplicity
 
 [Line 1742 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1742).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1744](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1744) | A validator SHOULD choose not to trust when there is evidence of duplicity. | SHOULD | untestable: Trust is the relying party's decision about key state; the adapter protocol reports what a validator accepted, not whether it trusts the result., security | 0 | 0 | 0 | — | — | — |
+> A validator SHOULD choose not to trust when there is evidence of duplicity.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1744](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1744) · SHOULD · untestable: Trust is the relying party's decision about key state; the adapter protocol reports what a validator accepted, not whether it trusts the result., security · not covered
 
 #### Validator Roles and Event Locality
 
 [Line 1756 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1756).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1758](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1758) | Each controller MUST accept its own events into its own copy of its KEL. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1758](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1758) | In this sense, every controller MUST also be a validator for its own AID. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1762](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1762) | The validator of a remote (nonlocal) event MUST assume that the event may have come from a malicious, untrustable source. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> Each controller MUST accept its own events into its own copy of its KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1758](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1758) · MUST · out-of-scope · not covered
+
+> In this sense, every controller MUST also be a validator for its own AID.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1758](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1758) · MUST · out-of-scope · not covered
+
+> The validator of a remote (nonlocal) event MUST assume that the event may have come from a malicious, untrustable source.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1762](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1762) · MUST · validator, security · not covered
 
 #### Validation Rules
 
 [Line 1768 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1768).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1772](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1772) | The controller SHOULD then propagate that event with attached controller signatures to the event's witnesses for receipting. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1772](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1772) | Given a remote event, the event's controller (non-Delegatee) SHOULD NOT sign or otherwise accept that event into its copy of that event's KEL. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1772](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1772) | The controller SHOULD NOT propagate that event to the event's witnesses for receipting. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) | Given a local event, the event's witness MUST first verify the event's controller signatures before it can sign (witness) and accept that event into its copy of that event's KEL. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
-| [1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) | The witness then SHOULD create a receipt of the event with the attached controller and witness signatures and can then propagate that event to other validators. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) | Given a remote event, the event's witness SHOULD NOT sign or otherwise accept that event into its copy of that event's KEL. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) | The witness SHOULD NOT propagate that event to other validators including witnesses. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) | The Delegatee then SHOULD propagate that event with attached signatures to the event's witnesses for receipting. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) | The Delegatee also SHOULD propagate that event with attached controller signatures and attached witness signatures (if witnessed) to the event's delegator for approval via an anchored seal. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) | Given a remote event, the event's Delegatee SHOULD NOT sign or otherwise accept that event into its copy of that event's KEL. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) | The Delegatee SHOULD NOT propagate that event to the event's witnesses for receipting or to the event's delegator for approval. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1778](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1778) | Given a local delegated event, the event's delegator MUST first verify the event's Delegatee signatures and witness signatures (if witnessed) before it can accept that event into its copy of that event's KEL. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
-| [1778](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1778) | Given a remote delegated event, the event's delegator SHOULD NOT approve (seal) or otherwise accept that event into its copy of that event's KEL. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [1778](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1778) | The approval logic of the delegator SHOULD NOT automatically approve a delegable rotation event unless that event's change to the witness pool is below the witness pool's prior threshold. | SHOULD | out-of-scope, security | 0 | 0 | 0 | — | — | — |
-| [1780](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1780) | Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL. | MUST | validator, security | 0 | 41 | 0 | SHOULD 162 | both | KERI-0001 (inferred), KERI-0002 (inferred), KERI-0003 (inferred), KERI-0008 (inferred), KERI-0009 (inferred), KERI-0011 (inferred), KERI-0012 (inferred), KERI-0013 (inferred), KERI-0015 (inferred), KERI-0016 (inferred), KERI-0018 (inferred), KERI-0020 (inferred), KERI-0021 (inferred), KERI-0022 (inferred), KERI-0023 (inferred), KERI-0024 (inferred), KERI-0025 (inferred), KERI-0026 (inferred), KERI-0027 (inferred), KERI-0028 (inferred), KERI-0029 (inferred), KERI-0030 (inferred), KERI-0031 (inferred), KERI-0033 (inferred), KERI-0034 (inferred), KERI-0035 (inferred), KERI-0036 (inferred), KERI-0041 (inferred), KERI-0042 (inferred), KERI-0044 (inferred), KERI-0045 (inferred), KERI-0046 (inferred), KERI-0047 (inferred), KERI-0050 (inferred), KERI-0060 (inferred), KERI-0061 (inferred), KERI-0062 (inferred), KERI-0063 (inferred), KERI-0064 (inferred), KERI-0066 (inferred), KERI-0067 (inferred) |
-| [1782](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1782) | Given either a local or remote receipt any validator MUST first verify the witness signatures or delegator seals attached to that receipt and then can attach those signatures or seals to its copy of the event. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
+> The controller SHOULD then propagate that event with attached controller signatures to the event's witnesses for receipting.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1772](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1772) · SHOULD · out-of-scope · not covered
+
+> Given a remote event, the event's controller (non-Delegatee) SHOULD NOT sign or otherwise accept that event into its copy of that event's KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1772](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1772) · SHOULD · out-of-scope · not covered
+
+> The controller SHOULD NOT propagate that event to the event's witnesses for receipting.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1772](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1772) · SHOULD · out-of-scope · not covered
+
+> Given a local event, the event's witness MUST first verify the event's controller signatures before it can sign (witness) and accept that event into its copy of that event's KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) · MUST · out-of-scope, security · not covered
+
+> The witness then SHOULD create a receipt of the event with the attached controller and witness signatures and can then propagate that event to other validators.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) · SHOULD · out-of-scope · not covered
+
+> Given a remote event, the event's witness SHOULD NOT sign or otherwise accept that event into its copy of that event's KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) · SHOULD · out-of-scope · not covered
+
+> The witness SHOULD NOT propagate that event to other validators including witnesses.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1774](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1774) · SHOULD · out-of-scope · not covered
+
+> The Delegatee then SHOULD propagate that event with attached signatures to the event's witnesses for receipting.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) · SHOULD · out-of-scope · not covered
+
+> The Delegatee also SHOULD propagate that event with attached controller signatures and attached witness signatures (if witnessed) to the event's delegator for approval via an anchored seal.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) · SHOULD · out-of-scope · not covered
+
+> Given a remote event, the event's Delegatee SHOULD NOT sign or otherwise accept that event into its copy of that event's KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) · SHOULD · out-of-scope · not covered
+
+> The Delegatee SHOULD NOT propagate that event to the event's witnesses for receipting or to the event's delegator for approval.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1776](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1776) · SHOULD · out-of-scope · not covered
+
+> Given a local delegated event, the event's delegator MUST first verify the event's Delegatee signatures and witness signatures (if witnessed) before it can accept that event into its copy of that event's KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1778](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1778) · MUST · out-of-scope, security · not covered
+
+> Given a remote delegated event, the event's delegator SHOULD NOT approve (seal) or otherwise accept that event into its copy of that event's KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1778](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1778) · SHOULD · out-of-scope · not covered
+
+> The approval logic of the delegator SHOULD NOT automatically approve a delegable rotation event unless that event's change to the witness pool is below the witness pool's prior threshold.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1778](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1778) · SHOULD · out-of-scope, security · not covered
+
+> Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.
+
+<span class="kcs-mark kcs-covered">●</span> [Line 1780](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1780) · MUST · validator, security · covered by [KERI-0001](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0001.json) (inferred), [KERI-0002](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0002.json) (inferred), [KERI-0003](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0003.json) (inferred), [KERI-0008](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0008.json) (inferred), [KERI-0009](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0009.json) (inferred), [KERI-0011](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0011.json) (inferred), [KERI-0012](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0012.json) (inferred), [KERI-0013](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0013.json) (inferred), [KERI-0015](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0015.json) (inferred), [KERI-0016](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0016.json) (inferred), [KERI-0018](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0018.json) (inferred), [KERI-0020](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0020.json) (inferred), [KERI-0021](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0021.json) (inferred), [KERI-0022](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0022.json) (inferred), [KERI-0023](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0023.json) (inferred), [KERI-0024](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0024.json) (inferred), [KERI-0025](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0025.json) (inferred), [KERI-0026](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0026.json) (inferred), [KERI-0027](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0027.json) (inferred), [KERI-0028](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0028.json) (inferred), [KERI-0029](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0029.json) (inferred), [KERI-0030](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0030.json) (inferred), [KERI-0031](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0031.json) (inferred), [KERI-0033](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0033.json) (inferred), [KERI-0034](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0034.json) (inferred), [KERI-0035](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0035.json) (inferred), [KERI-0036](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0036.json) (inferred), [KERI-0041](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0041.json) (inferred), [KERI-0042](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0042.json) (inferred), [KERI-0044](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0044.json) (inferred), [KERI-0045](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0045.json) (inferred), [KERI-0046](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0046.json) (inferred), [KERI-0047](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0047.json) (inferred), [KERI-0050](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0050.json) (inferred), [KERI-0060](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0060.json) (inferred), [KERI-0061](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0061.json) (inferred), [KERI-0062](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0062.json) (inferred), [KERI-0063](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0063.json) (inferred), [KERI-0064](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0064.json) (inferred), [KERI-0066](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0066.json) (inferred), [KERI-0067](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0067.json) (inferred) · 162 SHOULD assertions · both polarities
+
+> Given either a local or remote receipt any validator MUST first verify the witness signatures or delegator seals attached to that receipt and then can attach those signatures or seals to its copy of the event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1782](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1782) · MUST · validator, security · not covered
 
 #### Superseding Rules for Recovery at a given location, SN (sequence number).
 
 [Line 1802 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1802).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1821](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1821) | C. IF neither A. nor B. is satisfied, then recursively apply rules A. and B. to the delegating events of those delegating events and so on until either A. or B. is satisfied, or the root KEL of the delegation which MUST be undelegated has been reached. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1823](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1823) | The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B. MUST be satisfied, or else the superseding rotation MUST be discarded. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [1825](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1825) | In order to unrecoverably capture control of a delegated identifier, the attacker MUST issue a delegated rotation that rotates to keys under the control of the attacker that the delegator MUST approve and then issue and get approved by the delegator another rotation that follows but does not supersede the compromising rotation. | MUST | untestable: Describes what an attacker would have to do, not an obligation on any party. | 0 | 0 | 0 | — | — | — |
+> C. IF neither A. nor B. is satisfied, then recursively apply rules A. and B. to the delegating events of those delegating events and so on until either A. or B. is satisfied, or the root KEL of the delegation which MUST be undelegated has been reached.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1821](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1821) · MUST · validator, security · not covered
+
+> The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B. MUST be satisfied, or else the superseding rotation MUST be discarded.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1823](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1823) · MUST · validator, security · not covered
+
+> In order to unrecoverably capture control of a delegated identifier, the attacker MUST issue a delegated rotation that rotates to keys under the control of the attacker that the delegator MUST approve and then issue and get approved by the delegator another rotation that follows but does not supersede the compromising rotation.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1825](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1825) · MUST · untestable: Describes what an attacker would have to do, not an obligation on any party. · not covered
 
 #### Security Properties
 
 [Line 1870 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1870).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1872](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1872) | The validation process MUST provide means for the validator to protect itself from such threats. | MUST | untestable: States a goal for the validation process as a whole, without a behaviour a case could check. | 0 | 0 | 0 | — | — | — |
-| [1874](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1874) | Protection MUST come from some other process under the validator’s control. | MUST | untestable: States a goal for the validation process as a whole, without a behaviour a case could check. | 0 | 0 | 0 | — | — | — |
-| [1874](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1874) | In such a case, in order to undetectably promulgate alternate but sufficiently accountable event version agreements, a dishonest controller with dishonest witnesses MUST prevent any validator from communicating with any other observer who may have seen any alternate event version agreement. | MUST | untestable: Describes what a dishonest controller would have to do, not an obligation on any party. | 0 | 0 | 0 | — | — | — |
+> The validation process MUST provide means for the validator to protect itself from such threats.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1872](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1872) · MUST · untestable: States a goal for the validation process as a whole, without a behaviour a case could check. · not covered
+
+> Protection MUST come from some other process under the validator’s control.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1874](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1874) · MUST · untestable: States a goal for the validation process as a whole, without a behaviour a case could check. · not covered
+
+> In such a case, in order to undetectably promulgate alternate but sufficiently accountable event version agreements, a dishonest controller with dishonest witnesses MUST prevent any validator from communicating with any other observer who may have seen any alternate event version agreement.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1874](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1874) · MUST · untestable: Describes what a dishonest controller would have to do, not an obligation on any party. · not covered
 
 #### Protocol and Genus Version
 
 [Line 2075 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2075).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2077](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2077) | The only information that MUST be encoded in a native CESR message's version field is the protocol, the protocol version and the genus version of the associated code table. | MUST | validator | 0 | 0 | 0 | — | — | — |
-| [2079](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2079) | The protocol type uses four characters and MUST be `KERI` for a normative KERI protocol. | MUST | validator | 0 | 0 | 0 | — | — | — |
+> The only information that MUST be encoded in a native CESR message's version field is the protocol, the protocol version and the genus version of the associated code table.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2077](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2077) · MUST · validator · not covered
+
+> The protocol type uses four characters and MUST be `KERI` for a normative KERI protocol.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2079](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2079) · MUST · validator · not covered
 
 #### DateTime
 
 [Line 2091 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2091).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2093](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2093) | As described above, the datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339). | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> As described above, the datetime, `dt` field value, if any, MUST be the ISO-8601 datetime string with microseconds and UTC offset as per IETF [RFC-3339](#RFC3339).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2093](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2093) · MUST · out-of-scope · not covered
 
 #### Route or Return Route
 
 [Line 2135 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2135).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2137](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2137) | This conversion is only applicable to a route that does not otherwise have any dash, `-` characters, or non-Base64 characters besides the slash, `/.` In that case, the route MUST be converted as binary to Base64. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> This conversion is only applicable to a route that does not otherwise have any dash, `-` characters, or non-Base64 characters besides the slash, `/.` In that case, the route MUST be converted as binary to Base64.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2137](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2137) · MUST · out-of-scope · not covered
 
 #### Out-Of-Band-Introduction (OOBI)
 
 [Line 2627 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2627).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2629](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2629) | As such, an OOBI itself is not trusted but MUST be verified. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
-| [2629](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2629) | To clarify, any information obtained from the service endpoint provided in the OOBI MUST be verified by some other mechanism. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+> As such, an OOBI itself is not trusted but MUST be verified.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2629](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2629) · MUST · out-of-scope, security · not covered
+
+> To clarify, any information obtained from the service endpoint provided in the OOBI MUST be verified by some other mechanism.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2629](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2629) · MUST · out-of-scope, security · not covered
 
 #### Well-Known OOBI
 
 [Line 2691 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2691).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2713) | The request is unauthenticated and the response is untrusted at the transport layer; any returned material MUST be verified in-band before use, as with any other OOBI. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
-| [2713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2713) | Hosts that provision the `oobi` well-known suffix SHOULD make responses reachable over both `http` and `https`. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The request is unauthenticated and the response is untrusted at the transport layer; any returned material MUST be verified in-band before use, as with any other OOBI.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2713) · MUST · out-of-scope, security · not covered
+
+> Hosts that provision the `oobi` well-known suffix SHOULD make responses reachable over both `http` and `https`.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2713) · SHOULD · out-of-scope · not covered
 
 #### Self (Blind) OOBI (SOOBI)
 
 [Line 2808 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2808).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2827](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2827) | The controller MUST also create witness hosts with endpoints. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [2827](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2827) | Given that these WIDs MUST be eventually designated in the [[ref: KEL]] for the CID, the controller of the CID can confirm using its KEL that the signed endpoint reply provided by a SOOBI request is indeed signed by the corresponding private keys for a WID designated in its KEL. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [2827](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2827) | This means that the only place that the WID MUST appear is in the KEL and not in all the config files used to bootstrap communications between the CID host and its designated WID hosts. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> The controller MUST also create witness hosts with endpoints.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2827](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2827) · MUST · out-of-scope · not covered
+
+> Given that these WIDs MUST be eventually designated in the [[ref: KEL]] for the CID, the controller of the CID can confirm using its KEL that the signed endpoint reply provided by a SOOBI request is indeed signed by the corresponding private keys for a WID designated in its KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2827](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2827) · MUST · out-of-scope · not covered
+
+> This means that the only place that the WID MUST appear is in the KEL and not in all the config files used to bootstrap communications between the CID host and its designated WID hosts.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2827](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2827) · MUST · out-of-scope · not covered
 
 #### JIT/NTK Discovery
 
 [Line 2845 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2845).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2847](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2847) | Each Exchanger of verifiable data MUST have already verified the data before exchanging it with the Exchangee. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [2847](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2847) | Therefore, all the information needed to verify (proofs) MUST have already been available to the Exchanger, i.e., need-to-know. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> Each Exchanger of verifiable data MUST have already verified the data before exchanging it with the Exchangee.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2847](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2847) · MUST · out-of-scope · not covered
+
+> Therefore, all the information needed to verify (proofs) MUST have already been available to the Exchanger, i.e., need-to-know.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2847](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2847) · MUST · out-of-scope · not covered
 
 #### Bootstrap Configuration
 
 [Line 2849 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2849).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2851](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2851) | These buckets are a deployment convention and SHOULD NOT be treated as distinct wire forms; every entry is an OOBI in one of the forms defined above. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
+> These buckets are a deployment convention and SHOULD NOT be treated as distinct wire forms; every entry is an OOBI in one of the forms defined above.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2851](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2851) · SHOULD · out-of-scope · not covered
 
 #### Security Issues
 
 [Line 2874 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2874).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2884](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2884) | For protection against replay attacks using stale data, only copies of the digest or signature of the data MUST be kept. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+> For protection against replay attacks using stale data, only copies of the digest or signature of the data MUST be kept.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2884](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2884) · MUST · out-of-scope, security · not covered
 
 #### BADA Rules
 
 [Line 2888 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2888).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2892](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2892) | All entries in a KEL MUST be signed by the current signing keypair(s) given by the [[ref: Key-state]] for that KEL. | MUST | validator, security | 0 | 0 | 0 | — | — | — |
-| [2892](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2892) | In this case, the update MUST either includes a reference to the Key-state in the authorizing AID's KEL from which the signing keypair(s) needed to verify the signature is obtained or the AID MUST be ephemeral with a fixed Key-state (has a non-transferable derivation code). | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+> All entries in a KEL MUST be signed by the current signing keypair(s) given by the [[ref: Key-state]] for that KEL.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2892](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2892) · MUST · validator, security · not covered
+
+> In this case, the update MUST either includes a reference to the Key-state in the authorizing AID's KEL from which the signing keypair(s) needed to verify the signature is obtained or the AID MUST be ephemeral with a fixed Key-state (has a non-transferable derivation code).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2892](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2892) · MUST · out-of-scope, security · not covered
 
 #### RUN off the CRUD
 
 [Line 2933 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2933).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2935](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2935) | Each Peer MUST be the source of truth for its own data. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [2935](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2935) | Each Peer MUST be able to create unique identifiers for its own data. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [2939](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2939) | This means that a destination Peer MUST NOT ever delete a record storing the latest version of an Update. | MUST | out-of-scope | 0 | 0 | 0 | — | — | — |
+> Each Peer MUST be the source of truth for its own data.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2935](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2935) · MUST · out-of-scope · not covered
+
+> Each Peer MUST be able to create unique identifiers for its own data.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2935](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2935) · MUST · out-of-scope · not covered
+
+> This means that a destination Peer MUST NOT ever delete a record storing the latest version of an Update.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2939](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2939) · MUST · out-of-scope · not covered
 
 #### Authorized Endpoint Disclosure Example
 
 [Line 2958 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2958).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2962](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2962) | Each `reply` message includes a route, `r`, field that indicates both the payload type and the handler that SHOULD process the message. | SHOULD | out-of-scope | 0 | 0 | 0 | — | — | — |
-| [2973](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2973) | Other roles that are not explicitly part of Key-state (i.e., are not designated in KEL establishment events) MUST be authorized by explicitly signed reply messages. | MUST | out-of-scope, security | 0 | 0 | 0 | — | — | — |
+> Each `reply` message includes a route, `r`, field that indicates both the payload type and the handler that SHOULD process the message.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2962](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2962) · SHOULD · out-of-scope · not covered
+
+> Other roles that are not explicitly part of Key-state (i.e., are not designated in KEL establishment events) MUST be authorized by explicitly signed reply messages.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2973](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2973) · MUST · out-of-scope, security · not covered
 
 ### Permissions (MAY and OPTIONAL)
 
@@ -862,263 +1336,353 @@ The pinned text is [spec/spec-body.md at 71cb54ebb445](https://github.com/trusto
 
 [Line 8 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L8).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [17](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L17) | Alternatively, the functions might be split between devices where a remote software agent that runs on behalf of the controller MAY host encrypted [[xref: toip2, keypair]] storage and highly available key event validation functions while the more critical keypair generation, key event generation, and key event signing functions are on a device in the user's possession. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Alternatively, the functions might be split between devices where a remote software agent that runs on behalf of the controller MAY host encrypted [[xref: toip2, keypair]] storage and highly available key event validation functions while the more critical keypair generation, key event generation, and key event signing functions are on a device in the user's possession.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 17](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L17) · MAY · unassessed · not covered
 
 #### Indirect exchange via witnesses and watchers
 
 [Line 39 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L39).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [43](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L43) | Each controller of an AID MAY create or choose to use a set or pool of witnesses for that AID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [43](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L43) | It MAY use a witness service provided by some other party or MAY directly host its own witnesses in its own infrastructure or some combination of the two. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [43](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L43) | Regardless, the composition of the Witness pool is under the ultimate control of the AID's controller, which means the controller MAY change the witness infrastructure at will. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) | Likewise, each controller acting as a validator of some other controller's events MAY create or choose a set or pool of watchers. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) | It MAY use a watcher service provided by some other party or MAY directly host its own watchers in its own infrastructure or some combination of the two. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) | This means the validator MAY change its watcher infrastructure at will. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) | This is so that the watcher infrastructure used by any validator MAY be kept confidential and, therefore, unknown to potential attackers. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) | Each validator MAY use its own watcher pool to watch its own witness pool of the AID that it itself controls in order to detect external attacks on its witnesses. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [47](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L47) | Watchers MAY also exchange signed receipts of key events in the KELs they watch. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [51](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L51) | Watchers MAY implement different additional features. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [51](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L51) | A Juror MAY be a member of a highly available, fault-tolerant pool of Jurors, called a Jury. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [53](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L53) | A given validator MAY choose to use Judge and Jury services to aid it in deciding whether or not to trust the key state of a given AID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Each controller of an AID MAY create or choose to use a set or pool of witnesses for that AID.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 43](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L43) · MAY · unassessed · not covered
+
+> It MAY use a witness service provided by some other party or MAY directly host its own witnesses in its own infrastructure or some combination of the two.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 43](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L43) · MAY · unassessed · not covered
+
+> Regardless, the composition of the Witness pool is under the ultimate control of the AID's controller, which means the controller MAY change the witness infrastructure at will.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 43](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L43) · MAY · unassessed · not covered
+
+> Likewise, each controller acting as a validator of some other controller's events MAY create or choose a set or pool of watchers.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) · MAY · unassessed · not covered
+
+> It MAY use a watcher service provided by some other party or MAY directly host its own watchers in its own infrastructure or some combination of the two.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) · MAY · unassessed · not covered
+
+> This means the validator MAY change its watcher infrastructure at will.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) · MAY · unassessed · not covered
+
+> This is so that the watcher infrastructure used by any validator MAY be kept confidential and, therefore, unknown to potential attackers.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) · MAY · unassessed · not covered
+
+> Each validator MAY use its own watcher pool to watch its own witness pool of the AID that it itself controls in order to detect external attacks on its witnesses.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 45](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L45) · MAY · unassessed · not covered
+
+> Watchers MAY also exchange signed receipts of key events in the KELs they watch.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 47](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L47) · MAY · unassessed · not covered
+
+> Watchers MAY implement different additional features.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 51](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L51) · MAY · unassessed · not covered
+
+> A Juror MAY be a member of a highly available, fault-tolerant pool of Jurors, called a Jury.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 51](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L51) · MAY · unassessed · not covered
+
+> A given validator MAY choose to use Judge and Jury services to aid it in deciding whether or not to trust the key state of a given AID.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 53](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L53) · MAY · unassessed · not covered
 
 #### Overcoming existing security overlay flaws
 
 [Line 77 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L77).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [85](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L85) | Unlike certificate transparency, KERI enables the detection of Duplicity in the Key state via nonrepudiable cryptographic proofs of Duplicity, not merely the detection of inconsistency in the Key state that MAY or MAY NOT be duplicitous. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Unlike certificate transparency, KERI enables the detection of Duplicity in the Key state via nonrepudiable cryptographic proofs of Duplicity, not merely the detection of inconsistency in the Key state that MAY or MAY NOT be duplicitous.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 85](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L85) · MAY · unassessed · not covered
 
 #### End-verifiable
 
 [Line 87 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L87).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [103](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L103) | The output of the promulgation infrastructure is duplicity evident in cryptographically verifiable data structures that the verifier MAY verify. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [103](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L103) | The verifier MAY employ its own infrastructure to aid it in both performing cryptographic verification and detecting duplicity. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The output of the promulgation infrastructure is duplicity evident in cryptographically verifiable data structures that the verifier MAY verify.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 103](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L103) · MAY · unassessed · not covered
+
+> The verifier MAY employ its own infrastructure to aid it in both performing cryptographic verification and detecting duplicity.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 103](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L103) · MAY · unassessed · not covered
 
 #### Tetrad bindings
 
 [Line 162 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L162).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [172](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L172) | A non-transferable identifier MAY have a trivial KEL that only includes an Inception event but with a null set (empty list) of pre-rotated public keys. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [174](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L174) | At any point in time, the transferability of an identifier MAY be removed via a Rotation event that rotates to a null set (empty list) of pre-rotated public keys. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> A non-transferable identifier MAY have a trivial KEL that only includes an Inception event but with a null set (empty list) of pre-rotated public keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 172](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L172) · MAY · unassessed · not covered
+
+> At any point in time, the transferability of an identifier MAY be removed via a Rotation event that rotates to a null set (empty list) of pre-rotated public keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 174](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L174) · MAY · unassessed · not covered
 
 #### KERI field labels for data structures
 
 [Line 226 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L226).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [251](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L251) | Notwithstanding the former, some field value types MAY be a union of elemental value types. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Notwithstanding the former, some field value types MAY be a union of elemental value types.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 251](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L251) · MAY · unassessed · not covered
 
 #### Version string field
 
 [Line 263 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L263).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [269](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L269) | Each KERI message body at the top-level of a stream MAY use a different serialization type. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Each KERI message body at the top-level of a stream MAY use a different serialization type.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 269](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L269) · MAY · unassessed · not covered
 
 #### Message type  field
 
 [Line 275 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L275).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [297](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L297) | \|`exn`\| Exchange \| Other Message \| Generic exchange of information, MAY be a member of a multi-message transaction set \| | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> \|`exn`\| Exchange \| Other Message \| Generic exchange of information, MAY be a member of a multi-message transaction set \|
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 297](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L297) · MAY · unassessed · not covered
 
 #### SAID fields
 
 [Line 300 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L300).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L302) | Any nested field map that includes a SAID field (i.e., is, therefore, a SAD) MAY be compacted into its SAID. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L302) | The uncompacted blocks for each associated SAID MAY be attached or cached to optimize bandwidth and availability without decreasing security. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Any nested field map that includes a SAID field (i.e., is, therefore, a SAD) MAY be compacted into its SAID.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L302) · MAY · unassessed · not covered
+
+> The uncompacted blocks for each associated SAID MAY be attached or cached to optimize bandwidth and availability without decreasing security.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L302) · MAY · unassessed · not covered
 
 #### AID fields
 
 [Line 312 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L312).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [318](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L318) | A Controller AID, `i` field MAY appear in other places in messages. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> A Controller AID, `i` field MAY appear in other places in messages.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 318](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L318) · MAY · unassessed · not covered
 
 #### Key and key digest threshold fields
 
 [Line 325 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L325).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [327](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L327) | The threshold value MAY be either the simple case of a hex-encoded non-negative integer or the complex case of a list of clauses of fractional weights. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The threshold value MAY be either the simple case of a hex-encoded non-negative integer or the complex case of a list of clauses of fractional weights.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 327](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L327) · MAY · unassessed · not covered
 
 #### Backer threshold field
 
 [Line 343 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L343).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [345](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L345) | Witness Backers express support via a signature (endorsement) of the key event that MAY be conveyed via a Receipt message. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [345](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L345) | Ledger Registrar backers MAY express support by anchoring the key event or the SAID of the key event on the associated ledger. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Witness Backers express support via a signature (endorsement) of the key event that MAY be conveyed via a Receipt message.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 345](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L345) · MAY · unassessed · not covered
+
+> Ledger Registrar backers MAY express support by anchoring the key event or the SAID of the key event on the associated ledger.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 345](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L345) · MAY · unassessed · not covered
 
 #### Backer list
 
 [Line 351 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L351).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) | The list MAY be empty. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) | Although a Witness does not need a KEL, it MAY have one that consists of a trivial Inception event with an empty Next, `n` field list (making it non-transferable). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The list MAY be empty.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) · MAY · unassessed · not covered
+
+> Although a Witness does not need a KEL, it MAY have one that consists of a trivial Inception event with an empty Next, `n` field list (making it non-transferable).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 353](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L353) · MAY · unassessed · not covered
 
 #### Configuration traits field
 
 [Line 365 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L365).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [367](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L367) | Others MAY appear in either the inception event or rotation events (delegated or not). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [379](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L379) | A delegation seal MAY appear in an Interaction event. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Others MAY appear in either the inception event or rotation events (delegated or not).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 367](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L367) · MAY · unassessed · not covered
+
+> A delegation seal MAY appear in an Interaction event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 379](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L379) · MAY · unassessed · not covered
 
 #### Seals
 
 [Line 393 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L393).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [397](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L397) | The external data MAY itself be composed of digests of other data. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [399](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L399) | Seals MAY also be used as attachments to events to provide a reference for looking up the key state to be used for signatures on that event. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The external data MAY itself be composed of digests of other data.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 397](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L397) · MAY · unassessed · not covered
+
+> Seals MAY also be used as attachments to events to provide a reference for looking up the key state to be used for signatures on that event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 399](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L399) · MAY · unassessed · not covered
 
 #### Source Event seal
 
 [Line 448 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L448).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [454](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L454) | Source event seals MAY be used for endorsing transaction events that appear in issuance/revocation registries for ACDCs. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [454](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L454) | They MAY be used as references to delegating events in the KEL of the delegator where the delegator AID is implied by the context in which the seal appears. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Source event seals MAY be used for endorsing transaction events that appear in issuance/revocation registries for ACDCs.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 454](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L454) · MAY · unassessed · not covered
+
+> They MAY be used as references to delegating events in the KEL of the delegator where the delegator AID is implied by the context in which the seal appears.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 454](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L454) · MAY · unassessed · not covered
 
 #### Registrar Backer seal
 
 [Line 492 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L492).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [498](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L498) | The [[ref: SAD]] MAY appear as the value of the seal data, `sd` field in an associated bare, `bar` message (defined later). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The [[ref: SAD]] MAY appear as the value of the seal data, `sd` field in an associated bare, `bar` message (defined later).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 498](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L498) · MAY · unassessed · not covered
 
 #### Key event messages
 
 [Line 537 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L537).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [541](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L541) | A Validator MAY drop any provided key event message body that does not have at least one attached signature from the current controlling key state of the AID of the associated [[ref: KEL]]. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> A Validator MAY drop any provided key event message body that does not have at least one attached signature from the current controlling key state of the AID of the associated [[ref: KEL]].
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 541](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L541) · MAY · unassessed · not covered
 
 #### Controller AID field
 
 [Line 965 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L965).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [967](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L967) | A Controller AID, `i` field MAY appear in other places in messages (not at the top level). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> A Controller AID, `i` field MAY appear in other places in messages (not at the top level).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 967](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L967) · MAY · unassessed · not covered
 
 #### Indexed Signatures
 
 [Line 1242 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1242).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) | Indexed signatures MAY be attached to both key event messages and non-key event messages. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) | In the former case, where the signature is attached to a key event, the AID MAY be inferred. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1248](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1248) | Other information, such as the type of event to which the signature is attached and/or which AID the indexed signature belongs, MAY accompany the attachment. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1250](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1250) | Depending on the event and the key lists, a controller-indexed signature MAY REQUIRE one or two indices. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1250](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1250) | Controller-indexed signatures attached to Rotation events (delegated or not) MAY REQUIRE two indices, one into the signing key list of the rotation event itself and the other into the rotation key digest list from the immediately prior Establishment Event (Inception or Rotation), i.e., the prior next key digest list. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1252](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1252) | To clarify, witness-indexed signatures attached to any type of key event (inception, rotation, interaction, delegated inception, delegated rotation) need only one index into the current list of witnesses that is in effect as of the latest establishment event, which MAY or MAY NOT be the event to which the witness signature is attached. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1254](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1254) | The CESR group code used to attach the indexed signature MAY vary depending on the type of key event or other type of message. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Indexed signatures MAY be attached to both key event messages and non-key event messages.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) · MAY · unassessed · not covered
+
+> In the former case, where the signature is attached to a key event, the AID MAY be inferred.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1246](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1246) · MAY · unassessed · not covered
+
+> Other information, such as the type of event to which the signature is attached and/or which AID the indexed signature belongs, MAY accompany the attachment.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1248](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1248) · MAY · unassessed · not covered
+
+> Depending on the event and the key lists, a controller-indexed signature MAY REQUIRE one or two indices.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1250](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1250) · MAY · unassessed · not covered
+
+> Controller-indexed signatures attached to Rotation events (delegated or not) MAY REQUIRE two indices, one into the signing key list of the rotation event itself and the other into the rotation key digest list from the immediately prior Establishment Event (Inception or Rotation), i.e., the prior next key digest list.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1250](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1250) · MAY · unassessed · not covered
+
+> To clarify, witness-indexed signatures attached to any type of key event (inception, rotation, interaction, delegated inception, delegated rotation) need only one index into the current list of witnesses that is in effect as of the latest establishment event, which MAY or MAY NOT be the event to which the witness signature is attached.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1252](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1252) · MAY · unassessed · not covered
+
+> The CESR group code used to attach the indexed signature MAY vary depending on the type of key event or other type of message.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1254](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1254) · MAY · unassessed · not covered
 
 #### KERI keypair labeling convention
 
 [Line 1294 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1294).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1298](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1298) | Alternatively, the index MAY be omitted when the context defines which keypair and which Key state, such as, for example, the latest or current Key state. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1300](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1300) | Therefore, when referring to the keypair itself as a pair and not the individual members of the pair, either the uppercase label, `A`, or the tuple, `(A, a)`, MAY be used to refer to the keypair itself. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1302) | Furthermore, as described above, an Establishment event MAY change the Key state (usually). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> Alternatively, the index MAY be omitted when the context defines which keypair and which Key state, such as, for example, the latest or current Key state.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1298](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1298) · MAY · unassessed · not covered
+
+> Therefore, when referring to the keypair itself as a pair and not the individual members of the pair, either the uppercase label, `A`, or the tuple, `(A, a)`, MAY be used to refer to the keypair itself.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1300](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1300) · MAY · unassessed · not covered
+
+> Furthermore, as described above, an Establishment event MAY change the Key state (usually).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1302](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1302) · MAY · unassessed · not covered
 
 #### Labelling the digest of the public key
 
 [Line 1323 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1323).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1335](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1335) | As explained in more detail for partial Rotation of a pre-rotated set, a pre-rotated keypair from a set of two or more pre-rotated keypairs is only potentially authoritative so that its actual authoritative j<sup>th</sup> index MAY change when it is actually rotated in, if ever. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> As explained in more detail for partial Rotation of a pre-rotated set, a pre-rotated keypair from a set of two or more pre-rotated keypairs is only potentially authoritative so that its actual authoritative j<sup>th</sup> index MAY change when it is actually rotated in, if ever.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1335](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1335) · MAY · unassessed · not covered
 
 #### Pre-rotation
 
 [Line 1362 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1362).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1364](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1364) | The pre-rotated next set of Rotation keypairs are one-time use only rotation keypairs, but MAY be repurposed as signing keypairs after their one-time use to rotate. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The pre-rotated next set of Rotation keypairs are one-time use only rotation keypairs, but MAY be repurposed as signing keypairs after their one-time use to rotate.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1364](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1364) · MAY · unassessed · not covered
 
 #### Fractionally weighted threshold
 
 [Line 1417 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1417).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1419](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1419) | In a complex fractionally weighted threshold, each weight in a clause MAY be either a simple weight or a weighted list of weights. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1425](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1425) | Because participation of A<sup>3</sup> and A<sup>4</sup> is not required as long as at least two of A<sup>0</sup>, A<sup>1</sup>, and A<sup>2</sup> are available then A<sup>3</sup> and A<sup>4</sup> MAY be treated as reserve members of the controlling set of keys. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> In a complex fractionally weighted threshold, each weight in a clause MAY be either a simple weight or a weighted list of weights.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1419](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1419) · MAY · unassessed · not covered
+
+> Because participation of A<sup>3</sup> and A<sup>4</sup> is not required as long as at least two of A<sup>0</sup>, A<sup>1</sup>, and A<sup>2</sup> are available then A<sup>3</sup> and A<sup>4</sup> MAY be treated as reserve members of the controlling set of keys.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1425](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1425) · MAY · unassessed · not covered
 
 #### General Pre-rotation
 
 [Line 1468 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1468).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1470](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1470) | A Partial rotation operation on a set of pre-rotated keys  MAY hold back some as unexposed while exposing others as needed. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [1476](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1476) | Importantly, the unexposed (blinded) public keys from the *prior-next* key list MAY be held in reserve to be used in some later Rotation event. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> A Partial rotation operation on a set of pre-rotated keys  MAY hold back some as unexposed while exposing others as needed.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1470](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1470) · MAY · unassessed · not covered
+
+> Importantly, the unexposed (blinded) public keys from the *prior-next* key list MAY be held in reserve to be used in some later Rotation event.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1476](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1476) · MAY · unassessed · not covered
 
 #### Immunity and Availability
 
 [Line 1864 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1864).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [1866](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1866) | A Controller MAY choose to use the KAWA algorthm to achieve immunity. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> A Controller MAY choose to use the KAWA algorthm to achieve immunity.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 1866](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1866) · MAY · unassessed · not covered
 
 #### Basic OOBI
 
 [Line 2639 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2639).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2641](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2641) | The simplest form of a KERI OOBI MAY be expressed by any of a namespaced string, a tuple, a mapping, a structured message, or a structured attachment where every form contains both a KERI AID and a URL (or URI). | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The simplest form of a KERI OOBI MAY be expressed by any of a namespaced string, a tuple, a mapping, a structured message, or a structured attachment where every form contains both a KERI AID and a URL (or URI).
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2641](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2641) · MAY · unassessed · not covered
 
 #### Well-Known OOBI
 
 [Line 2691 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2691).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2693](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2693) | An OOBI MAY be returned as the result of an HTTP `GET` request to a well-known URI [[spec: RFC8615](#RFC8615)] using the registered `oobi` suffix. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
-| [2713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2713) | The AID in the path component MAY identify any KERI role. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> An OOBI MAY be returned as the result of an HTTP `GET` request to a well-known URI [[spec: RFC8615](#RFC8615)] using the registered `oobi` suffix.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2693](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2693) · MAY · unassessed · not covered
+
+> The AID in the path component MAY identify any KERI role.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2713](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2713) · MAY · unassessed · not covered
 
 #### KEL Anchored Updates
 
 [Line 2894 of the specification](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2894).
 
-| Line | Sentence | Level | Triage | Direct | Inferred | Disputed | Assertions | Polarity | Cases |
-|---:|:---|:---|:---|---:|---:|---:|:---|:---|:---|
-| [2896](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2896) | The record MAY have a Prior value that is being updated or the Update MAY serve to create the initial value of the record. | MAY | unassessed | 0 | 0 | 0 | — | — | — |
+> The record MAY have a Prior value that is being updated or the Update MAY serve to create the initial value of the record.
+
+<span class="kcs-mark kcs-uncovered">○</span> [Line 2896](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L2896) · MAY · unassessed · not covered
 
 ### Practice (any keyword, in text that states common practice)
 
@@ -1128,7 +1692,10 @@ No sentence of this text is triaged as practice.
 
 These quotes are cited by cases but contain no keyword sentence of the pinned text, usually because the sentence states its rule without an uppercase keyword.
 
-| Line | Quote | Cases | Cited as |
-|---:|:---|:---|:---|
-| [1799](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1799) | Notably, an event that may not supersede, according to the rules below, another event at the same location cannot be first seen at all by that KEL. | KERI-0042, KERI-0044, KERI-0045, KERI-0050 | inference |
-| [1806](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1806) | A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event. | KERI-0046, KERI-0047, KERI-0067 | inference |
+> Notably, an event that may not supersede, according to the rules below, another event at the same location cannot be first seen at all by that KEL.
+
+[Line 1799](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1799) · cited as inference by [KERI-0042](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0042.json), [KERI-0044](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0044.json), [KERI-0045](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0045.json), [KERI-0050](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0050.json)
+
+> A0. Any rotation event may supersede an [[ref: Interaction event]] at the same `sn` where that interaction event is not before any other rotation event.
+
+[Line 1806](https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md?plain=1#L1806) · cited as inference by [KERI-0046](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0046.json), [KERI-0047](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0047.json), [KERI-0067](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0067.json)

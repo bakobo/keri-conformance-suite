@@ -60,3 +60,39 @@
   background-color: var(--kcs-table-hover);
   box-shadow: none;
 }
+
+/* Clause coverage entries (docs/coverage/): each keyword sentence is a blockquote followed by a
+   paragraph of attributes that starts with a mark, filled when an active case covers the sentence
+   and hollow when none does. */
+:root {
+  --kcs-mark-covered: #61783e;
+  --kcs-mark-uncovered: #9a968c;
+}
+
+[data-md-color-scheme="slate"] {
+  --kcs-mark-covered: #9cb874;
+  --kcs-mark-uncovered: #7d7a72;
+}
+
+.md-typeset .kcs-mark {
+  font-size: 1.15em;
+  line-height: 1;
+}
+
+.md-typeset .kcs-covered {
+  color: var(--kcs-mark-covered);
+}
+
+.md-typeset .kcs-uncovered {
+  color: var(--kcs-mark-uncovered);
+}
+
+/* Only a blockquote followed by an entry's attribute line is drawn closer to it, so other
+   blockquotes on the site keep their spacing. */
+.md-typeset blockquote:has(+ p > .kcs-mark:first-child) {
+  margin-bottom: 0.3em;
+}
+
+.md-typeset blockquote + p:has(> .kcs-mark:first-child) {
+  margin-top: 0;
+}

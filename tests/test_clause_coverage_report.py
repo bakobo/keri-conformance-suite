@@ -41,9 +41,9 @@ FAKE2 = dataclasses.replace(FAKE, tag="v10", commit="e" * 40)
 FAKE2_TEXT = FAKE_TEXT.replace("A parser MAY stop.", "A parser MUST stop.")
 
 
-def line_link(n, pin=FAKE):
-    """A report's Line cell: the line number, linked to that line of the raw pinned text."""
-    return f"[{n}]({pin.repo}/blob/{pin.commit}/{pin.file}?plain=1#L{n})"
+def raw(n, pin=FAKE):
+    """The URL of a line of the raw pinned text."""
+    return f"{pin.repo}/blob/{pin.commit}/{pin.file}?plain=1#L{n}"
 
 
 def clause(quote, pin=FAKE):
@@ -388,8 +388,8 @@ def test_generate_reports_the_triage_of_each_occurrence_of_a_repeated_sentence(t
                                           judged("out-of-scope", section="Logging",
                                                  occurrence=2)]}))
     text = cc.generate(root)["docs/coverage/fake.md"].decode()
-    logs = [cells for cells in map(cc.split_row, text.splitlines()) if cells[1:2] == [LOG]]
-    assert [cells[3] for cells in logs] == ["validator", "unassessed", "out-of-scope"]
+    logs = [e for e in report_entries(text) if e.sentence == LOG]
+    assert [e.attrs[1] for e in logs] == ["validator", "unassessed", "out-of-scope"]
 
 
 def test_a_repeated_sentence_with_a_missing_disambiguator_fails_generate(tree, monkeypatch):
@@ -499,45 +499,303 @@ def test_every_keyword_sentence_has_exactly_one_row_in_order():
 
 
 # --- Rendering ----------------------------------------------------------------------------------
+# Each keyword sentence is an entry: the sentence quoted on its own line, a blank line, then one
+# line of attributes separated by " · " and led by a coverage mark.
+
+_MARK = re.compile(r'<span class="kcs-mark kcs-(covered|uncovered)">([●○])</span> ')
+_LINE_LINK = re.compile(r"\[Line (\d+)\]\(\S+\?plain=1#L\1\)")
+_CASE_LINK = re.compile(r"\[((CESR|KERI|ACDC|IPEX)-\d{4})\]\(https://github\.com/bakobo/"
+                        r"keri-conformance-suite/blob/main/cases/(\w+)/\1\.json\)((?: \([^)]*\))?)")
+SEP = " · "
 
 
-_LINE_CELL = re.compile(r"\[(\d+)\]\(\S+\?plain=1#L\1\)")
+def unquote(line):
+    """The text of a blockquote line written by cc.quote, with its escapes undone."""
+    assert line.startswith("> ")
+    text = re.sub(r"^(\d+)\\([.)])", r"\1\2", line[2:])
+    text = re.sub(r"^\\([-+*#>])", r"\1", text)
+    return text.replace("\\|", "|")
 
 
-def report_rows(markdown):
-    """(line, sentence) for every sentence row of a rendered per-spec report: a row of ten cells
-    whose first is a line linked to the raw text, and whose second is the sentence."""
+@dataclasses.dataclass
+class Entry:
+    line: int
+    sentence: str
+    covered: bool
+    attrs: list  # the attributes after the line link: level, triage, cases, ...
+
+
+def report_entries(markdown):
+    """Every sentence entry of a rendered per-spec report, in order: a blockquote line, a blank
+    line, then an attribute line led by a coverage mark and a line linked to the raw text."""
+    lines = markdown.splitlines()
     out = []
-    for line in markdown.splitlines():
-        cells = cc.split_row(line)
-        m = _LINE_CELL.fullmatch(cells[0]) if len(cells) == 10 else None
-        if m:
-            out.append((int(m.group(1)), cells[1]))
+    for i, line in enumerate(lines[:-2]):
+        mark = _MARK.match(lines[i + 2])
+        if not (line.startswith("> ") and lines[i + 1] == "" and mark):
+            continue
+        attrs = lines[i + 2][mark.end():].split(SEP)
+        link = _LINE_LINK.fullmatch(attrs[0])
+        assert link, attrs[0]
+        assert (mark.group(1) == "covered") == (mark.group(2) == "●")
+        out.append(Entry(int(link.group(1)), unquote(line), mark.group(1) == "covered", attrs[1:]))
     return out
 
 
-def test_report_rows_reads_only_sentence_rows():
-    sentence = "| " + line_link(5) + " | It MUST hold. | MUST |" + " x |" * 7
-    unmapped = "| " + line_link(6) + " | A quote. | KERI-0001 | clause |"
-    head = "| Line | Sentence |" + " x |" * 8
-    assert report_rows(f"{sentence}\n{unmapped}\n{head}") == [(5, "It MUST hold.")]
+def report_rows(markdown):
+    """(line, sentence) for every sentence entry of a rendered per-spec report."""
+    return [(e.line, e.sentence) for e in report_entries(markdown)]
 
 
-def test_a_table_cell_escapes_pipes_and_split_row_reads_it_back():
-    line = "| 3 | " + cc.cell("|`A`| It MUST be first. |") + " |"
-    assert cc.split_row(line) == ["3", "|`A`| It MUST be first. |"]
-    assert cc.split_row("not a row") == []
+def unmapped_entries(markdown):
+    """(line, quote, attribute line) for every entry under "Quotes that match no keyword
+    sentence": a blockquote line, a blank line, then an attribute line led by its line link."""
+    lines = markdown.splitlines()
+    return [(int(_LINE_LINK.match(lines[i + 2]).group(1)), unquote(line), lines[i + 2])
+            for i, line in enumerate(lines[:-2])
+            if line.startswith("> ") and lines[i + 1] == "" and _LINE_LINK.match(lines[i + 2])]
 
 
-def test_a_backslash_before_a_pipe_survives_a_cell():
+def case_marks(entry):
+    """{case id: marks} from an entry's coverage attribute, checking each case's link."""
+    cases = entry.attrs[2]
+    if cases == "not covered":
+        return {}
+    prefix = "covered by " if entry.covered else "cited by "
+    assert cases.startswith(prefix), cases
+    out = {}
+    for item in cases[len(prefix):].split(", ["):
+        m = _CASE_LINK.fullmatch(item if item.startswith("[") else "[" + item)
+        assert m, item
+        assert m.group(3) == m.group(2).lower()
+        out[m.group(1)] = m.group(4)[2:-1].split(", ") if m.group(4) else []
+    return out
+
+
+def recovered_counts(entry):
+    """What the old Direct, Inferred, Disputed and basis columns counted, from the marks alone."""
+    marks = case_marks(entry).values()
+    return (sum(not ({"inferred", "basis"} & set(m)) for m in marks),
+            sum(bool({"inferred", "also inferred"} & set(m)) for m in marks),
+            sum("disputed" in m for m in marks),
+            sum(bool({"basis", "also basis"} & set(m)) for m in marks))
+
+
+def row_counts(row):
+    return len(row.direct), len(row.inferred), row.disputed, len(row.basis)
+
+
+def test_report_entries_reads_only_sentence_entries():
+    sentence = f'> It MUST hold.\n\n<span class="kcs-mark kcs-covered">●</span> [Line 5]({FAKE.repo}' \
+               f'/blob/x/f?plain=1#L5) · MUST · validator · covered by [KERI-0001](https://github' \
+               f'.com/bakobo/keri-conformance-suite/blob/main/cases/keri/KERI-0001.json)'
+    unmapped = f"> A quote.\n\n[Line 6]({FAKE.repo}/blob/x/f?plain=1#L6) · cited as clause by x"
+    stray = "> A quote with no attributes.\n\nA paragraph."
+    entries = report_entries(f"{sentence}\n\n{unmapped}\n\n{stray}\n")
+    assert [(e.line, e.sentence, e.covered) for e in entries] == [(5, "It MUST hold.", True)]
+    assert case_marks(entries[0]) == {"KERI-0001": []}
+    assert [u[:2] for u in unmapped_entries(f"{sentence}\n\n{unmapped}\n")] == [(6, "A quote.")]
+
+
+def test_a_quoted_sentence_escapes_pipes_and_unquote_reads_it_back():
+    """A sentence that is a table row of the specification must not become a table."""
+    quoted = cc.quote("|`A`| It MUST be first. |")
+    assert quoted == r"> \|`A`\| It MUST be first. \|"
+    assert unquote(quoted) == "|`A`| It MUST be first. |"
+
+
+def test_a_backslash_before_a_pipe_survives_a_quote():
     """Hostile pass on #15: an existing backslash must not unescape the pipe after it."""
-    text = r"Logs \| are private. C:\path"
-    line = "| 1 | " + cc.cell(text) + " | 2 |"
-    # Markdown escapes a pipe only after an odd run of backslashes; count the delimiters it sees.
-    delimiters = [m for m in re.finditer(r"(\\*)\|", line) if len(m.group(1)) % 2 == 0]
-    assert len(delimiters) == 4
-    # The text is markdown, so its own "\\|" was already an escaped pipe.
-    assert cc.split_row(line) == ["1", r"Logs | are private. C:\path", "2"]
+    quoted = cc.quote(r"Logs \| are private. C:\path \\| x")
+    # Markdown escapes a pipe only after an odd run of backslashes; none may be left unescaped.
+    assert not [m for m in re.finditer(r"(\\*)\|", quoted) if len(m.group(1)) % 2 == 0]
+    # The text is markdown, so its own "\\|" was already an escaped pipe; other escapes are kept.
+    assert quoted == r"> Logs \| are private. C:\path \\\| x"
+
+
+def test_a_quote_keeps_the_specifications_own_escapes():
+    assert cc.quote(r"A \# code MUST be \*framed\*.") == r"> A \# code MUST be \*framed\*."
+
+
+@pytest.mark.parametrize("text, quoted", [
+    ("1. It MUST hold.", r"> 1\. It MUST hold."),
+    ("12) It MUST hold.", r"> 12\) It MUST hold."),
+    ("- It MUST hold.", r"> \- It MUST hold."),
+    ("+ It MUST hold.", r"> \+ It MUST hold."),
+    ("* It MUST hold.", r"> \* It MUST hold."),
+    ("# It MUST hold.", r"> \# It MUST hold."),
+    ("> It MUST hold.", r"> \> It MUST hold."),
+    ("*Emphasis* MUST stay.", "> *Emphasis* MUST stay."),
+    ("1.5 MUST stay.", "> 1.5 MUST stay."),
+    ("-x MUST stay.", "> -x MUST stay."),
+])
+def test_a_quote_cannot_start_a_list_heading_or_nested_quote(text, quoted):
+    assert cc.quote(text) == quoted
+    assert unquote(quoted) == text
+
+
+def test_the_spec_report_starts_with_the_notice_and_lists_sections_in_order():
+    text = cc.render_spec("fake", measured())
+    assert text.startswith(cc.NOTICE)
+    assert text.index("Parsing") < text.index("Keys")
+    assert text.index("### Obligations") < text.index("### Permissions")
+    # A section's line links to the raw text at its heading, which is line 3 of FAKE_TEXT.
+    assert ("#### Parsing\n\n[Line 3 of the specification](https://github.com/example/fake-spec/"
+            "blob/" + "f" * 40 + "/spec/spec-body.md?plain=1#L3).\n\n> ") in text
+    assert "spec-body.md#parsing" not in text
+    assert report_rows(text) == [  # spec order, obligations first
+        (s.line, s.text) for s in cc.keyword_sentences(FAKE_TEXT) if s.level != "MAY"
+    ] + [(5, "A parser MAY stop.")]
+
+
+def test_the_spec_report_has_entries_not_tables():
+    text = cc.render_spec("fake", measured())
+    assert "| Line |" not in text and "|---" not in text
+    # Entries are separated by a blank line, and the attribute line is a paragraph of its own.
+    assert "\n\n> A parser SHOULD log it.\n\n<span class=\"kcs-mark kcs-uncovered\">○</span> " \
+           in text
+    assert "\n\n\n" not in text
+
+
+def test_the_spec_report_links_its_readers_to_how_to_read_an_entry():
+    text = cc.render_spec("fake", measured())
+    intro = ("[README.md](README.md) explains how to read it and how it is generated. How to read "
+             "an entry is explained in [Reading an entry](README.md#reading-an-entry).\n\n## ")
+    assert intro in text
+
+
+def case_link(case_id):
+    layer = case_id.split("-")[0].lower()
+    return (f"[{case_id}](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/{layer}/"
+            f"{case_id}.json)")
+
+
+COVERED = '<span class="kcs-mark kcs-covered">●</span> '
+UNCOVERED = '<span class="kcs-mark kcs-uncovered">○</span> '
+
+
+def attribute_line(markdown, sentence):
+    lines = markdown.splitlines()
+    (i,) = [i for i, line in enumerate(lines) if line == f"> {sentence}"]
+    assert lines[i + 1] == ""
+    return lines[i + 2]
+
+
+def test_a_covered_entry_gives_its_attributes_in_words_and_links_its_cases():
+    text = cc.render_spec("fake", measured())
+    assert attribute_line(text, "A parser MUST refuse a bad code.") == (
+        f"{COVERED}[Line 5]({raw(5)}) · MUST · validator, security · covered by "
+        f"{case_link('KERI-0001')} (also inferred), {case_link('KERI-0002')}, "
+        f"{case_link('KERI-0004')} (inferred) · 2 MUST and 2 SHOULD assertions · both polarities")
+
+
+def test_an_entry_cited_only_by_a_disputed_case_is_cited_not_covered():
+    text = cc.render_spec("fake", measured())
+    assert attribute_line(text, "The controller MUST keep its keys secret.") == (
+        f"{UNCOVERED}[Line 10]({raw(10)}) · MUST · unassessed · cited by "
+        f"{case_link('KERI-0003')} (disputed) · 1 MUST assertion")
+
+
+def test_an_uncited_entry_says_not_covered_and_nothing_more():
+    text = cc.render_spec("fake", measured())
+    assert attribute_line(text, "A parser MAY stop.") == (
+        f"{UNCOVERED}[Line 5]({raw(5)}) · MAY · unassessed · not covered")
+
+
+@pytest.mark.parametrize("check, expected, words", [
+    ("rejected", None, "negative only"),
+    ("encoded", "00", "positive only"),
+])
+def test_an_entrys_polarity_is_in_words(check, expected, words):
+    coverage = cc.measure([case("KERI-0001", must("A parser MUST refuse a bad code.", check=check,
+                                                  expected=expected))],
+                          {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {})
+    line = attribute_line(cc.render_spec("fake", coverage), "A parser MUST refuse a bad code.")
+    assert line.endswith(f" · 1 MUST assertion · {words}")
+
+
+@pytest.mark.parametrize("levels, words", [
+    ({"MUST": 1}, "1 MUST assertion"),
+    ({"SHOULD": 3}, "3 SHOULD assertions"),
+    ({"MUST": 2, "SHOULD": 1}, "2 MUST and 1 SHOULD assertions"),
+    ({"MUST": 1, "SHOULD": 1, "INTEROP": 1}, "1 MUST, 1 SHOULD and 1 INTEROP assertions"),
+])
+def test_assertion_counts_are_in_words(levels, words):
+    assert cc._assertions_text(levels) == words
+
+
+def test_a_case_cited_both_ways_marks_each_way_beyond_the_direct_one():
+    row = cc.Row(cc.keyword_sentences(FAKE_TEXT)[0], None,
+                 direct=["KERI-0001"], inferred=["KERI-0001", "KERI-0002"],
+                 basis=["KERI-0001", "KERI-0002", "IPEX-0001"],
+                 statuses={"KERI-0001": "active", "KERI-0002": "draft", "IPEX-0001": "active"})
+    assert cc._cases_text(row) == (
+        f"cited by {case_link('IPEX-0001')} (basis), {case_link('KERI-0001')} (also inferred, "
+        f"also basis), {case_link('KERI-0002')} (inferred, basis, draft)")
+
+
+def assert_marks_recover_the_counts(coverages, markdown):
+    """Each row's entry: its mark says whether it is covered, and its case marks give back exactly
+    what the old Direct, Inferred and Disputed columns counted, and the basis citations."""
+    entries = {(e.line, e.sentence): e for e in report_entries(markdown)}
+    rows = [r for c in coverages for r in c.rows]
+    assert len(entries) == len(rows)
+    for r in rows:
+        e = entries[(r.sentence.line, r.sentence.text)]
+        assert e.covered == r.covered, r.sentence.text
+        assert recovered_counts(e) == row_counts(r), r.sentence.text
+
+
+def test_the_old_direct_inferred_and_disputed_counts_are_recoverable_from_the_marks():
+    assert_marks_recover_the_counts(measured(), cc.render_spec("fake", measured()))
+    practice = practice_measured([case("IPEX-0001", basis("A parser SHOULD log it.")),
+                                  case("IPEX-0002", basis("A parser MUST refuse a bad code."),
+                                       status="disputed")])
+    assert_marks_recover_the_counts(practice, cc.render_spec("fake", practice))
+
+
+def test_the_spec_report_lists_unmapped_quotes_as_entries():
+    text = cc.render_spec("fake", measured())
+    assert "### Quotes that match no keyword sentence" in text
+    assert "| Quote |" not in text
+    assert unmapped_entries(text) == [
+        (11, "A plain line with no keyword.",
+         f"[Line 11]({raw(11)}) · cited as clause by {case_link('KERI-0004')}"),
+        (11, "A plain line with no keyword.",
+         f"[Line 11]({raw(11)}) · cited as inference by {case_link('KERI-0004')}"),
+    ]
+
+
+def test_an_unmapped_quote_is_escaped_like_a_sentence():
+    coverage = cc.Coverage(FAKE, [], [cc.Unmapped(2, "| a | b |", "basis",
+                                                  ["IPEX-0001", "IPEX-0002"])])
+    text = cc.render_spec("fake", [coverage])
+    assert unmapped_entries(text) == [
+        (2, "| a | b |", (f"[Line 2]({raw(2)}) · cited as basis by "
+                          f"{case_link('IPEX-0001')}, {case_link('IPEX-0002')}"))]
+
+
+def test_a_spec_report_with_nothing_unmapped_says_so():
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {})
+    assert "Every quoted clause matches a keyword sentence." in cc.render_spec("fake", coverage)
+
+
+def test_a_triage_reason_is_escaped_and_kept_on_one_line():
+    """Copilot on #15: a pipe or a newline in a reason must not break the entry."""
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": {
+        "A parser SHOULD log it.": {"scope": "untestable", "reason": "Logs | are\nprivate.",
+                                    "security": False}}})
+    (entry,) = [e for e in report_entries(cc.render_spec("fake", coverage))
+                if e.sentence == "A parser SHOULD log it."]
+    assert entry.attrs == ["SHOULD", r"untestable: Logs \| are private.", "not covered"]
+
+
+def test_an_untestable_triage_shows_its_reason():
+    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": {
+        "A parser SHOULD log it.": {"scope": "untestable", "reason": "Logs are private.",
+                                    "security": True}}})
+    assert " · SHOULD · untestable: Logs are private., security · not covered\n" in cc.render_spec(
+        "fake", coverage)
 
 
 def test_write_refuses_a_report_it_could_not_read_back(tmp_path, monkeypatch):
@@ -548,71 +806,6 @@ def test_write_refuses_a_report_it_could_not_read_back(tmp_path, monkeypatch):
         cc.write(tmp_path, big)
     assert e.value.code == cc.E_SIZE
     assert not (tmp_path / "docs" / "coverage" / "fake.md").exists()
-
-
-def test_the_spec_report_starts_with_the_notice_and_lists_sections_in_order():
-    text = cc.render_spec("fake", measured())
-    assert text.startswith(cc.NOTICE)
-    assert text.index("Parsing") < text.index("Keys")
-    assert text.index("### Obligations") < text.index("### Permissions")
-    # A section's line links to the raw text at its heading, which is line 3 of FAKE_TEXT.
-    assert ("[Line 3 of the specification](https://github.com/example/fake-spec/blob/" + "f" * 40
-            + "/spec/spec-body.md?plain=1#L3).") in text
-    assert "spec-body.md#parsing" not in text
-    assert report_rows(text) == [  # spec order, obligations first
-        (s.line, s.text) for s in cc.keyword_sentences(FAKE_TEXT) if s.level != "MAY"
-    ] + [(5, "A parser MAY stop.")]
-
-
-def test_the_spec_report_rows_carry_triage_counts_polarity_and_case_marks():
-    text = cc.render_spec("fake", measured())
-    (bad_code,) = [line for line in text.splitlines() if "refuse a bad code. |" in line]
-    # The sentence comes second, so a reader can tell rows apart without scrolling right.
-    assert bad_code == (f"| {line_link(5)} | A parser MUST refuse a bad code. | MUST "
-                        "| validator, security | 2 | 2 | 0 | MUST 2, SHOULD 2 | both "
-                        "| KERI-0001, KERI-0002, KERI-0004 (inferred) |")
-    (secret,) = [line for line in text.splitlines() if "keys secret. |" in line]
-    assert secret.endswith("| unassessed | 1 | 0 | 1 | MUST 1 | — | KERI-0003 (disputed) |")
-
-
-def test_the_sentence_table_head_puts_the_sentence_after_the_line():
-    head, rule = cc._TABLE_HEAD.splitlines()
-    assert cc.split_row(head) == ["Line", "Sentence", "Level", "Triage", "Direct", "Inferred",
-                                  "Disputed", "Assertions", "Polarity", "Cases"]
-    assert cc.split_row(rule) == ["---:", ":---", ":---", ":---", "---:", "---:", "---:", ":---",
-                                  ":---", ":---"]
-
-
-def test_the_spec_report_lists_unmapped_quotes():
-    text = cc.render_spec("fake", measured())
-    assert "### Quotes that match no keyword sentence" in text
-    assert "| Line | Quote | Cases | Cited as |\n|---:|:---|:---|:---|\n" in text
-    assert (f"| {line_link(11)} | A plain line with no keyword. | KERI-0004 | inference |"
-            in text)
-
-
-def test_a_spec_report_with_nothing_unmapped_says_so():
-    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {})
-    assert "Every quoted clause matches a keyword sentence." in cc.render_spec("fake", coverage)
-
-
-def test_a_triage_reason_is_escaped_like_any_other_cell():
-    """Copilot on #15: a pipe or a newline in a reason must not break the table row."""
-    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": {
-        "A parser SHOULD log it.": {"scope": "untestable", "reason": "Logs | are\nprivate.",
-                                    "security": False}}})
-    (line,) = [line for line in cc.render_spec("fake", coverage).splitlines()
-               if "SHOULD log it." in line]
-    cells = cc.split_row(line)
-    assert len(cells) == 10
-    assert cells[3] == "untestable: Logs | are private."
-
-
-def test_an_untestable_triage_shows_its_reason():
-    coverage = cc.measure([], {(FAKE.label, FAKE.commit): (FAKE, FAKE_TEXT)}, {"fake": {
-        "A parser SHOULD log it.": {"scope": "untestable", "reason": "Logs are private.",
-                                    "security": False}}})
-    assert "| untestable: Logs are private. |" in cc.render_spec("fake", coverage)
 
 
 def test_a_sentence_before_any_heading_is_reported_under_its_own_heading():
@@ -657,6 +850,18 @@ def test_the_index_puts_the_summary_after_its_first_paragraph_and_the_details_af
     assert index.index(first) < summary < index.index("## Details") < index.index(rest)
     assert index.index("## Summary") < summary
     assert index.endswith(rest)
+
+
+def test_the_index_explains_how_to_read_an_entry_under_its_own_heading_in_the_details():
+    index = cc.render_index(measured())
+    details = index[index.index("## Details"):]
+    assert "\n### Reading an entry\n" in details
+    assert "Each row of a report" not in index
+    reading = details[details.index("### Reading an entry"):]
+    for words in ("●", "○", "`not covered`", "`covered by`", "`cited by`", "`(inferred)`",
+                  "`(also inferred)`", "`(basis)`", "`(also basis)`", "`(disputed)`",
+                  "`positive only`", "`negative only`", "`both polarities`", "`unassessed`"):
+        assert words in reading, words
 
 
 # --- Generation, writing and checking -----------------------------------------------------------
@@ -869,6 +1074,19 @@ def test_every_keyword_sentence_of_each_pinned_text_is_in_the_report_exactly_onc
     assert len(rows) == len(set(rows))
 
 
+def test_each_committed_entry_recovers_the_counts_of_its_row(monkeypatch):
+    """The marks of every real entry give back what the old Direct, Inferred and Disputed columns
+    counted, so replacing the table lost nothing."""
+    rendered = []
+    render = cc.render_spec
+    monkeypatch.setattr(cc, "render_spec", lambda label, coverages: rendered.append(
+        (coverages, render(label, coverages))) or rendered[-1][1])
+    real_files()
+    assert len(rendered) == 3
+    for coverages, markdown in rendered:
+        assert_marks_recover_the_counts(coverages, markdown)
+
+
 # --- Practice ------------------------------------------------------------------------------------
 # A keyword sentence in text that disclaims normativity, or that states common practice rather than
 # a requirement, is triaged practice. It is counted apart from the obligations and permissions, and
@@ -973,9 +1191,11 @@ def test_the_spec_report_lists_practice_sentences_in_their_own_part():
     obligations, rest = text.split("### Permissions")
     permissions, practice = rest.split("### Practice")
     assert "SHOULD log it." not in obligations and "MAY stop." not in permissions
-    assert "| A parser SHOULD log it. | SHOULD | practice | 0 | 0 | 0 | INTEROP 1 | negative " \
-           "| IPEX-0001 (basis) |" in practice
-    assert "| A parser MAY stop. | MAY | practice | 0 | 0 | 0 | — | — | — |" in practice
+    assert attribute_line(practice, "A parser SHOULD log it.") == (
+        f"{COVERED}[Line 5]({raw(5)}) · SHOULD · practice · covered by "
+        f"{case_link('IPEX-0001')} (basis) · 1 INTEROP assertion · negative only")
+    assert attribute_line(practice, "A parser MAY stop.") == (
+        f"{UNCOVERED}[Line 5]({raw(5)}) · MAY · practice · not covered")
     assert "3 MUST, 1 SHOULD and 0 MAY or OPTIONAL, and 2 triaged as practice" in text
 
 
@@ -995,7 +1215,7 @@ def test_generate_reads_the_text_a_basis_quotes_even_when_no_clause_cites_it(tre
     root = tree(case("IPEX-0001", basis("A parser SHOULD log it.")),
                 triage=triage_file({"A parser SHOULD log it.": PRACTICE}))
     text = cc.generate(root)["docs/coverage/fake.md"].decode()
-    assert "IPEX-0001 (basis)" in text
+    assert f"{case_link('IPEX-0001')} (basis)" in text
 
 
 def test_a_basis_quoting_an_unpinned_commit_is_a_coded_error(tree):
