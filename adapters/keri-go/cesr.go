@@ -49,20 +49,27 @@ func parseOp(request map[string]json.RawMessage) (any, *opError) {
 	if err != nil {
 		return reject(classParse, err), nil
 	}
+	acdc := false
 	for _, m := range messages {
 		proto, _, err := keri.DetectVersion(m)
 		if err != nil {
 			return reject(classVersion, err), nil
 		}
-		// keri-go has no parse-level reader for an ACDC body: ParseEvent reads key events, and
-		// VerifyCredential also checks SAIDs. Any verdict on one would be the adapter's.
+		// ParseEvent reads a KERI message's fields. keri-go has no parse-level reader for an ACDC
+		// body (VerifyCredential also checks SAIDs), so one is noted and judged after the rest.
 		if proto != keri.ProtocolKERI {
-			return nil, unsupported(eACDCBody, "keri-go has no reader that parses an ACDC body "+
-				"without verifying it, so the adapter gives no verdict on it.")
+			acdc = true
+			continue
 		}
 		if _, err := keri.ParseEvent(m); err != nil {
 			return reject(classEvent, err), nil
 		}
+	}
+	// keri-go refused nothing it could read. If an ACDC body is left unread, any verdict on the
+	// stream would be the adapter's.
+	if acdc {
+		return nil, unsupported(eACDCBody, "keri-go has no reader that parses an ACDC body "+
+			"without verifying it, so the adapter gives no verdict on a stream holding one.")
 	}
 	// ParseKELStream reads to the end of the stream or refuses it, so it consumed all of it.
 	return map[string]any{"accepted": map[string]int{"consumed": len(stream)}}, nil

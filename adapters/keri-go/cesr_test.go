@@ -168,3 +168,16 @@ func TestAnACDCBodyIsUnsupported(t *testing.T) {
 		}
 	}
 }
+
+// A KERI message keri-go refuses is a rejection wherever it sits, before or after an ACDC body:
+// the unsupported answer is only for a stream keri-go would otherwise accept.
+func TestARefusedKERIMessageAfterAnACDCBodyIsARejection(t *testing.T) {
+	acdc := []byte(`{"v":"ACDC10JSON000000_","x":1}`)
+	keriBad := []byte(`{"v":"KERI10JSON000000_","s":"zz"}`)
+	for _, stream := range [][]byte{append(append([]byte{}, acdc...), keriBad...), append(append([]byte{}, keriBad...), acdc...)} {
+		res := parseResult(t, hex.EncodeToString(stream))
+		if res["reject"].(map[string]any)["class"] != classEvent {
+			t.Fatalf("%s: %v", stream, res)
+		}
+	}
+}
