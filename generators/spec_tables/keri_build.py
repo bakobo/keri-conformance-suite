@@ -15,7 +15,7 @@ final readings, as ``"<step>/<reason>"``. The builder:
 The grading, per key-event message (receipts are graded only through their event):
 
 - Not seen: graded at the level of the clause behind the step that refused it. A refusal under
-  a sentence that says drop (lines 1266, 377, 379, 1823) is graded as ``rejected``, at the initial
+  a sentence that says drop (lines 1266, 367, 377, 379, 1823) is graded as ``rejected``, at the initial
   reading only. Every not-seen assertion must hold under every keep policy.
 - Pending: for a signing or witness threshold shortfall only, SHOULD (line 1266).
 - Seen and on the trunk: SHOULD, inferred (liveness). If seeing it needs the validator to have
@@ -63,6 +63,7 @@ REJECT_REASONS = {
     "establishment-only": "eo-drop",
     "do-not-delegate": "dnd-drop",
     "supersede-refused": "supersede-discard",
+    "trait-inception-only": "traits-drop",
 }
 NOT_SEEN_CLAUSES = {
     "unparseable": "act-as-verifier",
