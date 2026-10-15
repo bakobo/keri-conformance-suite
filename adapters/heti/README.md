@@ -1,6 +1,6 @@
 # heti adapter
 
-Connects [heti](https://github.com/bakobo/heti) to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `acdc.verify` through heti's public verifier, `Lockbox.verify_acdc`, and uses heti's public API only, never patching it (this.i 93t4d880). It composes nothing: `composes` is empty, and every verdict is heti's.
+Connects [heti](https://github.com/bakobo/heti) to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `acdc.verify` through heti's public verifier, `Lockbox.verify_acdc`, and `acdc.issue` through its public issuer, `OwnFacet.issue`, and uses heti's public API only, never patching it (this.i 93t4d880). It composes nothing: `composes` is empty, and every verdict is heti's.
 
 The adapter does not read, reuse or import anything from `generators/`, so it never tests the suite's own model against itself.
 
@@ -35,6 +35,10 @@ heti answers a verified ACDC with a verdict and refuses everything else by raisi
 heti bounds the age of its own key-state observation by a `recency` it is given. The adapter consults no clock, so it passes ten years, which makes the bound inert.
 
 `registry` reports heti's judged head for a verified ACDC. `edges` is empty, because heti reports which far nodes it walked, not a result per edge.
+
+## acdc.issue
+
+For each request the adapter builds a fresh lockbox, learns the request's schemas, mints one facet per role with no witnesses, and issues each credential with `OwnFacet.issue`, far nodes first, so an edge names its far credential by SAID and schema. heti issues with its own keys, salts, registry nonces and clock, which is why the runner grades an issuance by verifying it rather than by its bytes (this.i 2u2ps8mt). The result is each facet's KEL and each credential's ACDC, registry chain and head disclosure, as heti returns them. heti refuses an issuance by raising a coded error, which the adapter answers as `refused`.
 
 ## Declared features
 

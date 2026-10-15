@@ -7,11 +7,11 @@ import importlib.metadata
 import json
 import sys
 
-from kcs_adapter_heti import verify
+from kcs_adapter_heti import issue, verify
 
 PROTOCOL = 1
 ADAPTER = {"name": "kcs-adapter-heti", "version": "0.1.0"}
-OPERATIONS = ["acdc.verify"]
+OPERATIONS = ["acdc.verify", "acdc.issue"]
 # What heti does itself inside acdc.verify (README.md, "Declared features"). heti refuses upd
 # registries by name, so acdc.registry.upd is not declared.
 FEATURES = ["acdc.edges", "acdc.registry.bup", "acdc.version-2.x", "cesr.genus-2.00",
@@ -31,7 +31,7 @@ E_VERSION = "e.feature.unsupported.protocol-version.f"
 E_INTERNAL = "e.self.unknown.f"
 # Operations of protocol version 1 this adapter does not implement.
 UNDECLARED = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit", "exn.verify",
-              "acdc.issue", "acdc.present")
+              "acdc.present")
 
 
 class Unsupported(Exception):
@@ -61,7 +61,7 @@ def hello(request):
             "operations": list(OPERATIONS), "features": list(FEATURES), "composes": []}
 
 
-OPS = {"hello": hello, "acdc.verify": verify.verify}
+OPS = {"hello": hello, "acdc.verify": verify.verify, "acdc.issue": issue.issue}
 
 
 def handle(request):

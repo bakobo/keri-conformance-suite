@@ -12,9 +12,9 @@ def answer(request) -> dict:
     return json.loads(protocol.handle_line(json.dumps(request).encode()))
 
 
-def test_hello_names_heti_and_declares_acdc_verify_only():
+def test_hello_names_heti_and_declares_verify_and_issue():
     result = answer({"id": 0, "op": "hello", "protocol": 1, "supported": [1]})["result"]
-    assert result["protocol"] == 1 and result["operations"] == ["acdc.verify"]
+    assert result["protocol"] == 1 and result["operations"] == ["acdc.verify", "acdc.issue"]
     assert result["implementation"]["name"] == "heti"
     assert len(result["implementation"]["commit"]) == 40
     assert "acdc.registry.upd" not in result["features"] and result["composes"] == []
