@@ -15,7 +15,7 @@ final readings, as ``"<step>/<reason>"``. The builder:
 The grading, per key-event message (receipts are graded only through their event):
 
 - Not seen: graded at the level of the clause behind the step that refused it. A refusal under
-  a sentence that says drop (lines 1266, 377, 379, 1823) is graded as ``rejected``, at the initial
+  a sentence that says drop (lines 1266, 367, 377, 379, 1823) is graded as ``rejected``, at the initial
   reading only. Every not-seen assertion must hold under every keep policy.
 - Pending: for a signing or witness threshold shortfall only, SHOULD (line 1266).
 - Seen and on the trunk: SHOULD, inferred (liveness). If seeing it needs the validator to have
@@ -35,6 +35,14 @@ MUST assertions, the scenario names a ``companion``, and the builder emits them 
 case with the same messages and only those assertions. Its conditional key states report
 not-applicable for a validator that never sees the message they are conditioned on.
 
+In the non-normative keripy-1x-interop profile (``keripy_1x``), the case is built on the 1.x wire
+(keri_events.V1) and graded exactly as a normative case, companion and all, and then every
+assertion becomes INTEROP: its clause turns into a basis that quotes the same sentence and says
+what keri-v1.0.1 would grade the reading. The readings that rest on keeping an out-of-order or
+undelegated event, which keri-v1.0.1 leaves to the keri-escrow profile, are graded there too,
+gated on ``keri.escrow``, because keripy 1.x keeps such events (this.i "KERI 1.x KELs are graded
+for interoperability, by the decision procedure").
+
 "Every keep policy" above means every combination of keep policy, quiescence order (delivery
 order, its reverse, and every order of the kept messages when there are at most
 ``MAX_PERMUTED``) and recovery choice (a validator that declines an A0 supersession, which only a
@@ -44,15 +52,17 @@ graded SHOULD, inferred from rule A0, and needs ``kel.recovery``.
 
 import itertools
 
-from . import digests, keri_model
+from . import digests, keri_model, keripy1x
 from .errors import ScenarioError
-from .keri_events import DELEGATED, ESTABLISHMENT, INCEPTIONS, ROTATIONS, WIRE, EventBuilder
+from .keri_events import DELEGATED, ESTABLISHMENT, INCEPTIONS, ROTATIONS, V1, V2, EventBuilder
 
 GENERATOR_NAME = "kcs-gen-keri"
 GENERATOR_VERSION = "0.1.0"
 SCHEMA_VERSION = 1
 BASE_FEATURES = ("cesr.genus-2.00", "cesr.serialization.json", "crypto.ed25519", "kel.basic",
                  "keri.version-2.x")
+BASE_FEATURES_1X = ("cesr.genus-1.00", "cesr.serialization.json", "crypto.ed25519", "kel.basic",
+                    "keri.version-1.x")
 # Digest algorithms beyond Blake3 that a validator may decline (CESR line 1186 lets each
 # serialization choose; no sentence requires any one), named by the code that selects them.
 DIGEST_FEATURES = {"F": "crypto.blake2b-256", "I": "crypto.sha2-256"}
@@ -63,6 +73,7 @@ REJECT_REASONS = {
     "establishment-only": "eo-drop",
     "do-not-delegate": "dnd-drop",
     "supersede-refused": "supersede-discard",
+    "trait-inception-only": "traits-drop",
 }
 NOT_SEEN_CLAUSES = {
     "unparseable": "act-as-verifier",
@@ -108,6 +119,22 @@ ESCROW_BASIS = (
     "that arrives, so a validator that keeps it accepts a KEL delivered out of order. No clause "
     "states this; the specification's only escrow obligation is for threshold shortfalls (line "
     "1266). keripy keeps such events in its escrows."
+)
+KERIPY_1X_REFERENCE = (f"keripy {keripy1x.KERIPY_1X_VERSION} (commit {keripy1x.KERIPY_1X_COMMIT}) "
+                       f"is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).")
+KERIPY_1X_BASIS = (
+    "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision "
+    "procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where "
+    "keri-v1.0.1 would grade the same reading {how} under the quoted sentence. No specification "
+    "defines the KERI 1.x field sets or the CESR 1.00 attachment codes. " + KERIPY_1X_REFERENCE
+)
+KERIPY_1X_ESCROW_BASIS = (
+    "Interoperability with keripy 1.x, not conformance: keripy 1.x keeps an event it cannot accept "
+    "yet because an earlier event of its KEL, or its delegating seal, has not been seen, and "
+    "accepts it when that arrives. No clause states this; the KERI specification v1.0.1's only "
+    "escrow obligation is for threshold shortfalls (line 1266), so keri-v1.0.1 leaves it to the "
+    "keri-escrow profile. The reading is the suite's decision procedure with such events kept. "
+    + KERIPY_1X_REFERENCE
 )
 
 
@@ -160,8 +187,8 @@ def _note(outcome) -> str:
     return f"Decision procedure step {outcome.step} ({outcome.reason}).{NOTES.get(outcome.reason, '')}"
 
 
-def _features(ideal, messages, graded: set[str]) -> list[str]:
-    features = set(BASE_FEATURES) | graded
+def _features(ideal, messages, graded: set[str], base=BASE_FEATURES) -> list[str]:
+    features = set(base) | graded
     for i, p in enumerate(ideal.parsed):
         ilk, body = p.ilk, p.body
         if ilk == "rct":
@@ -269,10 +296,14 @@ def _companion_case(case, cid_key):
 
 
 def build_keri_case(t, scenario_path: str, case: dict, clauses: dict, inferences: dict,
-                    conflicts: dict, normative: bool) -> list[dict]:
-    """The case a scenario describes, and its ungated companion when it has one."""
+                    conflicts: dict, normative: bool, keripy_1x: bool = False) -> list[dict]:
+    """The case a scenario describes, and its ungated companion when it has one. ``keripy_1x``
+    builds it on the 1.x wire and grades it for the keripy-1x-interop profile."""
     cid = case["id"]
-    eb = EventBuilder(t, case["events"])
+    wire = V1 if keripy_1x else V2
+    base = BASE_FEATURES_1X if keripy_1x else BASE_FEATURES
+    graded_as_normative = normative or keripy_1x
+    eb = EventBuilder(t, case["events"], wire=wire)
     deliveries = case["messages"]
     messages = [eb.message(d) for d in deliveries]
     streams = [m.stream for m in messages]
@@ -324,9 +355,15 @@ def build_keri_case(t, scenario_path: str, case: dict, clauses: dict, inferences
         p = ideal.parsed[i]
         ini, fin = ideal.initial[i], ideal.outcome[i]
         conflicts_here = ("receipt-drop",) if p.said in receipted else ()
-        if not normative:
+        if not graded_as_normative:
             _escrow_assertions(out, models, i)
             continue
+        # Only keeping that ends in acceptance is graded: an event kept and never accepted (a
+        # broken pre-rotation commitment, a prior that never arrives) has no reading worth more
+        # than the not-seen the normative grading already gives it.
+        if (keripy_1x and fin.state == "seen"
+                and _escrow_assertions(out, models, i, KERIPY_1X_ESCROW_BASIS)):
+            graded.add("keri.escrow")
         # The initial reading.
         if ini.state == "seen":
             grade = seen_grade(i, "initial")
@@ -373,19 +410,20 @@ def build_keri_case(t, scenario_path: str, case: dict, clauses: dict, inferences
             out.add("disposition", clause, inferred, conflicts=conflicts_here + extra_conflicts,
                     note=_note(fin), message=i, phase="final", expected="not-seen")
 
-    _key_states(out, case, eb, models, messages, normative, receipted)
-    features = _features(ideal, messages, graded | ({"keri.escrow"} if not normative else set()))
+    _key_states(out, case, eb, models, messages, graded_as_normative, receipted)
+    features = _features(ideal, messages,
+                         graded | ({"keri.escrow"} if not graded_as_normative else set()), base)
     assertions = out.numbered()
     companion = None
     gated = sorted(set(features) & set(GATED))
-    if normative and gated:
+    if graded_as_normative and gated:
         musts = [a for a in assertions if a["level"] == "MUST"]
         if musts:
             comp = _companion_case(case, gated)
-            ungated = [f for f in _features(ideal, messages, set()) if f not in GATED]
+            ungated = [f for f in _features(ideal, messages, set(), base) if f not in GATED]
             companion = _case(comp["id"], comp["title"], comp["description"], case,
                               ungated, musts, messages, scenario_path,
-                              comp["key"], clauses)
+                              comp["key"], clauses, wire)
         elif "companion" in case:
             raise ScenarioError(f"{cid}: names a companion but has no MUST assertion to put in it.")
         assertions = [a for a in assertions if a["level"] != "MUST"]
@@ -394,12 +432,30 @@ def build_keri_case(t, scenario_path: str, case: dict, clauses: dict, inferences
     if not assertions:
         raise ScenarioError(f"{cid}: no assertion survives the grading rules.")
     result = _case(cid, case["title"], case["description"], case, features, assertions, messages,
-                   scenario_path, case["key"], clauses)
-    return [result] + ([companion] if companion else [])
+                   scenario_path, case["key"], clauses, wire)
+    built = [result] + ([companion] if companion else [])
+    if keripy_1x:
+        for one in built:
+            one["assertions"] = [_interop_1x(a) for a in one["assertions"]]
+    return built
+
+
+def _interop_1x(a: dict) -> dict:
+    """A graded assertion as the keripy-1x-interop profile states it: INTEROP, with a basis that
+    quotes the clause and says what keri-v1.0.1 would grade the same reading."""
+    if a["level"] == "INTEROP":
+        return a
+    clause = a["clause"]
+    how = "SHOULD, inferred" if "inferred_from" in a else a["level"]
+    out = {k: v for k, v in a.items() if k not in ("clause", "inferred_from", "level")}
+    out["level"] = "INTEROP"
+    out["basis"] = {"text": KERIPY_1X_BASIS.format(how=how),
+                    **{k: clause[k] for k in ("spec", "section", "url", "commit", "quote")}}
+    return out
 
 
 def _case(cid, title, description, case, features, assertions, messages, scenario_path, key,
-          clauses) -> dict:
+          clauses, wire=V2) -> dict:
     result = {
         "schema_version": SCHEMA_VERSION,
         "id": cid,
@@ -407,7 +463,7 @@ def _case(cid, title, description, case, features, assertions, messages, scenari
         "description": description,
         "status": case.get("status", "active"),
         "profile": case["profile"],
-        "targets": {"wire": ["CESR-2.00", WIRE], "features": features},
+        "targets": {"wire": [wire.cesr, wire.target], "features": features},
         "operation": "keri.process",
         "input": {
             "perspective": {"role": "validator"},
@@ -430,10 +486,10 @@ def _case(cid, title, description, case, features, assertions, messages, scenari
     return result
 
 
-def _escrow_assertions(out, models, i):
+def _escrow_assertions(out, models, i, basis=ESCROW_BASIS) -> bool:
     """INTEROP assertions for the readings that depend on keeping more than the specification
     asks: an early event held, then seen and on the trunk. They must not depend on the order of
-    re-evaluation."""
+    re-evaluation. Returns whether it added any."""
     ideal = models.ideal
     alls = models.select(("all",), (True,))
     stricts = models.select(("thresholds",), (True,))
@@ -444,15 +500,16 @@ def _escrow_assertions(out, models, i):
             raise ScenarioError(f"message {i}'s escrow readings depend on the order of "
                                 "re-evaluation.")
     if all((m.initial[i].state, m.outcome[i].state) == (ini.state, fin.state) for m in stricts):
-        return
+        return False
+    before = len(out.items)
     if ini.state == "kept":
-        out.add("disposition", basis=ESCROW_BASIS, note=_note(ini), message=i, phase="initial",
+        out.add("disposition", basis=basis, note=_note(ini), message=i, phase="initial",
                 expected="pending")
     if fin.state == "seen":
-        out.add("disposition", basis=ESCROW_BASIS, note=_note(fin), message=i, phase="final",
+        out.add("disposition", basis=basis, note=_note(fin), message=i, phase="final",
                 expected="seen")
-        out.add("trunk", basis=ESCROW_BASIS, note=_note(fin), message=i,
-                expected=ideal.on_trunk(i))
+        out.add("trunk", basis=basis, note=_note(fin), message=i, expected=ideal.on_trunk(i))
+    return len(out.items) > before
 
 
 def _key_state_grade(out, pre, ideal, how):

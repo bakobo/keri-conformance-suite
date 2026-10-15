@@ -15,7 +15,7 @@ fn the_binary_answers_over_stdio_and_exits_zero_at_end_of_file() {
         .unwrap();
     let mut stdin = child.stdin.take().unwrap();
     stdin
-        .write_all(b"{\"id\":0,\"op\":\"hello\",\"protocol\":1,\"supported\":[1]}\nnot json\n{\"id\":1,\"op\":\"cesr.parse\",\"stream\":\"2d4b\"}\n{\"id\":2,\"op\":\"keri.process\"}\n")
+        .write_all(b"{\"id\":0,\"op\":\"hello\",\"protocol\":1,\"supported\":[1]}\nnot json\n{\"id\":1,\"op\":\"cesr.parse\",\"stream\":\"2d4b\"}\n{\"id\":2,\"op\":\"keri.emit\"}\n")
         .unwrap();
     drop(stdin);
     let output = child.wait_with_output().unwrap();

@@ -308,6 +308,7 @@ def test_the_real_instances_build_from_their_lockfiles():
     assert (commands["keriox"] == commands["affinidi"] == commands["devrandom"]
             == ["cargo build --locked"])
     assert commands["signify-ts"] == ["npm ci --no-audit --no-fund"]
+    assert commands["keri-go"] == ["go build -mod=readonly -o kcs-adapter-keri-go ."]
 
 
 def test_an_adapter_that_writes_no_report_is_refused(repo):

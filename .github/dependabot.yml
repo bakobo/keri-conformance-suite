@@ -22,6 +22,14 @@ updates:
     directory: "/adapters/affinidi"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "gomod"
+    directory: "/adapters/keri-go"
+    schedule:
+      interval: "weekly"
+    # The adapter pins the keri-go release it tests (adapters/keri-go/README.md); moving it is a
+    # change to what is being tested, made by hand with refreshed results, not a routine bump.
+    ignore:
+      - dependency-name: "github.com/grapeid/keri-go"
   - package-ecosystem: "cargo"
     directory: "/adapters/devrandom"
     schedule:

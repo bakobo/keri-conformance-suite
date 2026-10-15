@@ -171,6 +171,11 @@
       "level": "MUST",
       "quote": "The terminal case of the recursive application of C. will occur at the root KEL, which by definition MUST be non-delegated therefore either A. or B. MUST be satisfied, or else the superseding rotation MUST be discarded."
     },
+    "traits-drop": {
+      "section": "Configuration traits field",
+      "level": "MUST",
+      "quote": "A Validator of an event MUST invalidate, i.e., drop any events that do not satisfy the constraints imposed by their configuration traits."
+    },
     "wit-list-order": {
       "section": "Backer remove list",
       "level": "MUST",

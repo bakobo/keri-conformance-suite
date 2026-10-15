@@ -49,6 +49,14 @@ jobs:
         run: |
           rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" --profile minimal
           cargo build --locked
+      - name: Install Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: adapters/keri-go/go.mod
+          cache-dependency-path: adapters/keri-go/go.sum
+      - name: Build the keri-go adapter at its pin
+        working-directory: adapters/keri-go
+        run: go build -mod=readonly -o kcs-adapter-keri-go .
       - name: Build the devrandom adapter at its pins
         working-directory: adapters/devrandom
         run: |

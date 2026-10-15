@@ -158,7 +158,9 @@ def test_disputed_cases_carry_a_dispute(cid):
 def test_profile_lists_exactly_its_cases(name):
     profile = json.loads((ROOT / "profiles" / f"{name}.json").read_text(encoding="utf-8"))
     assert profile["name"] == name and profile["about"]
-    assert profile["cases"] == sorted(cid for cid, c in CASES.items() if c["profile"] == name)
+    # keripy-1x-interop also lists KERI cases, which test_cases_keri checks.
+    listed = [cid for cid in profile["cases"] if cid.startswith("CESR-")]
+    assert listed == sorted(cid for cid, c in CASES.items() if c["profile"] == name)
 
 
 def test_normative_profile_cites_the_pinned_spec():
