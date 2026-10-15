@@ -1113,3 +1113,42 @@ fn a_contest_that_climbs_to_a_delegating_event_the_host_cannot_place_is_held() {
     );
     assert_eq!(readings[8], r("pending", "pending", false), "{result}");
 }
+
+#[test]
+fn a_receipt_with_witness_signatures_and_an_endorsement_attaches_the_signatures() {
+    let w = Witness::new(30);
+    let (alice, icp) = witnessed(1, &w);
+    let (bob, bicp) = Controller::incept(2, Options::default());
+    let said = icp.said().to_qb64();
+    let mixed = receipt(
+        &alice.prefix(),
+        0,
+        &said,
+        &[
+            wig_group(&[w.wig(icp.as_bytes(), 0)]),
+            endorsement_group(&bob, 0, &bicp.said().to_qb64(), icp.as_bytes()),
+        ],
+    );
+    let result = process(&[alice.frame(&icp), mixed, bob.frame(&bicp)]);
+    assert_eq!(
+        readings(&result),
+        [
+            r("pending", "seen", true),
+            r("pending", "seen", false),
+            r("seen", "seen", true)
+        ],
+        "{result}"
+    );
+}
+
+#[test]
+fn a_receipt_with_no_endorsement_is_refused_by_the_message_layer() {
+    let (alice, icp) = Controller::incept(1, Options::default());
+    let empty = receipt(&alice.prefix(), 0, &icp.said().to_qb64(), &[]);
+    let result = process(&[alice.frame(&icp), empty]);
+    assert_eq!(readings(&result)[1], r("rejected", "rejected", false));
+    assert!(
+        reason(&result, 1).to_lowercase().contains("endorsement"),
+        "{result}"
+    );
+}

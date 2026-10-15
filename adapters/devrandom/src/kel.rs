@@ -796,13 +796,16 @@ impl<'e> Host<'e> {
                 Err(error) => return Receipted::Rejected(format!("{error:?}")),
             }
         }
-        if !message.trans_receipts().is_empty() {
-            return Receipted::Held;
-        }
         let candidate = self.candidates.get_mut(said).expect("pending held");
         merge(&mut candidate.wigs, &wigs);
         self.drive(said);
-        Receipted::Attached(said.to_string())
+        // A transferable endorsement is judged only against a seen event, so a receipt carrying
+        // one stays held, with its witness signatures already attached.
+        if message.trans_receipts().is_empty() {
+            Receipted::Attached(said.to_string())
+        } else {
+            Receipted::Held
+        }
     }
 
     /// The reading of message `index` now.
