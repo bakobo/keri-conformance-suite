@@ -219,19 +219,34 @@ enum Receipted {
 /// delivered for it so far, controller and witness.
 struct Candidate<'e> {
     delivery: usize,
-    sigs: Vec<Siger<'e>>,
-    wigs: Vec<Siger<'e>>,
+    sigs: Sigs<'e>,
+    wigs: Sigs<'e>,
     seal: Option<(u128, String)>,
 }
 
-/// Add to `into` each signature of `from` it does not already hold, by encoding. Linear in both:
-/// each encoding is computed once and looked up in a set, because a hostile message may carry as
-/// many signatures as the framer's limits allow.
-fn merge<'e>(into: &mut Vec<Siger<'e>>, from: &[Siger<'e>]) {
-    let mut held: HashSet<String> = into.iter().map(Siger::to_qb64).collect();
-    for sig in from {
-        if held.insert(sig.to_qb64()) {
-            into.push(sig.clone());
+/// The signatures held for an event version, each once by encoding. The set of encodings lives
+/// with the list, so a delivery costs only its own signatures, however many are already held: a
+/// hostile message may carry as many as the framer's limits allow, and be replayed.
+struct Sigs<'e> {
+    list: Vec<Siger<'e>>,
+    held: HashSet<String>,
+}
+
+impl<'e> Sigs<'e> {
+    fn new(from: &[Siger<'e>]) -> Self {
+        let mut sigs = Self {
+            list: Vec::new(),
+            held: HashSet::new(),
+        };
+        sigs.merge(from);
+        sigs
+    }
+
+    fn merge(&mut self, from: &[Siger<'e>]) {
+        for sig in from {
+            if self.held.insert(sig.to_qb64()) {
+                self.list.push(sig.clone());
+            }
         }
     }
 }
@@ -342,8 +357,8 @@ impl<'e> Host<'e> {
                     Some(State::Seen | State::Duplicitous) => {}
                     Some(State::Pending) => {
                         let candidate = self.candidates.get_mut(&said).expect("pending held");
-                        merge(&mut candidate.sigs, &event.sigs);
-                        merge(&mut candidate.wigs, &event.wigs);
+                        candidate.sigs.merge(&event.sigs);
+                        candidate.wigs.merge(&event.wigs);
                         candidate.delivery = index;
                         if event.seal.is_some() {
                             candidate.seal.clone_from(&event.seal);
@@ -355,8 +370,8 @@ impl<'e> Host<'e> {
                             said.clone(),
                             Candidate {
                                 delivery: index,
-                                sigs: event.sigs.clone(),
-                                wigs: event.wigs.clone(),
+                                sigs: Sigs::new(&event.sigs),
+                                wigs: Sigs::new(&event.wigs),
                                 seal: event.seal.clone(),
                             },
                         );
@@ -418,8 +433,8 @@ impl<'e> Host<'e> {
         let proposal = Proposal {
             event: &event.event,
             body: event.body,
-            sigs: &candidate.sigs,
-            wigs: &candidate.wigs,
+            sigs: &candidate.sigs.list,
+            wigs: &candidate.wigs.list,
             seal: candidate.seal.as_ref(),
         };
         let prefix = ident(event.event.prefix());
@@ -810,7 +825,7 @@ impl<'e> Host<'e> {
             }
         }
         let candidate = self.candidates.get_mut(said).expect("pending held");
-        merge(&mut candidate.wigs, &wigs);
+        candidate.wigs.merge(&wigs);
         self.drive(said);
         // A transferable endorsement is judged only against a seen event, so a receipt carrying
         // one stays held, with its witness signatures already attached.
