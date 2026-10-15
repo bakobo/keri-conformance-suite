@@ -57,6 +57,20 @@ The suite's policy (decided 2026-10-01):
 - **The specification should state** that a parser MUST reject a body shorter than the size its version string declares, once the input is known to be complete.
 - **Re-issued at MUST if stated:** CESR-0042.
 
+### I8. A text-domain character outside the URL-safe alphabet (line 93)
+
+- **Text.** "Concrete Domain representations", line 93: "The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)]." The same paragraph says CESR does not use `=` for any purpose.
+- **Gap.** This binds what a text-domain stream contains. Nothing says a parser must reject a primitive containing the standard alphabet's `+` or `/` or the pad character `=`.
+- **The specification should state** that a parser MUST reject text-domain material containing any character outside the URL- and filename-safe alphabet.
+- **Re-issued at MUST if stated:** CESR-0066.
+
+### I9. A genus/version code opening a group that does not allow an override (line 816)
+
+- **Text.** "Universal Code table genus/version codes that allow genus/version override", line 816: "The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser." It adds that the code's interpretation "depends on the framed material context in which it appears".
+- **Gap.** This forbids the override reading but does not say what the code then is. Where the framed material must be indexed signatures (`-K`) or a fixed sequence of primitives (`-X`), the code fits none of them, so rejecting the group is inferred. In a generic list (`-J`), whose members may be anything, the line 818 example suggests the code is simply a list member, but the text does not say how a parser reports or handles it, so the suite has no case for that context yet.
+- **The specification should state** what a parser does with a genus/version code at the start of a non-overrideable group: reject the group where the group's material is typed, and, for generic groups, whether the code is an ordinary member.
+- **Re-issued at MUST if stated:** CESR-0062 (`-K`), CESR-0063 (`-X`).
+
 ## Spec-internal conflicts (cases stay MUST and active)
 
 ### C1. What a count code's size counts (line 591 against lines 674, 714 and 1103)
@@ -81,6 +95,12 @@ The suite's policy (decided 2026-10-01):
 - **Text.** The universal table (line 806) lists `-_AAA###` with Count Length `3*`, and the note at lines 808-809 says this "isn't a count of items". The KERI table lists `-_AAACAA` with no count length, and its note says the count lengths are 0. Line 609: "A protocol genus and version code itself MUST NOT provide a count of the following Quadlets or triplets".
 - **Correction.** Drop the count length from the universal row, or say that `###` are version digits.
 - **Effect on the suite.** None on any case. The adapter protocol reports a genus/version code as a `genus` item with no size, following line 609; keripy stores the version as a count of 8192.
+
+### C4. The pad size of the small variable-size table with 2 lead bytes (line 553)
+
+- **The rule the cases follow.** The table's title, "Small variable-length raw-size table with 2 lead bytes", line 539 ("These three tables use 0, 1, or 2 lead bytes as appropriate given the pad size of 0, 1, or 2"), and the last sentence of line 553 ("All are raw binary Primitives with a pad size of 2 that each includes 2 lead bytes.") all say the `6` selector's table encodes raw values with a pad size of 2.
+- **Conflicting text.** Line 553 also says "Only raw binaries with a pad size of 0 are encoded with this table.", which repeats line 545's sentence for the `4` selector.
+- **Recorded in:** CESR-0060 and CESR-0061 (`spec_conflicts`, `lead2-pad-553`).
 
 ## Gaps the suite tests outside the normative profile
 
@@ -194,6 +214,14 @@ Against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb
 - **Gap.** A body that is self-consistent (its SAID is correct over its own bytes) but not compact has an unclear status. Duplicate top-level labels (CSR-F2) are the case with a safety consequence: two validators parsing `{...,"k":[A],...,"k":[B],...}` first-wins and last-wins derive different key states from one signed, same-SAID body, with no second KEL anyone can hold up as evidence of duplicity.
 - **The specification should state** that a validator MUST reject a KERI body that is not the canonical (compact, unique-label) serialization its SAID is taken over.
 - **Effect.** The generator's model refuses such a body as not modelled rather than grading it (`keri_model.intrinsic`), so no case depends on the reading, and no duplicate-label case is built. The duplicate-label divergence is a reason to rule L253's field-order obligation (K-I-field-order) a validator rule.
+
+### K-I5. Value rules that bind only a producer (lines 323, 335, 353, 539, 1252)
+
+- **Text.** Line 323: an inception's sequence number "MUST be `0`", later events' "MUST be 1 greater than the previous event", and "The maximum value of a sequence number MUST be `ffffffffffffffffffffffffffffffff`". Line 335: "The Key, `k` field value MUST NOT be empty." Line 353: "A given AID MUST NOT appear more than once in any Backer list" and witness AIDs "MUST be non-transferable"; line 1252: "Witnesses MUST use only nontransferable identifiers". Line 539: key event message types "MUST be one of the following `[icp, rot, ixn, dip, drt]`".
+- **Gap.** Each sentence defines a value a producer must emit. None says what a validator does with a message that breaks it, and line 1737's list of structure checks names only the SAID, "the appearance of fields" and prior event digests. Two of them have a safety edge: a backer list that repeats a witness lets one witness meet a threshold of two, and a sequence number above the maximum is read as a small one by a parser that keeps only its low 128 bits.
+- **Effect.** The cases refuse each at SHOULD, inferred (`inferred_from` names the producer sentence): KERI-0106, KERI-0107, KERI-0108, KERI-0112, KERI-0113, KERI-0114, KERI-0115, KERI-0116. Where an earlier event was accepted, the key state the refusal leaves is graded at the same level (KERI-0107, KERI-0113, KERI-0114, KERI-0116); the others refuse an identifier's only event, so there is no key state to grade.
+- **Not yet written.** A rotation whose backer add list names a witness already in the effective list, and a rotation whose threshold exceeds its effective list, depend on how a rotation's list is composed and are left for a decision (tick 5y5t). A field set or order that breaks its type's field-order sentence is graded MUST, because line 1737 names the appearance of fields (KERI-0109 to KERI-0111), and a backer threshold larger than the backer list is graded MUST, because line 345 states it as a condition for the event to be valid (KERI-0105).
+- **The specification should state** that a validator MUST NOT accept an event that breaks any of these value rules. The cases would then be re-issued at MUST under new ids.
 
 ## The specification against itself
 

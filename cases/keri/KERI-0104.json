@@ -1,0 +1,199 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": "seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial",
+      "spec_conflicts": [
+        {
+          "line": 1266,
+          "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+          "section": "Indexed Signatures",
+          "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
+        }
+      ]
+    },
+    {
+      "check": "trunk",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "expected": true,
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence states what a validator must verify before it can accept an event, not that it must accept one that passes. No sentence obliges a validator to accept anything, so that a validator should accept an event that passes every check, and that the event is then on the trunk, is inferred and graded SHOULD (docs/design.md, KERI, What MUST means here).",
+        "line": 1780,
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "spec_conflicts": [
+        {
+          "line": 1266,
+          "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+          "section": "Indexed Signatures",
+          "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
+        }
+      ]
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "not-seen",
+      "id": "a3",
+      "level": "MUST",
+      "message": 1,
+      "note": "Decision procedure step 4 (witness-threshold).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "pending",
+      "id": "a4",
+      "level": "SHOULD",
+      "message": 1,
+      "note": "Decision procedure step 4 (witness-threshold).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "expected": "not-seen",
+      "id": "a5",
+      "level": "MUST",
+      "message": 1,
+      "note": "Decision procedure step 4 (witness-threshold).",
+      "phase": "final"
+    },
+    {
+      "aid": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+      "check": "key_state",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "expected": {
+        "bt": "1",
+        "delegator": null,
+        "keys": [
+          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+        ],
+        "nt": "1",
+        "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+        "sn": 0,
+        "wits": [
+          "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+        ]
+      },
+      "id": "a6",
+      "if_seen": 0,
+      "level": "MUST",
+      "spec_conflicts": [
+        {
+          "line": 1266,
+          "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+          "section": "Indexed Signatures",
+          "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
+        }
+      ]
+    }
+  ],
+  "description": "A witnessed inception with witness threshold 1, accepted, then an interaction signed by the controller with no witness signature, then a receipt naming the inception but carrying the witness's valid signature over the interaction. The signature verifies only against the interaction, which the receipt does not name, so the interaction's witness threshold stays unmet.",
+  "id": "KERI-0104",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146622e222c2274223a22696370222c2264223a2245485a647a76686c676f67465850334f576f75344a434730327866746b766b6f32507a5344586c2d39375152222c2269223a2245485a647a76686c676f67465850334f576f75344a434730327866746b766b6f32507a5344586c2d39375152222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2231222c2262223a5b2242436f5763736649665559446d53352d36384d6131714b4e6e4770665650324979763569615035792d654975225d2c2263223a5b5d2c2261223a5b5d7d2d4341752d4b4157414142794b766778524b663166434a2d4d74487374416a4155766a4d69782d4a375939347938546858626d72376f5f657267325564746e58544557765679776f59744d31714f5f636771656745564a6c714b2d4d6f43594b2d4c41574141414c50743677504a73395043386a45556e655f7256726e4d627862374b434b6d58684543366d2d5449526b79785738534c73782d5976664272704e51665930536a5042777759585f76694e75575f6c4c554a30757743"
+      },
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e4141444e2e222c2274223a2269786e222c2264223a224542336850754361574b67334239652d7847306f2d414e7632355052364568424f4c39525277757579556154222c2269223a2245485a647a76686c676f67465850334f576f75344a434730327866746b766b6f32507a5344586c2d39375152222c2273223a2231222c2270223a2245485a647a76686c676f67465850334f576f75344a434730327866746b766b6f32507a5344586c2d39375152222c2261223a5b5d7d2d4341582d4b4157414144525f504e4c5f496452554e705655414143646a465a514a514f6f784f4f412d5459474b5f4b505f766e39486b7770654e4c4d777475347772687049394967753833515356444b624c526157444636524a596b747743"
+      },
+      {
+        "source": "witness",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414143542e222c2274223a22726374222c2264223a2245485a647a76686c676f67465850334f576f75344a434730327866746b766b6f32507a5344586c2d39375152222c2269223a2245485a647a76686c676f67465850334f576f75344a434730327866746b766b6f32507a5344586c2d39375152222c2273223a2230227d2d4341582d4c415741414261754c4c6a3069306646476e65696f70674b4451516a4b65776a445a7a6663794a4c4b396635364242477950626b6d55703854505f767a49706c5751504c4a717947677559534a5a2d7a72454f39614a4b6c656350"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/tamper.json#KS-BT05"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.witness",
+      "keri.routing",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Receipt naming an earlier event, with signatures over a later one"
+}

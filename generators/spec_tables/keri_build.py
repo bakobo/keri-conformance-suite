@@ -44,7 +44,7 @@ graded SHOULD, inferred from rule A0, and needs ``kel.recovery``.
 
 import itertools
 
-from . import keri_model
+from . import digests, keri_model
 from .errors import ScenarioError
 from .keri_events import DELEGATED, ESTABLISHMENT, INCEPTIONS, ROTATIONS, WIRE, EventBuilder
 
@@ -53,7 +53,10 @@ GENERATOR_VERSION = "0.1.0"
 SCHEMA_VERSION = 1
 BASE_FEATURES = ("cesr.genus-2.00", "cesr.serialization.json", "crypto.ed25519", "kel.basic",
                  "keri.version-2.x")
-GATED = ("keri.escrow", "kel.recovery")
+# Digest algorithms beyond Blake3 that a validator may decline (CESR line 1186 lets each
+# serialization choose; no sentence requires any one), named by the code that selects them.
+DIGEST_FEATURES = {"F": "crypto.blake2b-256", "I": "crypto.sha2-256"}
+GATED = ("keri.escrow", "kel.recovery", *DIGEST_FEATURES.values())
 REJECT_REASONS = {
     "unsigned": "drop-unsigned",
     "unverified": "drop-unsigned",
@@ -63,10 +66,7 @@ REJECT_REASONS = {
 }
 NOT_SEEN_CLAUSES = {
     "unparseable": "act-as-verifier",
-    "fields": "act-as-verifier",
     "said": "act-as-verifier",
-    "sn": "act-as-verifier",
-    "inception-sn": "act-as-verifier",
     "d-i": "inception-d-i",
     "nontransferable": "no-events-nontransferable",
     "abandoned": "no-events-abandoned",
@@ -76,6 +76,30 @@ NOT_SEEN_CLAUSES = {
     "witness-threshold": "wit-threshold",
     "delegation": "delegation-seal",
     **REJECT_REASONS,
+}
+# A field set or order that breaks its type's field-order sentence is refused at MUST, because
+# line 1737 counts "the appearance of fields" as structure a verifier checks. The delegated
+# inception's sentence appears twice in the pinned text (lines 623 and 746), so a quote of it
+# names no single sentence; it and the receipt cite line 261, which states the rule for every type.
+FIELD_CLAUSES = {"icp": "icp-fields", "ixn": "ixn-fields", "rot": "rot-fields",
+                 "drt": "drt-fields"}
+# Value rules: the clause, and the inference when the sentence binds only a producer
+# (docs/design.md, Principles; this.i "KERI structure and value rules are graded by who the
+# sentence binds"). Line 345 states its threshold as a condition for validity, so it is direct.
+VALUE_CLAUSES = {
+    "ilk": ("message-types", "producer-type"),
+    "inception-sn": ("sn-inception", "producer-sn-inception"),
+    "sn": ("sn-increment", "producer-sn-increment"),
+    "sn-max": ("sn-max", "producer-sn-max"),
+    "empty-keys": ("keys-nonempty", "producer-keys"),
+    "backer-duplicate": ("backer-unique", "producer-backer-unique"),
+    "witness-transferable": ("witness-nontransferable", "producer-witness"),
+    "backer-threshold": ("backer-threshold", None),
+}
+PRODUCER_INFERENCES = {inferred for _, inferred in VALUE_CLAUSES.values() if inferred}
+NOTES = {
+    "fields": " Graded MUST because a validator must first act as a verifier, and verifying an "
+              "event's structure includes the appearance of fields (line 1737).",
 }
 ESCROW_BASIS = (
     "Inference from the KERI specification v1.0.1 (tag v1.0.1, commit "
@@ -92,6 +116,7 @@ class _Assertions:
         self.case_id = case_id
         self.clauses, self.inferences, self.conflicts = clauses, inferences, conflicts
         self.items: list[dict] = []
+        self.sources: list[tuple[str | None, str | None]] = []  # (clause, inference) keys
 
     def add(self, check, clause=None, inferred=None, basis=None, conflicts=(), note=None,
             **fields):
@@ -110,6 +135,7 @@ class _Assertions:
             out["note"] = note
         out.update(fields)
         self.items.append(out)
+        self.sources.append((clause, inferred))
 
     def numbered(self) -> list[dict]:
         return [{"id": f"a{n}", **a} for n, a in enumerate(self.items, start=1)]
@@ -121,13 +147,17 @@ def _not_seen_clause(reason: str, ilk: str) -> tuple[str, str | None]:
         return ("sig-threshold-rot" if ilk in ROTATIONS else "sig-threshold-icp-ixn"), None
     if reason == "conflict":
         return "one-kel", "first-seen"
+    if reason == "fields":
+        return FIELD_CLAUSES.get(ilk, "fields-order"), None
+    if reason in VALUE_CLAUSES:
+        return VALUE_CLAUSES[reason]
     if reason not in NOT_SEEN_CLAUSES:
         raise ScenarioError(f"No clause grades a refusal for {reason!r}.")
     return NOT_SEEN_CLAUSES[reason], None
 
 
 def _note(outcome) -> str:
-    return f"Decision procedure step {outcome.step} ({outcome.reason})."
+    return f"Decision procedure step {outcome.step} ({outcome.reason}).{NOTES.get(outcome.reason, '')}"
 
 
 def _features(ideal, messages, graded: set[str]) -> list[str]:
@@ -157,9 +187,33 @@ def _features(ideal, messages, graded: set[str]) -> list[str]:
             kel = ideal.kels.get(p.pre)
             if ideal.outcome[i].state == "seen" and kel:
                 prior_n = set(kel.est_before(p.sn).body["n"])
-                if {ideal._digest(k) for k in body["k"]} != prior_n:
+                keys = body["k"]
+                if ({d for d in prior_n if any(ideal.commits(d, k) for k in keys)} != prior_n
+                        or not all(any(ideal.commits(d, k) for d in prior_n) for k in keys)):
                     features.add("kel.partial-rotation")
+    features.update(_digest_features(ideal))
     return sorted(features)
+
+
+def _digest_features(ideal) -> set[str]:
+    """The declinable digest algorithms of the digests in every message the model ever sees:
+    its SAID, a digest prefix, its prior and its next-key digests. A message refused anyway, such
+    as one whose SAID's code names one algorithm while its value came from another, needs none,
+    because a validator without the algorithm refuses it too."""
+    features = set()
+    for i, p in enumerate(ideal.parsed):
+        if "seen" not in (ideal.initial[i].state, ideal.outcome[i].state) or p.ilk == "rct":
+            continue
+        for text in (p.said, p.pre, p.body.get("p", ""), *p.body.get("n", [])):
+            code = digests.code_of(text)
+            if code not in digests.ALGORITHMS or code == digests.DEFAULT:
+                continue
+            if code not in DIGEST_FEATURES:
+                raise ScenarioError(f"Digest code {code!r} has no feature, so a validator without "
+                                    f"its algorithm could not decline a case that accepts it. Add "
+                                    f"one to profiles/features.json and DIGEST_FEATURES first.")
+            features.add(DIGEST_FEATURES[code])
+    return features
 
 
 MAX_PERMUTED = 4  # every order of up to this many kept messages; beyond, forward and reverse
@@ -328,8 +382,9 @@ def build_keri_case(t, scenario_path: str, case: dict, clauses: dict, inferences
         musts = [a for a in assertions if a["level"] == "MUST"]
         if musts:
             comp = _companion_case(case, gated)
+            ungated = [f for f in _features(ideal, messages, set()) if f not in GATED]
             companion = _case(comp["id"], comp["title"], comp["description"], case,
-                              _features(ideal, messages, set()), musts, messages, scenario_path,
+                              ungated, musts, messages, scenario_path,
                               comp["key"], clauses)
         elif "companion" in case:
             raise ScenarioError(f"{cid}: names a companion but has no MUST assertion to put in it.")
@@ -405,15 +460,19 @@ def _key_state_grade(out, pre, ideal, how):
     supersession, only rule A0 (lowercase) fixes which keys control, so it is SHOULD, inferred.
     If any refusal of one of the identifier's messages is graded only SHOULD, the state rests on
     that refusal, so it is SHOULD too. Otherwise it is MUST, under line 1737 or the MUST clause
-    the scenario names for its content."""
+    the scenario names for its content. A state that rests only on refusals graded SHOULD
+    because their sentence binds a producer is SHOULD under the first such refusal's clause and
+    inference."""
     if not isinstance(how, dict) or set(how) - {"clause"}:
         raise ScenarioError(f"A key-state override names only a MUST clause, not {how!r}.")
     mine = {i for i, p in enumerate(ideal.parsed) if p.pre == pre}
     if any("supersedes" in (ideal.initial[i].reason, ideal.outcome[i].reason) for i in mine):
         level = ("controlling-keys", "recovery")
-    elif any(a["check"] == "disposition" and a.get("message") in mine and a["level"] == "SHOULD"
-             and a["expected"] in ("not-seen", "rejected") for a in out.items):
-        level = ("one-kel", "first-seen")
+    elif should := [src for a, src in zip(out.items, out.sources, strict=True)
+                    if a["check"] == "disposition" and a.get("message") in mine
+                    and a["level"] == "SHOULD" and a["expected"] in ("not-seen", "rejected")]:
+        producer = all(inferred in PRODUCER_INFERENCES for _, inferred in should)
+        level = should[0] if producer else ("one-kel", "first-seen")
     else:
         return how.get("clause", "controlling-keys"), None
     if "clause" in how:

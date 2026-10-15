@@ -10,20 +10,26 @@ tables of the CESR specification v1.0, and nothing else:
   ``[v, t, d, i, s, p, a]``, ``rct`` ``[v, t, d, i, s]``), serialized as compact JSON. The version
   string is ``KERIMmmGggKKKKSSSS.`` ("Version string field") with protocol and genus version 2.00.
 - **SAIDs** follow the CESR SAID protocol: the SAID field (and ``i``, for a self-addressing
-  inception) holds 44 ``#`` while the Blake3-256 digest of the serialization is taken.
+  inception) holds 44 ``#`` while the digest of the serialization is taken. The algorithm is the
+  one the event's ``digest`` derivation code names (``digests.py``), Blake3-256 (``E``) unless the
+  scenario names another, and the same code qualifies the event's next-key digests.
 - **Keys** are Ed25519, qualified with code ``D`` (transferable) or ``B`` (non-transferable), and
   each seed is the first 32 bytes of SHAKE-256 over the key's label, so every key is fixed by
-  the scenario text. A next-key digest is the Blake3-256 digest of the qualified public key's
-  text, the reading of "a fully qualified digest of a public key" that keripy also uses (recorded
+  the scenario text. A next-key digest is the digest of the qualified public key's text, the reading of "a fully qualified digest of a public key" that keripy also uses (recorded
   in generators/SPEC-ISSUES.md, K-I1).
 - **Attachments** are one CESR 2.00 attachments group ``-C`` holding controller-indexed signatures
   (``-K``), witness-indexed signatures (``-L``), non-transferable receipt couples (``-M``) and
   seal source couples (``-S``), in that order. Each stream starts with the genus/version code
   ``-_AAACAA``, because the CESR specification gives no default table for a stream without one.
 
-A scenario may tamper with an event on purpose (a wrong SAID, a ``d`` that differs from ``i``, a
-wrong prior digest or sequence number, a forged signature). The builder applies only what the
-scenario asks for; it never decides whether the result is acceptable. That is the model's job.
+A scenario may tamper with an event on purpose (a wrong SAID, a SAID whose value was computed
+with another algorithm than its code names (``said_digest``), a ``d`` that differs from ``i``, a
+wrong prior digest or sequence number, a forged signature, a signature over another event's bytes,
+top-level fields added, removed, reordered or set, a witness with a transferable prefix, a receipt
+that names a SAID other than the event its signatures cover). Field tampering happens before the
+SAID is taken, so the SAID still matches and only a field rule can refuse the body. The builder
+applies only what the scenario asks for; it never decides whether the result is acceptable. That
+is the model's job.
 """
 
 import hashlib
@@ -32,7 +38,7 @@ import re
 from dataclasses import dataclass, field
 from functools import cache
 
-from . import b64, blake3, ed25519, encoding
+from . import b64, digests, ed25519, encoding
 from .errors import ScenarioError
 from .tables import Tables
 
@@ -40,6 +46,11 @@ PROTOCOL = (2, 0)
 GENUS = (2, 0)
 GENUS_CODE = "-_AAACAA"
 DUMMY = "#" * 44
+# Fields the builder itself needs to place a SAID, a prefix and a sequence number. A field tamper
+# may not remove them, and may not set or add the version string, SAID or prefix, which the builder
+# overwrites; a wrong SAID or prefix is the ``d`` and ``i`` tamper's job.
+STRUCTURAL = ("v", "t", "d", "i", "s")
+OWNED = ("v", "d", "i")
 FIELDS = {
     "icp": ("v", "t", "d", "i", "s", "kt", "k", "nt", "n", "bt", "b", "c", "a"),
     "dip": ("v", "t", "d", "i", "s", "kt", "k", "nt", "n", "bt", "b", "c", "a", "di"),
@@ -73,12 +84,12 @@ def verkey(t: Tables, label: str, transferable: bool = True) -> str:
     return encoding.primitive(t, "D" if transferable else "B", public_key(label))
 
 
-def digest(t: Tables, data: bytes) -> str:
-    return encoding.primitive(t, "E", blake3.digest(data))
+def digest(t: Tables, data: bytes, code: str = digests.DEFAULT) -> str:
+    return digests.qualified(t, code, data)
 
 
-def next_digest(t: Tables, label: str) -> str:
-    return digest(t, verkey(t, label).encode("ascii"))
+def next_digest(t: Tables, label: str, code: str = digests.DEFAULT) -> str:
+    return digest(t, verkey(t, label).encode("ascii"), code)
 
 
 def label_digest(t: Tables, label: str) -> str:
@@ -119,6 +130,47 @@ def corrupt(raw: bytes, label: str) -> bytes:
     at = re.compile(rb'"[A-Za-z0-9_-]{8,}"').search(raw, start).start() + 2
     swapped = b"B" if raw[at:at + 1] == b"A" else b"A"
     return raw[:at] + swapped + raw[at + 1:]
+
+
+def restructure(fields: dict, tamper: dict) -> dict:
+    """The top-level fields with a scenario's field tampering applied: ``set`` replaces values,
+    ``remove`` drops fields, ``swap`` exchanges the positions of two fields and ``add`` appends
+    new ones, in that order."""
+    unknown = set(tamper) - {"set", "remove", "swap", "add"}
+    if unknown:
+        raise ScenarioError(f"Unknown field tamper {sorted(unknown)!r}.")
+    for op in ("set", "add"):
+        owned = sorted(set(tamper.get(op, {})) & set(OWNED))
+        if owned:
+            raise ScenarioError(f"A field tamper cannot {op} {owned!r}: the builder computes the "
+                                f"version string, SAID and prefix itself.")
+    clash = sorted(set(tamper.get("add", {})) & set(fields))
+    if clash:
+        raise ScenarioError(f"A field tamper cannot add {clash!r}, which the body already has; "
+                            f"use set to change a value.")
+    out = dict(fields)
+    out.update(tamper.get("set", {}))
+    for label in tamper.get("remove", []):
+        if label in STRUCTURAL:
+            raise ScenarioError(f"The builder cannot remove {label!r}, which it needs to place "
+                                f"the SAID, prefix and sequence number.")
+        if label not in out:
+            raise ScenarioError(f"{label!r} is not a field of the body, so it cannot be removed.")
+        out.pop(label)
+    if "swap" in tamper:
+        a, b = tamper["swap"]
+        if a == b:
+            raise ScenarioError(f"Swapping {a!r} with itself changes nothing.")
+        labels = list(out)
+        for label in (a, b):
+            if label not in out:
+                raise ScenarioError(f"{label!r} is not a field of the body, so it cannot be "
+                                    f"swapped.")
+        i, j = labels.index(a), labels.index(b)
+        labels[i], labels[j] = labels[j], labels[i]
+        out = {k: out[k] for k in labels}
+    out.update(tamper.get("add", {}))
+    return out
 
 
 @dataclass
@@ -231,7 +283,16 @@ class EventBuilder:
         fields["d"] = DUMMY
         if self_addressing:
             fields["i"] = DUMMY
-        said = digest(self.t, sized(fields))
+        fields = restructure(fields, tamper.get("fields", {}))
+        code = spec.get("digest", digests.DEFAULT)
+        digests.algorithm(code)
+        value = tamper.get("said_digest", code)
+        if "said_digest" in tamper and value == code:
+            raise ScenarioError(f"Event {name!r}: a said_digest tamper must name another algorithm "
+                                f"than the event's own {code!r}, or it changes nothing.")
+        # The SAID carries the event's code; a said_digest tamper computes its value with another
+        # algorithm, so the code names one algorithm and the value comes from another.
+        said = encoding.primitive(self.t, code, digests.raw(value, sized(fields)))
         fields["d"] = said
         if self_addressing:
             fields["i"] = said
@@ -253,10 +314,11 @@ class EventBuilder:
         # A non-transferable identifier's key is qualified as non-transferable, like its prefix.
         fields["k"] = [verkey(t, x, transferable=kind != "nontransferable") for x in keys]
         fields["nt"] = self._threshold(spec.get("nt", "1" if nxt else "0"))
-        fields["n"] = [next_digest(t, x) for x in nxt]
+        fields["n"] = [next_digest(t, x, spec.get("digest", digests.DEFAULT)) for x in nxt]
         wits = spec.get("wits", [])
+        transferable = tamper.get("transferable_wits", [])
         fields["bt"] = spec.get("bt", "0")
-        fields["b"] = [verkey(t, w, transferable=False) for w in wits]
+        fields["b"] = [verkey(t, w, transferable=w in transferable) for w in wits]
         fields["c"] = spec.get("c", [])
         fields["a"] = [self._seal(s) for s in spec.get("a", [])]
         if spec["t"] == "dip":
@@ -297,7 +359,7 @@ class EventBuilder:
         fields["kt"] = self._threshold(spec.get("kt", "1"))
         fields["k"] = [verkey(t, x) for x in keys]
         fields["nt"] = self._threshold(spec.get("nt", "1" if nxt else "0"))
-        fields["n"] = [next_digest(t, x) for x in nxt]
+        fields["n"] = [next_digest(t, x, spec.get("digest", digests.DEFAULT)) for x in nxt]
         br, ba = spec.get("br", []), spec.get("ba", [])
         fields["bt"] = spec.get("bt", "0")
         fields["br"] = [verkey(t, w, transferable=False) for w in br]
@@ -319,6 +381,11 @@ class EventBuilder:
         return ev
 
     # -- attachments ---------------------------------------------------------------------------
+
+    def _signed(self, ev: Event, sig: dict) -> bytes:
+        """The bytes a signature covers: its event's, or another event's when the scenario
+        says ``over``."""
+        return self.event(sig["over"]).raw if "over" in sig else ev.raw
 
     def _controller_sig(self, ev: Event, sig) -> str:
         if isinstance(sig, str):
@@ -343,7 +410,7 @@ class EventBuilder:
             else:
                 code = "2A"
         signer = f"{key}/forged" if sig.get("forged") else key
-        raw = signature(signer, ev.raw)
+        raw = signature(signer, self._signed(ev, sig))
         entry = self.t.indexed[code]
         return encoding.indexed(self.t, code, raw, index, ondex if entry.os else None)
 
@@ -358,7 +425,7 @@ class EventBuilder:
         else:
             raise ScenarioError(f"{ev.name}: {key!r} is not one of its witnesses.")
         signer = f"{key}/forged" if wig.get("forged") else key
-        raw = signature(signer, ev.raw)
+        raw = signature(signer, self._signed(ev, wig))
         return encoding.indexed(self.t, "A", raw, index)
 
     def _group(self, code: str, parts: list[str]) -> str:
@@ -391,7 +458,9 @@ class EventBuilder:
     def message(self, delivery: dict) -> Message:
         if "receipt" in delivery:
             ev = self.event(delivery["receipt"])
-            fields = {"v": None, "t": "rct", "d": ev.said, "i": ev.pre, "s": f"{ev.sn:x}"}
+            said = (label_digest(self.t, delivery["wrong_said"]) if "wrong_said" in delivery
+                    else ev.said)
+            fields = {"v": None, "t": "rct", "d": said, "i": ev.pre, "s": f"{ev.sn:x}"}
             body = sized(fields)
             source = delivery.get("source", "witness")
         else:

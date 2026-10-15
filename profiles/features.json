@@ -54,6 +54,10 @@
       "description": "Frames and parses MessagePack message bodies located by their version string.",
       "composable": false
     },
+    "crypto.blake2b-256": {
+      "description": "Computes and verifies Blake2b-256 digests (derivation code F) wherever a SAID, a digest prefix, a prior event digest or a next-key digest uses that code. No sentence requires a validator to support any particular digest algorithm, so only liveness assertions require it; a SAID whose code names an algorithm its value was not computed with is refused without it.",
+      "composable": false
+    },
     "crypto.ed25519": {
       "description": "Verifies and produces Ed25519 signatures and keys.",
       "composable": false
@@ -68,6 +72,10 @@
     },
     "crypto.secp256r1": {
       "description": "Verifies and produces ECDSA secp256r1 signatures and keys.",
+      "composable": false
+    },
+    "crypto.sha2-256": {
+      "description": "Computes and verifies SHA2-256 digests (derivation code I) wherever a SAID, a digest prefix, a prior event digest or a next-key digest uses that code. No sentence requires a validator to support any particular digest algorithm, so only liveness assertions require it; a SAID whose code names an algorithm its value was not computed with is refused without it.",
       "composable": false
     },
     "kel.basic": {

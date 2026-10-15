@@ -518,6 +518,41 @@
           ]
         }
       ]
+    },
+    {
+      "id": "KERI-0088",
+      "key": "AS-03a",
+      "status": "draft",
+      "title": "Inception whose only signature is indexed past its key list",
+      "description": "A single-key inception signed by its key, with the signature indexed 5 against a one-key list. An index names a position in the key list, and position 5 holds no key, so the signature verifies against nothing; the inception carries no verifiable controller signature and a validator must drop it (lines 1258 and 1266).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            {
+              "key": "a0",
+              "index": 5
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,75 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The top-level fields of an Inception, `icp`, event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a]`.",
+        "section": "Inception Event Message Body",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#inception-event-message-body"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (fields). Graded MUST because a validator must first act as a verifier, and verifying an event's structure includes the appearance of fields (line 1737).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The top-level fields of an Inception, `icp`, event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a]`.",
+        "section": "Inception Event Message Body",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#inception-event-message-body"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (fields). Graded MUST because a validator must first act as a verifier, and verifying an event's structure includes the appearance of fields (line 1737).",
+      "phase": "final"
+    }
+  ],
+  "description": "A signed inception with one top-level field beyond the inception's field set, its SAID computed over the body as sent. Line 556 allows no other top-level fields, and verifying structure includes the appearance of fields (line 1737), so a validator must not accept it.",
+  "id": "KERI-0109",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145312e222c2274223a22696370222c2264223a2245416d456433704c61616a69454559427464344450755842523954736a52596d334233734e714749476a6333222c2269223a2245416d456433704c61616a69454559427464344450755842523954736a52596d334233734e714749476a6333222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d2c2278223a2231227d2d4341582d4b4157414143396d31373430363234355a58324c5246463763416a6c7a6c6d665630354c594278525731374944544c666443746b474c6968695441476a4d327852336c504a3278375073384c544b6f667a4930366c485631655542"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/tamper.json#KS-BT10"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Inception with an extra top-level field"
+}
