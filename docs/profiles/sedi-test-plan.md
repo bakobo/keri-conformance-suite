@@ -33,7 +33,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
   - 5qcy: a single anchored head accepted. Neither a higher event that is not anchored nor a higher event whose chain is broken becomes the head, and neither leaves the verdict valid: under registry-evidence (3g4le6js) the first makes it `incomplete` and the second `invalid`. An unanchored event at the head's own n is ignored. Two events anchored at one n are refused.
   - 3b5o: the Blinder derivation accepted; a different path radix, an uppercase hex path and a wrong stretch tier are refused. The choice record states the KDF parameters, the entropy floor of the KDF's input and the reasoning for both. Its overturning condition includes a cost floor. The issuer refuses an empty salt, a salt below the floor, and one salt reused across two credentials. The spec-question draft for 3b5o argues strength as well as bytes.
   - 4xwz: a credential using the defaults accepted and one deviating refused. All of these cases are drafts.
-  - 3nch: one pair each for `-S##` versus `-T##`, the 8-character group code, the seal shape (the `{s,d}` couple and the `{i,s,d}` event seal with `i` the issuer accepted, per 2082s6k4), and edge `d` required.
+  - 3nch: one pair each for `-S##` versus `-T##`, the 8-character group code, the seal shape (the `{s,d}` couple and the `{i,s,d}` event seal with `i` the registry's SAID accepted, per 2082s6k4), and edge `d` required.
   - 3qah: an unknown operator gives `incomplete`.
   - 7kev: an absent `o` gives the v1.1 default. An explicit `o` that differs from the default changes the verdict.
   - 6ljr: `o` as a scalar, a one-element list, a multi-element list and an empty list.
@@ -102,8 +102,8 @@ Every requirement below gets a failing test before the code that satisfies it. N
 - **Revocation** is a profile choice: revoked is `invalid`, with its pair. A revoked middle node of a two-hop chain makes the head not valid under chain-strict propagation.
 - **Seals.** Each refusal has its positive pair:
   - a bare digest is refused. heti accepts one, so its baseline is expected to record the divergence;
-  - the `{s,d}` couple and the `{i,s,d}` event seal with `i` the issuer are both accepted, which widens ACDC line 1922 (2082s6k4);
-  - an `{i,s,d}` seal whose `i` is not the issuer is refused;
+  - the `{s,d}` couple and the `{i,s,d}` event seal with `i` the registry's SAID are both accepted, which widens ACDC line 1922 (2082s6k4);
+  - an `{i,s,d}` seal whose `i` is not the registry's SAID, the issuer's prefix included, is refused;
   - a seal with an extra field is refused;
   - a seal whose `d` does not match is refused;
   - an `s` naming an absent event is `incomplete`;

@@ -89,7 +89,7 @@
     },
     {
       "id": "seal-shape",
-      "reading": "A seal anchoring an ACDC or a registry event is the couple {s, d}, or the event seal {i, s, d} whose i is the issuer; an i naming anyone else, an extra field and a bare digest are refused.",
+      "reading": "A seal anchoring a registry event is the couple {s, d}, or the event seal {i, s, d} whose i is the registry's SAID; an i naming anything else, an extra field and a bare digest are refused.",
       "basis": "ACDC line 1922 shows the couple {s, d}; heti and keripy's SEDI tests anchor with the event seal {i, s, d}, so sedi-1 widens line 1922 to accept it (this.i 2082s6k4). heti also accepts a bare digest, which sedi-1 refuses, so heti is expected to record a divergence there.",
       "overturn": "Specification text that admits a bare digest as an issuance seal, or that refuses the event seal {i, s, d} in that position.",
       "tick": "3nch",
