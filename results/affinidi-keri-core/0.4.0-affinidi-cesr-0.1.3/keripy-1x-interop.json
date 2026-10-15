@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "b270e09296a924794b4f1f8d909299351e46a1e4",
+    "commit": "fdd165493d862a8f7f8651c819633d03b9ea9999",
     "date": "2026-10-15"
   },
   "report": {
@@ -28,21 +28,40 @@
       },
       "operations": [
         "cesr.parse",
-        "cesr.encode"
+        "cesr.encode",
+        "keri.process"
       ],
       "features": [
         "cesr.genus-1.00",
         "cesr.serialization.json",
+        "crypto.ed25519",
+        "kel.basic",
+        "kel.delegation",
+        "kel.multisig.numeric",
+        "kel.multisig.weighted",
+        "kel.witness",
+        "keri.routing",
         "keri.version-1.x"
       ],
-      "composes": []
+      "composes": [
+        "keri.routing"
+      ]
     },
     "declared_features": [
       "cesr.genus-1.00",
       "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "kel.multisig.numeric",
+      "kel.multisig.weighted",
+      "kel.witness",
+      "keri.routing",
       "keri.version-1.x"
     ],
-    "composes": [],
+    "composes": [
+      "keri.routing"
+    ],
     "filters": {
       "profile": "keripy-1x-interop",
       "cases_dir": "cases"

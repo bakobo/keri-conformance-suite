@@ -117,14 +117,16 @@ The readings use only `seen` and `rejected`. Affinidi has no escrow, so nothing 
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-15, suite b270e092](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/cesr-v1.0.json) |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite b270e092](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keripy-1x-interop.json) |
+| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-15, suite fdd16549](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/cesr-v1.0.json) |
+| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-15, suite fdd16549](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keri-escrow.json) |
+| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 69 | [2026-10-15, suite fdd16549](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keri-v1.0.1.json) |
+| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite fdd16549](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 
 ## CI and the committed results
 
-The `affinidi-adapter` job in `.github/workflows/ci.yml` installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0` and `keripy-1x-interop`, under `results/affinidi-keri-core/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
+The `affinidi-adapter` job in `.github/workflows/ci.yml` installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0`, `keri-v1.0.1`, `keri-escrow` and `keripy-1x-interop`, under `results/affinidi-keri-core/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
 
 ```sh
 uv run python scripts/reproduce-results check --adapter affinidi     # compare fresh runs with the committed results
@@ -134,5 +136,7 @@ uv run python scripts/reproduce-results refresh --adapter affinidi   # replace t
 `check` fails on a regression, and on an improvement too, until the results are refreshed in the same change (the rules are in the keripy adapter's README, CI and the committed results).
 
 The committed `cesr-v1.0` result is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-v1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
+
+The committed `keri-v1.0.1` and `keri-escrow` results are `no-evidence` too: every KERI case requires `keri.version-2.x` and `cesr.genus-2.00`, which Affinidi lacks, so none is sent. The adapter's `keri.process` cases will come from KERI 1.x cases in `keripy-1x-interop`.
 
 In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 need `cesr.item-extents` and CESR-0048 also needs `cesr.genus-2.00`, so none is sent; in `cesr-strict`, both cases need `cesr.genus-2.00`. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, need no item extents, so they are sent; Affinidi rejects all five, as keripy 1.2.14 does, and they pass. The `keripy-1x-interop` result records those five passes and the four cases not sent; its verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped like any verdict to the cases the adapter's declared features let the runner send.
