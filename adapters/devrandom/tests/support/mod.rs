@@ -9,6 +9,7 @@ use std::str::FromStr;
 use cesr::core::counter::CounterCodeV1;
 use cesr::core::matter::builder::MatterBuilder;
 use cesr::core::matter::code::{MatterCode, SignatureCode};
+use cesr::core::primitives::Number;
 use cesr::core::primitives::Siger;
 use cesr::crypto::salt::{Salt, Tier};
 use cesr_stream::encode::EncodeCount;
@@ -19,7 +20,6 @@ use keri_codec::{
     RotationBuilder, SerializedEvent,
 };
 use keri_events::{BasicPrefix, Identifier, Said, Seal, SigningThreshold};
-use cesr::core::primitives::Number;
 use serde_json::{Value, json};
 
 pub fn hex(bytes: &[u8]) -> String {
@@ -39,7 +39,11 @@ pub const fn spec(count: usize, ncount: usize) -> KeySpec {
 }
 
 pub fn custodian(seed: u8) -> SaltyCustodian {
-    SaltyCustodian::new(Salt::from_raw(&salt(seed)).unwrap(), Tier::Low, PathConvention::Keripy)
+    SaltyCustodian::new(
+        Salt::from_raw(&salt(seed)).unwrap(),
+        Tier::Low,
+        PathConvention::Keripy,
+    )
 }
 
 /// A non-transferable witness: one basic prefix that is its own key.
@@ -64,7 +68,10 @@ impl Witness {
 
     /// The witness's signature over `body`, indexed at `position` in the witness set.
     pub fn wig(&self, body: &[u8], position: u32) -> Siger<'static> {
-        self.custodian.sign(body, Some(&[position])).unwrap().remove(0)
+        self.custodian
+            .sign(body, Some(&[position]))
+            .unwrap()
+            .remove(0)
     }
 
     /// The witness's unindexed signature over `body`, as qb64.
@@ -258,7 +265,10 @@ pub fn count(code: CounterCodeV1, n: u32) -> String {
 
 /// An `-A` group of these signatures.
 pub fn sig_group(sigs: &[Siger<'_>]) -> String {
-    let mut s = count(CounterCodeV1::ControllerIdxSigs, u32::try_from(sigs.len()).unwrap());
+    let mut s = count(
+        CounterCodeV1::ControllerIdxSigs,
+        u32::try_from(sigs.len()).unwrap(),
+    );
     for sig in sigs {
         s.push_str(&sig.to_qb64());
     }
@@ -267,7 +277,10 @@ pub fn sig_group(sigs: &[Siger<'_>]) -> String {
 
 /// A `-B` group of these witness signatures.
 pub fn wig_group(wigs: &[Siger<'_>]) -> String {
-    let mut s = count(CounterCodeV1::WitnessIdxSigs, u32::try_from(wigs.len()).unwrap());
+    let mut s = count(
+        CounterCodeV1::WitnessIdxSigs,
+        u32::try_from(wigs.len()).unwrap(),
+    );
     for wig in wigs {
         s.push_str(&wig.to_qb64());
     }
@@ -288,13 +301,21 @@ pub fn seqner(sn: u128) -> String {
 
 /// A `-G` group of one seal-source couple naming (sn, said).
 pub fn seal_group(sn: u128, said: &str) -> String {
-    format!("{}{}{said}", count(CounterCodeV1::SealSourceCouples, 1), seqner(sn))
+    format!(
+        "{}{}{said}",
+        count(CounterCodeV1::SealSourceCouples, 1),
+        seqner(sn)
+    )
 }
 
 /// A `-E` group of one first-seen replay couple.
 pub fn first_seen_group(fn_: u128) -> String {
     let dater = "1AAG2020-08-22T17c50c09d988921p00c00";
-    format!("{}{}{dater}", count(CounterCodeV1::FirstSeenReplayCouples, 1), seqner(fn_))
+    format!(
+        "{}{}{dater}",
+        count(CounterCodeV1::FirstSeenReplayCouples, 1),
+        seqner(fn_)
+    )
 }
 
 /// A KERI 1.0 JSON receipt body naming (prefix, sn, said), in keripy's field order.

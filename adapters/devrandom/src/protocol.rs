@@ -51,7 +51,12 @@ pub const FEATURES: [&str; 15] = [
 
 /// The behaviours this adapter supplies itself on top of devrandom's sans-IO verdict functions
 /// (src/kel.rs). Every one of them is a host duty by the library's own account.
-pub const COMPOSES: [&str; 4] = ["kel.recovery", "keri.duplicity", "keri.escrow", "keri.routing"];
+pub const COMPOSES: [&str; 4] = [
+    "kel.recovery",
+    "keri.duplicity",
+    "keri.escrow",
+    "keri.routing",
+];
 
 /// The longest request line the adapter reads, in bytes, not counting its newline. A longer line
 /// is answered with an error whose id is null and is skipped without being held in memory.
@@ -102,7 +107,7 @@ pub fn guarded<T>(what: &str, f: impl FnOnce() -> Result<T, OpError>) -> Result<
 
 /// The bytes of a lowercase hex string, or `None` if it is not one.
 pub fn unhex(text: &str) -> Option<Vec<u8>> {
-    if text.len() % 2 != 0
+    if !text.len().is_multiple_of(2)
         || !text
             .bytes()
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))

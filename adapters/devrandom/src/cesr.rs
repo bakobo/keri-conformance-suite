@@ -41,16 +41,16 @@ fn reject(error: &ParseError) -> Value {
 
 /// Decode every element of one group, so that a malformed primitive inside a group devrandom has
 /// framed is rejected, as it is when devrandom's own message layer reads the group. A `-V`
-/// attachment frame's inner groups are decoded the same way; devrandom's message layer reads that
-/// frame one level deep and so does this. Other quadlet-counted frames are carried opaquely by
-/// devrandom and are left as its framer took them.
-fn decode(group: CesrGroup, depth: usize) -> Result<(), ParseError> {
+/// attachment frame's inner groups are decoded the same way, however deep devrandom's framer
+/// allowed the nesting (its limits bound the depth). Other quadlet-counted frames are carried
+/// opaquely by devrandom and are left as its framer took them.
+fn decode(group: CesrGroup) -> Result<(), ParseError> {
     macro_rules! elements {
         ($($variant:ident),*) => {
             match group {
                 $(CesrGroup::$variant(g) => g.iter().try_for_each(|e| e.map(drop)),)*
-                CesrGroup::AttachmentGroup(frame) if depth == 0 => {
-                    frame.into_iter().try_for_each(|inner| decode(inner?, depth + 1))
+                CesrGroup::AttachmentGroup(frame) => {
+                    frame.into_iter().try_for_each(|inner| decode(inner?))
                 }
                 _ => Ok(()),
             }
@@ -89,7 +89,7 @@ fn frame_one(input: &[u8]) -> Result<usize, ParseError> {
         .ok_or(ParseError::Truncated { missing: 1 })?;
     let attachments = &frame[span.body_len.unwrap_or(0).min(frame.len())..];
     for group in Groups::<V1>::over(attachments) {
-        decode(group?, 0)?;
+        decode(group?)?;
     }
     Ok(span.total_len)
 }
@@ -125,9 +125,13 @@ pub fn encode(code: &str, raw: &[u8], binary: bool) -> Result<Value, OpError> {
     let matter = MatterBuilder::new()
         .with_code(code)
         .with_raw(raw)
-        .map_err(|e| OpError::Unsupported(format!("{E_ENCODE}: devrandom refused the raw value: {e}.")))?
+        .map_err(|e| {
+            OpError::Unsupported(format!("{E_ENCODE}: devrandom refused the raw value: {e}."))
+        })?
         .build()
-        .map_err(|e| OpError::Unsupported(format!("{E_ENCODE}: devrandom refused to encode: {e}.")))?;
+        .map_err(|e| {
+            OpError::Unsupported(format!("{E_ENCODE}: devrandom refused to encode: {e}."))
+        })?;
     Ok(json!({"encoded": hex(matter.to_qb64().as_bytes())}))
 }
 

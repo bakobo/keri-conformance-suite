@@ -26,7 +26,7 @@ use keri_codec::{
     Deserialize, EventMessageError, JsonLimits, Message, MessageError, MessageLimits,
     ReceiptMessage,
 };
-use keri_events::{BasicPrefix, Identifier, KeriEvent, SigningThreshold};
+use keri_events::{BasicPrefix, Identifier, KeriEvent, SigningThreshold, Toad};
 use serde_json::{Value, json};
 
 use crate::cesr::LIMITS;
@@ -67,7 +67,7 @@ pub struct Event<'a> {
 
 /// What one delivered stream turned out to be.
 pub enum Item<'a> {
-    Event(Event<'a>),
+    Event(Box<Event<'a>>),
     Receipt(Box<ReceiptMessage<'a>>),
     /// Not a message this validator processes: unreadable to devrandom, more than one message,
     /// or a message that is not a key event or receipt. The reason is devrandom's.
@@ -85,18 +85,18 @@ pub fn read(stream: &[u8]) -> Item<'_> {
             "the stream holds more than one message: {} bytes follow the first",
             rest.len()
         )),
-        Ok((Message::Event(message), _)) => Item::Event(Event {
+        Ok((Message::Event(message), _)) => Item::Event(Box::new(Event {
             event: message.event().clone(),
             body: message.body(),
             sigs: message.sigs().to_vec(),
             wigs: message.wigs().to_vec(),
             seal: None,
-        }),
+        })),
         Ok((Message::Receipt(message), _)) => Item::Receipt(message),
         Ok(_) => Item::Refused("not a key event or receipt".to_string()),
         Err(MessageError::Event(EventMessageError::UnexpectedGroup {
             group: "SealSourceCouples" | "FirstSeenReplayCouples",
-        })) => reread(stream).unwrap_or_else(|reason| Item::Refused(reason)),
+        })) => reread(stream).unwrap_or_else(Item::Refused),
         Err(error) => Item::Refused(format!("{error}")),
     }
 }
@@ -125,7 +125,9 @@ fn reread(stream: &[u8]) -> Result<Item<'_>, String> {
             stream.len() - span.total_len
         ));
     }
-    let body_len = span.body_len.ok_or("the stream is a bare attachment group")?;
+    let body_len = span
+        .body_len
+        .ok_or("the stream is a bare attachment group")?;
     let (body, attachments) = stream.split_at(body_len);
     let event = KeriEvent::deserialize(body, JSON_LIMITS).map_err(|e| format!("{e}"))?;
     let mut parsed = Event {
@@ -142,7 +144,8 @@ fn reread(stream: &[u8]) -> Result<Item<'_>, String> {
             CesrGroup::WitnessIdxSigs(g) => parsed.wigs.extend(g.into_vec().map_err(fail)?),
             CesrGroup::SealSourceCouples(g) => {
                 for (sn, said) in g.into_vec().map_err(fail)? {
-                    let sn = number(sn.raw()).ok_or("a seal-source sequence number is too large")?;
+                    let sn =
+                        number(sn.raw()).ok_or("a seal-source sequence number is too large")?;
                     parsed.seal.get_or_insert((sn, said.to_qb64()));
                 }
             }
@@ -153,7 +156,9 @@ fn reread(stream: &[u8]) -> Result<Item<'_>, String> {
                 let name = format!("{other:?}");
                 return Err(format!(
                     "unexpected attachment group for a key event message: {}",
-                    name.split(|c: char| !c.is_ascii_alphanumeric()).next().unwrap_or("?")
+                    name.split(|c: char| !c.is_ascii_alphanumeric())
+                        .next()
+                        .unwrap_or("?")
                 ));
             }
         }
@@ -174,7 +179,7 @@ fn reread(stream: &[u8]) -> Result<Item<'_>, String> {
             group => route(group, &mut parsed)?,
         }
     }
-    Ok(Item::Event(parsed))
+    Ok(Item::Event(Box::new(parsed)))
 }
 
 /// The host's reading of one event version (by SAID), and of one receipt.
@@ -243,7 +248,12 @@ impl Proposal<'_> {
     /// The event and its bytes are asserted to belong together because devrandom's own parser
     /// produced the event from exactly those bytes (`read`).
     fn signed<'x>(&'x self) -> Signed<'x> {
-        Signed::from_host_asserted_parts(self.event, self.body, self.sigs.to_vec(), self.wigs.to_vec())
+        Signed::from_host_asserted_parts(
+            self.event,
+            self.body,
+            self.sigs.to_vec(),
+            self.wigs.to_vec(),
+        )
     }
 }
 
@@ -418,7 +428,8 @@ impl<'e> Host<'e> {
         };
         let state = match outcome {
             Outcome::Accepted(snapshot) => {
-                self.seen.insert(said.to_string(), (snapshot.clone(), delivery));
+                self.seen
+                    .insert(said.to_string(), (snapshot.clone(), delivery));
                 self.kels
                     .entry(prefix)
                     .or_insert_with(|| Kel { trunk: Vec::new() })
@@ -463,7 +474,7 @@ impl<'e> Host<'e> {
                     });
                     accepted(KeyState::incept_delegated(&proposal.signed(), &evidence))
                 }
-                Err(held) => held,
+                Err(reason) => Outcome::Held(reason),
             },
             _ => Outcome::Held(format!(
                 "no KEL is held for {} yet, so its event at sn {} cannot be judged [awaiting \
@@ -488,7 +499,7 @@ impl<'e> Host<'e> {
                         });
                         accepted(state.ingest_delegated(&proposal.signed(), &evidence))
                     }
-                    Err(held) => held,
+                    Err(reason) => Outcome::Held(reason),
                 }
             }
             _ => accepted(state.ingest(&proposal.signed())),
@@ -502,13 +513,13 @@ impl<'e> Host<'e> {
         &self,
         delegator: &Identifier<'_>,
         proposal: &Proposal<'_>,
-    ) -> Result<(&KeyStateSnapshot, &'e KeriEvent<'e>), Outcome> {
+    ) -> Result<(&KeyStateSnapshot, &'e KeriEvent<'e>), String> {
         let event = proposal.event;
         let held = || {
-            Outcome::Held(format!(
+            format!(
                 "the delegator {}'s anchoring event is not held yet [awaiting DelegationEvidence]",
                 ident(delegator)
-            ))
+            )
         };
         let kel = self.kels.get(&ident(delegator)).ok_or_else(held)?;
         let delegating = match proposal.seal {
@@ -526,13 +537,48 @@ impl<'e> Host<'e> {
         Ok((kel.head(), delegating.ok_or_else(held)?))
     }
 
-    /// The delegating event of the delegated event in delivery `delivery`, if the host holds it.
-    fn delegating_event(&self, delegator: &str, delivery: usize) -> Option<&'e KeriEvent<'e>> {
-        let delegated = &self.event(delivery).event;
+    /// The first trunk event of `delegator`'s KEL whose seals anchor `delegated`, if the host
+    /// holds one.
+    fn anchor_in(&self, delegator: &str, delegated: &KeriEvent<'_>) -> Option<&'e KeriEvent<'e>> {
         self.kels.get(delegator)?.trunk.iter().find_map(|(_, d)| {
             let e = &self.event(*d).event;
             e.anchor_position(delegated).is_some().then_some(e)
         })
+    }
+
+    /// The delegating events behind two delegated rotations contesting one sequence number,
+    /// level by level up the delegation chain, for `judge_same_sn`: at each level, the events in
+    /// the delegator's KEL that anchor the recorded side and the incoming side. The chain is
+    /// complete when it reaches a delegator that is not itself delegated, the root of every
+    /// delegation; it stops short, and is reported incomplete, where the host does not hold a
+    /// delegating event yet.
+    fn contests(
+        &self,
+        recorded: &KeriEvent<'_>,
+        incoming: &KeriEvent<'_>,
+        delegator: &Identifier<'_>,
+    ) -> (Vec<DelegationContest<'e>>, bool) {
+        let mut chain = Vec::new();
+        let (mut old, mut new): (&KeriEvent<'_>, &KeriEvent<'_>) = (recorded, incoming);
+        let mut delegator = ident(delegator);
+        loop {
+            let (Some(incumbent), Some(challenger)) = (
+                self.anchor_in(&delegator, old),
+                self.anchor_in(&delegator, new),
+            ) else {
+                return (chain, false);
+            };
+            chain.push(DelegationContest {
+                incumbent,
+                challenger,
+            });
+            match self.kels[&delegator].head().view().delegator() {
+                Some(next) => {
+                    (old, new, delegator) = (incumbent, challenger, ident(next));
+                }
+                None => return (chain, true),
+            }
+        }
     }
 
     /// An event at a sequence number its KEL already holds: devrandom's same-sn judgment decides,
@@ -546,29 +592,12 @@ impl<'e> Host<'e> {
         let recorded_delivery = kel.trunk[sn].1;
         let recorded = &self.event(recorded_delivery).event;
         let head = kel.head().view();
-        let mut chain = Vec::new();
-        if let (KeriEvent::DelegatedRotation(_), KeriEvent::DelegatedRotation(_), Some(d)) =
-            (incoming, recorded, head.delegator())
-        {
-            let delegator = ident(d);
-            let challenger = self
-                .kels
-                .get(&delegator)
-                .and_then(|k| {
-                    k.trunk
-                        .iter()
-                        .map(|(_, d)| &self.event(*d).event)
-                        .find(|e| e.anchor_position(incoming).is_some())
-                });
-            if let (Some(incumbent), Some(challenger)) =
-                (self.delegating_event(&delegator, recorded_delivery), challenger)
-            {
-                chain.push(DelegationContest {
-                    incumbent,
-                    challenger,
-                });
+        let (chain, complete) = match (incoming, recorded, head.delegator()) {
+            (KeriEvent::DelegatedRotation(_), KeriEvent::DelegatedRotation(_), Some(d)) => {
+                self.contests(recorded, incoming, d)
             }
-        }
+            _ => (Vec::new(), true),
+        };
         match head.judge_same_sn(incoming, recorded, &chain) {
             Ok(SameSnVerdict::Duplicitous { recorded }) => Outcome::Duplicitous(format!(
                 "conflicts with the seen event {} at sn {sn}",
@@ -580,7 +609,7 @@ impl<'e> Host<'e> {
                     other => other,
                 }
             }
-            Ok(SameSnVerdict::Undecided) => Outcome::Held(
+            Ok(SameSnVerdict::Undecided) if !complete => Outcome::Held(
                 "the same-sn judgment needs delegating events the host does not hold yet \
                  [awaiting DelegationEvidence]"
                     .to_string(),
@@ -590,53 +619,53 @@ impl<'e> Host<'e> {
         }
     }
 
-    /// The witness set that governs a held event: an inception's own, else the head's, updated
-    /// by a rotation's cuts and then its additions in order, as a rotation defines them. A wrong
-    /// position here could only make a valid receipt fail, never a forged one pass: devrandom's
-    /// fold verifies every witness signature against the witness its index selects.
-    fn governing(&self, event: &KeriEvent<'e>) -> Option<Vec<BasicPrefix<'static>>> {
-        let head = |prefix: &Identifier<'_>| -> Option<Vec<BasicPrefix<'static>>> {
-            Some(
-                self.kels
-                    .get(&ident(prefix))?
-                    .head()
-                    .view()
-                    .witnesses()
-                    .iter()
-                    .map(|w| w.clone().into_static())
-                    .collect(),
-            )
-        };
+    /// The witness set and threshold that govern a held event: an inception's own, else the
+    /// head's set updated by a rotation's cuts and then its additions in order, as a rotation
+    /// defines them, with the rotation's own threshold. A wrong position here could only make a
+    /// valid receipt fail, never a forged one pass: devrandom's fold verifies every witness
+    /// signature against the witness its index selects.
+    fn governing(&self, event: &KeriEvent<'e>) -> Option<(Vec<BasicPrefix<'static>>, Toad)> {
         let owned = |set: &[BasicPrefix<'_>]| -> Vec<BasicPrefix<'static>> {
             set.iter().map(|w| w.clone().into_static()).collect()
         };
-        let rotation = |current: Vec<BasicPrefix<'static>>,
-                        cuts: &[BasicPrefix<'_>],
-                        adds: &[BasicPrefix<'_>]| {
+        let head = || {
+            let state = self.kels.get(&ident(event.prefix()))?.head().view();
+            Some((owned(state.witnesses()), state.witness_threshold()))
+        };
+        let rotation = |cuts: &[BasicPrefix<'_>], adds: &[BasicPrefix<'_>], toad: Toad| {
             let cuts = owned(cuts);
-            let mut set: Vec<BasicPrefix<'static>> =
-                current.into_iter().filter(|w| !cuts.contains(w)).collect();
+            let mut set: Vec<BasicPrefix<'static>> = head()?
+                .0
+                .into_iter()
+                .filter(|w| !cuts.contains(w))
+                .collect();
             for add in owned(adds) {
                 if !set.contains(&add) {
                     set.push(add);
                 }
             }
-            set
+            Some((set, toad))
         };
         match event {
-            KeriEvent::Inception(icp) => Some(owned(icp.witnesses())),
-            KeriEvent::DelegatedInception(dip) => Some(owned(dip.inception().witnesses())),
-            KeriEvent::Interaction(_) => head(event.prefix()),
-            KeriEvent::Rotation(rot) => Some(rotation(
-                head(event.prefix())?,
+            KeriEvent::Inception(icp) => Some((owned(icp.witnesses()), icp.witness_threshold())),
+            KeriEvent::DelegatedInception(dip) => {
+                let icp = dip.inception();
+                Some((owned(icp.witnesses()), icp.witness_threshold()))
+            }
+            KeriEvent::Interaction(_) => head(),
+            KeriEvent::Rotation(rot) => rotation(
                 rot.witness_removals(),
                 rot.witness_additions(),
-            )),
-            KeriEvent::DelegatedRotation(drt) => Some(rotation(
-                head(event.prefix())?,
-                drt.rotation().witness_removals(),
-                drt.rotation().witness_additions(),
-            )),
+                rot.witness_threshold(),
+            ),
+            KeriEvent::DelegatedRotation(drt) => {
+                let rot = drt.rotation();
+                rotation(
+                    rot.witness_removals(),
+                    rot.witness_additions(),
+                    rot.witness_threshold(),
+                )
+            }
         }
     }
 
@@ -678,9 +707,11 @@ impl<'e> Host<'e> {
             }
         }
         for couple in message.couples() {
-            if let Err(error) =
-                cesr::crypto::verify(couple.receiptor().as_matter(), event.body, couple.signature())
-            {
+            if let Err(error) = cesr::crypto::verify(
+                couple.receiptor().as_matter(),
+                event.body,
+                couple.signature(),
+            ) {
                 return Receipted::Rejected(format!("{error:?}"));
             }
         }
@@ -690,12 +721,16 @@ impl<'e> Host<'e> {
                 endorsement.sn(),
                 endorsement.said().to_qb64(),
             );
-            let evidence = receiptor.as_ref().map(|(said, view)| ReceiptorEstablishment {
-                said,
-                keys: view.view().keys(),
-            });
-            match receipted.endorsed_by(&TransferableEndorsement::from(endorsement), evidence.as_ref())
-            {
+            let evidence = receiptor
+                .as_ref()
+                .map(|(said, view)| ReceiptorEstablishment {
+                    said,
+                    keys: view.view().keys(),
+                });
+            match receipted.endorsed_by(
+                &TransferableEndorsement::from(endorsement),
+                evidence.as_ref(),
+            ) {
                 Ok(()) => {}
                 Err(ReceiptError::EvidenceRequired) => return Receipted::Held,
                 Err(error) => return Receipted::Rejected(format!("{error:?}")),
@@ -714,9 +749,7 @@ impl<'e> Host<'e> {
         let kel = self.kels.get(receiptor)?;
         let (snapshot, delivery) = kel.trunk.get(usize::try_from(sn.value()).ok()?)?;
         let event = &self.event(*delivery).event;
-        if event.said().to_qb64() != said
-            || matches!(event, KeriEvent::Interaction(_))
-        {
+        if event.said().to_qb64() != said || matches!(event, KeriEvent::Interaction(_)) {
             return None;
         }
         Some((event.said().clone().into_static(), snapshot.clone()))
@@ -730,18 +763,8 @@ impl<'e> Host<'e> {
     fn attach(&mut self, message: &'e ReceiptMessage<'e>, said: &str) -> Receipted {
         let candidate = &self.candidates[said];
         let event = self.event(candidate.delivery);
-        let Some(governing) = self.governing(&event.event) else {
+        let Some((governing, toad)) = self.governing(&event.event) else {
             return Receipted::Held;
-        };
-        let toad = match &event.event {
-            KeriEvent::Inception(icp) => icp.witness_threshold(),
-            KeriEvent::DelegatedInception(dip) => dip.inception().witness_threshold(),
-            KeriEvent::Rotation(rot) => rot.witness_threshold(),
-            KeriEvent::DelegatedRotation(drt) => drt.rotation().witness_threshold(),
-            KeriEvent::Interaction(_) => match self.kels.get(&ident(event.event.prefix())) {
-                Some(kel) => kel.head().view().witness_threshold(),
-                None => return Receipted::Held,
-            },
         };
         let witnessing = Witnessing::new(&governing, toad);
         let mut wigs = Vec::new();
@@ -752,9 +775,11 @@ impl<'e> Host<'e> {
             wigs.push(wig.clone());
         }
         for couple in message.couples() {
-            if let Err(error) =
-                cesr::crypto::verify(couple.receiptor().as_matter(), event.body, couple.signature())
-            {
+            if let Err(error) = cesr::crypto::verify(
+                couple.receiptor().as_matter(),
+                event.body,
+                couple.signature(),
+            ) {
                 return Receipted::Rejected(format!("{error:?}"));
             }
             let Some(position) = witnessing.witness_index(couple.receiptor()) else {
@@ -820,11 +845,14 @@ impl<'e> Host<'e> {
         let said = event.event.said().to_qb64();
         self.state(&said) == Some(State::Seen)
             && !self.displaced.contains(&said)
-            && self.kels.get(&ident(event.event.prefix())).is_some_and(|kel| {
-                kel.trunk
-                    .iter()
-                    .any(|(_, d)| self.event(*d).event.said().to_qb64() == said)
-            })
+            && self
+                .kels
+                .get(&ident(event.event.prefix()))
+                .is_some_and(|kel| {
+                    kel.trunk
+                        .iter()
+                        .any(|(_, d)| self.event(*d).event.said().to_qb64() == said)
+                })
     }
 
     pub fn key_states(&self) -> Value {
@@ -861,7 +889,13 @@ pub fn threshold(threshold: &SigningThreshold) -> Value {
                 .map(|clause| {
                     clause
                         .iter()
-                        .map(|(n, d)| if *d == 1 { format!("{n}") } else { format!("{n}/{d}") })
+                        .map(|(n, d)| {
+                            if *d == 1 {
+                                format!("{n}")
+                            } else {
+                                format!("{n}/{d}")
+                            }
+                        })
                         .collect()
                 })
                 .collect();

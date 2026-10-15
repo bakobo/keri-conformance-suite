@@ -19,7 +19,10 @@ fn an_inception_is_seen_on_the_trunk_and_reported_as_key_state() {
     assert_eq!(state["said"], icp.said().to_qb64());
     assert_eq!(state["keys"][0], alice.commitment.verkeys[0].to_qb64());
     assert_eq!(state["kt"], "1");
-    assert_eq!(state["ndigs"][0], alice.commitment.next_digests[0].to_qb64());
+    assert_eq!(
+        state["ndigs"][0],
+        alice.commitment.next_digests[0].to_qb64()
+    );
     assert_eq!(state["nt"], "1");
     assert_eq!(state["wits"], serde_json::json!([]));
     assert_eq!(state["bt"], "0");
@@ -36,7 +39,10 @@ fn rotation_and_interaction_advance_the_kel() {
     let result = process(&[icp_wire, rot_wire, alice.frame(&ixn)]);
     assert_eq!(readings(&result), vec![r("seen", "seen", true); 3]);
     assert_eq!(result["key_states"][alice.prefix()]["sn"], 2);
-    assert_eq!(result["key_states"][alice.prefix()]["said"], ixn.said().to_qb64());
+    assert_eq!(
+        result["key_states"][alice.prefix()]["said"],
+        ixn.said().to_qb64()
+    );
 }
 
 fn reason(result: &serde_json::Value, index: usize) -> String {
@@ -109,7 +115,10 @@ fn a_conflicting_interaction_is_duplicitous_and_off_the_trunk() {
             r("duplicitous", "duplicitous", false)
         ]
     );
-    assert!(reason(&result, 2).contains(&ixn.said().to_qb64()), "{result}");
+    assert!(
+        reason(&result, 2).contains(&ixn.said().to_qb64()),
+        "{result}"
+    );
 }
 
 #[test]
@@ -136,7 +145,10 @@ fn a_rotation_supersedes_an_interaction_which_stays_seen_off_the_trunk() {
         ]
     );
     assert_eq!(reason(&result, 3), "superseding rotation");
-    assert_eq!(result["key_states"][alice.prefix()]["said"], rot.said().to_qb64());
+    assert_eq!(
+        result["key_states"][alice.prefix()]["said"],
+        rot.said().to_qb64()
+    );
 }
 
 #[test]
@@ -175,17 +187,17 @@ fn signatures_delivered_separately_are_combined_until_the_threshold_is_met() {
     };
     let (alice, icp) = Controller::incept(1, options());
     let sigs = alice.sigs(&icp);
-    let result = process(&[
-        frame(&icp, &sigs[..1], &[]),
-        frame(&icp, &sigs[1..], &[]),
-    ]);
+    let result = process(&[frame(&icp, &sigs[..1], &[]), frame(&icp, &sigs[1..], &[])]);
     assert_eq!(
         readings(&result),
         [r("pending", "seen", true), r("seen", "seen", true)]
     );
     assert!(result["dispositions"][0].get("reason").is_none());
     let partial = process(&[frame(&icp, &sigs[..1], &[])]);
-    assert!(reason(&partial, 0).contains("awaiting Signatures"), "{partial}");
+    assert!(
+        reason(&partial, 0).contains("awaiting Signatures"),
+        "{partial}"
+    );
 }
 
 #[test]
@@ -214,7 +226,12 @@ fn weighted_thresholds_are_reported_as_fractions() {
     );
 }
 
-fn delegated() -> (Controller, Controller, keri_codec::SerializedEvent, keri_codec::SerializedEvent) {
+fn delegated() -> (
+    Controller,
+    Controller,
+    keri_codec::SerializedEvent,
+    keri_codec::SerializedEvent,
+) {
     let (delegator, dicp) = Controller::incept(1, Options::default());
     let (delegate, dip) = Controller::incept(
         2,
@@ -254,7 +271,10 @@ fn a_delegated_inception_with_no_delegator_kel_waits() {
     let (_, delegate, _, dip) = delegated();
     let result = process(&[delegate.frame(&dip)]);
     assert_eq!(readings(&result), [r("pending", "pending", false)]);
-    assert!(reason(&result, 0).contains("awaiting DelegationEvidence"), "{result}");
+    assert!(
+        reason(&result, 0).contains("awaiting DelegationEvidence"),
+        "{result}"
+    );
 }
 
 #[test]
@@ -263,14 +283,24 @@ fn a_seal_source_couple_names_the_anchor_and_is_read_by_the_second_reading() {
     let anchor = delegator.ixn(vec![delegate.seal()]);
     let with_seal = bare(
         &dip,
-        &[sig_group(&delegate.sigs(&dip)), seal_group(1, &anchor.said().to_qb64())],
+        &[
+            sig_group(&delegate.sigs(&dip)),
+            seal_group(1, &anchor.said().to_qb64()),
+        ],
     );
-    let result = process(&[delegator.frame(&dicp), with_seal.clone(), delegator.frame(&anchor)]);
+    let result = process(&[
+        delegator.frame(&dicp),
+        with_seal.clone(),
+        delegator.frame(&anchor),
+    ]);
     assert_eq!(readings(&result)[1], r("pending", "seen", true));
     // A couple naming an event the delegator's KEL does not hold at that sn keeps it held.
     let wrong = bare(
         &dip,
-        &[sig_group(&delegate.sigs(&dip)), seal_group(1, &dicp.said().to_qb64())],
+        &[
+            sig_group(&delegate.sigs(&dip)),
+            seal_group(1, &dicp.said().to_qb64()),
+        ],
     );
     let result = process(&[delegator.frame(&dicp), wrong, delegator.frame(&anchor)]);
     assert_eq!(readings(&result)[1], r("pending", "pending", false));
@@ -405,9 +435,20 @@ fn the_second_reading_refuses_what_the_message_layer_would() {
     let w = Witness::new(30);
     let cases = [
         // A group no key event carries.
-        bare(&icp, &[sigs.clone(), first_seen_group(0), couple_group(&w, icp.as_bytes())]),
+        bare(
+            &icp,
+            &[
+                sigs.clone(),
+                first_seen_group(0),
+                couple_group(&w, icp.as_bytes()),
+            ],
+        ),
         // A second message after the first.
-        [bare(&icp, &[sigs.clone(), first_seen_group(0)]), alice.frame(&icp)].concat(),
+        [
+            bare(&icp, &[sigs.clone(), first_seen_group(0)]),
+            alice.frame(&icp),
+        ]
+        .concat(),
         // A group that ends early.
         {
             let mut s = bare(&icp, &[sigs.clone(), first_seen_group(0)]);
@@ -417,7 +458,11 @@ fn the_second_reading_refuses_what_the_message_layer_would() {
     ];
     for stream in cases {
         let result = process(&[stream]);
-        assert_eq!(readings(&result), [r("rejected", "rejected", false)], "{result}");
+        assert_eq!(
+            readings(&result),
+            [r("rejected", "rejected", false)],
+            "{result}"
+        );
         assert!(!reason(&result, 0).is_empty());
     }
 }
@@ -432,7 +477,11 @@ fn streams_that_are_not_one_key_event_or_receipt_are_rejected() {
     ];
     for stream in cases {
         let result = process(&[stream]);
-        assert_eq!(readings(&result), [r("rejected", "rejected", false)], "{result}");
+        assert_eq!(
+            readings(&result),
+            [r("rejected", "rejected", false)],
+            "{result}"
+        );
         assert!(!reason(&result, 0).is_empty());
     }
 }
@@ -452,7 +501,12 @@ fn witnessed(seed: u8, witness: &Witness) -> (Controller, keri_codec::Serialized
 fn a_witnessed_inception_waits_for_a_receipt_couple_which_is_then_seen() {
     let w = Witness::new(30);
     let (alice, icp) = witnessed(1, &w);
-    let rct = receipt(&alice.prefix(), 0, &icp.said().to_qb64(), &[couple_group(&w, icp.as_bytes())]);
+    let rct = receipt(
+        &alice.prefix(),
+        0,
+        &icp.said().to_qb64(),
+        &[couple_group(&w, icp.as_bytes())],
+    );
     let result = process(&[alice.frame(&icp), rct]);
     assert_eq!(
         readings(&result),
@@ -460,14 +514,22 @@ fn a_witnessed_inception_waits_for_a_receipt_couple_which_is_then_seen() {
     );
     assert!(reason(&result, 0).is_empty());
     assert_eq!(result["key_states"][alice.prefix()]["bt"], "1");
-    assert_eq!(result["key_states"][alice.prefix()]["wits"][0], w.prefix.to_qb64());
+    assert_eq!(
+        result["key_states"][alice.prefix()]["wits"][0],
+        w.prefix.to_qb64()
+    );
 }
 
 #[test]
 fn a_receipt_before_its_event_is_held_and_then_attached() {
     let w = Witness::new(30);
     let (alice, icp) = witnessed(1, &w);
-    let rct = receipt(&alice.prefix(), 0, &icp.said().to_qb64(), &[wig_group(&[w.wig(icp.as_bytes(), 0)])]);
+    let rct = receipt(
+        &alice.prefix(),
+        0,
+        &icp.said().to_qb64(),
+        &[wig_group(&[w.wig(icp.as_bytes(), 0)])],
+    );
     let result = process(&[rct, alice.frame(&icp)]);
     assert_eq!(
         readings(&result),
@@ -488,13 +550,26 @@ fn an_inline_witness_signature_is_enough_and_late_receipts_are_judged() {
         receipt(&alice.prefix(), 0, &said, &[wig_group(&[w.wig(body, 0)])]),
         receipt(&alice.prefix(), 0, &said, &[couple_group(&w, body)]),
         receipt(&alice.prefix(), 0, &said, &[couple_group(&other, body)]),
-        receipt(&alice.prefix(), 0, &said, &[wig_group(&[other.wig(body, 0)])]),
-        receipt(&alice.prefix(), 0, &said, &[format!(
-            "{}{}{}",
-            count(cesr::core::counter::CounterCodeV1::NonTransReceiptCouples, 1),
-            w.prefix.to_qb64(),
-            other.cigar(body)
-        )]),
+        receipt(
+            &alice.prefix(),
+            0,
+            &said,
+            &[wig_group(&[other.wig(body, 0)])],
+        ),
+        receipt(
+            &alice.prefix(),
+            0,
+            &said,
+            &[format!(
+                "{}{}{}",
+                count(
+                    cesr::core::counter::CounterCodeV1::NonTransReceiptCouples,
+                    1
+                ),
+                w.prefix.to_qb64(),
+                other.cigar(body)
+            )],
+        ),
         receipt(&alice.prefix(), 1, &said, &[wig_group(&[w.wig(body, 0)])]),
     ]);
     assert_eq!(
@@ -523,14 +598,27 @@ fn receipts_for_a_held_event_are_verified_before_they_are_attached() {
         // A couple by a non-witness verifies but binds to no position: the event stays held.
         receipt(&alice.prefix(), 0, &said, &[couple_group(&other, body)]),
         // A witness signature that does not verify against the witness at its index.
-        receipt(&alice.prefix(), 0, &said, &[wig_group(&[other.wig(body, 0)])]),
+        receipt(
+            &alice.prefix(),
+            0,
+            &said,
+            &[wig_group(&[other.wig(body, 0)])],
+        ),
         // A couple whose signature is not the named witness's.
-        receipt(&alice.prefix(), 0, &said, &[format!(
-            "{}{}{}",
-            count(cesr::core::counter::CounterCodeV1::NonTransReceiptCouples, 1),
-            w.prefix.to_qb64(),
-            other.cigar(body)
-        )]),
+        receipt(
+            &alice.prefix(),
+            0,
+            &said,
+            &[format!(
+                "{}{}{}",
+                count(
+                    cesr::core::counter::CounterCodeV1::NonTransReceiptCouples,
+                    1
+                ),
+                w.prefix.to_qb64(),
+                other.cigar(body)
+            )],
+        ),
         receipt(&alice.prefix(), 0, &said, &[wig_group(&[w.wig(body, 0)])]),
     ]);
     assert_eq!(
@@ -574,9 +662,19 @@ fn receipts_for_a_held_rotation_or_interaction_use_the_governing_witness_set() {
     let result = process(&[
         icp_wire,
         rot_wire,
-        receipt(&alice.prefix(), 1, &rot.said().to_qb64(), &[couple_group(&w2, rot.as_bytes())]),
+        receipt(
+            &alice.prefix(),
+            1,
+            &rot.said().to_qb64(),
+            &[couple_group(&w2, rot.as_bytes())],
+        ),
         alice.frame(&ixn),
-        receipt(&alice.prefix(), 2, &ixn.said().to_qb64(), &[couple_group(&w2, ixn.as_bytes())]),
+        receipt(
+            &alice.prefix(),
+            2,
+            &ixn.said().to_qb64(),
+            &[couple_group(&w2, ixn.as_bytes())],
+        ),
     ]);
     assert_eq!(
         readings(&result),
@@ -596,7 +694,12 @@ fn a_transferable_receipt_is_judged_against_the_receiptors_establishment_event()
     let (bob, bicp) = Controller::incept(2, Options::default());
     let said = icp.said().to_qb64();
     let endorse = |sn, said_of: &str| {
-        receipt(&alice.prefix(), 0, &said, &[endorsement_group(&bob, sn, said_of, icp.as_bytes())])
+        receipt(
+            &alice.prefix(),
+            0,
+            &said,
+            &[endorsement_group(&bob, sn, said_of, icp.as_bytes())],
+        )
     };
     let bob_said = bicp.said().to_qb64();
     let result = process(&[
@@ -616,19 +719,29 @@ fn a_transferable_receipt_is_judged_against_the_receiptors_establishment_event()
     );
     // An endorsement whose signatures are not the receiptor's.
     let (mallory, _) = Controller::incept(9, Options::default());
-    let forged = receipt(&alice.prefix(), 0, &said, &[format!(
-        "{}{}{}{bob_said}{}",
-        count(cesr::core::counter::CounterCodeV1::TransIdxSigGroups, 1),
-        bob.prefix(),
-        seqner(0),
-        sig_group(&mallory.sigs(&icp))
-    )]);
+    let forged = receipt(
+        &alice.prefix(),
+        0,
+        &said,
+        &[format!(
+            "{}{}{}{bob_said}{}",
+            count(cesr::core::counter::CounterCodeV1::TransIdxSigGroups, 1),
+            bob.prefix(),
+            seqner(0),
+            sig_group(&mallory.sigs(&icp))
+        )],
+    );
     let result = process(&[alice.frame(&icp), bob.frame(&bicp), forged]);
     assert_eq!(readings(&result)[2], r("rejected", "rejected", false));
     // A transferable receipt of a held event stays held.
     let w = Witness::new(30);
     let (carol, cicp) = witnessed(3, &w);
-    let held = receipt(&carol.prefix(), 0, &cicp.said().to_qb64(), &[endorsement_group(&bob, 0, &bob_said, cicp.as_bytes())]);
+    let held = receipt(
+        &carol.prefix(),
+        0,
+        &cicp.said().to_qb64(),
+        &[endorsement_group(&bob, 0, &bob_said, cicp.as_bytes())],
+    );
     let result = process(&[carol.frame(&cicp), bob.frame(&bicp), held]);
     assert_eq!(readings(&result)[2], r("pending", "pending", false));
 }
@@ -641,4 +754,362 @@ fn the_result_holds_one_disposition_per_message_and_a_state_per_identifier() {
     assert_eq!(result["dispositions"].as_array().unwrap().len(), 2);
     assert_eq!(result["key_states"].as_object().unwrap().len(), 2);
     assert!(process(&[])["dispositions"].as_array().unwrap().is_empty());
+}
+
+#[test]
+fn a_partial_rotation_exposes_one_pre_rotated_key_and_keeps_the_other_in_reserve() {
+    let (alice, icp) = Controller::incept(
+        1,
+        Options {
+            spec: spec(2, 2),
+            ..Options::default()
+        },
+    );
+    // The same salt rotated onto both committed keys; the event exposes only the first.
+    let mut rotated = custodian(1);
+    rotated.incept(spec(2, 2)).unwrap();
+    let both = rotated.rotate(spec(2, 1)).unwrap();
+    let rot = keri_codec::RotationBuilder::new()
+        .prefix(alice.id.clone())
+        .prior_event_said(icp.said().clone())
+        .keys(vec![both.verkeys[0].clone()])
+        .prior_witnesses(vec![])
+        .next_keys(both.next_digests.clone())
+        .build()
+        .unwrap();
+    let sigs = rotated.sign(rot.as_bytes(), None).unwrap();
+    let result = process(&[alice.frame(&icp), frame(&rot, &sigs[..1], &[])]);
+    assert_eq!(
+        readings(&result),
+        vec![r("seen", "seen", true); 2],
+        "{result}"
+    );
+    assert_eq!(
+        result["key_states"][alice.prefix()]["keys"],
+        serde_json::json!([both.verkeys[0].to_qb64()])
+    );
+    // Signed by the reserve key alone, the rotation does not verify against the keys it lists.
+    let reserve = frame(&rot, &sigs[1..], &[]);
+    let result = process(&[alice.frame(&icp), reserve]);
+    assert_eq!(readings(&result)[1].1, "rejected", "{result}");
+}
+
+#[test]
+fn a_nontransferable_inception_is_seen_with_no_next_keys() {
+    let mut basic = custodian(4);
+    let commitment = basic
+        .incept(keri::KeySpec {
+            count: 1,
+            ncount: 0,
+            transferable: false,
+        })
+        .unwrap();
+    let icp = keri_codec::InceptionBuilder::new()
+        .keys(commitment.verkeys.clone())
+        .build()
+        .unwrap();
+    let sigs = basic.sign(icp.as_bytes(), None).unwrap();
+    let result = process(&[frame(&icp, &sigs, &[])]);
+    assert_eq!(readings(&result), [r("seen", "seen", true)], "{result}");
+    let state = result["key_states"]
+        .as_object()
+        .unwrap()
+        .values()
+        .next()
+        .unwrap()
+        .clone();
+    assert_eq!(state["ndigs"], serde_json::json!([]));
+}
+
+#[test]
+fn the_second_reading_takes_signatures_from_frames_and_witness_groups() {
+    let w = Witness::new(30);
+    let (alice, icp) = witnessed(1, &w);
+    let body = icp.as_bytes();
+    let attachment_frame = |inner: &str| {
+        format!(
+            "{}{inner}",
+            count(
+                cesr::core::counter::CounterCodeV1::AttachmentGroup,
+                u32::try_from(inner.len() / 4).unwrap()
+            )
+        )
+    };
+    let inner = format!(
+        "{}{}{}",
+        sig_group(&alice.sigs(&icp)),
+        wig_group(&[w.wig(body, 0)]),
+        first_seen_group(0)
+    );
+    let framed = bare(&icp, &[attachment_frame(&inner)]);
+    assert_eq!(readings(&process(&[framed])), [r("seen", "seen", true)]);
+    let unframed = bare(
+        &icp,
+        &[
+            sig_group(&alice.sigs(&icp)),
+            wig_group(&[w.wig(body, 0)]),
+            first_seen_group(0),
+        ],
+    );
+    assert_eq!(readings(&process(&[unframed])), [r("seen", "seen", true)]);
+    // A frame inside a frame is refused: by the message layer itself, or, when a first-seen
+    // couple comes first and sends the frame to the second reading, by that reading.
+    let nested = bare(&icp, &[attachment_frame(&attachment_frame(&inner))]);
+    let result = process(&[nested]);
+    assert_eq!(readings(&result), [r("rejected", "rejected", false)]);
+    assert!(reason(&result, 0).contains("AttachmentGroup"), "{result}");
+    let behind_replay = format!(
+        "{}{}",
+        first_seen_group(0),
+        attachment_frame(&sig_group(&alice.sigs(&icp)))
+    );
+    let result = process(&[bare(&icp, &[attachment_frame(&behind_replay)])]);
+    assert_eq!(readings(&result), [r("rejected", "rejected", false)]);
+    assert!(reason(&result, 0).contains("nested"), "{result}");
+}
+
+#[test]
+fn a_seal_source_sequence_number_wider_than_128_bits_is_refused() {
+    let (delegator, delegate, dicp, dip) = delegated();
+    let wide = format!(
+        "{}{}{}",
+        count(cesr::core::counter::CounterCodeV1::SealSourceCouples, 1),
+        dicp.said().to_qb64(),
+        dicp.said().to_qb64()
+    );
+    let stream = bare(&dip, &[sig_group(&delegate.sigs(&dip)), wide]);
+    let result = process(&[delegator.frame(&dicp), stream]);
+    assert_eq!(readings(&result)[1], r("rejected", "rejected", false));
+    assert!(reason(&result, 1).contains("too large"), "{result}");
+}
+
+#[test]
+fn a_held_event_delivered_again_with_its_seal_source_couple_uses_it() {
+    let (mut delegator, delegate, dicp, dip) = delegated();
+    let anchor = delegator.ixn(vec![delegate.seal()]);
+    let with_seal = bare(
+        &dip,
+        &[
+            sig_group(&delegate.sigs(&dip)),
+            seal_group(1, &anchor.said().to_qb64()),
+        ],
+    );
+    let result = process(&[
+        delegator.frame(&dicp),
+        delegate.frame(&dip),
+        with_seal,
+        delegator.frame(&anchor),
+    ]);
+    assert_eq!(
+        readings(&result),
+        [
+            r("seen", "seen", true),
+            r("pending", "seen", true),
+            r("pending", "seen", true),
+            r("seen", "seen", true)
+        ]
+    );
+}
+
+#[test]
+fn a_delegated_rotation_anchored_earlier_than_the_one_it_contests_is_refused_at_the_root() {
+    let (mut delegator, mut delegate, dicp, dip) = delegated();
+    let dip_wire = delegate.frame(&dip);
+    let anchor = delegator.ixn(vec![delegate.seal()]);
+    let (mut twin, _) = Controller::incept(
+        2,
+        Options {
+            delegator: Some(delegator.id.clone()),
+            ..Options::default()
+        },
+    );
+    let drt = delegate.rot(true, vec![]);
+    let drt_wire = delegate.frame(&drt);
+    let anchor2 = delegator.ixn(vec![delegate.seal()]);
+    let other = twin.rot(true, vec![delegate.seal()]);
+    let other_wire = twin.frame(&other);
+    let anchor3 = delegator.ixn(vec![twin.seal()]);
+    let result = process(&[
+        delegator.frame(&dicp),
+        delegator.frame(&anchor),
+        dip_wire,
+        delegator.frame(&anchor2),
+        delegator.frame(&anchor3),
+        other_wire,
+        drt_wire,
+    ]);
+    assert_eq!(readings(&result)[5], r("seen", "seen", true), "{result}");
+    assert_eq!(
+        readings(&result)[6],
+        r("rejected", "rejected", false),
+        "{result}"
+    );
+    // No rule lets it supersede, and the whole delegation chain is held up to the delegator,
+    // which is not delegated: undecided at the root is refused, as KERI's C1 rule requires.
+    assert!(reason(&result, 6).contains("Undecided"), "{result}");
+}
+
+#[test]
+fn receipts_of_held_delegated_events_use_their_own_witness_sets() {
+    let w = Witness::new(30);
+    let (mut delegator, dicp) = Controller::incept(1, Options::default());
+    let (mut delegate, dip) = Controller::incept(
+        2,
+        Options {
+            delegator: Some(delegator.id.clone()),
+            witnesses: vec![w.prefix.clone()],
+            toad: Some(1),
+            ..Options::default()
+        },
+    );
+    let dip_wire = delegate.frame(&dip);
+    let anchor = delegator.ixn(vec![delegate.seal()]);
+    let drt = delegate.rot(true, vec![]);
+    let drt_wire = delegate.frame(&drt);
+    let anchor2 = delegator.ixn(vec![delegate.seal()]);
+    let result = process(&[
+        delegator.frame(&dicp),
+        delegator.frame(&anchor),
+        dip_wire,
+        receipt(
+            &delegate.prefix(),
+            0,
+            &dip.said().to_qb64(),
+            &[couple_group(&w, dip.as_bytes())],
+        ),
+        delegator.frame(&anchor2),
+        drt_wire,
+        receipt(
+            &delegate.prefix(),
+            1,
+            &drt.said().to_qb64(),
+            &[couple_group(&w, drt.as_bytes())],
+        ),
+    ]);
+    assert_eq!(
+        readings(&result),
+        [
+            r("seen", "seen", true),
+            r("seen", "seen", true),
+            r("pending", "seen", true),
+            r("seen", "seen", false),
+            r("seen", "seen", true),
+            r("pending", "seen", true),
+            r("seen", "seen", false)
+        ],
+        "{result}"
+    );
+}
+
+#[test]
+fn a_receipt_of_an_event_whose_kel_is_not_held_waits_with_it() {
+    let w = Witness::new(30);
+    let (mut alice, icp) = witnessed(1, &w);
+    let icp_wire = frame(&icp, &alice.sigs(&icp), &[w.wig(icp.as_bytes(), 0)]);
+    let ixn = alice.ixn(vec![]);
+    let result = process(&[
+        alice.frame(&ixn),
+        receipt(
+            &alice.prefix(),
+            1,
+            &ixn.said().to_qb64(),
+            &[couple_group(&w, ixn.as_bytes())],
+        ),
+        icp_wire,
+    ]);
+    assert_eq!(
+        readings(&result),
+        [
+            r("pending", "seen", true),
+            r("pending", "seen", false),
+            r("seen", "seen", true)
+        ],
+        "{result}"
+    );
+}
+
+#[test]
+fn a_basic_prefix_inception_is_keyed_by_its_basic_prefix() {
+    let mut basic = custodian(4);
+    let commitment = basic
+        .incept(keri::KeySpec {
+            count: 1,
+            ncount: 0,
+            transferable: false,
+        })
+        .unwrap();
+    let key = commitment.verkeys[0].to_qb64();
+    let built = keri_codec::InceptionBuilder::new()
+        .keys(commitment.verkeys.clone())
+        .build()
+        .unwrap();
+    let said = built.said().to_qb64();
+    let template = String::from_utf8(built.as_bytes().to_vec())
+        .unwrap()
+        .replace(
+            &format!("\"d\":\"{said}\""),
+            &format!("\"d\":\"{}\"", "#".repeat(44)),
+        )
+        .replace(&format!("\"i\":\"{said}\""), &format!("\"i\":\"{key}\""));
+    let digest = cesr::crypto::digest(
+        cesr::core::matter::code::DigestCode::Blake3_256,
+        template.as_bytes(),
+    )
+    .unwrap()
+    .to_qb64();
+    let body = template.replace(&"#".repeat(44), &digest).into_bytes();
+    let sigs = basic.sign(&body, None).unwrap();
+    let stream = [body, sig_group(&sigs).into_bytes()].concat();
+    let result = process(&[stream]);
+    assert_eq!(readings(&result), [r("seen", "seen", true)], "{result}");
+    assert!(result["key_states"].get(&key).is_some(), "{result}");
+}
+
+#[test]
+fn a_contest_that_climbs_to_a_delegating_event_the_host_cannot_place_is_held() {
+    // root -> middle -> leaf. The leaf's two rotations are anchored by two of middle's
+    // interactions, the challenger's earlier, so the judgment climbs to middle's own delegator,
+    // where an interaction has no anchoring event: the chain cannot be completed.
+    let (mut root, ricp) = Controller::incept(1, Options::default());
+    let (mut middle, mdip) = Controller::incept(
+        2,
+        Options {
+            delegator: Some(root.id.clone()),
+            ..Options::default()
+        },
+    );
+    let ranchor = root.ixn(vec![middle.seal()]);
+    let leaf_options = || Options {
+        delegator: Some(middle.id.clone()),
+        ..Options::default()
+    };
+    let (mut leaf, ldip) = Controller::incept(3, leaf_options());
+    let (mut twin, _) = Controller::incept(3, leaf_options());
+    let ldip_wire = leaf.frame(&ldip);
+    let manchor = middle.ixn(vec![leaf.seal()]);
+    let other = twin.rot(true, vec![leaf.seal()]);
+    let other_wire = twin.frame(&other);
+    let manchor_other = middle.ixn(vec![twin.seal()]);
+    let drt = leaf.rot(true, vec![]);
+    let drt_wire = leaf.frame(&drt);
+    let manchor_drt = middle.ixn(vec![leaf.seal()]);
+    let result = process(&[
+        root.frame(&ricp),
+        middle.frame(&mdip),
+        root.frame(&ranchor),
+        middle.frame(&manchor),
+        ldip_wire,
+        middle.frame(&manchor_other),
+        middle.frame(&manchor_drt),
+        drt_wire,
+        other_wire,
+    ]);
+    let readings = readings(&result);
+    assert_eq!(readings[1], r("pending", "seen", true), "{result}");
+    assert_eq!(
+        readings[2..8],
+        vec![r("seen", "seen", true); 6][..],
+        "{result}"
+    );
+    assert_eq!(readings[8], r("pending", "pending", false), "{result}");
 }
