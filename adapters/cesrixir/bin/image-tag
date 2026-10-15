@@ -1,0 +1,9 @@
+#!/bin/sh
+# Prints the image reference for the adapter's current sources: a digest of every file the image is
+# built from, so a stale image is never run by mistake. bin/build and bin/kcs-adapter-cesrixir agree
+# on it by both calling this.
+set -eu
+here=$(cd "$(dirname "$0")/.." && pwd)
+cd "$here"
+digest=$(find Dockerfile mix.exs mix.lock config lib -type f | LC_ALL=C sort | xargs sha256sum | sha256sum | cut -c1-16)
+echo "kcs-adapter-cesrixir:src-$digest"

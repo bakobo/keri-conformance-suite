@@ -27,7 +27,7 @@ Bakobo is a small company. These are commitments about *responsiveness*, not a g
 
 This repository is responsible for the conformance runner, the case generators, the adapters it hosts, and the correctness of the cases themselves. A case that wrongly passes an unsafe implementation, or a runner that can be made to report a pass it did not observe, is in scope here.
 
-A vulnerability in an implementation under test — keripy, keriox, affinidi-keri-rs, signify-ts, KERIA or any other — belongs to that project. Report it to them, not to us.
+A vulnerability in an implementation under test — keripy, keriox, affinidi-keri-rs, signify-ts, cesrixir, KERIA or any other — belongs to that project. Report it to them, not to us.
 
 **Cases can disclose vulnerabilities.** A must-reject case that an implementation wrongly accepts is, in effect, a public proof of concept against that implementation. If you are contributing a case that exposes an unpatched security defect in a released implementation, report it to that project privately first, and to us through the channels above. We hold such a case out of the public tree until the affected project has had a chance to ship a fix, on the same 90-day default described below.
 

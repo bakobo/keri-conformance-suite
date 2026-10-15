@@ -1,0 +1,17 @@
+#!/bin/sh
+# Starts the cesrixir adapter in its container, speaking the adapter protocol over this process's
+# standard input and output. Build the image first with bin/build.
+#
+# The runner's resource limits and process-group kill reach only this docker client, not the
+# container, so the container carries its own: no network, no capabilities, a read-only root,
+# 2 GiB of memory, 256 processes, and the nobody user. When the client dies its standard input
+# closes, and the adapter exits within five seconds whatever it is doing (README.md, "Running in
+# a container").
+set -eu
+tag=$("$(dirname "$0")/image-tag")
+if ! docker image inspect "$tag" >/dev/null 2>&1; then
+  echo "e.env.dependency.image.f: the image $tag is not built. Run adapters/cesrixir/bin/build first." >&2
+  exit 1
+fi
+exec docker run --rm -i --network none --cap-drop ALL --security-opt no-new-privileges \
+  --read-only --memory 2g --memory-swap 2g --pids-limit 256 --log-driver none "$tag"
