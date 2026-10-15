@@ -33,7 +33,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
   - 5qcy: a single anchored head accepted. A higher event that is not anchored is ignored, and so is a higher event whose chain is broken. Two events anchored at one n are refused.
   - 3b5o: the Blinder derivation accepted; a different path radix, an uppercase hex path and a wrong stretch tier are refused. The choice record states the KDF parameters, the entropy floor of the KDF's input and the reasoning for both. Its overturning condition includes a cost floor. The issuer refuses an empty salt, a salt below the floor, and one salt reused across two credentials. The spec-question draft for 3b5o argues strength as well as bytes.
   - 4xwz: a credential using the defaults accepted and one deviating refused. All of these cases are drafts.
-  - 3nch: one pair each for `-S##` versus `-T##`, the 8-character group code, the `{s,d}` seal couple, and edge `d` required.
+  - 3nch: one pair each for `-S##` versus `-T##`, the 8-character group code, the seal shape (the `{s,d}` couple and the `{i,s,d}` event seal with `i` the issuer accepted, per 2082s6k4), and edge `d` required.
   - 3qah: an unknown operator gives `incomplete`.
   - 7kev: an absent `o` gives the v1.1 default. An explicit `o` that differs from the default changes the verdict.
   - 6ljr: `o` as a scalar, a one-element list, a multi-element list and an empty list.
@@ -59,7 +59,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
 
 ## 4. Issuer vectors (`acdc.issue`)
 
-- **Positive cases.** IAR, Core, Residence, Age (`acg`) and Guardian, each once under a `upd` registry and once under a `bup` registry. The generator's bytes are cross-checked against Sam's `test_sedi.py` literals, pinned by full keripy commit and file digest.
+- **Positive cases.** IAR, Core, Residence, Age (`acg`) and Guardian under a `bup` registry, which is the only registry sedi-1 requires (8dgunr0e). A `upd` issuance is sent only to an adapter declaring `acdc.registry.upd`. The generator's bytes are cross-checked against Sam's `test_sedi.py` literals, pinned by full keripy commit and file digest.
 - **DISAGREEMENTS.md** is tested in both directions: every literal is either equal or listed, and every listed literal still differs.
 - **Negative cases**, each refused rather than issued:
   - `a.dt` emitted where SEDI forbids it (G17 #8);
@@ -101,7 +101,9 @@ Every requirement below gets a failing test before the code that satisfies it. N
   - an adapter declaring `upd` but not `bup`, which fails the `bup` cases and is not skipped on them.
 - **Revocation** is a profile choice: revoked is `invalid`, with its pair. A revoked middle node of a two-hop chain makes the head not valid under chain-strict propagation.
 - **Seals.** Each refusal has its positive pair:
-  - a bare digest is refused. This is the reading that diverges from keripy and heti, so their baselines are expected to record it.
+  - a bare digest is refused. heti accepts one, so its baseline is expected to record the divergence;
+  - the `{s,d}` couple and the `{i,s,d}` event seal with `i` the issuer are both accepted, which widens ACDC line 1922 (2082s6k4);
+  - an `{i,s,d}` seal whose `i` is not the issuer is refused;
   - a seal with an extra field is refused;
   - a seal whose `d` does not match is refused;
   - an `s` naming an absent event is `incomplete`;
@@ -182,7 +184,7 @@ For each issue vector, the evidence pack verifies adapter A's `acdc.issue` outpu
 
 - The adapter lives in `adapters/heti/`. It is pinned to a heti commit by full hash, with a dependency lockfile, uses heti's public API only (93t4d880), and builds in the no-secrets CI tier.
 - It implements `acdc.verify` (with the presentation context), `acdc.issue` and `acdc.present`. `kcs check-adapter` passes with the item-3 probes.
-- Its expected sedi-1 baseline is a reviewed artifact, not a snapshot. It lists the cases heti fails by design (it issues only `upd`, and it refuses operators outside its SEDI pins with `EDGE_BEARING`), with a tick for each. CI fails on a change to the baseline, not on a failure the baseline already lists.
+- Its expected sedi-1 baseline is a reviewed artifact, not a snapshot. It lists the cases heti fails by design (it accepts a bare digest as a seal, and it refuses operators outside its SEDI pins with `EDGE_BEARING`; it issues only `bup`, which sedi-1 no longer counts against it, per 8dgunr0e), with a tick for each. CI fails on a change to the baseline, not on a failure the baseline already lists.
 - No baseline line is written until the embargo gate above has cleared its case, and the baseline tool refuses to write a line for a case on the embargo list.
 - A commit-range check asserts that adapter commits touch nothing under `cases/`.
 
