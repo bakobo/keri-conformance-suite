@@ -5,7 +5,7 @@
 # The runner's resource limits and process-group kill reach only this docker client, not the
 # container, so the container carries its own: no network, no capabilities, a read-only root,
 # 2 GiB of memory, 256 processes, and the nobody user. When the client dies its standard input
-# closes, and the adapter exits within five seconds whatever it is doing (README.md, "Running in
+# closes, and the adapter exits once 65 seconds pass without an answer, whatever it is doing (README.md, "Running in
 # a container").
 set -eu
 tag=$("$(dirname "$0")/image-tag")

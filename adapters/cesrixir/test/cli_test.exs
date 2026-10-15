@@ -3,7 +3,12 @@ defmodule KcsAdapterCesrixir.CLITest do
   import ExUnit.CaptureIO
   alias KcsAdapterCesrixir.{CLI, Lines}
 
-  defp io(test_pid), do: %{write: &send(test_pid, {:wrote, IO.iodata_to_binary(&1)}), halt: &send(test_pid, {:halted, &1})}
+  defp io(test_pid),
+    do: %{
+      write: &send(test_pid, {:wrote, IO.iodata_to_binary(&1)}),
+      halt: &send(test_pid, {:halted, &1}),
+      progress: fn -> send(test_pid, :progress) end
+    }
 
   test "the loop answers each split line in order and halts with 0 at end of input" do
     me = self()
@@ -17,6 +22,7 @@ defmodule KcsAdapterCesrixir.CLITest do
     assert %{"id" => 2, "error" => _} = Jason.decode!(two)
     assert String.ends_with?(one, "\n")
     assert_receive {:halted, 0}, 5_000
+    assert_received :progress
     refute_received {:wrote, _}
   end
 
@@ -35,8 +41,23 @@ defmodule KcsAdapterCesrixir.CLITest do
     assert_receive {:halted, 0}, 1_000
   end
 
-  test "the grace period after end of input is five seconds" do
-    assert CLI.grace_ms() == 5_000
+  test "the grace period outlasts the runner's 60-second request timeout" do
+    assert CLI.grace_ms() > 60_000
+  end
+
+  test "after end of input each answer restarts the grace period" do
+    port = make_ref()
+    me = self()
+    reader = spawn(fn -> CLI.read(port, Lines.new(), me, &send(me, {:halted, &1}), 150) end)
+    send(reader, :answered)
+    send(reader, {port, :eof})
+    assert_receive :eof
+    for _ <- 1..3 do
+      Process.sleep(100)
+      send(reader, :answered)
+    end
+    refute_received {:halted, _}
+    assert_receive {:halted, 0}, 1_000
   end
 
   test "an oversize line is answered" do

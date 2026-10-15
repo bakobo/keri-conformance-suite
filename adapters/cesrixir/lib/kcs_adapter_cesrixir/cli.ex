@@ -7,16 +7,18 @@ defmodule KcsAdapterCesrixir.CLI do
   in a fresh process.
 
   At end of input the loop exits with status 0 once it has answered every complete line. The
-  reader also starts a timer then, and exits after `grace_ms` milliseconds whatever the loop is
-  doing. The runner sends one request at a time and closes standard input only after its last
-  answer, unless it is abandoning the adapter, so the timer cuts short only a request the runner
-  has given up on. That bound is what stops the container when the runner kills the docker client
-  over a hung request, because the client's death closes the container's standard input.
+  reader also watches for progress then: the loop tells it after every answer, and if `grace_ms`
+  milliseconds pass with no answer the reader exits the adapter whatever the loop is doing. The
+  grace is longer than the runner's 60-second request timeout, so a request the runner would still
+  wait for is never cut short, and a piped batch is answered however long it takes as long as each
+  request finishes within the grace. The bound is what stops the container when the runner kills
+  the docker client over a hung request, because the client's death closes the container's
+  standard input.
   """
 
   alias KcsAdapterCesrixir.{Errors, Lines, Protocol}
 
-  @grace_ms 5_000
+  @grace_ms 65_000
 
   def grace_ms, do: @grace_ms
 
@@ -25,13 +27,25 @@ defmodule KcsAdapterCesrixir.CLI do
     receive do
       {^port, {:data, chunk}} ->
         {done, lines} = Lines.feed(lines, chunk)
+        # ~5hlw complete lines queue in the loop's mailbox while a request runs
         Enum.each(done, &send(loop_pid, {:split, &1}))
+        read(port, lines, loop_pid, halt, grace_ms)
+
+      :answered ->
         read(port, lines, loop_pid, halt, grace_ms)
 
       {^port, :eof} ->
         send(loop_pid, :eof)
-        Process.sleep(grace_ms)
-        halt.(0)
+        idle(halt, grace_ms)
+    end
+  end
+
+  # After end of input: exit once `grace_ms` passes without an answer.
+  defp idle(halt, grace_ms) do
+    receive do
+      :answered -> idle(halt, grace_ms)
+    after
+      grace_ms -> halt.(0)
     end
   end
 
@@ -40,6 +54,7 @@ defmodule KcsAdapterCesrixir.CLI do
     receive do
       {:split, split} ->
         io.write.([Jason.encode!(answer(split)), "\n"])
+        io.progress.()
         loop(io)
 
       :eof ->
