@@ -25,6 +25,12 @@ fn hello_versions_match_cargo_lock() {
         locked_version(&lock, "affinidi-keri-core"),
         protocol::IMPLEMENTATION_VERSION
     );
+    // affinidi-keri-crypto is released from the same workspace as affinidi-keri-core, so the
+    // implementation identity covers it.
+    assert_eq!(
+        locked_version(&lock, "affinidi-keri-crypto"),
+        protocol::IMPLEMENTATION_VERSION
+    );
     assert_eq!(
         locked_version(&lock, "affinidi-cesr"),
         protocol::CESR_CRATE_VERSION
@@ -61,6 +67,14 @@ fn vcs_sha(dir: &Path) -> String {
 #[test]
 fn hello_commits_match_the_published_crates() {
     for dir in source_dirs("affinidi-keri-core", protocol::IMPLEMENTATION_VERSION) {
+        assert_eq!(
+            vcs_sha(&dir),
+            protocol::IMPLEMENTATION_COMMIT,
+            "{}",
+            dir.display()
+        );
+    }
+    for dir in source_dirs("affinidi-keri-crypto", protocol::IMPLEMENTATION_VERSION) {
         assert_eq!(
             vcs_sha(&dir),
             protocol::IMPLEMENTATION_COMMIT,
