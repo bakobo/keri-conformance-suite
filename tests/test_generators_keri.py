@@ -1022,6 +1022,8 @@ def test_an_inceptions_configuration_traits_must_also_be_a_list_of_strings():
 @pytest.mark.parametrize("fields,match", [
     ({"bt": []}, "backer threshold"),
     ({"ba": ["1AAA" + "A" * 44]}, "witness prefix"),
+    ({"ba": [""]}, "witness prefix"),
+    ({"ba": ["not-a-prefix"]}, "witness prefix"),
 ])
 def test_an_inception_only_trait_does_not_grade_a_body_the_model_cannot_read(fields, match):
     """The trait refusal is graded MUST, so it is never reached on a body the model would
