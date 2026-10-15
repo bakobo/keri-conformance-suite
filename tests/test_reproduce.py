@@ -411,13 +411,17 @@ def test_a_readme_that_cannot_be_read_is_a_coded_error(repo):
 @pytest.mark.parametrize(("errno_", "code"), [(13, "e.env.filesystem.readme.f"),
                                                (28, "e.env.filesystem.readme.r")])
 def test_a_readme_that_cannot_be_written_is_a_coded_error(repo, monkeypatch, errno_, code):
-    def fail(self, *args, **kwargs):
+    written = []
+
+    def fail(self, text, encoding=None):
+        written.append(self.name)
         raise OSError(errno_, "simulated")
 
     monkeypatch.setattr(P.Path, "write_text", fail)
     with pytest.raises(RunnerError) as info:
         P.update_readmes(repo)
     assert info.value.code == code
+    assert written == ["README.md"]  # the first README's write failed, and nothing after it ran
 
 
 @pytest.mark.parametrize("text", ["no markers\n", f"{P.END}\n{P.BEGIN}\n",

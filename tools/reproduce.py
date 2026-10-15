@@ -508,6 +508,7 @@ def _differences(found: list[str], matched: str) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    maintainer = ""
     try:
         args = _parser().parse_args(argv)
         repo = Path(args.repo)
