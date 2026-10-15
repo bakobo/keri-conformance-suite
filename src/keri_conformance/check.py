@@ -4,7 +4,8 @@ The probes check what the runner can check from the outside with no KERI materia
 valid, that ids are echoed, that a request line that is not JSON gets an error response whose id
 is null and the adapter then answers the next request, and that an unknown op gets an error; and,
 for an adapter that lists acdc.issue or acdc.present, or declares acdc.presentation, that a request
-the protocol cannot read gets an error rather than a result. The statelessness and quiescence probes need real KERI
+the protocol cannot read gets an error rather than a result; and, for an issuer, that two identical
+plain issuances each verify. The statelessness and quiescence probes need real KERI
 streams from the keripy generator, which does not exist yet, so they are reported as not yet
 available rather than faked.
 """
@@ -12,23 +13,24 @@ available rather than faked.
 import json
 from dataclasses import dataclass
 
+from keri_conformance import issued
 from keri_conformance.contracts import ERROR
 from keri_conformance.errors import HelloRefused
 from keri_conformance.jsonfile import loads
-from keri_conformance.session import AdapterSession, Failure, parse_response
+from keri_conformance.session import AdapterSession, Failure, beyond_schema, parse_response
 
 PROBES = ("hello", "id-echo", "malformed-request", "unknown-op", "statelessness", "quiescence",
-          "issue-malformed", "present-malformed", "presentation-malformed", "issue-determinism",
+          "issue-malformed", "present-malformed", "presentation-malformed", "issue-repeatable",
           "present-independence")
 # The probes for the issuer and holder operations and the presentation context, each run only
 # against an adapter that lists the operation (and declares the feature, where one is named), and
 # the probes for them that need a real issuance to send.
 OP_PROBES = (("issue-malformed", "acdc.issue", None), ("present-malformed", "acdc.present", None),
              ("presentation-malformed", "acdc.verify", "acdc.presentation"))
-OP_NOT_YET = (("issue-determinism", "acdc.issue"), ("present-independence", "acdc.present"))
+OP_NOT_YET = (("present-independence", "acdc.present"),)
 NOT_YET_ACDC = ("This probe sends a real issuance, taken from the suite's first acdc.issue case, "
                 "which does not exist yet.")
-# Requests this protocol cannot read: an issuance with no ACDC template, a presentation in a
+# Requests this protocol cannot read: an issuance that asks for no credential, a presentation in a
 # disclosure form the protocol does not define, and a verification whose presentation context
 # names no message and no verifier.
 _VERIFY = {"perspective": {"role": "validator"}, "kels": [], "registry": [], "schemas": [],
@@ -47,11 +49,21 @@ MALFORMED = {
         {**_VERIFY, "presentation": {"messages": _CONTEXT["messages"]}},
         {**_VERIFY, "presentation": {"verifier": _CONTEXT["verifier"]}},
     ],
-    "acdc.issue": {"kels": [], "seeds": {}, "registry": []},
+    "acdc.issue": {"roles": ["issuer"], "schemas": [], "credentials": []},
     "acdc.present": {"perspective": {"role": "holder"}, "kels": [], "registry": [], "schemas": [],
                      "acdcs": [], "held": {"stream": "2d4b"},
                      "disclosure": {"form": "kcs-probe-no-such-form"}},
 }
+# One plain issuance, sent twice by the issue-repeatable probe: an issuer and a holder, and one
+# credential under a schema that constrains nothing (this.i 2u2ps8mt).
+_PROBE_SCHEMA = {"$id": issued.DUMMY, "$schema": "https://json-schema.org/draft/2020-12/schema",
+                 "title": "T", "type": "object"}
+_PROBE_SCHEMA["$id"] = issued.digest(issued.serialize(_PROBE_SCHEMA))
+ISSUE_PROBE = {"roles": ["issuer", "holder"],
+               "schemas": [issued.serialize(_PROBE_SCHEMA).hex()],
+               "credentials": [{"name": "c", "issuer": "issuer", "issuee": "holder",
+                                "schema": _PROBE_SCHEMA["$id"], "attributes": {"name": "Zoe"},
+                                "registry": "bup"}]}
 ECHO_ID = 7919
 UNKNOWN_OP = "kcs.probe.no-such-op"
 NOT_YET = ("This probe needs real KERI event streams from the keripy generator, which does not "
@@ -156,6 +168,24 @@ def _probe_malformed_op(session: AdapterSession, op: str) -> tuple[bool, str]:
     return True, f"The adapter answered every malformed {op} request with an error response."
 
 
+def _probe_issue_repeatable(session: AdapterSession) -> tuple[bool, str]:
+    """Two identical issuance requests each return an issuance that verifies: an issuer's output
+    varies, so what repeats is that it verifies, not its bytes (this.i 2u2ps8mt)."""
+    for n in (1, 2):
+        outcome = _ask(session, "acdc.issue", ISSUE_PROBE)
+        if isinstance(outcome, Failure):
+            return False, f"The adapter did not answer issuance {n} with a result: {outcome.detail}"
+        if "refused" in outcome.result:
+            return False, f"The adapter refused issuance {n}, a plain issuance it must make."
+        shape = beyond_schema("acdc.issue", ISSUE_PROBE, outcome.result)
+        if shape:
+            return False, f"Issuance {n} does not answer the request: {shape}"
+        problems = issued.grade(ISSUE_PROBE, outcome.result)
+        if problems:
+            return False, f"Issuance {n} does not verify: {problems[0]}."
+    return True, "Two identical acdc.issue requests each returned an issuance that verifies."
+
+
 def _op_probes(session: AdapterSession) -> list[Probe]:
     results = []
     for name, op, feature in OP_PROBES:
@@ -174,6 +204,18 @@ def _op_probes(session: AdapterSession) -> list[Probe]:
         if not passed:
             session.kill()
         results.append(Probe(name, "pass" if passed else "fail", reason))
+    if "acdc.issue" not in session.hello["operations"]:
+        results.append(Probe("issue-repeatable", "not-applicable",
+                             "The adapter does not list acdc.issue."))
+    else:
+        try:
+            session.ensure_running()
+            passed, reason = _probe_issue_repeatable(session)
+        except HelloRefused as refusal:
+            passed, reason = False, str(refusal)
+        if not passed:
+            session.kill()
+        results.append(Probe("issue-repeatable", "pass" if passed else "fail", reason))
     for name, op in OP_NOT_YET:
         if op not in session.hello["operations"]:
             results.append(Probe(name, "not-applicable", f"The adapter does not list {op}."))
@@ -192,8 +234,8 @@ def check_adapter(session: AdapterSession) -> list[Probe]:
                   for name in PROBES[1:4]),
                 *(Probe(name, "not-yet-available", NOT_YET) for name in PROBES[4:6]),
                 *(Probe(name, "not-run", "The hello probe failed, so this probe was not run.")
-                  for name in PROBES[6:9]),
-                *(Probe(name, "not-yet-available", NOT_YET_ACDC) for name in PROBES[9:])]
+                  for name in PROBES[6:10]),
+                *(Probe(name, "not-yet-available", NOT_YET_ACDC) for name in PROBES[10:])]
     results = [Probe("hello", "pass", "The adapter's hello is valid and its features are in "
                                       "the vocabulary.")]
     for name, probe in (("id-echo", _probe_echo), ("malformed-request", _probe_malformed),

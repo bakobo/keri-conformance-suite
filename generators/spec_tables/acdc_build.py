@@ -21,7 +21,7 @@ docs/design.md fixes, through ``acdc_saids``:
   becomes the digest seal ``{d}`` of the ACDC's most compact SAID (line 1663, direct issuance),
   and ``{"registry": name}`` the transaction event seal ``{s, d}`` (line 1922). A registry seal
   may name another ``shape``: ``isd``, the event seal ``{i, s, d}`` whose ``i`` is the registry's
-  issuer unless the seal names one, or ``d``, the bare digest; and ``extra`` fields to add.
+  SAID unless the seal names another, or ``d``, the bare digest; and ``extra`` fields to add.
   sedi-1 accepts ``isd`` (this.i 2082s6k4), and its cases use the others as defects.
 - **Attachments** follow the body in a CESR attachments group ``-C``: a seal source couple
   ``-S`` (sequence number and SAID) of the key event a ``source_seal`` names (line 1671's
@@ -178,9 +178,10 @@ class _Builder:
             elif shape == "sd":
                 out = {"s": body["n"], "d": body["d"]}
             elif shape == "isd":
-                issuer = self._resolve(seal["i"]) if "i" in seal else \
-                    self.eb.prefix(self._registry_issuer(seal["registry"]))
-                out = {"i": issuer, "s": body["n"], "d": body["d"]}
+                spec = self._registry_spec(seal["registry"])
+                rd = body["d"] if spec["t"] == "rip" else self.registry_inception(spec["registry"])
+                out = {"i": self._resolve(seal["i"]) if "i" in seal else rd, "s": body["n"],
+                       "d": body["d"]}
             else:
                 raise ScenarioError(f"The seal {seal!r} has shape {shape!r}; a registry seal is "
                                     f"d, sd or isd.")
@@ -298,10 +299,6 @@ class _Builder:
         ts = how.get("ts", ts)
         own = sa.blinded_block(self.t, u, td, ts, self.readings)
         return own if how["blid"] == "own" else b + own[len(b):]
-
-    def _registry_issuer(self, name: str) -> str:
-        spec = self._registry_spec(name)
-        return spec["issuer"] if spec["t"] == "rip" else self._registry_issuer(spec["registry"])
 
     def registry_inception(self, name: str) -> str:
         spec = self._registry_spec(name)

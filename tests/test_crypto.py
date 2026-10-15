@@ -101,3 +101,35 @@ def test_ed25519_refuses_a_negative_zero_x_at_y_equal_p_minus_1():
 def test_ed25519_seeds_are_32_bytes():
     with pytest.raises(ValueError, match="32 bytes"):
         ed25519.public_key(bytes(31))
+
+
+IDENTITY = int.to_bytes(1, 32, "little")  # the point (0, 1)
+
+
+def test_ed25519_refuses_the_identity_key_forgery():
+    """With the identity as the public key, R the identity and S = 0, RFC 8032's equation holds
+    for every message; the runner verifies keys an adapter returns, so it must refuse it."""
+    for message in (b"", b"any event body"):
+        assert not ed25519.verify(IDENTITY, message, IDENTITY + bytes(32))
+
+
+def test_ed25519_refuses_keys_and_r_values_of_small_order():
+    order_two = int.to_bytes(ed25519.P - 1, 32, "little")  # (0, -1)
+    seed = bytes(range(32))
+    public = ed25519.public_key(seed)
+    signature = ed25519.sign(seed, b"m")
+    assert ed25519.verify(public, b"m", signature)
+    assert not ed25519.verify(order_two, b"m", signature)
+    assert not ed25519.verify(public, b"m", IDENTITY + signature[32:])
+
+
+def test_ed25519_refuses_a_non_canonical_encoding():
+    non_canonical = int.to_bytes(ed25519.P + 1, 32, "little")  # y = 1 written as p + 1
+    assert ed25519._decode_point(non_canonical) is None
+
+
+def test_ed25519_refuses_an_s_not_below_the_group_order():
+    seed = bytes(range(32))
+    signature = ed25519.sign(seed, b"m")
+    too_big = signature[:32] + int.to_bytes(ed25519.L, 32, "little")
+    assert not ed25519.verify(ed25519.public_key(seed), b"m", too_big)

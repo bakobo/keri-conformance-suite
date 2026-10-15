@@ -54,6 +54,7 @@ def test_both_accepted_seal_shapes_anchor():
 @pytest.mark.parametrize("seal,grade", [
     ({"shape": "d"}, "invalid"),
     ({"shape": "isd", "i": {"aid": "Q"}}, "invalid"),
+    ({"shape": "isd", "i": {"aid": "I"}}, "invalid"),  # the issuer's prefix is not the registry
     ({"shape": "sd", "extra": {"x": "1"}}, "invalid"),
 ])
 def test_a_seal_naming_the_event_in_another_shape_fails(seal, grade):

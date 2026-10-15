@@ -977,8 +977,7 @@
                 "required": [
                   "id",
                   "check",
-                  "level",
-                  "expected"
+                  "level"
                 ],
                 "properties": {
                   "id": {
@@ -1007,53 +1006,6 @@
                   },
                   "check": {
                     "const": "issued"
-                  },
-                  "expected": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "acdc",
-                      "registry"
-                    ],
-                    "description": "The bytes an issuer must return (docs/adapter-protocol.md, acdc.issue): the ACDC, each registry event with its blinded state or null, and the anchoring event's body when one is asked for.",
-                    "properties": {
-                      "acdc": {
-                        "type": "string",
-                        "pattern": "^([0-9a-f]{2})*$"
-                      },
-                      "registry": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "additionalProperties": false,
-                          "required": [
-                            "event",
-                            "blind"
-                          ],
-                          "properties": {
-                            "event": {
-                              "type": "string",
-                              "pattern": "^([0-9a-f]{2})*$"
-                            },
-                            "blind": {
-                              "oneOf": [
-                                {
-                                  "type": "null"
-                                },
-                                {
-                                  "type": "string",
-                                  "pattern": "^([0-9a-f]{2})*$"
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      },
-                      "anchor_body": {
-                        "type": "string",
-                        "pattern": "^([0-9a-f]{2})*$"
-                      }
-                    }
                   },
                   "spec_conflicts": {
                     "type": "array",
@@ -1104,67 +1056,6 @@
                   },
                   "check": {
                     "const": "issue_refused"
-                  },
-                  "spec_conflicts": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                      "$ref": "#/$defs/spec_conflict"
-                    },
-                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
-                  },
-                  "inferred_from": {
-                    "$ref": "#/$defs/inference",
-                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
-                  }
-                }
-              },
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "id",
-                  "check",
-                  "level",
-                  "expected"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "pattern": "^a[0-9]+$"
-                  },
-                  "level": {
-                    "enum": [
-                      "MUST",
-                      "SHOULD",
-                      "MAY",
-                      "INTEROP"
-                    ]
-                  },
-                  "clause": {
-                    "$ref": "#/$defs/clause"
-                  },
-                  "basis": {
-                    "$ref": "#/$defs/basis"
-                  },
-                  "choices": {
-                    "$ref": "#/$defs/choices"
-                  },
-                  "note": {
-                    "type": "string"
-                  },
-                  "check": {
-                    "const": "anchor_signed"
-                  },
-                  "expected": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "description": "The public keys, in signing-index order, whose signatures over the anchoring event's body the attachments must carry; each must have its seed in the input.",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1
-                    }
                   },
                   "spec_conflicts": {
                     "type": "array",
@@ -1777,84 +1668,68 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "kels",
-              "seeds",
-              "acdc",
-              "registry"
+              "roles",
+              "schemas",
+              "credentials"
             ],
             "properties": {
-              "kels": {
+              "roles": {
                 "type": "array",
+                "minItems": 1,
                 "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "stream",
-                    "source"
-                  ],
-                  "properties": {
-                    "stream": {
-                      "type": "string",
-                      "pattern": "^([0-9a-f]{2})*$"
-                    },
-                    "source": {
-                      "type": "string"
-                    }
-                  }
+                  "type": "string",
+                  "minLength": 1
                 }
               },
-              "seeds": {
-                "type": "object",
-                "additionalProperties": {
+              "schemas": {
+                "type": "array",
+                "items": {
                   "type": "string",
                   "pattern": "^([0-9a-f]{2})*$"
                 }
               },
-              "acdc": {
-                "type": "object"
-              },
-              "registry": {
+              "credentials": {
                 "type": "array",
+                "minItems": 1,
                 "items": {
                   "type": "object",
-                  "additionalProperties": false,
                   "required": [
-                    "event"
+                    "name",
+                    "issuer",
+                    "schema",
+                    "attributes",
+                    "registry"
                   ],
                   "properties": {
-                    "event": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "issuer": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "issuee": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "schema": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "attributes": {
                       "type": "object"
                     },
-                    "blind": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "salt",
-                        "state"
-                      ],
-                      "properties": {
-                        "salt": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "state": {
-                          "type": "object"
-                        }
-                      }
+                    "edges": {
+                      "type": "object"
+                    },
+                    "registry": {
+                      "enum": [
+                        "bup"
+                      ]
                     }
-                  }
-                }
-              },
-              "anchor": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "event"
-                ],
-                "properties": {
-                  "event": {
-                    "type": "object"
-                  }
+                  },
+                  "additionalProperties": false
                 }
               }
             }
@@ -2059,8 +1934,7 @@
                 "check": {
                   "enum": [
                     "issued",
-                    "issue_refused",
-                    "anchor_signed"
+                    "issue_refused"
                   ]
                 }
               }

@@ -230,41 +230,47 @@ The features these cases require are `acdc.version-2.x`, which every ACDC case r
 
 ## `acdc.issue`
 
-Issue one ACDC: build it, build the registry events that issue it, and build and sign the key event that anchors them, from fixed inputs. The runner compares every body byte for byte with the case and checks the anchoring event's signatures, as it does for `keri.emit`. This operation and `acdc.present` are specified ahead of their first cases, and the message schemas and `kcs check-adapter` accept both.
+Issue credentials, as an implementation issues them: with its own keys, salts, registry nonces and clock (this.i 2u2ps8mt). The request asks for an issuance, not for bytes, and the runner grades the result by verifying it. This operation and `acdc.present` are specified ahead of their first cases, and the message schemas and `kcs check-adapter` accept both.
 
 ```json
 {"id": 7, "op": "acdc.issue",
- "kels": [{"stream": "2d5f414141434141...", "source": "issuer"}],
- "seeds": {"DOYgdUBx...": "a1b2..."},
- "acdc": {"v": "", "t": "acm", "d": "", "u": "0ABn...", "i": "EKBC...", "rd": "EAz1...",
-          "s": "EBdX...", "a": {"d": "", "u": "0ACx...", "i": "EDB8...", "givenName": "Guy"},
-          "e": {}, "r": {}},
- "registry": [
-   {"event": {"v": "", "t": "bup", "d": "", "rd": "EAz1...", "n": "1", "p": "EAz1...",
-              "dt": "2026-10-15T00:00:00.000000+00:00", "b": ""},
-    "blind": {"salt": "0ABz...", "state": {"d": "", "u": "", "td": "", "ts": "issued"}}}
- ],
- "anchor": {"event": {"v": "", "t": "ixn", "d": "", "i": "EKBC...", "s": "1", "p": "EKBC...",
-                      "a": [{"s": "1", "d": "EGsP..."}]}}}
+ "roles": ["issuer", "holder"],
+ "schemas": ["7b2224696422..."],
+ "credentials": [
+   {"name": "core", "issuer": "issuer", "issuee": "holder", "schema": "EBdX...",
+    "attributes": {"givenName": "Guy"}, "registry": "bup"},
+   {"name": "guardian", "issuer": "holder", "schema": "EBdX...", "attributes": {"role": "parent"},
+    "registry": "bup", "edges": {"core": {"credential": "core", "o": "I2I"}}}
+ ]}
 ```
 
-- `kels` holds the issuer's KEL as it stands before issuance, and any delegator's, delivered as `keri.process` would deliver them. The issuer is the identifier whose current signing keys `seeds` gives, as hex seeds keyed by public key.
-- `acdc`, each registry `event`, a blinded `state` and the anchoring `event` are templates: JSON objects with every field given, in order, and with every field whose value is a SAID, a BLID or the version string left as the empty string. The implementation fills them in by its own rules, so a template is what its issuance API would build from, not something the adapter completes. Salts (`u`), stamps (`dt`), attribute values and seals are given literally. An implementation that would add a field the template lacks, such as a stamp in `a`, must not: the bytes it returns are compared with the template's.
-- A registry entry carries a `blind` when its event is a blindable update. Its `salt` is the 128-bit salt, qb64-encoded, that the issuer shares with the holder, and its `state` is the blinded state block's template. The implementation derives the block's `u` from the salt and the event's sequence number, computes the block's BLID, and sets the event's `b` to it.
-- `registry` may be empty, for an ACDC committed by a seal alone. `anchor` may be absent, when the case tests only the bodies.
+- `roles` names the identifiers the implementation creates for the request, each a new transferable identifier with no witnesses and no delegator. Nothing about them is given: the implementation makes its own keys.
+- `schemas` holds the JSON Schema documents the credentials name, each the hex encoding of a compact JSON document whose `$id` is its SAID, as in `acdc.verify`.
+- Each entry of `credentials` asks for one credential: its `name` in the request, the role that issues it, the role it is issued to (`issuee`, absent for an untargeted credential), its schema's SAID, its attribute values by label, and its registry kind, which is `bup`, a blindable registry of its own. The implementation adds the attribute block's `d`, `u` and `i` as its rules say, and nothing else.
+- `edges`, when present, is the edge section asked for. Each label names another credential in the request by `name`, with the operators asked for in `o` (a string or a list), or is a group of such labels with its own `o` (`AND` or `OR`). A credential's edges name only credentials the request also issues, so the request is issued far nodes first.
 
 ```json
-{"id": 7, "result": {"acdc": "7b2276223a224143444343...",
-                     "registry": [{"event": "7b2276223a...", "blind": "7b2264223a..."}],
-                     "anchor": "2d5f4141414341417b2276223a224b455249..."}}
-{"id": 7, "result": {"refused": {"reason": "salt shorter than 128 bits"}}}
+{"id": 7, "result": {
+  "kels": {"issuer": "2d5f414141434141...", "holder": "2d5f414141434141..."},
+  "credentials": {
+    "core": {"acdc": "2d5f4141414341417b2276223a2241434443...",
+             "registry": "2d5f4141414341417b2276223a2241434443...",
+             "disclosure": "EG61F_et0sn-CbHLZrbm..."},
+    "guardian": {"acdc": "...", "registry": "...", "disclosure": "..."}}}}
+{"id": 7, "result": {"refused": {"reason": "an attribute the schema forbids"}}}
 ```
 
-`acdc` is the ACDC as built from the template, fully expanded, as JSON bytes in hex with no attachments. `registry` has one entry per requested event, in order: the event's bytes, and the blinded state block's bytes when a `blind` was requested, otherwise `null`. `anchor` is the signed anchoring event as a hex stream with its attachments, beginning with the genus/version code as a `keri.emit` stream does, and is present exactly when `anchor` was requested.
+`kels` holds each role's KEL as a hex stream, every event with its attachments. Each entry of `credentials` holds the ACDC, fully expanded, as a genus-pinned hex stream with no attachments; the credential's registry as one genus/version code followed by its events' bodies, in order; and the head update's blinded state block as qb64 text, with or without its group code, when the registry is blindable. The result has one KEL per role and one entry per credential, and nothing else.
 
-The runner frames `anchor` by its version string, after any genus/version code, and compares the body with the case's. It then checks that the attachments carry, for each signing key the case names, that key's signature over the body at its index, as an Ed25519 indexed signature in the text or binary domain; how the signatures are grouped is up to the implementation. It computes each signature from the case's own seed, never from a key the adapter supplies, so its work is bounded by the case, and it refuses a body that declares more than 64 KiB before it signs anything.
+The runner grades the result by verifying it, and never by comparing its bytes with a case's:
 
-An implementation that refuses to issue from these inputs, because a salt is empty or too short, a seed is malformed, or a template asks for something its rules forbid, answers `refused` with an informative `reason`. A refusal is a result, not an error, so a case can require one: a case that must be refused fails when the adapter issues anything, and a case that must be issued fails when the adapter refuses.
+- every KEL event's SAID, sequence number and prior, an inception's self-addressing prefix and its commitment to next keys (each role must be transferable), and every event's Ed25519 indexed controller signatures against the key state it is signed under, to its threshold, with a rotation's new keys against the prior next-key digests. A witnessed or delegated KEL, a weighted threshold or a signature code other than `A` or `B` is beyond what the runner verifies, and a result that uses one fails the check rather than passing unverified;
+- every registry event's SAID, sequence number and prior, each anchored on the issuer's verified KEL by a seal the case's profile accepts, and the head's disclosure, which must hash to the head update's BLID and record the credential as issued;
+- each ACDC's genus/version code, type (`acm`), version string, field order (ACDC line 32), most compact SAID and every nested SAIDed block's own SAID, issuer, schema (one the request carries, whose SAID verifies) and registry, its attribute block (exactly the attributes asked for, with their values, the issuee asked for, and a 128-bit salt where it has one), and each edge asked for: its own SAID in `d`, the far credential's SAID, the operators asked for (or, where none were, absent or the default), and whether they hold between the two credentials as issued.
+
+What legitimately varies (SAIDs, salts, nonces, stamps, keys and prefixes) is checked for what it must be, never for what it is. The runner checks every count and size before it hashes or verifies anything, so its work is bounded by its own limits, not by what the adapter returned.
+
+An implementation that refuses an issuance, because an attribute breaks its schema or an edge asks for something its rules forbid, answers `refused` with an informative `reason`. A refusal is a result, not an error, so a case can require one: a case that must be refused fails when the adapter issues anything, and a case that must be issued fails when the adapter refuses.
 
 ## `acdc.present`
 

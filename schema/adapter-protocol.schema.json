@@ -314,10 +314,9 @@
           "required": [
             "id",
             "op",
-            "kels",
-            "seeds",
-            "acdc",
-            "registry"
+            "roles",
+            "schemas",
+            "credentials"
           ],
           "properties": {
             "id": {
@@ -327,78 +326,67 @@
             "op": {
               "const": "acdc.issue"
             },
-            "kels": {
+            "roles": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "The identifiers the implementation creates, by role name (this.i 2u2ps8mt)."
+            },
+            "schemas": {
               "type": "array",
               "items": {
-                "type": "object",
-                "required": [
-                  "stream",
-                  "source"
-                ],
-                "properties": {
-                  "stream": {
-                    "type": "string",
-                    "pattern": "^([0-9a-f]{2})*$"
-                  },
-                  "source": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "seeds": {
-              "type": "object",
-              "additionalProperties": {
                 "type": "string",
                 "pattern": "^([0-9a-f]{2})*$"
               }
             },
-            "acdc": {
-              "type": "object",
-              "description": "A template: every field given in order, with every SAID, BLID and version-string field left as the empty string for the implementation to fill (docs/adapter-protocol.md, acdc.issue)."
-            },
-            "registry": {
+            "credentials": {
               "type": "array",
+              "minItems": 1,
               "items": {
                 "type": "object",
                 "required": [
-                  "event"
+                  "name",
+                  "issuer",
+                  "schema",
+                  "attributes",
+                  "registry"
                 ],
                 "properties": {
-                  "event": {
-                    "type": "object",
-                    "description": "A template: every field given in order, with every SAID, BLID and version-string field left as the empty string for the implementation to fill (docs/adapter-protocol.md, acdc.issue)."
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
                   },
-                  "blind": {
+                  "issuer": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The role that issues it."
+                  },
+                  "issuee": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The role it is issued to; absent for an untargeted credential."
+                  },
+                  "schema": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The SAID of one of the request's schemas."
+                  },
+                  "attributes": {
                     "type": "object",
-                    "required": [
-                      "salt",
-                      "state"
-                    ],
-                    "properties": {
-                      "salt": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "The 128-bit salt the issuer shares with the holder, qb64."
-                      },
-                      "state": {
-                        "type": "object",
-                        "description": "A template: every field given in order, with every SAID, BLID and version-string field left as the empty string for the implementation to fill (docs/adapter-protocol.md, acdc.issue)."
-                      }
-                    }
+                    "description": "The attribute values, by label; the implementation adds d, u and i as its rules say."
+                  },
+                  "edges": {
+                    "type": "object",
+                    "description": "The edge section asked for: each label names another requested credential by name, with its operators, or is a group of such (docs/adapter-protocol.md, acdc.issue)."
+                  },
+                  "registry": {
+                    "enum": [
+                      "bup"
+                    ]
                   }
-                }
-              }
-            },
-            "anchor": {
-              "type": "object",
-              "required": [
-                "event"
-              ],
-              "properties": {
-                "event": {
-                  "type": "object",
-                  "description": "A template: every field given in order, with every SAID, BLID and version-string field left as the empty string for the implementation to fill (docs/adapter-protocol.md, acdc.issue)."
                 }
               }
             }
@@ -1425,46 +1413,41 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "acdc",
-        "registry"
+        "kels",
+        "credentials"
       ],
-      "description": "An acdc.issue result: the built ACDC, one entry per requested registry event, and the signed anchoring event exactly when one was requested.",
+      "description": "An acdc.issue result: each role's KEL, and each requested credential's ACDC, its registry's events and the disclosure of its head's blinded state.",
       "properties": {
-        "acdc": {
-          "type": "string",
-          "pattern": "^([0-9a-f]{2})*$"
+        "kels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^([0-9a-f]{2})*$"
+          }
         },
-        "registry": {
-          "type": "array",
-          "items": {
+        "credentials": {
+          "type": "object",
+          "additionalProperties": {
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "event",
-              "blind"
+              "acdc",
+              "registry"
             ],
             "properties": {
-              "event": {
+              "acdc": {
                 "type": "string",
                 "pattern": "^([0-9a-f]{2})*$"
               },
-              "blind": {
-                "oneOf": [
-                  {
-                    "type": "null"
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^([0-9a-f]{2})*$"
-                  }
-                ]
+              "registry": {
+                "type": "string",
+                "pattern": "^([0-9a-f]{2})*$"
+              },
+              "disclosure": {
+                "type": "string"
               }
             }
           }
-        },
-        "anchor": {
-          "type": "string",
-          "pattern": "^([0-9a-f]{2})*$"
         }
       }
     },
