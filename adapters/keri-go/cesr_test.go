@@ -104,24 +104,23 @@ func TestAnEmptyStreamIsRejected(t *testing.T) {
 	}
 }
 
-func TestEncodeUsesKeriGosNamedCodesOnly(t *testing.T) {
+func TestEncodeHandsEveryCodeToKeriGo(t *testing.T) {
 	raw := strings.Repeat("00", 32)
 	r := answer(t, `{"id":2,"op":"cesr.encode","code":"E","raw":"`+raw+`","domain":"text"}`)
 	enc, _ := hex.DecodeString(r["result"].(map[string]any)["encoded"].(string))
 	if string(enc) != "E"+strings.Repeat("A", 43) {
 		t.Fatalf("%s", enc)
 	}
-	sig := strings.Repeat("11", 64)
-	r = answer(t, `{"id":2,"op":"cesr.encode","code":"0B","raw":"`+sig+`","domain":"text"}`)
+	// keri-go names no code M, and encodes it anyway by the same arithmetic; that is its answer.
+	r = answer(t, `{"id":2,"op":"cesr.encode","code":"M","raw":"0001","domain":"text"}`)
 	enc, _ = hex.DecodeString(r["result"].(map[string]any)["encoded"].(string))
-	if !strings.HasPrefix(string(enc), "0B") || len(enc) != 88 {
+	if string(enc) != "MAAB" {
 		t.Fatalf("%s", enc)
 	}
 }
 
 func TestEncodeRefusals(t *testing.T) {
 	cases := map[string][2]string{
-		`{"id":2,"op":"cesr.encode","code":"M","raw":"0000","domain":"text"}`: {"unsupported", eUnknownCode},
 		`{"id":2,"op":"cesr.encode","code":"E","raw":"00","domain":"binary"}`: {"unsupported", eBinaryDomain},
 		`{"id":2,"op":"cesr.encode","code":"E","raw":"00","domain":"qb3"}`:    {"harness", eMalformed},
 		`{"id":2,"op":"cesr.encode","code":"","raw":"00","domain":"text"}`:    {"harness", eMalformed},
@@ -136,12 +135,11 @@ func TestEncodeRefusals(t *testing.T) {
 	}
 }
 
-func TestEncodeRefusedByKeriGo(t *testing.T) {
-	saved := matterQB64
-	defer func() { matterQB64 = saved }()
-	matterQB64 = func(string, []byte) (string, error) { return "", errTest }
-	kind, msg := errorOf(t, answer(t, `{"id":2,"op":"cesr.encode","code":"E","raw":"00","domain":"text"}`))
-	if kind != "unsupported" || !strings.HasPrefix(msg, eEncodeRefused+": ") {
-		t.Fatalf("got %s %q", kind, msg)
+// When keri-go refuses to encode, the answer is a rejection, as for cesr.parse.
+func TestARefusalByKeriGoIsARejection(t *testing.T) {
+	// A three-character code cannot be written over any raw value: keri-go's own check refuses it.
+	r := answer(t, `{"id":2,"op":"cesr.encode","code":"1AA","raw":"","domain":"text"}`)
+	if r["result"].(map[string]any)["reject"].(map[string]any)["class"] != classEncode {
+		t.Fatalf("%v", r)
 	}
 }

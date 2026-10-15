@@ -48,16 +48,14 @@ var (
 
 // Error codes, per bakobo/dev standards/error-codes.md. Each is the prefix of its message.
 const (
-	eOversize      = "e.input.range.request-size.f"
-	eMalformed     = "e.input.format.request.f"
-	eUnknownOp     = "e.input.range.unknown-op.f"
-	eUndeclaredOp  = "e.feature.unsupported.undeclared-op.f"
-	eVersion       = "e.feature.unsupported.protocol-version.f"
-	eBinaryDomain  = "e.feature.unsupported.binary-domain.f"
-	eUnknownCode   = "e.feature.unsupported.code.f"
-	eEncodeRefused = "e.input.format.encode-refused.f"
-	ePanic         = "e.self.unknown.panic.f"
-	eStdio         = "e.env.io.stdio.f"
+	eOversize     = "e.input.range.request-size.f"
+	eMalformed    = "e.input.format.request.f"
+	eUnknownOp    = "e.input.range.unknown-op.f"
+	eUndeclaredOp = "e.feature.unsupported.undeclared-op.f"
+	eVersion      = "e.feature.unsupported.protocol-version.f"
+	eBinaryDomain = "e.feature.unsupported.binary-domain.f"
+	ePanic        = "e.self.unknown.panic.f"
+	eStdio        = "e.env.io.stdio.f"
 )
 
 // opError is an operation's failure: kind is "harness" or "unsupported".

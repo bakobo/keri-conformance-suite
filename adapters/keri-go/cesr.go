@@ -13,20 +13,8 @@ import (
 const (
 	classParse   = "ParseKELStream"
 	classVersion = "DetectVersion"
+	classEncode  = "MatterQB64"
 )
-
-// matterQB64 is keri-go's encoder, a variable so a test can make it fail.
-var matterQB64 = keri.MatterQB64
-
-// encodable are the codes keri-go names (cesr.go): it encodes any code by the same arithmetic,
-// but only these are codes it knows, so only these are offered.
-var encodable = map[string]bool{
-	keri.CodeBlake3_256:  true,
-	keri.CodeEd25519:     true,
-	keri.CodeEd25519N:    true,
-	keri.CodeEd25519Sig:  true,
-	keri.CodeEd25519Seed: true,
-}
 
 func hexField(request map[string]json.RawMessage, field string) ([]byte, *opError) {
 	// A pointer, because JSON null decodes into a string as "" without error.
@@ -89,12 +77,11 @@ func encodeOp(request map[string]json.RawMessage) (any, *opError) {
 	if domain == "binary" {
 		return nil, unsupported(eBinaryDomain, "keri-go encodes in the text domain only.")
 	}
-	if !encodable[code] {
-		return nil, unsupported(eUnknownCode, "keri-go names no code %q.", code)
-	}
-	qb64, err := matterQB64(code, raw)
+	// Every code goes to keri-go: MatterQB64 checks no code table and no raw size, and whatever it
+	// answers, an encoding or a refusal, is keri-go's answer.
+	qb64, err := keri.MatterQB64(code, raw)
 	if err != nil {
-		return nil, unsupported(eEncodeRefused, "keri-go refused to encode: %v", err)
+		return reject(classEncode, err), nil
 	}
 	return map[string]string{"encoded": hex.EncodeToString([]byte(qb64))}, nil
 }
