@@ -31,10 +31,20 @@ NOT_YET_ACDC = ("This probe sends a real issuance, taken from the suite's first 
 # Requests this protocol cannot read: an issuance with no ACDC template, a presentation in a
 # disclosure form the protocol does not define, and a verification whose presentation context
 # names no message and no verifier.
+_VERIFY = {"perspective": {"role": "validator"}, "kels": [], "registry": [], "schemas": [],
+           "acdcs": [], "presented": {"stream": "2d4b"}}
+_CONTEXT = {"messages": [{"stream": "2d4b", "source": "holder"}], "verifier": "EKcsProbeVerifier"}
+# A well-formed request an op's malformed variants are measured against: an adapter must answer it
+# with a result, so that an error on a variant shows the variant's own defect was read, not that
+# the adapter refuses the request whatever its context.
+CONTROL = {"acdc.verify": {**_VERIFY, "presentation": _CONTEXT}}
 MALFORMED = {
-    "acdc.verify": {"perspective": {"role": "validator"}, "kels": [], "registry": [],
-                    "schemas": [], "acdcs": [], "presented": {"stream": "2d4b"},
-                    "presentation": {"messages": [], "verifier": ""}},
+    "acdc.verify": [
+        {**_VERIFY, "presentation": {**_CONTEXT, "messages": []}},
+        {**_VERIFY, "presentation": {**_CONTEXT, "verifier": ""}},
+        {**_VERIFY, "presentation": {"messages": _CONTEXT["messages"]}},
+        {**_VERIFY, "presentation": {"verifier": _CONTEXT["verifier"]}},
+    ],
     "acdc.issue": {"kels": [], "seeds": {}, "registry": []},
     "acdc.present": {"perspective": {"role": "holder"}, "kels": [], "registry": [], "schemas": [],
                      "acdcs": [], "held": {"stream": "2d4b"},
@@ -117,19 +127,29 @@ def _probe_unknown_op(session: AdapterSession) -> tuple[bool, str]:
     return False, outcome.detail
 
 
-def _probe_malformed_op(session: AdapterSession, op: str) -> tuple[bool, str]:
+def _ask(session: AdapterSession, op: str, fields: dict):
     rid = session.next_id()
-    line = session.exchange(_line({"id": rid, "op": op, **MALFORMED[op]}))
-    if isinstance(line, Failure):
-        return False, line.detail
-    outcome = parse_response(line, rid, op)
-    if not isinstance(outcome, Failure):
-        return False, (f"The adapter answered a malformed {op} request with a result; a request "
-                       "the protocol cannot read gets an error response, never a result or a "
-                       "refusal.")
-    if outcome.kind.startswith("error-"):
-        return True, f"The adapter answered a malformed {op} request with an error response."
-    return False, outcome.detail
+    line = session.exchange(_line({"id": rid, "op": op, **fields}))
+    return line if isinstance(line, Failure) else parse_response(line, rid, op)
+
+
+def _probe_malformed_op(session: AdapterSession, op: str) -> tuple[bool, str]:
+    if op in CONTROL:
+        outcome = _ask(session, op, CONTROL[op])
+        if isinstance(outcome, Failure):
+            return False, (f"The adapter did not answer a well-formed {op} request with a "
+                           f"result, so its errors cannot show it reads the request's fields: "
+                           f"{outcome.detail}")
+    variants = MALFORMED[op] if isinstance(MALFORMED[op], list) else [MALFORMED[op]]
+    for n, fields in enumerate(variants):
+        outcome = _ask(session, op, fields)
+        if not isinstance(outcome, Failure):
+            return False, (f"The adapter answered a malformed {op} request (variant {n}) with a "
+                           "result; a request the protocol cannot read gets an error response, "
+                           "never a result or a refusal.")
+        if not outcome.kind.startswith("error-"):
+            return False, outcome.detail
+    return True, f"The adapter answered every malformed {op} request with an error response."
 
 
 def _op_probes(session: AdapterSession) -> list[Probe]:

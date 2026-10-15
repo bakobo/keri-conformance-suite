@@ -8,6 +8,7 @@ from conftest import ROOT, bad, good
 
 from keri_conformance import cli, errors
 from keri_conformance import session as session_module
+from keri_conformance.check import _CONTEXT as CONTEXT
 from keri_conformance.check import PROBES, check_adapter
 from keri_conformance.check import exit_code as check_exit_code
 from keri_conformance.session import AdapterSession, Limits
@@ -131,10 +132,13 @@ ISSUER_HELLO = {
     "features": ["acdc.presentation"],
 }
 ECHO = {"match": {"op": "cesr.parse"}, "result": {"reject": {"class": "truncated"}}}
+VERDICT = {"verdict": "invalid", "registry": None, "edges": []}
+# The well-formed presentation context the probe sends first, which must get a result.
+CONTROL = {"match": {"op": "acdc.verify", "presentation": CONTEXT}, "result": VERDICT}
 
 
-def issuer(write_json, *entries):
-    table = write_json("table.json", [ECHO, *entries])
+def issuer(write_json, *entries, control=True):
+    table = write_json("table.json", [ECHO, *([CONTROL] if control else []), *entries])
     return good("--table", table, "--hello", write_json("hello.json", ISSUER_HELLO))
 
 
@@ -274,3 +278,20 @@ def test_the_presentation_probe_needs_the_feature_as_well_as_the_op(vocabulary, 
     result = probes(good("--table", table, "--hello", hello), vocabulary)
     assert result["presentation-malformed"].status == "not-applicable"
     assert "acdc.presentation" in result["presentation-malformed"].reason
+
+
+def test_an_adapter_that_errors_on_every_verification_fails_the_presentation_probe(
+        vocabulary, write_json):
+    # Its errors on the malformed contexts would show nothing, since it errors on a good one too.
+    result = probes(issuer(write_json, control=False), vocabulary)
+    assert result["presentation-malformed"].status == "fail"
+    assert "well-formed" in result["presentation-malformed"].reason
+
+
+@pytest.mark.parametrize("context", [{"messages": CONTEXT["messages"]},
+                                     {**CONTEXT, "verifier": ""}])
+def test_each_malformed_context_field_is_probed_on_its_own(vocabulary, write_json, context):
+    answered = {"match": {"op": "acdc.verify", "presentation": context}, "result": VERDICT}
+    result = probes(issuer(write_json, answered), vocabulary)
+    assert result["presentation-malformed"].status == "fail"
+    assert "variant" in result["presentation-malformed"].reason
