@@ -34,6 +34,7 @@ a scenario that reaches it is refused rather than guessed at.
 """
 
 import json
+import re
 from dataclasses import dataclass, field
 from fractions import Fraction
 from functools import cache
@@ -161,6 +162,10 @@ def parse(t: Tables, stream: bytes) -> Parsed:
     return p
 
 
+def _names(receipt: Parsed, ev: Parsed) -> bool:
+    return (receipt.said, receipt.pre, receipt.sn) == (ev.said, ev.pre, ev.sn)
+
+
 def _code(t: Tables, text: str) -> str:
     """The derivation code of a qualified primitive, by the master table's selector rules."""
     return text[:2] if text[:1].isdigit() else text[:1]
@@ -220,6 +225,9 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), and
     an inception's backer threshold no larger than its backer list (line 345). A rotation's
     threshold is checked against the effective list, which depends on state, at step 4."""
+    if not re.fullmatch(r"0|[1-9a-f][0-9a-f]*", p.body["bt"]):
+        raise ScenarioError(f"A backer threshold of {p.body['bt']!r}, which is not hex without "
+                            f"leading zeros (line 345), is not modelled.")
     if not p.body["k"]:
         return "empty-keys"
     lists = [p.body["b"]] if p.ilk in INCEPTIONS else [p.body["br"], p.body["ba"]]
@@ -324,9 +332,11 @@ class Model:
                 raise ScenarioError("A receipt couple from a witness is not modelled (G21).")
         return good
 
-    def _receipts_for(self, said: str) -> list[int]:
+    def _receipts_for(self, ev: Parsed) -> list[int]:
+        """Receipts that name ``ev`` by all of its identifier, sequence number and SAID: a
+        receipt whose fields disagree with each other names no event."""
         return [i for i, p in enumerate(self.parsed)
-                if p.ilk == "rct" and p.said == said and self.state[i] in ("seen", "kept")]
+                if p.ilk == "rct" and _names(p, ev) and self.state[i] in ("seen", "kept")]
 
     def _delegator(self, p: Parsed, kel: Kel | None) -> str | None:
         """The delegator whose seal an event needs. A delegation seals establishment events
@@ -464,7 +474,7 @@ class Model:
                     raise ScenarioError("Witness signatures on a rotation that changes the "
                                         "witness at their index are not modelled (G12).")
         bt = p.body["bt"] if p.ilk in ESTABLISHMENT else kel.est_before(p.sn).body["bt"]
-        good = self._witness_sigs(p, wits, pool + self._receipts_for(p.said))
+        good = self._witness_sigs(p, wits, pool + self._receipts_for(p))
         if len(good) < int(bt, 16):
             return "witness-threshold"
         delegator = self._delegator(p, kel)
@@ -490,9 +500,19 @@ class Model:
 
     def _receipt(self, p: Parsed) -> Outcome:
         kel = self.kels.get(p.pre)
-        if kel and p.said in kel.seen:
+        held = kel.seen.get(p.said) if kel else None
+        if held is not None:
+            # Line 1782: a validator must first verify the receipt's witness signatures, so one
+            # that names its event inconsistently, or none of whose signatures verify against
+            # that event, attaches nothing.
+            if held.sn != p.sn or not (
+                    any(index < len(held.wits)
+                        and verify(qb64_raw(held.wits[index]), held.raw, raw)
+                        for index, raw in p.wigs)
+                    or any(verify(qb64_raw(prefix), held.raw, raw) for prefix, raw in p.couples)):
+                return Outcome("dropped", 2, "receipt-unverified")
             return Outcome("seen", 6, "receipt")
-        if any(q.said == p.said and q.ilk != "rct" and self.state[i] == "kept"
+        if any(q.ilk != "rct" and _names(p, q) and self.state[i] == "kept"
                for i, q in enumerate(self.parsed)):
             return Outcome("kept", 4, "receipt")
         if self.policy == "all":

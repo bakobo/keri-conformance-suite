@@ -798,3 +798,44 @@ def test_a_backer_threshold_above_the_backer_list_is_refused_at_must_and_never_p
                       [msg("icp", ["a0"], ["1/backer-threshold"] * 2, wigs=["w1"])]))
     assert [(a["expected"], a["level"]) for a in built["assertions"]] == [
         ("not-seen", "MUST"), ("not-seen", "MUST")]
+
+
+def test_a_receipt_whose_sequence_number_disagrees_with_its_said_counts_for_nothing():
+    """A receipt names its event by (i, s, d); one whose s is not the event's names no event."""
+    events = [WITNESSED, ev("ixn1", "ixn")]
+    deliveries = [msg("icp", ["a0"], wigs=["w1"]), msg("ixn1", ["a0"]),
+                  {"receipt": "ixn1", "wigs": ["w1"]}]
+    eb = keri_events.EventBuilder(T, events)
+    s = [eb.message(d).stream for d in deliveries]
+    body = keri_model.parse(T, s[2]).body
+    wrong = dict(body, s="0")
+    rct = keri_events.GENUS_CODE.encode() + keri_events.sized(wrong) + s[2][len(
+        keri_events.GENUS_CODE) + len(keri_model.parse(T, s[2]).raw):]
+    m = keri_model.run(T, [s[0], s[1], rct], "thresholds")
+    assert m.outcome[1].tag == "4/witness-threshold"
+    # Naming the held inception's SAID at the wrong sequence number names nothing either.
+    icp_rct = dict(body, d=keri_model.parse(T, s[0]).said, s="1")
+    stray = keri_events.GENUS_CODE.encode() + keri_events.sized(icp_rct)
+    assert keri_model.run(T, [s[0], stray], "all").outcome[1].tag == "2/receipt-unverified"
+
+
+def test_a_receipt_couple_must_verify_against_the_event():
+    events = [ICP]
+    good = [msg("icp", ["a0"]), {"receipt": "icp", "couples": ["v1"]}]
+    assert tags(events, good)[1] == ["6/receipt"] * 2
+    s = streams(events, good)
+    forged = s[1][:-4] + (b"AAAA" if not s[1].endswith(b"AAAA") else b"BBBB")
+    assert keri_model.run(T, [s[0], forged], "all").outcome[1].tag == "2/receipt-unverified"
+
+
+def test_a_receipt_none_of_whose_signatures_verify_is_dropped():
+    events = [WITNESSED, ev("ixn1", "ixn")]
+    deliveries = [msg("icp", ["a0"], wigs=["w1"]), msg("ixn1", ["a0"]),
+                  {"receipt": "icp", "wigs": [{"key": "w1", "over": "ixn1"}]}]
+    assert tags(events, deliveries)[2] == ["2/receipt-unverified"] * 2
+
+
+@pytest.mark.parametrize("bt", ["-1", "x", "01"])
+def test_a_backer_threshold_that_is_not_canonical_hex_is_not_modelled(bt):
+    with pytest.raises(ScenarioError, match="backer threshold"):
+        tags([{**ICP, "bt": bt}], [msg("icp", ["a0"])])

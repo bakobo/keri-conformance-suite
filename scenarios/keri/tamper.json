@@ -302,8 +302,8 @@
             }
           ],
           "expect": [
-            "6/receipt",
-            "6/receipt"
+            "2/receipt-unverified",
+            "2/receipt-unverified"
           ]
         }
       ]
