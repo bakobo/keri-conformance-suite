@@ -48,7 +48,7 @@ from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, loads, re
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 
 OPERATIONS = ("cesr.parse", "cesr.encode", "keri.process", "keri.emit", "acdc.verify",
-              "exn.verify")
+              "exn.verify", "acdc.issue", "acdc.present")
 ENV_KEEP = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "SYSTEMROOT")
 HELLO_FIELDS = ("protocol", "adapter", "implementation", "operations", "features", "composes")
 CHUNK = 65536
@@ -249,6 +249,27 @@ def _per_message(fields, result, key, noun, op) -> str | None:
             f"a {op} result has one per message.")
 
 
+def _issued_problem(fields: dict, result: dict) -> str | None:
+    """An issue result answers exactly the parts its request asked for (docs/adapter-protocol.md,
+    acdc.issue): each registry event, a blinded state where a blind was asked for, and the
+    anchoring event when one was."""
+    asked, got = fields["registry"], result["registry"]
+    if len(asked) != len(got):
+        return (f"The adapter returned {len(got)} registry event{'' if len(got) == 1 else 's'} "
+                f"for {len(asked)} registry events requested; an acdc.issue result has one per "
+                "requested event.")
+    for n, (want, entry) in enumerate(zip(asked, got)):
+        if ("blind" in want) != (entry["blind"] is not None):
+            return (f"Registry event {n}'s blinded state was "
+                    f"{'asked for and not returned' if 'blind' in want else 'returned unasked'}; "
+                    "an acdc.issue result returns a blinded state exactly when one was asked for.")
+    if ("anchor" in fields) != ("anchor" in result):
+        return (f"The anchoring event was "
+                f"{'asked for and not returned' if 'anchor' in fields else 'returned unasked'}; "
+                "an acdc.issue result has an anchor exactly when one was requested.")
+    return None
+
+
 def beyond_schema(op: str, fields: dict, result: dict) -> str | None:
     """The rules a well-shaped result must also satisfy that relate it to its request, or each of
     its entries to the others, which the protocol schema cannot express."""
@@ -261,6 +282,8 @@ def beyond_schema(op: str, fields: dict, result: dict) -> str | None:
         if consumed > length:
             return (f"The adapter's summary says the implementation consumed {consumed} bytes "
                     f"of a {length}-byte stream.")
+    if op == "acdc.issue" and "refused" not in result:
+        return _issued_problem(fields, result)
     if op == "acdc.verify":
         # Each edge is reported once (docs/adapter-protocol.md, acdc.verify), so an edge
         # assertion never has two answers to choose between.

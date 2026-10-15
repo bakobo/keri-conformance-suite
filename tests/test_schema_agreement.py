@@ -210,7 +210,8 @@ def disagreements(documents, ours, schema_validator):
 
 STATE = {"sn": 0, "said": "EAbc", "keys": ["DAbc"], "kt": "1", "ndigs": ["EGhi"],
          "nt": ["1/2", "1/2"], "wits": [], "bt": "0", "delegator": None}
-INTEROP = {"id": "a9", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x"}
+INTEROP = {"id": "a9", "check": "rejected", "level": "INTEROP", "basis": "keripy 1.x",
+           "choices": ["tel-sequence", "registry-head"]}
 # A basis that quotes the sentence it rests on, as a practice case's does.
 QUOTED = {"id": "a10", "check": "rejected", "level": "INTEROP", "basis": {
     "text": "The IPEX section states it.", "spec": "acdc", "section": "IPEX",
@@ -311,6 +312,8 @@ def test_cross_field_rules_agree_with_the_case_schema(base):
         for level in ("MUST", "INTEROP"):
             documents.append(_replace(base, ("assertions", a, "level"), level))
         documents.append(_replace(base, ("assertions", a, "basis"), "b"))
+        documents.append(_replace(base, ("assertions", a, "choices"), ["registry-head"]))
+        documents.append(_replace(base, ("assertions", a, "choices"), ["x", "x"]))
         if assertion_["check"] == "disposition":
             documents.append(_replace(base, ("assertions", a, "phase"), "initial"))
             for retired in ("accepted", "not-accepted", "superseded"):
@@ -387,6 +390,10 @@ RESULT_DEFS = {
     "keri.emit": {"$ref": "#/$defs/result_emitted"},
     "acdc.verify": {"$ref": "#/$defs/result_verified"},
     "exn.verify": {"$ref": "#/$defs/result_exchanged"},
+    "acdc.issue": {"oneOf": [{"$ref": "#/$defs/result_issued"},
+                             {"$ref": "#/$defs/result_refused"}]},
+    "acdc.present": {"oneOf": [{"$ref": "#/$defs/result_presented"},
+                               {"$ref": "#/$defs/result_refused"}]},
 }
 
 BASE_RESULTS = [
@@ -418,6 +425,12 @@ BASE_RESULTS = [
     ("exn.verify", {"verdicts": [{"on_delivery": "accepted", "verdict": "rejected",
                                   "reason": "prior"},
                                  {"on_delivery": "rejected", "verdict": "rejected"}]}),
+    ("acdc.issue", {"acdc": "7b7d", "registry": [{"event": "7b7d", "blind": "7b7e"},
+                                                 {"event": "7b7f", "blind": None}],
+                    "anchor": "2d5f"}),
+    ("acdc.issue", {"refused": {"reason": "salt too short"}}),
+    ("acdc.present", {"presented": {"stream": "2d5f"}}),
+    ("acdc.present", {"refused": {}}),
 ]
 
 

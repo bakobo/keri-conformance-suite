@@ -9,8 +9,11 @@ is committed.
 import json
 import pathlib
 import re
+import tomllib
 
-from . import acdc_cases, keripy1x, spec_source, tables
+from keri_conformance.session import OPERATIONS
+
+from . import acdc_cases, keripy1x, sedi_profile, spec_source, tables
 from .build import build_case, resolve_clauses, resolve_records
 from .errors import (
     E_CASE_ID,
@@ -41,6 +44,12 @@ KERI_CASE_ID = re.compile(r"KERI-([0-9]{4})")  # always applied with fullmatch
 ACDC_SCENARIO_DIR = "scenarios/acdc"
 ACDC_CASE_DIR = "cases/acdc"
 ACDC_CASE_ID = re.compile(r"ACDC-([0-9]{4})")  # always applied with fullmatch
+# The layered SEDI deployment profile's source (docs/design.md, Targets and profiles).
+SEDI_SOURCE = "scenarios/sedi/profile.json"
+VOCABULARY_FILE = "features.json"
+# Each released version of it: the suite version it was released with and the digest of what it
+# fixes (sedi_profile.FROZEN). A version is recorded here when Daniel ratifies it.
+SEDI_RELEASED = "scenarios/sedi/released.json"
 
 PROFILES = {
     "cesr-1.0": {
@@ -263,7 +272,40 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
 
     for name, profile in PROFILES.items():
         files[f"profiles/{name}.json"] = dumps({**profile, "cases": sorted(members[name])})
+    built = sedi(root, files)
+    if built:
+        files[f"profiles/{built[0]['name']}.json"] = dumps(built[0])
     return files
+
+
+def sedi(root: pathlib.Path, files: dict[str, bytes]) -> tuple[dict, list[str]] | None:
+    """The layered SEDI profile file built from its source and the generated cases in ``files``
+    that belong to it, with the choices not yet exercised both ways; None if there is no source."""
+    path = root / SEDI_SOURCE
+    if not path.exists():
+        return None
+    source = _load_json(path)
+    name = source.get("name") if isinstance(source, dict) else None
+    cases = [case for case in (json.loads(data) for p, data in sorted(files.items())
+                               if p.startswith("cases/"))
+             if case["profile"] == name]
+    vocabulary = json.loads((root / "profiles" / "features.json").read_text(encoding="utf-8"))
+    released = _load_json(root / SEDI_RELEASED) if (root / SEDI_RELEASED).exists() else {}
+    record = released.get(name) if isinstance(released, dict) else None
+    suite = record["suite"] if isinstance(record, dict) else _suite_version(root)
+    pins = {"suite": suite,
+            "specs": {pin.label: {"repository": pin.repo, "tag": pin.tag, "commit": pin.commit}
+                      for pin in (spec_source.cesr_pin(), spec_source.KERI, spec_source.ACDC)}}
+    doc, unfilled = sedi_profile.build_profile(source, cases, operations=OPERATIONS,
+                                               features=set(vocabulary["features"]),
+                                               profiles=set(PROFILES), pins=pins)
+    sedi_profile.check_release(doc, released)
+    return doc, unfilled
+
+
+def _suite_version(root: pathlib.Path) -> str:
+    return tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"][
+        "version"]
 
 
 def _generate_keri(root: pathlib.Path, files: dict[str, bytes],
@@ -389,10 +431,10 @@ def committed(root: pathlib.Path) -> dict[str, bytes]:
     cases/acdc, and the profiles."""
     out = {p.relative_to(root).as_posix(): p.read_bytes()
            for d in (CASE_DIR, KERI_CASE_DIR, ACDC_CASE_DIR) for p in (root / d).glob("*.json")}
-    for name in PROFILES:
-        p = root / "profiles" / f"{name}.json"
-        if p.exists():
-            out[f"profiles/{name}.json"] = p.read_bytes()
+    # Every profile file is generated; only the feature vocabulary beside them is not.
+    for p in (root / "profiles").glob("*.json"):
+        if p.name != VOCABULARY_FILE:
+            out[f"profiles/{p.name}"] = p.read_bytes()
     return out
 
 

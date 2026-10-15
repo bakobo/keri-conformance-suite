@@ -26,12 +26,14 @@ from keri_conformance import __version__
 from keri_conformance.assertions import evaluate
 from keri_conformance.errors import (
     E_CASE_FORMAT,
+    E_PROFILE_CASES,
     E_REPORT_BUDGET,
     EXIT_FAULT,
     EXIT_REFUSED,
     HelloRefused,
     RunnerError,
 )
+from keri_conformance.profiles import Profile, claim_verdict, manifest_problem
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
 from keri_conformance.session import AdapterSession, Failure, Reply
 
@@ -161,9 +163,39 @@ def summarize(entries: list[dict]) -> tuple[dict, str]:
     return summary, verdict
 
 
-def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None,
+def _member_verdict(entries: list[dict], name: str, *, own: bool) -> str:
+    """One member's verdict for a claim: its conformance verdict (a prerequisite) or its INTEROP
+    verdict (the profile itself), except that an active case the adapter was not sent leaves it
+    at best incomplete, since a claim covers every case its profiles name."""
+    mine = [e for e in entries if e["profile"] == name]
+    summary, verdict = summarize(mine)
+    if own:
+        verdict = summary["interop_verdict"] or "no-evidence"
+    unsent = any(e["status"] == "active" and e["outcome"] == "not-supported" for e in mine)
+    if unsent and verdict in ("conformant", "interoperable", "no-evidence"):
+        return "incomplete"
+    return verdict
+
+
+def make_claim(profile: Profile, entries: list[dict], hello: dict) -> dict:
+    """A layered profile's claim (docs/design.md, Targets and profiles): each prerequisite's
+    verdict from its own cases, the profile's own INTEROP verdict from its cases, the requirements
+    the adapter did not declare, and the claim they add up to."""
+    prerequisites = {name: _member_verdict(entries, name, own=False)
+                     for name in profile.prerequisites}
+    own = _member_verdict(entries, profile.name, own=True)
+    missing = {"operations": [o for o in profile.operations if o not in hello["operations"]],
+               "features": [f for f in profile.features if f not in hello["features"]]}
+    return {"profile": profile.name, "version": profile.version,
+            "prerequisites": prerequisites, "own_verdict": own, "missing": missing,
+            "verdict": claim_verdict(own, prerequisites,
+                                     bool(missing["operations"] or missing["features"]))}
+
+
+def run_suite(session: AdapterSession, cases: list[dict], *, profile: Profile | None,
               cases_dir: str, suite_version: str) -> dict:
-    """Run the cases (filtered by profile) and return the conformance report."""
+    """Run the cases (filtered by profile, with a layered profile's prerequisites) and return the
+    conformance report."""
     for case in cases:
         unknown = [f for f in case["targets"]["features"] if f not in session.vocabulary]
         if unknown:
@@ -171,10 +203,19 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
                                              f"targets.features lists {', '.join(unknown)}, "
                                              "which the suite's feature vocabulary "
                                              "(profiles/features.json) does not define.")
+    if profile is not None and profile.layered:
+        named: dict[str, set[str]] = {}
+        for case in cases:
+            named.setdefault(case["profile"], set()).add(case["id"])
+        problem = manifest_problem(profile, named)
+        if problem:
+            raise RunnerError(E_PROFILE_CASES, f"The layered profile {profile.name} cannot be "
+                                               f"claimed from {cases_dir}: {problem}. A claim "
+                                               "rests on exactly the cases its profiles name.")
     session_stderr = session.take_stderr()
     entries, aborted = [], None
     for case in cases:
-        if profile is not None and case["profile"] != profile:
+        if profile is not None and case["profile"] not in profile.members:
             continue
         try:
             entries.append(run_case(session, case))
@@ -192,10 +233,16 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
                        "problems": [], "at_case": case["id"], "exit_code": EXIT_FAULT}
             break
     summary, verdict = summarize(entries)
+    hello = session.hello
+    claim = make_claim(profile, entries, hello) if profile and profile.layered else None
+    if claim:
+        verdict = claim["verdict"]
     if aborted:
         verdict = "aborted"
-    hello = session.hello
-    return {
+        if claim:
+            # An aborted run left cases unrun, so its claim can be no better than incomplete.
+            claim["verdict"] = "incomplete"
+    report = {
         "report_version": 1,
         "runner_version": __version__,
         "suite_version": suite_version,
@@ -205,7 +252,7 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
         "hello": hello,
         "declared_features": hello["features"],
         "composes": hello.get("composes", []),
-        "filters": {"profile": profile, "cases_dir": cases_dir},
+        "filters": {"profile": profile and profile.name, "cases_dir": cases_dir},
         "session_stderr": session_stderr,
         "verdict": verdict,
         "aborted": aborted,
@@ -213,6 +260,9 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: str | None
         "summary": summary,
         "cases": entries,
     }
+    if claim:
+        report["claim"] = claim
+    return report
 
 
 def human_summary(report: dict, report_path: str | None) -> str:
@@ -239,8 +289,20 @@ def human_summary(report: dict, report_path: str | None) -> str:
     if interop:
         lines.append("active INTEROP assertions: "
                      + ", ".join(f"{n} {k}" for k, n in sorted(interop.items())))
+    claim = report.get("claim")
+    if claim:
+        # An interoperability claim is never worded as conformance, even for its prerequisites'
+        # share: they are listed by their own verdicts.
+        lines.append(f"profile: {claim['profile']} version {claim['version']}, layered on "
+                     + ", ".join(f"{name} ({verdict})"
+                                 for name, verdict in claim["prerequisites"].items()))
+        lines.append(f"{claim['profile']} cases: {claim['own_verdict']}")
+        missing = claim["missing"]["operations"] + claim["missing"]["features"]
+        if missing:
+            lines.append(f"not declared, and required to claim {claim['profile']}: "
+                         + ", ".join(missing))
     lines.append(f"verdict: {report['verdict']}")
-    if interop and report["verdict"] != report["summary"]["interop_verdict"]:
+    if interop and not claim and report["verdict"] != report["summary"]["interop_verdict"]:
         lines.append(f"interoperability: {report['summary']['interop_verdict']} (never part of "
                      "the verdict)")
     if report["summary"]["should_warning"]:

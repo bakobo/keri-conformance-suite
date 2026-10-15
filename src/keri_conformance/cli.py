@@ -19,6 +19,7 @@ from keri_conformance.errors import (
     RunnerError,
 )
 from keri_conformance.jsonfile import TRANSIENT_ERRNOS
+from keri_conformance.profiles import load_profile
 from keri_conformance.run import VERDICT_EXIT, human_summary, run_suite
 from keri_conformance.session import AdapterSession, Limits, load_vocabulary
 from keri_conformance.suite import read_suite_version
@@ -27,7 +28,9 @@ EXIT_CODES = """\
 A run whose cases carry only INTEROP assertions (a non-normative profile, such as
 keripy-1x-interop) gets an interoperability verdict instead of a conformance one:
 interoperable, not-interoperable, incomplete or no-evidence, from its active INTEROP
-assertions, with the exit codes below. It is never a conformance claim.
+assertions, with the exit codes below. It is never a conformance claim. A layered profile
+(such as sedi-1) runs its prerequisites' cases too, and its verdict is the claim: interoperable
+only if every prerequisite is conformant and its own cases are interoperable.
 
 exit codes:
   0  conformant: every MUST assertion in every active case that was run passed; or, for a
@@ -113,7 +116,8 @@ def _parser() -> argparse.ArgumentParser:
                      help="the command that starts the adapter, split like a shell would split it "
                           "but never run through a shell")
     run.add_argument("--cases", help="directory of cases (default: SUITE/cases)")
-    run.add_argument("--profile", help="run only the cases in this profile")
+    run.add_argument("--profile", help="run only the cases in this profile, and for a layered "
+                                       "profile such as sedi-1 its prerequisites' cases too")
     run.add_argument("--report", help="write the JSON conformance report here (default: no "
                                       "report is written)")
     _adapter_options(run)
@@ -136,10 +140,11 @@ def _session(args, command) -> AdapterSession:
 def _run(args) -> int:
     suite_version = read_suite_version(args.suite)
     cases_dir = args.cases or str(Path(args.suite) / "cases")
+    profile = None if args.profile is None else load_profile(args.suite, args.profile)
     cases = load_cases(cases_dir)
     with _session(args, args.adapter) as session:
         session.open()
-        report = run_suite(session, cases, profile=args.profile, cases_dir=cases_dir,
+        report = run_suite(session, cases, profile=profile, cases_dir=cases_dir,
                            suite_version=suite_version)
     if args.report:
         try:

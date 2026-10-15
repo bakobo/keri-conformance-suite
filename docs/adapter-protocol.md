@@ -4,7 +4,7 @@
 
 An adapter is a program that connects one implementation to the runner. The runner starts it as a child process and talks to it over its standard input and output. This document is everything an adapter author needs.
 
-Two things check an adapter without running a single case: message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Both are described under "Checking an adapter" in [`design.md`](design.md). The schemas cover `acdc.verify` and `exn.verify`; `kcs check-adapter` has no probe specific to either yet.
+Two things check an adapter without running a single case: message schemas in `schema/adapter-protocol.schema.json`, which you can run in your own tests in any language, and `kcs check-adapter <command>`, which probes a running adapter. Both are described under "Checking an adapter" in [`design.md`](design.md). The schemas cover every operation below. `kcs check-adapter` has probes specific to `acdc.issue` and `acdc.present`, run when an adapter lists them, and none yet for `acdc.verify` or `exn.verify`.
 
 ## Transport
 
@@ -194,6 +194,8 @@ Every stream is hex-encoded, and the adapter hands each to its implementation un
 - `presented` is the ACDC to judge, in whatever variant the case uses, with the attachments that carry or point to its issuer's commitment.
 - An optional `expect_schema` names, by SAID, the schema the validator expects this kind of ACDC to have. Cases that test that expectation (ACDC specification line 250, a SHOULD) send it; the rest do not.
 
+- An optional `presentation` gives the context the ACDC was presented in: `messages`, the exchange messages that delivered it, each with its attachments and in order, ending with the message that carries or names the presented ACDC (an IPEX grant, for example), and `verifier`, the AID of the verifier it was presented to. The adapter delivers `messages` after `kels`, as `exn.verify` delivers its messages, and its implementation judges the ACDC as presented by the sender of the last message to that verifier. A case sends `presentation` only to an adapter that declares the feature `acdc.presentation`, because an adapter ignores a field it does not recognise, and an implementation that ignored the context would answer as if nobody in particular had presented the ACDC. Without `presentation`, `acdc.verify` behaves exactly as described here.
+
 The bundle is the whole world. An adapter must not fetch anything, follow a URL or an OOBI, or consult a clock: whatever the bundle lacks does not exist for this request, and a `dt` field or an expiry attribute is never compared with the current time. If an implementation reads the clock, the adapter must fix it.
 
 ```json
@@ -224,7 +226,71 @@ An input the implementation cannot parse or frame, whether the presented ACDC or
 
 `edges` lists every edge the implementation evaluated anywhere in the provenance DAG, each once. An edge is identified by `near`, the SAID of the ACDC it belongs to, and `path`, the chain of field labels from that ACDC's top-level `e` field joined by full stops. Each entry also carries `n`, the value of the edge's own `n` field (the far node SAID the near node claims, not one the implementation recomputed), and whether the edge is `valid`; `n` is informative and no assertion grades it. An adapter that did not reach the edges, because an earlier step failed, or that stopped at the first failing edge, reports only what it evaluated. An edge assertion applies only when the edge it names is reported, except that a `valid` verdict commits the adapter to a failing edge whose check is a MUST, and whether an edge is reported is graded separately at SHOULD, as [`design.md`](design.md) explains under Edges.
 
-The features these cases require are `acdc.version-2.x`, which every ACDC case requires together with the KERI base features, and the declinable features `acdc.edges` and `acdc.registry.bup`, which only liveness assertions and the assertions that an edge or a registry is reported require. `acdc.registry.upd` is added with the first cases that use non-blindable registry updates. The non-normative profile `acdc-keripy-1x-interop` adds `acdc.keripy-1x`, keripy 1.x's ACDC field set and SAID computation, and `acdc.ptel-1x`, keripy 1.x's issuance and revocation registry. These names are in the feature vocabulary, `profiles/features.json`.
+The features these cases require are `acdc.version-2.x`, which every ACDC case requires together with the KERI base features, and the declinable features `acdc.edges` and `acdc.registry.bup`, which only liveness assertions and the assertions that an edge or a registry is reported require. `acdc.registry.upd` is added with the first cases that use non-blindable registry updates. `acdc.presentation` marks an implementation that judges an ACDC in its presentation context; only cases that send `presentation` require it, and the `sedi-1` profile requires it of any adapter that claims the profile. The non-normative profile `acdc-keripy-1x-interop` adds `acdc.keripy-1x`, keripy 1.x's ACDC field set and SAID computation, and `acdc.ptel-1x`, keripy 1.x's issuance and revocation registry. These names are in the feature vocabulary, `profiles/features.json`.
+
+## `acdc.issue`
+
+Issue one ACDC: build it, build the registry events that issue it, and build and sign the key event that anchors them, from fixed inputs. The runner compares every body byte for byte with the case and checks the anchoring event's signatures, as it does for `keri.emit`. This operation and `acdc.present` are specified ahead of their first cases, and the message schemas and `kcs check-adapter` accept both.
+
+```json
+{"id": 7, "op": "acdc.issue",
+ "kels": [{"stream": "2d5f414141434141...", "source": "issuer"}],
+ "seeds": {"DOYgdUBx...": "a1b2..."},
+ "acdc": {"v": "", "t": "acm", "d": "", "u": "0ABn...", "i": "EKBC...", "rd": "EAz1...",
+          "s": "EBdX...", "a": {"d": "", "u": "0ACx...", "i": "EDB8...", "givenName": "Guy"},
+          "e": {}, "r": {}},
+ "registry": [
+   {"event": {"v": "", "t": "bup", "d": "", "rd": "EAz1...", "n": "1", "p": "EAz1...",
+              "dt": "2026-10-15T00:00:00.000000+00:00", "b": ""},
+    "blind": {"salt": "0ABz...", "state": {"d": "", "u": "", "td": "", "ts": "issued"}}}
+ ],
+ "anchor": {"event": {"v": "", "t": "ixn", "d": "", "i": "EKBC...", "s": "1", "p": "EKBC...",
+                      "a": [{"s": "1", "d": "EGsP..."}]}}}
+```
+
+- `kels` holds the issuer's KEL as it stands before issuance, and any delegator's, delivered as `keri.process` would deliver them. The issuer is the identifier whose current signing keys `seeds` gives, as hex seeds keyed by public key.
+- `acdc`, each registry `event`, a blinded `state` and the anchoring `event` are templates: JSON objects with every field given, in order, and with every field whose value is a SAID, a BLID or the version string left as the empty string. The implementation fills them in by its own rules, so a template is what its issuance API would build from, not something the adapter completes. Salts (`u`), stamps (`dt`), attribute values and seals are given literally. An implementation that would add a field the template lacks, such as a stamp in `a`, must not: the bytes it returns are compared with the template's.
+- A registry entry carries a `blind` when its event is a blindable update. Its `salt` is the 128-bit salt, qb64-encoded, that the issuer shares with the holder, and its `state` is the blinded state block's template. The implementation derives the block's `u` from the salt and the event's sequence number, computes the block's BLID, and sets the event's `b` to it.
+- `registry` may be empty, for an ACDC committed by a seal alone. `anchor` may be absent, when the case tests only the bodies.
+
+```json
+{"id": 7, "result": {"acdc": "7b2276223a224143444343...",
+                     "registry": [{"event": "7b2276223a...", "blind": "7b2264223a..."}],
+                     "anchor": "2d5f4141414341417b2276223a224b455249..."}}
+{"id": 7, "result": {"refused": {"reason": "salt shorter than 128 bits"}}}
+```
+
+`acdc` is the ACDC as built from the template, fully expanded, as JSON bytes in hex with no attachments. `registry` has one entry per requested event, in order: the event's bytes, and the blinded state block's bytes when a `blind` was requested, otherwise `null`. `anchor` is the signed anchoring event as a hex stream with its attachments, beginning with the genus/version code as a `keri.emit` stream does, and is present exactly when `anchor` was requested.
+
+An implementation that refuses to issue from these inputs, because a salt is empty or too short, a seed is malformed, or a template asks for something its rules forbid, answers `refused` with an informative `reason`. A refusal is a result, not an error, so a case can require one: a case that must be refused fails when the adapter issues anything, and a case that must be issued fails when the adapter refuses.
+
+## `acdc.present`
+
+Present one held ACDC in a chosen disclosure form. The runner grades the presentation itself, by its bytes where the form is deterministic and otherwise with its own model of the decision procedure, never by asking the same adapter to verify it.
+
+```json
+{"id": 8, "op": "acdc.present", "perspective": {"role": "holder"},
+ "kels": [{"stream": "2d5f414141434141...", "source": "issuer"}],
+ "registry": [{"stream": "..."}], "schemas": ["7b2224696422..."], "acdcs": [],
+ "held": {"stream": "2d5f4141414341417b2276223a2241434443..."},
+ "disclosure": {"form": "partial", "expand": ["a", "e.le"]}}
+```
+
+The bundle is `acdc.verify`'s, with `held`, the ACDC fully expanded as its holder holds it, in place of `presented`, and with the same rule that nothing outside it exists. `disclosure` says what to present:
+
+- `{"form": "compact"}`: every block compacted to its SAID.
+- `{"form": "expanded"}`: every block expanded.
+- `{"form": "partial", "expand": [...]}`: blocks compacted except those named, each by its label path from the top level (`a`, `e`, `e.le`, `r`). A path that names no block of the held ACDC is refused.
+- `{"form": "selective", "disclose": [...]}`: the selectively disclosable attribute aggregate `A` with only the named attribute blocks disclosed, each by the label of its attribute, and every other block left as its blinded SAID. A label that names no block, a label named twice, or an empty list is refused, and so is a selective form of an ACDC with no aggregate.
+
+```json
+{"id": 8, "result": {"presented": {"stream": "2d5f4141414341417b2276223a2241434443..."}}}
+{"id": 8, "result": {"refused": {"reason": "e.le names no block"}}}
+```
+
+`presented` is the presentation as `acdc.verify` takes its `presented`: the ACDC in the chosen form with the attachments that carry or point to its issuer's commitment, beginning with the genus/version code. It must contain nothing the form hides: no hidden attribute value, no salt of a hidden block, no undisclosed blinded state and no hidden issuee block, in any encoding. A holder refuses to present an ACDC that a verifier would refuse, with `refused`, and refuses a disclosure that the ACDC or its schema cannot satisfy. It never answers with a presentation other than the one asked for.
+
+A refusal judges the inputs, so it is only for a request the adapter could read. An `acdc.issue` request without its templates, or an `acdc.present` request whose `form` this protocol does not define, cannot be read, and gets an error response, never `refused`. So does an `acdc.verify` request whose `presentation` names no message or no verifier. `kcs check-adapter` probes all three.
 
 ## `exn.verify`
 

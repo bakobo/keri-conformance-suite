@@ -225,6 +225,100 @@ def test_an_aborted_report_must_say_aborted():
     assert "verdict" in R.result_problem(doc)
 
 
+# --- layered profiles ---------------------------------------------------------------------------
+
+LAYERED = {"name": "lay", "version": "1", "prerequisites": ["cesr-1.0"],
+           "requires": {"operations": ["cesr.parse"], "features": ["kel.delegation"]},
+           "cases": ["CESR-0004"]}
+
+
+@pytest.fixture
+def suite(tmp_path):
+    root = tmp_path / "suite"
+    (root / "profiles").mkdir(parents=True)
+    for name, doc in (("lay", LAYERED), ("cesr-1.0", {"name": "cesr-1.0",
+                                                       "cases": ["CESR-0001"]})):
+        (root / "profiles" / f"{name}.json").write_text(json.dumps(doc), encoding="utf-8")
+    return root
+
+
+def layered_result():
+    rep = report([case(), case("CESR-0004", profile="lay", records=[record(level="INTEROP")])],
+                 profile="lay")
+    rep["claim"] = {"profile": "lay", "version": "1", "prerequisites": {"cesr-1.0": "conformant"},
+                    "own_verdict": "interoperable",
+                    "missing": {"operations": [], "features": ["kel.delegation"]},
+                    "verdict": "not-interoperable"}
+    rep["verdict"] = "not-interoperable"
+    return result(rep)
+
+
+def test_a_layered_result_whose_claim_follows_from_its_cases_is_published(suite):
+    assert R.result_problem(layered_result(), suite) is None
+
+
+@pytest.mark.parametrize(("field", "value"), [
+    ("verdict", "interoperable"),
+    ("own_verdict", "no-evidence"),
+    ("prerequisites", {"cesr-1.0": "not-conformant"}),
+    ("missing", {"operations": [], "features": []}),
+    ("version", "2"),
+])
+def test_an_edited_claim_is_refused(suite, field, value):
+    doc = layered_result()
+    doc["report"]["claim"][field] = value
+    assert "claim" in R.result_problem(doc, suite)
+
+
+def test_a_layered_report_needs_its_claim(suite):
+    doc = layered_result()
+    del doc["report"]["claim"]
+    assert "must carry a claim" in R.result_problem(doc, suite)
+
+
+def test_a_flat_report_must_not_carry_a_claim(suite):
+    doc = result()
+    doc["report"]["claim"] = layered_result()["report"]["claim"]
+    assert "must not carry a claim" in R.result_problem(doc, suite)
+
+
+def test_a_layered_result_may_hold_only_its_own_and_its_prerequisites_cases(suite):
+    doc = layered_result()
+    doc["report"]["cases"][0]["profile"] = "keri-1.0"
+    assert "profile" in R.result_problem(doc, suite)
+
+
+def test_a_result_for_a_profile_the_suite_does_not_define_is_refused(suite):
+    assert "no profile named" in R.result_problem(result(report(profile="cesr-9")), suite)
+
+
+def test_a_layered_result_must_hold_every_case_its_profiles_name(suite):
+    doc = layered_result()
+    del doc["report"]["cases"][0]
+    assert "missing CESR-0001" in R.result_problem(doc, suite)
+
+
+def test_an_aborted_layered_result_claims_no_more_than_incomplete(suite):
+    doc = layered_result()
+    rep = doc["report"]
+    rep["aborted"] = {"code": "e.x.f", "reason": "r", "problems": [], "at_case": "CESR-0004",
+                      "exit_code": 4}
+    rep["verdict"] = "aborted"
+    rep["claim"]["verdict"] = "interoperable"
+    rep["claim"]["missing"] = {"operations": [], "features": []}
+    rep["hello"]["features"].append("kel.delegation")
+    rep["declared_features"] = rep["hello"]["features"]
+    assert "claim" in R.result_problem(doc, suite)
+    rep["claim"]["verdict"] = "incomplete"
+    assert R.result_problem(doc, suite) is None
+
+
+def test_the_claim_verdict_is_the_report_verdict(suite):
+    doc = layered_result()
+    doc["report"]["verdict"] = "not-conformant"
+    assert "verdict" in R.result_problem(doc, suite)
+
+
 # --- loading ------------------------------------------------------------------------------------
 
 def test_load_reads_every_result_sorted(tmp_path):

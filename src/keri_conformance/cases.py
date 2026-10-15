@@ -28,9 +28,9 @@ from keri_conformance.errors import (
     RunnerError,
 )
 from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, read_json
-from keri_conformance.session import OPERATIONS
 from keri_conformance.shapes import (
     Check,
+    all_of,
     anything_object,
     array,
     enum,
@@ -38,6 +38,7 @@ from keri_conformance.shapes import (
     mapping,
     nullable,
     obj,
+    predicate,
     string,
     tagged,
     text_or,
@@ -68,6 +69,11 @@ BASIS = text_or(obj({"text": string(min_length=1), "spec": enum("cesr", "keri", 
                      "section": string(min_length=1), "url": string("^https://"),
                      "commit": string(COMMIT), "quote": string(min_length=1)}))
 
+# The profile choices an INTEROP assertion in a layered profile rests on (docs/design.md, Targets
+# and profiles); the profile's generator checks each names a choice the profile makes.
+CHOICES = all_of(array(string("^[a-z0-9][a-z0-9-]{0,63}$"), min_items=1),
+                 predicate(lambda ids: len(set(ids)) == len(ids), "a list of distinct choice ids"))
+
 SPEC_CONFLICT = obj({"quote": string(min_length=1), "section": string(min_length=1),
                      "line": integer(minimum=1), "why": string(min_length=1)})
 INFERENCE = obj({"quote": string(min_length=1), "section": string(min_length=1),
@@ -77,7 +83,7 @@ INFERENCE = obj({"quote": string(min_length=1), "section": string(min_length=1),
 def _assertion(check: str, **fields) -> Check:
     return obj({"id": string("^a[0-9]+$"), "check": enum(check), "level": enum(*LEVELS),
                 **fields},
-               {"clause": CLAUSE, "basis": BASIS, "note": string(),
+               {"clause": CLAUSE, "basis": BASIS, "choices": CHOICES, "note": string(),
                 "spec_conflicts": array(SPEC_CONFLICT, min_items=1),
                 "inferred_from": INFERENCE})
 
@@ -159,7 +165,7 @@ CASE = obj(
         "profile": string("^[a-z0-9][a-z0-9.-]*$"),
         "targets": obj({"wire": array(string(), min_items=1),
                         "features": array(string(FEATURE))}),
-        "operation": enum(*OPERATIONS),
+        "operation": enum(*INPUTS),
         "input": anything_object,
         "assertions": array(tagged("check", CHECK_FORMS), min_items=1),
         "provenance": obj({
@@ -208,6 +214,9 @@ def _cross_field_problem(case: dict) -> str | None:
         if needs not in assertion or forbids in assertion:
             return (f'assertions[{n}] at level {assertion["level"]} needs "{needs}" and must '
                     f'not carry "{forbids}"')
+        if "choices" in assertion and assertion["level"] in NORMATIVE:
+            return (f'assertions[{n}] at level {assertion["level"]} rests on a clause, so it '
+                    'must not carry "choices", which only an INTEROP assertion rests on')
         if "inferred_from" in assertion and assertion["level"] != "SHOULD":
             return (f'assertions[{n}] carries "inferred_from", so its level must be SHOULD, '
                     f'not {assertion["level"]}')

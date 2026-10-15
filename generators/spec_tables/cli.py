@@ -41,6 +41,10 @@ def main(argv=None) -> int:
     except GeneratorError as e:
         print(str(e), file=sys.stderr)
         return 3
+    built = regenerate.sedi(ROOT, files)
+    if built and built[1]:
+        print(f"{built[0]['name']} ({built[0]['status']}): {len(built[1])} choice sides not yet "
+              "exercised: " + "; ".join(built[1]) + ".")
     if args.check:
         with tempfile.TemporaryDirectory() as tmp:
             regenerate.write(pathlib.Path(tmp), files)

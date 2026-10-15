@@ -10,12 +10,20 @@
       "description": "Reads the ACDC 1.x field set and computes the top-level SAID over the expanded form, as keripy 1.x does. No specification defines either; cases using it belong to the acdc-keripy-1x-interop profile.",
       "composable": false
     },
+    "acdc.presentation": {
+      "description": "Judges an ACDC in the context it was presented in: the exchange messages that delivered it and the verifier it was presented to, given as acdc.verify's optional presentation field. Only cases that send that field require it, and the sedi-1 profile requires it of an adapter that claims the profile, because an adapter ignores a field it does not recognise.",
+      "composable": false
+    },
     "acdc.ptel-1x": {
       "description": "Verifies keripy 1.x's issuance and revocation registry (vcp, iss, rev). No specification defines it; cases using it belong to the acdc-keripy-1x-interop profile.",
       "composable": false
     },
     "acdc.registry.bup": {
       "description": "Verifies a blindable registry (rip and bup events, with any disclosed blinded state) and reports its verified head. Only liveness assertions and the assertions that a registry is reported require it.",
+      "composable": false
+    },
+    "acdc.registry.upd": {
+      "description": "Verifies a non-blindable registry (rip and upd events) and reports its verified head. Only liveness assertions and the assertions that a registry is reported require it; an implementation without it answers incomplete for an ACDC whose registry it cannot evaluate. The sedi-1 profile requires it.",
       "composable": false
     },
     "acdc.version-2.x": {

@@ -1,0 +1,203 @@
+{
+  "name": "sedi-1",
+  "version": "1",
+  "status": "draft",
+  "basis": "SEDI's deployment profile, version 1: the choices the State of Utah's SEDI program makes where the CESR, KERI and ACDC specifications are silent or disagree, layered over the normative profiles. Bakobo edits it until a SEDI body (Utah's Interop WG) owns it, and every version is ratified by Daniel Hardman (this.i 2u40l9tk).",
+  "prerequisites": [
+    "cesr-1.0",
+    "keri-1.0",
+    "acdc-1.0"
+  ],
+  "requires": {
+    "operations": [
+      "cesr.parse",
+      "keri.process",
+      "exn.verify",
+      "acdc.verify",
+      "acdc.issue",
+      "acdc.present"
+    ],
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x",
+      "acdc.version-2.x",
+      "acdc.edges",
+      "acdc.registry.bup",
+      "acdc.registry.upd",
+      "acdc.presentation"
+    ]
+  },
+  "drafts": {
+    "acdc-main": {
+      "repository": "https://github.com/trustoverip/kswg-acdc-specification",
+      "commit": "9d80942ed1a4a1ea8b6a2cd9ec57a15f0ead5f65",
+      "why": "Bulk issuance (choice bulk-defaults) cites text that exists only on main."
+    }
+  },
+  "maxima": {},
+  "choices": [
+    {
+      "id": "tel-sequence",
+      "reading": "A registry event's sequence number n is its predecessor's plus one, and the inception's is 0.",
+      "basis": "ACDC line 2135 says n MUST increment, which reads as plus one; line 2023 says only strictly monotonically increasing, which would allow gaps. keripy and heti both require plus one.",
+      "overturn": "Specification text that allows a registry's sequence numbers to skip.",
+      "tick": "57ud",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "registry-head",
+      "reading": "A registry's current state is its highest-n event that chain-verifies from the inception and is sealed in the issuer's KEL; two sealed events claiming one n are refused.",
+      "basis": "No clause selects a registry's current event or says what two events at one n mean; heti pins this reading.",
+      "overturn": "A specification rule for selecting the current registry event or for duplicitous registry events.",
+      "tick": "5qcy",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "blind-derivation",
+      "reading": "A blinded state's u is keripy's Blinder derivation: Argon2id with the event's sequence number in lowercase hex without leading zeros as the password and the 128-bit shared salt as the salt, at opslimit 2 and memlimit 64 MiB, giving 32 bytes encoded with the 256-bit salt code. A salt shorter than 128 bits is refused.",
+      "basis": "The text says only that the blind is derived from a shared salt and the event's sequence number (lines 2077, 2133 and 2135) and names no derivation; keripy and heti derive it this way. Line 2282 requires the shared salt to have about 128 bits of strength, and the blind's secrecy rests on that salt, not on the stretch: without the salt an observer cannot test both states, so the low stretch cost is not what protects it.",
+      "overturn": "Specification text naming another derivation, path encoding or cost, or allowing a salt below 128 bits.",
+      "tick": "3b5o",
+      "decided": "8g9vtxvc",
+      "security": true
+    },
+    {
+      "id": "bulk-defaults",
+      "reading": "Bulk issuance derives each blinding factor v_k at path 'k.', and concatenates in the CESR qb64 text domain with Blake3-256 as H, as ACDC main commit 9d80942 (pull request 200) states. Every bulk case is draft until a tagged specification carries the text.",
+      "basis": "Section 15.4 at the tag contradicts itself on the v_k path and leaves H and the concatenation domain open; pull request 200 pins them and is merged on main.",
+      "overturn": "A tagged specification whose bulk issuance text differs.",
+      "tick": "4xwz",
+      "decided": "43rj9wfc"
+    },
+    {
+      "id": "seal-couple-code",
+      "reading": "The count code of a seal couple group is -S##.",
+      "basis": "CESR lines 933 to 936 and keripy's 2.00 count-code table give -S##; ACDC line 1931 says -T##.",
+      "overturn": "An ACDC correction that keeps -T##, with the CESR table changed to match.",
+      "tick": "3nch",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "blind-state-code",
+      "reading": "The count code of a big blinded-state group is the 8-character code, keeping quadlet alignment.",
+      "basis": "ACDC lines 2062, 2145 and 2367 give a 9-character code, which breaks quadlet alignment; keripy uses 8.",
+      "overturn": "An ACDC correction that keeps a 9-character code.",
+      "tick": "3nch",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "seal-shape",
+      "reading": "A seal anchoring an ACDC or a registry event is the couple {s, d}; a bare digest is not a seal of either.",
+      "basis": "The text shows the couple; heti also accepts a bare digest, and sedi-1 takes the stricter reading, so heti and keripy are expected to record a divergence.",
+      "overturn": "Specification text that admits a bare digest as an issuance seal.",
+      "tick": "3nch",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "edge-said",
+      "reading": "An edge must carry its far node's SAID in d; an edge without d is not valid.",
+      "basis": "Daniel's answer to the profile interview, Q2: the edge's d is required.",
+      "overturn": "Specification text that makes an edge's d optional.",
+      "tick": "3nch",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "unknown-operator",
+      "reading": "An edge operator outside I2I, NI2I, DI2I, E1E, AND and OR, including NOT, cannot be evaluated: the verdict is incomplete, never valid.",
+      "basis": "Every unary operator narrows what satisfies an edge, so skipping an unknown one would apply a more permissive rule than the issuer wrote. NOT waits for 67i2.",
+      "overturn": "Specification text saying a validator skips operators it does not know.",
+      "tick": "3qah",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "default-operator",
+      "reading": "When an edge's o is absent or names none of I2I, NI2I, DI2I or E1E, I2I is appended if the far node has an issuee and NI2I if it has none.",
+      "basis": "ACDC v1.1 (branch v1.1, spec-body.md line 1209) states this rule with E1E among the operators that suppress the default; the tag's line 1197 lists only I2I, NI2I and DI2I, and keripy's two verifiers disagree.",
+      "overturn": "A specification that replaces the rule, such as with per-group defaults (keripy #1556).",
+      "tick": "7kev",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "operator-list",
+      "reading": "An edge's o is a string naming one operator or a list of them; both are evaluated as the list.",
+      "basis": "Lines 1186, 1199 and 1201 treat o as an effective list; keripy's verifier reads only a string.",
+      "overturn": "Specification text restricting o to one form.",
+      "tick": "6ljr",
+      "decided": "8g9vtxvc"
+    },
+    {
+      "id": "presenter-binding",
+      "reading": "A presented ACDC is valid only when its presenter, the sender of the presentation's last exchange message, is its issuee a.i, or for an aggregate the issuee at A[1].i.",
+      "basis": "Lines 312 and 344 make presentation by the issuee a capability, and no clause obliges a validator to check it; without the check, anyone who has seen a credential can present it as theirs.",
+      "overturn": "Specification text making presenter binding an obligation in another form.",
+      "tick": "5u4y",
+      "decided": "09snlyre",
+      "security": true
+    },
+    {
+      "id": "aggregate-issuee",
+      "reading": "An aggregate credential's issuee is at A[1].i; an aggregate whose issuee is not disclosed cannot be bound, and a presentation of it is incomplete.",
+      "basis": "keripy reads the issuee there (iseaid), though no builder writes it and the text leaves the position open.",
+      "overturn": "Specification text pinning, or rejecting, A[1].i as the aggregate issuee's home.",
+      "tick": "5oo6",
+      "decided": "09snlyre"
+    },
+    {
+      "id": "bearer-untargeted",
+      "reading": "An ACDC with no issuee is a bearer credential: anyone holding it may present it, and the profile says so.",
+      "basis": "The text defines untargeted ACDCs and no presenter they could be bound to.",
+      "overturn": "A SEDI policy that forbids untargeted credentials in its schemas.",
+      "decided": "09snlyre",
+      "security": true
+    },
+    {
+      "id": "unresolved-grading",
+      "reading": "A verdict is graded three ways: invalid when a check failed, incomplete when something the verdict needs is absent or cannot be evaluated, and never valid in either case.",
+      "basis": "Utah's KERI-012 asks for positive, negative and unresolved outcomes, which a relying party acts on as accept, reject and retry; acdc-1.0 leaves the distinction informative.",
+      "overturn": "None from the specification: this is how SEDI reads a verdict.",
+      "decided": "8fh68wt6"
+    },
+    {
+      "id": "valid-is-interop",
+      "reading": "Accepting a valid ACDC is graded at INTEROP, so an implementation that refuses everything fails the profile.",
+      "basis": "acdc-1.0 grades acceptance as an inferred SHOULD; without this, an adapter answering incomplete or invalid to everything would pass every sedi-1 refusal.",
+      "overturn": "None from the specification.",
+      "decided": "8fh68wt6"
+    },
+    {
+      "id": "revoked",
+      "reading": "A credential whose registry head records it revoked is invalid.",
+      "basis": "The specification has no revoked verdict and names issued and revoked only as example states; SEDI needs one.",
+      "overturn": "Specification text defining what a revoked state means for a verdict.",
+      "decided": "8fh68wt6",
+      "security": true
+    },
+    {
+      "id": "registry-evidence",
+      "reading": "Registry evidence the verdict did not account for makes it never valid: incomplete when a later event, its body or its disclosed state is absent, invalid when a later event fails a check.",
+      "basis": "The bundle is the holder's; without this, withholding one event leaves a revoked credential's head at issued.",
+      "overturn": "None from the specification.",
+      "decided": "3g4le6js",
+      "security": true
+    },
+    {
+      "id": "no-1x",
+      "reading": "Under sedi-1, a 1.x version string, a 1.x field set or a 1.x registry is never valid; sedi-1x-interop grades 1.x on its own.",
+      "basis": "Otherwise a credential revoked in its 2.00 registry could be re-presented in its 1.x form.",
+      "overturn": "A SEDI decision to accept 1.x credentials under sedi-1.",
+      "decided": "3g4le6js",
+      "security": true
+    },
+    {
+      "id": "failure-precedence",
+      "reading": "When a bundle holds both a failed check and something that cannot be evaluated, the verdict is invalid.",
+      "basis": "Otherwise adding an unknown operator to a forged credential would turn a reject into a retry.",
+      "overturn": "None from the specification.",
+      "decided": "3g4le6js",
+      "security": true
+    }
+  ]
+}
