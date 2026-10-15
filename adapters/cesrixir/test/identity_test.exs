@@ -21,7 +21,7 @@ defmodule KcsAdapterCesrixir.IdentityTest do
   end
 
   test "the adapter's version follows the implementation's release" do
-    assert %{"name" => "cesrixir-adapter", "version" => "1.0.1-" <> _} = Identity.adapter()
+    assert %{"name" => "kcs-adapter-cesrixir", "version" => "1.0.1-" <> _} = Identity.adapter()
     assert Mix.Project.config()[:version] == Identity.adapter()["version"]
   end
 end

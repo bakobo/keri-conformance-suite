@@ -56,6 +56,8 @@ jobs:
       - name: Install the signify-ts adapter at its pin
         working-directory: adapters/signify-ts
         run: npm ci --no-audit --no-fund
+      - name: Build the cesrixir adapter image at its pins
+        run: adapters/cesrixir/bin/build --progress plain
       # One run of every adapter: the tool rebuilds each from its lockfile (a no-op after the
       # steps above, which keep each toolchain's log separate), writes the runs labelled
       # reproduced, and compares those same runs with the committed results. A difference fails

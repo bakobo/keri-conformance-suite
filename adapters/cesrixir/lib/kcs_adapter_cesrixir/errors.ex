@@ -9,8 +9,6 @@ defmodule KcsAdapterCesrixir.Errors do
   def unknown_op, do: "e.input.range.unknown-op.f"
   def undeclared_op, do: "e.feature.unsupported.undeclared-op.f"
   def version, do: "e.feature.unsupported.protocol-version.f"
-  def code, do: "e.feature.unsupported.code.f"
-  def encode_refused, do: "e.input.format.encode-refused.f"
   def commit, do: "e.env.dependency.cesrixir-commit.f"
   def exception, do: "e.self.unknown.exception.f"
   def replay_mismatch, do: "e.self.unknown.replay-mismatch.f"

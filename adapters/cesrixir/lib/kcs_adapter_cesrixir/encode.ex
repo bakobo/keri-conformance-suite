@@ -3,13 +3,14 @@ defmodule KcsAdapterCesrixir.Encode do
   `cesr.encode`: builds the primitive with cesrixir's own module for the code and serializes it with
   cesrixir's encoder. The module is found in cesrixir's own code tables (its generator modules'
   `typeDescriptions`), never in a table the adapter carries.
+
+  When cesrixir has no primitive for the code, or its constructor refuses the raw value, that is a
+  refusal, and the protocol answers it as a rejection (docs/adapter-protocol.md, `cesr.encode`).
   """
 
   alias Cesr.CesrElement
   alias Cesr.Primitive.Generator.{FourCharFixedPrimitive, OneCharFixedPrimitive, TwoCharFixedPrimitive, VariableLengthPrimitive}
-  alias KcsAdapterCesrixir.Errors
-
-  @doc "Returns `{:ok, encoded_bytes}` or `{:error, error_body}`."
+  @doc "Returns `{:ok, encoded_bytes}`, or `{:reject, class}` when cesrixir refuses."
   def encode(code, raw, domain) do
     with {:ok, element} <- build(code, raw) do
       {:ok, if(domain == "binary", do: CesrElement.to_binary(element), else: CesrElement.to_b64(element))}
@@ -20,14 +21,18 @@ defmodule KcsAdapterCesrixir.Encode do
     case lookup(code, raw) do
       {:fixed, module} -> refused(module.new(raw), code)
       {:variable, element} -> {:ok, element}
-      :none -> {:error, Errors.unsupported(Errors.code(), "cesrixir has no primitive with the code #{inspect(code)}.")}
+      :none ->
+        IO.puts(:stderr, "cesrixir has no primitive with the code #{inspect(code)}.")
+        {:reject, "unknown-code"}
     end
   end
 
   defp refused({:ok, element}, _code), do: {:ok, element}
 
-  defp refused({:error, why}, code),
-    do: {:error, Errors.unsupported(Errors.encode_refused(), "cesrixir refused to build a #{code} primitive: #{why}")}
+  defp refused({:error, why}, code) do
+    IO.puts(:stderr, "cesrixir refused to build a #{code} primitive: #{why}")
+    {:reject, "refused"}
+  end
 
   @doc false
   def lookup(code, raw) do

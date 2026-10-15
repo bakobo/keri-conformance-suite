@@ -93,9 +93,11 @@ defmodule KcsAdapterCesrixir.Protocol do
   defp handle(%{"op" => "cesr.encode"} = request) do
     with {:ok, raw} <- hex_field(request, "raw"),
          {:ok, code} <- string_field(request, "code"),
-         {:ok, domain} <- domain_field(request),
-         {:ok, encoded} <- Encode.encode(code, raw, domain) do
-      {:ok, %{"encoded" => Base.encode16(encoded, case: :lower)}}
+         {:ok, domain} <- domain_field(request) do
+      case Encode.encode(code, raw, domain) do
+        {:ok, encoded} -> {:ok, %{"encoded" => Base.encode16(encoded, case: :lower)}}
+        {:reject, class} -> {:ok, %{"reject" => %{"class" => class}}}
+      end
     end
   end
 

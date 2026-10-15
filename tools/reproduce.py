@@ -121,6 +121,12 @@ INSTANCES = (
              "adapters/signify-ts/bin/kcs-adapter-signify-ts",
              ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-signify-ts",
              "adapters/signify-ts/README.md"),
+    # The cesrixir adapter runs in a Docker image; bin/build builds and tests it, and the
+    # launcher refuses to start until the image for the current sources exists.
+    Instance("cesrixir", (_step("adapters/cesrixir", "bin/build"),),
+             "adapters/cesrixir/bin/kcs-adapter-cesrixir",
+             ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-cesrixir",
+             "adapters/cesrixir/README.md"),
 )
 
 

@@ -15,7 +15,7 @@ defmodule KcsAdapterCesrixir.Identity do
   # hex release -> the vLEIDA/cesrixir commit whose lib/ and mix.exs the release tarball matches
   @commits %{"1.0.1" => "1e4944a25a7f1aa6c00db1192afb930a88aa444e"}
 
-  def adapter, do: %{"name" => "cesrixir-adapter", "version" => @adapter_version}
+  def adapter, do: %{"name" => "kcs-adapter-cesrixir", "version" => @adapter_version}
 
   def commits, do: @commits
 

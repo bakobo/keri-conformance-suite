@@ -124,12 +124,18 @@ defmodule KcsAdapterCesrixir.ProtocolTest do
       assert Base.decode16!(enc, case: :lower) == "4BABAQID"
     end
 
-    test "a code cesrixir has no primitive for, and a raw value it refuses" do
-      assert %{"error" => %{"kind" => "unsupported", "message" => "e.feature.unsupported.code.f: " <> _}} =
-               respond(%{"id" => 11, "op" => "cesr.encode", "code" => "zz", "raw" => "00", "domain" => "text"})
+    test "a code cesrixir has no primitive for, and a raw value it refuses, are rejections" do
+      err =
+        capture_io(:stderr, fn ->
+          assert %{"id" => 11, "result" => %{"reject" => %{"class" => "unknown-code"}}} =
+                   respond(%{"id" => 11, "op" => "cesr.encode", "code" => "zz", "raw" => "00", "domain" => "text"})
 
-      assert %{"error" => %{"kind" => "unsupported", "message" => "e.input.format.encode-refused.f: " <> _}} =
-               respond(%{"id" => 11, "op" => "cesr.encode", "code" => "D", "raw" => "00", "domain" => "text"})
+          assert %{"id" => 11, "result" => %{"reject" => %{"class" => "refused"}}} =
+                   respond(%{"id" => 11, "op" => "cesr.encode", "code" => "D", "raw" => "00", "domain" => "text"})
+        end)
+
+      assert err =~ "cesrixir has no primitive with the code"
+      assert err =~ "must be 32 bytes long"
     end
   end
 end

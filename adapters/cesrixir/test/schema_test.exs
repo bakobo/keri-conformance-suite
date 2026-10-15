@@ -40,8 +40,9 @@ defmodule KcsAdapterCesrixir.SchemaTest do
     capture_io(:stderr, fn -> valid!(ctx, parse("-JAB1AAM")) end)
   end
 
-  test "an encoding", ctx do
+  test "an encoding, and a refusal to encode", ctx do
     valid!(ctx, Protocol.respond(~s({"id":2,"op":"cesr.encode","code":"4B","raw":"010203","domain":"text"})))
+    capture_io(:stderr, fn -> valid!(ctx, Protocol.respond(~s({"id":2,"op":"cesr.encode","code":"D","raw":"00","domain":"text"}))) end)
   end
 
   test "every kind of error", ctx do
