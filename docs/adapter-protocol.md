@@ -262,6 +262,8 @@ Issue one ACDC: build it, build the registry events that issue it, and build and
 
 `acdc` is the ACDC as built from the template, fully expanded, as JSON bytes in hex with no attachments. `registry` has one entry per requested event, in order: the event's bytes, and the blinded state block's bytes when a `blind` was requested, otherwise `null`. `anchor` is the signed anchoring event as a hex stream with its attachments, beginning with the genus/version code as a `keri.emit` stream does, and is present exactly when `anchor` was requested.
 
+The runner frames `anchor` by its version string, after any genus/version code, and compares the body with the case's. It then checks that the attachments carry, for each signing key the case names, that key's signature over the body at its index, as an Ed25519 indexed signature in the text or binary domain; how the signatures are grouped is up to the implementation. It computes each signature from the case's own seed, never from a key the adapter supplies, so its work is bounded by the case, and it refuses a body that declares more than 64 KiB before it signs anything.
+
 An implementation that refuses to issue from these inputs, because a salt is empty or too short, a seed is malformed, or a template asks for something its rules forbid, answers `refused` with an informative `reason`. A refusal is a result, not an error, so a case can require one: a case that must be refused fails when the adapter issues anything, and a case that must be issued fails when the adapter refuses.
 
 ## `acdc.present`
@@ -294,7 +296,7 @@ A refusal judges the inputs, so it is only for a request the adapter could read.
 
 ## `exn.verify`
 
-Deliver KERI exchange messages and report whether each was accepted. Its cases belong to the KERI layer and the `keri-1.0` profile, and IPEX is tested through it, because the only normative text about an IPEX message is KERI's text about exchange messages; [`design.md`](design.md) explains why under IPEX.
+Deliver KERI exchange messages and report whether each was accepted. Its cases belong to the KERI layer and the `keri-v1.0.1` profile, and IPEX is tested through it, because the only normative text about an IPEX message is KERI's text about exchange messages; [`design.md`](design.md) explains why under IPEX.
 
 ```json
 {"id": 6, "op": "exn.verify", "perspective": {"role": "validator"},
@@ -328,5 +330,12 @@ An exchange message may name an ACDC in its `a` field, as an IPEX grant does. `e
 ## Writing an adapter
 
 Keep it small, and keep it outside the implementation. An adapter builds against a released or pinned version of its implementation and uses only that implementation's public API, so it keeps working whether or not the implementation's maintainers ever host it. Where the implementation lacks an entry point — for example, a library that verifies events but does not route or escrow them — the adapter composes the missing piece on top, declares it in `composes`, and explains it in its README.
+
+The adapters in this repository are working examples, each a small program in its implementation's own language:
+
+- [`adapters/keripy`](../adapters/keripy), in Python, for keripy, with a second instance for keripy 1.2.14 in [`adapters/keripy/keripy-1.2.14`](../adapters/keripy/keripy-1.2.14).
+- [`adapters/keriox`](../adapters/keriox), in Rust, for keriox.
+- [`adapters/affinidi`](../adapters/affinidi), in Rust, for Affinidi's keri-core and cesr crates.
+- [`adapters/signify-ts`](../adapters/signify-ts), in TypeScript, for signify-ts.
 
 Report what the implementation did, not what the case expects. An adapter must never read a case's expected value; the runner never sends it one.

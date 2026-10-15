@@ -1,6 +1,6 @@
 {
   "about": "cesr.parse cases that a parser must accept, carried the way CESR carries them: a genus/version code, then KERI message bodies framed by their version strings, each followed by attachment groups in the attachments group (-C) the master table defines for them. The bodies are KERI inception events built to the KERI specification (v1.0.1, commit 71cb54ebb445dd9d8cb33cd29a5f50894fafc569, 'Inception Event Message Body': fields [ v, t, d, i, s, kt, k, nt, n, bt, b, c, a], all required) with d and i computed by the CESR SAID protocol using Blake3-256; keys, digests and signatures are fixed SHAKE-256 bytes, so signatures do not verify and these cases say nothing about KERI validity beyond well-formed bodies. Every counter reports group_end, where the group it introduces ends.",
-  "profile": "cesr-1.0",
+  "profile": "cesr-v1.0",
   "messages": {
     "alpha": {
       "proto": "KERI",

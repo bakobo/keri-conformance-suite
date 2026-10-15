@@ -363,6 +363,16 @@ def test_file_url_points_at_the_pinned_commit():
     )
 
 
+def test_line_url_points_at_the_raw_line_of_the_pinned_text():
+    assert spec_source.line_url(3) == (
+        "https://github.com/trustoverip/kswg-cesr-specification/blob/"
+        "037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L3"
+    )
+    assert spec_source.line_url(12, spec_source.KERI) == (
+        f"{spec_source.KERI.repo}/blob/{spec_source.KERI.commit}/spec/spec-body.md?plain=1#L12"
+    )
+
+
 def test_table_at_end_of_text_is_read():
     assert spec_source.table_after("# T\n| a |\n|-|\n| x |", "T") == [["x"]]
 
@@ -417,7 +427,7 @@ def test_inconsistent_indexed_row_is_left_out_and_recorded():
 
 
 def test_blake3_matches_the_spec_said_example_and_the_empty_vector():
-    from generators.spec_tables import blake3
+    from keri_conformance import blake3
 
     assert blake3.digest(b"").hex() == (
         "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262")

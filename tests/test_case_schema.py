@@ -29,7 +29,7 @@ KERI_CASE = {
     "title": "Out-of-order interaction is not accepted early",
     "description": "An ixn at sn 2 arrives before the ixn at sn 1.",
     "status": "active",
-    "profile": "keri-1.0",
+    "profile": "keri-v1.0.1",
     "targets": {"wire": ["KERI10JSON"], "features": ["kel.basic", "crypto.ed25519"]},
     "operation": "keri.process",
     "input": {
@@ -83,7 +83,7 @@ CESR_CASE = {
     "title": "Truncated count code is rejected",
     "description": "A stream that ends inside a count code.",
     "status": "active",
-    "profile": "cesr-1.0",
+    "profile": "cesr-v1.0",
     "targets": {"wire": ["CESR-2.00"], "features": ["cesr.genus-2.00"]},
     "operation": "cesr.parse",
     "input": {"stream": "2d4b"},

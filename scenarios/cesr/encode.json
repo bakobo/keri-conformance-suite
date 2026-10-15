@@ -1,6 +1,6 @@
 {
   "about": "cesr.encode cases: a code and a raw value in, the fully qualified encoding out, as hex bytes (the ASCII bytes of the Base64 text in the text domain; the qb2 bytes in the binary domain). One case per code size the master table uses: 1-, 2- and 4-character codes, with pad sizes 1, 2 and 0. Raw values are SHAKE-256 of the label unless hex is given.",
-  "profile": "cesr-1.0",
+  "profile": "cesr-v1.0",
   "cases": [
     {
       "id": "CESR-0001", "key": "encode-ed25519-verkey-text",

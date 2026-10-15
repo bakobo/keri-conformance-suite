@@ -57,7 +57,7 @@ def msg(event, sigs, expect=None, **kw):
 
 def case(events, messages, **kw):
     return {"id": "KERI-9999", "key": "KS-test", "title": "t", "description": "d",
-            "profile": kw.pop("profile", "keri-1.0"), "events": events, "messages": messages,
+            "profile": kw.pop("profile", "keri-v1.0.1"), "events": events, "messages": messages,
             **kw}
 
 
@@ -364,7 +364,7 @@ def ktree(tmp_path):
     return tmp_path
 
 
-def _kscenario(tree, cases, profile="keri-1.0", **extra):
+def _kscenario(tree, cases, profile="keri-v1.0.1", **extra):
     for c in cases:
         c.pop("profile", None)
     (tree / "scenarios" / "keri" / "t.json").write_text(
@@ -381,7 +381,7 @@ def test_generate_writes_keri_cases_and_their_profile(ktree):
     _kscenario(ktree, [_one(2)], id_gaps=[{"number": 1, "reason": "test"}])
     files = regenerate.generate(ktree)
     assert "cases/keri/KERI-0002.json" in files
-    assert json.loads(files["profiles/keri-1.0.json"])["cases"] == ["KERI-0002"]
+    assert json.loads(files["profiles/keri-v1.0.1.json"])["cases"] == ["KERI-0002"]
 
 
 @pytest.mark.parametrize("cases,match", [
@@ -397,7 +397,7 @@ def test_generate_refuses_a_bad_keri_scenario(ktree, cases, match):
 
 
 def test_generate_refuses_a_non_keri_profile_for_a_keri_scenario(ktree):
-    _kscenario(ktree, [_one()], profile="cesr-1.0")
+    _kscenario(ktree, [_one()], profile="cesr-v1.0")
     with pytest.raises(ScenarioError, match="unknown KERI profile"):
         regenerate.generate(ktree)
 

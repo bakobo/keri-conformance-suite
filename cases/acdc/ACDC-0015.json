@@ -46,7 +46,7 @@
     "schemas": []
   },
   "operation": "acdc.verify",
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "provenance": {
     "generator": {
       "name": "kcs-gen-acdc",

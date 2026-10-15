@@ -99,7 +99,7 @@ def test_a_suite_version_component_is_bounded():
 
 
 def test_a_case_from_another_profile_is_refused():
-    doc = result(report([case(profile="keri-1.0")]))
+    doc = result(report([case(profile="keri-v1.0.1")]))
     assert "profile" in R.result_problem(doc)
 
 
@@ -227,7 +227,7 @@ def test_an_aborted_report_must_say_aborted():
 
 # --- layered profiles ---------------------------------------------------------------------------
 
-LAYERED = {"name": "lay", "version": "1", "prerequisites": ["cesr-1.0"],
+LAYERED = {"name": "lay", "version": "1", "prerequisites": ["cesr-v1.0"],
            "requires": {"operations": ["cesr.parse"], "features": ["kel.delegation"]},
            "cases": ["CESR-0004"]}
 
@@ -236,7 +236,7 @@ LAYERED = {"name": "lay", "version": "1", "prerequisites": ["cesr-1.0"],
 def suite(tmp_path):
     root = tmp_path / "suite"
     (root / "profiles").mkdir(parents=True)
-    for name, doc in (("lay", LAYERED), ("cesr-1.0", {"name": "cesr-1.0",
+    for name, doc in (("lay", LAYERED), ("cesr-v1.0", {"name": "cesr-v1.0",
                                                        "cases": ["CESR-0001"]})):
         (root / "profiles" / f"{name}.json").write_text(json.dumps(doc), encoding="utf-8")
     return root
@@ -245,7 +245,7 @@ def suite(tmp_path):
 def layered_result():
     rep = report([case(), case("CESR-0004", profile="lay", records=[record(level="INTEROP")])],
                  profile="lay")
-    rep["claim"] = {"profile": "lay", "version": "1", "prerequisites": {"cesr-1.0": "conformant"},
+    rep["claim"] = {"profile": "lay", "version": "1", "prerequisites": {"cesr-v1.0": "conformant"},
                     "own_verdict": "interoperable",
                     "missing": {"operations": [], "features": ["kel.delegation"]},
                     "verdict": "not-interoperable"}
@@ -260,7 +260,7 @@ def test_a_layered_result_whose_claim_follows_from_its_cases_is_published(suite)
 @pytest.mark.parametrize(("field", "value"), [
     ("verdict", "interoperable"),
     ("own_verdict", "no-evidence"),
-    ("prerequisites", {"cesr-1.0": "not-conformant"}),
+    ("prerequisites", {"cesr-v1.0": "not-conformant"}),
     ("missing", {"operations": [], "features": []}),
     ("version", "2"),
 ])
@@ -284,7 +284,7 @@ def test_a_flat_report_must_not_carry_a_claim(suite):
 
 def test_a_layered_result_may_hold_only_its_own_and_its_prerequisites_cases(suite):
     doc = layered_result()
-    doc["report"]["cases"][0]["profile"] = "keri-1.0"
+    doc["report"]["cases"][0]["profile"] = "keri-v1.0.1"
     assert "profile" in R.result_problem(doc, suite)
 
 
@@ -313,6 +313,17 @@ def test_an_aborted_layered_result_claims_no_more_than_incomplete(suite):
     assert R.result_problem(doc, suite) is None
 
 
+def test_an_aborted_layered_result_keeps_a_definite_failure(suite):
+    doc = layered_result()  # its claim is not-interoperable: kel.delegation is undeclared
+    rep = doc["report"]
+    rep["aborted"] = {"code": "e.x.f", "reason": "r", "problems": [], "at_case": "CESR-0004",
+                      "exit_code": 4}
+    rep["verdict"] = "aborted"
+    assert R.result_problem(doc, suite) is None
+    rep["claim"]["verdict"] = "incomplete"
+    assert "claim" in R.result_problem(doc, suite)
+
+
 def test_the_claim_verdict_is_the_report_verdict(suite):
     doc = layered_result()
     doc["report"]["verdict"] = "not-conformant"
@@ -323,14 +334,14 @@ def test_the_claim_verdict_is_the_report_verdict(suite):
 
 def test_load_reads_every_result_sorted(tmp_path):
     put(tmp_path, result(report(name="zeta")))
-    put(tmp_path, result(report(name="alpha", profile="keri-1.0",
-                                cases=[case("KERI-0001", profile="keri-1.0")])))
+    put(tmp_path, result(report(name="alpha", profile="keri-v1.0.1",
+                                cases=[case("KERI-0001", profile="keri-v1.0.1")])))
     put(tmp_path, result(report(name="alpha")))
     (tmp_path / "README.md").write_text("about\n")
     loaded = R.load_results(tmp_path, kinds=("submitted",))
     assert [r.path.as_posix() for r in loaded] == [
-        "alpha/2.1.0.dev1/cesr-1.0.json", "alpha/2.1.0.dev1/keri-1.0.json",
-        "zeta/2.1.0.dev1/cesr-1.0.json"]
+        "alpha/2.1.0.dev1/cesr-v1.0.json", "alpha/2.1.0.dev1/keri-v1.0.1.json",
+        "zeta/2.1.0.dev1/cesr-v1.0.json"]
     assert loaded[0].doc["report"]["hello"]["implementation"]["name"] == "alpha"
 
 
@@ -364,9 +375,9 @@ def test_a_kind_the_directory_may_not_hold_is_refused(tmp_path):
 
 
 def test_a_result_at_the_wrong_path_is_refused(tmp_path):
-    put(tmp_path, result(), "keripy/9.9.9/cesr-1.0.json")
+    put(tmp_path, result(), "keripy/9.9.9/cesr-v1.0.json")
     message = refused(R.E_RESULT_PATH, R.load_results, tmp_path, kinds=("submitted",))
-    assert "keripy/2.1.0.dev1/cesr-1.0.json" in message
+    assert "keripy/2.1.0.dev1/cesr-v1.0.json" in message
 
 
 @pytest.mark.parametrize("rel", ["stray.json", "keripy/x.json", "keripy/2/cesr/x.json",
@@ -387,13 +398,13 @@ def test_a_symlink_is_refused(tmp_path):
 
 def test_too_many_files_are_refused_before_any_is_read(tmp_path):
     for n in range(3):
-        put(tmp_path, {"not": "read"}, f"impl{n}/1/cesr-1.0.json")
+        put(tmp_path, {"not": "read"}, f"impl{n}/1/cesr-v1.0.json")
     refused(R.E_RESULTS_COUNT, R.load_results, tmp_path, kinds=("submitted",), max_files=2)
 
 
 def test_too_many_bytes_are_refused_before_any_is_read(tmp_path):
     for n in range(2):
-        put(tmp_path, {"not": "read", "pad": "x" * 100}, f"impl{n}/1/cesr-1.0.json")
+        put(tmp_path, {"not": "read", "pad": "x" * 100}, f"impl{n}/1/cesr-v1.0.json")
     refused(R.E_RESULTS_BYTES, R.load_results, tmp_path, kinds=("submitted",),
             max_total_bytes=150)
 
@@ -455,7 +466,7 @@ def test_wrap_writes_the_envelope_at_its_path(tmp_path):
     source.write_text(json.dumps(report(version="0.1.8 (said 0.4.3)")))
     into = tmp_path / "results"
     written = R.wrap(source, SUBMITTED, into)
-    assert written == into / "keripy" / "0.1.8-said-0.4.3" / "cesr-1.0.json"
+    assert written == into / "keripy" / "0.1.8-said-0.4.3" / "cesr-v1.0.json"
     doc = json.loads(written.read_text())
     assert doc == result(report(version="0.1.8 (said 0.4.3)"), SUBMITTED)
     assert R.load_results(into, kinds=("submitted",))[0].doc == doc
@@ -583,7 +594,7 @@ def test_check_command(tmp_path, capsys):
     put(tmp_path, result())
     assert R.main(["check", str(tmp_path)]) == 0
     assert "1 result" in capsys.readouterr().out
-    put(tmp_path, result(provenance=REPRODUCED), "x/1/cesr-1.0.json")
+    put(tmp_path, result(provenance=REPRODUCED), "x/1/cesr-v1.0.json")
     assert R.main(["check", str(tmp_path)]) == 4
     assert R.E_RESULT_PROVENANCE in capsys.readouterr().err
 
@@ -595,7 +606,7 @@ def test_wrap_command_submitted(tmp_path, capsys):
                    "--submitted", "--submitter", "Jane Maintainer", "--pull-request",
                    SUBMITTED["pull_request"]])
     assert code == 0
-    written = tmp_path / "r" / "keripy" / "2.1.0.dev1" / "cesr-1.0.json"
+    written = tmp_path / "r" / "keripy" / "2.1.0.dev1" / "cesr-v1.0.json"
     assert str(written) in capsys.readouterr().out
     assert json.loads(written.read_text())["provenance"] == SUBMITTED
 
@@ -606,7 +617,7 @@ def test_wrap_command_reproduced(tmp_path):
     code = R.main(["wrap", str(source), "--into", str(tmp_path / "r"), "--date", "2026-10-09",
                    "--reproduced", "--run", REPRODUCED["run"], "--commit", "0" * 40])
     assert code == 0
-    written = tmp_path / "r" / "keripy" / "2.1.0.dev1" / "cesr-1.0.json"
+    written = tmp_path / "r" / "keripy" / "2.1.0.dev1" / "cesr-v1.0.json"
     assert json.loads(written.read_text())["provenance"] == REPRODUCED
 
 

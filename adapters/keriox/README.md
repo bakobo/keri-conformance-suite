@@ -26,7 +26,7 @@ cargo test --locked
 
 # from the repository root
 uv run kcs check-adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox"
-uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile cesr-1.0
+uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile cesr-v1.0
 uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile keripy-1x-interop
 ```
 
@@ -45,7 +45,7 @@ Declared: `cesr.genus-1.00`, `cesr.serialization.json`, `keri.version-1.x`. Not 
 
 `cesr.item-extents` is not declared. That feature promises the decoded items of every stream the implementation accepts ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md), `cesr.parse`), and this adapter knowingly cannot keep that promise: it measures every item's offsets from what cesrox consumed (see "Measured, not sourced") except inside two kinds of group cesrox does not itemize, first-seen couples (`-E`) and pathed material (`-L`). A stream with either is answered with the protocol's accepted summary. Declaring the feature would make the runner send decoded cases the adapter cannot answer, so no case with a `decoded` assertion is sent to it; those are not-supported. The adapter still reports items for every other accepted stream, and a case whose assertions are all rejections is still sent and still gets cesrox's verdict.
 
-Every case in `cesr-1.0` targets `cesr.genus-2.00`, so the runner sends none of them: 41 cases not-supported, verdict `no-evidence`. In `keripy-1x-interop`, CESR-0045 to CESR-0048 have a `decoded` assertion, so those four are not-supported (CESR-0048 also needs `cesr.genus-2.00`). cesrox's output for CESR-0045, CESR-0046 and CESR-0047 does match the expected items exactly, which the adapter's own tests check. Both `cesr-strict` cases need `cesr.genus-2.00` too. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, have only `rejected` assertions and need only `cesr.genus-1.00`, so they are sent, and all five pass: cesrox rejects each stream, as keripy 1.2.14 does. That run's verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped to the five cases sent.
+Every case in `cesr-v1.0` targets `cesr.genus-2.00`, so the runner sends none of them: 41 cases not-supported, verdict `no-evidence`. In `keripy-1x-interop`, CESR-0045 to CESR-0048 have a `decoded` assertion, so those four are not-supported (CESR-0048 also needs `cesr.genus-2.00`). cesrox's output for CESR-0045, CESR-0046 and CESR-0047 does match the expected items exactly, which the adapter's own tests check. Both `cesr-strict` cases need `cesr.genus-2.00` too. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, have only `rejected` assertions and need only `cesr.genus-1.00`, so they are sent, and all five pass: cesrox rejects each stream, as keripy 1.2.14 does. That run's verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped to the five cases sent.
 
 ## How a stream is parsed
 
@@ -99,9 +99,9 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 
 ## CI and the baselines
 
-CI level 2 (`docs/design.md`) for this adapter is the `keriox-adapter` job in `.github/workflows/ci.yml`. It installs the toolchain `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test`, runs `kcs check-adapter`, and then compares two runs with the baselines here: `cesr-1.0` with `baseline-cesr-1.0.json`, and `keripy-1x-interop` with `baseline-keripy-1x-interop.json`. The comparison is the keripy adapter's standard-library tool, `python -m kcs_adapter_keripy.baseline compare` with `PYTHONPATH=adapters/keripy/src`, with the rules its README gives: a regression fails the job, and so does an improvement, including a different cesrox or said commit, until the baseline is updated in the same change:
+CI level 2 (`docs/design.md`) for this adapter is the `keriox-adapter` job in `.github/workflows/ci.yml`. It installs the toolchain `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test`, runs `kcs check-adapter`, and then compares two runs with the baselines here: `cesr-v1.0` with `baseline-cesr-v1.0.json`, and `keripy-1x-interop` with `baseline-keripy-1x-interop.json`. The comparison is the keripy adapter's standard-library tool, `python -m kcs_adapter_keripy.baseline compare` with `PYTHONPATH=adapters/keripy/src`, with the rules its README gives: a regression fails the job, and so does an improvement, including a different cesrox or said commit, until the baseline is updated in the same change:
 
 ```sh
-uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile cesr-1.0 --report /tmp/r.json
-PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/keriox/baseline-cesr-1.0.json /tmp/r.json
+uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile cesr-v1.0 --report /tmp/r.json
+PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/keriox/baseline-cesr-v1.0.json /tmp/r.json
 ```

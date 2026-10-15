@@ -1,7 +1,7 @@
 {
-  "profile": "keri-1.0",
+  "profile": "keri-v1.0.1",
   "operation": "exn.verify",
-  "about": "Exchange-message cases (docs/design.md, IPEX): the KELs of the parties are delivered first, then xip and exn messages through exn.verify, each graded accepted or rejected by the exchange-message decision procedure (generators/spec_tables/exn_build.py). Every clause they cite is KERI's, so they are KERI cases in keri-1.0.",
+  "about": "Exchange-message cases (docs/design.md, IPEX): the KELs of the parties are delivered first, then xip and exn messages through exn.verify, each graded accepted or rejected by the exchange-message decision procedure (generators/spec_tables/exn_build.py). Every clause they cite is KERI's, so they are KERI cases in keri-v1.0.1.",
   "cases": [
     {
       "id": "KERI-0068",

@@ -1,11 +1,12 @@
 """BLAKE3 with a 32-byte output, in pure Python.
 
-The CESR specification's SAID examples use Blake3-256 (code `E`), and the generators may use only
-the standard library, which has no BLAKE3. KERI event bodies with many keys or seals exceed one
-1024-byte chunk, so inputs of any length are hashed with the reference's chunk tree. The
-implementation follows the BLAKE3 reference
-(https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs) and is
-checked against the CESR specification's own worked SAID example and the official test vectors.
+The runner and the generators share it: the CESR specification's SAID examples use Blake3-256
+(code `E`), the runner depends on nothing at runtime, and the generators use only the standard
+library, which has no BLAKE3. KERI event bodies with many keys or seals exceed one 1024-byte chunk,
+so inputs of any length are hashed with the reference's chunk tree. The implementation follows the
+BLAKE3 reference
+(https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs) and is checked
+against the CESR specification's own worked SAID example and the official test vectors.
 """
 
 IV = (0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,

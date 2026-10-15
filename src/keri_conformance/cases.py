@@ -110,6 +110,16 @@ CHECK_FORMS = {
                              expected=enum(True, False)),
     "exn_verdict": _assertion("exn_verdict", message=integer(minimum=0),
                               expected=enum(*EXN_READINGS)),
+    # An issuer's answer (docs/adapter-protocol.md, acdc.issue): its bytes, its refusal, and the
+    # signatures over its anchoring event by the keys the case names, in signing-index order.
+    "issued": _assertion("issued", expected=obj(
+        {"acdc": HEX_STRING,
+         "registry": array(obj({"event": HEX_STRING, "blind": nullable(HEX_STRING)}))},
+        {"anchor_body": HEX_STRING})),
+    "issue_refused": _assertion("issue_refused"),
+    "anchor_signed": _assertion("anchor_signed", expected=all_of(
+        array(string(min_length=1), min_items=1),
+        predicate(lambda keys: len(set(keys)) == len(keys), "a list of distinct keys"))),
 }
 
 # The checks that can apply to each operation's result.
@@ -121,6 +131,7 @@ OPERATION_CHECKS = {
     "acdc.verify": ("verdict", "registry_reported", "registry_state", "edge_reported",
                     "edge_valid"),
     "exn.verify": ("exn_verdict",),
+    "acdc.issue": ("issued", "issue_refused", "anchor_signed"),
 }
 
 PERSPECTIVE = obj({"role": enum("validator")})
@@ -143,6 +154,13 @@ INPUTS = {
                        {"expect_schema": SAID}),
     "exn.verify": obj({"perspective": PERSPECTIVE, "kels": array(SOURCED),
                        "messages": array(SOURCED, min_items=1)}),
+    # Templates are objects the implementation fills in (this.i 4xw8k0hg).
+    "acdc.issue": obj({"kels": array(SOURCED), "seeds": mapping(HEX_STRING),
+                       "acdc": anything_object,
+                       "registry": array(obj({"event": anything_object},
+                                             {"blind": obj({"salt": string(min_length=1),
+                                                            "state": anything_object})}))},
+                      {"anchor": obj({"event": anything_object})}),
 }
 
 # The shape of an ACDC case's provenance DAG, which the runner bounds (_dag_problem) but never
@@ -153,7 +171,7 @@ DAG = obj({"root": SAID, "edges": array(obj({"near": SAID, "path": string(EDGE_P
 AS_OF = mapping(integer(minimum=0))
 ACDC_ONLY = ("dag", "as_of")
 # The layer whose ids the new operations' cases take (docs/design.md, ACDC; exchange messages).
-LAYER_PREFIX = {"acdc.verify": "ACDC-", "exn.verify": "KERI-"}
+LAYER_PREFIX = {"acdc.verify": "ACDC-", "exn.verify": "KERI-", "acdc.issue": "ACDC-"}
 
 CASE = obj(
     {
@@ -271,6 +289,32 @@ def _dag_problem(dag: dict) -> str | None:
     return None
 
 
+def _issue_problem(case: dict) -> str | None:
+    """What an issuance case's assertions must agree with in its input, beyond the schema: the
+    expected bytes answer exactly the parts asked for, and every signer has a seed."""
+    request = case["input"]
+    for assertion in case["assertions"]:
+        expected, aid = assertion.get("expected"), assertion["id"]
+        if assertion["check"] == "issued":
+            if len(expected["registry"]) != len(request["registry"]) or any(
+                    ("blind" in want) != (got["blind"] is not None)
+                    for want, got in zip(request["registry"], expected["registry"])):
+                return (f'Its assertion "{aid}" expects registry events that do not match the '
+                        "ones its input asks for, one each and a blinded state exactly where a "
+                        "blind is asked for.")
+            if ("anchor" in request) != ("anchor_body" in expected):
+                return (f'Its assertion "{aid}" must expect an anchoring body exactly when its '
+                        "input asks for an anchoring event.")
+        if assertion["check"] == "anchor_signed":
+            if "anchor" not in request:
+                return f'Its assertion "{aid}" checks an anchoring event its input does not ask for.'
+            unseeded = [key for key in expected if key not in request["seeds"]]
+            if unseeded:
+                return (f'Its assertion "{aid}" names signers with no seed in its input: '
+                        f'{", ".join(unseeded)}.')
+    return None
+
+
 def case_problem(case) -> str | None:
     """None if the case satisfies the case schema (and the runner's own rule that assertion ids
     are unique), else a sentence saying what is wrong."""
@@ -281,6 +325,10 @@ def case_problem(case) -> str | None:
         return f"It does not satisfy the case schema: {problem}."
     if "dag" in case:
         problem = _dag_problem(case["dag"])
+        if problem:
+            return problem
+    if case["operation"] == "acdc.issue":
+        problem = _issue_problem(case)
         if problem:
             return problem
     seen = set()

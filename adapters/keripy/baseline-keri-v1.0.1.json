@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "profile": "keri-1.0",
+  "profile": "keri-v1.0.1",
   "implementation": {
     "name": "keripy",
     "version": "2.1.0.dev1",

@@ -18,7 +18,7 @@ cd adapters/affinidi && cargo build --locked && cargo test --locked
 
 # from the repository root
 uv run kcs check-adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi"
-uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile cesr-1.0
+uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile cesr-v1.0
 ```
 
 ## Declared features
@@ -28,7 +28,7 @@ A feature is a claim about what the implementation and this adapter can do toget
 Not declared, and why:
 
 - `cesr.item-extents`. Affinidi's parser does not report where any item lay (see "How a stream is parsed"), so the adapter answers accepted streams with a summary. The runner therefore sends it no case with a decoded assertion, only cases whose assertions are all rejections.
-- `cesr.genus-2.00`. Affinidi has no genus/version codes, so a stream that opens with `-_AAACAA` is rejected at its first byte. Its `CounterTable::V2` is not the CESR 2.00 master table (it maps `-A` to attached material and `-B` to controller signatures), and no 2.x version string parses (`Version::parse_str` accepts only the 17-character 1.x form). Every case in the `cesr-1.0` profile requires this feature, so none of them is sent.
+- `cesr.genus-2.00`. Affinidi has no genus/version codes, so a stream that opens with `-_AAACAA` is rejected at its first byte. Its `CounterTable::V2` is not the CESR 2.00 master table (it maps `-A` to attached material and `-B` to controller signatures), and no 2.x version string parses (`Version::parse_str` accepts only the 17-character 1.x form). Every case in the `cesr-v1.0` profile requires this feature, so none of them is sent.
 - `keri.version-2.x`, `cesr.native`: no 2.x version strings and no native CESR bodies (`parser::parse_next` refuses a stream that does not start with `{` or a CBOR/MessagePack map byte).
 - `cesr.domain.binary`: the parser rejects non-ASCII attachment bytes, so it reads attachments in the text domain only. `Matter` can encode qb2, but a feature is a claim about the whole implementation.
 - `cesr.serialization.cbor`, `cesr.serialization.mgpk`: Affinidi's `Serder` has CBOR and MessagePack kinds, but no case exercises them and this adapter has not verified that framing, so they are not claimed.
@@ -63,15 +63,15 @@ This is the central limitation. Affinidi's parser returns attachments as decoded
 
 ## CI and the baseline
 
-CI level 2 (`docs/design.md`) for this adapter is the `affinidi-adapter` job in `.github/workflows/ci.yml`. It installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, runs `kcs check-adapter`, and then runs `kcs run` for `cesr-1.0` and for `keripy-1x-interop` and compares each report with its baseline, `baseline-cesr-1.0.json` and `baseline-keripy-1x-interop.json`. The comparison is the keripy adapter's tool, run from source with `PYTHONPATH=adapters/keripy/src`; it uses only the standard library, so keripy is not installed. Its rules are the keripy job's: a regression fails, and so does an improvement until the baseline is updated in the same change.
+CI level 2 (`docs/design.md`) for this adapter is the `affinidi-adapter` job in `.github/workflows/ci.yml`. It installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, runs `kcs check-adapter`, and then runs `kcs run` for `cesr-v1.0` and for `keripy-1x-interop` and compares each report with its baseline, `baseline-cesr-v1.0.json` and `baseline-keripy-1x-interop.json`. The comparison is the keripy adapter's tool, run from source with `PYTHONPATH=adapters/keripy/src`; it uses only the standard library, so keripy is not installed. Its rules are the keripy job's: a regression fails, and so does an improvement until the baseline is updated in the same change.
 
 ```sh
-uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile cesr-1.0 --report /tmp/r.json
-PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-cesr-1.0.json /tmp/r.json
+uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile cesr-v1.0 --report /tmp/r.json
+PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-cesr-v1.0.json /tmp/r.json
 uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affinidi" --profile keripy-1x-interop --report /tmp/i.json
 PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline write adapters/affinidi/baseline-keripy-1x-interop.json /tmp/i.json
 ```
 
-The committed baseline is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
+The committed baseline is `affinidi-keri-core` 0.4.0 at `6277ae86…` with `affinidi-cesr` 0.1.3 at `b970cb01…`, verdict `no-evidence`: all 41 `cesr-v1.0` cases are `not-supported`, because every one requires `cesr.genus-2.00`. That is the accurate result for this implementation, not a gap in the adapter.
 
 In `keripy-1x-interop`, CESR-0045, CESR-0046 and CESR-0047 need `cesr.item-extents` and CESR-0048 also needs `cesr.genus-2.00`, so none is sent; in `cesr-strict`, both cases need `cesr.genus-2.00`. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, need no item extents, so they are sent; Affinidi rejects all five, as keripy 1.2.14 does, and they pass. The `keripy-1x-interop` baseline records those five passes and the four cases not sent; its verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped like any verdict to the cases the adapter's declared features let the runner send.

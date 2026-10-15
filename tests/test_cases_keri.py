@@ -28,7 +28,7 @@ ALL_CASES = {p.stem: json.loads(p.read_text(encoding="utf-8"))
              for p in sorted(CASE_DIR.glob("*.json"))}
 # Exchange-message cases are KERI cases too, checked by test_cases_exn.
 CASES = {cid: c for cid, c in ALL_CASES.items() if c["operation"] == "keri.process"}
-NORMATIVE, ESCROW = "keri-1.0", "keri-escrow"
+NORMATIVE, ESCROW = "keri-v1.0.1", "keri-escrow"
 GATED = {"keri.escrow", "kel.recovery"}
 
 

@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "profile": "cesr-1.0",
+  "profile": "cesr-v1.0",
   "implementation": {
     "commit": "40840948fb669424a0b7629979291ee0c777bb0e (said a385e69028fa2d9bd8fda31a9401ad0a630e1361)",
     "name": "cesrox",

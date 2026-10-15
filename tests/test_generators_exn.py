@@ -69,7 +69,7 @@ def deliver(name, expect, sigs=BY_I, **kw):
 
 def case(exchanges, messages, events=EVENTS, kels=KELS, **kw):
     return {"id": "KERI-9999", "key": "XS-test", "title": "t", "description": "d",
-            "profile": kw.pop("profile", "keri-1.0"), "events": events, "kels": kels,
+            "profile": kw.pop("profile", "keri-v1.0.1"), "events": events, "kels": kels,
             "exchanges": exchanges, "messages": messages, **kw}
 
 
@@ -495,10 +495,10 @@ def test_generate_writes_exchange_cases_into_the_keri_layer_and_profile(ktree):
     c["id"] = "KERI-0001"
     c.pop("profile")
     (ktree / "scenarios" / "keri" / "x.json").write_text(json.dumps(
-        {"profile": "keri-1.0", "operation": "exn.verify", "cases": [copy.deepcopy(c)]}))
+        {"profile": "keri-v1.0.1", "operation": "exn.verify", "cases": [copy.deepcopy(c)]}))
     files = regenerate.generate(ktree)
     assert json.loads(files["cases/keri/KERI-0001.json"])["operation"] == "exn.verify"
-    assert json.loads(files["profiles/keri-1.0.json"])["cases"] == ["KERI-0001"]
+    assert json.loads(files["profiles/keri-v1.0.1.json"])["cases"] == ["KERI-0001"]
 
 
 def test_a_key_event_delivered_as_an_exchange_message_is_refused():

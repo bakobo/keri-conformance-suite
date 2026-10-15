@@ -1,6 +1,6 @@
 {
   "about": "ACDC scenarios for step 2 of the decision procedure (docs/design.md, ACDC): the schema an ACDC names, its SAID, its references and dialect, and validation against it.",
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "fixtures": {
     "direct": {
       "events": [

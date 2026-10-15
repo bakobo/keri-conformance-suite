@@ -1,6 +1,7 @@
-"""The KERI generator's standard-library cryptography: BLAKE3 over inputs longer than one chunk,
-and Ed25519 signing and verification. Both are checked against published test vectors, so the
-cases' SAIDs and signatures do not rest on the generator's own word."""
+"""The suite's standard-library cryptography, shared by the runner and the generators: BLAKE3 over
+inputs longer than one chunk, and Ed25519 signing and verification. Both are checked against
+published test vectors, so neither the cases' SAIDs and signatures nor the runner's checks of an
+issuer's signatures rest on the suite's own word."""
 
 import pathlib
 import sys
@@ -10,7 +11,7 @@ import pytest
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from generators.spec_tables import blake3, ed25519
+from keri_conformance import blake3, ed25519
 
 # The official BLAKE3 test vectors (BLAKE3-team/BLAKE3, test_vectors/test_vectors.json): the input
 # is the bytes 0, 1, ..., 250, 0, 1, ... of the given length; the hash is the first 32 bytes.

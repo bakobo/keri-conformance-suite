@@ -1,6 +1,6 @@
 {
   "about": "ACDC scenarios for selective disclosure (docs/design.md, ACDC, Construction properties): an aggregate of blinded attribute blocks.",
-  "profile": "acdc-1.0",
+  "profile": "acdc-v1.0",
   "fixtures": {
     "selective": {
       "events": [
