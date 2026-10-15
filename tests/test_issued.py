@@ -510,7 +510,10 @@ def test_an_aggregate_must_verify_against_its_agid():
     good = [iss.digest(iss.serialize([iss.DUMMY, member["d"]])), member]
     assert iss._aggregate_verifies(good)
     assert iss._aggregate_verifies([good[0], member["d"]])
-    for bad in ([("E" + "A" * 43), member], [good[0], "not-a-digest"], ["x"], "x"):
+    unsaided = {"label": "x"}
+    unsaided_agid = iss.digest(iss.serialize([iss.DUMMY, iss.block_said(unsaided)]))
+    for bad in ([("E" + "A" * 43), member], [good[0], "not-a-digest"], ["x"], "x",
+                [unsaided_agid, unsaided]):
         assert not iss._aggregate_verifies(bad)
 
     def forged(r, c, p):

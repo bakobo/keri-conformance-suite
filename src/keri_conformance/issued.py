@@ -534,7 +534,7 @@ def _aggregate_verifies(aggregate) -> bool:
         return False
     saids = []
     for member in aggregate[1:]:
-        if isinstance(member, dict):
+        if is_saided(member):
             saids.append(block_said(member))
         elif _is_digest(member):
             saids.append(member)
