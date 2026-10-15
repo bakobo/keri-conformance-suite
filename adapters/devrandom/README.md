@@ -82,6 +82,14 @@ Each request starts a fresh host (`src/kel.rs`). Messages are delivered in order
 ## Results
 
 <!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+
+| Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-15, suite ca2187ea](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/cesr-v1.0.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-15, suite ca2187ea](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keri-escrow.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 69 | [2026-10-15, suite ca2187ea](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keri-v1.0.1.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite ca2187ea](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keripy-1x-interop.json) |
+
 <!-- END generated results -->
 
 ## CI and the committed results
