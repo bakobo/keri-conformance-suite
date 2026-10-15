@@ -109,7 +109,7 @@ The suite's policy (decided 2026-10-01):
 - **Text.** Line 1158 requires 2.XX implementations to support 1.XX version strings, and the note after the master table says the 1.00 tables are not in this specification. Nothing says which table applies to the count codes of a stream that has no genus/version code.
 - **Effect.** keripy 1.2.14 reads such streams with the 1.00 table and keripy main with the 2.00 table, so the same bytes frame differently.
 - **The specification should state** a default genus/version, or require a leading genus/version code before any count code.
-- **Cases:** CESR-0045, CESR-0046 and CESR-0047, in the non-normative `keripy-1x-interop` profile. They would stay there, since the 1.00 table is not specified.
+- **Cases:** CESR-0045, CESR-0046 and CESR-0047, in the non-normative `keripy-1x-interop` profile. They would stay there, since the 1.00 table is not specified. The profile's KERI cases (KERI-0143 to KERI-0176) also carry no genus/version code, because keripy 1.x reads none, and so depend on the 1.00 table being the default (K-G9 below).
 
 ### G2. Override scoping cannot be tested while only one table is defined
 
@@ -186,6 +186,12 @@ Against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb
 - **Gap.** Nothing says a validator must collapse the two encodings to one signer before counting. A validator that counts distinct wire strings lets one key of a multi-signature group satisfy the whole threshold.
 - **The specification should state** that threshold satisfaction counts distinct verified signer indices, independent of a signature's encoding.
 - **Effect.** The duplicate-at-one-index cases KS-05b and KS-05d are published (KERI-0056, KERI-0058), because keripy counts them as one signer. The two-encoding case is held (allocated as a gap), because keripy counts it as two and accepts the event; see the private candidates note.
+
+### K-G9. The KERI 1.x key event field sets (KERI line 556 onward; CESR v1.0 line 1158)
+
+- **Text.** The per-type field-order sentences from line 556 define the 2.XX bodies and the 2.XX version string. Nothing defines a body carrying a 1.XX version string, though implementations that speak KERI 1.x (keripy 1.x, keriox, Affinidi's keri-core) emit them, and keripy 1.x's field sets differ from 2.00's: its `rot` and `drt` carry no `c` field. The CESR 1.00 count codes those implementations attach are not specified either (G1).
+- **Effect.** No normative case can be built on the 1.x wire. The `keripy-1x-interop` profile mirrors 29 `keri-v1.0.1` scenarios on keripy 1.2.14's 1.x wire (KERI-0143 to KERI-0176), grading the decision procedure's reading of those bytes at `INTEROP` with a basis that quotes the sentence each step rests on (`docs/design.md`, KERI 1.x). Implementations that speak only 1.x get evidence that way, but no conformance verdict. The October 2026 coverage assessment lists the question as item 11.
+- **The specification should** either define the 1.x field sets and say whether a 2.XX validator must judge them, or say that a 1.XX version string obliges only framing, as ACDC line 68 is read here (A-G5 below).
 
 ## Inferred or interpreted text
 
