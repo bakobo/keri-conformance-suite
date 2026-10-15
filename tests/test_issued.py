@@ -143,7 +143,7 @@ def icp_with(**fields):
     ({"k": []}, "no signing keys"),
     ({"n": ["E" + "A" * 43] * (iss.MAX_KEYS + 1)}, "more than"),
     ({"kt": ["1/2", "1/2"]}, "weighted"),
-    ({"kt": "zz"}, "not hex"),
+    ({"kt": "zz"}, "not lowercase hex"),
     ({"kt": "2"}, "threshold"),
 ])
 def test_establishment_events_the_runner_does_not_verify(fields, words):
@@ -542,3 +542,83 @@ def test_a_body_nested_beyond_the_bound_is_unreadable():
 
 def test_a_seal_list_that_is_not_a_list_is_no_seal():
     assert "not anchored" in iss.sealed([{"a": 123}], "Erd", "0", "Erd")
+
+
+# -- the PR review's findings -------------------------------------------------------------------
+
+def test_an_acdc_that_breaks_its_schema_fails():
+    request, result, _ = w.issuance()
+    strict = {**w.SCHEMA, "$id": iss.DUMMY, "required": ["zz"]}
+    strict["$id"] = iss.digest(iss.serialize(strict))
+    request["schemas"].append(iss.serialize(strict).hex())
+    request["credentials"][0]["schema"] = strict["$id"]
+    problems = iss.grade(request, result)
+    assert any("schema is not the one asked for" in p for p in problems)
+    assert any("does not validate against its schema" in p for p in problems)
+
+
+def test_a_schema_outside_the_runners_subset_cannot_be_evaluated():
+    assert "cannot be evaluated" in iss._fits({}, {"type": "object", "minLength": 1})[0]
+    assert iss._fits({}, None) == []
+
+
+def test_an_edge_schema_must_be_carried_and_satisfied():
+    said, _ = w.schema()
+    assert edged({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR, "s": said}}) == []
+    problems = edged({"le": {"credential": "c"}},
+                     {"le": {"d": "", "n": FAR, "s": "E" + "A" * 43}})
+    assert any("which the request does not carry" in p for p in problems)
+    strict = {"$id": "", "type": "object", "required": ["zz"]}
+    bodies = {"c": {"d": "Efar", "a": {}}}
+    assert "far credential" in iss._edge_schemas({"le": {"n": "Efar", "s": "Es"}}, bodies,
+                                                 {"Es": strict})[0]
+    assert iss._edge_blocks("Ecompact") == []
+    # A far node the issuance does not hold is reported by the edge check, not here.
+    assert iss._edge_schemas({"le": {"n": "Eunknown", "s": "Es"}}, {}, {"Es": strict}) == []
+
+
+@pytest.mark.parametrize("fields,words", [
+    ({"kt": "-1"}, "not lowercase hex"),
+    ({"kt": ""}, "not lowercase hex"),
+    ({"kt": "0"}, "between 1 and"),
+])
+def test_signing_thresholds_must_be_usable(fields, words):
+    assert words in failed(icp_with(**fields))[0]
+
+
+def test_salts_and_stamps_must_have_their_forms():
+    assert iss._is_stamp("2026-10-15T16:52:06.408727+00:00")
+    assert iss._is_stamp("2026-10-15T16:52:06.408727Z")
+    assert not iss._is_stamp("2026-10-15T16:52:06+00:00") and not iss._is_stamp(7)
+    problems = registry_problems(lambda c, p: c.update(registry=w.chain(
+        w.saidify({**p["rip"], "u": "x", "d": ""}, "ACDC"), p["bup"])))
+    assert any("salt or stamp" in x for x in problems)
+    problems = registry_problems(lambda c, p: c.update(registry=w.chain(
+        p["rip"], w.saidify({**p["bup"], "dt": "not-a-stamp", "d": ""}, "ACDC"))))
+    assert any("stamp is not of the form" in x for x in problems)
+    problems = acdc_problems(lambda r, c, p: c.update(acdc=rebuilt(p, u="x")))
+    assert any("top-level salt" in x for x in problems)
+
+
+def test_an_attachments_count_must_measure_what_follows():
+    sig = w.sig_group(b"x", [(0, "a")])
+    with pytest.raises(iss.Unread, match="count"):
+        iss.groups(("-CAA" + sig).encode())
+    with pytest.raises(iss.Unread, match="count"):
+        iss.groups(("--CAAAAA" + sig).encode())
+
+
+def test_a_registry_must_be_genus_pinned_bodies_only():
+    problems = registry_problems(lambda c, p: c.update(registry=c["registry"][16:]))
+    assert any("genus/version code" in x for x in problems)
+    problems = registry_problems(lambda c, p: c.update(registry=c["registry"] + b"junk".hex()))
+    assert any("bytes follow" in x for x in problems)
+
+
+def test_an_or_group_holds_when_one_member_does():
+    asked = {"o": "OR", "a": {"credential": "c"}, "b": {"credential": "nope"}}
+    issued_e = {"o": "OR", "a": {"d": "", "n": FAR}, "b": {"d": "", "n": "Ewrong"}}
+    assert edged(asked, issued_e) == []
+    asked["a"] = {"credential": "nope"}
+    issued_e["a"] = {"d": "", "n": "Ewrong"}
+    assert any("does not name" in p for p in edged(asked, issued_e))

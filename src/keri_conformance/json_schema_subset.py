@@ -1,8 +1,9 @@
-"""A JSON Schema 2020-12 evaluator for the subset the ACDC generator declares.
+"""A JSON Schema 2020-12 evaluator for the subset the suite's schemas use.
 
-Expected schema verdicts must not come from an implementation under test, and the generators use
-only the standard library, so the ACDC generator evaluates schemas itself (docs/design.md, ACDC,
-"Schemas"). It implements these keywords with their 2020-12 meaning, and no others:
+Expected schema verdicts must not come from an implementation under test, and the runner and the
+generators use only the standard library, so the suite evaluates schemas itself: the ACDC generator
+to decide a case (docs/design.md, ACDC, "Schemas"), and the runner to check an issued credential
+against the schema its case names (this.i 2u2ps8mt). It implements these keywords with their 2020-12 meaning, and no others:
 
 - ``type`` (a name or a list of names; an integer is any number with no fractional part, and a
   boolean is never a number);
@@ -29,8 +30,6 @@ one (ACDC lines 194, 206 and 220) can be recognized and decided without evaluati
 
 import urllib.parse
 
-from .errors import GeneratorError
-
 DIALECT = "https://json-schema.org/draft/2020-12/schema"
 
 # A keyword outside the subset.
@@ -50,8 +49,11 @@ ROOT_ONLY = ("$id", "$schema")
 NONLOCAL_KEYWORDS = ("$dynamicRef", "$dynamicAnchor", "$recursiveRef", "$recursiveAnchor")
 
 
-class SchemaError(GeneratorError):
-    pass
+class SchemaError(Exception):
+    def __init__(self, message: str, code: str):
+        super().__init__(f"{code}: {message}")
+        self.code = code
+        self.message = message
 
 
 def _where(path: str) -> str:

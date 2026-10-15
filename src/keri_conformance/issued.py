@@ -29,8 +29,10 @@ plan.md, item 13), so the work is bounded by the bounds, not by what an adapter 
 
 import base64
 import json
+import re
 
 from keri_conformance import blake3, ed25519
+from keri_conformance import json_schema_subset as js
 
 GENUS = b"-_AAACAA"
 B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
@@ -188,11 +190,13 @@ def groups(attachments: bytes) -> list[tuple[str, str]]:
     in the text domain, small (``-X##``) or big (``--X#####``)."""
     text = attachments.decode("ascii", "replace")
     if text.startswith("--C"):
-        i = 8
+        i, size = 8, b64_int(text[3:8]) * 4
     elif text.startswith("-C"):
-        i = 4
+        i, size = 4, b64_int(text[2:4]) * 4
     else:
         return []
+    if i + size != len(text):
+        raise Unread("an attachments group's count does not measure what follows it")
     out = []
     while i < len(text):
         if text.startswith("--", i):
@@ -233,10 +237,9 @@ def signatures(attachments: bytes) -> list[tuple[int, bytes]]:
 def _threshold(value) -> int:
     if not isinstance(value, str):
         raise Unread("a weighted threshold is beyond what the runner verifies")
-    try:
-        return int(value, 16)
-    except ValueError:
-        raise Unread(f"the threshold {value!r} is not hex") from None
+    if not value or any(c not in "0123456789abcdef" for c in value):
+        raise Unread(f"the threshold {value!r} is not lowercase hex")
+    return int(value, 16)
 
 
 def _signed(raw: bytes, keys: list[str], sigs: list[tuple[int, bytes]]) -> set[int]:
@@ -306,6 +309,9 @@ def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
                     return prefix, trunk, [(f"{where} commits to no next keys, so its "
                                             "identifier is not transferable")]
             threshold = _threshold(body.get("kt")) if ilk != "ixn" else kt
+            if not 1 <= threshold <= len(keys):
+                return prefix, trunk, [(f"{where}'s signing threshold is not between 1 and "
+                                        "its number of keys")]
             kt = threshold
             if len(_signed(raw, keys, sigs)) < max(threshold, 1):
                 return prefix, trunk, [f"{where} is not signed to its threshold"]
@@ -313,6 +319,23 @@ def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
             return prefix, trunk, [f"{where} cannot be verified: {exc}"]
         trunk.append(body)
     return prefix, trunk, []
+
+
+STAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}(Z|[+-]\d{2}:\d{2})")
+
+
+def _is_salt(text) -> bool:
+    """A 128-bit salt (code 0A): the form of an ACDC's and a registry inception's u."""
+    try:
+        raw_of(text, "0A", 16)
+    except Unread:
+        return False
+    return True
+
+
+def _is_stamp(text) -> bool:
+    """A stamp: an RFC 3339 datetime with microseconds and a UTC offset (ACDC line 98)."""
+    return isinstance(text, str) and STAMP.fullmatch(text) is not None
 
 
 def _is_digest(text) -> bool:
@@ -422,7 +445,11 @@ def check_registry(chain: bytes, disclosure, issuer: str, trunk: list[dict], acd
         return None, ["the registry exceeds the runner's bounds"]
     problems = []
     try:
+        if chain and not chain.startswith(GENUS):
+            raise Unread("it does not begin with the genus/version code")
         events = frames(chain, b"ACDC")
+        if any(attachments for _, _, attachments in events):
+            raise Unread("bytes follow a registry event's body")
     except Unread as exc:
         return None, [f"the registry cannot be read: {exc}"]
     if not events:
@@ -431,6 +458,8 @@ def check_registry(chain: bytes, disclosure, issuer: str, trunk: list[dict], acd
     if rip.get("t") != "rip" or tuple(rip) != RIP_FIELDS:
         return None, ["the registry does not begin with a blindable inception (rip)"]
     rd = rip["d"]
+    if not _is_salt(rip.get("u")) or not _is_stamp(rip.get("dt")):
+        problems.append("the registry inception's salt or stamp is not of the form it must be")
     if serialize(sized(rip, "ACDC")) != raw or said(rip, "ACDC") != rd:
         problems.append("the registry inception's SAID does not verify")
     if rip.get("i") != issuer or rip.get("n") != "0":
@@ -445,6 +474,8 @@ def check_registry(chain: bytes, disclosure, issuer: str, trunk: list[dict], acd
             break
         if serialize(sized(bup, "ACDC")) != raw or said(bup, "ACDC") != bup["d"]:
             problems.append(f"registry event {n}'s SAID does not verify")
+        if not _is_stamp(bup.get("dt")):
+            problems.append(f"registry event {n}'s stamp is not of the form it must be")
         if bup["rd"] != rd or bup["n"] != f"{n:x}" or bup["p"] != prior:
             problems.append(f"registry event {n} does not follow the event before it")
         why = sealed(trunk, rd, f"{n:x}", bup["d"])
@@ -484,15 +515,19 @@ def _edges(asked: dict, e, near: dict, issued: dict[str, dict]) -> list[str]:
     labels = {k for k in asked if k != "o"}
     if labels != {k for k in e if k not in ("d", "u", "o")}:
         problems.append("the edge section's labels are not the ones asked for")
+    members = []
     for label in sorted(labels & set(e)):
         want, got = asked[label], e[label]
         if not isinstance(got, dict):
-            problems.append(f"the edge {label} is not a map")
+            members.append([f"the edge {label} is not a map"])
         elif "credential" not in want:
-            problems += _edges(want, got, near, issued)
+            members.append(_edges(want, got, near, issued))
         else:
-            problems += _edge(label, want, got, near, issued.get(want["credential"]))
-    return problems
+            members.append(_edge(label, want, got, near, issued.get(want["credential"])))
+    # An OR group holds when any member does; AND, the default, when every member does.
+    if asked.get("o") == "OR" and any(not m for m in members):
+        return problems
+    return problems + [p for m in members for p in m]
 
 
 def _issuee(body: dict | None):
@@ -583,6 +618,8 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
     except Unread as exc:
         return None, None, [f"the ACDC cannot be read: {exc}"]
     problems = []
+    if "u" in body and not _is_salt(body["u"]):
+        problems.append("the ACDC's top-level salt is not a 128-bit salt")
     if body.get("t") != "acm":
         problems.append("the ACDC's type is not acm, the type of an ACDC with an attribute map")
     if rest:
@@ -630,6 +667,43 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
     return body.get("d"), body, problems
 
 
+def _fits(body: dict, schema) -> list[str]:
+    """What fails in an ACDC, as issued, against a schema (ACDC lines 246 and 250)."""
+    if schema is None:
+        return []  # reported once, as the missing schema
+    try:
+        js.check(schema)
+        fits = js.validate(schema, body)
+    except js.SchemaError as exc:
+        return [f"its schema cannot be evaluated by the runner: {exc.message}"]
+    return [] if fits else ["the ACDC does not validate against its schema"]
+
+
+def _edge_schemas(e, bodies: dict[str, dict], schemas: dict[str, dict]) -> list[str]:
+    """What fails in an edge that names a schema in s: the request must carry that schema, and
+    the far credential must validate against it (ACDC line 1178)."""
+    by_said = {b.get("d"): b for b in bodies.values()}
+    out = []
+    for block in _edge_blocks(e):
+        if "s" not in block:
+            continue
+        if block["s"] not in schemas:
+            out.append(f"an edge names the schema {block['s']!r}, which the request does not "
+                       "carry")
+        elif block.get("n") in by_said:
+            out += [f"an edge's far credential: {p}"
+                    for p in _fits(by_said[block["n"]], schemas[block["s"]])]
+    return out
+
+
+def _edge_blocks(e) -> list[dict]:
+    if not isinstance(e, dict):
+        return []
+    if "n" in e:
+        return [e]
+    return [b for k, v in e.items() if k not in ("d", "u", "o") for b in _edge_blocks(v)]
+
+
 def grade(request: dict, result: dict) -> list[str]:
     """Every check the result fails; empty when what was issued verifies and is what was asked."""
     problems: list[str] = []
@@ -645,10 +719,12 @@ def grade(request: dict, result: dict) -> list[str]:
         problems += [f"{role}'s KEL: {p}" for p in failed]
     issued = result.get("credentials") or {}
     bodies: dict[str, dict] = {}
-    schemas = set()
+    schemas: dict[str, dict] = {}
     for raw in request.get("schemas", []):
         try:
-            schemas.add(schema_said(bytes.fromhex(raw)))
+            said_ = schema_said(bytes.fromhex(raw))
+            if said_:
+                schemas[said_] = json.loads(bytes.fromhex(raw))
         except (ValueError, TypeError, AttributeError):
             continue
     # Far credentials first, so an edge can be checked against its far node's SAID.
@@ -667,6 +743,8 @@ def grade(request: dict, result: dict) -> list[str]:
         problems += [f"{name}: {p}" for p in failed]
         if d is None:
             continue
+        problems += [f"{name}: {p}" for p in _fits(body, schemas.get(asked["schema"]))]
+        problems += [f"{name}: {p}" for p in _edge_schemas(body.get("e"), bodies, schemas)]
         bodies[name] = body
         chain = bytes.fromhex(out["registry"]) if isinstance(out.get("registry"), str) else b""
         rd, failed = check_registry(chain, out.get("disclosure"), issuer,

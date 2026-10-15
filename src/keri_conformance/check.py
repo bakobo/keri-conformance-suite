@@ -17,7 +17,7 @@ from keri_conformance import issued
 from keri_conformance.contracts import ERROR
 from keri_conformance.errors import HelloRefused
 from keri_conformance.jsonfile import loads
-from keri_conformance.session import AdapterSession, Failure, parse_response
+from keri_conformance.session import AdapterSession, Failure, beyond_schema, parse_response
 
 PROBES = ("hello", "id-echo", "malformed-request", "unknown-op", "statelessness", "quiescence",
           "issue-malformed", "present-malformed", "presentation-malformed", "issue-repeatable",
@@ -177,6 +177,9 @@ def _probe_issue_repeatable(session: AdapterSession) -> tuple[bool, str]:
             return False, f"The adapter did not answer issuance {n} with a result: {outcome.detail}"
         if "refused" in outcome.result:
             return False, f"The adapter refused issuance {n}, a plain issuance it must make."
+        shape = beyond_schema("acdc.issue", ISSUE_PROBE, outcome.result)
+        if shape:
+            return False, f"Issuance {n} does not answer the request: {shape}"
         problems = issued.grade(ISSUE_PROBE, outcome.result)
         if problems:
             return False, f"Issuance {n} does not verify: {problems[0]}."

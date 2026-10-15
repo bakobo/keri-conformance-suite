@@ -1,5 +1,6 @@
 """`kcs check-adapter`: probes against fake adapters running as real subprocesses."""
 
+import copy
 import json
 import shlex
 
@@ -336,3 +337,12 @@ def test_an_adapter_that_does_not_issue_skips_the_repeatability_probe(vocabulary
 def test_an_issuer_that_crashes_on_the_plain_issuance_fails_it(vocabulary):
     result = probes(bad("crash-on-op", "acdc.issue"), vocabulary, timeout=1.0)
     assert result["issue-repeatable"].status == "fail"
+
+
+def test_an_issuance_with_entries_not_asked_for_fails_the_probe(vocabulary, write_json):
+    extra = copy.deepcopy(ISSUANCE["result"])
+    extra["kels"]["stranger"] = extra["kels"]["issuer"]
+    result = probes(issuer(write_json, {"match": ISSUANCE["match"], "result": extra},
+                           issuance=False), vocabulary)
+    assert result["issue-repeatable"].status == "fail"
+    assert "does not answer the request" in result["issue-repeatable"].reason
