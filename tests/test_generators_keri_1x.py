@@ -256,3 +256,14 @@ def test_a_1x_body_under_genus_2_00_framing_is_not_modelled():
     attachments = two[len(keri_events.GENUS_CODE) + len(keri_model.parse(T, two).raw):]
     with pytest.raises(ScenarioError, match="1.x body in a stream framed as 2.x"):
         keri_model.parse(T, keri_events.GENUS_CODE.encode() + body + attachments)
+
+
+def test_a_genus_code_after_a_1x_body_is_not_modelled():
+    """A genus/version code after a 1.x body switches its attachments to 2.00, which neither wire
+    defines either."""
+    one = streams([ICP], [msg("icp", ["a0"])])[0]
+    body = keri_model.parse(T, one).raw
+    two = keri_events.EventBuilder(T, [ICP]).message(msg("icp", ["a0"])).stream
+    attachments = two[len(keri_events.GENUS_CODE) + len(keri_model.parse(T, two).raw):]
+    with pytest.raises(ScenarioError, match="not modelled"):
+        keri_model.parse(T, body + keri_events.GENUS_CODE.encode() + attachments)
