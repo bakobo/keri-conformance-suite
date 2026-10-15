@@ -95,3 +95,20 @@ Nothing is escrowed, so a message's reading after the last delivery is its readi
 ## Errors
 
 `hello` negotiates from the request's `supported` list, or `[protocol]` when the list is absent, and answers with protocol 1, or with an `unsupported` error (`e.feature.unsupported.protocol-version.f`) when the integer 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB (`maxRequestLine`, not counting its newline); a longer line gets an error whose `id` is null (`e.input.range.request-size.f`) and is skipped without being held. A line that is not a JSON object, including a blank line, or whose `id` is not an integer from 0 to 2^64−1, gets an error whose `id` is null (`e.input.format.request.f`). A request without a string `op` or with malformed fields is a `harness` error carrying its id (`e.input.format.request.f`), and an unknown `op` is too (`e.input.range.unknown-op.f`). `keri.emit`, `acdc.verify` and `exn.verify` get an `unsupported` error (`e.feature.unsupported.undeclared-op.f`), as do `cesr.encode` in the binary domain (`e.feature.unsupported.binary-domain.f`), a code keri-go does not name (`e.feature.unsupported.code.f`), and a code keri-go refuses to encode (`e.input.format.encode-refused.f`). A panic anywhere in an operation, including inside keri-go, is caught, its stack written to standard error, and answered as a `harness` error (`e.self.unknown.panic.f`); the adapter goes on to the next request. The adapter exits with status 0 at end of input; if it cannot read standard input or write standard output it says why on standard error (`e.env.io.stdio.f`) and exits with status 1. Every code ends in `f`: none of these failures clears on retry.
+
+## Results
+
+<!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+<!-- END generated results -->
+
+## CI and the committed results
+
+The `keri-go-adapter` job in `.github/workflows/ci.yml` installs the Go version `go.mod` names, verifies the module cache against `go.sum`, builds with `-mod=readonly`, runs `gofmt`, `go vet` and the tests with every statement covered, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0`, `keri-v1.0.1` and `keripy-1x-interop`, under `results/keri-go/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
+
+```sh
+uv run python scripts/reproduce-results check --adapter keri-go     # compare fresh runs with the committed results
+uv run python scripts/reproduce-results refresh --adapter keri-go   # rewrite them, from a clean tree
+```
+
+`keri-v1.0.1` is run, although no case reaches the adapter, so that its result records that every case there needs a feature keri-go does not have. `keri-escrow` is not run: every case in it needs `keri.escrow`, which the adapter does not declare.
+
