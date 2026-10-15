@@ -125,6 +125,33 @@ def test_refresh_removes_the_result_a_new_version_supersedes(repo):
     assert claim.exists()
 
 
+@pytest.mark.parametrize(("code", "errno_"), [("e.env.filesystem.result-write.f", 13),
+                                               ("e.env.filesystem.result-write.r", 28)])
+def test_refresh_reports_a_result_it_could_not_move_into_place(repo, monkeypatch, code, errno_):
+    def fail(source, target):
+        raise OSError(errno_, "simulated")
+
+    monkeypatch.setattr(P.os, "replace", fail)
+    with pytest.raises(RunnerError) as info:
+        refresh(repo)
+    assert info.value.code == code
+    assert not list((repo / "results").rglob("*.tmp"))
+
+
+def test_refresh_reports_a_results_directory_it_cannot_write_in(repo, monkeypatch):
+    real = P.tempfile.mkstemp
+
+    def fail_in_results(*args, dir=None, **kwargs):
+        if str(dir).startswith(str(repo / "results")):
+            raise PermissionError(13, "denied")
+        return real(*args, dir=dir, **kwargs)
+
+    monkeypatch.setattr(P.tempfile, "mkstemp", fail_in_results)
+    with pytest.raises(RunnerError) as info:
+        refresh(repo)
+    assert info.value.code == P.E_RESULT_WRITE
+
+
 def test_refresh_selects_adapters(repo):
     runs = Runs(default_reports())
     refresh(repo, runs, ["beta"])

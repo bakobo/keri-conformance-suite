@@ -32,6 +32,7 @@ import argparse
 import contextlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -43,6 +44,8 @@ from keri_conformance.errors import E_USAGE_INVALID, EXIT_FAULT, EXIT_USAGE, Run
 from tools import outcomes
 from tools.results import (
     COMMITTED_KINDS,
+    E_RESULT_WRITE,
+    E_RESULT_WRITE_TRANSIENT,
     load_results,
     result_path,
     result_problem,
@@ -191,12 +194,31 @@ def refresh(repo, names=(), *, maintainer: str, day: str, run=kcs_run) -> list[s
             staged.append(wrap(source, provenance, work / f"{n}.out").relative_to(work / f"{n}.out"))
         written = []
         for n, relative in enumerate(staged):
-            target = results / relative
-            target.parent.mkdir(parents=True, exist_ok=True)
-            os.replace(work / f"{n}.out" / relative, target)
+            _install(work / f"{n}.out" / relative, results / relative)
             written.append(f"wrote results/{relative.as_posix()}")
     removed = _remove_superseded(results, runs, {s.as_posix() for s in staged})
     return written + removed + update_readmes(repo)
+
+
+def _install(source: Path, target: Path) -> None:
+    """Put source at target, replacing it whole or not at all. The staging directory may be on
+    another filesystem than the repository (/tmp is often tmpfs), so the file is copied to a
+    temporary file beside target first and renamed over it there."""
+    temporary = None
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        handle, temporary = tempfile.mkstemp(dir=target.parent, suffix=".tmp")
+        os.close(handle)
+        shutil.copyfile(source, temporary)
+        os.replace(temporary, target)
+    except OSError as exc:
+        if temporary:
+            with contextlib.suppress(OSError):
+                os.unlink(temporary)
+        code = (E_RESULT_WRITE_TRANSIENT if exc.errno in outcomes.TRANSIENT_ERRNOS
+                else E_RESULT_WRITE)
+        raise RunnerError(code, f"The result could not be written to {target}: {exc}. Results "
+                                "already moved into place stay; rerun the refresh.") from exc
 
 
 def _remove_superseded(results: Path, runs, kept: set[str]) -> list[str]:
