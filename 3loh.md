@@ -2,3 +2,4 @@
 kind: todo
 created: 2026-10-15T06:31Z
 
+- 2026-10-15T06:44Z Also covers: _missing (tools/reproduce.py) matches adapter and profile, not implementation version, so a hand-supplied result at another version can stand in for a deleted shipped one (codex fix pass and the ds seat on #32, both). refresh never produces that state, since it removes superseded versions; pinning each build's expected implementation identity in INSTANCES would close it at the cost of a second place to update pins.
