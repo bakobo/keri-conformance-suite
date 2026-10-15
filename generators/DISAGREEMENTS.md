@@ -72,7 +72,7 @@ Not disagreements with keripy. Under the suite's policy, assertions affected by 
 
 # Disagreements between the KERI cases and keripy
 
-The KERI cases (`cases/keri/`) take their expected values from the decision procedure in `docs/design.md` ("KERI"), applied by `generators/spec_tables/keri_model.py` to the exact bytes each case delivers, and grade them against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb33cd29a5f50894fafc569`). The event bytes are built by `generators/spec_tables/keri_events.py` from the specification's field rules with the standard library only (SAIDs by the CESR SAID protocol over Blake3-256, Ed25519 signatures per RFC 8032), so keripy is not in the provenance of any KERI case. It is used afterwards to cross-check, never as the authority.
+The KERI cases (`cases/keri/`) take their expected values from the decision procedure in `docs/design.md` ("KERI"), applied by `generators/spec_tables/keri_model.py` to the exact bytes each case delivers, and grade them against the KERI specification v1.0.1 (tag `v1.0.1`, commit `71cb54ebb445dd9d8cb33cd29a5f50894fafc569`). The event bytes are built by `generators/spec_tables/keri_events.py` from the specification's field rules with the standard library only (SAIDs by the CESR SAID protocol over the digest algorithm each SAID's code names, Blake3-256 unless a scenario names another, Ed25519 signatures per RFC 8032), so keripy is not in the provenance of any KERI case. It is used afterwards to cross-check, never as the authority.
 
 How the cross-check was run, from the repository root:
 
@@ -91,7 +91,7 @@ Last run: 2026-10-15 (with KERI-0084 to KERI-0090, KERI-0100 to KERI-0116 and KE
 
 Every assertion of every KERI case except those of KERI-0108 and KERI-0123 to KERI-0126 agrees with keripy main, at every level, including the `keri-escrow` profile. keripy rebuilds every untampered body byte for byte, refuses to rebuild or parse the bodies whose SAID or prefix the scenarios tampered with, and verifies or refuses each signature exactly as the scenarios made it, including, for a signature made over another event, against that event's bytes. Five key-event cases are disputed, KERI-0108 and KERI-0123 to KERI-0126, below; the exchange-message cases, four of them disputed, are under "Exchange-message cases" below.
 
-Two conventions the cases share with keripy, which the specification does not pin down (both are in `generators/SPEC-ISSUES.md`): a next-key digest is the Blake3-256 digest of the qualified public key's text (K-I1), and each stream starts with the genus/version code `-_AAACAA` (K-G6). keripy main reads streams with or without that code the same way.
+Two conventions the cases share with keripy, which the specification does not pin down (both are in `generators/SPEC-ISSUES.md`): a next-key digest is the digest, by the algorithm its own code names, of the qualified public key's text (K-I1), and each stream starts with the genus/version code `-_AAACAA` (K-G6). keripy main reads streams with or without that code the same way.
 
 keripy 1.2.14 was not run through the full cross-check. It implements KERI 1.x bodies only, and every case carries 2.XX bodies. It was probed by hand for this batch's published duplicate-signature cases and agrees with keripy main.
 

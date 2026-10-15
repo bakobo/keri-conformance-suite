@@ -1,31 +1,5 @@
 {
   "profile": "keri-v1.0.1",
-  "id_gaps": [
-    {
-      "number": 117,
-      "reason": "Allocated to digest-agility; not in this tree."
-    },
-    {
-      "number": 118,
-      "reason": "Allocated to digest-agility; not in this tree."
-    },
-    {
-      "number": 119,
-      "reason": "Allocated to digest-agility; not in this tree."
-    },
-    {
-      "number": 120,
-      "reason": "Allocated to digest-agility; not in this tree."
-    },
-    {
-      "number": 121,
-      "reason": "Allocated to digest-agility; not in this tree."
-    },
-    {
-      "number": 122,
-      "reason": "Allocated to digest-agility; not in this tree."
-    }
-  ],
   "cases": [
     {
       "id": "KERI-0027",

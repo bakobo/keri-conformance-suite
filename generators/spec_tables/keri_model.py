@@ -5,7 +5,7 @@ the exact bytes a case delivers, and the model decides each message's readings b
 of the procedure that applies:
 
 1. intrinsic failure (the stream does not parse, the type is not a key event's, the fields are
-   not the type's, the SAID does not match, an inception's ``d`` and ``i`` differ, a sequence
+   not the type's, the SAID does not match by the algorithm its own code names, an inception's ``d`` and ``i`` differ, a sequence
    number is out of range, a key list is empty, a backer list repeats an AID or names a
    transferable witness, an inception's backer threshold exceeds its backer list, a rotation
    carries an inception-only configuration trait);
@@ -40,10 +40,10 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from functools import cache
 
-from . import b64, ed25519, encoding
+from . import b64, digests, ed25519, encoding
 from .decoding import Parser, Rejected
 from .errors import ScenarioError
-from .keri_events import DUMMY, ESTABLISHMENT, FIELDS, INCEPTIONS, ROTATIONS, digest, sized
+from .keri_events import DUMMY, ESTABLISHMENT, FIELDS, INCEPTIONS, ROTATIONS, sized
 from .tables import Tables
 
 POLICIES = ("all", "thresholds", "none")
@@ -174,11 +174,6 @@ def _names(receipt: Parsed, ev: Parsed) -> bool:
     return (receipt.said, receipt.pre, receipt.sn) == (ev.said, ev.pre, ev.sn)
 
 
-def _code(t: Tables, text: str) -> str:
-    """The derivation code of a qualified primitive, by the master table's selector rules."""
-    return text[:2] if text[:1].isdigit() else text[:1]
-
-
 def digest_codes(t: Tables) -> set[str]:
     return {c for c, prim in t.primitives.items() if "Digest" in prim.description}
 
@@ -204,7 +199,7 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
         return None
     self_addressing = False
     if ilk in INCEPTIONS:
-        code = _code(t, p.pre)
+        code = digests.code_of(p.pre)
         if code in digest_codes(t):
             self_addressing = True
         elif code not in BASIC_CODES:
@@ -218,7 +213,9 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
     fields["d"] = DUMMY
     if self_addressing:
         fields["i"] = DUMMY
-    if digest(t, sized(fields)) != p.said:
+    # Recomputed with the algorithm the claimed SAID's own code names (CESR line 1194), so a value
+    # computed with another algorithm, or a code no algorithm here computes, does not verify.
+    if not digests.verifies(t, p.said, sized(fields)):
         return "said"
     if ilk in INCEPTIONS and p.sn != 0:
         return "inception-sn"
@@ -258,7 +255,7 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     if p.ilk in ROTATIONS and set(traits) & set(INCEPTION_ONLY_TRAITS):
         _check_bt_modelled(p.body["bt"])
         for prefix in p.body["ba"]:
-            _check_witness_code_modelled(_code(t, prefix))
+            _check_witness_code_modelled(digests.code_of(prefix))
         return "trait-inception-only"
     if not p.body["k"]:
         return "empty-keys"
@@ -267,7 +264,7 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     if any(len(set(backers)) != len(backers) for backers in lists):
         return "backer-duplicate"
     for prefix in lists[-1]:
-        code = _code(t, prefix)
+        code = digests.code_of(prefix)
         _check_witness_code_modelled(code)
         if code == "D":
             return "witness-transferable"
@@ -334,8 +331,9 @@ class Model:
 
     # -- helpers -------------------------------------------------------------------------------
 
-    def _digest(self, text: str) -> str:
-        return digest(self.t, text.encode("ascii"))
+    def commits(self, next_digest: str, key: str) -> bool:
+        """Whether a next-key digest commits to a qualified key, by the digest's own code."""
+        return digests.verifies(self.t, next_digest, key.encode("ascii"))
 
     def _live(self, said: str) -> list[int]:
         """Messages for the event ``said`` that are seen or kept: their signatures pool."""
@@ -484,12 +482,12 @@ class Model:
             est = kel.est_before(p.sn)
             prior_n, prior_nt = est.body["n"], est.body["nt"]
             exposed = {j for j, d in enumerate(prior_n)
-                       if any(self._digest(k) == d for k in p.body["k"])}
+                       if any(self.commits(d, k) for k in p.body["k"])}
             if not prior_n or not satisfies(prior_nt, exposed, len(prior_n)):
                 return "pre-rotation"
             ondexes = {s.ondex for s in verified if s.ondex is not None
                        and s.ondex < len(prior_n)
-                       and self._digest(keys[s.index]) == prior_n[s.ondex]}
+                       and self.commits(prior_n[s.ondex], keys[s.index])}
             if not satisfies(prior_nt, ondexes, len(prior_n)):
                 return "signing-threshold"
             if not satisfies(p.body["kt"], indices, len(keys)):
