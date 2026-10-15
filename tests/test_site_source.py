@@ -6,7 +6,7 @@ import re
 
 import pytest
 from conftest import ROOT
-from result_docs import REPRODUCED, SUBMITTED, case, record, report, result
+from result_docs import MAINTAINER_RUN, REPRODUCED, SUBMITTED, case, record, report, result
 
 from keri_conformance.errors import RunnerError
 from tools import site_source as S
@@ -155,6 +155,15 @@ def test_detail_page_for_a_reproduced_result():
     assert REPRODUCED["run"] in page and "0" * 40 in page
 
 
+def test_detail_page_for_a_maintainer_run_result():
+    pages = S.render_results(loaded(result(provenance=MAINTAINER_RUN)))
+    page = pages["results/keripy/2.1.0.dev1/cesr-v1.0-maintainer-run.md"]
+    assert '!!! info "Run by the suite maintainer"' in page
+    assert "Daniel Hardman" in page
+    assert f"{S.REPO_URL}/commit/{MAINTAINER_RUN['commit']}" in page
+    assert "`scripts/reproduce-results check`" in page
+
+
 def test_implementation_page_lists_its_results_by_suite_version():
     pages = S.render_results(_two_versions())
     page = pages["results/keripy/index.md"]
@@ -242,23 +251,20 @@ def test_assemble_refuses_a_docs_page_that_collides_with_the_results(repo, tmp_p
 
 # --- command line -------------------------------------------------------------------------------
 
-def test_main_assembles_from_both_result_sources(repo, tmp_path, capsys):
-    submitted = tmp_path / "submitted"
-    reproduced = tmp_path / "reproduced"
-    for root, doc in ((submitted, result(report(name="alpha"))),
-                      (reproduced, result(provenance=REPRODUCED))):
-        path = root / result_path(doc)
+def test_main_assembles_the_committed_results(repo, tmp_path, capsys):
+    committed = tmp_path / "committed"
+    for doc in (result(report(name="alpha")), result(provenance=MAINTAINER_RUN)):
+        path = committed / result_path(doc)
         path.parent.mkdir(parents=True)
         path.write_text(json.dumps(doc))
     out = tmp_path / "out"
-    assert S.main(["--repo", str(repo), "--out", str(out), "--results", str(submitted),
-                   "--reproduced", str(reproduced)]) == 0
+    assert S.main(["--repo", str(repo), "--out", str(out), "--results", str(committed)]) == 0
     index = (out / "results" / "index.md").read_text()
     assert "alpha" in index and "keripy" in index
     assert "2 results" in capsys.readouterr().out
 
 
-def test_main_without_reproduced_results(repo, tmp_path):
+def test_main_with_no_results(repo, tmp_path):
     (repo / "results").mkdir()
     assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 0
 
@@ -272,45 +278,10 @@ def test_main_refuses_a_reproduced_result_in_the_committed_tree(repo, tmp_path, 
     assert "e.rule.result.provenance.f" in capsys.readouterr().err
 
 
-def _baseline(repo, adapter, name, version, profile="cesr-v1.0"):
-    path = repo / "adapters" / adapter / f"baseline-{profile}.json"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps({"implementation": {"name": name, "version": version}}))
-
-
-def test_main_refuses_a_submitted_name_that_collides_with_a_ci_baseline(repo, tmp_path, capsys):
-    """Hostile pass on #18: the Pages build adds a reproduced result for every CI baseline, so a
-    submitted name sharing a slug with one would pass the pull request and stop the deploy. The
-    pull request's build now checks submitted results against the baselines' identities."""
-    _baseline(repo, "keripy", "keripy", "2.1.0.dev1")
-    _baseline(repo, "keripy", "keripy", "1.2.14", "keripy-1x-interop")
-    doc = result(report(name="KeriPy"))
-    path = repo / "results" / result_path(doc)
-    path.parent.mkdir(parents=True)
-    path.write_text(json.dumps(doc))
-    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
-    err = capsys.readouterr().err
-    assert S.E_RESULT_SLUG in err and "the CI baseline adapters/keripy/" in err
-    path.write_text(json.dumps(result(report(name="keripy"))))
-    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 0
-
-
-def test_main_refuses_an_unreadable_ci_baseline(repo, tmp_path, capsys):
-    (repo / "results").mkdir()
-    (repo / "adapters" / "x").mkdir(parents=True)
-    (repo / "adapters" / "x" / "baseline-cesr-v1.0.json").write_text("{")
-    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
-    assert "baseline-cesr-v1.0.json" in capsys.readouterr().err
-
-
-@pytest.mark.parametrize("content", [{}, [], {"implementation": {"name": "x"}},
-                                     {"implementation": {"name": "x", "version": 1}}])
-def test_main_refuses_a_ci_baseline_that_names_no_implementation(repo, tmp_path, capsys, content):
-    (repo / "results").mkdir()
-    (repo / "adapters" / "x").mkdir(parents=True)
-    (repo / "adapters" / "x" / "baseline-cesr-v1.0.json").write_text(json.dumps(content))
-    assert S.main(["--repo", str(repo), "--out", str(tmp_path / "out")]) == 4
-    assert "names no implementation" in capsys.readouterr().err
+def test_main_no_longer_reads_results_from_a_build(repo, tmp_path, capsys):
+    """The site publishes committed results only; nothing a build runs reaches it."""
+    assert S.main(["--repo", str(repo), "--reproduced", str(tmp_path)]) == 2
+    assert "e.input.format.f" in capsys.readouterr().err
 
 
 def test_main_usage_error(capsys):
@@ -497,6 +468,9 @@ def test_case_ids_link_to_the_case_files_the_run_used():
     submitted = S.render_results(loaded(result(rep, SUBMITTED)))
     page = submitted["results/keripy/2.1.0.dev1/cesr-v1.0-submitted.md"]
     assert f"[CESR\\-0001]({S.REPO_URL}/blob/main/cases/cesr/CESR-0001.json)" in page
+    ran = S.render_results(loaded(result(rep, MAINTAINER_RUN)))
+    page = ran["results/keripy/2.1.0.dev1/cesr-v1.0-maintainer-run.md"]
+    assert f"[CESR\\-0001]({S.REPO_URL}/blob/{MAINTAINER_RUN['commit']}/cases/cesr/" in page
 
 
 @pytest.mark.parametrize("case_id,linked", [

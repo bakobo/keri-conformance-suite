@@ -47,6 +47,8 @@ SUBMITTED = {"kind": "submitted", "submitter": "Jane Maintainer",
 REPRODUCED = {"kind": "reproduced",
               "run": "https://github.com/bakobo/keri-conformance-suite/actions/runs/123",
               "commit": "0" * 40, "date": "2026-10-09"}
+MAINTAINER_RUN = {"kind": "maintainer-run", "maintainer": "Daniel Hardman",
+                  "commit": "1" * 40, "date": "2026-10-15"}
 
 
 def result(rep=None, provenance=None):

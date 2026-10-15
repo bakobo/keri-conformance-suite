@@ -6,7 +6,7 @@ import json
 import os
 
 import pytest
-from result_docs import REPRODUCED, SUBMITTED, case, record, report, result
+from result_docs import MAINTAINER_RUN, REPRODUCED, SUBMITTED, case, record, report, result
 
 from keri_conformance.errors import RunnerError
 from keri_conformance.jsonfile import JsonFileError
@@ -489,6 +489,9 @@ def test_check_command(tmp_path, capsys):
     put(tmp_path, result())
     assert R.main(["check", str(tmp_path)]) == 0
     assert "1 result" in capsys.readouterr().out
+    put(tmp_path, result(report(name="other"), MAINTAINER_RUN))
+    assert R.main(["check", str(tmp_path)]) == 0
+    assert "2 results" in capsys.readouterr().out
     put(tmp_path, result(provenance=REPRODUCED), "x/1/cesr-v1.0.json")
     assert R.main(["check", str(tmp_path)]) == 4
     assert R.E_RESULT_PROVENANCE in capsys.readouterr().err
@@ -516,8 +519,26 @@ def test_wrap_command_reproduced(tmp_path):
     assert json.loads(written.read_text())["provenance"] == REPRODUCED
 
 
+def test_wrap_command_maintainer_run(tmp_path):
+    source = tmp_path / "report.json"
+    source.write_text(json.dumps(report()))
+    code = R.main(["wrap", str(source), "--into", str(tmp_path / "r"), "--date", "2026-10-15",
+                   "--maintainer-run", "--maintainer", "Daniel Hardman", "--commit", "1" * 40])
+    assert code == 0
+    written = tmp_path / "r" / "keripy" / "2.1.0.dev1" / "cesr-v1.0.json"
+    assert json.loads(written.read_text())["provenance"] == MAINTAINER_RUN
+
+
+def test_a_maintainer_run_names_a_full_suite_commit():
+    doc = result(provenance={**MAINTAINER_RUN, "commit": "abc123"})
+    assert "commit" in R.result_problem(doc)
+    assert R.result_problem(result(provenance=MAINTAINER_RUN)) is None
+
+
 @pytest.mark.parametrize("args", [
     [],
+    ["wrap", "r.json", "--into", "o", "--date", "2026-10-09", "--maintainer-run",
+     "--commit", "1"],
     ["wrap", "r.json", "--into", "o", "--date", "2026-10-09", "--submitted"],
     ["wrap", "r.json", "--into", "o", "--date", "2026-10-09", "--reproduced", "--run", "x"],
     ["wrap", "r.json", "--into", "o", "--date", "2026-10-09"],
