@@ -106,6 +106,7 @@ fn a_rotation_without_c_is_rejected_as_affinidi_rejects_it() {
     ]);
     assert_eq!(readings(&result), vec![seen(), rejected()]);
     assert!(reason(&result, 1).contains("`c`"), "{result}");
+    assert!(!reason(&result, 1).starts_with("routing: "), "{result}");
     assert_eq!(result["key_states"][&pre]["sn"], 0);
 }
 
@@ -329,6 +330,7 @@ fn a_receipt_message_is_never_seen_and_never_on_the_trunk() {
     let icp = Icp::single(&[&k0], &[&k1]).icp();
     let result = process(&[stream(&icp, &[sigs(&icp, &[(&k0, 0)])]), rct(&icp, &[&w1])]);
     assert_eq!(readings(&result), vec![seen(), rejected()]);
+    assert!(reason(&result, 1).starts_with("routing: "), "{result}");
     assert!(reason(&result, 1).contains("receipt"), "{result}");
 }
 
@@ -426,6 +428,7 @@ fn a_delegated_event_without_a_verified_anchor_is_rejected() {
         stream(&dip, std::slice::from_ref(&dip_signed)),
     ]);
     assert_eq!(readings(&bare), vec![seen(), seen(), rejected()]);
+    assert!(reason(&bare, 2).starts_with("routing: "), "{bare}");
     assert!(reason(&bare, 2).contains("seal source"), "{bare}");
 
     // A delegated event delivered before its delegator exists.

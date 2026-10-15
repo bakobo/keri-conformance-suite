@@ -1,12 +1,13 @@
 //! keri.process: deliver each message, in order, to fresh state, and report what Affinidi's `Kever`
 //! decided about it.
 //!
-//! Every accept or reject is Affinidi's: `Kever::new`, `Kever::new_delegated`,
-//! `Kever::verify_update`, `Kever::verify_update_delegated` and
-//! `Kever::verify_witness_receipts_static` do all the checking. What this module adds is the routing
+//! Every acceptance is Affinidi's: `Kever::new`, `Kever::new_delegated`, `Kever::verify_update`,
+//! `Kever::verify_update_delegated` and `Kever::verify_witness_receipts_static` do all the checking,
+//! and their refusals are Affinidi's verdicts. What this module adds is the routing
 //! Affinidi leaves to its caller, declared as `keri.routing` in hello's `composes`: it picks which of
 //! those calls a message needs from its ilk and prefix, holds one `Kever` per prefix, records the
-//! bodies Affinidi accepted, and answers Affinidi's `DelegatorAnchors` lookup from that record only.
+//! bodies Affinidi accepted, and answers Affinidi's `DelegatorAnchors` lookup from that record only. A
+//! message routing cannot hand to a Kever is reported rejected with a reason marked `routing:`.
 //! README.md, "keri.process", says where each reported value comes from.
 
 use std::collections::BTreeMap;
@@ -75,29 +76,39 @@ impl Validator {
                 return (
                     None,
                     Some(format!(
-                        "the stream holds {} messages, not exactly one",
+                        "routing: the stream holds {} messages, not exactly one",
                         messages.len()
                     )),
                 );
             }
-            Err(e) => return (None, Some(format!("Affinidi cannot parse it: {e}"))),
+            Err(e) => {
+                return (
+                    None,
+                    Some(format!("routing: Affinidi cannot parse it: {e}")),
+                );
+            }
         };
         let ilk = match parsed.serder.ilk() {
             Ok(ilk) => ilk,
-            Err(e) => return (None, Some(format!("Affinidi cannot read its ilk: {e}"))),
+            Err(e) => {
+                return (
+                    None,
+                    Some(format!("routing: Affinidi cannot read its ilk: {e}")),
+                );
+            }
         };
         if ilk == "rct" {
             return (
                 None,
                 Some(
-                    "Affinidi's validator has no processing for a receipt message: Kever counts \
-                     only receipt couples attached to the event they receipt"
+                    "routing: Affinidi's validator has no processing for a receipt message; \
+                     Kever counts only receipt couples attached to the event they receipt"
                         .into(),
                 ),
             );
         }
         if !matches!(ilk.as_str(), "icp" | "dip" | "rot" | "ixn" | "drt") {
-            return (None, Some(format!("{ilk} is not a key event")));
+            return (None, Some(format!("routing: {ilk} is not a key event")));
         }
         // A body Affinidi already accepted is refused again by Kever (its sequence number is no
         // longer next), but it is the same event, and reads as seen by its body.
@@ -107,7 +118,7 @@ impl Validator {
     }
 
     /// Hand one key event to the Kever call its ilk needs, and record it if Affinidi accepts it.
-    fn validate(&mut self, ilk: &str, msg: &ParsedMessage) -> Result<(), CoreError> {
+    fn validate(&mut self, ilk: &str, msg: &ParsedMessage) -> Result<(), Refusal> {
         let serder = &msg.serder;
         let prefix = serder.prefix()?;
         let sn = serder.sn()?;
@@ -117,7 +128,7 @@ impl Validator {
         match ilk {
             "icp" | "dip" => {
                 if self.kevers.contains_key(&prefix) {
-                    return Err(CoreError::Validation(format!(
+                    return Err(routing(format!(
                         "an inception of {prefix} has already been accepted"
                     )));
                 }
@@ -131,9 +142,10 @@ impl Validator {
                 self.kevers.insert(prefix.clone(), kever);
             }
             _ => {
-                let kever = self.kevers.get(&prefix).ok_or_else(|| {
-                    CoreError::Validation(format!("no key state is held for {prefix}"))
-                })?;
+                let kever = self
+                    .kevers
+                    .get(&prefix)
+                    .ok_or_else(|| routing(format!("no key state is held for {prefix}")))?;
                 let state = if ilk == "drt" {
                     kever.verify_update_delegated(serder, &sigs, &proof(msg)?, self)?
                 } else {
@@ -165,6 +177,32 @@ impl Validator {
         });
         Ok(())
     }
+}
+
+/// Why an event was not accepted: Affinidi's verdict, or a refusal the adapter's routing made
+/// without asking a Kever, which its reason marks so that a reader can tell the two apart.
+enum Refusal {
+    Affinidi(CoreError),
+    Routing(String),
+}
+
+impl From<CoreError> for Refusal {
+    fn from(e: CoreError) -> Self {
+        Refusal::Affinidi(e)
+    }
+}
+
+impl std::fmt::Display for Refusal {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Refusal::Affinidi(e) => write!(f, "{e}"),
+            Refusal::Routing(why) => write!(f, "routing: {why}"),
+        }
+    }
+}
+
+fn routing(why: String) -> Refusal {
+    Refusal::Routing(why)
 }
 
 /// Every controller signature attached, across all `-A` groups, as Affinidi's direct mode gathers
@@ -211,15 +249,15 @@ fn verfers(sad: &Value) -> Result<Vec<Verfer>, CoreError> {
 }
 
 /// The delegation proof from the first seal source couple, as Affinidi's did:webs verifier reads it.
-fn proof(msg: &ParsedMessage) -> Result<DelegationProof, CoreError> {
+fn proof(msg: &ParsedMessage) -> Result<DelegationProof, Refusal> {
     let (sn, said) = msg.seal_source_couples().first().ok_or_else(|| {
-        CoreError::Validation(
+        routing(
             "the delegated event carries no seal source couple, and Affinidi's Kever needs one \
              to find its delegator's anchoring event"
                 .into(),
         )
     })?;
-    DelegationProof::from_seal_source_couple(sn, said)
+    Ok(DelegationProof::from_seal_source_couple(sn, said)?)
 }
 
 /// A threshold in the protocol's forms: a numeric one in hex, as KERI writes it, from the number
