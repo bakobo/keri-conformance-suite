@@ -55,6 +55,7 @@ Declared: `cesr.genus-1.00`, `cesr.serialization.json`, `keri.version-1.x`, `cry
 - `kel.nontransferable`: keri-go builds non-transferable identifiers; their validation rules are not exercised by the adapter's tests, so they are not claimed.
 - `kel.recovery`, `keri.escrow`, `keri.duplicity`: keri-go's `Watcher` detects duplicity, but nothing in keri-go escrows or supersedes, and the adapter composes none of them.
 - `crypto.ed448`, `crypto.secp256k1`, `crypto.secp256r1`: keri-go is Ed25519 only.
+- `crypto.blake2b-256`, `crypto.sha2-256`: keri-go computes and checks Blake3-256 digests only (`Blake3SAID`, code `E`).
 
 Every case in `cesr-v1.0`, `cesr-strict`, `keri-v1.0.1`, `keri-escrow` and `acdc-v1.0` requires `cesr.genus-2.00` and, except the encode cases, `keri.version-2.x`, so the runner sends none of them and each profile's verdict is `no-evidence`. In `keripy-1x-interop`, CESR-0045 to CESR-0048 need `cesr.item-extents` (CESR-0048 also `cesr.genus-2.00`), so those four are not sent. The must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, are sent and all five pass: keri-go refuses each stream, as keripy 1.2.14 does. That profile's verdict is `interoperable`, scoped to the five cases sent.
 
