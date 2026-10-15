@@ -53,6 +53,7 @@ THRESHOLD_REASONS = ("signing-threshold", "witness-threshold")
 VERSION_STEPS = (3, 5)
 CANONICAL_HEX = re.compile(r"0|[1-9a-f][0-9a-f]*")  # line 323: hex with no leading zeros
 BASIC_CODES = ("D", "B")  # transferable and non-transferable Ed25519 prefixes
+BASIC_PREFIX = re.compile(r"[DB][A-Za-z0-9_-]{43}")  # one of them, whole: code and 43 more
 MAX_SN = 2 ** 128 - 1  # line 323
 # The configuration-traits table, lines 369-373. keripy ignores them in a rotation. ~4fsy
 INCEPTION_ONLY_TRAITS = ("EO", "DND", "DID")
@@ -274,6 +275,9 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
                                 f"prefixes (line 353), is not modelled.")
         for prefix in added:
             _check_witness_code_modelled(digests.code_of(prefix))
+            if not BASIC_PREFIX.fullmatch(prefix):
+                raise ScenarioError(f"A witness prefix of {prefix!r}, which is not a "
+                                    f"44-character qualified Ed25519 key, is not modelled.")
         return "trait-inception-only"
     if not p.body["k"]:
         return "empty-keys"
@@ -281,7 +285,7 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     lists = [p.body["b"]] if p.ilk in INCEPTIONS else [p.body["br"], p.body["ba"]]
     if any(len(set(backers)) != len(backers) for backers in lists):
         return "backer-duplicate"
-    for prefix in lists[-1]:
+    for prefix in lists[-1]:  # read by code only, not checked whole as the trait branch does ~3ebu
         code = digests.code_of(prefix)
         _check_witness_code_modelled(code)
         if code == "D":
