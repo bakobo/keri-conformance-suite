@@ -133,6 +133,15 @@ def test_more_messages_than_the_adapter_replays_is_refused():
     assert process.E_TOO_MANY in response["error"]["message"]
 
 
+def test_more_bytes_than_the_adapter_replays_is_refused(monkeypatch):
+    monkeypatch.setattr(process, "MAX_MESSAGE_BYTES", 1000)
+    response = json.loads(protocol.handle_line(json.dumps(
+        request(messages=["00" * 600, "00" * 401])).encode()))
+    assert response["error"]["kind"] == "unsupported"
+    assert process.E_TOO_LARGE in response["error"]["message"]
+    assert process.process(request(messages=["00" * 600, "00" * 400]))["dispositions"]
+
+
 def test_an_identifier_heti_cannot_parse_is_rejected():
     stream = bytes.fromhex(KELS["in-order"][0])
     sad = process.verify.split(stream)[0]

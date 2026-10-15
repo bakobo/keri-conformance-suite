@@ -38,6 +38,10 @@ E_TOO_MANY = "e.feature.unsupported.message-count.f"
 # The most messages the adapter replays. Every message costs two replays of up to all of them, so
 # the work grows with the square of this; the cases deliver at most a handful.
 MAX_MESSAGES = 64
+E_TOO_LARGE = "e.feature.unsupported.message-bytes.f"
+# The most bytes of messages the adapter replays, all messages together, for the same reason: a
+# replay copies every stream it is given. Case messages are a few hundred bytes each.
+MAX_MESSAGE_BYTES = 1024 * 1024
 HEX = re.compile(r"(?:[0-9a-f]{2})*")
 KEY_EVENTS = ("icp", "rot", "ixn", "dip", "drt")
 DUPLICITY = "e.state.conflict.duplicity"
@@ -73,6 +77,9 @@ def _messages(request) -> list[bytes]:
     if len(out) > MAX_MESSAGES:
         raise Unsupported(f"{E_TOO_MANY}: This adapter replays at most {MAX_MESSAGES} messages "
                           f"in one request, and this one has {len(out)}.")
+    if (size := sum(map(len, out))) > MAX_MESSAGE_BYTES:
+        raise Unsupported(f"{E_TOO_LARGE}: This adapter replays at most {MAX_MESSAGE_BYTES} "
+                          f"bytes of messages in one request, and this one has {size}.")
     return out
 
 
