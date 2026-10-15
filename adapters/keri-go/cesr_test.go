@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"os"
@@ -150,6 +151,17 @@ func TestABodyKeriGoCannotReadIsRejected(t *testing.T) {
 	broken := strings.Replace(string(raw), `_",`, `_"!`, 1)
 	res := parseResult(t, hex.EncodeToString([]byte(broken)))
 	if res["reject"].(map[string]any)["class"] != classEvent {
+		t.Fatalf("%v", res)
+	}
+}
+
+// keri-go's ParseEvent reads KERI events: an ACDC's s is a schema SAID, which it would refuse as a
+// sequence number. An ACDC body, here keri-go's own issued-into-registry vector, is framed and its
+// version read, and is not given to ParseEvent.
+func TestAnACDCBodyIsNotReadAsAKeyEvent(t *testing.T) {
+	acdc, _ := base64.StdEncoding.DecodeString("eyJ2IjoiQUNEQzEwSlNPTjAwMDE5NF8iLCJkIjoiRUNnSVVVc1dhWjhIU2o1aWV6ODc2OFBFcEcxeE4wYmNaRjdOOHdWWWw1UzMiLCJpIjoiREdMRHpoZzdWTzFVRUZPczRBdi1nVVU3aGNSYmR2eU9fNW53N0liS0JyUXQiLCJyaSI6IkVOclNGcnhPTXI1R1VfQldVRWFKdEx0ZDdsLTVlZWJHTy0tUVgzX283bG9vIiwicyI6IkVDSzB4Wmxram1Qb092ME5HR0Z5Mi1fal9lOXpjMHl4YXlISDBwTmVveDh3IiwiYSI6eyJkIjoiRUVGRjlqczdrT09zSXlBY2tTMHpZVldiSGJpMmVHbXQtMFdfdWdxVkFxM2ciLCJpIjoiREdwbzJiczdncTh3TjNYenBYUkR1RzlSYVkzbXhlUTlVa0ttZnI3YUwwZy0iLCJkdCI6IjIwMjQtMDEtMDFUMDA6MDA6MDAuMDAwMDAwKzAwOjAwIiwibmFtZSI6IkFsaWNlIiwic2NvcmUiOjQyfX0=")
+	res := parseResult(t, hex.EncodeToString(acdc))
+	if int(res["accepted"].(map[string]any)["consumed"].(float64)) != len(acdc) {
 		t.Fatalf("%v", res)
 	}
 }

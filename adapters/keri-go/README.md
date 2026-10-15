@@ -38,7 +38,7 @@ keri-go's README says it reads and builds both CESR 1.0 and 2.0. Run against the
 - **It has no genus/version codes and only the 1.00 count codes.** Its stream reader knows `-A`, `-B`, `-C`, `-D` and `-V`, counted as keripy 1.x counts them, and refuses any other code. A stream that opens with `-_AAACAA` is framed with those eight characters inside the body, so `DetectVersion` finds the version string at the wrong offset; and a 2.00 group such as `-K` is read as an unknown 1.00 group and refused.
 - **It reads JSON bodies only**, as its README says.
 - **Its stream reader skips whitespace before a message but not after one's attachments.** A newline between two messages is refused, although a comment in `kel_stream.go` says pretty-printed streams are tolerated.
-- **Its stream reader does not read bodies.** `ParseKELStream` frames a body by matching braces, so a body that is not valid JSON passes it; `ParseEvent`, which reads the fields, refuses it.
+- **Its stream reader does not read bodies, and its event reader checks only the values it uses.** `ParseKELStream` frames a body by matching braces, so a body that is not valid JSON passes it. `ParseEvent` refuses a malformed field list, but skips the value of a field it does not read without checking that it is JSON, so `"c":xx` in an inception passes both.
 - **Its stream reader copies the remaining stream once per message** (`strings.TrimLeft(string(rest), …)`), so a stream of many short messages costs time quadratic in its length. A 64 MiB request of short messages can run past the runner's time limit, which the protocol counts as a failure of the case, not a gap.
 - **It does not refuse a witness threshold it cannot read.** `ParseEvent` leaves an unreadable `bt` as absent, and `ValidateSignedKEL` accepts the event; the adapter refuses it, as below.
 
@@ -64,7 +64,7 @@ CESR-0054's stream has a receipt couple whose prefix carries an unassigned code.
 
 ### `cesr.parse`
 
-The adapter hands the stream to keri-go's `ParseKELStream`, which splits it into messages, framing each body by matching braces and measuring each attachment group from its count code, then calls `DetectVersion` and `ParseEvent` on each message. Any of them refusing is a rejection whose `class` names it, `ParseKELStream`, `DetectVersion` or `ParseEvent`; keri-go's reason goes to standard error. Otherwise the answer is `{"accepted": {"consumed": n}}` with `n` the length of the stream, because `ParseKELStream` either reads to the end of the stream or refuses it. The adapter never parses CESR itself.
+The adapter hands the stream to keri-go's `ParseKELStream`, which splits it into messages, framing each body by matching braces and measuring each attachment group from its count code, then calls `DetectVersion` on each message, and `ParseEvent` on each KERI message (an ACDC body is framed and its version read, but keri-go has no stream reader for its fields, and `ParseEvent` would refuse its `s` as a sequence number). Any of them refusing is a rejection whose `class` names it, `ParseKELStream`, `DetectVersion` or `ParseEvent`; keri-go's reason goes to standard error. Otherwise the answer is `{"accepted": {"consumed": n}}` with `n` the length of the stream, because `ParseKELStream` either reads to the end of the stream or refuses it. The adapter never parses CESR itself.
 
 ### `cesr.encode`
 
