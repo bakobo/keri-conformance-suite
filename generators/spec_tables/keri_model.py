@@ -4,8 +4,10 @@ The generator does not take any implementation's word for a disposition. It runs
 the exact bytes a case delivers, and the model decides each message's readings by the first step
 of the procedure that applies:
 
-1. intrinsic failure (the stream does not parse, the SAID does not match, an inception's ``d``
-   and ``i`` differ, an inception's ``s`` is not 0);
+1. intrinsic failure (the stream does not parse, the type is not a key event's, the fields are
+   not the type's, the SAID does not match, an inception's ``d`` and ``i`` differ, a sequence
+   number is out of range, a key list is empty, a backer list repeats an AID or names a
+   transferable witness, an inception's backer threshold exceeds its backer list);
 2. no verifiable controller signature (none attached, or the key state needed to verify is held
    and none verifies);
 3. forbidden by state the validator holds (establishment-only, do-not-delegate, any event after a
@@ -32,6 +34,7 @@ a scenario that reaches it is refused rather than guessed at.
 """
 
 import json
+import re
 from dataclasses import dataclass, field
 from fractions import Fraction
 from functools import cache
@@ -47,7 +50,9 @@ THRESHOLD_REASONS = ("signing-threshold", "witness-threshold")
 # Steps 3 and 5 judge an event version whose SAID step 1 has verified, so their refusal covers
 # every copy of it. A step-1 failure names no version: its claimed SAID is the thing that failed.
 VERSION_STEPS = (3, 5)
+CANONICAL_HEX = re.compile(r"0|[1-9a-f][0-9a-f]*")  # line 323: hex with no leading zeros
 BASIC_CODES = ("D", "B")  # transferable and non-transferable Ed25519 prefixes
+MAX_SN = 2 ** 128 - 1  # line 323
 
 
 @cache
@@ -158,6 +163,14 @@ def parse(t: Tables, stream: bytes) -> Parsed:
     return p
 
 
+def _canonical_hex(value) -> bool:
+    return isinstance(value, str) and CANONICAL_HEX.fullmatch(value) is not None
+
+
+def _names(receipt: Parsed, ev: Parsed) -> bool:
+    return (receipt.said, receipt.pre, receipt.sn) == (ev.said, ev.pre, ev.sn)
+
+
 def _code(t: Tables, text: str) -> str:
     """The derivation code of a qualified primitive, by the master table's selector rules."""
     return text[:2] if text[:1].isdigit() else text[:1]
@@ -172,8 +185,13 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
     if p.error:
         return p.error
     ilk = p.ilk
+    if "t" in p.body and ilk not in FIELDS:
+        return "ilk"
     if ilk not in FIELDS or tuple(p.body) != FIELDS[ilk]:
         return "fields"
+    if not _canonical_hex(p.body["s"]):
+        raise ScenarioError(f"A sequence number of {p.body['s']!r}, which is not hex without "
+                            f"leading zeros (line 323), is not modelled.")
     if sized(dict(p.body)) != p.raw:
         # A body that is not its own compact serialization (whitespace, escapes, a repeated
         # label) may still carry a correct SAID; whether it is valid is K-I4, so no case grades it.
@@ -203,6 +221,35 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
         return "inception-sn"
     if ilk not in INCEPTIONS and p.sn == 0:
         return "sn"
+    if p.sn > MAX_SN:
+        return "sn-max"
+    if ilk in ESTABLISHMENT:
+        return _establishment_values(t, p)
+    return None
+
+
+def _establishment_values(t: Tables, p: Parsed) -> str | None:
+    """The value rules of an establishment event's own body: a key list that is not empty (line
+    335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), and
+    an inception's backer threshold no larger than its backer list (line 345). A rotation's
+    threshold is checked against the effective list, which depends on state, at step 4."""
+    if not p.body["k"]:
+        return "empty-keys"
+    if not _canonical_hex(p.body["bt"]):
+        raise ScenarioError(f"A backer threshold of {p.body['bt']!r}, which is not hex without "
+                            f"leading zeros (line 345), is not modelled.")
+    lists = [p.body["b"]] if p.ilk in INCEPTIONS else [p.body["br"], p.body["ba"]]
+    if any(len(set(backers)) != len(backers) for backers in lists):
+        return "backer-duplicate"
+    for prefix in lists[-1]:
+        code = _code(t, prefix)
+        if code == "D":
+            return "witness-transferable"
+        if code != "B":
+            raise ScenarioError(f"A witness prefix with code {code!r} is not modelled.")
+    # A rotation's bt above its effective list waits at step 4 as a shortfall instead. ~5y5t
+    if p.ilk in INCEPTIONS and int(p.body["bt"], 16) > len(p.body["b"]):
+        return "backer-threshold"
     return None
 
 
@@ -259,6 +306,7 @@ class Model:
         self.state: list[str] = []  # per message: seen, kept, dropped
         self.outcome: list[Outcome] = []
         self.initial: list[Outcome] = []
+        self.early: set[int] = set()  # receipts kept before the validator held their event
 
     # -- helpers -------------------------------------------------------------------------------
 
@@ -292,9 +340,11 @@ class Model:
                 raise ScenarioError("A receipt couple from a witness is not modelled (G21).")
         return good
 
-    def _receipts_for(self, said: str) -> list[int]:
+    def _receipts_for(self, ev: Parsed) -> list[int]:
+        """Receipts that name ``ev`` by all of its identifier, sequence number and SAID: a
+        receipt whose fields disagree with each other names no event."""
         return [i for i, p in enumerate(self.parsed)
-                if p.ilk == "rct" and p.said == said and self.state[i] in ("seen", "kept")]
+                if p.ilk == "rct" and _names(p, ev) and self.state[i] in ("seen", "kept")]
 
     def _delegator(self, p: Parsed, kel: Kel | None) -> str | None:
         """The delegator whose seal an event needs. A delegation seals establishment events
@@ -432,7 +482,7 @@ class Model:
                     raise ScenarioError("Witness signatures on a rotation that changes the "
                                         "witness at their index are not modelled (G12).")
         bt = p.body["bt"] if p.ilk in ESTABLISHMENT else kel.est_before(p.sn).body["bt"]
-        good = self._witness_sigs(p, wits, pool + self._receipts_for(p.said))
+        good = self._witness_sigs(p, wits, pool + self._receipts_for(p))
         if len(good) < int(bt, 16):
             return "witness-threshold"
         delegator = self._delegator(p, kel)
@@ -458,21 +508,37 @@ class Model:
 
     def _receipt(self, p: Parsed) -> Outcome:
         kel = self.kels.get(p.pre)
-        if kel and p.said in kel.seen:
+        held = kel.seen.get(p.said) if kel else None
+        if held is not None:
+            # Line 1782: a validator must first verify the receipt's witness signatures, so one
+            # that names its event inconsistently, or none of whose signatures verify against
+            # that event, attaches nothing.
+            if held.sn != p.sn or not (
+                    any(index < len(held.wits)
+                        and verify(qb64_raw(held.wits[index]), held.raw, raw)
+                        for index, raw in p.wigs)
+                    or any(verify(qb64_raw(prefix), held.raw, raw) for prefix, raw in p.couples)):
+                return Outcome("dropped", 2, "receipt-unverified")
             return Outcome("seen", 6, "receipt")
-        if any(q.said == p.said and q.ilk != "rct" and self.state[i] == "kept"
+        if any(q.ilk != "rct" and _names(p, q) and self.state[i] == "kept"
                for i, q in enumerate(self.parsed)):
             return Outcome("kept", 4, "receipt")
         if self.policy == "all":
-            raise ScenarioError("A receipt for an event the validator does not hold is not "
-                                "modelled (G4).")
+            # Kept, as line 1286 permits ("can escrow"). It changes nothing unless its event
+            # arrives later, and deliver() refuses that case.
+            return Outcome("kept", 4, "receipt")
         return Outcome("dropped", 4, "receipt")
 
     # -- delivery and quiescence ---------------------------------------------------------------
 
     def deliver(self, stream: bytes) -> None:
         index = len(self.parsed)
-        self.parsed.append(parse(self.t, stream))
+        p = parse(self.t, stream)
+        if p.ilk != "rct" and any(self.parsed[i].said == p.said for i in self.early
+                                  if self.state[i] == "kept"):
+            raise ScenarioError("A receipt for an event the validator does not hold is not "
+                                "modelled (G4).")
+        self.parsed.append(p)
         self.state.append("kept")  # provisionally, so that its own signatures pool
         self.outcome.append(Outcome("kept", 0, "delivered"))
         self._settle(index)
@@ -482,6 +548,10 @@ class Model:
     def _settle(self, index: int) -> bool:
         before = (self.state[index], self.outcome[index].tag)
         out = self.evaluate(index)
+        p = self.parsed[index]
+        if (p.ilk == "rct" and out.state == "kept"
+                and not any(q.said == p.said and q.ilk != "rct" for q in self.parsed)):
+            self.early.add(index)
         self.outcome[index] = out
         self.state[index] = out.state
         if out.state == "dropped" and out.step in VERSION_STEPS:

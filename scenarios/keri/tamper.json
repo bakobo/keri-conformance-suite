@@ -1,0 +1,955 @@
+{
+  "profile": "keri-v1.0.1",
+  "cases": [
+    {
+      "id": "KERI-0100",
+      "key": "KS-BT01",
+      "status": "draft",
+      "title": "Interaction carrying the inception's signature",
+      "description": "An accepted inception, then an interaction whose only controller signature is the current key's valid signature over the inception's bytes, not the interaction's. No controller signature on the interaction verifies, so line 1266 requires it dropped.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            {
+              "key": "a0",
+              "over": "icp"
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0101",
+      "key": "KS-BT02",
+      "status": "draft",
+      "title": "Interaction carrying the previous interaction's signature",
+      "description": "An accepted inception and interaction, then a second interaction whose only controller signature is the current key's valid signature over the first interaction. The signer and key state are right but the bytes are not, so no controller signature on it verifies and line 1266 requires it dropped.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn2",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn2",
+          "sigs": [
+            {
+              "key": "a0",
+              "over": "ixn1"
+            }
+          ],
+          "expect": [
+            "2/unverified",
+            "2/unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0102",
+      "key": "KS-BT03",
+      "status": "draft",
+      "title": "Witness signature over another event",
+      "description": "A witnessed inception with witness threshold 1, accepted with its witness's signature, then an interaction signed by the controller whose only witness signature is the witness's valid signature over the inception. The interaction's witness threshold is not met, so a validator must not accept it (line 1264).",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1"
+          ],
+          "bt": "1"
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            {
+              "key": "w1",
+              "over": "icp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0103",
+      "key": "KS-BT04",
+      "status": "draft",
+      "title": "Receipt whose SAID is not the event its signatures cover",
+      "description": "A witnessed inception with witness threshold 1, accepted, then an interaction signed by the controller with no witness signature, then a receipt naming the interaction's identifier and sequence number but a different SAID, carrying the witness's valid signature over the interaction. A receipt's signatures are on the event its fields name (line 882), which the validator does not hold, so they cannot be attached to the interaction and its witness threshold stays unmet.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1"
+          ],
+          "bt": "1"
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ]
+        },
+        {
+          "receipt": "ixn1",
+          "wrong_said": "not-ixn1",
+          "wigs": [
+            "w1"
+          ],
+          "expect": [
+            "4/receipt",
+            "4/receipt"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0104",
+      "key": "KS-BT05",
+      "status": "draft",
+      "title": "Receipt naming an earlier event, with signatures over a later one",
+      "description": "A witnessed inception with witness threshold 1, accepted, then an interaction signed by the controller with no witness signature, then a receipt naming the inception but carrying the witness's valid signature over the interaction. The signature verifies only against the interaction, which the receipt does not name, so the interaction's witness threshold stays unmet.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1"
+          ],
+          "bt": "1"
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ]
+        },
+        {
+          "receipt": "icp",
+          "wigs": [
+            {
+              "key": "w1",
+              "over": "ixn1"
+            }
+          ],
+          "expect": [
+            "2/receipt-unverified",
+            "2/receipt-unverified"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0105",
+      "key": "KS-BT06",
+      "status": "draft",
+      "title": "Inception whose witness threshold exceeds its witness list",
+      "description": "An inception naming one witness with witness threshold 2, carrying the controller's signature and the witness's. Line 345 makes the threshold the number of backers in the list that must support the event for it to be valid, and one witness cannot be two, so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/backer-threshold",
+            "1/backer-threshold"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0106",
+      "key": "KS-BT07",
+      "status": "draft",
+      "title": "Inception listing one witness twice",
+      "description": "An inception whose witness list names the same witness twice, with witness threshold 2, carrying the witness's signature at both indexes. Line 353 forbids an AID appearing more than once in a backer list; a validator that accepted it would let one witness meet a threshold of two.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w1"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/backer-duplicate",
+            "1/backer-duplicate"
+          ],
+          "wigs": [
+            {
+              "key": "w1",
+              "index": 0
+            },
+            {
+              "key": "w1",
+              "index": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0107",
+      "key": "KS-BT08",
+      "status": "draft",
+      "title": "Rotation adding one witness twice",
+      "description": "An accepted inception with no witnesses, then a rotation whose backer add list names the same witness twice, with witness threshold 1, signed by the exposed next key and the witness. Line 353 forbids an AID appearing more than once in any backer list, so a validator should not accept the rotation, and the key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "ba": [
+            "w1",
+            "w1"
+          ],
+          "bt": "1"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "1/backer-duplicate",
+            "1/backer-duplicate"
+          ],
+          "wigs": [
+            {
+              "key": "w1",
+              "index": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0108",
+      "key": "KS-BT09",
+      "status": "disputed",
+      "title": "Inception designating a transferable witness",
+      "description": "An inception whose only witness is given as a transferable Ed25519 prefix (code D), with witness threshold 1, carrying the controller's signature and the witness's. Lines 353 and 1252 require witness AIDs to be non-transferable, so a validator should not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1"
+          ],
+          "bt": "1",
+          "tamper": {
+            "transferable_wits": [
+              "w1"
+            ]
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/witness-transferable",
+            "1/witness-transferable"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ],
+      "dispute": {
+        "clauses": [
+          "witness-nontransferable"
+        ],
+        "summary": "keripy main accepts the inception and verifies the witness signature with the key the transferable prefix carries. It checks that a witness prefix is non-transferable only when it builds a receipt message, not when it validates an event's witness list.",
+        "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-15; not yet raised with keripy or the KERI specification working group."
+      }
+    },
+    {
+      "id": "KERI-0109",
+      "key": "KS-BT10",
+      "status": "draft",
+      "title": "Inception with an extra top-level field",
+      "description": "A signed inception with one top-level field beyond the inception's field set, its SAID computed over the body as sent. Line 556 allows no other top-level fields, and verifying structure includes the appearance of fields (line 1737), so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "tamper": {
+            "fields": {
+              "add": {
+                "x": "1"
+              }
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/fields",
+            "1/fields"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0110",
+      "key": "KS-BT11",
+      "status": "draft",
+      "title": "Interaction missing a required field",
+      "description": "An accepted inception, then a signed interaction without its anchors field a, its SAID computed over the body as sent. Line 627 requires every interaction field, so a validator must not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn",
+          "tamper": {
+            "fields": {
+              "remove": [
+                "a"
+              ]
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/fields",
+            "1/fields"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0111",
+      "key": "KS-BT12",
+      "status": "draft",
+      "title": "Rotation with two fields out of order",
+      "description": "An accepted inception, then a rotation by the exposed next key whose key list k comes before its signing threshold kt, its SAID computed over the body as sent. Line 665 fixes the rotation's field order, so a validator must not accept it, and the key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "tamper": {
+            "fields": {
+              "swap": [
+                "kt",
+                "k"
+              ]
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "1/fields",
+            "1/fields"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0112",
+      "key": "KS-BT13",
+      "status": "draft",
+      "title": "Inception with a nonzero sequence number",
+      "description": "A signed inception whose sequence number is 1. Line 323 says an inception's sequence number must be 0, so a validator should not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "s": 1
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/inception-sn",
+            "1/inception-sn"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0113",
+      "key": "KS-BT14",
+      "status": "draft",
+      "title": "Interaction whose sequence number exceeds the maximum",
+      "description": "An accepted inception, then a signed interaction whose prior is the inception and whose sequence number is 2^128 + 1, one more than the maximum plus one (line 323). A parser that keeps only the low 128 bits reads it as 1, the next sequence number, so a validator should refuse it for its range rather than accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn",
+          "s": 340282366920938463463374607431768211457
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/sn-max",
+            "1/sn-max"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0114",
+      "key": "KS-BT15",
+      "status": "draft",
+      "title": "Message with an unknown type",
+      "description": "An accepted inception, then a signed message with an interaction's fields and values whose type is ixx, which is not a key event type. Line 539 lists the key event types, so a validator should not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn",
+          "tamper": {
+            "fields": {
+              "set": {
+                "t": "ixx"
+              }
+            }
+          }
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "1/ilk",
+            "1/ilk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0115",
+      "key": "KS-BT16",
+      "status": "draft",
+      "title": "Inception with an empty key list",
+      "description": "A signed inception whose key list is empty, with signing threshold 1 and a signature at index 0. Line 335 says the key list must not be empty, so a validator should not accept it.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [],
+          "next": [
+            "a1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            {
+              "key": "a0",
+              "index": 0
+            }
+          ],
+          "expect": [
+            "1/empty-keys",
+            "1/empty-keys"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0116",
+      "key": "KS-BT17",
+      "status": "draft",
+      "title": "Rotation with an empty key list",
+      "description": "An accepted inception, then a rotation whose key list is empty, carrying the exposed next key's signature at index 0. Line 335 says the key list must not be empty, so a validator should not accept it, and the key state stays the inception's.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [],
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            {
+              "key": "a1",
+              "index": 0
+            }
+          ],
+          "expect": [
+            "1/empty-keys",
+            "1/empty-keys"
+          ]
+        }
+      ]
+    }
+  ],
+  "id_gaps": [
+    {
+      "number": 84,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 85,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 86,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 87,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 88,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 89,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 90,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 91,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 92,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 93,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 94,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 95,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 96,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 97,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 98,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    },
+    {
+      "number": 99,
+      "reason": "Allocated to cases-batch-a; not in this tree."
+    }
+  ]
+}

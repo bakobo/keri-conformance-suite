@@ -1,0 +1,76 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "This is the number of backers in the backer list that MUST support a key event for it to be valid.",
+        "section": "Backer threshold field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#backer-threshold-field"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (backer-threshold).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "This is the number of backers in the backer list that MUST support a key event for it to be valid.",
+        "section": "Backer threshold field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#backer-threshold-field"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (backer-threshold).",
+      "phase": "final"
+    }
+  ],
+  "description": "An inception naming one witness with witness threshold 2, carrying the controller's signature and the witness's. Line 345 makes the threshold the number of backers in the list that must support the event for it to be valid, and one witness cannot be two, so a validator must not accept it.",
+  "id": "KERI-0105",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146622e222c2274223a22696370222c2264223a22454a705f5267326b58754f33734b4739504d6448456b6b4363726d54783979717231662d456a4b61477a3178222c2269223a22454a705f5267326b58754f33734b4739504d6448456b6b4363726d54783979717231662d456a4b61477a3178222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2232222c2262223a5b2242436f5763736649665559446d53352d36384d6131714b4e6e4770665650324979763569615035792d654975225d2c2263223a5b5d2c2261223a5b5d7d2d4341752d4b415741414463484a42766b37743237576737763351743046415a664f5351366a4e3258624a525743347575643359466b46316c796f44505f797135466933545151337a545255704a35366173752d754c6e4437344547624834442d4c4157414142334879314b55745a6c7749376c6a305a564e45355f53416d784b4e6e6152723155664f553972396e72586545554b6f53385f2d52304165624d576371747032496d6f6965574c3279426e5036506b76356d54426746"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/tamper.json#KS-BT06"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.witness",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Inception whose witness threshold exceeds its witness list"
+}

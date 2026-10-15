@@ -46,6 +46,7 @@ not graded against the reading this module makes.
 """
 
 import argparse
+import hashlib
 import json
 import pathlib
 import signal
@@ -58,6 +59,7 @@ from keri.app import habbing
 from keri.core import parsing, serdering
 from keri.core.coring import Verfer
 from keri.core.eventing import Kevery
+from keri.core.signing import Signer
 from keri.db import basing
 from keri.kering import Vrsn_2_0
 from keri.peer import exchanging
@@ -113,8 +115,9 @@ def check_bytes(case) -> list[str]:
     same field values, and whether each signature verifies."""
     notes = []
     spec = scenario_of(case)
-    # Only a tampered SAID or prefix makes a body that keripy cannot rebuild or parse.
-    tampered = {e["name"] for e in spec["events"] if {"d", "i"} & set(e.get("tamper", {}))}
+    # A tampered SAID, prefix, field set or type makes a body keripy cannot rebuild or parse. A
+    # field tamper that only sets values (other than the type) may leave a valid body.
+    tampered = {e["name"] for e in spec["events"] if _breaks_body(e.get("tamper", {}))}
     events = {e["name"]: e for e in spec["events"]}
     for i, (m, d) in enumerate(zip(case["input"]["messages"], spec["messages"], strict=True)):
         stream = bytes.fromhex(m["stream"])
@@ -141,7 +144,18 @@ def check_bytes(case) -> list[str]:
         ev = events[name]
         signed = raw if "event" in d else _event_raw(case, spec, name)
         keys = body.get("k") if "event" in d and body["t"] != "ixn" else None
-        forged = [isinstance(s, dict) and s.get("forged") for s in d.get("sigs", [])]
+        # A signature is bad for this body if the scenario forged it, made it over another event's
+        # bytes, or made it with a key outside the event's own key list (an empty one, say).
+        own = ev.get("keys", [])
+        forged = [_not_over_this(s) or _label(s) not in own for s in d.get("sigs", [])]
+        for kind, made, got in (("signature", d.get("sigs", []), exts.sigers),
+                                ("witness signature", d.get("wigs", []), exts.wigers)):
+            for sig, siger in zip(made, got, strict=True):
+                if isinstance(sig, dict) and "over" in sig and not sig.get("forged"):
+                    source = _event_raw(case, spec, sig["over"])
+                    if not _verfer(sig["key"], kind == "signature").verify(siger.raw, source):
+                        notes.append(f"message {i} ({name}): keripy's Verfer says {kind} "
+                                     f"{siger.index} does not verify over {sig['over']}")
         if keys is not None:
             # A genuine (non-forged) signature verifies against one of the event's keys, whatever
             # index it is attached at; a forged one against none. The index is keripy's business.
@@ -151,7 +165,7 @@ def check_bytes(case) -> list[str]:
                     notes.append(f"message {i} ({name}): keripy's Verfer says signature "
                                  f"at index {siger.index} {'verifies' if ok else 'does not'}")
         wits = ev.get("wits")
-        wforged = [isinstance(w, dict) and w.get("forged") for w in d.get("wigs", [])]
+        wforged = [_not_over_this(w) for w in d.get("wigs", [])]
         if wits and exts.wigers:
             wit_keys = _witness_keys(case, spec, name)
             for wiger, bad in zip(exts.wigers, wforged, strict=True):
@@ -160,6 +174,30 @@ def check_bytes(case) -> list[str]:
                     notes.append(f"message {i} ({name}): keripy's Verfer says witness "
                                  f"signature {wiger.index} {'verifies' if ok else 'fails'}")
     return notes
+
+
+def _breaks_body(tamper: dict) -> bool:
+    fields = tamper.get("fields", {})
+    return bool({"d", "i"} & set(tamper) or {"add", "remove", "swap"} & set(fields)
+                or "t" in fields.get("set", {}))
+
+
+def _label(sig) -> str:
+    return sig["key"] if isinstance(sig, dict) else sig
+
+
+def _verfer(label: str, transferable: bool) -> Verfer:
+    """The verifier of a scenario key label, derived by keripy from the seed the suite's builder
+    uses (the first 32 bytes of SHAKE-256 over ``kcs-keri-seed/<label>``), so that a signature's
+    source is checked without the builder's own Ed25519."""
+    seed = hashlib.shake_256(f"kcs-keri-seed/{label}".encode()).digest(32)
+    return Signer(raw=seed, transferable=transferable).verfer
+
+
+def _not_over_this(sig) -> bool:
+    """Whether a scenario made a signature that must not verify against the bytes it is attached
+    to: one it forged, or one it made over another event's bytes (``over``)."""
+    return isinstance(sig, dict) and bool(sig.get("forged") or "over" in sig)
 
 
 def _event_raw(case, spec, name) -> bytes:

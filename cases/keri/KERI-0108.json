@@ -1,0 +1,101 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys.",
+        "section": "Backer list",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#backer-list"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence constrains the witness AIDs a controller designates, as line 1252 (\"Witnesses MUST use only nontransferable identifiers\") constrains the witnesses; neither names a validator. That a validator should not accept an event designating a witness with a transferable prefix is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 353,
+        "quote": "When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys.",
+        "section": "Backer list"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 1 (witness-transferable).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys.",
+        "section": "Backer list",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#backer-list"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence constrains the witness AIDs a controller designates, as line 1252 (\"Witnesses MUST use only nontransferable identifiers\") constrains the witnesses; neither names a validator. That a validator should not accept an event designating a witness with a transferable prefix is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 353,
+        "quote": "When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys.",
+        "section": "Backer list"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 1 (witness-transferable).",
+      "phase": "final"
+    }
+  ],
+  "description": "An inception whose only witness is given as a transferable Ed25519 prefix (code D), with witness threshold 1, carrying the controller's signature and the witness's. Lines 353 and 1252 require witness AIDs to be non-transferable, so a validator should not accept it.",
+  "dispute": {
+    "clauses": [
+      {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys.",
+        "section": "Backer list",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#backer-list"
+      }
+    ],
+    "raised_at": "generators/DISAGREEMENTS.md in this repository, 2026-10-15; not yet raised with keripy or the KERI specification working group.",
+    "summary": "keripy main accepts the inception and verifies the witness signature with the key the transferable prefix carries. It checks that a witness prefix is non-transferable only when it builds a receipt message, not when it validates an event's witness list."
+  },
+  "id": "KERI-0108",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414146622e222c2274223a22696370222c2264223a2245506536364a6c77773532456a73584e6d546e61526967505241354a43527a70362d3139636650795a367476222c2269223a2245506536364a6c77773532456a73584e6d546e61526967505241354a43527a70362d3139636650795a367476222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2231222c2262223a5b2244436f5763736649665559446d53352d36384d6131714b4e6e4770665650324979763569615035792d654975225d2c2263223a5b5d2c2261223a5b5d7d2d4341752d4b4157414141706951745f786a7a4e414d773943314b6c6d334461724479565961766a576d53416f32643174503442786a6f55644a617761376a366b626831496d697162364e4a34413359342d6150733165616948775a6c7a45482d4c41574141424248324767592d485276315a3338335a44465373764d48725175455454576b336a75574c76686655745a436c6a6c336d6b6a6844382d445031456d7561346e5f7078674252524f5061663632634e55444d31615145"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/tamper.json#KS-BT09"
+  },
+  "schema_version": 1,
+  "status": "disputed",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.witness",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Inception designating a transferable witness"
+}

@@ -1,0 +1,87 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0).",
+        "section": "Sequence number field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#sequence-number-field"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "inferred_from": {
+        "inference": "The sentence defines the value an inception's sequence number must have; no validator-facing sentence names it. That a validator should not accept an inception with a nonzero sequence number is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 323,
+        "quote": "The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0).",
+        "section": "Sequence number field"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 1 (inception-sn).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0).",
+        "section": "Sequence number field",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#sequence-number-field"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "inferred_from": {
+        "inference": "The sentence defines the value an inception's sequence number must have; no validator-facing sentence names it. That a validator should not accept an inception with a nonzero sequence number is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5).",
+        "line": 323,
+        "quote": "The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0).",
+        "section": "Sequence number field"
+      },
+      "level": "SHOULD",
+      "message": 0,
+      "note": "Decision procedure step 1 (inception-sn).",
+      "phase": "final"
+    }
+  ],
+  "description": "A signed inception whose sequence number is 1. Line 323 says an inception's sequence number must be 0, so a validator should not accept it.",
+  "id": "KERI-0112",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a22454e46444537783768374f71513049576f3034626f6c535170336452654962416b7a6f43464752546f596349222c2269223a22454e46444537783768374f71513049576f3034626f6c535170336452654962416b7a6f43464752546f596349222c2273223a2231222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b415741414130594d57636d4b5f435f5430335f4b65776d657961454c696e456677356d476a49546b5059684e48785f756d7268733563362d616c5f68426d6d535f61426f6b2d50373747636d507136354a347051725064476343"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/tamper.json#KS-BT13"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "Inception with a nonzero sequence number"
+}

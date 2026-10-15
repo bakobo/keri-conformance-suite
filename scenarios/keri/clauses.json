@@ -11,6 +11,16 @@
       "level": "MUST",
       "quote": "Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures."
     },
+    "backer-threshold": {
+      "section": "Backer threshold field",
+      "level": "MUST",
+      "quote": "This is the number of backers in the backer list that MUST support a key event for it to be valid."
+    },
+    "backer-unique": {
+      "section": "Backer list",
+      "level": "MUST",
+      "quote": "A given AID MUST NOT appear more than once in any Backer list."
+    },
     "controlling-keys": {
       "section": "Verifier",
       "level": "MUST",
@@ -30,6 +40,11 @@
       "section": "Indexed Signatures",
       "level": "MUST",
       "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it)."
+    },
+    "drt-fields": {
+      "section": "Delegated Rotation Event Message Body",
+      "level": "MUST",
+      "quote": "The top-level fields of a Delegated Rotation, `drt` event message body MUST appear in the following order: `[ v, t, d, i, s, p, kt, k, nt, n, bt, br, ba, c, a]`."
     },
     "eo-drop": {
       "section": "Configuration traits field",
@@ -66,10 +81,35 @@
       "level": "MUST",
       "quote": "The first message MUST be an Exchange Inception message with type `xip`."
     },
+    "fields-order": {
+      "section": "Special label ordering requirements",
+      "level": "MUST",
+      "quote": "The top-level fields of each message type MUST appear in a specific order."
+    },
+    "icp-fields": {
+      "section": "Inception Event Message Body",
+      "level": "MUST",
+      "quote": "The top-level fields of an Inception, `icp`, event message body MUST appear in the following order: `[ v, t, d, i, s, kt, k, nt, n, bt, b, c, a]`."
+    },
     "inception-d-i": {
       "section": "Inception event pre-rotation",
       "level": "MUST",
       "quote": "Validation of an Inception event requires examining the `i` field's derivation code and if it is a digest-type then the `d` field MUST be identical otherwise the Inception event is invalid."
+    },
+    "ixn-fields": {
+      "section": "Interaction Event Message Body",
+      "level": "MUST",
+      "quote": "The top-level fields of an Interaction, `ixn` event message body MUST appear in the following order: `[ v, t, d, i, s, p, a]`."
+    },
+    "keys-nonempty": {
+      "section": "Key list field",
+      "level": "MUST",
+      "quote": "The Key, `k` field value MUST NOT be empty."
+    },
+    "message-types": {
+      "section": "Key event messages",
+      "level": "MUST",
+      "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`."
     },
     "no-events-abandoned": {
       "section": "Next key digest list field",
@@ -96,6 +136,11 @@
       "level": "MUST",
       "quote": "A Validator, therefore, MUST confirm that the set of keys in the current key list truly includes a satisfiable subset of the prior next key list and that the current key list is satisfiable with respect to both the current and [[xref: keri1, prio-next-threshold, prior next threshold]]s."
     },
+    "rot-fields": {
+      "section": "Rotation Event Message Body",
+      "level": "MUST",
+      "quote": "The top-level fields of a Rotation, `rot` event message body MUST appear in the following order: `[ v, t, d, i, s, p, kt, k, nt, n, bt, br, ba, c, a]`."
+    },
     "sig-threshold-icp-ixn": {
       "section": "Indexed Signatures",
       "level": "MUST",
@@ -105,6 +150,21 @@
       "section": "Indexed Signatures",
       "level": "MUST",
       "quote": "A set of controller-indexed signatures on a rotation event (delegated or not) MUST at least satisfy both the current signing threshold and the prior next rotation threshold in order for that event to be accepted as valid."
+    },
+    "sn-inception": {
+      "section": "Sequence number field",
+      "level": "MUST",
+      "quote": "The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0)."
+    },
+    "sn-increment": {
+      "section": "Sequence number field",
+      "level": "MUST",
+      "quote": "The Sequence number value of all subsequent key events in a KEL MUST be 1 greater than the previous event."
+    },
+    "sn-max": {
+      "section": "Sequence number field",
+      "level": "MUST",
+      "quote": "The maximum value of a sequence number MUST be `ffffffffffffffffffffffffffffffff` which is the hex encoding of `2^128 - 1 = 340282366920938463463374607431768211455`."
     },
     "supersede-discard": {
       "section": "Superseding Rules for Recovery at a given location, SN (sequence number).",
@@ -120,6 +180,11 @@
       "section": "Indexed Signatures",
       "level": "MUST",
       "quote": "A set of witness-indexed signatures on an interaction, inception, or rotation (delegated or not) for which the effective witness list is not empty MUST satisfy the current witness threshold (of accountable duplicity) for that event to be accepted as valid."
+    },
+    "witness-nontransferable": {
+      "section": "Backer list",
+      "level": "MUST",
+      "quote": "When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys."
     },
     "xip-fields": {
       "section": "Exchange Transaction Inception Message Body",
@@ -162,6 +227,41 @@
       "section": "Exchange identifier field",
       "quote": "When an exchange message is not part of a transaction, the Exchange Identifier, `x` field value, MUST be the empty string.",
       "inference": "The sentence binds the sender. An exchange message whose `x` names no exchange inception the validator holds is refused under either reading of whether it belongs to a transaction: outside one, this sentence requires `x` to be empty; inside one, the transaction's first message must be an `xip` (\"The first message MUST be an Exchange Inception message with type `xip`.\"), and none with that SAID was delivered. Refusing it is inferred and graded SHOULD (docs/design.md, IPEX)."
+    },
+    "producer-type": {
+      "section": "Key event messages",
+      "quote": "A [[ref: Key event message]] types MUST be one of the following `[icp, rot, ixn, dip, drt]`.",
+      "inference": "The sentence defines the values a key event's type may take; no sentence says what a validator does with a message whose type is none of them. That a validator should not accept such a message is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5)."
+    },
+    "producer-sn-inception": {
+      "section": "Sequence number field",
+      "quote": "The Sequence Number, `s` field value in Inceptions, `icp` and Delegated Inception, `dip` events MUST be `0` (hex encoded 0).",
+      "inference": "The sentence defines the value an inception's sequence number must have; no validator-facing sentence names it. That a validator should not accept an inception with a nonzero sequence number is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5)."
+    },
+    "producer-sn-increment": {
+      "section": "Sequence number field",
+      "quote": "The Sequence number value of all subsequent key events in a KEL MUST be 1 greater than the previous event.",
+      "inference": "The sentence defines how a later event's sequence number relates to its prior; no validator-facing sentence names a later event at sequence number 0. That a validator should not accept one is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5)."
+    },
+    "producer-sn-max": {
+      "section": "Sequence number field",
+      "quote": "The maximum value of a sequence number MUST be `ffffffffffffffffffffffffffffffff` which is the hex encoding of `2^128 - 1 = 340282366920938463463374607431768211455`.",
+      "inference": "The sentence bounds the value of a sequence number; no sentence says what a validator does with a larger one. That a validator should not accept an event whose sequence number exceeds the maximum is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5)."
+    },
+    "producer-keys": {
+      "section": "Key list field",
+      "quote": "The Key, `k` field value MUST NOT be empty.",
+      "inference": "The sentence defines the key list's value; no validator-facing sentence names an empty one. That a validator should not accept an establishment event with an empty key list is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5)."
+    },
+    "producer-backer-unique": {
+      "section": "Backer list",
+      "quote": "A given AID MUST NOT appear more than once in any Backer list.",
+      "inference": "The sentence constrains a backer list's value; no validator-facing sentence names a repeated backer. That a validator should not accept an event whose backer list repeats an AID is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5)."
+    },
+    "producer-witness": {
+      "section": "Backer list",
+      "quote": "When the Backers are Witnesses, then the AIDs themselves MUST be non-transferable, fully qualified public keys.",
+      "inference": "The sentence constrains the witness AIDs a controller designates, as line 1252 (\"Witnesses MUST use only nontransferable identifiers\") constrains the witnesses; neither names a validator. That a validator should not accept an event designating a witness with a transferable prefix is inferred and graded SHOULD (docs/design.md, Principles: an obligation the specification states only for producers is graded SHOULD for validators), and the gap is raised in generators/SPEC-ISSUES.md (K-I5)."
     }
   },
   "conflicts": {
