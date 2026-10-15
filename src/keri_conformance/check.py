@@ -18,17 +18,17 @@ from keri_conformance.jsonfile import loads
 from keri_conformance.session import AdapterSession, Failure, parse_response
 
 PROBES = ("hello", "id-echo", "malformed-request", "unknown-op", "statelessness", "quiescence",
-          "issue-malformed", "present-malformed", "presentation-malformed", "issue-determinism",
+          "issue-malformed", "present-malformed", "presentation-malformed", "issue-repeatable",
           "present-independence")
 # The probes for the issuer and holder operations and the presentation context, each run only
 # against an adapter that lists the operation (and declares the feature, where one is named), and
 # the probes for them that need a real issuance to send.
 OP_PROBES = (("issue-malformed", "acdc.issue", None), ("present-malformed", "acdc.present", None),
              ("presentation-malformed", "acdc.verify", "acdc.presentation"))
-OP_NOT_YET = (("issue-determinism", "acdc.issue"), ("present-independence", "acdc.present"))
+OP_NOT_YET = (("issue-repeatable", "acdc.issue"), ("present-independence", "acdc.present"))
 NOT_YET_ACDC = ("This probe sends a real issuance, taken from the suite's first acdc.issue case, "
                 "which does not exist yet.")
-# Requests this protocol cannot read: an issuance with no ACDC template, a presentation in a
+# Requests this protocol cannot read: an issuance that asks for no credential, a presentation in a
 # disclosure form the protocol does not define, and a verification whose presentation context
 # names no message and no verifier.
 _VERIFY = {"perspective": {"role": "validator"}, "kels": [], "registry": [], "schemas": [],
@@ -47,7 +47,7 @@ MALFORMED = {
         {**_VERIFY, "presentation": {"messages": _CONTEXT["messages"]}},
         {**_VERIFY, "presentation": {"verifier": _CONTEXT["verifier"]}},
     ],
-    "acdc.issue": {"kels": [], "seeds": {}, "registry": []},
+    "acdc.issue": {"roles": ["issuer"], "schemas": [], "credentials": []},
     "acdc.present": {"perspective": {"role": "holder"}, "kels": [], "registry": [], "schemas": [],
                      "acdcs": [], "held": {"stream": "2d4b"},
                      "disclosure": {"form": "kcs-probe-no-such-form"}},

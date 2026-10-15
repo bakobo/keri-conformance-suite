@@ -269,16 +269,12 @@ BASE_CASES += [
 ]
 BASE_CASES += [
     make_case("ACDC-0002", "acdc.issue",
-              {"kels": [{"stream": "7b7d", "source": "issuer"}], "seeds": {"DKey": "00"},
-               "acdc": {"v": "", "d": ""},
-               "registry": [{"event": {"t": "upd"}},
-                            {"event": {"t": "bup"}, "blind": {"salt": "0ABz", "state": {}}}],
-               "anchor": {"event": {"t": "ixn"}}},
-              [assertion("issued", expected={"acdc": "7b7d", "registry": [
-                  {"event": "7b01", "blind": None}, {"event": "7b02", "blind": "7b03"}],
-                  "anchor_body": "7b04"}),
-               assertion("anchor_signed", name="a2", expected=["DKey"]),
-               assertion("issue_refused", name="a3", level="SHOULD")],
+              {"roles": ["issuer", "holder"], "schemas": ["7b7d"],
+               "credentials": [{"name": "c", "issuer": "issuer", "issuee": "holder",
+                                "schema": "EBdX", "attributes": {"name": "Zoe"},
+                                "registry": "bup"}]},
+              [assertion("issued"),
+               assertion("issue_refused", name="a2", level="SHOULD")],
               profile="sedi-1"),
 ]
 BASE_CASES[5]["dag"] = {"root": "EAcd", "edges": [
@@ -308,11 +304,10 @@ def test_case_checks_agree_with_the_case_schema(base):
     found = disagreements(mutations(base), case_problem, CASE_VALIDATOR)
     # Reachability from the presented ACDC is a runtime rule the schema cannot state; renaming an
     # edge's near node strands it (see the test below).
-    # So are an issuance case's agreement with its own input (tests/test_issuance.py): one expected
-    # registry event per requested one, an anchoring body when an anchor is asked for, and a seed
-    # for every signer.
-    runtime = ("cannot reach", "registry events that do not match", "anchoring body exactly",
-               "no seed in its input", "does not ask for")
+    # So is an issuance case's agreement with itself (tests/test_issuance.py): distinct roles and
+    # credential names, roles it creates, and edges to other credentials it issues.
+    runtime = ("cannot reach", "role twice", "credential twice", "does not create",
+               "another credential")
     found = [f for f in found if not any(r in (case_problem(f[2]) or "") for r in runtime)]
     assert found == [], found[:3]
 
@@ -452,9 +447,9 @@ BASE_RESULTS = [
     ("exn.verify", {"verdicts": [{"on_delivery": "accepted", "verdict": "rejected",
                                   "reason": "prior"},
                                  {"on_delivery": "rejected", "verdict": "rejected"}]}),
-    ("acdc.issue", {"acdc": "7b7d", "registry": [{"event": "7b7d", "blind": "7b7e"},
-                                                 {"event": "7b7f", "blind": None}],
-                    "anchor": "2d5f"}),
+    ("acdc.issue", {"kels": {"issuer": "2d5f"},
+                    "credentials": {"c": {"acdc": "7b7d", "registry": "2d5f",
+                                          "disclosure": "EBlid"}}}),
     ("acdc.issue", {"refused": {"reason": "salt too short"}}),
     ("acdc.present", {"presented": {"stream": "2d5f"}}),
     ("acdc.present", {"refused": {}}),
@@ -519,7 +514,7 @@ OPERATION_CHECKS = {
     "acdc.verify": {"verdict", "registry_reported", "registry_state", "edge_reported",
                     "edge_valid"},
     "exn.verify": {"exn_verdict"},
-    "acdc.issue": {"issued", "issue_refused", "anchor_signed"},
+    "acdc.issue": {"issued", "issue_refused"},
 }
 
 

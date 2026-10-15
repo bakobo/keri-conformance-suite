@@ -112,7 +112,7 @@ def _source_problem(source, *, operations, features, profiles) -> str | None:
 
 
 # An issuance that must succeed accepts; one that must be refused refuses.
-POLARITY = {"issued": "positive", "anchor_signed": "positive", "issue_refused": "negative"}
+POLARITY = {"issued": "positive", "issue_refused": "negative"}
 
 
 def _polarity(assertion: dict) -> str:

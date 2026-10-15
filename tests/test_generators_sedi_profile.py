@@ -270,7 +270,7 @@ def test_one_case_cannot_exercise_a_choice_both_ways():
         build(cases=[case])
 
 
-@pytest.mark.parametrize(("check", "side"), [("issued", "positive"), ("anchor_signed", "positive"),
+@pytest.mark.parametrize(("check", "side"), [("issued", "positive"),
                                             ("issue_refused", "negative")])
 def test_issuance_checks_exercise_a_choice_by_their_polarity(check, side):
     case = verdict_case("ACDC-0901", "valid", ["revoked"])

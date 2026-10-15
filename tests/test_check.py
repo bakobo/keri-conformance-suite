@@ -23,7 +23,7 @@ def probes(argv, vocabulary, timeout=5.0):
 def test_probe_names_are_stable():
     assert PROBES == ("hello", "id-echo", "malformed-request", "unknown-op", "statelessness",
                       "quiescence", "issue-malformed", "present-malformed",
-                      "presentation-malformed", "issue-determinism", "present-independence")
+                      "presentation-malformed", "issue-repeatable", "present-independence")
 
 
 def test_a_good_adapter_passes_every_available_probe(vocabulary):
@@ -147,7 +147,7 @@ def test_an_issuer_that_errors_on_malformed_requests_passes(vocabulary, write_js
     assert result["issue-malformed"].status == "pass"
     assert result["present-malformed"].status == "pass"
     assert result["presentation-malformed"].status == "pass"
-    assert result["issue-determinism"].status == "not-yet-available"
+    assert result["issue-repeatable"].status == "not-yet-available"
     assert result["present-independence"].status == "not-yet-available"
     assert check_exit_code(list(result.values())) == 0
 

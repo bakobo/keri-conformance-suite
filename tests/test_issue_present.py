@@ -30,18 +30,14 @@ GENUS = "2d5f414141434141"
 KELS = [{"stream": GENUS + "7b7d", "source": "issuer"}]
 ISSUE = {
     "id": 7, "op": "acdc.issue",
-    "kels": KELS,
-    "seeds": {"DOYg": "a1b2"},
-    "acdc": {"v": "", "t": "acm", "d": "", "u": "0ABn", "i": "EKBC", "rd": "EAz1", "s": "EBdX",
-             "a": {"d": "", "u": "0ACx", "i": "EDB8", "givenName": "Guy"}, "e": {}, "r": {}},
-    "registry": [
-        {"event": {"v": "", "t": "bup", "d": "", "rd": "EAz1", "n": "1", "p": "EAz1",
-                   "dt": "2026-10-15T00:00:00.000000+00:00", "b": ""},
-         "blind": {"salt": "0ABz", "state": {"d": "", "u": "", "td": "", "ts": "issued"}}},
-        {"event": {"v": "", "t": "upd", "d": "", "rd": "EAz1", "n": "2", "p": "EBup"}},
+    "roles": ["issuer", "holder"],
+    "schemas": ["7b7d"],
+    "credentials": [
+        {"name": "core", "issuer": "issuer", "issuee": "holder", "schema": "EBdX",
+         "attributes": {"givenName": "Guy"}, "registry": "bup"},
+        {"name": "guardian", "issuer": "holder", "schema": "EBdX", "attributes": {},
+         "registry": "bup", "edges": {"core": {"credential": "core", "o": "I2I"}}},
     ],
-    "anchor": {"event": {"v": "", "t": "ixn", "d": "", "i": "EKBC", "s": "1", "p": "EKBC",
-                         "a": [{"s": "1", "d": "EGsP"}]}},
 }
 BUNDLE = {
     "kels": KELS,
@@ -56,9 +52,10 @@ VERIFY = {"id": 9, "op": "acdc.verify", "perspective": {"role": "validator"}, **
           "presentation": {"messages": [{"stream": GENUS + "7b01", "source": "holder"}],
                            "verifier": "EVer"}}
 
-ISSUED = {"acdc": "7b7d", "registry": [{"event": "7b7d", "blind": "7b7e"},
-                                       {"event": "7b7f", "blind": None}],
-          "anchor": GENUS + "7b7d"}
+ISSUED = {"kels": {"issuer": GENUS + "7b7d", "holder": GENUS + "7b7e"},
+          "credentials": {"core": {"acdc": "7b7d", "registry": GENUS + "7b7d",
+                                   "disclosure": "EBlid"},
+                          "guardian": {"acdc": "7b7e", "registry": GENUS + "7b7e"}}}
 PRESENTED = {"presented": {"stream": GENUS + "7b00"}}
 REFUSED = {"refused": {"reason": "salt shorter than 128 bits"}}
 
@@ -97,8 +94,7 @@ def _with(message, value, *path):
 
 GOOD_REQUESTS = [
     ISSUE,
-    _without(ISSUE, "anchor"),
-    _with(ISSUE, [], "registry"),
+    _with(ISSUE, [], "schemas"),
     *(_with(PRESENT, d, "disclosure") for d in DISCLOSURES),
     VERIFY,
     _without(VERIFY, "presentation"),
@@ -111,17 +107,18 @@ def test_the_new_requests_validate(request_):
 
 
 BAD_REQUESTS = [
-    _without(ISSUE, "kels"),
-    _without(ISSUE, "seeds"),
-    _without(ISSUE, "acdc"),
-    _without(ISSUE, "registry"),
-    _with(ISSUE, "7b7d", "acdc"),  # a template is an object, not bytes
-    _with(ISSUE, {"DOYg": "XYZ"}, "seeds"),
-    _without(ISSUE, "registry", 0, "event"),
-    _without(ISSUE, "registry", 0, "blind", "salt"),
-    _without(ISSUE, "registry", 0, "blind", "state"),
-    _with(ISSUE, "", "registry", 0, "blind", "salt"),
-    _without(ISSUE, "anchor", "event"),
+    _without(ISSUE, "roles"),
+    _with(ISSUE, [], "roles"),
+    _without(ISSUE, "schemas"),
+    _without(ISSUE, "credentials"),
+    _with(ISSUE, [], "credentials"),
+    _with(ISSUE, "XYZ", "schemas", 0),
+    _without(ISSUE, "credentials", 0, "name"),
+    _without(ISSUE, "credentials", 0, "issuer"),
+    _without(ISSUE, "credentials", 0, "schema"),
+    _without(ISSUE, "credentials", 0, "attributes"),
+    _with(ISSUE, "upd", "credentials", 0, "registry"),
+    _with(ISSUE, "7b7d", "credentials", 0, "attributes"),
     _without(PRESENT, "held"),
     _without(PRESENT, "disclosure"),
     _with(PRESENT, {"role": "validator"}, "perspective"),
@@ -146,8 +143,7 @@ def test_the_new_requests_are_refused_without_what_they_need(request_):
 
 GOOD_RESULTS = [
     ("acdc.issue", ISSUED),
-    ("acdc.issue", _without(ISSUED, "anchor")),
-    ("acdc.issue", {"acdc": "7b7d", "registry": []}),
+    ("acdc.issue", _without(ISSUED, "credentials", "core", "disclosure")),
     ("acdc.issue", REFUSED),
     ("acdc.issue", {"refused": {}}),
     ("acdc.present", PRESENTED),
@@ -163,11 +159,15 @@ def test_the_new_results_are_read(op, result):
 
 BAD_RESULTS = [
     ("acdc.issue", {}),
-    ("acdc.issue", _without(ISSUED, "acdc")),
-    ("acdc.issue", _without(ISSUED, "registry")),
-    ("acdc.issue", _with(ISSUED, "EAcd", "acdc")),
-    ("acdc.issue", _without(ISSUED, "registry", 1, "blind")),
-    ("acdc.issue", _with(ISSUED, {"event": "7b7d", "blind": "7b7e", "x": 1}, "registry", 0)),
+    ("acdc.issue", _without(ISSUED, "kels")),
+    ("acdc.issue", _without(ISSUED, "credentials")),
+    ("acdc.issue", _with(ISSUED, "XYZ", "kels", "issuer")),
+    ("acdc.issue", _without(ISSUED, "credentials", "core", "acdc")),
+    ("acdc.issue", _without(ISSUED, "credentials", "core", "registry")),
+    ("acdc.issue", _with(ISSUED, "EAcd", "credentials", "core", "acdc")),
+    ("acdc.issue", _with(ISSUED, 7, "credentials", "core", "disclosure")),
+    ("acdc.issue", _with(ISSUED, {"acdc": "7b", "registry": "7b", "x": 1}, "credentials",
+                         "core")),
     ("acdc.issue", {**ISSUED, **REFUSED}),
     ("acdc.issue", {"refused": {"reason": 7}}),
     ("acdc.issue", {"refused": "no"}),
@@ -221,19 +221,15 @@ def test_an_issue_result_answers_every_requested_part():
 
 
 @pytest.mark.parametrize(("result", "words"), [
-    (_with(ISSUED, ISSUED["registry"][:1], "registry"), "2 registry events"),
-    (_with(ISSUED, None, "registry", 0, "blind"), "blinded state"),
-    (_with(ISSUED, "7b7d", "registry", 1, "blind"), "blinded state"),
-    (_without(ISSUED, "anchor"), "anchor"),
+    (_without(ISSUED, "kels", "holder"), "one KEL per role"),
+    (_with(ISSUED, GENUS, "kels", "stranger"), "one KEL per role"),
+    (_without(ISSUED, "credentials", "guardian"), "one entry per credential"),
+    (_with(ISSUED, ISSUED["credentials"]["core"], "credentials", "extra"),
+     "one entry per credential"),
 ])
 def test_an_issue_result_that_does_not_match_its_request_is_malformed(result, words):
     problem = beyond_schema("acdc.issue", _fields(ISSUE), result)
     assert problem is not None and words in problem
-
-
-def test_an_anchor_not_asked_for_is_malformed():
-    problem = beyond_schema("acdc.issue", _fields(_without(ISSUE, "anchor")), ISSUED)
-    assert problem is not None and "anchor" in problem
 
 
 def test_a_refusal_matches_any_request():
@@ -247,13 +243,13 @@ def test_a_mismatched_issue_result_is_a_failure_through_the_session(write_json, 
              "implementation": {"name": "i", "version": "1", "commit": "c"},
              "operations": ["acdc.issue"], "features": []}
     table = [{"match": {"op": "acdc.issue"},
-              "result": _with(ISSUED, ISSUED["registry"][:1], "registry")}]
+              "result": _without(ISSUED, "credentials", "guardian")}]
     argv = good("--table", write_json("t.json", table), "--hello", write_json("h.json", hello))
     with AdapterSession(argv, vocabulary, limits=Limits(timeout=5.0)) as session:
         session.open()
         outcome = session.request("acdc.issue", _fields(ISSUE))
     assert isinstance(outcome, Failure) and outcome.kind == "malformed"
-    assert "registry events" in outcome.detail
+    assert "one entry per credential" in outcome.detail
 
 
 def test_a_matching_issue_result_is_read_through_the_session(write_json, vocabulary):

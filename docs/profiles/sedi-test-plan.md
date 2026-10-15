@@ -8,8 +8,8 @@ Every requirement below gets a failing test before the code that satisfies it. N
 
 - **Positive pairs.** Every refusal, `incomplete` or `invalid`, has a positive twin that differs from it only in the defect, as in the rest of the suite.
 - **Grading.** sedi-1 grades `valid` at INTEROP on every positive. Otherwise an adapter that answers `incomplete` or `invalid` to everything passes, because acdc-v1.0 grades `valid` only as an inferred SHOULD.
-- **Oracles.** A case whose output is deterministic declares `oracle: bytes`, and a generator check enforces it. A case may grade by verdict only when the bytes cannot be fixed, and then the verdict comes from the suite's own model (3lq4zrr3).
-- **Determinism.** Every seed, salt, stamp and KDF parameter is fixed in the scenario. `regenerate --check` covers the cases, the profile manifest and `generators/DISAGREEMENTS.md`.
+- **Oracles.** A case whose output is deterministic declares `oracle: bytes`, and a generator check enforces it. A case may grade by verdict only when the bytes cannot be fixed, and then the verdict comes from the suite's own model (3lq4zrr3). An issuer's output is never fixed, so issuer cases are graded by verifying it (2u2ps8mt).
+- **Determinism.** Every seed, salt, stamp and KDF parameter of a verifier or holder case is fixed in the scenario; an issuer case fixes only what it asks for (2u2ps8mt). `regenerate --check` covers the cases, the profile manifest and `generators/DISAGREEMENTS.md`.
 - **Embargo.** The suite's embargo rule (5cz9hck0) applies before anything reaches this public tree. Every sedi-1 and sedi-1x-interop case carries a triage line stating its security consequence. A case that has one is run first against every adapter in the private mirror. It moves to the public tree only when no released implementation fails it. heti counts as a released implementation, even though Bakobo builds it. The same gate covers `DISAGREEMENTS.md` entries, defect reproductions and spec-question drafts.
 
 ## 1. The profile manifest and the claim
@@ -31,7 +31,7 @@ Every requirement below gets a failing test before the code that satisfies it. N
 - A choice-to-case matrix is generated from the scenario file. Every choice must name at least one positive case id and one negative case id. While the profile's version is draft, the generator lists every empty side; it refuses to make a version active with one (this.i 47yreej2), so the profile can land in steps without hiding the gap. The minimum per choice:
   - 57ud: n+1 accepted; a gap, a repeated n, and n+2 after a `bup`.
   - 5qcy: a single anchored head accepted. Neither a higher event that is not anchored nor a higher event whose chain is broken becomes the head, and neither leaves the verdict valid: under registry-evidence (3g4le6js) the first makes it `incomplete` and the second `invalid`. An unanchored event at the head's own n is ignored. Two events anchored at one n are refused.
-  - 3b5o: the Blinder derivation accepted; a different path radix, an uppercase hex path and a wrong stretch tier are refused. The choice record states the KDF parameters, the entropy floor of the KDF's input and the reasoning for both. Its overturning condition includes a cost floor. The issuer refuses an empty salt, a salt below the floor, and one salt reused across two credentials. The spec-question draft for 3b5o argues strength as well as bytes.
+  - 3b5o: the Blinder derivation accepted; a different path radix, an uppercase hex path and a wrong stretch tier are refused. The choice record states the KDF parameters, the entropy floor of the KDF's input and the reasoning for both. Its overturning condition includes a cost floor. An issuer's derivation is checked only when it returns the shared salt (2u2ps8mt). The spec-question draft for 3b5o argues strength as well as bytes.
   - 4xwz: a credential using the defaults accepted and one deviating refused. All of these cases are drafts.
   - 3nch: one pair each for `-S##` versus `-T##`, the 8-character group code, the seal shape (the `{s,d}` couple and the `{i,s,d}` event seal with `i` the registry's SAID accepted, per 2082s6k4), and edge `d` required.
   - 3qah: an unknown operator gives `incomplete`.
@@ -53,24 +53,20 @@ Every requirement below gets a failing test before the code that satisfies it. N
 - New `kcs check-adapter` probes:
   - Malformed `acdc.issue` and `acdc.present` requests, an unknown disclosure choice, and a malformed presentation context each get an error response, not a crash.
   - A mock adapter that crashes on a malformed request fails check-adapter.
-  - Two identical `acdc.issue` requests return identical bytes.
+  - Two identical `acdc.issue` requests each return an issuance that verifies (2u2ps8mt).
   - `acdc.present` does not depend on an earlier `acdc.issue`.
   - The response id is echoed.
 
 ## 4. Issuer vectors (`acdc.issue`)
 
-- **Positive cases.** IAR, Core, Residence, Age (`acg`) and Guardian under a `bup` registry, which is the only registry sedi-1 requires (8dgunr0e). A `upd` issuance is sent only to an adapter declaring `acdc.registry.upd`. The generator's bytes are cross-checked against Sam's `test_sedi.py` literals, pinned by full keripy commit and file digest.
-- **DISAGREEMENTS.md** is tested in both directions: every literal is either equal or listed, and every listed literal still differs.
-- **Negative cases**, each refused rather than issued:
-  - `a.dt` emitted where SEDI forbids it (G17 #8);
-  - unsaidified nested blocks;
-  - a wrong registry n;
-  - a seal in the wrong shape;
-  - an empty salt;
-  - a non-hex seed;
-  - an attribute containing a NUL or non-ASCII where the schema forbids it;
-  - an invalid stamp.
-- **Signatures.** The runner checks them only against the keys of the case's stated establishment event. A stub adapter signs with a pre-rotation key, with a key not in the KEL, with the right key over a different body, and with an index past the key list; each must fail. `emitted_body` and `signatures_verify` are scheduled in this item, and until they land, issuer results are `incomplete`, never passing.
+An issuer issues with its own keys, salts, nonces and clock, so an issuer case asks for an issuance and the runner grades what comes back by verifying it (this.i 2u2ps8mt, revising 4xw8k0hg): every KEL, registry and ACDC is checked for what it must be, and compared with what was asked only after the fields that legitimately vary are set aside.
+
+- **Positive cases.** IAR, Core, Residence, Age (`acg`) and Guardian under a `bup` registry, which is the only registry sedi-1 requires (8dgunr0e). A `upd` issuance is sent only to an adapter declaring `acdc.registry.upd`. Sam's `test_sedi.py` literals, pinned by full keripy commit and file digest, are cross-checked after the same normalization, never byte for byte.
+- **DISAGREEMENTS.md** is tested in both directions: every literal is either equal after normalization or listed, and every listed literal still differs.
+- **Refusals.** A request an issuer must refuse: an attribute containing a NUL or non-ASCII where the schema forbids it, and an edge whose operators the request's own identifiers cannot satisfy.
+- **Output checks**, each a reason `issued` fails whatever was asked: `a.dt` emitted where SEDI forbids it (G17 #8), an attribute block that is not exactly what was asked for, a SAID or BLID that does not verify, a wrong registry n or prior, a seal in a shape the profile refuses, and a head disclosure that does not record the credential as issued.
+- **Signatures.** The runner verifies every KEL event's signatures against the key state the KEL itself establishes. A stub adapter signs with a pre-rotation key, with a key not in the KEL, with the right key over a different body, and with an index past the key list; each must fail.
+- **The blinding derivation (3b5o)** is checked only when an issuer returns the shared salt, and is otherwise reported unchecked, never passed.
 
 ## 5. Holder vectors (`acdc.present`)
 
@@ -173,7 +169,7 @@ These cases use the presentation context (09snlyre), and each has its pair:
 
 ## 10. Cross-role agreement
 
-For each issue vector, the evidence pack verifies adapter A's `acdc.issue` output with every other adapter's `acdc.verify`. It does the same for each presentation. Every cell must be `valid` for a positive case, and every verifier must refuse an issuer negative case. This matrix is deterministic, offline and reported per cell. It belongs to the evidence pack and is not a graded profile assertion.
+For each issue vector, the evidence pack verifies adapter A's `acdc.issue` output, its KELs included, with every other adapter's `acdc.verify`. It does the same for each presentation. Every cell must be `valid` for a positive case, and every verifier must refuse an issuer negative case. This matrix is deterministic, offline and reported per cell. It belongs to the evidence pack and is not a graded profile assertion.
 
 ## 11. The 1x companion (`sedi-1x-interop`)
 
@@ -191,7 +187,7 @@ For each issue vector, the evidence pack verifies adapter A's `acdc.issue` outpu
 
 ## 13. Bounds
 
-- **Runner side.** Before any signature is verified, every new response field is checked for count and size. A stub that returns a maximum-size response stuffed with signature groups must be failed within a stated runner time.
+- **Runner side.** Before any signature is verified, every new response field, an issuer's returned KELs included, is checked for count and size. A stub that returns a maximum-size response stuffed with signature groups must be failed within a stated runner time.
 - **Implementation side.** sedi-1 states maxima for:
   - registry events per registry;
   - attributes per aggregate;

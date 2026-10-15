@@ -9,7 +9,7 @@ import re
 from dataclasses import dataclass
 from fractions import Fraction
 
-from keri_conformance import issuance
+from keri_conformance import issued
 from keri_conformance.errors import E_CHECK_NOT_IMPLEMENTED
 
 # The schemas' threshold patterns, matched with re.search as Python's jsonschema matches them.
@@ -300,51 +300,28 @@ def _exn_verdict(assertion, result):
                         f"{' both times' if expected == 'rejected' else ' at the end'}.")
 
 
-def _issued(assertion, result):
-    expected = assertion["expected"]
+def _issued(assertion, result, case_input):
+    """What was issued verifies and is what the case asked for (this.i 2u2ps8mt)."""
     if "refused" in result:
-        return _fail(result, "The issuer refused to issue from inputs it must issue from.")
-    actual = {"acdc": result["acdc"], "registry": result["registry"]}
-    if "anchor_body" in expected:
-        try:
-            body, _ = issuance.frame(bytes.fromhex(result["anchor"]))
-        except issuance.Unframed as exc:
-            return _fail(actual, f"The anchoring event cannot be framed: {exc}.")
-        actual["anchor_body"] = body.hex()
-    differs = [field for field in expected if actual.get(field) != expected[field]]
-    if differs:
-        return _fail(actual, f"The issued bytes differ from the case in {', '.join(differs)}.")
-    return Evaluation("pass", actual)
+        return _fail(result, "The issuer refused to issue what it must issue.")
+    problems = issued.grade(case_input, result)
+    if problems:
+        return _fail({"problems": problems}, "What was issued does not verify as asked: "
+                     + "; ".join(problems) + ".")
+    return Evaluation("pass", {"credentials": sorted(result["credentials"])})
 
 
 def _issue_refused(assertion, result):
     if "refused" in result:
         return Evaluation("pass", result)
-    return _fail(result, "The issuer issued from inputs it must refuse.")
+    return _fail(result, "The issuer issued what it must refuse.")
 
 
-def _anchor_signed(assertion, result, case_input):
-    if "refused" in result or "anchor" not in result:
-        return _fail(None, "The issuer returned no anchoring event to check.")
-    try:
-        body, attachments = issuance.frame(bytes.fromhex(result["anchor"]))
-    except issuance.Unframed as exc:
-        return _fail(None, f"The anchoring event cannot be framed: {exc}.")
-    missing = issuance.missing_signatures(body, attachments, assertion["expected"],
-                                          case_input["seeds"])
-    if missing:
-        return _fail({"missing": missing},
-                     f"The anchoring event's attachments carry no signature over its body, at "
-                     f"the right index, by {', '.join(missing)}.")
-    return Evaluation("pass", {"signers": assertion["expected"]})
-
-
-# Checks that read the case's own input as well as the result: keys only from the case (the
-# runner never takes a key from an adapter's answer).
-CHECKS_WITH_INPUT = {"anchor_signed": _anchor_signed}
+# Checks that read the case's own input as well as the result: what was asked for comes only from
+# the case.
+CHECKS_WITH_INPUT = {"issued": _issued}
 
 CHECKS = {
-    "issued": _issued,
     "issue_refused": _issue_refused,
     "decoded": _decoded,
     "rejected": _rejected,
