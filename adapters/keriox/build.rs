@@ -1,4 +1,4 @@
-//! Records which cesrox and said this binary was built against, read from Cargo.lock, so that
+//! Records which keri-core, cesrox and said this binary was built against, read from Cargo.lock, so that
 //! hello reports the resolved versions rather than a constant that could drift from the lock.
 //! The commit for each version comes from the crate's .cargo_vcs_info.json as published on
 //! crates.io; a version without a recorded commit fails the build instead of reporting a guess.
@@ -6,6 +6,11 @@
 use std::fs;
 
 const COMMITS: &[(&str, &str, &str)] = &[
+    (
+        "keri-core",
+        "0.17.13",
+        "b25ba2b1b276706cbe103bc185224071a5e73579",
+    ),
     (
         "cesrox",
         "0.1.8",
@@ -38,7 +43,11 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     let lock =
         fs::read_to_string("Cargo.lock").expect("Cargo.lock must exist; build with --locked");
-    for (name, env) in [("cesrox", "CESROX"), ("said", "SAID")] {
+    for (name, env) in [
+        ("keri-core", "KERI_CORE"),
+        ("cesrox", "CESROX"),
+        ("said", "SAID"),
+    ] {
         let version = locked_version(&lock, name);
         let commit = COMMITS
             .iter()
