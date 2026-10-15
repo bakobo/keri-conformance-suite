@@ -27,7 +27,7 @@ const requests: [string, string][] = [
     ['rejection', JSON.stringify({ id: 4, op: 'cesr.parse', stream: '00' })],
     ['encoding', JSON.stringify({ id: 5, op: 'cesr.encode', code: 'E', raw: '00'.repeat(32), domain: 'text' })],
     ['unsupported encoding', JSON.stringify({ id: 6, op: 'cesr.encode', code: 'E', raw: '00', domain: 'binary' })],
-    ['refused encoding', JSON.stringify({ id: 6, op: 'cesr.encode', code: 'E', raw: '00', domain: 'text' })],
+    ['refused encoding', JSON.stringify({ id: 9, op: 'cesr.encode', code: 'E', raw: '00', domain: 'text' })],
     ['undeclared op', JSON.stringify({ id: 7, op: 'keri.process' })],
     ['unknown op', JSON.stringify({ id: 8, op: 'nope' })],
     ['unreadable line', 'nope'],

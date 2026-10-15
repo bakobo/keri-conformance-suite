@@ -66,7 +66,7 @@ The adapter hands the whole stream to `parse()` once, with no options. `parse()`
 | Indexed `code`, `raw`, `index` | `Indexer` read the same way: `.code`, `.raw`, `.index` |
 | Indexed `ondex` | Reported only when `Indexer.Sizes[code].os > 0`. The value is `Indexer.ondex`. For current-only codes signify-ts checks that the field is zero and then stores none; for those the field is read back from the primitive's own encoding at the offsets of `Indexer.Sizes`, decoded with signify-ts's `b64ToInt` |
 | `cesr.encode` text | `new Matter({raw, code}).qb64` |
-| `cesr.encode` rejection `class` | The class name of what `new Matter({raw, code})` threw (`typeof` the value, if it is not an `Error`) |
+| `cesr.encode` rejection `class` | The class name of what `new Matter({raw, code}).qb64` threw (`typeof` the value, if it is not an `Error`) |
 
 The adapter checks its arithmetic against the parser wherever both exist: a count code's `end` must lie inside its group and must equal the start of the group's first member, if it has one (`e.self.unknown.group-header.f`), and a primitive read again must have the code `parse()` framed it with (`e.self.unknown.primitive-code.f`). Either mismatch is a harness error, not a report.
 

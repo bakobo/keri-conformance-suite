@@ -249,6 +249,11 @@ describe('cesr.encode', () => {
         vi.restoreAllMocks();
     });
 
+    it('reports what signify-ts encodes from a raw value too long for its code, without judging it', () => {
+        // signify-ts keeps the first 32 bytes and encodes them; whether that conforms is the cases' call.
+        expect(encode('E', new Uint8Array(33), 'text')).toEqual({ encoded: hex(digestE()) });
+    });
+
     it('names a subclass signify-ts throws by its own name', () => {
         class EmptyMaterialError extends Error {}
         const thrower = () => {
