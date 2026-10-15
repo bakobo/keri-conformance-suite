@@ -1,0 +1,10 @@
+#!/bin/sh
+# Builds the adapter's image, running its tests on the way, and tags it as bin/image-tag says.
+# Needs Docker with BuildKit and the network (to fetch hex packages); running the image needs neither
+# the network nor anything else on the host. Extra arguments go to docker build (e.g. --progress plain).
+set -eu
+here=$(cd "$(dirname "$0")/.." && pwd)
+tag=$("$here/bin/image-tag")
+docker build "$@" --build-context suite="$here/../.." --target test "$here"
+docker build "$@" --build-context suite="$here/../.." --target adapter -t "$tag" "$here"
+echo "built $tag" >&2

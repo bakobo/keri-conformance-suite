@@ -19,9 +19,28 @@ def loaded(*docs):
 
 def test_a_known_value_gets_its_definition_as_a_tooltip():
     assert S.term("no-evidence") == (
-        f'<abbr title="{S.html_attr(S.GLOSSARY["no-evidence"])}">no\\-evidence</abbr>')
+        f'<abbr class="kcs-tone kcs-muted" title="{S.html_attr(S.GLOSSARY["no-evidence"])}">'
+        "no\\-evidence</abbr>")
+    assert S.term("active") == f'<abbr title="{S.html_attr(S.GLOSSARY["active"])}">active</abbr>'
     assert S.term("pass") == "pass"
     assert S.term("<x>") == "&lt;x&gt;"
+
+
+def test_verdicts_and_outcomes_are_coloured_by_what_they_mean():
+    tone = {value: re.search(r'class="kcs-tone kcs-(\w+)"', S.term(value)).group(1)
+            for value in ("conformant", "interoperable", "not-conformant", "not-interoperable",
+                          "fail", "incomplete", "aborted", "no-evidence", "skipped")}
+    assert tone == {"conformant": "good", "interoperable": "good", "not-conformant": "bad",
+                    "not-interoperable": "bad", "fail": "bad", "incomplete": "warn",
+                    "aborted": "warn", "no-evidence": "muted", "skipped": "muted"}
+    # An outcome with no definition is still coloured, and its text still escaped.
+    assert S.term("fail") == '<span class="kcs-tone kcs-bad">fail</span>'
+
+
+def test_every_tone_has_a_style():
+    css = (ROOT / "docs" / "stylesheets" / "kcs.css").read_text(encoding="utf-8")
+    for tone in set(S.TONES.values()):
+        assert f".md-typeset .kcs-{tone}" in css, tone
 
 
 def test_a_definition_is_safe_inside_an_attribute():
@@ -41,7 +60,8 @@ def test_verdicts_outcomes_and_labels_carry_tooltips():
     rep["summary"]["not_supported_active"] = ["CESR-0003"]
     pages = S.render_results(loaded(result(rep, REPRODUCED)))
     index = pages["results/index.md"]
-    assert f'<abbr title="{S.html_attr(S.GLOSSARY["conformant"])}">conformant</abbr>' in index
+    assert (f'<abbr class="kcs-tone kcs-good" title="{S.html_attr(S.GLOSSARY["conformant"])}">'
+            "conformant</abbr>") in index
     detail = pages["results/keripy/2.1.0.dev1/cesr-v1.0-reproduced.md"]
     assert '">not\\-supported</abbr>' in detail
     assert '">active</abbr>' in detail

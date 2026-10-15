@@ -305,9 +305,11 @@ def test_the_real_instances_build_from_their_lockfiles():
     commands = {i.name: [" ".join(argv) for _, argv, _ in i.build] for i in P.INSTANCES}
     assert commands["keripy-1.2.14"] == ["uv sync --locked"]
     assert dict(P.INSTANCES[1].build[0][2]) == {"UV_PYTHON": "3.12"}
-    assert commands["keriox"] == commands["affinidi"] == ["cargo build --locked"]
+    assert (commands["keriox"] == commands["affinidi"] == commands["devrandom"]
+            == ["cargo build --locked"])
     assert commands["signify-ts"] == ["npm ci --no-audit --no-fund"]
     assert commands["keri-go"] == ["go build -mod=readonly -o kcs-adapter-keri-go ."]
+    assert commands["cesrixir"] == ["bin/build"]
 
 
 def test_an_adapter_that_writes_no_report_is_refused(repo):
