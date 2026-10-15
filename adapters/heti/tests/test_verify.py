@@ -168,6 +168,10 @@ def test_a_presented_acdc_with_trailing_bytes_goes_to_heti_as_it_came():
     (b"-CAC" + b"-SAB" + b"AAAA", False),  # an -S group must hold whole seal source couples
     (b"-CAS-SAR" + b"0A" + b"A" * 22 + b"E" + b"A" * 43, True),
     (b"-CAS-SAR" + b"0A" + b"A" * 22 + b"X" + b"A" * 43, False),
+    (b"-CAS-SAR" + b"0A" + b"A" * 22 + b"E" + b"A" * 42 + b"B", True),  # a different digest
+    (b"-CAS-SAR" + b"0A" + b"A" * 22 + b"EQ" + b"A" * 42, False),  # nonzero midpad bits
+    (b"-CAS-SAR" + b"0AQ" + b"A" * 21 + b"E" + b"A" * 43, False),
+    (b"-CAS-SAR" + b"0AB" + b"A" * 21 + b"EB" + b"A" * 42, True),  # keripy accepts these
     (b"-CAC-aAB" + b"\xff" * 4, False),
     (b"-CAC" + b"--SAAAAA", True),
     (b"-CAB" + b"-SAC", False),  # an inner group's count reaches past the end

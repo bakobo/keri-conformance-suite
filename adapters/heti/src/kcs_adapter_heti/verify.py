@@ -238,8 +238,20 @@ def _contents_read(code: bytes, contents: bytes) -> bool:
         return False
     if code == b"S":
         couples = [contents[n:n + 68] for n in range(0, len(contents), 68)]
-        return all(len(c) == 68 and c[:2] == b"0A" and c[24:25] == b"E" for c in couples)
+        return all(len(c) == 68 and _canonical(c[:24], b"0A") and _canonical(c[24:], b"E")
+                   for c in couples)
     return True
+
+
+def _canonical(text: bytes, code: bytes) -> bool:
+    """Whether a fixed-size primitive is of ``code`` and encoded canonically. Its pad is leading
+    and as many bytes as the code has characters (one for a 32-byte digest under E, two for a
+    16-byte number under 0A), and the bits of it that the code does not overwrite must be zero,
+    as keripy's Matter requires ("nonzero midpad bytes")."""
+    if not text.startswith(code):
+        return False
+    raw = base64.urlsafe_b64decode(b"A" * len(code) + text[len(code):])
+    return not any(raw[:len(code)])
 
 
 def evidence(stream: bytes, regs: dict[str, dict]) -> tuple:
