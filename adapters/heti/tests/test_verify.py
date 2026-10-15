@@ -176,7 +176,7 @@ def test_a_disclosure_that_is_not_text_is_left_out():
 def test_walked_edges_report_only_what_heti_walked():
     stream = bytes.fromhex(BUNDLES["chain"]["presented"]["stream"])
     near = verify.split(stream)[0]
-    far = [p for _, p in verify.edge_blocks(near["e"])][0]["n"]
+    far = next(p for _, p in verify.edge_blocks(near["e"]))["n"]
     assert verify.walked_edges([stream, b"junk"], (far,)) == [
         {"near": near["d"], "path": "e.le", "n": far, "valid": True}]
     assert verify.walked_edges([stream], None) == []
