@@ -55,6 +55,7 @@ Not declared, and why:
 - `cesr.serialization.cbor`, `cesr.serialization.mgpk`. cesrox frames CBOR and MessagePack bodies, but keri-core 0.17.13 reads only JSON bodies, so the adapter has no keriox reader for their version strings and answers `unsupported`.
 - `keri.version-2.x`. said 0.4.3 cannot read a 2.XX version string.
 - `kel.recovery`. keri-core has no superseding recovery: it files a superseding rotation as duplicitous and keeps the events it should displace on its trunk.
+- `crypto.blake2b-256`, `crypto.sha2-256`. keri-core's `said` crate has both digest codes, but no test here exercises either in a KEL, and only liveness assertions require them.
 - `crypto.secp256k1`, `crypto.secp256r1`, `crypto.ed448`. keri-core 0.17.13 has secp256k1 keys, but no test here exercises them in a KEL, and it has no P-256 or Ed448 verifier.
 
 `cesr.genus-1.00` is declared because the 1.00 codes cesrox has behave as keripy 1.x's do. cesrox lacks some 1.00 codes (`-I`, `-J`, `-K` and the big counters, among others), so a case that uses one of them fails rather than being skipped.
