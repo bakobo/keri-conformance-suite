@@ -30,6 +30,15 @@ that names a SAID other than the event its signatures cover). Field tampering ha
 SAID is taken, so the SAID still matches and only a field rule can refuse the body. The builder
 applies only what the scenario asks for; it never decides whether the result is acceptable. That
 is the model's job.
+
+Everything above describes the default wire, ``V2``. The keripy-1x-interop profile builds on
+``V1`` instead: KERI 1.0 bodies with keripy 1.x's field sets, whose rotations carry no ``c``
+(keripy 1.2.14, ``src/keri/core/serdering.py``, ``SerderKERI.Fields`` for ``Vrsn_1_0``), a
+``KERI10JSONssssss_`` version string with a six-digit hex size, no genus/version code because
+keripy 1.x reads none (``generators/SPEC-ISSUES.md``, G1), and attachments as bare CESR 1.00
+groups counted in items (``keripy1x.TABLE``): controller signatures ``-A``, witness signatures
+``-B``, receipt couples ``-C`` and seal source couples ``-G``. No specification defines either,
+so cases built on it are non-normative.
 """
 
 import hashlib
@@ -40,6 +49,7 @@ from functools import cache
 
 from . import b64, digests, ed25519, encoding
 from .errors import ScenarioError
+from .keripy1x import TABLE as TABLE_1X
 from .tables import Tables
 
 PROTOCOL = (2, 0)
@@ -103,7 +113,44 @@ def version_string(size: int) -> str:
             f"{b64.int_to_b64(size, 4)}.")
 
 
+def version_string_1x(size: int) -> str:
+    return f"KERI10JSON{size:06x}_"
+
+
 WIRE = "KERICAACAAJSON"
+
+
+@dataclass(frozen=True)
+class Wire:
+    """How a KERI version's bodies and attachments are laid out on the wire."""
+
+    name: str
+    fields: dict
+    version_string: object  # size -> version string
+    prefix: bytes  # what every stream starts with: a genus/version code, or nothing
+    target: str  # the version string up to its serialization kind, as a case's targets name it
+    cesr: str  # the CESR code table its attachments use, as a case's targets name it
+    groups: dict  # attachment kind -> count code
+    wrapper: str | None  # the attachments group the others nest in, if any
+    table: dict | None  # a legacy count-code table (decoding.Legacy), or None for genus 2.00
+
+
+V2 = Wire(name="2.x", fields=FIELDS, version_string=version_string,
+          prefix=GENUS_CODE.encode(), target=WIRE, cesr="CESR-2.00",
+          groups={"sigs": "-K", "wigs": "-L", "couples": "-M", "seals": "-S"}, wrapper="-C",
+          table=None)
+FIELDS_1X = {**FIELDS,
+             "rot": tuple(f for f in FIELDS["rot"] if f != "c"),
+             "drt": tuple(f for f in FIELDS["drt"] if f != "c")}
+V1 = Wire(name="1.x", fields=FIELDS_1X, version_string=version_string_1x, prefix=b"",
+          target="KERI10JSON", cesr="CESR-1.00",
+          groups={"sigs": "-A", "wigs": "-B", "couples": "-C", "seals": "-G"}, wrapper=None,
+          table=TABLE_1X)
+
+
+def wire_of(raw: bytes) -> Wire:
+    """The wire a body's version string selects: 1.x for a ``KERI10`` version string."""
+    return V1 if raw.startswith(b'{"v":"KERI10') else V2
 
 
 def serialize(fields: dict) -> bytes:
@@ -115,10 +162,11 @@ def serialize(fields: dict) -> bytes:
     return text.encode("utf-8")
 
 
-def sized(fields: dict) -> bytes:
+def sized(fields: dict, wire: Wire | None = None) -> bytes:
     """Serialize with the version string's size field set to the serialization's own size."""
-    fields["v"] = version_string(0)
-    fields["v"] = version_string(len(serialize(fields)))
+    vs = (wire or V2).version_string
+    fields["v"] = vs(0)
+    fields["v"] = vs(len(serialize(fields)))
     return serialize(fields)
 
 
@@ -204,8 +252,9 @@ class Message:
 class EventBuilder:
     """Builds a case's named events on demand, each once, resolving priors, prefixes and seals."""
 
-    def __init__(self, t: Tables, specs: list[dict], seal_resolver=None):
+    def __init__(self, t: Tables, specs: list[dict], seal_resolver=None, wire: Wire = V2):
         self.t = t
+        self.wire = wire
         # Turns a seal that names something other than a key event (an ACDC, a registry event)
         # into its field map; the ACDC builder supplies it.
         self.seal_resolver = seal_resolver
@@ -292,13 +341,13 @@ class EventBuilder:
                                 f"than the event's own {code!r}, or it changes nothing.")
         # The SAID carries the event's code; a said_digest tamper computes its value with another
         # algorithm, so the code names one algorithm and the value comes from another.
-        said = encoding.primitive(self.t, code, digests.raw(value, sized(fields)))
+        said = encoding.primitive(self.t, code, digests.raw(value, sized(fields, self.wire)))
         fields["d"] = said
         if self_addressing:
             fields["i"] = said
         if "d" in tamper:  # a SAID that is not the digest of the body
             fields["d"] = label_digest(self.t, tamper["d"])
-        raw = sized(fields)
+        raw = sized(fields, self.wire)
         return Event(name=name, aid=spec["aid"], ilk=fields["t"], sn=int(fields["s"], 16),
                      pre=fields["i"], said=fields["d"], body=dict(fields), raw=raw)
 
@@ -307,7 +356,7 @@ class EventBuilder:
         kind = spec.get("prefix", "self")
         keys, nxt = spec["keys"], spec.get("next", [])
         tamper = spec.get("tamper", {})
-        fields = {k: None for k in FIELDS[spec["t"]]}
+        fields = {k: None for k in self.wire.fields[spec["t"]]}
         fields["t"] = spec["t"]
         fields["s"] = f"{spec.get('s', 0):x}"
         fields["kt"] = self._threshold(spec.get("kt", "1"))
@@ -343,7 +392,7 @@ class EventBuilder:
         return prior, est
 
     def _common(self, name, spec, prior) -> dict:
-        fields = {k: None for k in FIELDS[spec["t"]]}
+        fields = {k: None for k in self.wire.fields[spec["t"]]}
         fields["t"] = spec["t"]
         fields["i"] = self.prefix(spec["aid"])
         fields["s"] = f"{spec.get('s', prior.sn + 1):x}"
@@ -364,7 +413,11 @@ class EventBuilder:
         fields["bt"] = spec.get("bt", "0")
         fields["br"] = [verkey(t, w, transferable=False) for w in br]
         fields["ba"] = [verkey(t, w, transferable=False) for w in ba]
-        fields["c"] = spec.get("c", [])
+        if "c" in fields:
+            fields["c"] = spec.get("c", [])
+        elif "c" in spec:
+            raise ScenarioError(f"Event {name!r}: a {self.wire.name} rotation has no c field, so "
+                                f"it cannot carry configuration traits.")
         fields["a"] = [self._seal(s) for s in spec.get("a", [])]
         ev = self._finish(name, spec, fields, False)
         remaining = [w for w in prior.wits if w not in br]
@@ -430,30 +483,35 @@ class EventBuilder:
 
     def _group(self, code: str, parts: list[str]) -> str:
         body = "".join(parts)
-        return encoding.counter(self.t, code, len(body) // 4) + body
+        if self.wire.table is None:
+            return encoding.counter(self.t, code, len(body) // 4) + body
+        # A CESR 1.00 group counts its items, or its tuples of ``per`` items (keripy1x.TABLE).
+        entry = self.wire.table[code]
+        return code + b64.int_to_b64(len(parts) // entry.per, entry.ss) + body
 
     def attachments(self, ev: Event, delivery: dict) -> str:
         groups = []
+        codes = self.wire.groups
         sigs = delivery.get("sigs", [])
         if sigs:
-            groups.append(self._group("-K", [self._controller_sig(ev, s) for s in sigs]))
+            groups.append(self._group(codes["sigs"], [self._controller_sig(ev, s) for s in sigs]))
         wigs = delivery.get("wigs", [])
         if wigs:
-            groups.append(self._group("-L", [self._witness_sig(ev, w) for w in wigs]))
+            groups.append(self._group(codes["wigs"], [self._witness_sig(ev, w) for w in wigs]))
         couples = delivery.get("couples", [])
         if couples:
             parts = []
             for label in couples:
                 parts.append(verkey(self.t, label, transferable=False))
                 parts.append(encoding.primitive(self.t, "0B", signature(label, ev.raw)))
-            groups.append(self._group("-M", parts))
+            groups.append(self._group(codes["couples"], parts))
         if "source_seal" in delivery:
             anchor = self.event(delivery["source_seal"])
             sn = encoding.primitive(self.t, "0A", anchor.sn.to_bytes(16, "big"))
-            groups.append(self._group("-S", [sn + anchor.said]))
-        if not groups:
-            return ""
-        return self._group("-C", groups)
+            groups.append(self._group(codes["seals"], [sn, anchor.said]))
+        if not groups or self.wire.wrapper is None:
+            return "".join(groups)
+        return self._group(self.wire.wrapper, groups)
 
     def message(self, delivery: dict) -> Message:
         if "receipt" in delivery:
@@ -461,7 +519,7 @@ class EventBuilder:
             said = (label_digest(self.t, delivery["wrong_said"]) if "wrong_said" in delivery
                     else ev.said)
             fields = {"v": None, "t": "rct", "d": said, "i": ev.pre, "s": f"{ev.sn:x}"}
-            body = sized(fields)
+            body = sized(fields, self.wire)
             source = delivery.get("source", "witness")
         else:
             ev = self.event(delivery["event"])
@@ -469,5 +527,5 @@ class EventBuilder:
             if "corrupt" in delivery:
                 body = corrupt(body, delivery["corrupt"])
             source = delivery.get("source", "controller")
-        stream = GENUS_CODE.encode() + body + self.attachments(ev, delivery).encode()
+        stream = self.wire.prefix + body + self.attachments(ev, delivery).encode()
         return Message(stream=stream, source=source, event=ev, receipt="receipt" in delivery)
