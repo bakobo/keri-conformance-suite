@@ -18,11 +18,17 @@ repo_name = "bakobo/keri-conformance-suite"
 docs_dir = "_site/src"
 # Colours taken from keri.one; the stylesheet says which.
 extra_css = ["stylesheets/kcs.css"]
+# Opens every link that leaves the site in one reused window named "spec".
+extra_javascript = ["javascripts/external-links.js"]
 site_dir = "_site/html"
 nav = [
   { "Home" = "index.md" },
-  { "Results" = "results/index.md" },
-  { "Publishing results" = "publishing-results.md" },
+  { "Results" = [
+    { "Results" = "results/index.md" },
+    { "Reading a result" = "reading-a-result.md" },
+    { "Verdicts" = "verdicts.md" },
+    { "Publishing a result" = "publishing-results.md" },
+  ] },
   { "Design" = "design.md" },
   { "Adapter protocol" = "adapter-protocol.md" },
   { "Clause coverage" = [

@@ -61,16 +61,16 @@ _DOCS = "../../../"
 EXPLAINED = {
     "Suite version": "design.md#versioning",
     "Profile": "design.md#targets-and-profiles",
-    "Verdict": "publishing-results.md#verdict",
-    "Active MUST assertions": "publishing-results.md#assertion-counts",
-    "Active SHOULD assertions": "publishing-results.md#assertion-counts",
-    "Active INTEROP assertions": "publishing-results.md#assertion-counts",
+    "Verdict": "verdicts.md",
+    "Active MUST assertions": "reading-a-result.md#pass-and-fail-counts",
+    "Active SHOULD assertions": "reading-a-result.md#pass-and-fail-counts",
+    "Active INTEROP assertions": "reading-a-result.md#pass-and-fail-counts",
     "Interoperability (never part of the verdict)": "design.md#practice",
-    "Composes": "publishing-results.md#composes",
-    "Self-agreement": "publishing-results.md#self-agreement",
+    "Composes": "reading-a-result.md#composes",
+    "Self-agreement": "reading-a-result.md#self-agreement",
     "Runner": "design.md#the-runner",
-    "Active cases not supported": "publishing-results.md#cases-not-supported",
-    "Aborted": "publishing-results.md#verdict",
+    "Active cases not supported": "reading-a-result.md#cases-not-supported",
+    "Aborted": "verdicts.md#conformance-verdicts",
 }
 
 _ENTITIES = {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}
@@ -262,7 +262,7 @@ INDEX_INTRO = """# Results
 
 Each result below is a conformance report written by `kcs run --report`, published with a label saying who produced it. A result labelled *Reproduced by CI* was produced by this repository's CI from a pinned adapter and implementation, and the run that produced it is linked from its page. A result labelled *Submitted claim, not reproduced* was sent by an implementation's maintainer through a pull request; the suite checked that the report is well formed and agrees with itself, but it did not run it and cannot vouch for it.
 
-Results are grouped by the suite version they ran against, and no table compares results from different suite versions. A verdict is never the whole claim: each cell also gives the active MUST and SHOULD assertions that passed and failed, because in the KERI layer a validator that accepts nothing passes every MUST. How results are produced and how to submit one is described in [Publishing results](../publishing-results.md).
+Results are grouped by the suite version they ran against, and no table compares results from different suite versions. A verdict is never the whole claim: each cell also gives the active MUST and SHOULD assertions that passed and failed, because in the KERI layer a validator that accepts nothing passes every MUST. What each part of a result means is in [Reading a result](../reading-a-result.md), the verdicts are explained in [Verdicts](../verdicts.md), and how to submit a result is in [Publishing a result](../publishing-results.md).
 """
 
 

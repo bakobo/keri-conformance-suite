@@ -22,13 +22,14 @@ uv run kcs --version
 
 ## Results and documentation
 
-Each of the [published conformance results](https://bakobo.github.io/keri-conformance-suite/results/) is labelled as either reproduced by this repository's CI or submitted by an implementation's maintainer; [`docs/publishing-results.md`](docs/publishing-results.md) explains the difference and how to submit one.
+Each of the [published conformance results](https://bakobo.github.io/keri-conformance-suite/results/) is labelled as either reproduced by this repository's CI or submitted by an implementation's maintainer; [`docs/reading-a-result.md`](docs/reading-a-result.md) explains the difference, and [`docs/publishing-results.md`](docs/publishing-results.md) how to submit one.
 
 ## Documents
 
 - [`docs/design.md`](docs/design.md) — principles, verdicts, case format, versioning and CI.
 - [`docs/adapter-protocol.md`](docs/adapter-protocol.md) — how an adapter talks to the runner.
-- [`docs/publishing-results.md`](docs/publishing-results.md) — how results are produced, labelled and submitted, and how to build the site.
+- [`docs/reading-a-result.md`](docs/reading-a-result.md) and [`docs/verdicts.md`](docs/verdicts.md) — what a published result says and what its verdict means.
+- [`docs/publishing-results.md`](docs/publishing-results.md) — how results are produced and submitted, and how to build the site locally.
 
 ## License
 

@@ -131,7 +131,7 @@ def test_detail_page_states_the_claim_and_every_case():
     assert page.startswith("# keripy 2\\.1\\.0\\.dev1, profile cesr\\-1\\.0\n")
     assert '!!! warning "Submitted claim, not reproduced"' in page
     assert "Jane Maintainer" in page and SUBMITTED["pull_request"] in page
-    assert "| [Verdict](../../../publishing-results.md#verdict) | aborted |" in page
+    assert "| [Verdict](../../../verdicts.md) | aborted |" in page
     assert "it stopped &lt;here&gt;" in page
     assert (f"| [CESR\\-0002]({S.REPO_URL}/blob/main/cases/cesr/CESR-0002.json) | active | "
             "cesr\\.parse | fail |") in page
@@ -345,7 +345,7 @@ def test_a_cell_gives_interop_results_and_unsupported_cases_when_there_are_any()
             "supported |") in index
     detail = S.render_results(loaded(doc))[
         "results/keripy/2.1.0.dev1/keripy-1x-interop-reproduced.md"]
-    assert "| [Active INTEROP assertions](../../../publishing-results.md#assertion-counts) | 1 passed, 0 failed (1 not\\-supported, 1 pass) |" in detail
+    assert "| [Active INTEROP assertions](../../../reading-a-result.md#pass-and-fail-counts) | 1 passed, 0 failed (1 not\\-supported, 1 pass) |" in detail
     assert "INTEROP" not in S.render_results(loaded(result()))[
         "results/keripy/2.1.0.dev1/cesr-1.0-submitted.md"]
     assert "Interoperability" not in detail
@@ -536,4 +536,4 @@ def test_detail_labels_link_to_their_explanations():
         source = (docs / target[len("../../../"):]).read_text(encoding="utf-8")
         slugs = {re.sub(r"[^a-z0-9 -]", "", h.lower()).strip().replace(" ", "-")
                  for h in re.findall(r"^#+ (.*)$", source, re.MULTILINE)}
-        assert anchor in slugs, (label, link)
+        assert not anchor or anchor in slugs, (label, link)
