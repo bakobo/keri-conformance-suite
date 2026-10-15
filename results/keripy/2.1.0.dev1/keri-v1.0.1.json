@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "7548f0674af6065f47df0f05d3784fca03e17247",
+    "commit": "cc7aff7ffc715deb692c6d091399588343adff9c",
     "date": "2026-10-15"
   },
   "report": {
@@ -104,8 +104,16 @@
         },
         "disputed": {
           "SHOULD": {
-            "fail": 6,
+            "fail": 8,
             "pass": 2
+          }
+        },
+        "draft": {
+          "SHOULD": {
+            "pass": 45
+          },
+          "MUST": {
+            "pass": 25
           }
         }
       },
@@ -5920,6 +5928,1233 @@
             "actual": {
               "on_delivery": "rejected",
               "verdict": "rejected"
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0100",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "rejected",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0101",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "rejected",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a7",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EMdVm3b4h2Rj3t-v5WQl6nVBFBHwhDbI-1ih9zDbA72L",
+              "sn": 1,
+              "wits": []
+            },
+            "actual": {
+              "sn": 1,
+              "said": "EMdVm3b4h2Rj3t-v5WQl6nVBFBHwhDbI-1ih9zDbA72L",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0102",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "pending",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": {
+              "bt": "1",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "sn": 0,
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ]
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ],
+              "bt": "1",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0103",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "pending",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": {
+              "bt": "1",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "sn": 0,
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ]
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ],
+              "bt": "1",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0104",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "pending",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": {
+              "bt": "1",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "sn": 0,
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ]
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EHZdzvhlgogFXP3OWou4JCG02xftkvko2PzSDXl-97QR",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [
+                "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu"
+              ],
+              "bt": "1",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0105",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0106",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0107",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0108",
+        "status": "disputed",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "fail",
+            "expected": "not-seen",
+            "actual": "seen",
+            "detail": "Message 0's initial reading is seen, not not-seen.",
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "fail",
+            "expected": "not-seen",
+            "actual": "seen",
+            "detail": "Message 0 was seen on arrival, and a seen message is always seen, so its final reading cannot be not-seen.",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "KERI-0109",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "keripy cannot parse message: ValidationError: Invalid raw for Serder = {'v': 'KERICAACAAJSONAAE1.', 't': 'icp', 'd': 'EAmEd3pLaajiEEYBtd4DPuXBR9TsjRYm3B3sNqGIGjc3', 'i': 'EAmEd3pLaajiEEYBtd4DPuXBR9TsjRYm3B3sNqGIGjc3', 's': '0', 'kt': '1', 'k': ['DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4'], 'nt': '1', 'n': ['EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud'], 'bt': '0', 'b': [], 'c': [], 'a': [], 'x': '1'}. Unallowed extra field(s) = ['x'] in sad.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0110",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "keripy cannot parse message: ValidationError: Invalid raw for Serder = {'v': 'KERICAACAAJSONAADG.', 't': 'ixn', 'd': 'EPx1Iz5yBl9MWM6Uu2qmVZQoD7GSsEfevHVQJ0UEUzk_', 'i': 'EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo', 's': '1', 'p': 'EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo'}. list index out of range\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0111",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "keripy cannot parse message: ValidationError: Invalid raw for Serder = {'v': 'KERICAACAAJSONAAFp.', 't': 'rot', 'd': 'EGq_WkJ1OuiWBlh2V9DkCFKQBLfFLO7cbEGFEX13gAe1', 'i': 'EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo', 's': '1', 'p': 'EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo', 'k': ['DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t'], 'kt': '1', 'nt': '1', 'n': ['EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj'], 'bt': '0', 'br': [], 'ba': [], 'c': [], 'a': []}. Missing or out-of-order field = kt from = ['v', 't', 'd', 'i', 's', 'p', 'kt', 'k', 'nt', 'n', 'bt', 'br', 'ba', 'c', 'a'] in sad.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "MUST",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0112",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0113",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0114",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "keripy cannot parse message: ValidationError: Invalid raw for Serder = {'v': 'KERICAACAAJSONAADN.', 't': 'ixx', 'd': 'EDc6eczwPRlFfNC9I3qI7gHd6JRNtN6CCgIFNEzT9Wid', 'i': 'EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo', 's': '1', 'p': 'EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo', 'a': []}. Invalid packet type (ilk) = ixx forprotocol = KERI.\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0115",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0116",
+        "status": "draft",
+        "profile": "keri-v1.0.1",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": "not-seen",
+            "actual": "rejected",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "SHOULD",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EJ1STGinbZKBFU-4VTID0ihd6eP2-zTdgmw4p_ekmCoo",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
             },
             "detail": null,
             "self_agreement": false
