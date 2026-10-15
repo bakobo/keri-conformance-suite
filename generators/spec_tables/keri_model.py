@@ -275,7 +275,10 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
                                 f"prefixes (line 353), is not modelled.")
         for prefix in added:
             _check_witness_code_modelled(digests.code_of(prefix))
-            if not BASIC_PREFIX.fullmatch(prefix):
+            # Whole and canonical: it re-encodes to itself, so no pad bit is set (CESR's parser
+            # refuses one), as well as being the right length and alphabet.
+            if not BASIC_PREFIX.fullmatch(prefix) or encoding.primitive(
+                    t, prefix[0], qb64_raw(prefix)) != prefix:
                 raise ScenarioError(f"A witness prefix of {prefix!r}, which is not a "
                                     f"44-character qualified Ed25519 key, is not modelled.")
         return "trait-inception-only"
