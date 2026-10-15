@@ -1198,17 +1198,17 @@ fn combining_many_signatures_on_a_held_event_stays_linear() {
         })
         .collect();
     let stream = bare(&ixn, &[sig_group(&many)]);
-    let stream_once = |e: &keri_codec::SerializedEvent,
-                       sigs: &[cesr::core::primitives::Siger<'_>]| {
-        bare(e, &[sig_group(sigs)])
-    };
+    let held = [stream.clone(), stream.clone(), stream.clone()];
+    let judged = [stream, alice.frame(&icp)];
+    // The bound is an order of magnitude over what this takes, and the quadratic merge it guards
+    // against took tens of seconds at this size; only the processing is timed.
     let started = std::time::Instant::now();
-    let result = process(&[stream.clone(), stream.clone(), stream]);
+    let result = process(&held);
     assert!(started.elapsed().as_secs() < 10, "{:?}", started.elapsed());
     assert_eq!(readings(&result)[0].1, "pending", "{result}");
-    // Once its KEL arrives, devrandom verifies every one of them, once, and refuses the event.
+    // Once its KEL arrives, devrandom judges the event with all of them and refuses it.
     let started = std::time::Instant::now();
-    let result = process(&[stream_once(&ixn, &many), alice.frame(&icp)]);
+    let result = process(&judged);
     assert!(started.elapsed().as_secs() < 10, "{:?}", started.elapsed());
     assert_eq!(
         readings(&result)[0],
