@@ -1,10 +1,12 @@
 """Ed25519 signing and verification in pure Python, following RFC 8032, section 5.1.
 
-The KERI cases carry real signatures, and the generators may use only the standard library, which
-has no Ed25519. Signing is deterministic, so every signature is fixed by its seed and message.
-This is a generator's tool, never a production signer: it makes no attempt at constant time.
-The implementation is the RFC's own (sections 5.1.2 to 5.1.7, in extended coordinates) and is
-checked against the RFC's test vectors.
+The runner and the generators share it. The KERI cases carry real signatures, and the runner checks
+an issuer's signatures itself (docs/adapter-protocol.md, acdc.issue), but the runner depends on
+nothing at runtime and the generators use only the standard library, which has no Ed25519. Signing
+is deterministic, so every signature is fixed by its seed and message. It is a test tool, never a
+production signer: it makes no attempt at constant time, and the runner uses it only on keys and
+messages the case itself supplies. The implementation is the RFC's own (sections 5.1.2 to 5.1.7, in
+extended coordinates) and is checked against the RFC's test vectors.
 """
 
 import hashlib

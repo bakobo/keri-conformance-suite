@@ -36,7 +36,9 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from functools import cache
 
-from . import b64, ed25519, encoding
+from keri_conformance import ed25519
+
+from . import b64, encoding
 from .decoding import Parser, Rejected
 from .errors import ScenarioError
 from .keri_events import DUMMY, ESTABLISHMENT, FIELDS, INCEPTIONS, ROTATIONS, digest, sized

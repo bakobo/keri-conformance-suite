@@ -23,7 +23,9 @@ parses the stream back with the reference parser and requires the two to agree.
 import hashlib
 import json
 
-from . import GENERATOR_NAME, GENERATOR_VERSION, b64, blake3, encoding, spec_source
+from keri_conformance import blake3
+
+from . import GENERATOR_NAME, GENERATOR_VERSION, b64, encoding, spec_source
 from .decoding import Legacy, Parser, Rejected
 from .errors import ScenarioError
 from .tables import Tables

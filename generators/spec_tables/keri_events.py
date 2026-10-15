@@ -32,7 +32,9 @@ import re
 from dataclasses import dataclass, field
 from functools import cache
 
-from . import b64, blake3, ed25519, encoding
+from keri_conformance import blake3, ed25519
+
+from . import b64, encoding
 from .errors import ScenarioError
 from .tables import Tables
 

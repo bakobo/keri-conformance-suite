@@ -40,7 +40,9 @@ import json
 import math
 from dataclasses import dataclass
 
-from . import b64, blake3, encoding
+from keri_conformance import blake3
+
+from . import b64, encoding
 from .errors import ScenarioError
 from .tables import Tables
 

@@ -417,7 +417,7 @@ def test_inconsistent_indexed_row_is_left_out_and_recorded():
 
 
 def test_blake3_matches_the_spec_said_example_and_the_empty_vector():
-    from generators.spec_tables import blake3
+    from keri_conformance import blake3
 
     assert blake3.digest(b"").hex() == (
         "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262")

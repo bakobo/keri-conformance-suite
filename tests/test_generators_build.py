@@ -438,7 +438,7 @@ def test_only_inception_bodies_are_built():
 
 
 def test_named_messages_resolve_and_carry_a_verifiable_said():
-    from generators.spec_tables import blake3
+    from keri_conformance import blake3
 
     m = {"proto": "KERI", "version": [2, 0], "genus_version": [2, 0], "keys": ["a"],
          "kt": "1", "next": ["b"], "nt": "1"}
