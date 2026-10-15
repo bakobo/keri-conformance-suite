@@ -70,7 +70,7 @@ class Recorder:
     """Stands in for a Kevery and keeps the signatures keripy's Parser extracted."""
 
     def __init__(self):
-        self.sigers, self.wigers = [], []
+        self.sigers, self.wigers, self.cigars = [], [], []
 
     def processEvent(self, serder, sigers, wigers=None, **kwa):
         self.sigers, self.wigers = list(sigers), list(wigers or [])
@@ -79,14 +79,18 @@ class Recorder:
         self.wigers = list(wigers)
 
     def processReceipt(self, serder, cigars, **kwa):
-        pass
+        self.cigars = list(cigars)
 
     def processAttachedReceiptCouples(self, serder, cigars, **kwa):
-        pass
+        self.cigars = list(cigars)
 
 
 class EndOfInput(Exception):
     """keripy's parser asked for more bytes after the whole stream was delivered."""
+
+
+class LeftOver(Exception):
+    """keripy's parser finished one message and left part of the stream unread."""
 
 
 def deliver(kvy, stream: bytes) -> None:
@@ -99,6 +103,8 @@ def deliver(kvy, stream: bytes) -> None:
     try:
         next(gen)
     except StopIteration:
+        if ims:  # every case stream holds one message; anything left was never examined
+            raise LeftOver(f"keripy 1.2.14's parser left {len(ims)} bytes of the stream unread")
         return
     raise EndOfInput("keripy 1.2.14's parser waits for more bytes after the end of the stream")
 
@@ -137,10 +143,10 @@ def check_bytes(case) -> list[str]:
         stream = bytes.fromhex(m["stream"])
         body, raw = body_of(stream)
         name = d.get("event") or d.get("receipt")
-        if "event" in d:
-            raws.setdefault(name, (body, raw))
         if "corrupt" in d:
             continue  # a corrupt copy: keripy must refuse it, which the dispositions check
+        if "event" in d:
+            raws.setdefault(name, (body, raw))  # the genuine bytes every signature covers
         try:
             same = serdering.SerderKERI(sad=dict(body), makify=True).raw == raw
             why = ""
@@ -152,7 +158,7 @@ def check_bytes(case) -> list[str]:
         try:
             exts = extract(stream)
         except Exception as e:  # noqa: BLE001
-            if name not in tampered and (d.get("sigs") or d.get("wigs")):
+            if name not in tampered and (d.get("sigs") or d.get("wigs") or d.get("couples")):
                 notes.append(f"message {i} ({name}): keripy 1.2.14's Parser does not extract it "
                              f"({type(e).__name__}: {e})")
             continue
@@ -170,6 +176,14 @@ def check_bytes(case) -> list[str]:
             if ok == (_bad(wig) or label not in wits):
                 notes.append(f"message {i} ({name}): keripy's Verfer says witness signature "
                              f"{wiger.index} {'verifies' if ok else 'fails'}")
+        # Receipt couples carry the receipter's prefix, so keripy's own Verfer checks each one.
+        if len(exts.cigars) != len(d.get("couples", [])):
+            notes.append(f"message {i} ({name}): keripy extracted {len(exts.cigars)} receipt "
+                         f"couples, not {len(d.get('couples', []))}")
+        for cigar in exts.cigars:
+            if not cigar.verfer.verify(cigar.raw, signed):
+                notes.append(f"message {i} ({name}): keripy's Verfer says the receipt couple "
+                             f"from {cigar.verfer.qb64} fails")
     return notes
 
 
@@ -240,6 +254,7 @@ def run_case(case) -> dict:
     result = {"dispositions": [None] * len(messages), "errors": []}
     with basing.openDB(name="kcs-keri1x-check", temp=True) as db:
         kvy = Kevery(db=db, lax=False, local=False)
+        refused = set()
         for i, s in enumerate(messages):
             try:
                 deliver(kvy, s)
@@ -247,6 +262,7 @@ def run_case(case) -> dict:
                 raise
             except Exception as e:  # noqa: BLE001 - keripy refusing a message drops it
                 result["errors"].append(f"message {i}: {type(e).__name__}: {e}")
+                refused.add(i)
             before = None
             for _ in range(MAX_PASSES):
                 kvy.processEscrows()
@@ -255,14 +271,19 @@ def run_case(case) -> dict:
                     break
                 before = now
             if corrupt[i]:
-                result["dispositions"][i] = {"initial": "rejected"}
+                # A corrupt copy claims the genuine event's SAID, so keripy's tables cannot tell
+                # the two apart. Read keripy's verdict from the delivery itself: a copy it took
+                # without raising is reported seen, so a keripy that accepts one disagrees.
+                corrupt_reading = "rejected" if i in refused else "seen"
+                result["dispositions"][i] = {"initial": corrupt_reading}
             elif idents[i][0] == "rct":
                 result["dispositions"][i] = {"initial": "seen"}
             else:
                 result["dispositions"][i] = {"initial": readings(db, kvy, idents[i])[0]}
         for i, ident in enumerate(idents):
             if corrupt[i]:
-                result["dispositions"][i].update({"final": "rejected", "trunk": False})
+                result["dispositions"][i].update({"final": result["dispositions"][i]["initial"],
+                                                  "trunk": False})
             elif ident[0] == "rct":
                 result["dispositions"][i].update({"final": "seen", "trunk": False})
             else:
@@ -289,9 +310,12 @@ def check(case) -> dict:
         if ev.outcome == "fail":
             out.append({"assertion": a["id"], "check": a["check"],
                         "expected": a.get("expected"), "keripy": ev.actual, "detail": ev.detail})
+    try:
+        notes = check_bytes(case)
+    except Exception as e:  # noqa: BLE001 - a body keripy cannot read is reported, not raised
+        notes = [f"the byte check could not read the case ({type(e).__name__}: {e})"]
     return {"id": case["id"], "status": case["status"], "disagreements": out,
-            "bytes": check_bytes(case), "keripy_errors": got["errors"],
-            "readings": got["dispositions"]}
+            "bytes": notes, "keripy_errors": got["errors"], "readings": got["dispositions"]}
 
 
 def cases() -> list[dict]:

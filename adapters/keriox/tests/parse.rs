@@ -241,15 +241,25 @@ fn encode_text_domain_uses_cesrox() {
 }
 
 #[test]
-fn encode_binary_domain_and_unknown_codes_are_unsupported() {
-    for (code, domain, prefix) in [
-        ("D", "binary", "e.feature.unsupported.binary-domain.f"),
-        ("0A", "text", "e.feature.unsupported.code.f"),
-        ("X", "text", "e.feature.unsupported.code.f"),
-    ] {
-        match encode(code, &[0u8; 16], domain) {
-            Err(OpError::Unsupported(m)) => assert!(m.starts_with(prefix), "{code} {domain}: {m}"),
-            other => panic!("{code} {domain}: {other:?}"),
+fn encode_in_the_binary_domain_is_unsupported() {
+    match encode("D", &[0u8; 32], "binary") {
+        Err(OpError::Unsupported(m)) => {
+            assert!(
+                m.starts_with("e.feature.unsupported.binary-domain.f"),
+                "{m}"
+            )
         }
+        other => panic!("{other:?}"),
+    }
+}
+
+#[test]
+fn a_code_cesrox_will_not_encode_is_a_rejection_with_cesroxs_error() {
+    for code in ["0A", "X"] {
+        assert_eq!(
+            encode(code, &[0u8; 16], "text"),
+            Ok(json!({"reject": {"class": "UnknownCodeError"}})),
+            "{code}"
+        );
     }
 }
