@@ -7,7 +7,8 @@ the codes from ``CounterCodex_1_0`` (lines 46-71) and their sizes from ``Counter
 (lines 343-366). In that table most codes count items, not quadlets: ``-A`` counts indexed
 controller signatures, ``-C`` counts (prefix, signature) couples, while ``-V`` and ``-0V``
 count quadlets. Only the codes the interop cases use are transcribed; ``generators/keripy1x_check``
-checks each against keripy 1.2.14 itself.
+checks each against keripy 1.2.14 itself. ``-G`` (SealSourceCouples, a sequence number and a
+digest per couple) carries the delegating seal's location on a 1.x delegated event.
 """
 
 from .decoding import Legacy
@@ -20,6 +21,7 @@ TABLE = {
     "-A": Legacy(hs=2, ss=2, unit="indexed"),  # ControllerIdxSigs
     "-B": Legacy(hs=2, ss=2, unit="indexed"),  # WitnessIdxSigs
     "-C": Legacy(hs=2, ss=2, unit="primitive", per=2),  # NonTransReceiptCouples, pre+cig
+    "-G": Legacy(hs=2, ss=2, unit="primitive", per=2),  # SealSourceCouples, snu+dig
     "-V": Legacy(hs=2, ss=2, unit="quadlets"),  # AttachmentGroup
     "-0V": Legacy(hs=3, ss=5, unit="quadlets"),  # BigAttachmentGroup
 }
