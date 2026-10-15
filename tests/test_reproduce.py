@@ -257,10 +257,11 @@ def _instance(*steps):
 
 def test_build_adapter_runs_each_step_in_its_directory_with_its_environment(tmp_path,
                                                                            monkeypatch):
-    monkeypatch.setenv("VIRTUAL_ENV", "/the/suite/.venv")
+    for name in P.REDIRECTS:
+        monkeypatch.setenv(name, "/elsewhere")
     (tmp_path / "a").mkdir()
-    script = ("import os, pathlib; pathlib.Path('out.txt').write_text("
-              "os.environ['KCS_X'] + str(os.environ.get('VIRTUAL_ENV')))")
+    script = ("import os, pathlib; pathlib.Path('out.txt').write_text(os.environ['KCS_X'] + "
+              f"str([n for n in {sorted(P.REDIRECTS)!r} if n in os.environ] or None))")
     P.build_adapter(tmp_path, _instance(P._step("a", sys.executable, "-c", script, KCS_X="1")))
     assert (tmp_path / "a" / "out.txt").read_text() == "1None"
 

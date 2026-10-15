@@ -73,6 +73,9 @@ E_UNSHIPPED = "e.rule.result.unshipped-adapter.f"
 BEGIN = ("<!-- BEGIN generated results: scripts/reproduce-results writes this table from "
          "results/; do not edit it -->")
 END = "<!-- END generated results -->"
+# Environment variables that move where a build puts what the runs execute.
+REDIRECTS = frozenset({"VIRTUAL_ENV", "UV_PROJECT_ENVIRONMENT", "CARGO_TARGET_DIR",
+                       "CARGO_BUILD_TARGET_DIR", "CARGO_BUILD_TARGET"})
 # Paths a refresh may find changed: what it writes itself.
 REFRESHABLE = ("results/",)
 
@@ -126,9 +129,11 @@ def _today() -> str:
 
 def build_adapter(repo: Path, instance: Instance) -> None:
     """Build `instance` from its lockfile, as its README and CI do. Each step's output goes to
-    this process's own, so a failure explains itself. The suite's own virtual environment is not
-    passed on: an adapter's uv project has its own."""
-    inherited = {k: v for k, v in os.environ.items() if k != "VIRTUAL_ENV"}
+    this process's own, so a failure explains itself. Variables that would send a build's output
+    somewhere other than the executable path the runs use are not passed on, or a build could
+    succeed elsewhere while a stale executable runs; that includes the suite's own virtual
+    environment, since an adapter's uv project has its own."""
+    inherited = {k: v for k, v in os.environ.items() if k not in REDIRECTS}
     for directory, argv, env in instance.build:
         try:
             done = subprocess.run(list(argv), cwd=repo / directory,
@@ -192,7 +197,7 @@ def _run_all(repo: Path, instances, work: Path, run, build) -> list[tuple[Instan
     return runs
 
 
-def _clean_commit(repo: Path) -> str:
+def _clean_commit(repo: Path) -> str:  # ~4my7
     """HEAD, after making sure the working tree holds nothing a run could depend on that HEAD
     does not."""
     status = _git(repo, "status", "--porcelain=v1", "-z", "--untracked-files=all")
