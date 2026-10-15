@@ -99,6 +99,13 @@ Nothing is escrowed, so a message's reading after the last delivery is its readi
 ## Results
 
 <!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+
+| Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| keri-go 0.1.5 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-15, suite 44b60935](../../results/keri-go/0.1.5/cesr-v1.0.json) |
+| keri-go 0.1.5 | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 69 | [2026-10-15, suite 44b60935](../../results/keri-go/0.1.5/keri-v1.0.1.json) |
+| keri-go 0.1.5 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite 44b60935](../../results/keri-go/0.1.5/keripy-1x-interop.json) |
+
 <!-- END generated results -->
 
 ## CI and the committed results
