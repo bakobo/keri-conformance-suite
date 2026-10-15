@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT))
 from generators.spec_tables import (
     b64,
     build,
+    digests,
     keri_build,
     keri_events,
     keri_model,
@@ -858,3 +859,90 @@ def test_a_sequence_number_that_is_not_canonical_hex_is_not_modelled(sn):
 def test_an_empty_key_list_is_refused_before_the_backer_threshold_is_read():
     events = [{**ICP, "keys": [], "tamper": {"fields": {"set": {"bt": []}}}}]
     assert tags(events, [msg("icp", [{"key": "a0", "index": 0}])]) == [["1/empty-keys"] * 2]
+
+
+# -- digest agility ----------------------------------------------------------------------------
+# Each event's SAID, digest prefix and next-key digests use the algorithm its "digest" code names
+# (CESR lines 1186 and 1194, KERI line 1713); the model recomputes each with the code it carries.
+
+def agile(code, **icp_tamper):
+    icp = {**ICP, "digest": code, **({"tamper": icp_tamper} if icp_tamper else {})}
+    return [icp, ev("rot1", "rot", keys=["a1"], next=["a2"], digest=code)]
+
+
+@pytest.mark.parametrize("code", ["F", "I"])
+def test_an_events_digests_use_the_algorithm_its_code_names(code):
+    eb = keri_events.EventBuilder(T, agile(code))
+    icp, rot = eb.event("icp"), eb.event("rot1")
+    for e in (icp, rot):
+        blank = dict(e.body, d=keri_events.DUMMY)
+        if e.ilk == "icp":
+            blank["i"] = keri_events.DUMMY
+        assert e.said.startswith(code)
+        assert digests.verifies(T, e.said, keri_events.sized(blank))
+        assert all(n.startswith(code) for n in e.body["n"])
+    assert icp.pre == icp.said and rot.body["p"] == icp.said
+    assert digests.verifies(T, icp.body["n"][0], keri_events.verkey(T, "a1").encode())
+
+
+@pytest.mark.parametrize("code", ["F", "I"])
+def test_a_kel_in_another_digest_algorithm_is_accepted(code):
+    deliveries = [msg("icp", ["a0"]), msg("rot1", ["a1"])]
+    assert tags(agile(code), deliveries) == [[A, A], [A, A]]
+
+
+def test_next_key_digests_are_checked_with_their_own_code():
+    events = [{**ICP, "digest": "I"}, ev("rot1", "rot", keys=["a9"], next=["a2"], digest="I")]
+    assert tags(events, [msg("icp", ["a0"]), msg("rot1", ["a9"])])[1] == ["4/pre-rotation"] * 2
+
+
+@pytest.mark.parametrize("code,value", [("I", "E"), ("E", "I"), ("F", "I")])
+def test_a_said_computed_with_another_algorithm_than_its_code_names_fails(code, value):
+    events = [{**ICP, "digest": code, "tamper": {"said_digest": value}}]
+    eb = keri_events.EventBuilder(T, events)
+    icp = eb.event("icp")
+    assert icp.said.startswith(code) and icp.pre == icp.said
+    blank = dict(icp.body, d=keri_events.DUMMY, i=keri_events.DUMMY)
+    data = keri_events.sized(blank)
+    assert icp.said == keri_events.encoding.primitive(T, code, digests.raw(value, data))
+    assert not digests.verifies(T, icp.said, data)
+    assert tags(events, [msg("icp", ["a0"])]) == [["1/said"] * 2]
+
+
+def test_a_said_digest_tamper_must_name_another_algorithm():
+    with pytest.raises(ScenarioError, match="said_digest"):
+        keri_events.EventBuilder(T, [{**ICP, "digest": "I", "tamper": {"said_digest": "I"}}]
+                                 ).event("icp")
+
+
+def test_a_digest_code_the_generators_cannot_compute_is_refused():
+    with pytest.raises(ScenarioError, match="names no digest algorithm"):
+        keri_events.EventBuilder(T, [{**ICP, "digest": "D"}]).event("icp")
+
+
+def test_a_seen_digest_algorithm_is_a_gated_feature_with_an_ungated_companion():
+    deliveries = [msg("icp", ["a0"], expect=[A, A]), msg("rot1", ["a1"], expect=[A, A])]
+    with pytest.raises(ScenarioError, match="must name a companion"):
+        make_all(case(agile("I"), copy.deepcopy(deliveries)))
+    gated, companion = make_all(case(agile("I"), copy.deepcopy(deliveries), companion=COMPANION))
+    assert "crypto.sha2-256" in gated["targets"]["features"]
+    assert all(a["level"] != "MUST" for a in gated["assertions"])
+    assert not set(companion["targets"]["features"]) & set(keri_build.GATED)
+    assert all(a["level"] == "MUST" for a in companion["assertions"])
+    built = make_all(case(agile("F"), copy.deepcopy(deliveries), companion=COMPANION))[0]
+    assert "crypto.blake2b-256" in built["targets"]["features"]
+
+
+def test_a_mislabelled_said_needs_no_digest_feature_and_keeps_its_must():
+    events = [{**ICP, "digest": "I", "tamper": {"said_digest": "E"}}]
+    built = make_all(case(events, [msg("icp", ["a0"], expect=["1/said"] * 2)]))
+    assert len(built) == 1
+    assert not {"crypto.sha2-256", "crypto.blake2b-256"} & set(built[0]["targets"]["features"])
+    levels = [a["level"] for a in built[0]["assertions"] if a["check"] == "disposition"]
+    assert levels and set(levels) == {"MUST"}
+
+
+def test_a_said_digest_tamper_cannot_hide_an_unknown_event_code():
+    with pytest.raises(ScenarioError, match="'D' names no digest algorithm"):
+        keri_events.EventBuilder(T, [{**ICP, "digest": "D", "tamper": {"said_digest": "E"}}]
+                                 ).event("icp")

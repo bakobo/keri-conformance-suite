@@ -10,18 +10,20 @@ tables of the CESR specification v1.0, and nothing else:
   ``[v, t, d, i, s, p, a]``, ``rct`` ``[v, t, d, i, s]``), serialized as compact JSON. The version
   string is ``KERIMmmGggKKKKSSSS.`` ("Version string field") with protocol and genus version 2.00.
 - **SAIDs** follow the CESR SAID protocol: the SAID field (and ``i``, for a self-addressing
-  inception) holds 44 ``#`` while the Blake3-256 digest of the serialization is taken.
+  inception) holds 44 ``#`` while the digest of the serialization is taken. The algorithm is the
+  one the event's ``digest`` derivation code names (``digests.py``), Blake3-256 (``E``) unless the
+  scenario names another, and the same code qualifies the event's next-key digests.
 - **Keys** are Ed25519, qualified with code ``D`` (transferable) or ``B`` (non-transferable), and
   each seed is the first 32 bytes of SHAKE-256 over the key's label, so every key is fixed by
-  the scenario text. A next-key digest is the Blake3-256 digest of the qualified public key's
-  text, the reading of "a fully qualified digest of a public key" that keripy also uses (recorded
+  the scenario text. A next-key digest is the digest of the qualified public key's text, the reading of "a fully qualified digest of a public key" that keripy also uses (recorded
   in generators/SPEC-ISSUES.md, K-I1).
 - **Attachments** are one CESR 2.00 attachments group ``-C`` holding controller-indexed signatures
   (``-K``), witness-indexed signatures (``-L``), non-transferable receipt couples (``-M``) and
   seal source couples (``-S``), in that order. Each stream starts with the genus/version code
   ``-_AAACAA``, because the CESR specification gives no default table for a stream without one.
 
-A scenario may tamper with an event on purpose (a wrong SAID, a ``d`` that differs from ``i``, a
+A scenario may tamper with an event on purpose (a wrong SAID, a SAID whose value was computed
+with another algorithm than its code names (``said_digest``), a ``d`` that differs from ``i``, a
 wrong prior digest or sequence number, a forged signature, a signature over another event's bytes,
 top-level fields added, removed, reordered or set, a witness with a transferable prefix, a receipt
 that names a SAID other than the event its signatures cover). Field tampering happens before the
@@ -36,7 +38,7 @@ import re
 from dataclasses import dataclass, field
 from functools import cache
 
-from . import b64, blake3, ed25519, encoding
+from . import b64, digests, ed25519, encoding
 from .errors import ScenarioError
 from .tables import Tables
 
@@ -82,12 +84,12 @@ def verkey(t: Tables, label: str, transferable: bool = True) -> str:
     return encoding.primitive(t, "D" if transferable else "B", public_key(label))
 
 
-def digest(t: Tables, data: bytes) -> str:
-    return encoding.primitive(t, "E", blake3.digest(data))
+def digest(t: Tables, data: bytes, code: str = digests.DEFAULT) -> str:
+    return digests.qualified(t, code, data)
 
 
-def next_digest(t: Tables, label: str) -> str:
-    return digest(t, verkey(t, label).encode("ascii"))
+def next_digest(t: Tables, label: str, code: str = digests.DEFAULT) -> str:
+    return digest(t, verkey(t, label).encode("ascii"), code)
 
 
 def label_digest(t: Tables, label: str) -> str:
@@ -282,7 +284,15 @@ class EventBuilder:
         if self_addressing:
             fields["i"] = DUMMY
         fields = restructure(fields, tamper.get("fields", {}))
-        said = digest(self.t, sized(fields))
+        code = spec.get("digest", digests.DEFAULT)
+        digests.algorithm(code)
+        value = tamper.get("said_digest", code)
+        if "said_digest" in tamper and value == code:
+            raise ScenarioError(f"Event {name!r}: a said_digest tamper must name another algorithm "
+                                f"than the event's own {code!r}, or it changes nothing.")
+        # The SAID carries the event's code; a said_digest tamper computes its value with another
+        # algorithm, so the code names one algorithm and the value comes from another.
+        said = encoding.primitive(self.t, code, digests.raw(value, sized(fields)))
         fields["d"] = said
         if self_addressing:
             fields["i"] = said
@@ -304,7 +314,7 @@ class EventBuilder:
         # A non-transferable identifier's key is qualified as non-transferable, like its prefix.
         fields["k"] = [verkey(t, x, transferable=kind != "nontransferable") for x in keys]
         fields["nt"] = self._threshold(spec.get("nt", "1" if nxt else "0"))
-        fields["n"] = [next_digest(t, x) for x in nxt]
+        fields["n"] = [next_digest(t, x, spec.get("digest", digests.DEFAULT)) for x in nxt]
         wits = spec.get("wits", [])
         transferable = tamper.get("transferable_wits", [])
         fields["bt"] = spec.get("bt", "0")
@@ -349,7 +359,7 @@ class EventBuilder:
         fields["kt"] = self._threshold(spec.get("kt", "1"))
         fields["k"] = [verkey(t, x) for x in keys]
         fields["nt"] = self._threshold(spec.get("nt", "1" if nxt else "0"))
-        fields["n"] = [next_digest(t, x) for x in nxt]
+        fields["n"] = [next_digest(t, x, spec.get("digest", digests.DEFAULT)) for x in nxt]
         br, ba = spec.get("br", []), spec.get("ba", [])
         fields["bt"] = spec.get("bt", "0")
         fields["br"] = [verkey(t, w, transferable=False) for w in br]
