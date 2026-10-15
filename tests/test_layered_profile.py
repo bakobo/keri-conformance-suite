@@ -276,3 +276,15 @@ def test_an_aborted_layered_run_claims_no_more_than_incomplete(suite, cases_dir,
     code, report = run(suite, cases_dir(*chosen), tmp_path)
     assert report["verdict"] == "aborted" and report["claim"]["verdict"] == "incomplete"
     assert code == errors.EXIT_FAULT
+
+
+def test_an_aborted_run_never_softens_a_definite_failure(suite, cases_dir, tmp_path,
+                                                         monkeypatch):
+    from keri_conformance import run as run_module
+    write(suite, "lay", {**LAYERED, "requires": {"operations": ["acdc.issue"], "features": []}})
+    chosen = [*BASE_CASES["conformant"], *OWN_CASES["interoperable"]]
+    manifest(suite, *chosen)
+    monkeypatch.setattr(run_module, "MAX_RETAINED_BYTES", 0)
+    _code, report = run(suite, cases_dir(*chosen), tmp_path)
+    assert report["verdict"] == "aborted"
+    assert report["claim"]["verdict"] == "not-interoperable"

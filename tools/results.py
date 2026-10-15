@@ -40,7 +40,7 @@ from keri_conformance.errors import (
 )
 from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, read_json
 from keri_conformance.profiles import load_profile, manifest_problem
-from keri_conformance.run import make_claim, summarize
+from keri_conformance.run import aborted_claim, make_claim, summarize
 from keri_conformance.shapes import (
     Check,
     all_of,
@@ -259,7 +259,7 @@ def _meaning_problem(report: dict, suite=SUITE) -> str | None:
             return problem
         expected = make_claim(profile, report["cases"], report["hello"])
         if report["aborted"] is not None:
-            expected["verdict"] = "incomplete"
+            expected["verdict"] = aborted_claim(expected["verdict"])
         if claim != expected:
             return "its claim is not the one its cases, hello and profile imply"
         verdict = claim["verdict"]

@@ -313,6 +313,17 @@ def test_an_aborted_layered_result_claims_no_more_than_incomplete(suite):
     assert R.result_problem(doc, suite) is None
 
 
+def test_an_aborted_layered_result_keeps_a_definite_failure(suite):
+    doc = layered_result()  # its claim is not-interoperable: kel.delegation is undeclared
+    rep = doc["report"]
+    rep["aborted"] = {"code": "e.x.f", "reason": "r", "problems": [], "at_case": "CESR-0004",
+                      "exit_code": 4}
+    rep["verdict"] = "aborted"
+    assert R.result_problem(doc, suite) is None
+    rep["claim"]["verdict"] = "incomplete"
+    assert "claim" in R.result_problem(doc, suite)
+
+
 def test_the_claim_verdict_is_the_report_verdict(suite):
     doc = layered_result()
     doc["report"]["verdict"] = "not-conformant"

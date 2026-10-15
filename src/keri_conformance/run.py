@@ -177,6 +177,12 @@ def _member_verdict(entries: list[dict], name: str, *, own: bool) -> str:
     return verdict
 
 
+def aborted_claim(verdict: str) -> str:
+    """An aborted run left cases unrun, so its claim can be no better than incomplete; a definite
+    failure it had already shown stands, so aborting can never soften one."""
+    return verdict if verdict == "not-interoperable" else "incomplete"
+
+
 def make_claim(profile: Profile, entries: list[dict], hello: dict) -> dict:
     """A layered profile's claim (docs/design.md, Targets and profiles): each prerequisite's
     verdict from its own cases, the profile's own INTEROP verdict from its cases, the requirements
@@ -240,8 +246,7 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: Profile | 
     if aborted:
         verdict = "aborted"
         if claim:
-            # An aborted run left cases unrun, so its claim can be no better than incomplete.
-            claim["verdict"] = "incomplete"
+            claim["verdict"] = aborted_claim(claim["verdict"])
     report = {
         "report_version": 1,
         "runner_version": __version__,
