@@ -1,15 +1,16 @@
 # Affinidi adapter
 
-Connects Affinidi's Rust CESR/KERI crates to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse` and `cesr.encode` and declares only those operations. It composes nothing: `composes` is empty, and every value it reports comes from Affinidi's own parsing or from the bytes Affinidi said it consumed. It never parses CESR itself. Affinidi's public API does not say where each item of a stream lay, so the adapter does not report items: it answers every stream Affinidi accepts with the protocol's accepted summary, the number of bytes Affinidi consumed.
+Connects Affinidi's Rust CESR/KERI crates to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse`, `cesr.encode` and `keri.process`, and declares only those operations. For CESR it composes nothing: every value it reports comes from Affinidi's own parsing or from the bytes Affinidi said it consumed, and it never parses CESR itself. For `keri.process` every accept or reject is Affinidi's, but the routing around those verdicts is the adapter's, so `composes` is `["keri.routing"]` (see "keri.process" below). For `cesr.parse`, Affinidi's public API does not say where each item of a stream lay, so the adapter does not report items: it answers every stream Affinidi accepts with the protocol's accepted summary, the number of bytes Affinidi consumed.
 
 ## Pins
 
 | Crate | Version | Source commit (from the crate's `.cargo_vcs_info.json`) | Role |
 |---|---|---|---|
 | `affinidi-keri-core` | `=0.4.0` | `6277ae866c5761edb5cfa807a5f7ac83ebf3700c` (affinidi/affinidi-keri-rs) | Stream parser and message framing; names the implementation in `hello` |
+| `affinidi-keri-crypto` | `=0.4.0` | `6277ae866c5761edb5cfa807a5f7ac83ebf3700c` (affinidi/affinidi-keri-rs) | Verification keys (`Verfer`) built from an event's `k` field for `keri.process`; same workspace and commit as `affinidi-keri-core`, so the implementation identity already covers it |
 | `affinidi-cesr` | `=0.1.3` | `b970cb01bdd1acd0530137b67460579e4624ab47` (affinidi/affinidi-tdk-rs) | Primitives (`Matter`), used by `cesr.encode` and by the parser; its version and commit are part of `hello`'s implementation identity |
 
-Both are the latest releases on crates.io as of 2026-10-02, pinned exactly in `Cargo.toml` and locked in `Cargo.lock`. The adapter uses only their public API and patches nothing. `hello` reports name `affinidi-keri-core`, version `0.4.0 (affinidi-cesr 0.1.3)` and commit `6277ae86… (affinidi-cesr b970cb01…)`, so moving either pin changes the identity the committed results record. `tests/pins.rs` fails if those constants in `src/protocol.rs` drift from `Cargo.lock` or from the commits crates.io published. To move a pin, change it in `Cargo.toml`, run `cargo update -p <crate> --precise <version>`, update the constants, and refresh the committed results.
+Both are the latest releases on crates.io as of 2026-10-02, pinned exactly in `Cargo.toml` and locked in `Cargo.lock`. The adapter uses only their public API and patches nothing. `hello` reports name `affinidi-keri-core`, version `0.4.0 (affinidi-cesr 0.1.3)` and commit `6277ae86… (affinidi-cesr b970cb01…)`, so moving either pin changes the identity the committed results record. `tests/pins.rs` fails if those constants in `src/protocol.rs` drift from `Cargo.lock` or from the commits crates.io published, and if `affinidi-keri-crypto` is not at `affinidi-keri-core`'s version and commit. To move a pin, change it in `Cargo.toml`, run `cargo update -p <crate> --precise <version>`, update the constants, and refresh the committed results.
 
 The toolchain is Rust 1.95.0 (`rust-toolchain.toml`), the `rust-version` both crates declare.
 
@@ -23,7 +24,16 @@ uv run kcs run --adapter "$PWD/adapters/affinidi/target/debug/kcs-adapter-affini
 
 ## Declared features
 
-A feature is a claim about what the implementation and this adapter can do together, not about the implementation alone. Declared: `cesr.genus-1.00`, `cesr.serialization.json` and `keri.version-1.x`. Affinidi frames JSON bodies by a legacy `KERI10JSON…_` version string and reads the 1.00 count codes `-A`, `-B`, `-C`, `-E`, `-F`, `-G` and `-V`, with `-0X` as their big forms (`affinidi_keri_core::counter_table`); `-D` is modelled but refused, and other 1.00 codes are unknown to it. A 1.00 case that uses one of those fails rather than being skipped.
+A feature is a claim about what the implementation and this adapter can do together, not about the implementation alone. Declared for CESR: `cesr.genus-1.00`, `cesr.serialization.json` and `keri.version-1.x`. Affinidi frames JSON bodies by a legacy `KERI10JSON…_` version string and reads the 1.00 count codes `-A`, `-B`, `-C`, `-E`, `-F`, `-G` and `-V`, with `-0X` as their big forms (`affinidi_keri_core::counter_table`); `-D` is modelled but refused, and other 1.00 codes are unknown to it. A 1.00 case that uses one of those fails rather than being skipped.
+
+Declared for `keri.process`, each because Affinidi's `Kever` has the check and the adapter calls it:
+
+- `kel.basic`: `Kever::new` checks an inception's SAID, signatures and prefix derivation; `Kever::verify_update` checks a rotation's or interaction's SAID, sequence number, prior event digest, signatures and pre-rotation commitment.
+- `kel.multisig.numeric` and `kel.multisig.weighted`: `Threshold::is_satisfied` over the indexed signatures, for numeric thresholds and for weighted clauses. Affinidi reads a weighted threshold only in its nested form (`[["1/2","1/2"]]`) and rejects keripy's flat single-clause form (`["1/2","1/2"]`), and it reads a numeric threshold as decimal where KERI writes hex, so the two agree only below 10. Cases in those forms fail rather than being skipped.
+- `kel.delegation`: `Kever::new_delegated` and `Kever::verify_update_delegated` check that the delegator's event named by the seal source couple anchors a seal for exactly this event.
+- `kel.witness`: `Kever::verify_witness_receipts_static` counts verified receipt couples (`-C`) from designated witnesses against the event's witness threshold, including after a rotation changes the witness list. It does not count witness indexed signatures (`-B`), the form keripy attaches, so a case that receipts with `-B` fails.
+- `crypto.ed25519`: every key and signature the tests use. Affinidi's `Verfer` also verifies secp256k1 and secp256r1, but no test here exercises them, so they are not claimed.
+- `keri.routing`: supplied by the adapter, and listed in `composes`.
 
 Not declared, and why:
 
@@ -32,6 +42,12 @@ Not declared, and why:
 - `keri.version-2.x`, `cesr.native`: no 2.x version strings and no native CESR bodies (`parser::parse_next` refuses a stream that does not start with `{` or a CBOR/MessagePack map byte).
 - `cesr.domain.binary`: the parser rejects non-ASCII attachment bytes, so it reads attachments in the text domain only. `Matter` can encode qb2, but a feature is a claim about the whole implementation.
 - `cesr.serialization.cbor`, `cesr.serialization.mgpk`: Affinidi's `Serder` has CBOR and MessagePack kinds, but no case exercises them and this adapter has not verified that framing, so they are not claimed.
+- `kel.nontransferable`: `Threshold::from_json_value` refuses `"0"` for every threshold, `nt` included, so Affinidi rejects every non-transferable inception, its own included.
+- `kel.partial-rotation`: Affinidi requires a rotation's keys to match the prior next-key digests one for one and in order, and its parser does not read the big indexed signature codes (`2A`…) keripy uses when a signature's two indexes differ.
+- `kel.recovery`: `Kever` accepts only the event at the next sequence number, so no superseding rotation is ever accepted.
+- `keri.escrow`: Affinidi's `Escrow` type exists, but none of its validation paths uses it. An event that arrives before what it needs is rejected and stays rejected.
+- `keri.duplicity`: a second event at a sequence number Affinidi already holds is refused by `Kever` as out of order, not recorded as duplicitous. Affinidi's `Judge` keeps a duplicitous-event log, but this adapter does not use `Judge` (see below).
+- `keri.version-2.x`: no 2.x version strings, as above.
 
 ## How a stream is parsed
 
@@ -57,9 +73,42 @@ This is the central limitation. Affinidi's parser returns attachments as decoded
 | `cesr.encode` binary | `Matter::new(code, raw)?.qb2()` |
 | Decoded items of any kind | Never reported: Affinidi's parser does not expose them (see above) |
 
+## keri.process
+
+Each request gets a fresh validator, and each message is delivered to it in order. The adapter parses a message with `parser::parse_all`, the strict parser, and requires exactly one message. It then makes the one `Kever` call the message's ilk needs:
+
+| Ilk | Affinidi call |
+|---|---|
+| `icp` | `Kever::new`, then `Kever::verify_witness_receipts` |
+| `dip` | `Kever::new_delegated`, then `Kever::verify_witness_receipts` |
+| `rot`, `ixn` | `Kever::verify_update` on the prefix's `Kever`, then `Kever::verify_witness_receipts_static` against the proposed state, then `apply_verified_update` |
+| `drt` | `Kever::verify_update_delegated`, then the same witness check and update |
+
+Anything else, an `rct` included, is not handed to a `Kever` and is reported rejected. Affinidi's validator has no processing for a receipt message. Kever counts only receipt couples attached to the event they receipt, and holding a receipt for a later event would be an escrow that Affinidi does not have.
+
+This sequencing is the adapter's, which is why `keri.routing` is in `composes`. It does four things Affinidi leaves to its caller. It picks the call from the ilk. It keeps one `Kever` per prefix, refusing a second inception of a prefix it already holds, as Affinidi's direct mode does. It records the body of every event Affinidi accepted. And it answers Affinidi's `DelegatorAnchors` lookup, whose contract is that it returns anchors only from events already verified, from that record alone. Where Affinidi's own did:webs verifier makes the same choices, the adapter follows it: the delegation proof is the first seal source couple attached, and the receipt couples counted are those attached to the event.
+
+The adapter does not use Affinidi's higher-level validator, `affinidi_keri::direct` and the `Judge` built on it. Direct mode returns success for a `rot`, `ixn` or `drt` whose prefix it holds no state for, so its return value cannot back a reading. It also accepts only `icp` as an inception, so it cannot process a delegated identifier at all (`affinidi-keri` 0.4.0, `src/direct.rs`, the "in direct mode we skip" branch, and `Kever::new_from_parts`, which refuses everything but `icp`). `this.i` records the decision.
+
+### Where each value comes from
+
+| Reported value | Source |
+|---|---|
+| `initial` | `seen` if, after the message's own delivery, Affinidi has accepted an event with exactly this body, otherwise `rejected` |
+| `final` | The same test after the last message. An event Affinidi accepted is never removed, so a message seen on delivery stays seen. A message rejected on delivery reads seen at the end only when a later delivery of the same body was accepted |
+| `trunk` | Equal to `final` being `seen`: without recovery, every accepted event is on the trunk, and a receipt is never seen |
+| `reason` | The `CoreError` Affinidi returned, or why the adapter could not hand the message to a `Kever`; given only for a message not seen on delivery |
+| `key_states` | One entry per prefix with a `Kever`, from `Kever::state()` |
+| `sn`, `keys`, `ndigs`, `wits`, `delegator` | `KeyState` `sn`, `keys`, `next_keys`, `backers`, `delegator` |
+| `said` | `KeyState::last_event_digest`, the SAID of the last event accepted |
+| `kt`, `nt` | `KeyState` `threshold` and `next_threshold`. A numeric threshold is the number Affinidi holds, written in hex as KERI writes it, so a `kt` of `"10"`, which Affinidi reads as ten, is reported as `"a"`. A weighted threshold is `Threshold::to_json_value`, always nested |
+| `bt` | `KeyState::backer_threshold`, in hex |
+
+The readings use only `seen` and `rejected`. Affinidi has no escrow, so nothing is `pending`, and it records no duplicity, so nothing is `duplicitous`.
+
 ## Errors
 
-`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when the integer 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB (`protocol::MAX_REQUEST_LINE`, not counting its newline). The adapter reads at most that far before deciding; a longer line gets an error whose `id` is null (`e.input.range.request-size.f`) and the rest of it is skipped a buffer at a time, never held whole. A line that is blank, not UTF-8, not a JSON object, or has no usable `id` (a non-negative integer up to 2^64−1) gets an error whose `id` is null (`e.input.format.request.f`). `keri.process` and `keri.emit` get an `unsupported` error. When Affinidi refuses to encode, the response is an `unsupported` error naming its `CesrError` variant (`e.input.format.encode-refused.f`), because that operation has no rejection result. A panic anywhere in an operation, including inside Affinidi, is caught and answered as a harness error (`e.self.unknown.panic.f`), so the session continues. Every error is also written to standard error, which the runner keeps in its report.
+`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when the integer 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB (`protocol::MAX_REQUEST_LINE`, not counting its newline). The adapter reads at most that far before deciding; a longer line gets an error whose `id` is null (`e.input.range.request-size.f`) and the rest of it is skipped a buffer at a time, never held whole. A line that is blank, not UTF-8, not a JSON object, or has no usable `id` (a non-negative integer up to 2^64−1) gets an error whose `id` is null (`e.input.format.request.f`). `keri.emit` gets an `unsupported` error. A `keri.process` request whose `perspective` is not an object, or whose `messages` is not a list of objects each with a lowercase hex `stream`, gets a harness error (`e.input.format.request.f`); a perspective other than `{"role": "validator"}` gets an `unsupported` error (`e.feature.unsupported.perspective.f`). Everything Affinidi refuses, and every stream it cannot parse, is a rejected reading, never an error. When Affinidi refuses to encode, the response is an `unsupported` error naming its `CesrError` variant (`e.input.format.encode-refused.f`), because that operation has no rejection result. A panic anywhere in an operation, including inside Affinidi, is caught and answered as a harness error (`e.self.unknown.panic.f`), so the session continues. Every error is also written to standard error, which the runner keeps in its report.
 
 ## Results
 
