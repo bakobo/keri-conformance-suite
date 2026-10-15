@@ -1,0 +1,2375 @@
+{
+  "result_version": 1,
+  "provenance": {
+    "kind": "maintainer-run",
+    "maintainer": "Daniel Hardman",
+    "commit": "7548f0674af6065f47df0f05d3784fca03e17247",
+    "date": "2026-10-15"
+  },
+  "report": {
+    "report_version": 1,
+    "runner_version": "0.0.1",
+    "suite_version": "0.0.1",
+    "protocol_version": 1,
+    "supported_protocols": [
+      1
+    ],
+    "negotiated_protocol": 1,
+    "hello": {
+      "protocol": 1,
+      "adapter": {
+        "name": "kcs-adapter-affinidi",
+        "version": "0.1.0"
+      },
+      "implementation": {
+        "name": "affinidi-keri-core",
+        "version": "0.4.0 (affinidi-cesr 0.1.3)",
+        "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c (affinidi-cesr b970cb01bdd1acd0530137b67460579e4624ab47)"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode"
+      ],
+      "features": [
+        "cesr.genus-1.00",
+        "cesr.serialization.json",
+        "keri.version-1.x"
+      ],
+      "composes": []
+    },
+    "declared_features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "keri.version-1.x"
+    ],
+    "composes": [],
+    "filters": {
+      "profile": "cesr-v1.0",
+      "cases_dir": "cases"
+    },
+    "session_stderr": "",
+    "verdict": "no-evidence",
+    "aborted": null,
+    "probes": {
+      "statelessness": "not-yet-available"
+    },
+    "summary": {
+      "counts": {
+        "active": {
+          "MUST": {
+            "not-supported": 29
+          },
+          "SHOULD": {
+            "not-supported": 10
+          }
+        },
+        "disputed": {
+          "MUST": {
+            "not-supported": 2
+          }
+        }
+      },
+      "should": {
+        "not-supported": 10
+      },
+      "should_failed": 0,
+      "interop": {},
+      "interop_verdict": null,
+      "should_warning": null,
+      "not_supported_active": [
+        "CESR-0001",
+        "CESR-0002",
+        "CESR-0003",
+        "CESR-0004",
+        "CESR-0005",
+        "CESR-0006",
+        "CESR-0007",
+        "CESR-0008",
+        "CESR-0009",
+        "CESR-0010",
+        "CESR-0011",
+        "CESR-0012",
+        "CESR-0013",
+        "CESR-0014",
+        "CESR-0015",
+        "CESR-0016",
+        "CESR-0017",
+        "CESR-0018",
+        "CESR-0019",
+        "CESR-0020",
+        "CESR-0021",
+        "CESR-0023",
+        "CESR-0024",
+        "CESR-0025",
+        "CESR-0026",
+        "CESR-0027",
+        "CESR-0028",
+        "CESR-0029",
+        "CESR-0030",
+        "CESR-0032",
+        "CESR-0033",
+        "CESR-0034",
+        "CESR-0035",
+        "CESR-0037",
+        "CESR-0038",
+        "CESR-0039",
+        "CESR-0040",
+        "CESR-0041",
+        "CESR-0042"
+      ],
+      "self_agreement_passes": 0
+    },
+    "cases": [
+      {
+        "id": "CESR-0001",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "44504c4f5f483162383361546c325632754b794d3243367a724b4930615a5f584d6f71574e474f686e6c5831",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0002",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "0cf2cefc7d5bf37693976576b8ac8cd82eb3aca234699fd7328a963463a19e55f5",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0003",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "4544774b6b496d537a4c3951565978354c474f746150694249547933344c4f6c66626233365934496551634a",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0004",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "3042415476594c4d7a50694539626c7a7350537368457262424356773057617144544852386b4952356874326a543876355631515368364d6262574c49367241424f30354c5f617666755f796d6e594957336b71452d5574",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0005",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "d01013bd82ccccf884f5b973b0f4ac844adb042570d166aa0d31d1f24211e61b768d3f2fe55d504a1e8c6db58b23aac004ed392ff6af7eeff29a76085b792a13e52d",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0006",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "3041425a444d4f342d373276423251654336503079566a5a",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0007",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "31414142425a644172627a31736e585336567142486e626663514b3150316452494d36755538576c4d6b413153594538",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0008",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "d40001059740adbcf5b275d2e95a811e76df7102b53f575120ceae53c5a532403549813c",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0009",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "314141447a6f76423361586d36614b6242637352426174467075377a71596c2d4436336745686c4655374e66684f646e364346355630394f4e7374756976453346384d6467394e627a4158617a7a4f77",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0010",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "4d414142",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0011",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.encode",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "encoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "300001",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0012",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 633,
+                "kind": "counter",
+                "size": 45,
+                "start": 449
+              },
+              {
+                "code": "-K",
+                "end": 457,
+                "group_end": 633,
+                "kind": "counter",
+                "size": 44,
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 545,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "28c87793346a68b65809574dfb580414abe6d3e6b4bf35839bdb5d732d253a987b7326b402ef548511a268d406154a07bb0ec3b76940711c3521831b4fb413b7",
+                "start": 457
+              },
+              {
+                "code": "A",
+                "end": 633,
+                "index": 1,
+                "kind": "indexed",
+                "raw": "f8b08544be4feaf1f00b8ee5bea29c61394dbf1c549affc5d9f1e4a7020dc0808f93d8ce81d4472ce2993117ff22f3ad34af1082eb4cfe56bd88414352575be5",
+                "start": 545
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0013",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 307,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 299,
+                "start": 8,
+                "version": "1.0"
+              },
+              {
+                "code": "-C",
+                "end": 311,
+                "group_end": 403,
+                "kind": "counter",
+                "size": 23,
+                "start": 307
+              },
+              {
+                "code": "-K",
+                "end": 315,
+                "group_end": 403,
+                "kind": "counter",
+                "size": 22,
+                "start": 311
+              },
+              {
+                "code": "A",
+                "end": 403,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "4382f0cf2854668ea2858981ff78057dcb50f3f36441e73fd7b031936335d9b94065476ea06f0f9fd6ff194666fd79788eeb628ae414215756ff72170b47bb5e",
+                "start": 315
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0014",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 545,
+                "kind": "counter",
+                "size": 23,
+                "start": 449
+              },
+              {
+                "code": "-K",
+                "end": 457,
+                "group_end": 545,
+                "kind": "counter",
+                "size": 22,
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 545,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "6c8c181adf3894ee3f5e968e11dc4b8f9eb8428c39a4f3f33fb1c21aec10c68b255d1a8ab0275716c2e88080b844fbc0a8a33dff1dad24db1408e9a0cd42658a",
+                "start": 457
+              },
+              {
+                "end": 846,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 545,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 850,
+                "group_end": 942,
+                "kind": "counter",
+                "size": 23,
+                "start": 846
+              },
+              {
+                "code": "-K",
+                "end": 854,
+                "group_end": 942,
+                "kind": "counter",
+                "size": 22,
+                "start": 850
+              },
+              {
+                "code": "A",
+                "end": 942,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "3b9565f7ce46233f5238f7eb4e403278768ec3237591e7051ca19bc004162b13ea22c8f379d1938661a9cd465430ff376cd9545b4841c2cd5cdd5fc91c68671e",
+                "start": 854
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0015",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 813,
+                "kind": "counter",
+                "size": 90,
+                "start": 449
+              },
+              {
+                "code": "-K",
+                "end": 457,
+                "group_end": 545,
+                "kind": "counter",
+                "size": 22,
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 545,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "a65347c151b0b76a761bfac81256f200eb2b33345bcc7c1081b5ac3e2991656fbfe5c2965237a9759edd481ede89d75affce5499d824da4f72a255d82545726d",
+                "start": 457
+              },
+              {
+                "code": "-M",
+                "end": 549,
+                "group_end": 813,
+                "kind": "counter",
+                "size": 66,
+                "start": 545
+              },
+              {
+                "code": "B",
+                "end": 593,
+                "kind": "primitive",
+                "raw": "93f79047cc6a25ce8254faccac9e5f97d017a141840cdcef6b4eab38954c14ac",
+                "start": 549
+              },
+              {
+                "code": "0B",
+                "end": 681,
+                "kind": "primitive",
+                "raw": "89554d47a287d36554b46fd3e31c2455d8ba90741470d2e81a9e750f73a2fda6b69a2757b86cbc58211434ec2efce489ea73e6d2b9be03a2411e3243f368e745",
+                "start": 593
+              },
+              {
+                "code": "B",
+                "end": 725,
+                "kind": "primitive",
+                "raw": "2bea68e26abbf066b610e1bf162b24bba7e9cb44134bd5e34e91100d892e3e69",
+                "start": 681
+              },
+              {
+                "code": "0B",
+                "end": 813,
+                "kind": "primitive",
+                "raw": "35ae450ef0da4c3ec9402e6eb761a0aaeea84afef111673e15ffa5e9fcb967cfee7ac200c6293b3702d278ca92c6518ef1efb6eeb81e10b6825f9e6ac842ee45",
+                "start": 725
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0016",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 469,
+                "kind": "counter",
+                "size": 39,
+                "start": 309
+              },
+              {
+                "code": "-K",
+                "end": 317,
+                "group_end": 405,
+                "kind": "counter",
+                "size": 22,
+                "start": 313
+              },
+              {
+                "code": "A",
+                "end": 405,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "f41b99ddca94d48db7b8e92bf72391e7b049bebba0a3d0afa3e21cb50e04d095143c284ddc18d58892cf97e3adef941cfcf7d8a8f956b8ccddc200db8333485d",
+                "start": 317
+              },
+              {
+                "code": "-O",
+                "end": 409,
+                "group_end": 469,
+                "kind": "counter",
+                "size": 15,
+                "start": 405
+              },
+              {
+                "code": "0A",
+                "end": 433,
+                "kind": "primitive",
+                "raw": "00000000000000000000000000000000",
+                "start": 409
+              },
+              {
+                "code": "1AAG",
+                "end": 469,
+                "kind": "primitive",
+                "raw": "db4dbafb4d7ed354f4d1cd34734d1dd34d34d34a74d1cd34",
+                "start": 433
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0017",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 473,
+                "kind": "counter",
+                "size": 40,
+                "start": 309
+              },
+              {
+                "code": "-K",
+                "end": 317,
+                "group_end": 473,
+                "kind": "counter",
+                "size": 39,
+                "start": 313
+              },
+              {
+                "code": "0A",
+                "end": 473,
+                "index": 3,
+                "kind": "indexed",
+                "ondex": 4,
+                "raw": "a09d9136552ba9433eb32981202df544875778c58f34fc2bcc66aeefc79557dbc1a8e14892fc045b51b71f6e3de1d0370566731cea27ce5f39a8bbfb4af3e6762e045d557e4cb21f009907722cc4fa5b77cb78c59eb202bdd0a7a82a08b2c8bbc4ccd3e952de72dcd494a7238c97074c1cfd",
+                "start": 317
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0018",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 633,
+                "kind": "counter",
+                "size": 45,
+                "start": 449
+              },
+              {
+                "code": "-K",
+                "end": 457,
+                "group_end": 633,
+                "kind": "counter",
+                "size": 44,
+                "start": 453
+              },
+              {
+                "code": "B",
+                "end": 545,
+                "index": 5,
+                "kind": "indexed",
+                "raw": "c706042d9d662f031c3620ca17f5f82f7f78b9f4da97aa0d395e99e5b25bd9e9e6e221396822257f872006679c483f62082ffde193830aaae2c14184e72b927f",
+                "start": 457
+              },
+              {
+                "code": "D",
+                "end": 633,
+                "index": 7,
+                "kind": "indexed",
+                "raw": "a8c0bcfa18ec9d5d361d2833691b9299dd1405a3d02c1df18f001631db6cc110c5296e435b2d1ec2d5dadae55c513e95a8f7b3ff5e15c353269419d462b036b1",
+                "start": 545
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0019",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 725,
+                "kind": "counter",
+                "size": 68,
+                "start": 449
+              },
+              {
+                "code": "-K",
+                "end": 457,
+                "group_end": 633,
+                "kind": "counter",
+                "size": 44,
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 545,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "dbab81f5731a34177546f381ea949c2d706e3767c8640f322997f3ab4bbd5c6819437a039b71e9cc9a32c53c0bb2633dc8b92b6dd95e1c4dcba3635b458fcdc3",
+                "start": 457
+              },
+              {
+                "code": "A",
+                "end": 633,
+                "index": 1,
+                "kind": "indexed",
+                "raw": "c9cfc99167bc2cd08f1ec8c544440e05811bfc61c60c3d9386d7ae39bec49ac4011d397f805802b1520e21d51e3408e6adb892eb79e1d53c591fc2763d84f134",
+                "start": 545
+              },
+              {
+                "code": "-L",
+                "end": 637,
+                "group_end": 725,
+                "kind": "counter",
+                "size": 22,
+                "start": 633
+              },
+              {
+                "code": "A",
+                "end": 725,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "bb1a7b5662dcd951c48bcf5e3ce71ea67960b8531c70c6013e2e54fe5adcdbd4345137716a686a68e93e5da7221b40560ef6fa63af9dcff74f8071a90590d434",
+                "start": 637
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0020",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 24,
+                "start": 309
+              },
+              {
+                "code": "-K",
+                "end": 317,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 23,
+                "start": 313
+              },
+              {
+                "code": "2A",
+                "end": 409,
+                "index": 65,
+                "kind": "indexed",
+                "ondex": 70,
+                "raw": "036923472055ef2999b63d2e09be103f167ee7b186d3988702229dfbf4575eb05df3e711948b8e39eea56fdd7899219c0148c909e91fb53aefd2f447ec67aab0",
+                "start": 317
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0021",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 24,
+                "start": 309
+              },
+              {
+                "code": "-K",
+                "end": 317,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 23,
+                "start": 313
+              },
+              {
+                "code": "2B",
+                "end": 409,
+                "index": 70,
+                "kind": "indexed",
+                "ondex": 0,
+                "raw": "47a475565276621fe40455c1dfc513be8ffa09f88b3a8c9c57f24aed44564e33902e7271520466bfe9f095595efd0d6abc3987e705273fdde1af0d9272d72463",
+                "start": 317
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0022",
+        "status": "disputed",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 24,
+                "start": 309
+              },
+              {
+                "code": "-K",
+                "end": 317,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 23,
+                "start": 313
+              },
+              {
+                "code": "2B",
+                "end": 409,
+                "index": 70,
+                "kind": "indexed",
+                "ondex": 9,
+                "raw": "e9a21561c13502297b0c54a7bd3e91d701c371acd15a91c0b9b92c808163ee71bfd544addc114f98aa297f6afd0030e29561bb1c04262cc44a4f00049d68eeda",
+                "start": 317
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0023",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 477,
+                "kind": "counter",
+                "size": 41,
+                "start": 309
+              },
+              {
+                "code": "-K",
+                "end": 317,
+                "group_end": 477,
+                "kind": "counter",
+                "size": 40,
+                "start": 313
+              },
+              {
+                "code": "3A",
+                "end": 477,
+                "index": 4096,
+                "kind": "indexed",
+                "ondex": 5000,
+                "raw": "3ddb89ceaa6a24f94adc480bf238d0fd0fa924a3400d5c9340dc11a74bcfd4945b35f5b2ab87fe274110e823bbd0a9eafa92d6432be07de8f03336b1f6ec0b4c8c4409cb6ca5750c69656941d9a7fcca2858f84c9794740478e4249cf70f626ca528720e14bc382f9790b30ab01e60bfde64",
+                "start": 317
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0024",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 6,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 447,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 6,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 450,
+                "group_end": 585,
+                "kind": "counter",
+                "size": 45,
+                "start": 447
+              },
+              {
+                "code": "-K",
+                "end": 453,
+                "group_end": 585,
+                "kind": "counter",
+                "size": 44,
+                "start": 450
+              },
+              {
+                "code": "A",
+                "end": 519,
+                "index": 1,
+                "kind": "indexed",
+                "raw": "23df7246b57f5d276268782022508545aac0fd33c4ef412a83ad7465ec653bf884dba059ef2b211ed17931ceed9088a06058fece9ca23576252bb865776df5da",
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 585,
+                "index": 2,
+                "kind": "indexed",
+                "raw": "9db7906560b1fa39e48ced48f5dd9cb2202af136ef942467cde6566a68b5c7f4027fbb98dce307cf08844eca0026ae3b7cfc5e1a7f8399d64297837ab31dbc1a",
+                "start": 519
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0025",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 813,
+                "kind": "counter",
+                "size": 90,
+                "start": 449
+              },
+              {
+                "code": "-K",
+                "end": 457,
+                "group_end": 721,
+                "kind": "counter",
+                "size": 66,
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 545,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "f41b99ddca94d48db7b8e92bf72391e7b049bebba0a3d0afa3e21cb50e04d095143c284ddc18d58892cf97e3adef941cfcf7d8a8f956b8ccddc200db8333485d",
+                "start": 457
+              },
+              {
+                "code": "A",
+                "end": 633,
+                "index": 1,
+                "kind": "indexed",
+                "raw": "bf688af1f50287e5b6a126ae5ceb6e5315d957832c2896f1c91cef8a2cfebc6113007d40b27247fc7b01f53a0cd1356d740e3c6e8b19695b0bd698d5f83757eb",
+                "start": 545
+              },
+              {
+                "code": "A",
+                "end": 721,
+                "index": 2,
+                "kind": "indexed",
+                "raw": "7737945e88515d3d343dc7191a1695c5f816823d71525b6aa7c5fe7c63978578ae6035c328f012b85446a62e8d271822f9f46e40ed59958d326952454b1c6081",
+                "start": 633
+              },
+              {
+                "code": "-L",
+                "end": 725,
+                "group_end": 813,
+                "kind": "counter",
+                "size": 22,
+                "start": 721
+              },
+              {
+                "code": "A",
+                "end": 813,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "1b38889b07a06be89e23b8f17f80783fd5d7d0ea0722ca04170794594710613b7fb563566e2e7ad4f25a4bba81cd3608737fe91bc8d98c4f02ed49bc3507b8f9",
+                "start": 725
+              },
+              {
+                "end": 1114,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 813,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 1118,
+                "group_end": 1210,
+                "kind": "counter",
+                "size": 23,
+                "start": 1114
+              },
+              {
+                "code": "-K",
+                "end": 1122,
+                "group_end": 1210,
+                "kind": "counter",
+                "size": 22,
+                "start": 1118
+              },
+              {
+                "code": "A",
+                "end": 1210,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "80671e807942007ad595e13e3a12075e0e7d9cdfdf69e1f08ca7543dda1ed23b0c0b22fd1e6a106c0f7b2861e0976c124afd94c9fea2436ac43221a863b6c4a6",
+                "start": 1122
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0026",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 749,
+                "kind": "counter",
+                "size": 74,
+                "start": 449
+              },
+              {
+                "code": "-X",
+                "end": 457,
+                "group_end": 749,
+                "kind": "counter",
+                "size": 73,
+                "start": 453
+              },
+              {
+                "code": "E",
+                "end": 501,
+                "kind": "primitive",
+                "raw": "1d9f4f572cc4f8480f3a0bb8f06164e1966a53a5fc5628f77f9cb1b0af9feed6",
+                "start": 457
+              },
+              {
+                "code": "0A",
+                "end": 525,
+                "kind": "primitive",
+                "raw": "00000000000000000000000000000000",
+                "start": 501
+              },
+              {
+                "code": "E",
+                "end": 569,
+                "kind": "primitive",
+                "raw": "3f26e4b3ff7abcdeb93e192c83391dc0f052d73d63a144adbf0c56f97a91a7bd",
+                "start": 525
+              },
+              {
+                "code": "-K",
+                "end": 573,
+                "group_end": 749,
+                "kind": "counter",
+                "size": 44,
+                "start": 569
+              },
+              {
+                "code": "A",
+                "end": 661,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "26e2851efd520d4c21afb320b460d9b6ba8d4d02f6c5ec33fbbde6148567df3cb7dc37f9cadfaadbaade2ff1d5f4f2ed03c3110fd6465d6bc56185f78eba80d6",
+                "start": 573
+              },
+              {
+                "code": "A",
+                "end": 749,
+                "index": 1,
+                "kind": "indexed",
+                "raw": "e37f767853495d574755720fd12e9358e47aeba0f47a6e0b5c11ad9769e1b5bf31172572d469a612daae8a8b7df95f7cd77dc155da3d41ea2e93ed3c07da09c9",
+                "start": 661
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0027",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 6,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 447,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 6,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 450,
+                "group_end": 720,
+                "kind": "counter",
+                "size": 90,
+                "start": 447
+              },
+              {
+                "code": "-K",
+                "end": 453,
+                "group_end": 651,
+                "kind": "counter",
+                "size": 66,
+                "start": 450
+              },
+              {
+                "code": "A",
+                "end": 519,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "f41b99ddca94d48db7b8e92bf72391e7b049bebba0a3d0afa3e21cb50e04d095143c284ddc18d58892cf97e3adef941cfcf7d8a8f956b8ccddc200db8333485d",
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 585,
+                "index": 1,
+                "kind": "indexed",
+                "raw": "bf688af1f50287e5b6a126ae5ceb6e5315d957832c2896f1c91cef8a2cfebc6113007d40b27247fc7b01f53a0cd1356d740e3c6e8b19695b0bd698d5f83757eb",
+                "start": 519
+              },
+              {
+                "code": "A",
+                "end": 651,
+                "index": 2,
+                "kind": "indexed",
+                "raw": "7737945e88515d3d343dc7191a1695c5f816823d71525b6aa7c5fe7c63978578ae6035c328f012b85446a62e8d271822f9f46e40ed59958d326952454b1c6081",
+                "start": 585
+              },
+              {
+                "code": "-L",
+                "end": 654,
+                "group_end": 720,
+                "kind": "counter",
+                "size": 22,
+                "start": 651
+              },
+              {
+                "code": "A",
+                "end": 720,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "1b38889b07a06be89e23b8f17f80783fd5d7d0ea0722ca04170794594710613b7fb563566e2e7ad4f25a4bba81cd3608737fe91bc8d98c4f02ed49bc3507b8f9",
+                "start": 654
+              },
+              {
+                "end": 1021,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 720,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 1024,
+                "group_end": 1093,
+                "kind": "counter",
+                "size": 23,
+                "start": 1021
+              },
+              {
+                "code": "-K",
+                "end": 1027,
+                "group_end": 1093,
+                "kind": "counter",
+                "size": 22,
+                "start": 1024
+              },
+              {
+                "code": "A",
+                "end": 1093,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "80671e807942007ad595e13e3a12075e0e7d9cdfdf69e1f08ca7543dda1ed23b0c0b22fd1e6a106c0f7b2861e0976c124afd94c9fea2436ac43221a863b6c4a6",
+                "start": 1027
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0028",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "--C",
+                "end": 317,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 23,
+                "start": 309
+              },
+              {
+                "code": "-K",
+                "end": 321,
+                "group_end": 409,
+                "kind": "counter",
+                "size": 22,
+                "start": 317
+              },
+              {
+                "code": "A",
+                "end": 409,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "ec434c6ce8394d7f13d5333c5dd67c83cdc8627a562ce7beb53f304735df8f0396bc84a053b68cd5da386df1ad2b76fff04e8c2fe33aea831407fc54ac084e74",
+                "start": 321
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0029",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 309,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 313,
+                "group_end": 413,
+                "kind": "counter",
+                "size": 25,
+                "start": 309
+              },
+              {
+                "code": "-_AAACAA",
+                "end": 321,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 313,
+                "version": "2.00"
+              },
+              {
+                "code": "-K",
+                "end": 325,
+                "group_end": 413,
+                "kind": "counter",
+                "size": 22,
+                "start": 321
+              },
+              {
+                "code": "A",
+                "end": 413,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "cdc7ecd012f736e5e620ccb0c5004ce6c183ca0e0b745bb727f4376ce49727f753ae7973bf8e9e2422d89708bb4d172e153ad5bac0b3da70ec937a87709f15a6",
+                "start": 325
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0030",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 545,
+                "kind": "counter",
+                "size": 23,
+                "start": 449
+              },
+              {
+                "code": "-K",
+                "end": 457,
+                "group_end": 545,
+                "kind": "counter",
+                "size": 22,
+                "start": 453
+              },
+              {
+                "code": "A",
+                "end": 545,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "5a4b40b71ba92d4b44c733fb4e1facd10d17ba0aa36ba0d4f290d8d79509a62efbda45b22c994c214a2b09eea28c179918c14176aad5a52e899671cbb23ec913",
+                "start": 457
+              },
+              {
+                "end": 846,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 545,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 849,
+                "group_end": 918,
+                "kind": "counter",
+                "size": 23,
+                "start": 846
+              },
+              {
+                "code": "-K",
+                "end": 852,
+                "group_end": 918,
+                "kind": "counter",
+                "size": 22,
+                "start": 849
+              },
+              {
+                "code": "A",
+                "end": 918,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "732f433d1051023a8e58e4614fa9a741f3c7e84ba010fdab34c7b35d8dfe51e0862d41a08ec1be7e350db3f93d94316bc7fbea6e6a9b2029b468a955434251d4",
+                "start": 852
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0031",
+        "status": "disputed",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "cesr.item-extents",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "decoded",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": [
+              {
+                "code": "-_AAACAA",
+                "end": 8,
+                "genus": "AAA",
+                "kind": "genus",
+                "start": 0,
+                "version": "2.00"
+              },
+              {
+                "end": 449,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 441,
+                "start": 8,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 453,
+                "group_end": 453,
+                "kind": "counter",
+                "size": 0,
+                "start": 449
+              },
+              {
+                "end": 754,
+                "kind": "message",
+                "proto": "KERI",
+                "serialization": "JSON",
+                "size": 301,
+                "start": 453,
+                "version": "2.0"
+              },
+              {
+                "code": "-C",
+                "end": 758,
+                "group_end": 850,
+                "kind": "counter",
+                "size": 23,
+                "start": 754
+              },
+              {
+                "code": "-K",
+                "end": 762,
+                "group_end": 850,
+                "kind": "counter",
+                "size": 22,
+                "start": 758
+              },
+              {
+                "code": "A",
+                "end": 850,
+                "index": 0,
+                "kind": "indexed",
+                "raw": "be9d8fe9ef28867c70e8d9861b0b49c5817151ca38714ad1c423c298571ea63cfea5c03e1967e2f66d900cac2834965326794715df728d783e88c5beaeb134f8",
+                "start": 762
+              }
+            ],
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0032",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0033",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0034",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0035",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0037",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0038",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0039",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0040",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.domain.binary",
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0041",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0042",
+        "status": "active",
+        "profile": "cesr-v1.0",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      }
+    ]
+  }
+}

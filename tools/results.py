@@ -5,6 +5,12 @@ envelope that says who produced it (schema/result.schema.json; docs/publishing-r
 place is fixed by its content: results/<implementation>/<version>/<profile>.json, where the first
 two segments are slugs of the implementation name and version the adapter reported in hello.
 
+A result is labelled with one of three provenance kinds. maintainer-run: the suite's maintainer ran
+a shipped adapter at its pin, locally, from the suite commit the result names, and committed it
+(scripts/reproduce-results refresh writes these). submitted: an implementation's maintainer sent it
+by pull request. reproduced: a GitHub Actions run of this repository produced it; that kind is
+never committed, so no pull request can claim a hosted runner ran it.
+
 Results are untrusted input: a submitted one arrives by pull request from outside the project.
 load_results is the door, and it works in the order the input-handling standard requires. Size
 first: the walk counts the files and adds up their sizes before any is read, and refuses anything
@@ -12,7 +18,7 @@ that is not a plain file or directory where the layout expects one. Then shape: 
 with a byte bound and checked against a hand-written mirror of the schema, which
 tests/test_result_schema.py proves agrees with the schema. Then meaning: the file must sit at the
 path its report implies, its provenance must be a kind the directory may hold (the committed
-results/ tree holds only submitted results, so no pull request can claim that CI reproduced it),
+results/ tree holds submitted and maintainer-run results, never reproduced ones),
 and the report must agree with itself: every case in the named profile, each case's outcome what
 its assertions imply, and the summary and verdict what the runner's own summarize computes from
 the cases. A hand-edited verdict is therefore refused rather than published.
@@ -74,7 +80,9 @@ MAX_RESULTS_BYTES = 128 * 1024 * 1024
 MAX_SLUG = 64
 MAX_LABEL = 256
 
-KINDS = ("reproduced", "submitted")
+KINDS = ("reproduced", "maintainer-run", "submitted")
+# What the committed results/ tree may hold.
+COMMITTED_KINDS = ("maintainer-run", "submitted")
 CASE_ID = "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
 PROFILE = "^[a-z0-9][a-z0-9.-]{0,63}$"
 # Components are sorted as integers, so each is short, and a suffix cannot start with a digit.
@@ -104,6 +112,8 @@ POSITIVE = integer(minimum=1)
 PROVENANCE = tagged("kind", {
     "reproduced": obj({"kind": enum("reproduced"), "run": string(RUN_URL),
                        "commit": string("^[0-9a-f]{40}$"), "date": string(DATE)}),
+    "maintainer-run": obj({"kind": enum("maintainer-run"), "maintainer": LABEL,
+                           "commit": string("^[0-9a-f]{40}$"), "date": string(DATE)}),
     "submitted": obj({"kind": enum("submitted"), "submitter": LABEL,
                       "pull_request": string(PR_URL), "date": string(DATE)}),
 })
@@ -342,8 +352,8 @@ def load_results(root, *, kinds: tuple[str, ...], max_bytes: int = MAX_RESULT_BY
             raise RunnerError(E_RESULT_PROVENANCE,
                               f"The result file {path} is labelled {kind}, which {root} may not "
                               f"hold; it holds only {' and '.join(kinds)} results. A reproduced "
-                              "result is written by this repository's CI at build time and is "
-                              "never committed.")
+                              "result comes from a GitHub Actions run and is never committed; "
+                              "a result the maintainer ran locally is labelled maintainer-run.")
         relative = path.relative_to(root)
         expected = result_path(doc)
         if relative != expected:
@@ -420,7 +430,7 @@ def _parser() -> argparse.ArgumentParser:
     parser = _Parser(prog="scripts/results",
                      description="Check published results, or wrap a report for publication.")
     commands = parser.add_subparsers(dest="command")
-    check = commands.add_parser("check", help="validate a directory of submitted results")
+    check = commands.add_parser("check", help="validate a directory of committed results")
     check.add_argument("directory")
     wrap_ = commands.add_parser("wrap", help="put a kcs run report into a provenance envelope")
     wrap_.add_argument("report", help="the JSON report written by kcs run --report")
@@ -429,12 +439,17 @@ def _parser() -> argparse.ArgumentParser:
     kind = wrap_.add_mutually_exclusive_group(required=True)
     kind.add_argument("--submitted", action="store_true",
                       help="a maintainer's claim, sent by pull request")
+    kind.add_argument("--maintainer-run", action="store_true",
+                      help="a run of a shipped adapter by the suite's maintainer, from a clean "
+                           "suite commit (scripts/reproduce-results refresh)")
     kind.add_argument("--reproduced", action="store_true",
-                      help="a run by this repository's CI (used by the Pages workflow)")
+                      help="a run by a GitHub Actions workflow of this repository")
     wrap_.add_argument("--submitter", help="with --submitted: who submits it")
     wrap_.add_argument("--pull-request", help="with --submitted: the pull request's URL")
-    wrap_.add_argument("--run", help="with --reproduced: the CI run's URL")
-    wrap_.add_argument("--commit", help="with --reproduced: the suite commit the run used")
+    wrap_.add_argument("--maintainer", help="with --maintainer-run: who ran it")
+    wrap_.add_argument("--run", help="with --reproduced: the workflow run's URL")
+    wrap_.add_argument("--commit", help="with --maintainer-run or --reproduced: the suite commit "
+                                        "the run used")
     return parser
 
 
@@ -442,6 +457,9 @@ def _provenance(args) -> dict:
     if args.submitted:
         fields = {"submitter": args.submitter, "pull_request": args.pull_request}
         kind = "submitted"
+    elif args.maintainer_run:
+        fields = {"maintainer": args.maintainer, "commit": args.commit}
+        kind = "maintainer-run"
     else:
         fields = {"run": args.run, "commit": args.commit}
         kind = "reproduced"
@@ -465,7 +483,7 @@ def main(argv: list[str] | None = None) -> int:
         return EXIT_USAGE
     try:
         if args.command == "check":
-            loaded = load_results(args.directory, kinds=("submitted",))
+            loaded = load_results(args.directory, kinds=COMMITTED_KINDS)
             print(f"{len(loaded)} result{'' if len(loaded) == 1 else 's'} under "
                   f"{args.directory} can be published.")
         else:

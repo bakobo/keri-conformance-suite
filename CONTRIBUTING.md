@@ -55,7 +55,7 @@ Practically: if you add a failure path, give it a code in the existing style rat
 
 ## Adding or changing a conformance case
 
-Cases are generated, never hand-edited. A case's input and expected verdict come from a scenario file and a generator, and CI regenerates every fixture and fails if anything differs. To add a case, add or extend a scenario and regenerate. Then run `scripts/clause-coverage` and commit the updated report under `docs/coverage/`, which CI also checks.
+Cases are generated, never hand-edited. A case's input and expected verdict come from a scenario file and a generator, and CI regenerates every fixture and fails if anything differs. To add a case, add or extend a scenario and regenerate. Then run `scripts/clause-coverage` and commit the updated report under `docs/coverage/`, which CI also checks. CI does not run the shipped adapters, so if your change could move their results, run `uv run python scripts/reproduce-results check` before asking for a merge, and refresh the committed results in the same pull request if anything moved; [`docs/publishing-results.md`](docs/publishing-results.md) says how.
 
 A published case's expected verdict never changes. If a case turns out to be wrong, it is deprecated and a corrected case is added under a new id, so that no implementation's result silently flips between suite releases. Every case cites the normative spec clause it tests; behaviour that no spec clause requires belongs in a non-normative profile, not in the conformance cases.
 
@@ -63,7 +63,7 @@ If you believe a case contradicts the spec, open an issue citing the clause. Do 
 
 ## Submitting a conformance result
 
-If you maintain an implementation, you can publish its result on the suite's site by adding the report `kcs run --report` wrote, wrapped with `scripts/results wrap --submitted`, under `results/` in a pull request. The site shows it as your claim, distinct from the results this repository's CI reproduces. [`docs/publishing-results.md`](docs/publishing-results.md) has the steps and the checks CI runs on it.
+If you maintain an implementation, you can publish its result on the suite's site by adding the report `kcs run --report` wrote, wrapped with `scripts/results wrap --submitted`, under `results/` in a pull request. The site shows it as your claim, distinct from the results of the adapters this repository ships, which its maintainer runs and commits. [`docs/publishing-results.md`](docs/publishing-results.md) has the steps and the checks CI runs on it.
 
 ## Using AI to write your contribution
 

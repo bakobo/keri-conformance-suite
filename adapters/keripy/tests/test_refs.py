@@ -1,4 +1,4 @@
-"""The weekly check of the keripy adapter against other keripy refs (this.i 4numcxwq): which refs
+"""The on-demand check of the keripy adapter against other keripy refs (this.i 4numcxwq): which refs
 it runs, which it skips, what counts as a difference, and how failures are reported."""
 
 import json
@@ -7,6 +7,7 @@ import subprocess
 import sys
 
 import pytest
+from tools import outcomes
 
 from kcs_adapter_keripy import refs
 
@@ -35,13 +36,14 @@ def report(profile, commit, *cases, verdict="conformant"):
 
 @pytest.fixture
 def suite(tmp_path):
-    """A suite checkout holding a baseline for each profile the tests use."""
+    """A suite checkout holding a committed keripy result for each profile the tests use."""
     root = tmp_path / "suite"
-    adapter = root / "adapters" / "keripy"
-    adapter.mkdir(parents=True)
-    for profile in (*MAIN_PROFILES, "keripy-1x-interop"):
-        base = refs.baseline.summarize(report(profile, "pinned"))
-        (adapter / f"baseline-{profile}.json").write_text(json.dumps(base))
+    (root / "adapters" / "keripy").mkdir(parents=True)
+    for version, profile in (*(("2", p) for p in MAIN_PROFILES), ("1.2.14", "keripy-1x-interop")):
+        path = root / "results" / "keripy" / version / f"{profile}.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"result_version": 1, "provenance": {"kind": "maintainer-run"},
+                                    "report": report(profile, "pinned")}))
     return root
 
 
@@ -121,11 +123,30 @@ class TestResolve:
 
 class TestDifferences:
     def test_only_the_commit_differs_so_nothing_is_reported(self):
-        base = refs.baseline.summarize(report("cesr-v1.0", "pinned"))
+        base = outcomes.summarize(report("cesr-v1.0", "pinned"))
         assert refs.differences(base, report("cesr-v1.0", SHA_A), SHA_A) == []
 
+    def test_another_keripy_version_is_expected_of_another_ref(self):
+        base = outcomes.summarize(report("cesr-v1.0", "pinned"))
+        now = report("cesr-v1.0", SHA_A)
+        now["hello"]["implementation"]["version"] = "1.3.6"
+        assert refs.differences(base, now, SHA_A) == []
+
+    def test_a_case_named_like_an_identity_line_is_still_a_difference(self):
+        base = outcomes.summarize(report("cesr-v1.0", "pinned"))
+        now = report("cesr-v1.0", SHA_A, case("CESR-0001"), case("implementation version: x"))
+        assert refs.differences(base, now, SHA_A) == ["implementation version: x: new case"]
+
+    def test_a_case_whose_line_reads_like_a_version_change_is_still_a_difference(self):
+        base = outcomes.summarize(report("cesr-v1.0", "pinned", case("implementation version")))
+        now = report("cesr-v1.0", SHA_A, case("implementation version", "fail", a1="fail"),
+                     verdict="not-conformant")
+        now["hello"]["implementation"]["version"] = "fail"
+        base["implementation"]["version"] = "outcome pass"
+        assert "implementation version: outcome pass -> fail" in refs.differences(base, now, SHA_A)
+
     def test_a_regression_is_reported(self):
-        base = refs.baseline.summarize(report("cesr-v1.0", "pinned"))
+        base = outcomes.summarize(report("cesr-v1.0", "pinned"))
         now = report("cesr-v1.0", SHA_A, case("CESR-0001", "fail", a1="fail"),
                      verdict="not-conformant")
         lines = refs.differences(base, now, SHA_A)
@@ -133,7 +154,7 @@ class TestDifferences:
         assert any(line.startswith("verdict:") for line in lines)
 
     def test_an_improvement_is_a_difference_too(self):
-        base = refs.baseline.summarize(report("cesr-v1.0", "pinned", case("CESR-0001", "fail")))
+        base = outcomes.summarize(report("cesr-v1.0", "pinned", case("CESR-0001", "fail")))
         lines = refs.differences(base, report("cesr-v1.0", SHA_A), SHA_A)
         assert lines == ["CESR-0001: outcome fail -> pass"]
 
@@ -202,14 +223,33 @@ class TestLoadRefs:
         with pytest.raises(refs.UsageError, match=r"^e\.input\.range\.file-size\.f: "):
             refs.load_refs(self.write(tmp_path, [entry()]))
 
-    def test_the_committed_list_is_valid_and_has_a_baseline_for_every_profile(self):
+    def test_the_committed_list_is_valid_and_has_a_committed_result_for_every_profile(self):
         import pathlib
         adapter = pathlib.Path(refs.__file__).resolve().parents[2]
         listed = refs.load_refs(adapter / "refs.json")
         assert listed
         for item in listed:
             for profile in item["profiles"]:
-                assert (adapter / f"baseline-{profile}.json").is_file(), (item["name"], profile)
+                assert refs.committed_result(adapter.parents[1], profile).is_file(), \
+                    (item["name"], profile)
+
+
+class TestCommittedResult:
+    def test_the_one_committed_result_for_a_profile_is_found(self, suite):
+        assert refs.committed_result(suite, "keripy-1x-interop") == (
+            suite / "results" / "keripy" / "1.2.14" / "keripy-1x-interop.json")
+
+    @pytest.mark.parametrize("extra", [False, True])
+    def test_none_or_two_is_an_error(self, suite, extra):
+        if extra:
+            other = suite / "results" / "keripy" / "9" / "cesr-v1.0.json"
+            other.parent.mkdir()
+            other.write_text("{}")
+            profile, count = "cesr-v1.0", 2
+        else:
+            profile, count = "acdc-v1.0", 0
+        with pytest.raises(refs.CommandError, match=rf"^{refs.E_NO_RESULT}: .* {count} "):
+            refs.committed_result(suite, profile)
 
 
 class TestState:

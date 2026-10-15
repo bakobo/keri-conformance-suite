@@ -1,0 +1,421 @@
+{
+  "result_version": 1,
+  "provenance": {
+    "kind": "maintainer-run",
+    "maintainer": "Daniel Hardman",
+    "commit": "7548f0674af6065f47df0f05d3784fca03e17247",
+    "date": "2026-10-15"
+  },
+  "report": {
+    "report_version": 1,
+    "runner_version": "0.0.1",
+    "suite_version": "0.0.1",
+    "protocol_version": 1,
+    "supported_protocols": [
+      1
+    ],
+    "negotiated_protocol": 1,
+    "hello": {
+      "protocol": 1,
+      "adapter": {
+        "name": "kcs-adapter-keripy",
+        "version": "0.1.0"
+      },
+      "implementation": {
+        "name": "keripy",
+        "version": "2.1.0.dev1",
+        "commit": "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode",
+        "keri.process",
+        "acdc.verify",
+        "exn.verify"
+      ],
+      "features": [
+        "cesr.domain.binary",
+        "cesr.genus-1.00",
+        "cesr.genus-2.00",
+        "cesr.item-extents",
+        "cesr.serialization.cbor",
+        "cesr.serialization.json",
+        "cesr.serialization.mgpk",
+        "keri.version-1.x",
+        "keri.version-2.x",
+        "crypto.ed25519",
+        "kel.basic",
+        "kel.delegation",
+        "kel.multisig.numeric",
+        "kel.multisig.weighted",
+        "kel.nontransferable",
+        "kel.partial-rotation",
+        "kel.recovery",
+        "kel.witness",
+        "keri.duplicity",
+        "keri.escrow",
+        "keri.routing"
+      ],
+      "composes": []
+    },
+    "declared_features": [
+      "cesr.domain.binary",
+      "cesr.genus-1.00",
+      "cesr.genus-2.00",
+      "cesr.item-extents",
+      "cesr.serialization.cbor",
+      "cesr.serialization.json",
+      "cesr.serialization.mgpk",
+      "keri.version-1.x",
+      "keri.version-2.x",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "kel.multisig.numeric",
+      "kel.multisig.weighted",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "kel.recovery",
+      "kel.witness",
+      "keri.duplicity",
+      "keri.escrow",
+      "keri.routing"
+    ],
+    "composes": [],
+    "filters": {
+      "profile": "keri-escrow",
+      "cases_dir": "cases"
+    },
+    "session_stderr": "",
+    "verdict": "interoperable",
+    "aborted": null,
+    "probes": {
+      "statelessness": "not-yet-available"
+    },
+    "summary": {
+      "counts": {
+        "active": {
+          "INTEROP": {
+            "pass": 16
+          }
+        }
+      },
+      "should": {},
+      "should_failed": 0,
+      "interop": {
+        "pass": 16
+      },
+      "interop_verdict": "interoperable",
+      "should_warning": null,
+      "not_supported_active": [],
+      "self_agreement_passes": 0
+    },
+    "cases": [
+      {
+        "id": "KERI-0017",
+        "status": "active",
+        "profile": "keri-escrow",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "pending",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "ENBQTivaMv3HMfTcuw42n9YY51UHqOxZLNs_nN_Qi1WC",
+              "sn": 2,
+              "wits": []
+            },
+            "actual": {
+              "sn": 2,
+              "said": "ENBQTivaMv3HMfTcuw42n9YY51UHqOxZLNs_nN_Qi1WC",
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0019",
+        "status": "active",
+        "profile": "keri-escrow",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "pending",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "pending",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a7",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+              ],
+              "nt": "1",
+              "said": "ENIm_Ps4QsYsfBTTPVoGBKRxLDAEJD1j6gCGS-KMwAR8",
+              "sn": 2,
+              "wits": []
+            },
+            "actual": {
+              "sn": 2,
+              "said": "ENIm_Ps4QsYsfBTTPVoGBKRxLDAEJD1j6gCGS-KMwAR8",
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "KERI-0032",
+        "status": "active",
+        "profile": "keri-escrow",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "pending",
+            "actual": "pending",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": "seen",
+            "actual": "seen",
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": true,
+            "actual": true,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": "ECCqvSFRysAQ-cCfVyS7WOV77FSglAl4LN1PKJ30VwyS",
+              "keys": [
+                "DKsQLaFtlu2YuRtQ2F8Vea1KjklG8cAtuaDBUs_3cwdM"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EIBc_-6oqkliwKGvXlLw50H_vXQR2itLG9zo2ehYcMKK"
+              ],
+              "nt": "1",
+              "said": "EBZQ3CM85_8PUt58vLf_iVW7z_B4mbjJEL3i_V6Gey4x",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": {
+              "sn": 0,
+              "said": "EBZQ3CM85_8PUt58vLf_iVW7z_B4mbjJEL3i_V6Gey4x",
+              "keys": [
+                "DKsQLaFtlu2YuRtQ2F8Vea1KjklG8cAtuaDBUs_3cwdM"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EIBc_-6oqkliwKGvXlLw50H_vXQR2itLG9zo2ehYcMKK"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": "ECCqvSFRysAQ-cCfVyS7WOV77FSglAl4LN1PKJ30VwyS"
+            },
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
+              ],
+              "nt": "1",
+              "said": "EHr2YLeAURVaXjuoaJFzFekCLwbwg4c39GZbDEw_Vrjo",
+              "sn": 1,
+              "wits": []
+            },
+            "actual": {
+              "sn": 1,
+              "said": "EHr2YLeAURVaXjuoaJFzFekCLwbwg4c39GZbDEw_Vrjo",
+              "keys": [
+                "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
+              ],
+              "nt": "1",
+              "wits": [],
+              "bt": "0",
+              "delegator": null
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      }
+    ]
+  }
+}

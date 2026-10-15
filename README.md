@@ -22,7 +22,7 @@ uv run kcs --version
 
 ## Results and documentation
 
-Each of the [published conformance results](https://bakobo.github.io/keri-conformance-suite/results/) is labelled as either reproduced by this repository's CI or submitted by an implementation's maintainer; [`docs/reading-a-result.md`](docs/reading-a-result.md) explains the difference, and [`docs/publishing-results.md`](docs/publishing-results.md) how to submit one.
+Each of the [published conformance results](https://bakobo.github.io/keri-conformance-suite/results/) is labelled as either run by the suite's maintainer from an adapter in this repository or submitted by an implementation's maintainer; [`docs/reading-a-result.md`](docs/reading-a-result.md) explains the difference, and [`docs/publishing-results.md`](docs/publishing-results.md) how to submit one.
 
 ## Documents
 

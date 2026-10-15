@@ -1,0 +1,76 @@
+name: Reproduce results
+
+# On demand only: builds every adapter in adapters/ at its pin, reruns each against the profiles it
+# is meant for, and uploads those runs, labelled reproduced, with their comparison against the
+# committed results (scripts/reproduce-results reproduce), as an artifact. It never commits,
+# deploys or publishes anything: the site shows only committed results (pages.yml), and a
+# reproduced result reaches it only if a maintainer deliberately commits one. It runs
+# implementation code against hostile inputs, so it holds only a read-only token. Nothing runs it
+# on a schedule or on a push (this.i, "CI tests the suite; results are committed maintainer runs").
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # keripy main needs Python 3.14; the keripy 1.2.14 instance sets 3.12 on its own step.
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      - name: Install libsodium
+        run: sudo apt-get update && sudo apt-get install -y libsodium23
+      - name: Sync the runner
+        run: uv sync --locked
+      - name: Build the keripy adapter at its pin (keripy main)
+        working-directory: adapters/keripy
+        run: uv sync --locked
+      - name: Build the keripy adapter at its pin (keripy 1.2.14)
+        working-directory: adapters/keripy/keripy-1.2.14
+        env:
+          UV_PYTHON: "3.12"
+        run: uv sync --locked
+      - name: Build the keriox adapter at its pin
+        working-directory: adapters/keriox
+        run: |
+          rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" --profile minimal
+          cargo build --locked
+      - name: Build the Affinidi adapter at its pins
+        working-directory: adapters/affinidi
+        run: |
+          rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" --profile minimal
+          cargo build --locked
+      - name: Install Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: adapters/signify-ts/.node-version
+      - name: Install the signify-ts adapter at its pin
+        working-directory: adapters/signify-ts
+        run: npm ci --no-audit --no-fund
+      # One run of every adapter: the tool rebuilds each from its lockfile (a no-op after the
+      # steps above, which keep each toolchain's log separate), writes the runs labelled
+      # reproduced, and compares those same runs with the committed results. A difference fails
+      # the job after the runs and the comparison are saved for the artifact.
+      - name: Rerun the adapters and compare with the committed results
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/reproduced"
+          uv run python scripts/reproduce-results reproduce "$RUNNER_TEMP/reproduced/results" \
+            --run "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT" \
+            --commit "$GITHUB_SHA" 2>&1 | tee "$RUNNER_TEMP/reproduced/comparison.txt"
+      - name: Upload the runs and the comparison
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: reproduced-results
+          path: ${{ runner.temp }}/reproduced
+          if-no-files-found: warn

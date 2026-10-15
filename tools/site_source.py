@@ -25,13 +25,13 @@ from pathlib import Path
 
 from keri_conformance import __version__
 from keri_conformance.errors import E_USAGE_INVALID, EXIT_FAULT, EXIT_USAGE, RunnerError
-from keri_conformance.jsonfile import JsonFileError, read_json
+from keri_conformance.jsonfile import read_json
 from tools.results import (
+    COMMITTED_KINDS,
     E_RESULT_FORMAT,
     E_RESULT_PATH,
     MAX_RESULT_BYTES,
     Result,
-    _read_error,
     load_results,
     result_path,
     result_problem,
@@ -46,9 +46,10 @@ E_SITE_COLLISION = "e.self.config.site-collision.f"
 E_RESULT_SLUG = "e.rule.result.slug-collision.f"
 E_PROFILE_NAME = "e.self.config.profile-name.f"
 
-LABELS = {"reproduced": "Reproduced by CI", "submitted": "Submitted claim, not reproduced"}
-ADMONITION = {"reproduced": "success", "submitted": "warning"}
-KIND_ORDER = {"reproduced": 0, "submitted": 1}
+LABELS = {"reproduced": "Reproduced by CI", "maintainer-run": "Run by the suite maintainer",
+          "submitted": "Submitted claim, not reproduced"}
+ADMONITION = {"reproduced": "success", "maintainer-run": "info", "submitted": "warning"}
+KIND_ORDER = {"reproduced": 0, "maintainer-run": 1, "submitted": 2}
 DETAIL_LIMIT = 300
 CURRENT_SUITE_VERSION = __version__
 
@@ -98,7 +99,10 @@ GLOSSARY = {
     "disputed": ("A case whose expected values an implementation contradicts where the clause "
                  "seems to say otherwise; excluded from the verdict until settled."),
     "deprecated": "A case replaced by a corrected one under a new id; skipped.",
-    LABELS["reproduced"]: "This repository's CI ran this, from a pinned adapter and implementation.",
+    LABELS["reproduced"]: ("A GitHub Actions run of this repository produced this, from a pinned "
+                           "adapter and implementation."),
+    LABELS["maintainer-run"]: ("The suite's maintainer ran a pinned adapter locally from the "
+                               "named suite commit; anyone can rerun it, but CI did not."),
     LABELS["submitted"]: ("An implementation's maintainer sent this; the suite checked it agrees "
                           "with itself but did not run it."),
 }
@@ -224,9 +228,9 @@ def _case_link(case_id: str, ref: str) -> str:
 
 
 def _cases_ref(provenance: dict) -> str:
-    """The commit whose cases a result ran: CI's own commit for a reproduced result. A submitted
-    result names no suite commit, so its cases are linked on main."""
-    return provenance["commit"] if provenance["kind"] == "reproduced" else "main"
+    """The commit whose cases a result ran, which a reproduced or maintainer-run result names. A
+    submitted result names no suite commit, so its cases are linked on main."""
+    return provenance.get("commit", "main")
 
 
 def _row(label: str, value: str) -> str:
@@ -447,7 +451,7 @@ def _by_suite_version(results: list[Result]) -> list[tuple[str, list[Result]]]:
 
 INDEX_INTRO = """# Results
 
-Each result below is a conformance report written by `kcs run --report`, published with a label saying who produced it. A result labelled *Reproduced by CI* was produced by this repository's CI from a pinned adapter and implementation, and the run that produced it is linked from its page. A result labelled *Submitted claim, not reproduced* was sent by an implementation's maintainer through a pull request; the suite checked that the report is well formed and agrees with itself, but it did not run it and cannot vouch for it.
+Each result below is a conformance report written by `kcs run --report`, published with a label saying who produced it. A result labelled *Run by the suite maintainer* comes from an adapter shipped in this repository, run at its pin by the suite's maintainer from the suite commit its page names; anyone can rerun it from that commit, but CI did not run it. A result labelled *Submitted claim, not reproduced* was sent by an implementation's maintainer through a pull request; the suite checked that the report is well formed and agrees with itself, but it did not run it and cannot vouch for it. A result labelled *Reproduced by CI* would come from a GitHub Actions run of this repository, which is linked from its page; the site publishes none today.
 
 Results are grouped by the suite version they ran against, and no table compares results from different suite versions. A verdict is never the whole claim: each cell also gives the active MUST and SHOULD assertions that passed and failed, because in the KERI layer a validator that accepts nothing passes every MUST. What each part of a result means is in [Reading a result](../reading-a-result.md), the verdicts are explained in [Verdicts](../verdicts.md), and how to submit a result is in [Publishing a result](../publishing-results.md).
 """
@@ -485,9 +489,16 @@ def _provenance_block(provenance: dict) -> list[str]:
     kind = provenance["kind"]
     lines = [f'!!! {ADMONITION[kind]} "{LABELS[kind]}"', ""]
     if kind == "reproduced":
-        lines.append(f"    This repository's CI produced this result in [run]({provenance['run']}) "
-                     f"on {text(provenance['date'])}, from suite commit "
-                     f"{text(provenance['commit'])}.")
+        lines.append(f"    A GitHub Actions run of this repository produced this result in "
+                     f"[run]({provenance['run']}) on {text(provenance['date'])}, from suite "
+                     f"commit {text(provenance['commit'])}.")
+    elif kind == "maintainer-run":
+        lines.append(f"    {text(provenance['maintainer'])} ran this on "
+                     f"{text(provenance['date'])}, with the adapter and implementation pinned at "
+                     f"suite commit [{text(provenance['commit'][:12])}]"
+                     f"({REPO_URL}/commit/{provenance['commit']}). CI did not run it; anyone can "
+                     "rerun it with `scripts/reproduce-results check`, as "
+                     f"[Reading a result]({_DOCS}reading-a-result.md#who-produced-it) explains.")
     else:
         lines.append(f"    {text(provenance['submitter'])} submitted this result in "
                      f"[a pull request]({provenance['pull_request']}), for a run on "
@@ -626,27 +637,6 @@ def distinct_identities(identities: list[tuple[str, str, str]]) -> None:
                     "page. Report one spelling for one implementation."))
 
 
-def baseline_identities(repo) -> list[tuple[str, str, str]]:
-    """The implementations CI reproduces, read from the adapters' committed baselines. The Pages
-    build publishes a reproduced result for each, so a pull request's submitted results are
-    checked against them here rather than first meeting them after the merge."""
-    repo, identities = Path(repo), []
-    for path in sorted((repo / "adapters").glob("*/baseline-*.json")):
-        try:
-            impl = read_json(path, MAX_RESULT_BYTES)["implementation"]
-            name, version = impl["name"], impl["version"]
-        except JsonFileError as exc:
-            raise _read_error(path, exc) from exc
-        except (KeyError, TypeError) as exc:
-            raise RunnerError(E_RESULT_FORMAT, f"The CI baseline {path} names no implementation "
-                                               "name and version.") from exc
-        if not (isinstance(name, str) and isinstance(version, str)):
-            raise RunnerError(E_RESULT_FORMAT, f"The CI baseline {path} names no implementation "
-                                               "name and version.")
-        identities.append((f"the CI baseline {path.relative_to(repo).as_posix()}", name, version))
-    return identities
-
-
 def assemble(repo, out, results: list[Result]) -> None:
     """Write the site source for the repository at `repo` into `out`, replacing what a previous
     run wrote there. A directory this did not make is refused, never emptied."""
@@ -703,10 +693,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repo", default=str(repo_default), help="the repository root")
     parser.add_argument("--out", default=None, help="where to write (default: REPO/_site/src)")
     parser.add_argument("--results", default=None,
-                        help="the submitted results (default: REPO/results)")
-    parser.add_argument("--reproduced", default=None,
-                        help="results this run's CI reproduced, written by scripts/results wrap "
-                             "--reproduced (default: none)")
+                        help="the committed results (default: REPO/results)")
     try:
         args = parser.parse_args(argv)
     except _UsageError as exc:
@@ -716,12 +703,7 @@ def main(argv: list[str] | None = None) -> int:
     repo = Path(args.repo)
     out = Path(args.out) if args.out else repo / "_site" / "src"
     try:
-        results = load_results(args.results or repo / "results", kinds=("submitted",))
-        distinct_identities(baseline_identities(repo) + [
-            (f"the submitted result {r.path.as_posix()}", _impl(r)["name"], _impl(r)["version"])
-            for r in results])
-        if args.reproduced:
-            results += load_results(args.reproduced, kinds=("reproduced",))
+        results = load_results(args.results or repo / "results", kinds=COMMITTED_KINDS)
         assemble(repo, out, results)
     except RunnerError as err:
         print(f"scripts/site-source: {err}", file=sys.stderr)

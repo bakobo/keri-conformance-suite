@@ -13,7 +13,7 @@ import pytest
 from conftest import ROOT
 from jsonschema import Draft202012Validator as _Draft202012
 from jsonschema import ValidationError, validators
-from result_docs import REPRODUCED, SUBMITTED, case, record, report, result
+from result_docs import MAINTAINER_RUN, REPRODUCED, SUBMITTED, case, record, report, result
 
 from tools.results import shape_problem
 
@@ -44,7 +44,7 @@ def _rich():
     aborted = {"code": "e.x.f", "reason": "stopped", "problems": ["p"], "at_case": "CESR-0003",
                "exit_code": 3}
     return [result(report([case(), failed, unsupported], composes=["keri.escrow"]), SUBMITTED),
-            result(report(aborted=aborted), REPRODUCED)]
+            result(report(aborted=aborted), REPRODUCED), result(report(), MAINTAINER_RUN)]
 
 
 SAMPLES = [1, 1.5, "x", "", None, True, [], {}, ["x"], {"x": 1}]

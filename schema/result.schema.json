@@ -11,6 +11,7 @@
     "provenance": {
       "oneOf": [
         {"$ref": "#/$defs/reproduced"},
+        {"$ref": "#/$defs/maintainer-run"},
         {"$ref": "#/$defs/submitted"}
       ]
     },
@@ -32,7 +33,7 @@
       "items": {"type": "string"}
     },
     "reproduced": {
-      "description": "Produced by this repository's CI from a pinned adapter and implementation. Never committed: the Pages workflow writes these at build time.",
+      "description": "Produced by a GitHub Actions run of this repository from a pinned adapter and implementation. Never committed under results/.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "run", "commit", "date"],
@@ -42,6 +43,18 @@
           "type": "string",
           "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/actions/runs/[0-9]+(/attempts/[0-9]+)?$"
         },
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "date": {"$ref": "#/$defs/date"}
+      }
+    },
+    "maintainer-run": {
+      "description": "Produced by the suite's maintainer, who ran a shipped adapter at its pin locally from the named suite commit (scripts/reproduce-results refresh). A reader can rerun it from that commit; no hosted runner ran it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "maintainer", "commit", "date"],
+      "properties": {
+        "kind": {"const": "maintainer-run"},
+        "maintainer": {"$ref": "#/$defs/label"},
         "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
         "date": {"$ref": "#/$defs/date"}
       }

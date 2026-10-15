@@ -20,6 +20,17 @@ Results are read through one function, `load_results` in `tools/results.py`, whi
 
 CI runs the same checks on every pull request (`scripts/results check results`), so a submission that would break the site is caught before it merges. Text from a result is escaped before it reaches a page.
 
+## Results of the shipped adapters
+
+The adapters in `adapters/` have their results committed here too, labelled `maintainer-run`, one file per implementation version and profile. Nothing regenerates them at build time: the Pages workflow publishes exactly what is committed, so a push of markdown or result JSON to `main` republishes the site without running any adapter. They are kept current with one local tool. It builds every adapter it runs from that adapter's lockfile, with the command its README and CI use, so the toolchains those READMEs name must be installed:
+
+```sh
+uv run python scripts/reproduce-results check     # rerun and compare with the committed results
+uv run python scripts/reproduce-results refresh   # rerun and replace them (needs a clean tree)
+```
+
+Both take `--adapter NAME` (repeatable) to run only some of the builds: `keripy`, `keripy-1.2.14`, `keriox`, `affinidi`, `signify-ts`. `refresh` refuses a working tree with changes outside `results/` and the adapter READMEs, before and after the runs. It records the suite commit it ran from, the date, and who ran it (`--maintainer`, defaulting to `git config user.name`), and rewrites the generated results table in each adapter's README; `scripts/reproduce-results readmes` rewrites only those tables, and CI checks them with `readmes --check`, which also refuses a `maintainer-run` result from an adapter this repository does not ship. The workflow `.github/workflows/reproduce.yml` does the same reruns in GitHub Actions when a maintainer starts it, once each, and uploads them, labelled `reproduced`, with their comparison as an artifact; it never commits or publishes them.
+
 ## Submitting a result
 
 1. Run the suite against your adapter, for one profile, and keep the report:
@@ -51,4 +62,4 @@ uv run python scripts/site-source
 uv run zensical build --clean --strict
 ```
 
-The site is then in `_site/html`. To include reproduced results in a local build, run the adapters, wrap each report with `scripts/results wrap --reproduced` into a directory of their own, and pass that directory to `scripts/site-source --reproduced`; `scripts/reproduce-results` does all of this for the adapters it finds built.
+The site is then in `_site/html`. It holds exactly the results committed under `results/`.

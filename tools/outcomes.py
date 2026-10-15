@@ -1,68 +1,62 @@
-"""CI level 2 for this adapter: compare a conformance report with the committed baseline.
+"""Compare a fresh conformance report with the committed result for the same implementation,
+version and profile, outcome by outcome.
 
-    python -m kcs_adapter_keripy.baseline compare BASELINE REPORT
-    python -m kcs_adapter_keripy.baseline write BASELINE REPORT
+A shipped adapter's committed result (results/<implementation>/<version>/<profile>.json, labelled
+maintainer-run) records what a run of that adapter at its pin produced. scripts/reproduce-results
+check reruns the adapter and calls compare here, and the keripy refs check
+(adapters/keripy/src/kcs_adapter_keripy/refs.py) does the same for other keripy refs. What is
+compared is the verdict, every case's outcome and failure kind (how the adapter failed to answer,
+if it did: timeout, exited, malformed, ...), and every assertion's outcome; timestamps, stderr and
+detail text are not. Any difference fails, in either direction:
 
-The baseline records the run's verdict, every case's outcome and failure kind (how the adapter
-failed to answer, if it did: timeout, exited, malformed, ...), and every assertion's outcome.
-compare exits 0 when the run matches it exactly. It exits 1 on a regression and also on an
-improvement, because an improvement must be recorded by updating the baseline in the same change.
-
-- Regressions: a different profile; an aborted run; a verdict change other than to conformant
+- Regressions: a different profile; a different implementation name or version; an aborted run; a verdict change other than to conformant
   (or, for a non-normative profile, to interoperable); a case outcome or assertion outcome that
   changed to anything but pass; a failure kind that appeared or changed (a case that starts
   crashing, though it still fails); a case or assertion that disappeared.
 - Improvements: a verdict that became conformant or interoperable; a new pass; a failure kind
-  that went away; a new case or assertion; a different keripy commit.
+  that went away; a new case or assertion; a different implementation commit. An improvement is
+  recorded by refreshing the committed result in the same change.
 
-write records REPORT as the new baseline. Standard library only.
+These were the semantics of the per-adapter baseline files this replaces. Standard library only,
+so the keripy refs check can import it from an adapter's own environment.
 """
 
 import errno
 import json
-import sys
-from pathlib import Path
 
-E_REGRESSION = "e.state.conflict.baseline-regression.f"
-E_STALE = "e.state.conflict.baseline-stale.f"
-E_USAGE = "e.input.format.usage.f"
-E_ABORTED = "e.input.range.aborted-report.f"
 E_MISSING_FILE = "e.input.missing.file.f"
 E_READ = "e.env.filesystem.read.r"
-E_WRITE_TRANSIENT = "e.env.filesystem.write.r"
-E_WRITE = "e.env.filesystem.write.f"
 E_FILE_SIZE = "e.input.range.file-size.f"
 E_REPORT_FORMAT = "e.input.format.report.f"
-E_BASELINE_FORMAT = "e.input.format.baseline.f"
+E_COMMITTED_FORMAT = "e.input.format.committed-result.f"
 
-
-# Write failures that may clear on their own; retrying the write could succeed.
+# Read failures that may clear on their own; retrying could succeed.
 TRANSIENT_ERRNOS = frozenset({errno.EAGAIN, errno.EWOULDBLOCK, errno.EINTR, errno.EBUSY,
                               errno.ENOSPC, errno.EDQUOT, errno.EIO, errno.ETIMEDOUT})
-FORMAT = 2
-# The largest report or baseline this tool reads. A cesr-v1.0 report is well under 1 MiB.
+# The largest report or result this module reads. A report of the whole suite is about 150 KB.
 MAX_FILE_BYTES = 64 * 1024 * 1024
 ABORTED = "aborted"
 NONE = "none"  # how a missing failure kind is written in a comparison line
 
 # The values a kcs conformance report can hold (src/keri_conformance/run.py and session.py). A
-# value outside these sets makes the report malformed: the tool fails closed rather than guess.
+# value outside these sets makes the report malformed: the comparison fails closed rather than guess.
 VERDICTS = frozenset({"conformant", "not-conformant", "aborted", "incomplete", "no-evidence",
                       "interoperable", "not-interoperable"})
 # The verdicts a run can improve to: conformance, or interoperability for a non-normative profile.
 HELD = frozenset({"conformant", "interoperable"})
 CASE_OUTCOMES = frozenset({"pass", "fail", "incomplete", "not-supported", "skipped"})
-ASSERTION_OUTCOMES = frozenset({"pass", "fail", "not-implemented", "not-supported", "skipped"})
+ASSERTION_OUTCOMES = frozenset({"pass", "fail", "not-applicable", "not-implemented",
+                                "not-supported", "skipped"})
 FAILURE_KINDS = frozenset({"timeout", "oversize", "exited", "malformed", "error-harness",
                            "error-unsupported"})
 
 
 class InputError(Exception):
-    """A file the tool was given cannot be used; the message starts with its code."""
+    """A file the comparison was given cannot be used; the message starts with its code."""
 
 
 def summarize(report: dict) -> dict:
-    """The part of a conformance report the baseline keeps."""
+    """The part of a conformance report the comparison looks at."""
     cases = {}
     for entry in report["cases"]:
         failure = entry.get("failure")
@@ -71,8 +65,7 @@ def summarize(report: dict) -> dict:
             "failure": None if failure is None else failure["kind"],
             "assertions": dict(sorted((a["id"], a["outcome"]) for a in entry["assertions"])),
         }
-    return {"format": FORMAT,
-            "profile": report["filters"]["profile"],
+    return {"profile": report["filters"]["profile"],
             "implementation": report["hello"]["implementation"],
             "verdict": report["verdict"],
             "cases": dict(sorted(cases.items()))}
@@ -95,20 +88,26 @@ def _compare_case(cid, was, now, regressions, improvements):
 
 
 def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
-    """(regressions, improvements) of report against the baseline summary base."""
+    """(regressions, improvements) of report against base, the summary of the committed run."""
     now = summarize(report)
     regressions, improvements = [], []
     if now["profile"] != base["profile"]:
         regressions.append(f"profile: {base['profile']} -> {now['profile']}")
     if now["verdict"] == ABORTED:
-        # An aborted run is never accepted, whatever the baseline records.
-        regressions.append(f"verdict: {ABORTED} (an aborted run never satisfies the baseline)")
+        # An aborted run is never accepted, whatever the committed result records.
+        regressions.append(f"verdict: {ABORTED} (an aborted run never matches a committed result)")
     elif now["verdict"] != base["verdict"]:
         # Any other change of verdict is a regression unless the run now holds (conformant, or
-        # interoperable), so an abnormal run cannot satisfy the gate even when every assertion it
-        # recorded matches.
+        # interoperable), so an abnormal run cannot match even when every assertion it recorded
+        # does.
         line = f"verdict: {base['verdict']} -> {now['verdict']}"
         (improvements if now["verdict"] in HELD else regressions).append(line)
+    # A run that names another implementation, or another version of it, is not evidence about
+    # the committed one, however its outcomes compare; a new commit of the same version is.
+    for field in ("name", "version"):
+        if now["implementation"][field] != base["implementation"][field]:
+            regressions.append(f"implementation {field}: {base['implementation'][field]} -> "
+                               f"{now['implementation'][field]}")
     if now["implementation"]["commit"] != base["implementation"]["commit"]:
         improvements.append(f"implementation commit: {base['implementation']['commit']} -> "
                             f"{now['implementation']['commit']}")
@@ -134,7 +133,7 @@ def _load(path, what, malformed):
                          "is a readable file and try again.") from exc
     if len(data) > MAX_FILE_BYTES:
         raise InputError(f"{E_FILE_SIZE}: The {what} {path} is larger than {MAX_FILE_BYTES} "
-                         "bytes, the most this tool reads; it is not a report or baseline of a "
+                         "bytes, the most this comparison reads; it is not a report of a "
                          "profile this suite has.")
     try:
         text = data.decode("utf-8")
@@ -148,6 +147,12 @@ def _load(path, what, malformed):
 
 def _is_str(value):
     return isinstance(value, str)
+
+
+def _one_of(value, allowed) -> bool:
+    """value is one of the strings in allowed. A JSON array or object is unhashable, so it is
+    ruled out before the set lookup rather than raising TypeError from it."""
+    return isinstance(value, str) and value in allowed
 
 
 def _implementation_problem(implementation):
@@ -169,7 +174,7 @@ def _assertions_problem(where, assertions):
         if assertion["id"] in seen:
             return f"{where} has the assertion {assertion['id']} twice"
         seen.add(assertion["id"])
-        if assertion.get("outcome") not in ASSERTION_OUTCOMES:
+        if not _one_of(assertion.get("outcome"), ASSERTION_OUTCOMES):
             return f"{where}/{assertion['id']} has an unknown outcome"
     return None
 
@@ -181,17 +186,17 @@ def _case_problem(entry, seen):
     if cid in seen:
         return f"the case {cid} appears twice"
     seen.add(cid)
-    if entry.get("outcome") not in CASE_OUTCOMES:
+    if not _one_of(entry.get("outcome"), CASE_OUTCOMES):
         return f"the case {cid} has an unknown outcome"
     failure = entry.get("failure")
     if failure is not None and (not isinstance(failure, dict)
-                                or failure.get("kind") not in FAILURE_KINDS):
+                                or not _one_of(failure.get("kind"), FAILURE_KINDS)):
         return f"the case {cid} has a failure that is not an object with a known kind"
     return _assertions_problem(cid, entry.get("assertions"))
 
 
 def report_problem(report):
-    """None if report is a well-formed kcs conformance report, else what is wrong with it."""
+    """None if report is well-formed enough to compare, else what is wrong with it."""
     if not isinstance(report, dict):
         return "it is not a JSON object"
     filters, hello = report.get("filters"), report.get("hello")
@@ -202,7 +207,7 @@ def report_problem(report):
     problem = _implementation_problem(hello.get("implementation"))
     if problem:
         return problem
-    if report.get("verdict") not in VERDICTS:
+    if not _one_of(report.get("verdict"), VERDICTS):
         return "its verdict is not one kcs reports"
     if not isinstance(report.get("cases"), list):
         return "its cases are not a list"
@@ -214,28 +219,8 @@ def report_problem(report):
     return None
 
 
-def baseline_problem(base):
-    """None if base is a well-formed baseline of the current format, else what is wrong."""
-    if not isinstance(base, dict) or base.get("format") != FORMAT:
-        return f"it is not a format-{FORMAT} baseline"
-    if not _is_str(base.get("profile")) or base.get("verdict") not in VERDICTS:
-        return "its profile or verdict is missing or unknown"
-    problem = _implementation_problem(base.get("implementation"))
-    if problem:
-        return problem
-    if not isinstance(base.get("cases"), dict):
-        return "its cases are not an object"
-    for cid, entry in base["cases"].items():
-        if (not isinstance(entry, dict) or entry.get("outcome") not in CASE_OUTCOMES
-                or (entry.get("failure") is not None
-                    and entry.get("failure") not in FAILURE_KINDS)
-                or not isinstance(entry.get("assertions"), dict)
-                or not all(o in ASSERTION_OUTCOMES for o in entry["assertions"].values())):
-            return f"its entry for {cid} is malformed"
-    return None
-
-
-def _report(path):
+def read_report(path) -> dict:
+    """The kcs run report at path, refused with an InputError if it cannot be compared."""
     report = _load(path, "report", E_REPORT_FORMAT)
     problem = report_problem(report)
     if problem:
@@ -244,58 +229,20 @@ def _report(path):
     return report
 
 
-def _baseline(path):
-    base = _load(path, "baseline", E_BASELINE_FORMAT)
-    problem = baseline_problem(base)
+def read_committed(path, *, kind: str | None = None) -> dict:
+    """The summary of the committed result at path (a report inside a provenance envelope),
+    refused with an InputError if it cannot be compared. With `kind`, the result must also carry
+    that provenance kind, so a fresh run is never measured against another kind of result that
+    happens to sit at the same path."""
+    doc = _load(path, "committed result", E_COMMITTED_FORMAT)
+    report = doc.get("report") if isinstance(doc, dict) else None
+    problem = "it has no report" if report is None else report_problem(report)
+    if not problem and kind is not None:
+        provenance = doc.get("provenance")
+        found = provenance.get("kind") if isinstance(provenance, dict) else None
+        if found != kind:
+            problem = f"it is labelled {json.dumps(found)}, not {kind}"
     if problem:
-        raise InputError(f"{E_BASELINE_FORMAT}: The baseline {path} is not one this tool wrote "
-                         f"({problem}); regenerate it with `write`.")
-    return base
-
-
-def main(argv=None) -> int:
-    argv = sys.argv[1:] if argv is None else argv
-    if len(argv) != 3 or argv[0] not in ("compare", "write"):
-        print(f"{E_USAGE}: usage: python -m kcs_adapter_keripy.baseline compare|write "
-              "BASELINE REPORT", file=sys.stderr)
-        return 2
-    command, base_path, report_path = argv
-    try:
-        report = _report(report_path)
-        base = None if command == "write" else _baseline(base_path)
-    except InputError as exc:
-        print(exc, file=sys.stderr)
-        return 2
-    if command == "write":
-        if report.get("verdict") == ABORTED:
-            print(f"{E_ABORTED}: {report_path} is the report of an aborted run, which cannot be "
-                  "a baseline; rerun to completion and write the baseline from that report.",
-                  file=sys.stderr)
-            return 1
-        try:
-            Path(base_path).write_text(json.dumps(summarize(report), indent=2) + "\n",
-                                       encoding="utf-8")
-        except OSError as exc:
-            transient = exc.errno in TRANSIENT_ERRNOS
-            code = E_WRITE_TRANSIENT if transient else E_WRITE
-            advice = ("this may clear; try again" if transient
-                      else "check that the directory exists and is writable")
-            print(f"{code}: The baseline {base_path} could not be written ({exc}); {advice}.",
-                  file=sys.stderr)
-            return 2
-        print(f"Wrote the baseline {base_path} from {report_path}.")
-        return 0
-    regressions, improvements = compare(base, report)
-    for line in regressions:
-        print(f"{E_REGRESSION}: {line}")
-    for line in improvements:
-        print(f"{E_STALE}: {line} (an improvement; update the baseline in this change with "
-              f"`python -m kcs_adapter_keripy.baseline write {base_path} <report>`)")
-    if regressions or improvements:
-        return 1
-    print(f"The run matches the baseline {base_path}.")
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+        raise InputError(f"{E_COMMITTED_FORMAT}: The committed result {path} cannot be compared "
+                         f"({problem}); scripts/results check names what is wrong with it.")
+    return summarize(report)
