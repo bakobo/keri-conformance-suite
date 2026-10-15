@@ -79,19 +79,20 @@ Each reading is then taken from keri-core's tables, in this order, after each de
 | `duplicitous` | `DuplicitousEvents::get` for the identifier holds an event with that digest |
 | `pending` | The out-of-order escrow table (read by its name, `out_of_order_escrow`, because that escrow keeps its handle private), the partially signed escrow's `contains`, the partially witnessed escrow's `get_event_by_sn_and_digest`, or, for a `dip`, the delegation escrow under the delegator the `dip` names. `reason` names the escrow |
 | `rejected` | None of the above |
-| Receipt `seen` | keri-core's log holds every signature the receipt carries for the receipted digest (`get_nontrans_couplets`, or `get_trans_receipts` for a transferable receipt), and the receipted event is seen |
+| Receipt `seen` | keri-core's log holds every signature the receipt carries for the receipted digest (`get_nontrans_couplets`, or `get_trans_receipts` for a transferable receipt, where each signature must be held under the same validator seal), and the receipted event is seen |
 | Receipt `pending` | Those signatures are held, and the receipted event is not seen. keri-core keeps a receipt that arrives before its event this way, and has no such escrow for a transferable receipt |
 | `trunk` | `true` for a key event whose final reading is `seen`. keri-core has no superseding recovery, so nothing it has accepted ever leaves its trunk. Always `false` for a receipt |
 | `key_states` | `EventStorage::get_state` for every identifier any delivered stream names a key event for, omitted where keri-core holds none: `sn`, `said` (its last event digest), and keri-core's own serialization of `k`, `kt`, `n`, `nt`, `b`, `bt` and `di`, reported as `keys`, `kt`, `ndigs`, `nt`, `wits`, `bt` and `delegator` |
 
 ## Where keri-core differs from keripy
 
-Re-run on this release, keri-core reaches keripy 1.2.14's final state on 17 of the 2026-09 Rust survey's 20 keripy 1.2.14 KEL items, as the survey found on its source build. The tests pin the three differences behind the other three, and a fourth this adapter's tests found, so that a change in keri-core shows:
+Re-run on this release, keri-core reaches keripy 1.2.14's final state on 17 of the 2026-09 Rust survey's 20 keripy 1.2.14 KEL items, as the survey found on its source build. The tests pin the three differences behind the other three, and two more this adapter's tests found, so that a change in keri-core shows:
 
 - An event for an identifier keri-core has not seen, such as a rotation delivered before its inception, is refused ("Prefix does not match") rather than escrowed, so the events after it wait out of order for ever.
 - A delegated event whose attachments are in a `-V` frame cannot be parsed, so keripy's replay of a delegated KEL is refused from the `dip` on.
 - A rotation that superseding recovery permits is filed as duplicitous, and the events it should displace stay seen on the trunk.
 - A delegated rotation is accepted without its delegating seal being checked. keri-core's `EventData` is an untagged serde enum in which `Rot` precedes `Drt`, so every `drt` body deserializes as a plain rotation and `EventValidator::validate_seal` never runs for it. keripy holds such a `drt` until the delegator's anchoring event arrives. Whatever event the `drt`'s seal names, delivered or not, the `drt` is accepted, which a case would grade as a MUST failure (KERI specification v1.0.1, line 1612).
+- A copy of an event keri-core has already accepted, delivered with a controller signature that does not verify, is taken without complaint: `process` returns `Ok`, and keri-core stores the copy's signature beside the event's genuine one. Nothing keri-core holds tells the copy from the event, so the adapter reads it `seen`, where keripy drops it (KERI specification v1.0.1, line 1266).
 
 ## How a stream is parsed
 

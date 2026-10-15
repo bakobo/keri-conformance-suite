@@ -308,6 +308,43 @@ fn a_transferable_receipt_from_a_known_validator_is_seen() {
 }
 
 #[test]
+fn a_receipt_reusing_held_signatures_under_another_validator_seal_is_rejected() {
+    // The validator's signature is held from the genuine receipt, but under the seal of the
+    // validator's inception; a copy naming sn 1 of the validator's KEL is refused by keri-core.
+    let basic = messages("kel-basic");
+    let validator = messages("validator-icp");
+    let vrc = messages("vrc-basic-icp");
+    let text = String::from_utf8(vrc[0].clone()).unwrap();
+    let seal_sn = "0AAAAAAAAAAAAAAAAAAAAAAA";
+    assert_eq!(text.matches(seal_sn).count(), 1, "{text}");
+    let forged = text
+        .replace(seal_sn, "0AAAAAAAAAAAAAAAAAAAAAAB")
+        .into_bytes();
+    let result = run(vec![
+        basic[0].clone(),
+        validator[0].clone(),
+        vrc[0].clone(),
+        forged,
+    ]);
+    assert_eq!(
+        readings(&result),
+        vec![SEEN, SEEN, "seen seen false", "rejected rejected false"]
+    );
+}
+
+#[test]
+fn keri_core_takes_a_copy_of_a_seen_event_with_a_bad_signature_as_the_event() {
+    // keripy drops a copy whose controller signature does not verify. keri-core returns Ok for it
+    // and stores its signature beside the event's genuine one, so nothing it holds tells the two
+    // copies apart and the copy reads seen. ~6gfa
+    let kel = messages("kel-basic");
+    let icp = &kel[0];
+    let forged = tampered(icp, icp.len() - 10);
+    let result = run(vec![icp.clone(), icp.clone(), forged]);
+    assert_eq!(readings(&result), vec![SEEN; 3]);
+}
+
+#[test]
 fn a_transferable_receipt_keri_core_cannot_verify_is_rejected() {
     let basic = messages("kel-basic");
     let validator = messages("validator-icp");

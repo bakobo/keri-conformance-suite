@@ -71,6 +71,14 @@ fn each<T: Serialize>(values: &[T]) -> Vec<Value> {
         .collect()
 }
 
+/// Each signature of a transferable receipt together with the validator seal it was made under,
+/// so that a signature held under one seal does not vouch for a receipt naming another.
+fn sealed<S: Serialize, T: Serialize>(seal: &S, sigs: &[T]) -> Vec<Value> {
+    sigs.iter()
+        .map(|sig| serde_json::to_value((seal, sig)).unwrap_or(Value::Null))
+        .collect()
+}
+
 fn nontransferable_sigs(sigs: impl IntoIterator<Item = Nontransferable>) -> Vec<Value> {
     sigs.into_iter()
         .flat_map(|n| match n {
@@ -99,7 +107,7 @@ fn identify(stream: &[u8]) -> Option<Ident> {
             id: vrc.body.prefix.clone(),
             sn: vrc.body.sn,
             said: vrc.body.receipted_event_digest.clone(),
-            sigs: each(&vrc.signatures),
+            sigs: sealed(&vrc.validator_seal, &vrc.signatures),
             transferable: true,
         }),
     }
@@ -236,7 +244,7 @@ impl Validator {
         let held: Vec<Value> = if transferable {
             log.get_trans_receipts(said)
                 .map_err(storage_error)?
-                .flat_map(|Transferable::Seal(_, sigs)| each(&sigs))
+                .flat_map(|Transferable::Seal(seal, sigs)| sealed(&seal, &sigs))
                 .collect()
         } else {
             log.get_nontrans_couplets(said)
