@@ -13,7 +13,7 @@ import tomllib
 
 from keri_conformance.session import OPERATIONS
 
-from . import acdc_cases, keripy1x, sedi_profile, spec_source, tables
+from . import acdc_cases, keripy1x, sedi_cases, sedi_profile, spec_source, tables
 from .build import build_case, resolve_clauses, resolve_records
 from .errors import (
     E_CASE_ID,
@@ -50,6 +50,8 @@ VOCABULARY_FILE = "features.json"
 # Each released version of it: the suite version it was released with and the digest of what it
 # fixes (sedi_profile.FROZEN). A version is recorded here when Daniel ratifies it.
 SEDI_RELEASED = "scenarios/sedi/released.json"
+# sedi-1's own verifier cases: acdc.verify cases in the ACDC id sequence, graded by its model.
+SEDI_CASE_DIR = "cases/sedi"
 
 PROFILES = {
     "cesr-v1.0": {
@@ -272,6 +274,7 @@ def generate(root: pathlib.Path) -> dict[str, bytes]:
 
     for name, profile in PROFILES.items():
         files[f"profiles/{name}.json"] = dumps({**profile, "cases": sorted(members[name])})
+    _generate_sedi(root, files, t)
     built = sedi(root, files)
     if built:
         files[f"profiles/{built[0]['name']}.json"] = dumps(built[0])
@@ -426,11 +429,57 @@ def _generate_acdc(root: pathlib.Path, files: dict[str, bytes],
         raise ScenarioError(f"ACDC case ids have undocumented gaps: {sorted(gaps - allowed)}.")
 
 
+def _generate_sedi(root: pathlib.Path, files: dict[str, bytes], t: tables.Tables) -> None:
+    """Add sedi-1's verifier cases to ``files``. Their ids come from the ACDC sequence, which the
+    private mirror allocates (docs/design.md, Security), so a gap carries no meaning; an id
+    already used by any case is refused."""
+    scen_dir = root / SEDI_SOURCE.rsplit("/", 1)[0]
+    if not (root / SEDI_SOURCE).exists():
+        return
+    source = _load_json(root / SEDI_SOURCE)
+    readings = {c["id"]: c["reading"] for c in source.get("choices", [])
+                if isinstance(c, dict) and "id" in c and "reading" in c}
+    skip = {pathlib.PurePath(SEDI_SOURCE).name, pathlib.PurePath(SEDI_RELEASED).name}
+    built, pairs = [], {}
+    for path in sorted(scen_dir.glob("*.json")):
+        if path.name in skip:
+            continue
+        scenario = _load_json(path)
+        _scenario_shape(scenario, path.name)
+        rel = path.relative_to(root).as_posix()
+        if scenario["profile"] != sedi_cases.PROFILE:
+            raise ScenarioError(f"{rel}: unknown sedi profile {scenario['profile']!r}.")
+        for case in scenario["cases"]:
+            case_id, key = case.get("id"), case.get("key")
+            if not isinstance(case_id, str) or not ACDC_CASE_ID.fullmatch(case_id):
+                raise ScenarioError(f"{rel}: {case_id!r} is not a case id of the form ACDC-NNNN.",
+                                    E_CASE_ID)
+            if key in pairs:
+                raise ScenarioError(f"{rel}: the scenario key {key!r} is used twice.")
+            try:
+                ev = sedi_cases.build(t, scenario.get("fixtures", {}), case)
+            except BUILD_FAILURES as e:
+                raise ScenarioError(f"{rel}, {case_id}: {type(e).__name__}: {e}") from None
+            pairs[key] = (case_id, ev.result.verdict)
+            built.append((rel, case, ev))
+    used = {p.rsplit("/", 1)[-1] for p in files if p.startswith("cases/")}
+    for rel, case, ev in built:
+        try:
+            one = sedi_cases.build_sedi_case(rel, case, ev, pairs, readings)
+        except BUILD_FAILURES as e:
+            raise ScenarioError(f"{rel}, {case['id']}: {type(e).__name__}: {e}") from None
+        if f"{one['id']}.json" in used:
+            raise ScenarioError(f"Case id {one['id']} is used twice.")
+        used.add(f"{one['id']}.json")
+        files[f"{SEDI_CASE_DIR}/{one['id']}.json"] = dumps(one)
+
+
 def committed(root: pathlib.Path) -> dict[str, bytes]:
-    """The committed files that generate() owns: every case under cases/cesr, cases/keri and
-    cases/acdc, and the profiles."""
+    """The committed files that generate() owns: every case under cases/cesr, cases/keri,
+    cases/acdc and cases/sedi, and the profiles."""
     out = {p.relative_to(root).as_posix(): p.read_bytes()
-           for d in (CASE_DIR, KERI_CASE_DIR, ACDC_CASE_DIR) for p in (root / d).glob("*.json")}
+           for d in (CASE_DIR, KERI_CASE_DIR, ACDC_CASE_DIR, SEDI_CASE_DIR)
+           for p in (root / d).glob("*.json")}
     # Every profile file is generated; only the feature vocabulary beside them is not.
     for p in (root / "profiles").glob("*.json"):
         if p.name != VOCABULARY_FILE:

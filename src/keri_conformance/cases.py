@@ -57,7 +57,11 @@ NORMATIVE = ("MUST", "SHOULD", "MAY")
 LEVELS = (*NORMATIVE, "INTEROP")
 EXPECTED_READINGS = ("seen", "not-seen", "pending", "rejected", "duplicitous")
 # Cases grade an ACDC as valid or not valid; invalid and incomplete are both not valid.
-EXPECTED_VERDICTS = ("valid", "not-valid")
+EXPECTED_VERDICTS = ("valid", "not-valid", "invalid", "incomplete")
+# The refinements of not valid, which only an INTEROP assertion may expect exactly: the
+# normative profiles leave them informative (docs/design.md, ACDC, Verdicts), and a layered
+# profile such as sedi-1 grades them (this.i 8fh68wt6).
+REFINED_VERDICTS = ("invalid", "incomplete")
 
 CLAUSE = obj({"spec": enum("cesr", "keri", "acdc", "ipex"), "section": string(min_length=1),
               "url": string("^https://"), "commit": string(COMMIT)},
@@ -232,6 +236,10 @@ def _cross_field_problem(case: dict) -> str | None:
         if needs not in assertion or forbids in assertion:
             return (f'assertions[{n}] at level {assertion["level"]} needs "{needs}" and must '
                     f'not carry "{forbids}"')
+        if (assertion["check"] == "verdict" and assertion["expected"] in REFINED_VERDICTS
+                and assertion["level"] != "INTEROP"):
+            return (f'assertions[{n}] expects the verdict {assertion["expected"]} exactly, which '
+                    'only an INTEROP assertion may; a normative one expects "not-valid"')
         if "choices" in assertion and assertion["level"] in NORMATIVE:
             return (f'assertions[{n}] at level {assertion["level"]} rests on a clause, so it '
                     'must not carry "choices", which only an INTEROP assertion rests on')

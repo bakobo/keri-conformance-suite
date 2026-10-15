@@ -587,3 +587,23 @@ def test_kcs_run_grades_every_new_check_end_to_end(cases_dir, tmp_path, write_js
 def test_the_registry_state_definition_is_identical_in_both_schemas():
     case = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
     assert case["$defs"]["registry_state"] == PROTOCOL["$defs"]["registry_state"]
+
+
+@pytest.mark.parametrize(("expected", "verdict", "result"), [
+    ("invalid", "invalid", "pass"), ("invalid", "incomplete", "fail"), ("invalid", "valid", "fail"),
+    ("incomplete", "incomplete", "pass"), ("incomplete", "invalid", "fail"),
+])
+def test_an_exact_refinement_takes_only_itself(expected, verdict, result):
+    a = assertion("verdict", level="INTEROP", basis="b", expected=expected)
+    assert evaluate(a, {"verdict": verdict, "registry": None, "edges": []}).outcome == result
+
+
+@pytest.mark.parametrize("level", ["MUST", "SHOULD"])
+def test_only_an_interop_assertion_expects_a_refinement(level):
+    case = acdc_case("ACDC-0001", [assertion("verdict", level=level, expected="incomplete")])
+    problem = case_problem(case)
+    assert problem is not None and "only an INTEROP" in problem
+    assert not CASE_SCHEMA.is_valid(case)
+    interop = acdc_case("ACDC-0001", [assertion("verdict", level="INTEROP", basis="b",
+                                                expected="incomplete")])
+    assert case_problem(interop) is None and CASE_SCHEMA.is_valid(interop)

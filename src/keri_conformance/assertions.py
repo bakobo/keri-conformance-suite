@@ -191,9 +191,10 @@ REGISTRY_FIELDS = ("rd", "n", "d", "td", "ts")
 
 
 def _verdict(assertion, result):
-    actual = result.get("verdict")
-    holds = actual == "valid" if assertion["expected"] == "valid" else actual in (
-        "invalid", "incomplete")
+    actual, expected = result.get("verdict"), assertion["expected"]
+    # not-valid takes either refinement; an exact refinement, which only an INTEROP assertion of
+    # a layered profile grades (this.i 8fh68wt6), takes only itself.
+    holds = actual in ("invalid", "incomplete") if expected == "not-valid" else actual == expected
     if holds:
         return Evaluation("pass", actual)
     return _fail(actual, f"The adapter's verdict is {actual}, which is not "

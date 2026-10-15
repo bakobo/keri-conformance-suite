@@ -26,7 +26,6 @@
       "acdc.version-2.x",
       "acdc.edges",
       "acdc.registry.bup",
-      "acdc.registry.upd",
       "acdc.presentation"
     ]
   },
@@ -90,16 +89,16 @@
     },
     {
       "id": "seal-shape",
-      "reading": "A seal anchoring an ACDC or a registry event is the couple {s, d}; a bare digest is not a seal of either.",
-      "basis": "The text shows the couple; heti also accepts a bare digest, and sedi-1 takes the stricter reading, so heti and keripy are expected to record a divergence.",
-      "overturn": "Specification text that admits a bare digest as an issuance seal.",
+      "reading": "A seal anchoring an ACDC or a registry event is the couple {s, d}, or the event seal {i, s, d} whose i is the issuer; an i naming anyone else, an extra field and a bare digest are refused.",
+      "basis": "ACDC line 1922 shows the couple {s, d}; heti and keripy's SEDI tests anchor with the event seal {i, s, d}, so sedi-1 widens line 1922 to accept it (this.i 2082s6k4). heti also accepts a bare digest, which sedi-1 refuses, so heti is expected to record a divergence there.",
+      "overturn": "Specification text that admits a bare digest as an issuance seal, or that refuses the event seal {i, s, d} in that position.",
       "tick": "3nch",
-      "decided": "8g9vtxvc"
+      "decided": "2082s6k4"
     },
     {
       "id": "edge-said",
-      "reading": "An edge must carry its far node's SAID in d; an edge without d is not valid.",
-      "basis": "Daniel's answer to the profile interview, Q2: the edge's d is required.",
+      "reading": "An edge block must carry its own SAID in d, first in the block; an edge without d, or whose d is not the SAID of its block, is not valid.",
+      "basis": "ACDC line 1154 makes an edge block's d optional and, when present, the SAID of its block; Daniel's answer to the profile interview, Q2, makes it required.",
       "overturn": "Specification text that makes an edge's d optional.",
       "tick": "3nch",
       "decided": "8g9vtxvc"
@@ -127,6 +126,14 @@
       "overturn": "Specification text restricting o to one form.",
       "tick": "6ljr",
       "decided": "8g9vtxvc"
+    },
+    {
+      "id": "operator-shape",
+      "reading": "An empty o reads as an absent one and gets the default operator; among conflicting unary operators the latest wins, so [I2I, NI2I] is NI2I. An empty AND or OR edge-group and a nested list such as [[I2I]] are invalid.",
+      "basis": "ACDC lines 1197 and 1186 settle the empty o and the conflicting list; the text says nothing of an empty group or a nested list, which sedi-1 treats as malformed instructions, not unevaluable ones.",
+      "overturn": "Specification text that gives an empty edge-group or a nested operator list a meaning.",
+      "tick": "6ljr",
+      "decided": "599d5f5f"
     },
     {
       "id": "presenter-binding",

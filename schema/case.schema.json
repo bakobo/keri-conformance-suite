@@ -652,7 +652,9 @@
                   "expected": {
                     "enum": [
                       "valid",
-                      "not-valid"
+                      "not-valid",
+                      "invalid",
+                      "incomplete"
                     ],
                     "description": "Cases grade valid against not valid; an invalid or incomplete verdict is not valid."
                   },
@@ -1245,6 +1247,33 @@
               "properties": {
                 "level": {
                   "const": "SHOULD"
+                }
+              }
+            }
+          },
+          {
+            "description": "An exact refinement of not valid is graded only at INTEROP (docs/design.md, Targets and profiles).",
+            "if": {
+              "properties": {
+                "check": {
+                  "const": "verdict"
+                },
+                "expected": {
+                  "enum": [
+                    "invalid",
+                    "incomplete"
+                  ]
+                }
+              },
+              "required": [
+                "check",
+                "expected"
+              ]
+            },
+            "then": {
+              "properties": {
+                "level": {
+                  "const": "INTEROP"
                 }
               }
             }
