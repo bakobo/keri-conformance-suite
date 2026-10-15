@@ -1,0 +1,98 @@
+{
+  "assertions": [
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "check": "disposition",
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 4 (out-of-order).",
+      "phase": "initial"
+    },
+    {
+      "aid": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+        ],
+        "nt": "1",
+        "said": "ENzfbqbwnHjo253wPYTGPkizE81yuZLTYvyE-V4nKryn",
+        "sn": 2,
+        "wits": []
+      },
+      "id": "a2",
+      "if_seen": 1,
+      "level": "INTEROP"
+    }
+  ],
+  "description": "The assertions of KERI-0155 that need no declinable feature, on the same messages, so that an adapter that declines keri.escrow or kel.recovery still gives evidence for them.",
+  "id": "KERI-0156",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303132625f222c2274223a22696370222c2264223a22454c5342754e645244445f6157344268704d4678302d65645334592d4f7248736d636c4a366e717a75533135222c2269223a22454c5342754e645244445f6157344268704d4678302d65645334592d4f7248736d636c4a366e717a75533135222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d41414241414431655070555934576d5f6e2d63664973675a6e76534a2d58743465524530324c6c51666c2d3442797031685a6d365651593563445f564b697a4c4a696a464a6b6f4d6a4d486a726468467830627954333471583850"
+      },
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303063625f222c2274223a2269786e222c2264223a22454e7a66627162776e486a6f3235337750595447506b697a45383179755a4c54597679452d56346e4b72796e222c2269223a22454c5342754e645244445f6157344268704d4678302d65645334592d4f7248736d636c4a366e717a75533135222c2273223a2232222c2270223a22454661524f75466e5f5a68595f4e67445f3274684a68574578466250524139327373677a5968656741376151222c2261223a5b5d7d2d41414241414337345374484a6f76627a6a6b726372595a7a72634748677353394d6a55546e594a5f546e544139465268454e5f56574c2d4530586a664977696a41746f544d376e733149357a462d62774a457173436152694d5543"
+      },
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303063625f222c2274223a2269786e222c2264223a22454661524f75466e5f5a68595f4e67445f3274684a68574578466250524139327373677a5968656741376151222c2269223a22454c5342754e645244445f6157344268704d4678302d65645334592d4f7248736d636c4a366e717a75533135222c2273223a2231222c2270223a22454c5342754e645244445f6157344268704d4678302d65645334592d4f7248736d636c4a366e717a75533135222c2261223a5b5d7d2d4141424141414374704f4b6b514a4e32597450754a6f694751776b6745714b4771546449513436336e59665a38704755307a31517a6a7763325f70654b4e734373416e7a6f3076465959374e48656f2d4f4959666b77335067414a"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/keripy1x.json#K1X-22s"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: one event early: not accepted on arrival"
+}
