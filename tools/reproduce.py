@@ -110,7 +110,7 @@ INSTANCES = (
              ("keripy-1x-interop",), "kcs-adapter-keripy", "adapters/keripy/README.md"),
     Instance("keriox", (_step("adapters/keriox", "cargo", "build", "--locked"),),
              "adapters/keriox/target/debug/kcs-adapter-keriox",
-             ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-keriox",
+             ("cesr-v1.0", "keripy-1x-interop", "keri-v1.0.1", "keri-escrow"), "kcs-adapter-keriox",
              "adapters/keriox/README.md"),
     Instance("affinidi", (_step("adapters/affinidi", "cargo", "build", "--locked"),),
              "adapters/affinidi/target/debug/kcs-adapter-affinidi",
