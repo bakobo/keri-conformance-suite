@@ -50,7 +50,9 @@ REF = re.compile(r"refs/(heads|tags)/[A-Za-z0-9_.][A-Za-z0-9_./-]*|[0-9a-f]{40}"
 PYTHON = re.compile(r"3\.\d+")
 PROFILE = re.compile(r"[a-z0-9][a-z0-9.-]*")
 SHA = re.compile(r"[0-9a-f]{40}")
-IDENTITY = "implementation commit:"
+# Another keripy ref is expected to report another commit, and often another version; the check
+# requires the commit the ref resolved to instead.
+IDENTITY = ("implementation commit:", "implementation version:")
 
 
 class UsageError(Exception):
@@ -215,7 +217,7 @@ def differences(base, report, sha):
         found.append(f"implementation: the report names {implementation.get('name')} at "
                      f"{implementation.get('commit')}, not keripy at {sha}")
     regressions, improvements = outcomes.compare(base, report)
-    return found + regressions + [line for line in improvements if not line.startswith(IDENTITY)]
+    return [line for line in found + regressions + improvements if not line.startswith(IDENTITY)]
 
 
 def check_ref(item, sha, suite, work, run):

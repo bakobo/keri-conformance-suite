@@ -208,6 +208,11 @@ def _clean_commit(repo: Path) -> str:  # ~4my7
         readme = path.startswith("adapters/") and path.endswith("/README.md")
         if not (path.startswith(REFRESHABLE) or readme):
             dirty.append(path)
+    # git status cannot see an edit to a file marked assume-unchanged (a lowercase tag in
+    # `git ls-files -v`) or skip-worktree (S), so any such file counts as changed.
+    for line in _git(repo, "ls-files", "-v", "-z").split("\0"):
+        if line and (line[0].islower() or line[0] == "S"):
+            dirty.append(f"{line[2:]} (hidden from git status)")
     if dirty:
         shown = ", ".join(sorted(dirty)[:5]) + (" and more" if len(dirty) > 5 else "")
         raise RunnerError(E_DIRTY, f"The working tree has changes outside results/ and the "

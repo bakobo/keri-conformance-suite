@@ -181,6 +181,19 @@ def test_refresh_refuses_a_tree_with_changes_outside_what_it_writes(repo):
     assert "stray0.txt" in str(info.value) and "and more" in str(info.value)
 
 
+@pytest.mark.parametrize("flag", ["--assume-unchanged", "--skip-worktree"])
+def test_refresh_sees_an_edit_git_status_is_told_to_hide(repo, flag):
+    (repo / "src.txt").write_text("committed\n")
+    git(repo, "add", "src.txt")
+    git(repo, "-c", "user.name=T", "-c", "user.email=t@x", "commit", "-qm", "src")
+    git(repo, "update-index", flag, "src.txt")
+    (repo / "src.txt").write_text("edited\n")
+    assert git(repo, "status", "--porcelain") == ""
+    with pytest.raises(RunnerError) as info:
+        refresh(repo)
+    assert info.value.code == P.E_DIRTY and "src.txt (hidden from git status)" in str(info.value)
+
+
 def test_refresh_refuses_an_aborted_run_and_writes_nothing(repo):
     aborted = {"code": "e.x.f", "reason": "stopped", "problems": [], "at_case": "CESR-0001",
                "exit_code": 3}

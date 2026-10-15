@@ -126,6 +126,12 @@ class TestDifferences:
         base = outcomes.summarize(report("cesr-v1.0", "pinned"))
         assert refs.differences(base, report("cesr-v1.0", SHA_A), SHA_A) == []
 
+    def test_another_keripy_version_is_expected_of_another_ref(self):
+        base = outcomes.summarize(report("cesr-v1.0", "pinned"))
+        now = report("cesr-v1.0", SHA_A)
+        now["hello"]["implementation"]["version"] = "1.3.6"
+        assert refs.differences(base, now, SHA_A) == []
+
     def test_a_regression_is_reported(self):
         base = outcomes.summarize(report("cesr-v1.0", "pinned"))
         now = report("cesr-v1.0", SHA_A, case("CESR-0001", "fail", a1="fail"),

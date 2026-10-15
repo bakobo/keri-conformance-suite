@@ -9,7 +9,7 @@ compared is the verdict, every case's outcome and failure kind (how the adapter 
 if it did: timeout, exited, malformed, ...), and every assertion's outcome; timestamps, stderr and
 detail text are not. Any difference fails, in either direction:
 
-- Regressions: a different profile; an aborted run; a verdict change other than to conformant
+- Regressions: a different profile; a different implementation name or version; an aborted run; a verdict change other than to conformant
   (or, for a non-normative profile, to interoperable); a case outcome or assertion outcome that
   changed to anything but pass; a failure kind that appeared or changed (a case that starts
   crashing, though it still fails); a case or assertion that disappeared.
@@ -102,6 +102,12 @@ def compare(base: dict, report: dict) -> tuple[list[str], list[str]]:
         # does.
         line = f"verdict: {base['verdict']} -> {now['verdict']}"
         (improvements if now["verdict"] in HELD else regressions).append(line)
+    # A run that names another implementation, or another version of it, is not evidence about
+    # the committed one, however its outcomes compare; a new commit of the same version is.
+    for field in ("name", "version"):
+        if now["implementation"][field] != base["implementation"][field]:
+            regressions.append(f"implementation {field}: {base['implementation'][field]} -> "
+                               f"{now['implementation'][field]}")
     if now["implementation"]["commit"] != base["implementation"]["commit"]:
         improvements.append(f"implementation commit: {base['implementation']['commit']} -> "
                             f"{now['implementation']['commit']}")

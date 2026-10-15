@@ -97,6 +97,13 @@ def test_a_different_profile_is_a_regression():
     assert regressions == ["profile: cesr-v1.0 -> other"]
 
 
+def test_a_run_of_another_implementation_or_version_is_a_regression():
+    other = base_report()
+    other["hello"]["implementation"] = {"name": "cesrox", "version": "0.1.8", "commit": "abc"}
+    assert baseline.compare(summary(), other) == (
+        ["implementation name: keripy -> cesrox", "implementation version: 2 -> 0.1.8"], [])
+
+
 def test_a_different_implementation_commit_needs_the_baseline_updated():
     assert baseline.compare(summary(), base_report(commit="def")) == (
         [], ["implementation commit: abc -> def"])
