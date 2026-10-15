@@ -5,7 +5,7 @@ It reuses acdc_model for what sedi-1 does not change (framing, field order, SAID
 replaces what it does:
 
 - **Seals** (seal-shape, this.i 2082s6k4). A registry event is anchored by the couple ``{s, d}``
-  or the event seal ``{i, s, d}`` whose ``i`` is the issuer, in the issuer's KEL trunk. A seal
+  or the event seal ``{i, s, d}`` whose ``i`` is the registry's SAID, in the issuer's KEL trunk. A seal
   that names the event's SAID in any other shape (a bare digest, an extra field, another ``i``,
   the wrong ``s``) fails a check; no seal naming it at all leaves the anchor absent.
 - **Commitment.** A SEDI credential is committed through its registry: the head of the registry
@@ -150,14 +150,14 @@ class _SediModel(am._Model):
     def _seals(self, issuer) -> list:
         return [seal for body in self.kels.trunks.get(issuer, []) for seal in body.get("a") or []]
 
-    def anchor(self, issuer, n: str, said) -> str | None:
+    def anchor(self, issuer, rd, n: str, said) -> str | None:
         """None when the issuer's trunk anchors the event in an accepted shape; else the grade:
         invalid when a seal names its SAID in another shape, incomplete when none names it."""
         named = False
         for seal in self._seals(issuer):
             if not isinstance(seal, dict) or seal.get("d") != said:
                 continue
-            if seal in ({"s": n, "d": said}, {"i": issuer, "s": n, "d": said}):
+            if seal in ({"s": n, "d": said}, {"i": rd, "s": n, "d": said}):
                 return None
             named = True
         return INVALID if named else INCOMPLETE
@@ -194,7 +194,7 @@ class _SediModel(am._Model):
             return None, [(INVALID, "rip-said")]
         if body.get("i") != issuer:
             return None, [(INVALID, "rip-issuer")]
-        grade = self.anchor(issuer, "0", rd)
+        grade = self.anchor(issuer, rd, "0", rd)
         if grade:
             return None, [(grade, "rip-anchor")]
         head, problems = Head(rd=rd, n=0, d=rd), []
@@ -220,7 +220,7 @@ class _SediModel(am._Model):
             if not candidates:
                 problems.append((INCOMPLETE, "registry-gap"))
                 break
-            grades = {c[0]["d"]: self.anchor(issuer, f"{n:x}", c[0]["d"]) for c in candidates}
+            grades = {c[0]["d"]: self.anchor(issuer, rd, f"{n:x}", c[0]["d"]) for c in candidates}
             anchored = [c for c in candidates if grades[c[0]["d"]] is None]
             if len({c[0]["d"] for c in anchored}) > 1:
                 problems.append((INVALID, "registry-duplicity"))

@@ -250,23 +250,17 @@ def _per_message(fields, result, key, noun, op) -> str | None:
 
 
 def _issued_problem(fields: dict, result: dict) -> str | None:
-    """An issue result answers exactly the parts its request asked for (docs/adapter-protocol.md,
-    acdc.issue): each registry event, a blinded state where a blind was asked for, and the
-    anchoring event when one was."""
-    asked, got = fields["registry"], result["registry"]
-    if len(asked) != len(got):
-        return (f"The adapter returned {len(got)} registry event{'' if len(got) == 1 else 's'} "
-                f"for {len(asked)} registry events requested; an acdc.issue result has one per "
-                "requested event.")
-    for n, (want, entry) in enumerate(zip(asked, got)):
-        if ("blind" in want) != (entry["blind"] is not None):
-            return (f"Registry event {n}'s blinded state was "
-                    f"{'asked for and not returned' if 'blind' in want else 'returned unasked'}; "
-                    "an acdc.issue result returns a blinded state exactly when one was asked for.")
-    if ("anchor" in fields) != ("anchor" in result):
-        return (f"The anchoring event was "
-                f"{'asked for and not returned' if 'anchor' in fields else 'returned unasked'}; "
-                "an acdc.issue result has an anchor exactly when one was requested.")
+    """An issue result answers exactly what its request asked for (docs/adapter-protocol.md,
+    acdc.issue): a KEL for each role and an entry for each credential, and nothing else."""
+    roles, kels = set(fields["roles"]), set(result["kels"])
+    if roles != kels:
+        return (f"The adapter returned KELs for {sorted(kels)} where the request created "
+                f"{sorted(roles)}; an acdc.issue result has one KEL per role.")
+    names = {c["name"] for c in fields["credentials"]}
+    issued = set(result["credentials"])
+    if names != issued:
+        return (f"The adapter returned the credentials {sorted(issued)} where the request asked "
+                f"for {sorted(names)}; an acdc.issue result has one entry per credential.")
     return None
 
 

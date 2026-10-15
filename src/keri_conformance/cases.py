@@ -114,16 +114,10 @@ CHECK_FORMS = {
                              expected=enum(True, False)),
     "exn_verdict": _assertion("exn_verdict", message=integer(minimum=0),
                               expected=enum(*EXN_READINGS)),
-    # An issuer's answer (docs/adapter-protocol.md, acdc.issue): its bytes, its refusal, and the
-    # signatures over its anchoring event by the keys the case names, in signing-index order.
-    "issued": _assertion("issued", expected=obj(
-        {"acdc": HEX_STRING,
-         "registry": array(obj({"event": HEX_STRING, "blind": nullable(HEX_STRING)}))},
-        {"anchor_body": HEX_STRING})),
+    # An issuer's answer (docs/adapter-protocol.md, acdc.issue): what it issued verifies and is
+    # what the case asked for (this.i 2u2ps8mt), or it refused.
+    "issued": _assertion("issued"),
     "issue_refused": _assertion("issue_refused"),
-    "anchor_signed": _assertion("anchor_signed", expected=all_of(
-        array(string(min_length=1), min_items=1),
-        predicate(lambda keys: len(set(keys)) == len(keys), "a list of distinct keys"))),
 }
 
 # The checks that can apply to each operation's result.
@@ -135,10 +129,14 @@ OPERATION_CHECKS = {
     "acdc.verify": ("verdict", "registry_reported", "registry_state", "edge_reported",
                     "edge_valid"),
     "exn.verify": ("exn_verdict",),
-    "acdc.issue": ("issued", "issue_refused", "anchor_signed"),
+    "acdc.issue": ("issued", "issue_refused"),
 }
 
 PERSPECTIVE = obj({"role": enum("validator")})
+ISSUE_CREDENTIAL = obj({"name": string(min_length=1), "issuer": string(min_length=1),
+                        "schema": string(min_length=1), "attributes": anything_object,
+                        "registry": enum("bup")},
+                       {"issuee": string(min_length=1), "edges": anything_object})
 SOURCED = obj({"stream": HEX_STRING, "source": string()})
 STREAM = obj({"stream": HEX_STRING})
 
@@ -158,13 +156,11 @@ INPUTS = {
                        {"expect_schema": SAID}),
     "exn.verify": obj({"perspective": PERSPECTIVE, "kels": array(SOURCED),
                        "messages": array(SOURCED, min_items=1)}),
-    # Templates are objects the implementation fills in (this.i 4xw8k0hg).
-    "acdc.issue": obj({"kels": array(SOURCED), "seeds": mapping(HEX_STRING),
-                       "acdc": anything_object,
-                       "registry": array(obj({"event": anything_object},
-                                             {"blind": obj({"salt": string(min_length=1),
-                                                            "state": anything_object})}))},
-                      {"anchor": obj({"event": anything_object})}),
+    # An issuance asked for, not bytes: the identifiers to create by role and the credentials to
+    # issue among them (this.i 2u2ps8mt).
+    "acdc.issue": obj({"roles": array(string(min_length=1), min_items=1),
+                       "schemas": array(HEX_STRING),
+                       "credentials": array(ISSUE_CREDENTIAL, min_items=1)}),
 }
 
 # The shape of an ACDC case's provenance DAG, which the runner bounds (_dag_problem) but never
@@ -298,29 +294,47 @@ def _dag_problem(dag: dict) -> str | None:
 
 
 def _issue_problem(case: dict) -> str | None:
-    """What an issuance case's assertions must agree with in its input, beyond the schema: the
-    expected bytes answer exactly the parts asked for, and every signer has a seed."""
+    """What an issuance case's input must agree with itself in, beyond the schema: each credential
+    is named once, names roles the case creates, and has edges only to other credentials it
+    names, with no credential reaching itself."""
     request = case["input"]
-    for assertion in case["assertions"]:
-        expected, aid = assertion.get("expected"), assertion["id"]
-        if assertion["check"] == "issued":
-            if len(expected["registry"]) != len(request["registry"]) or any(
-                    ("blind" in want) != (got["blind"] is not None)
-                    for want, got in zip(request["registry"], expected["registry"])):
-                return (f'Its assertion "{aid}" expects registry events that do not match the '
-                        "ones its input asks for, one each and a blinded state exactly where a "
-                        "blind is asked for.")
-            if ("anchor" in request) != ("anchor_body" in expected):
-                return (f'Its assertion "{aid}" must expect an anchoring body exactly when its '
-                        "input asks for an anchoring event.")
-        if assertion["check"] == "anchor_signed":
-            if "anchor" not in request:
-                return f'Its assertion "{aid}" checks an anchoring event its input does not ask for.'
-            unseeded = [key for key in expected if key not in request["seeds"]]
-            if unseeded:
-                return (f'Its assertion "{aid}" names signers with no seed in its input: '
-                        f'{", ".join(unseeded)}.')
+    roles = request["roles"]
+    if len(set(roles)) != len(roles):
+        return "Its input names a role twice."
+    names = [c["name"] for c in request["credentials"]]
+    if len(set(names)) != len(names):
+        return "Its input names a credential twice."
+    for credential in request["credentials"]:
+        name = credential["name"]
+        unknown = [r for r in (credential["issuer"], credential.get("issuee", roles[0]))
+                   if r not in roles]
+        if unknown:
+            return f"Its credential {name} names a role its input does not create: {unknown[0]}."
+        far = _edge_targets(credential.get("edges", {}))
+        if far is None or any(n not in names or n == name for n in far):
+            return (f"Its credential {name}'s edges must each name another credential its "
+                    "input issues.")
     return None
+
+
+def _edge_targets(edges) -> list[str] | None:
+    """The credentials an edge section asked for names, or None if it is not one."""
+    out = []
+    for label, value in edges.items():
+        if label == "o":
+            continue
+        if not isinstance(value, dict):
+            return None
+        if "credential" in value:
+            if not isinstance(value["credential"], str):
+                return None
+            out.append(value["credential"])
+        else:
+            inner = _edge_targets(value)
+            if inner is None:
+                return None
+            out += inner
+    return out
 
 
 def case_problem(case) -> str | None:
