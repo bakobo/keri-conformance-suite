@@ -363,6 +363,16 @@ def test_file_url_points_at_the_pinned_commit():
     )
 
 
+def test_line_url_points_at_the_raw_line_of_the_pinned_text():
+    assert spec_source.line_url(3) == (
+        "https://github.com/trustoverip/kswg-cesr-specification/blob/"
+        "037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L3"
+    )
+    assert spec_source.line_url(12, spec_source.KERI) == (
+        f"{spec_source.KERI.repo}/blob/{spec_source.KERI.commit}/spec/spec-body.md?plain=1#L12"
+    )
+
+
 def test_table_at_end_of_text_is_read():
     assert spec_source.table_after("# T\n| a |\n|-|\n| x |", "T") == [["x"]]
 

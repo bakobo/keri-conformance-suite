@@ -263,4 +263,11 @@ An exchange message may name an ACDC in its `a` field, as an IPEX grant does. `e
 
 Keep it small, and keep it outside the implementation. An adapter builds against a released or pinned version of its implementation and uses only that implementation's public API, so it keeps working whether or not the implementation's maintainers ever host it. Where the implementation lacks an entry point — for example, a library that verifies events but does not route or escrow them — the adapter composes the missing piece on top, declares it in `composes`, and explains it in its README.
 
+The adapters in this repository are working examples, each a small program in its implementation's own language:
+
+- [`adapters/keripy`](../adapters/keripy), in Python, for keripy, with a second instance for keripy 1.2.14 in [`adapters/keripy/keripy-1.2.14`](../adapters/keripy/keripy-1.2.14).
+- [`adapters/keriox`](../adapters/keriox), in Rust, for keriox.
+- [`adapters/affinidi`](../adapters/affinidi), in Rust, for Affinidi's keri-core and cesr crates.
+- [`adapters/signify-ts`](../adapters/signify-ts), in TypeScript, for signify-ts.
+
 Report what the implementation did, not what the case expects. An adapter must never read a case's expected value; the runner never sends it one.

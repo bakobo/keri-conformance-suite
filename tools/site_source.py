@@ -23,6 +23,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from keri_conformance import __version__
 from keri_conformance.errors import E_USAGE_INVALID, EXIT_FAULT, EXIT_USAGE, RunnerError
 from keri_conformance.jsonfile import JsonFileError, read_json
 from tools.results import (
@@ -48,6 +49,29 @@ LABELS = {"reproduced": "Reproduced by CI", "submitted": "Submitted claim, not r
 ADMONITION = {"reproduced": "success", "submitted": "warning"}
 KIND_ORDER = {"reproduced": 0, "submitted": 1}
 DETAIL_LIMIT = 300
+CURRENT_SUITE_VERSION = __version__
+
+# A case id is a layer prefix and four digits (docs/design.md, Cases), and its file is
+# cases/<layer>/<id>.json. Only an id of exactly that shape becomes a link.
+_CASE_ID = re.compile(r"(CESR|KERI|ACDC|IPEX)-[0-9]{4}")
+
+# Where each label of a result page's claim table is explained, relative to the site root. The
+# implementation and the adapter need no explanation.
+_DOCS = "../../../"
+EXPLAINED = {
+    "Suite version": "design.md#versioning",
+    "Profile": "design.md#targets-and-profiles",
+    "Verdict": "publishing-results.md#verdict",
+    "Active MUST assertions": "publishing-results.md#assertion-counts",
+    "Active SHOULD assertions": "publishing-results.md#assertion-counts",
+    "Active INTEROP assertions": "publishing-results.md#assertion-counts",
+    "Interoperability (never part of the verdict)": "design.md#practice",
+    "Composes": "publishing-results.md#composes",
+    "Self-agreement": "publishing-results.md#self-agreement",
+    "Runner": "design.md#the-runner",
+    "Active cases not supported": "publishing-results.md#cases-not-supported",
+    "Aborted": "publishing-results.md#verdict",
+}
 
 _ENTITIES = {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}
 # Python-Markdown's escapable characters, with "|" from its tables extension.
@@ -128,6 +152,32 @@ def _sort_key(result: Result):
     impl = _impl(result)
     return (result.path.parts[0], impl["name"], result.path.parts[1],
             KIND_ORDER[result.doc["provenance"]["kind"]], result.path.name)
+
+
+def _case_link(case_id: str, ref: str) -> str:
+    """`case_id` as a link to its case file at `ref`, or as plain text if it is not a case id."""
+    if not _CASE_ID.fullmatch(case_id):
+        return text(case_id)
+    layer = case_id.split("-")[0].lower()
+    return f"[{text(case_id)}]({REPO_URL}/blob/{ref}/cases/{layer}/{case_id}.json)"
+
+
+def _cases_ref(provenance: dict) -> str:
+    """The commit whose cases a result ran: CI's own commit for a reproduced result. A submitted
+    result names no suite commit, so its cases are linked on main."""
+    return provenance["commit"] if provenance["kind"] == "reproduced" else "main"
+
+
+def _row(label: str, value: str) -> str:
+    target = EXPLAINED.get(label)
+    shown = f"[{label}]({_DOCS}{target})" if target else label
+    return f"| {shown} | {value} |"
+
+
+def _version_heading(version: str) -> str:
+    if version == CURRENT_SUITE_VERSION:
+        return f"## Current suite version ({text(version)})"
+    return f"## Suite version {text(version)}"
 
 
 def _n(value: int) -> str:
@@ -222,7 +272,7 @@ def _index(results: list[Result]) -> str:
         lines.append("No results have been published yet.\n")
         return "\n".join(lines)
     for version, group in _by_suite_version(results):
-        lines += [f"## Suite version {text(version)}", ""]
+        lines += [_version_heading(version), ""]
         lines += _version_tables(group, "")
         lines.append("")
     return "\n".join(lines)
@@ -237,7 +287,7 @@ def _implementation_page(results: list[Result]) -> str:
              ("Every published result for this implementation, by the suite version it ran "
              "against. The labels are explained on the [results page](../index.md)."), ""]
     for version, group in _by_suite_version(results):
-        lines += [f"## Suite version {text(version)}", ""]
+        lines += [_version_heading(version), ""]
         own = f"](../{group[0].path.parts[0]}/"
         lines += [line.replace(own, "](") for line in _version_tables(group, "../")]
         lines.append("")
@@ -291,44 +341,45 @@ def _detail_page(result: Result) -> str:
     lines = [(f"# {text(result.path.parts[0])} {text(result.path.parts[1])}, profile "
               f"{text(report['filters']['profile'])}"), ""]
     lines += _provenance_block(doc["provenance"])
+    ref = _cases_ref(doc["provenance"])
+    unsupported = report["summary"]["not_supported_active"]
     lines += [
-        "| | |", "|---|---|",
-        f"| Suite version | {text(report['suite_version'])} |",
-        f"| Profile | {text(report['filters']['profile'])} |",
-        f"| Verdict | {text(report['verdict'])} |",
-        (f"| Active MUST assertions | {must[0]} passed, {must[1]} failed "
-        f"({_outcome_counts(report, 'MUST')}) |"),
-        (f"| Active SHOULD assertions | {should[0]} passed, {should[1]} failed "
-        f"({_outcome_counts(report, 'SHOULD')}) |"),
+        "| Field | Value |", "|---|---|",
+        _row("Suite version", text(report["suite_version"])),
+        _row("Profile", text(report["filters"]["profile"])),
+        _row("Verdict", text(report["verdict"])),
+        _row("Active MUST assertions",
+             f"{must[0]} passed, {must[1]} failed ({_outcome_counts(report, 'MUST')})"),
+        _row("Active SHOULD assertions",
+             f"{should[0]} passed, {should[1]} failed ({_outcome_counts(report, 'SHOULD')})"),
     ]
     if "INTEROP" in report["summary"]["counts"].get("active", {}):
         interop = _tally(report, "INTEROP")
-        lines.append(f"| Active INTEROP assertions | {interop[0]} passed, {interop[1]} failed "
-                     f"({_outcome_counts(report, 'INTEROP')}) |")
+        lines.append(_row("Active INTEROP assertions", f"{interop[0]} passed, {interop[1]} "
+                                                       f"failed ({_outcome_counts(report, 'INTEROP')})"))
         if report["summary"]["interop_verdict"] not in (None, report["verdict"]):
-            lines.append("| Interoperability (never part of the verdict) | "
-                         f"{text(report['summary']['interop_verdict'])} |")
+            lines.append(_row("Interoperability (never part of the verdict)",
+                              text(report["summary"]["interop_verdict"])))
     lines += [
-        (f"| Implementation | {text(impl['name'], 80)} {text(impl['version'], 80)}, commit "
-        f"{text(impl['commit'])} |"),
-        f"| Adapter | {text(adapter['name'], 80)} {text(adapter['version'], 80)} |",
-        f"| Composes | {_composes(report)} |",
-        f"| Self-agreement | {_self_agreement(report)} |",
-        (f"| Runner | {text(report['runner_version'])}, adapter protocol "
-        f"{_n(report['negotiated_protocol'])} |"),
-        "| Active cases not supported | "
-        + (text(", ".join(report["summary"]["not_supported_active"]))
-           if report["summary"]["not_supported_active"] else "none") + " |",
+        _row("Implementation", f"{text(impl['name'], 80)} {text(impl['version'], 80)}, commit "
+                               f"{text(impl['commit'])}"),
+        _row("Adapter", f"{text(adapter['name'], 80)} {text(adapter['version'], 80)}"),
+        _row("Composes", _composes(report)),
+        _row("Self-agreement", _self_agreement(report)),
+        _row("Runner", f"{text(report['runner_version'])}, adapter protocol "
+                       f"{_n(report['negotiated_protocol'])}"),
+        _row("Active cases not supported",
+             ", ".join(_case_link(c, ref) for c in unsupported) if unsupported else "none"),
     ]
     if report["aborted"] is not None:
-        lines.append(f"| Aborted | {text(report['aborted']['reason'], DETAIL_LIMIT)} |")
+        lines.append(_row("Aborted", text(report["aborted"]["reason"], DETAIL_LIMIT)))
     stem = Path(_page(result)).stem
     lines += ["", (f"Every case, with its outcome, is below, and [the full report \\(JSON\\)]"
                   f"({stem}.json) has every assertion's expected and actual values."), "",
               "## Cases", "", "| Case | Status | Operation | Outcome | Notes |",
               "|---|---|---|---|---|"]
     for entry in sorted(report["cases"], key=lambda e: e["id"]):
-        lines.append(f"| {text(entry['id'])} | {text(entry['status'])} | "
+        lines.append(f"| {_case_link(entry['id'], ref)} | {text(entry['status'])} | "
                      f"{text(entry['operation'], 80)} | {text(entry['outcome'])} | "
                      f"{_case_notes(entry)} |")
     return "\n".join(lines) + "\n"

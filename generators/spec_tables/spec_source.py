@@ -230,6 +230,13 @@ def file_url(anchor: str, pin: Pin | None = None) -> str:
     return f"{pin.repo}/blob/{pin.commit}/{pin.file}#{anchor}"
 
 
+def line_url(line: int, pin: Pin | None = None) -> str:
+    """GitHub's plain (unrendered) view of the pinned text, at a 1-based line. The rendered view
+    has no line anchors, so a citation of a line, rather than a heading, links here."""
+    pin = pin or cesr_pin()
+    return f"{pin.repo}/blob/{pin.commit}/{pin.file}?plain=1#L{line}"
+
+
 def table_after(text: str, heading_text: str) -> list[list[str]]:
     """The body rows of the first markdown table under the heading whose text is
     ``heading_text``, with backticks stripped and cells trimmed. The header and separator rows
