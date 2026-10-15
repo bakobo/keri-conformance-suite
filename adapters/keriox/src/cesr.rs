@@ -413,10 +413,28 @@ pub fn encode(code: &str, raw: &[u8], domain: &str) -> Result<Value, OpError> {
     {
         (c, raw).to_str()
     } else {
-        return Err(OpError::Unsupported(format!(
-            "{E_CODE}: cesrox 0.1.8 has no primitive encoder for code {}.",
-            Value::String(code.into())
-        )));
+        // cesrox refusing the code is its answer, reported as a rejection whose class is the
+        // variant of cesrox's own error (adapter protocol, cesr.encode).
+        let refusal = [
+            Basic::from_str(code).err(),
+            SelfAddressing::from_str(code).err(),
+            SelfSigning::from_str(code).err(),
+        ]
+        .into_iter()
+        .flatten()
+        .next();
+        return match refusal {
+            Some(e) => {
+                let class = format!("{e:?}");
+                let class = class.split('(').next().unwrap_or_default().to_string();
+                eprintln!("cesrox refused to encode code {code:?}: {e}");
+                Ok(json!({"reject": {"class": class}}))
+            }
+            None => Err(OpError::Unsupported(format!(
+                "{E_CODE}: cesrox 0.1.8 reads code {} but no encoder gives it back exactly.",
+                Value::String(code.into())
+            ))),
+        };
     };
     Ok(json!({"encoded": hex(text.as_bytes())}))
 }

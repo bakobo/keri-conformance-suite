@@ -61,7 +61,7 @@ Not declared, and why:
 
 `cesr.item-extents` is not declared. That feature promises the decoded items of every stream the implementation accepts ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md), `cesr.parse`), and this adapter knowingly cannot keep that promise: it measures every item's offsets from what cesrox consumed (see "Measured, not sourced") except inside two kinds of group cesrox does not itemize, first-seen couples (`-E`) and pathed material (`-L`). A stream with either is answered with the protocol's accepted summary. Declaring the feature would make the runner send decoded cases the adapter cannot answer, so no case with a `decoded` assertion is sent to it; those are not-supported. The adapter still reports items for every other accepted stream, and a case whose assertions are all rejections is still sent and still gets cesrox's verdict.
 
-Every case in `cesr-v1.0` targets `cesr.genus-2.00`, so the runner sends none of them: 41 cases not-supported, verdict `no-evidence`. In `keripy-1x-interop`, CESR-0045 to CESR-0048 have a `decoded` assertion, so those four are not-supported (CESR-0048 also needs `cesr.genus-2.00`). cesrox's output for CESR-0045, CESR-0046 and CESR-0047 does match the expected items exactly, which the adapter's own tests check. Both `cesr-strict` cases need `cesr.genus-2.00` too. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, have only `rejected` assertions and need only `cesr.genus-1.00`, so they are sent, and all five pass: cesrox rejects each stream, as keripy 1.2.14 does. That run's verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped to the five cases sent.
+Every case in `cesr-v1.0` targets `cesr.genus-2.00`, so the runner sends none of them, and the verdict is `no-evidence`. In `keripy-1x-interop`, CESR-0045 to CESR-0048 have a `decoded` assertion, so those four are not-supported (CESR-0048 also needs `cesr.genus-2.00`). cesrox's output for CESR-0045, CESR-0046 and CESR-0047 does match the expected items exactly, which the adapter's own tests check. Both `cesr-strict` cases need `cesr.genus-2.00` too. The interop must-reject cases on KERI 1.0 streams, CESR-0049, CESR-0050, CESR-0052, CESR-0054 and CESR-0057, have only `rejected` assertions and need only `cesr.genus-1.00`, so they are sent, and all five pass: cesrox rejects each stream, as keripy 1.2.14 does. That run's verdict is `interoperable`, the verdict a non-normative profile gets instead of a conformance one, scoped to the five cases sent.
 
 Every case in `keri-v1.0.1` and `keri-escrow` carries KERI 2.0 bodies behind a genus 2.00 code, so the runner sends none of them to this adapter and both verdicts are `no-evidence`. `keri.process` is exercised so far only by the adapter's own tests (`tests/process.rs`), on keripy 1.2.14 KELs. It gets suite cases when KERI 1.x interop cases are added to `keripy-1x-interop`.
 
@@ -125,7 +125,7 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 | Sequence number `raw` (`0A`) | `parse_primitive::<SerialNumberCode>`, which returns the raw bytes it decoded. cesrox's groups call `serial_number_parser`, which returns a `u64` instead; the adapter replays both on the same bytes and checks that they agree |
 | Indexed `index` | `Index::current()` |
 | Indexed `ondex` | Reported only for cesrox's `Index::Dual` and `Index::BigDual`, from `prev_next()`. cesrox's current-only variants carry no ondex, so none is reported for them, even for codes whose table row defines an ondex field. A case that expects one fails, and that failure is cesrox's |
-| `cesr.encode` | `CesrPrimitive::to_str()` on `(code, raw)`, with the code from the first of cesrox's `Basic`, `SelfAddressing` and `SelfSigning` whose `FromStr` accepts it and whose `to_str()` gives it back exactly |
+| `cesr.encode` | `CesrPrimitive::to_str()` on `(code, raw)`, with the code from the first of cesrox's `Basic`, `SelfAddressing` and `SelfSigning` whose `FromStr` accepts it and whose `to_str()` gives it back exactly. A code none of them accepts is cesrox's refusal, answered as a rejection whose class is cesrox's error variant, such as `UnknownCodeError` for `0A` or `M` |
 
 ## What it answers with a summary
 
@@ -135,7 +135,7 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 ## What it answers `unsupported`
 
 - A CBOR or MessagePack body (`e.feature.unsupported.serialization.f`).
-- `cesr.encode` in the binary domain (`e.feature.unsupported.binary-domain.f`), and a code cesrox has no encoder for, such as `0A` or `M` (`e.feature.unsupported.code.f`).
+- `cesr.encode` in the binary domain (`e.feature.unsupported.binary-domain.f`), which this adapter does not declare. A code cesrox reads but cannot give back exactly would be `e.feature.unsupported.code.f`; no such code is known.
 - `keri.emit` (`e.feature.unsupported.undeclared-op.f`).
 - `keri.process` from any perspective but an ordinary validator's (`e.feature.unsupported.perspective.f`).
 
@@ -163,4 +163,4 @@ uv run python scripts/reproduce-results check --adapter keriox     # compare a f
 uv run python scripts/reproduce-results refresh --adapter keriox   # replace them, from a clean tree
 ```
 
-`check` fails on a regression, and on an improvement too, including a different cesrox or said commit, until the results are refreshed in the same change.
+`check` fails on a regression, and on an improvement too, including a different keri-core, cesrox or said commit, until the results are refreshed in the same change.
