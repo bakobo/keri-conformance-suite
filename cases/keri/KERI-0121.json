@@ -1,0 +1,75 @@
+{
+  "assertions": [
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures.",
+        "section": "Validator",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validator"
+      },
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (said).",
+      "phase": "initial"
+    },
+    {
+      "check": "disposition",
+      "clause": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Therefore, a validator MUST first act as a verifier in order to establish the root authoritative set of keys and verify the associated signatures.",
+        "section": "Validator",
+        "spec": "keri",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validator"
+      },
+      "expected": "not-seen",
+      "id": "a2",
+      "level": "MUST",
+      "message": 0,
+      "note": "Decision procedure step 1 (said).",
+      "phase": "final"
+    }
+  ],
+  "description": "A self-addressing inception whose SAID and prefix carry the SHA2-256 code (I) while their value is the Blake3-256 digest of the body. The SAID verification protocol computes the digest with the algorithm the SAID's own code names (CESR line 1194), so the SAID does not verify and the inception must not be accepted. A validator that always uses Blake3, whatever the code says, accepts it. The case needs no digest feature, because a validator without SHA2-256 refuses it too.",
+  "id": "KERI-0121",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "2d5f4141414341417b2276223a224b4552494341414341414a534f4e414145742e222c2274223a22696370222c2264223a2249434a686735387155457a57784e624e4777785a646876724a70374e414b46377143746a4b44786d74616438222c2269223a2249434a686735387155457a57784e624e4777785a646876724a70374e414b46377143746a4b44786d74616438222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b2249463978586548394868684b465a6559776d50413945563630543474444f654f386b68754e58394e75667462225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4341582d4b4157414143344a327a47336c487762326148737a686a7564736c6d635965465f6c737548676e4e45542d3230753377304f4b63414545654e344a5169635758346f4339427058656942706132752d554650685a63334e69496745"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keri-v1.0.1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/digests.json#KS-DA03"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON"
+    ]
+  },
+  "title": "SAID coded SHA2-256 but computed with Blake3-256"
+}
