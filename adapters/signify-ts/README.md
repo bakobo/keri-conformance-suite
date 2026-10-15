@@ -76,6 +76,12 @@ The adapter checks its arithmetic against the parser wherever both exist: a coun
 ## Results
 
 <!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+
+| Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-v1.0` | not-conformant | 7 / 15 | 9 / 0 | 0 / 0 | 8 | [2026-10-15, suite 1916e6e1](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-v1.0.json) |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 8 / 1 | 0 | [2026-10-15, suite 1916e6e1](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/keripy-1x-interop.json) |
+
 <!-- END generated results -->
 
 ## CI and the committed results

@@ -100,6 +100,12 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 ## Results
 
 <!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+
+| Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| cesrox 0.1.8 (said 0.4.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-15, suite 1916e6e1](../../results/cesrox/0.1.8-said-0.4.3/cesr-v1.0.json) |
+| cesrox 0.1.8 (said 0.4.3) | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-15, suite 1916e6e1](../../results/cesrox/0.1.8-said-0.4.3/keripy-1x-interop.json) |
+
 <!-- END generated results -->
 
 ## CI and the committed results

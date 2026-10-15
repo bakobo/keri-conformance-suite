@@ -1,0 +1,2345 @@
+{
+  "result_version": 1,
+  "provenance": {
+    "kind": "maintainer-run",
+    "maintainer": "Daniel Hardman",
+    "commit": "1916e6e1b6da0b0e25c46c2fc626e75d229d293d",
+    "date": "2026-10-15"
+  },
+  "report": {
+    "report_version": 1,
+    "runner_version": "0.0.1",
+    "suite_version": "0.0.1",
+    "protocol_version": 1,
+    "supported_protocols": [
+      1
+    ],
+    "negotiated_protocol": 1,
+    "hello": {
+      "protocol": 1,
+      "adapter": {
+        "name": "kcs-adapter-keripy",
+        "version": "0.1.0"
+      },
+      "implementation": {
+        "name": "keripy",
+        "version": "2.1.0.dev1",
+        "commit": "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode",
+        "keri.process",
+        "acdc.verify",
+        "exn.verify"
+      ],
+      "features": [
+        "cesr.domain.binary",
+        "cesr.genus-1.00",
+        "cesr.genus-2.00",
+        "cesr.item-extents",
+        "cesr.serialization.cbor",
+        "cesr.serialization.json",
+        "cesr.serialization.mgpk",
+        "keri.version-1.x",
+        "keri.version-2.x",
+        "crypto.ed25519",
+        "kel.basic",
+        "kel.delegation",
+        "kel.multisig.numeric",
+        "kel.multisig.weighted",
+        "kel.nontransferable",
+        "kel.partial-rotation",
+        "kel.recovery",
+        "kel.witness",
+        "keri.duplicity",
+        "keri.escrow",
+        "keri.routing"
+      ],
+      "composes": []
+    },
+    "declared_features": [
+      "cesr.domain.binary",
+      "cesr.genus-1.00",
+      "cesr.genus-2.00",
+      "cesr.item-extents",
+      "cesr.serialization.cbor",
+      "cesr.serialization.json",
+      "cesr.serialization.mgpk",
+      "keri.version-1.x",
+      "keri.version-2.x",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "kel.multisig.numeric",
+      "kel.multisig.weighted",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "kel.recovery",
+      "kel.witness",
+      "keri.duplicity",
+      "keri.escrow",
+      "keri.routing"
+    ],
+    "composes": [],
+    "filters": {
+      "profile": "acdc-v1.0",
+      "cases_dir": "cases"
+    },
+    "session_stderr": "",
+    "verdict": "no-evidence",
+    "aborted": null,
+    "probes": {
+      "statelessness": "not-yet-available"
+    },
+    "summary": {
+      "counts": {
+        "draft": {
+          "SHOULD": {
+            "not-supported": 85
+          },
+          "MUST": {
+            "not-supported": 22
+          }
+        }
+      },
+      "should": {},
+      "should_failed": 0,
+      "interop": {},
+      "interop_verdict": null,
+      "should_warning": null,
+      "not_supported_active": [],
+      "self_agreement_passes": 0
+    },
+    "cases": [
+      {
+        "id": "ACDC-0001",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0002",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0003",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0004",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0005",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0006",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0007",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0008",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0009",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0010",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0011",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0012",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0013",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0014",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0015",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0016",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0017",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0018",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0019",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0020",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0021",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0022",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0023",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0024",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0025",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EK_aa2DRLn6Aukgqnh5QMMEUjXhww8FESKUJ_4PILlQ7",
+              "n": 1,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": "EEZxAmpNYNVwwYjiJ8Yr1jK0SZhcNqtnkncKQ_igAgvo",
+              "ts": "issued"
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0026",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "ELy4pU80HG0iGA5KuWzAJDlTvR5mrp5wIe52jE7LuAit",
+              "n": 2,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": "EEZxAmpNYNVwwYjiJ8Yr1jK0SZhcNqtnkncKQ_igAgvo",
+              "ts": "revoked"
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0027",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EK_aa2DRLn6Aukgqnh5QMMEUjXhww8FESKUJ_4PILlQ7",
+              "n": 1,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": "EEZxAmpNYNVwwYjiJ8Yr1jK0SZhcNqtnkncKQ_igAgvo",
+              "ts": "issued"
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0028",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "n": 0,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": null,
+              "ts": null
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0029",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0030",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "n": 0,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": null,
+              "ts": null
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0031",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0032",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "ELy4pU80HG0iGA5KuWzAJDlTvR5mrp5wIe52jE7LuAit",
+              "n": 2,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": null,
+              "ts": null
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0033",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0034",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_state",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "n": 0,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": null,
+              "ts": null
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0035",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0036",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EK_aa2DRLn6Aukgqnh5QMMEUjXhww8FESKUJ_4PILlQ7",
+              "n": 1,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": "EEZxAmpNYNVwwYjiJ8Yr1jK0SZhcNqtnkncKQ_igAgvo",
+              "ts": "issued"
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0037",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EK_aa2DRLn6Aukgqnh5QMMEUjXhww8FESKUJ_4PILlQ7",
+              "n": 1,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": "EEZxAmpNYNVwwYjiJ8Yr1jK0SZhcNqtnkncKQ_igAgvo",
+              "ts": "issued"
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0038",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0039",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EK_aa2DRLn6Aukgqnh5QMMEUjXhww8FESKUJ_4PILlQ7",
+              "n": 1,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": null,
+              "ts": null
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0040",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0041",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.registry.bup",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "registry_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "registry_state",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": {
+              "d": "EK_aa2DRLn6Aukgqnh5QMMEUjXhww8FESKUJ_4PILlQ7",
+              "n": 1,
+              "rd": "EIhyVlJL804tb2dck2jZCSkLYYZvWurb2oJieRCsSAex",
+              "td": null,
+              "ts": null
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0042",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0043",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0044",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0045",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0046",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0047",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0048",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0049",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0050",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0051",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0052",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0053",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0054",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0055",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0056",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0057",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0058",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0059",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0060",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0061",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0062",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a7",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a8",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a9",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0063",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0064",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0065",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0066",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "not-valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0067",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0068",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0069",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0070",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0071",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0072",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "verdict",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": "valid",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "edge_valid",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0073",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0074",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0075",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.edges",
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_reported",
+            "level": "SHOULD",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "ACDC-0076",
+        "status": "draft",
+        "profile": "acdc-v1.0",
+        "operation": "acdc.verify",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "acdc.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "edge_valid",
+            "level": "MUST",
+            "outcome": "not-supported",
+            "expected": false,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      }
+    ]
+  }
+}
