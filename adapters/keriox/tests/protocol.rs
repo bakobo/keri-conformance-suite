@@ -44,18 +44,36 @@ fn hello_answers_protocol_one_and_declares_what_it_implements() {
     assert_eq!(result["protocol"], 1);
     assert_eq!(result["adapter"]["name"], "kcs-adapter-keriox");
     assert!(result["adapter"]["version"].is_string());
-    assert_eq!(result["implementation"]["name"], "cesrox");
-    assert_eq!(result["implementation"]["version"], "0.1.8 (said 0.4.3)");
+    assert_eq!(result["implementation"]["name"], "keri-core");
+    assert_eq!(
+        result["implementation"]["version"],
+        "0.17.13 (cesrox 0.1.8, said 0.4.3)"
+    );
     assert_eq!(
         result["implementation"]["commit"],
-        "40840948fb669424a0b7629979291ee0c777bb0e (said a385e69028fa2d9bd8fda31a9401ad0a630e1361)"
+        "b25ba2b1b276706cbe103bc185224071a5e73579 (cesrox 40840948fb669424a0b7629979291ee0c777bb0e, \
+         said a385e69028fa2d9bd8fda31a9401ad0a630e1361)"
     );
-    assert_eq!(result["operations"], json!(["cesr.parse", "cesr.encode"]));
+    assert_eq!(
+        result["operations"],
+        json!(["cesr.parse", "cesr.encode", "keri.process"])
+    );
     assert_eq!(
         result["features"],
         json!([
             "cesr.genus-1.00",
             "cesr.serialization.json",
+            "crypto.ed25519",
+            "kel.basic",
+            "kel.delegation",
+            "kel.multisig.numeric",
+            "kel.multisig.weighted",
+            "kel.nontransferable",
+            "kel.partial-rotation",
+            "kel.witness",
+            "keri.duplicity",
+            "keri.escrow",
+            "keri.routing",
             "keri.version-1.x"
         ])
     );
@@ -149,12 +167,10 @@ fn an_unknown_op_is_a_harness_error() {
 }
 
 #[test]
-fn undeclared_operations_are_unsupported() {
-    for op in ["keri.process", "keri.emit"] {
-        let r = answer(&format!(r#"{{"id":4,"op":"{op}"}}"#));
-        assert_eq!(r["id"], 4);
-        assert_eq!(error_kind(&r), "unsupported", "{op}");
-    }
+fn an_undeclared_operation_is_unsupported() {
+    let r = answer(r#"{"id":4,"op":"keri.emit"}"#);
+    assert_eq!(r["id"], 4);
+    assert_eq!(error_kind(&r), "unsupported");
 }
 
 #[test]
@@ -168,6 +184,13 @@ fn malformed_operation_fields_are_harness_errors() {
         r#"{"id":2,"op":"cesr.encode","code":"","raw":"00","domain":"text"}"#,
         r#"{"id":2,"op":"cesr.encode","code":"D","raw":"0","domain":"text"}"#,
         r#"{"id":2,"op":"cesr.encode","code":"D","raw":"00","domain":"qb3"}"#,
+        r#"{"id":2,"op":"keri.process","messages":[]}"#,
+        r#"{"id":2,"op":"keri.process","perspective":"validator","messages":[]}"#,
+        r#"{"id":2,"op":"keri.process","perspective":{"role":"validator"}}"#,
+        r#"{"id":2,"op":"keri.process","perspective":{"role":"validator"},"messages":{}}"#,
+        r#"{"id":2,"op":"keri.process","perspective":{"role":"validator"},"messages":["00"]}"#,
+        r#"{"id":2,"op":"keri.process","perspective":{"role":"validator"},"messages":[{}]}"#,
+        r#"{"id":2,"op":"keri.process","perspective":{"role":"validator"},"messages":[{"stream":"0G"}]}"#,
     ] {
         let r = answer(line);
         assert_eq!(r["id"], 2, "{line}");
