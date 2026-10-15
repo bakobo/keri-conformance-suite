@@ -4,8 +4,10 @@ The runner and the generators share it. The KERI cases carry real signatures, an
 an issuer's signatures itself (docs/adapter-protocol.md, acdc.issue), but the runner depends on
 nothing at runtime and the generators use only the standard library, which has no Ed25519. Signing
 is deterministic, so every signature is fixed by its seed and message. It is a test tool, never a
-production signer: it makes no attempt at constant time, and the runner uses it only on keys and
-messages the case itself supplies. The implementation is the RFC's own (sections 5.1.2 to 5.1.7, in
+production signer: it makes no attempt at constant time. The runner verifies with keys an adapter
+returns (src/keri_conformance/issued.py), so verification refuses keys and R values of small order
+rather than following RFC 8032's permissive verification, as it already refuses non-canonical
+encodings and S values not below the group order. The implementation is the RFC's own (sections 5.1.2 to 5.1.7, in
 extended coordinates) and is checked against the RFC's test vectors.
 """
 
@@ -78,6 +80,15 @@ def _decode_point(data: bytes):
     return (x, y, 1, x * y % P)
 
 
+def _small_order(point) -> bool:
+    """Whether the point's order divides 8, the cofactor: the identity and the seven other points
+    that multiply to it. A public key or R of small order makes a forgery trivial (the identity
+    key with R the identity and S = 0 verifies for every message), so verify refuses both, as
+    libsodium does."""
+    x, y, z, _ = _scalar_mult(8, point)
+    return x % P == 0 and (y - z) % P == 0
+
+
 def _points_equal(a, b) -> bool:
     x1, y1, z1, _ = a
     x2, y2, z2, _ = b
@@ -119,10 +130,10 @@ def verify(public: bytes, message: bytes, signature: bytes) -> bool:
     if len(public) != 32 or len(signature) != 64:
         return False
     a = _decode_point(public)
-    if a is None:
+    if a is None or _small_order(a):
         return False
     r = _decode_point(signature[:32])
-    if r is None:
+    if r is None or _small_order(r):
         return False
     s = int.from_bytes(signature[32:], "little")
     if s >= L:
