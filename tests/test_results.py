@@ -298,6 +298,21 @@ def test_a_layered_result_must_hold_every_case_its_profiles_name(suite):
     assert "missing CESR-0001" in R.result_problem(doc, suite)
 
 
+def test_an_aborted_layered_result_claims_no_more_than_incomplete(suite):
+    doc = layered_result()
+    rep = doc["report"]
+    rep["aborted"] = {"code": "e.x.f", "reason": "r", "problems": [], "at_case": "CESR-0004",
+                      "exit_code": 4}
+    rep["verdict"] = "aborted"
+    rep["claim"]["verdict"] = "interoperable"
+    rep["claim"]["missing"] = {"operations": [], "features": []}
+    rep["hello"]["features"].append("kel.delegation")
+    rep["declared_features"] = rep["hello"]["features"]
+    assert "claim" in R.result_problem(doc, suite)
+    rep["claim"]["verdict"] = "incomplete"
+    assert R.result_problem(doc, suite) is None
+
+
 def test_the_claim_verdict_is_the_report_verdict(suite):
     doc = layered_result()
     doc["report"]["verdict"] = "not-conformant"

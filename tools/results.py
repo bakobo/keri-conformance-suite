@@ -257,7 +257,10 @@ def _meaning_problem(report: dict, suite=SUITE) -> str | None:
         problem = manifest_problem(profile, named)
         if problem:
             return problem
-        if claim != make_claim(profile, report["cases"], report["hello"]):
+        expected = make_claim(profile, report["cases"], report["hello"])
+        if report["aborted"] is not None:
+            expected["verdict"] = "incomplete"
+        if claim != expected:
             return "its claim is not the one its cases, hello and profile imply"
         verdict = claim["verdict"]
     if report["aborted"] is not None:

@@ -140,12 +140,22 @@ def _exercised(source: dict, cases: list[dict], pins: dict) -> dict[str, dict[st
                 raise ScenarioError(f"{where} names {', '.join(unknown)}, which "
                                     f"{source['name']} does not choose.")
             basis = assertion.get("basis")
-            if isinstance(basis, dict) and not any(
-                    c.startswith(basis["commit"]) for c in allowed.get(basis["spec"], ())):
-                raise ScenarioError(f"{where} quotes the {basis['spec']} text at "
-                                    f"{basis['commit']}, which {source['name']} does not pin.")
+            if isinstance(basis, dict) and not (
+                    isinstance(basis.get("commit"), str) and basis["commit"]
+                    and any(c.startswith(basis["commit"])
+                            for c in allowed.get(basis.get("spec"), ()))):
+                raise ScenarioError(f"{where} quotes the {basis.get('spec')} text at "
+                                    f"{basis.get('commit')}, which {source['name']} does not "
+                                    "pin.")
             polarity = _polarity(assertion)
+            other = "negative" if polarity == "positive" else "positive"
             for cid in assertion["choices"]:
+                # One input cannot be both accepted and refused by a correct implementation, so a
+                # case exercises a choice on one side only.
+                if case["id"] in matrix[cid][other]:
+                    raise ScenarioError(f"{case['id']} exercises {cid} both ways; a case is "
+                                        "either accepted or refused, so each side needs its "
+                                        "own case.")
                 if case["id"] not in matrix[cid][polarity]:
                     matrix[cid][polarity].append(case["id"])
     return matrix
@@ -196,7 +206,12 @@ def check_release(doc: dict, released) -> None:
     """Refuse a released version whose fixed fields changed, and a released version not marked
     active. ``released`` maps a profile name to the suite version it was released with and the
     digest of what it fixes, as recorded when it was ratified."""
-    record = released.get(doc["name"]) if isinstance(released, dict) else None
+    released = released if isinstance(released, dict) else {}
+    for name in released:
+        if name != doc["name"]:
+            raise ScenarioError(f"{name} is recorded as released but is no longer generated; a "
+                                "released version is never removed or renamed.")
+    record = released.get(doc["name"])
     if record is None:
         return
     if doc["status"] != "active":

@@ -265,3 +265,14 @@ def test_the_manifest_check_names_what_differs():
     problem = manifest_problem(profile, {"lay": {"A", "D"}, "base": {"B"}})
     assert problem is not None and "not listed D" in problem
     assert "missing C" in manifest_problem(profile, {"lay": {"A"}, "base": {"B"}})
+
+
+def test_an_aborted_layered_run_claims_no_more_than_incomplete(suite, cases_dir, tmp_path,
+                                                                monkeypatch):
+    from keri_conformance import run as run_module
+    chosen = [*BASE_CASES["conformant"], *OWN_CASES["interoperable"]]
+    manifest(suite, *chosen)
+    monkeypatch.setattr(run_module, "MAX_RETAINED_BYTES", 0)
+    code, report = run(suite, cases_dir(*chosen), tmp_path)
+    assert report["verdict"] == "aborted" and report["claim"]["verdict"] == "incomplete"
+    assert code == errors.EXIT_FAULT

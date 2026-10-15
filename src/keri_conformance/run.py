@@ -239,6 +239,9 @@ def run_suite(session: AdapterSession, cases: list[dict], *, profile: Profile | 
         verdict = claim["verdict"]
     if aborted:
         verdict = "aborted"
+        if claim:
+            # An aborted run left cases unrun, so its claim can be no better than incomplete.
+            claim["verdict"] = "incomplete"
     report = {
         "report_version": 1,
         "runner_version": __version__,

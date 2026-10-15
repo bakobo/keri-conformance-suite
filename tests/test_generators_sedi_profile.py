@@ -85,6 +85,8 @@ def test_a_draft_may_leave_a_choice_unexercised_but_an_active_version_may_not():
     ({"choices": ["no-such-choice"]}, "does not choose"),
     ({"check": "rejected"}, "has no polarity"),
     ({"basis": {"spec": "acdc", "commit": "1234567"}}, "does not pin"),
+    ({"basis": {"spec": "acdc"}}, "does not pin"),
+    ({"basis": {"spec": "acdc", "commit": ""}}, "does not pin"),
 ])
 def test_every_assertion_rests_on_a_choice_the_profile_makes(assertion, words):
     case = verdict_case("ACDC-0901", "valid", ["revoked"])
@@ -184,6 +186,8 @@ def test_a_released_version_must_be_active_and_unchanged():
     sedi_profile.check_release(doc, record)
     sedi_profile.check_release(doc, {})
     sedi_profile.check_release(doc, [])
+    with pytest.raises(ScenarioError, match="no longer generated"):
+        sedi_profile.check_release({**doc, "name": "sedi-2"}, record)
     with pytest.raises(ScenarioError, match="status must be active"):
         sedi_profile.check_release({**doc, "status": "draft"}, record)
     changed = copy.deepcopy(doc)
@@ -257,3 +261,10 @@ def test_the_script_says_nothing_when_every_choice_is_exercised(monkeypatch, cap
     monkeypatch.setattr(script.regenerate, "sedi", lambda root, files: (real(root, files)[0], []))
     assert script.main(["--check"]) == 0
     assert "not yet exercised" not in capsys.readouterr().out
+
+
+def test_one_case_cannot_exercise_a_choice_both_ways():
+    case = verdict_case("ACDC-0901", "valid", ["revoked"])
+    case["assertions"].append({**case["assertions"][0], "id": "a2", "expected": "not-valid"})
+    with pytest.raises(ScenarioError, match="both ways"):
+        build(cases=[case])
