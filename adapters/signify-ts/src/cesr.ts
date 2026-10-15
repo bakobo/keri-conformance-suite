@@ -5,7 +5,6 @@ import type { AttachmentGroup, AttachmentNode, ParseResult, Primitive } from 'si
 
 import {
     E_DOMAIN,
-    E_ENCODE_REFUSED,
     E_GROUP_HEADER,
     E_PRIMITIVE_CODE,
     E_UNCONSUMED,
@@ -14,7 +13,8 @@ import {
 } from './errors.ts';
 
 export type Item = Record<string, string | number>;
-export type ParseAnswer = { items: Item[] } | { reject: { class: string } };
+export type Rejection = { reject: { class: string } };
+export type ParseAnswer = { items: Item[] } | Rejection;
 export type Parser = (stream: Uint8Array) => ParseResult;
 
 const hex = (bytes: Uint8Array): string => Buffer.from(bytes).toString('hex');
@@ -135,8 +135,14 @@ function primitive(node: Primitive, text: Text): Item {
 export type MatterMaker = (raw: Uint8Array, code: string) => { qb64: string };
 const makeMatter: MatterMaker = (raw, code) => new Matter({ raw, code });
 
-/** Encode one primitive with signify-ts's Matter. signify-ts has no binary domain. */
-export function encode(code: string, raw: Uint8Array, domain: string, make: MatterMaker = makeMatter): { encoded: string } {
+/** Encode one primitive with signify-ts's Matter, or report signify-ts's refusal to encode it as a
+ * rejection whose class is the class of what it threw. signify-ts has no binary domain. */
+export function encode(
+    code: string,
+    raw: Uint8Array,
+    domain: string,
+    make: MatterMaker = makeMatter,
+): { encoded: string } | Rejection {
     if (domain !== 'text') {
         throw new OpError('unsupported', `${E_DOMAIN}: signify-ts encodes only in the text domain (it has no qb2).`);
     }
@@ -144,8 +150,10 @@ export function encode(code: string, raw: Uint8Array, domain: string, make: Matt
     try {
         qb64 = make(raw, code).qb64;
     } catch (err) {
-        // cesr.encode has no rejection result, so a refusal is answered as unsupported.
-        throw new OpError('unsupported', `${E_ENCODE_REFUSED}: signify-ts refused to encode: ${describe(err)}`);
+        // Only signify-ts runs inside this try, so whatever it throws is its refusal of the input.
+        const klass = err instanceof Error ? err.constructor.name : typeof err;
+        process.stderr.write(`signify-ts refused to encode: ${klass}: ${describe(err)}\n`);
+        return { reject: { class: klass } };
     }
     return { encoded: hex(Buffer.from(qb64, 'latin1')) };
 }

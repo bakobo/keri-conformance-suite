@@ -18,7 +18,6 @@ export const E_UNKNOWN_OP = 'e.input.range.unknown-op.f';
 export const E_UNDECLARED_OP = 'e.feature.unsupported.undeclared-op.f';
 export const E_VERSION = 'e.feature.unsupported.protocol-version.f';
 export const E_DOMAIN = 'e.feature.unsupported.domain.f';
-export const E_ENCODE_REFUSED = 'e.input.format.encode-refused.f';
 export const E_COMMIT = 'e.env.dependency.signify-commit.f';
 export const E_EXCEPTION = 'e.self.unknown.exception.f';
 export const E_UNCONSUMED = 'e.self.unknown.unconsumed.f';
