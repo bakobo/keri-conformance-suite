@@ -327,3 +327,30 @@ func TestAnEmptyDeliveryListHasNoDispositions(t *testing.T) {
 		t.Fatalf("%v", res)
 	}
 }
+
+// reSAID rewrites a self-addressing inception's d and i to the SAID keri-go computes for it, so a
+// tampered body is still self-consistent.
+func reSAID(t *testing.T, body []byte) []byte {
+	old := must(keri.ParseEvent(body)).SAID
+	said := must(keri.ComputeSAID(body))
+	return []byte(strings.ReplaceAll(string(body), old, said))
+}
+
+// keri-go's ParseEvent leaves a bt it cannot read as absent, and its validation does not refuse
+// it, so the threshold in force is unknown. The adapter must not count that as zero.
+func TestAnUnreadableWitnessThresholdIsNotTakenAsZero(t *testing.T) {
+	wits, sigs := witnesses(t, 1)
+	one := 1
+	id, icp := incept(t, "a", 1, nil, wits, sigs, &one)
+	body := icp[:strings.Index(string(icp), "}-")+1]
+	tampered := reSAID(t, []byte(strings.Replace(string(body), `"bt":"1"`, `"bt":"z"`, 1)))
+	signed := id.sign(tampered, id.chain.Signers())
+	if _, err := keri.ValidateSignedKEL([][]byte{signed}); err != nil {
+		t.Skipf("keri-go now refuses an unreadable bt itself: %v", err)
+	}
+	res := process(t, signed)
+	assertReadings(t, res, "rejected/rejected/off")
+	if !strings.HasPrefix(res["dispositions"].([]any)[0].(map[string]any)["reason"].(string), routing) {
+		t.Fatalf("%v", res["dispositions"])
+	}
+}

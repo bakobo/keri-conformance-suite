@@ -1,6 +1,6 @@
 # keri-go adapter
 
-Connects grapeid/keri-go, a KERI implementation in Go, to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse`, `cesr.encode` and `keri.process`. keri-go validates a whole key log at a time and has no per-message processor, so the adapter supplies the routing that `keri.process` needs and declares it: `composes` is `["keri.routing"]`. Every acceptance is keri-go's. Every rejection is keri-go's too, except three that the routing makes, each reported with a reason that begins "refused by the adapter's routing, not by keri-go": a delegated event, a message that is not a key event, and an event keri-go would accept at a sequence number another seen event already holds (see `keri.process` below). The design decision is node `3t0efrq7` in [`this.i`](../../this.i).
+Connects grapeid/keri-go, a KERI implementation in Go, to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse`, `cesr.encode` and `keri.process`. keri-go validates a whole key log at a time and has no per-message processor, so the adapter supplies the routing that `keri.process` needs and declares it: `composes` is `["keri.routing"]`. Every acceptance is keri-go's. Every rejection is keri-go's too, except four that the routing makes, each reported with a reason that begins "refused by the adapter's routing, not by keri-go": a delegated event, a message that is not a key event, an event keri-go would accept at a sequence number another seen event already holds, and an establishment event whose witness threshold keri-go could not read (see `keri.process` below). The design decision is node `3t0efrq7` in [`this.i`](../../this.i).
 
 ## What it tests, pinned
 
@@ -38,6 +38,9 @@ keri-go's README says it reads and builds both CESR 1.0 and 2.0. Run against the
 - **It has no genus/version codes and only the 1.00 count codes.** Its stream reader knows `-A`, `-B`, `-C`, `-D` and `-V`, counted as keripy 1.x counts them, and refuses any other code. A stream that opens with `-_AAACAA` is framed with those eight characters inside the body, so `DetectVersion` finds the version string at the wrong offset; and a 2.00 group such as `-K` is read as an unknown 1.00 group and refused.
 - **It reads JSON bodies only**, as its README says.
 - **Its stream reader skips whitespace before a message but not after one's attachments.** A newline between two messages is refused, although a comment in `kel_stream.go` says pretty-printed streams are tolerated.
+- **Its stream reader does not read bodies.** `ParseKELStream` frames a body by matching braces, so a body that is not valid JSON passes it; `ParseEvent`, which reads the fields, refuses it.
+- **Its stream reader copies the remaining stream once per message** (`strings.TrimLeft(string(rest), …)`), so a stream of many short messages costs time quadratic in its length. A 64 MiB request of short messages can run past the runner's time limit, which the protocol counts as a failure of the case, not a gap.
+- **It does not refuse a witness threshold it cannot read.** `ParseEvent` leaves an unreadable `bt` as absent, and `ValidateSignedKEL` accepts the event; the adapter refuses it, as below.
 
 ## Declared features, and the results that follow
 
@@ -61,7 +64,7 @@ CESR-0054's stream has a receipt couple whose prefix carries an unassigned code.
 
 ### `cesr.parse`
 
-The adapter hands the stream to keri-go's `ParseKELStream`, which splits it into messages, framing each body by matching braces and measuring each attachment group from its count code, then calls `DetectVersion` on each message. Either one refusing is a rejection whose `class` names it, `ParseKELStream` or `DetectVersion`; keri-go's reason goes to standard error. Otherwise the answer is `{"accepted": {"consumed": n}}` with `n` the length of the stream, because `ParseKELStream` either reads to the end of the stream or refuses it. The adapter never parses CESR itself.
+The adapter hands the stream to keri-go's `ParseKELStream`, which splits it into messages, framing each body by matching braces and measuring each attachment group from its count code, then calls `DetectVersion` and `ParseEvent` on each message. Any of them refusing is a rejection whose `class` names it, `ParseKELStream`, `DetectVersion` or `ParseEvent`; keri-go's reason goes to standard error. Otherwise the answer is `{"accepted": {"consumed": n}}` with `n` the length of the stream, because `ParseKELStream` either reads to the end of the stream or refuses it. The adapter never parses CESR itself.
 
 ### `cesr.encode`
 
@@ -75,7 +78,7 @@ For each delivered message, in order, starting from empty state per request:
 2. Only `icp`, `rot` and `ixn` are routed. A `dip` or `drt`, a receipt, and any other message is `rejected` by the adapter, with a reason saying so. The runner sends no case that needs them, because the features they would need are not declared.
 3. The event is routed to its identifier's log of seen messages. If its sequence number is beyond the end of the log, the candidate log is the log plus the event; if that position is already held, the candidate is the log up to that position plus this delivery.
 4. keri-go's `ValidateSignedKEL` must accept the candidate log. It checks every event's fields, version-string size, SAID, derivation, thresholds, sequence, prior digest, pre-rotation, and controller signatures against the key state in force.
-5. If the witness threshold in force once the event is applied is not zero, keri-go's `ReceiptsMeetThreshold` must count at least that many valid receipt couples, from the witnesses in force, attached to the delivery.
+5. If an establishment event carries a `bt` that keri-go could not read, the adapter rejects it, because the threshold its receipts must meet is unknown and counting it as zero would accept the event unwitnessed. Otherwise, if the witness threshold in force once the event is applied is not zero, keri-go's `ReceiptsMeetThreshold` must count at least that many valid receipt couples, from the witnesses in force, attached to the delivery.
 6. If either refuses, the message is `rejected` with keri-go's reason. If both pass and the position was held by a different seen event, the adapter rejects it: keri-go has no rule for choosing between two branches it accepts, and the adapter supersedes nothing (`kel.recovery` is not declared). Otherwise the message is `seen` and, unless it repeats a seen event, appended to the log.
 
 Nothing is escrowed, so a message's reading after the last delivery is its reading on arrival, and `trunk` is `true` exactly when the message is seen.
@@ -84,7 +87,7 @@ Nothing is escrowed, so a message's reading after the last delivery is its readi
 
 | Value | Source |
 |---|---|
-| Accept or reject of each delivery | keri-go: `ParseKELStream`, `DetectVersion`, `ParseEvent`, `ValidateSignedKEL`, `ReceiptsMeetThreshold`; the adapter decides which log a message joins, and makes the three routing refusals named at the top |
+| Accept or reject of each delivery | keri-go: `ParseKELStream`, `DetectVersion`, `ParseEvent`, `ValidateSignedKEL`, `ReceiptsMeetThreshold`; the adapter decides which log a message joins, and makes the four routing refusals named at the top |
 | End of an event's body, for `ReceiptsMeetThreshold` | The size in the version string, read by keri-go's `ParseVersionString`; `ValidateSignedKEL` has already checked that it equals the length of the body keri-go framed |
 | Witnesses and witness threshold in force | Replayed by the adapter from `b`, `br`, `ba` and `bt` as keri-go's `ParseEvent` read them, as keri-go's own `ValidateKEL` does internally without exporting the result |
 | `key_states`: `sn`, `said` | The last seen event, as `ParseEvent` read it |

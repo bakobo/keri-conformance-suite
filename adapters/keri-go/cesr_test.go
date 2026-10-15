@@ -143,3 +143,13 @@ func TestARefusalByKeriGoIsARejection(t *testing.T) {
 		t.Fatalf("%v", r)
 	}
 }
+
+// keri-go's stream reader frames bodies by braces and does not read them; its ParseEvent does.
+func TestABodyKeriGoCannotReadIsRejected(t *testing.T) {
+	raw, _ := hex.DecodeString(caseStream(t, "cesr", "CESR-0045"))
+	broken := strings.Replace(string(raw), `_",`, `_"!`, 1)
+	res := parseResult(t, hex.EncodeToString([]byte(broken)))
+	if res["reject"].(map[string]any)["class"] != classEvent {
+		t.Fatalf("%v", res)
+	}
+}

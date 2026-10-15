@@ -101,6 +101,13 @@ func (v *validator) deliver(raw []byte) string {
 	if _, err := keri.ValidateSignedKEL(candidate); err != nil {
 		return "keri-go's ValidateSignedKEL refused the log with this event: " + err.Error()
 	}
+	// keri-go's ParseEvent drops a bt it cannot read, and its validation does not refuse one, so
+	// the threshold the witness check needs would be unknown; the adapter refuses rather than
+	// count it as zero.
+	if _, has := fields(ev)["bt"]; has && !ev.HasTOAD {
+		return routing + "keri-go could not read the event's witness threshold (bt), so its " +
+			"receipts cannot be counted against it"
+	}
 	if reason := witnessed(raw, ev, log.events[:len(prior)]); reason != "" {
 		return reason
 	}

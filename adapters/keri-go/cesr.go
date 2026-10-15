@@ -14,6 +14,7 @@ const (
 	classParse   = "ParseKELStream"
 	classVersion = "DetectVersion"
 	classEncode  = "MatterQB64"
+	classEvent   = "ParseEvent"
 )
 
 func hexField(request map[string]json.RawMessage, field string) ([]byte, *opError) {
@@ -36,8 +37,8 @@ func hexField(request map[string]json.RawMessage, field string) ([]byte, *opErro
 }
 
 // parseOp gives keri-go's verdict on a stream. keri-go's stream reader, ParseKELStream, splits a
-// stream into messages and measures their attachment groups, and DetectVersion reads each
-// message's version string. Either refusing is a rejection; otherwise the stream is accepted, and
+// stream into messages and measures their attachment groups, DetectVersion reads each message's
+// version string, and ParseEvent reads its body's fields. Any of them refusing is a rejection; otherwise the stream is accepted, and
 // because keri-go reports no item offsets the answer is the protocol's summary.
 func parseOp(request map[string]json.RawMessage) (any, *opError) {
 	stream, bad := hexField(request, "stream")
@@ -51,6 +52,9 @@ func parseOp(request map[string]json.RawMessage) (any, *opError) {
 	for _, m := range messages {
 		if _, _, err := keri.DetectVersion(m); err != nil {
 			return reject(classVersion, err), nil
+		}
+		if _, err := keri.ParseEvent(m); err != nil {
+			return reject(classEvent, err), nil
 		}
 	}
 	// ParseKELStream reads to the end of the stream or refuses it, so it consumed all of it.
