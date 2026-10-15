@@ -1,0 +1,128 @@
+{
+  "assertions": [
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading SHOULD under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "check": "disposition",
+      "expected": "pending",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 4 (witness-threshold).",
+      "phase": "initial",
+      "spec_conflicts": [
+        {
+          "line": 1266,
+          "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+          "section": "Indexed Signatures",
+          "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
+        }
+      ]
+    },
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading SHOULD under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "check": "disposition",
+      "expected": "seen",
+      "id": "a2",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "final",
+      "spec_conflicts": [
+        {
+          "line": 1266,
+          "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+          "section": "Indexed Signatures",
+          "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
+        }
+      ]
+    },
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Events that have a non-empty set of attached signatures which set does not satisfy the REQUIRED thresholds SHOULD escrow the event while waiting for other signatures to arrive either as attachments to the same [[ref: Version]] of the event or to a receipt of that event (see next section).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading SHOULD under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "check": "trunk",
+      "expected": true,
+      "id": "a3",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "spec_conflicts": [
+        {
+          "line": 1266,
+          "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+          "section": "Indexed Signatures",
+          "why": "A receipt is a non-key-event message that carries witness signatures, not controller signatures, so read literally this sentence requires every witness receipt to be dropped. That contradicts the same paragraph's completion of a threshold 'to a receipt of that event' and lines 1286 and 1782. The cases apply the drop rule to key events only."
+        }
+      ]
+    }
+  ],
+  "description": "The inception of KS-45 with no witness signatures, then receipts from two of its witnesses. A validator that kept the inception, as line 1266 says it should, accepts it once the receipts satisfy the threshold. The safety half, graded at MUST without keri.escrow, is the companion case KS-47s. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0038 (KS-47) in keri-v1.0.1.",
+  "id": "KERI-0170",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303162375f222c2274223a22696370222c2264223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2269223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2232222c2262223a5b2242436f5763736649665559446d53352d36384d6131714b4e6e4770665650324979763569615035792d654975222c224244726f4b6352656a344a5434325568386a695938767361724b72734c72736f6e656b583038375244693767222c224246753976776d623651596b42476575506c7169664a324665644d33323278756e414e524d79736f394d7064225d2c2263223a5b5d2c2261223a5b5d7d2d414142414141574d336a315259534c626d5361686b6b6675526a4c78566150507a4156625076374d3432654276435871625548564b43346c4d43687456446336767635394c613737526369414d502d764b4a526a723430635f3442"
+      },
+      {
+        "source": "witness-w1",
+        "stream": "7b2276223a224b45524931304a534f4e3030303039315f222c2274223a22726374222c2264223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2269223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2273223a2230227d2d424142414142323356466c5145544e42374c61484e4a356b77454f537a67585374526d30513552656848784e786a727445414273684e5f724f794955346e426c4b546d3272506f68316c754a62666e4c6961626a7676584151304c"
+      },
+      {
+        "source": "witness-w2",
+        "stream": "7b2276223a224b45524931304a534f4e3030303039315f222c2274223a22726374222c2264223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2269223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2273223a2230227d2d424142414244357a793678386f7743545144716e522d516f56635462426e6b7636386755694959302d494435567263474f4d77683932696b56687665455f4541534c5671553552472d323343337665313661336d75733462705946"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/keripy1x.json#K1X-47"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.witness",
+      "keri.escrow",
+      "keri.routing",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: witness threshold completed by receipts"
+}

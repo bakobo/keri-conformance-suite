@@ -1,0 +1,129 @@
+{
+  "assertions": [
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Validator]] MUST be given or find the delegating seal in the delegator’s KEL before the event may be accepted as valid.",
+        "section": "Cooperative Delegation",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#cooperative-delegation"
+      },
+      "check": "disposition",
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 4 (delegation).",
+      "phase": "initial"
+    },
+    {
+      "aid": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_",
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
+        ],
+        "nt": "1",
+        "said": "EAMsILOgPSHdUeYApNzXMoT6PDJmAqEyn2CCkFV2c95D",
+        "sn": 1,
+        "wits": []
+      },
+      "id": "a2",
+      "if_seen": 2,
+      "level": "INTEROP"
+    },
+    {
+      "aid": "EPy35vaq3pvXOt3CaMFvovfqjFMK5PXHyWyuw-o9ajmO",
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_",
+        "keys": [
+          "DKsQLaFtlu2YuRtQ2F8Vea1KjklG8cAtuaDBUs_3cwdM"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EIBc_-6oqkliwKGvXlLw50H_vXQR2itLG9zo2ehYcMKK"
+        ],
+        "nt": "1",
+        "said": "EPy35vaq3pvXOt3CaMFvovfqjFMK5PXHyWyuw-o9ajmO",
+        "sn": 0,
+        "wits": []
+      },
+      "id": "a3",
+      "if_seen": 0,
+      "level": "INTEROP"
+    }
+  ],
+  "description": "The assertions of KERI-0164 that need no declinable feature, on the same messages, so that an adapter that declines keri.escrow or kel.recovery still gives evidence for them.",
+  "id": "KERI-0165",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303135665f222c2274223a22646970222c2264223a224550793335766171337076584f743343614d46766f7666716a464d4b3550584879577975772d6f39616a6d4f222c2269223a224550793335766171337076584f743343614d46766f7666716a464d4b3550584879577975772d6f39616a6d4f222c2273223a2230222c226b74223a2231222c226b223a5b22444b73514c6146746c75325975527451324638566561314b6a6b6c47386341747561444255735f336377644d225d2c226e74223a2231222c226e223a5b22454942635f2d366f716b6c69774b4776586c4c773530485f765851523269744c47397a6f32656859634d4b4b225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d2c226469223a224548503754535242614c7474526c4b4e363537424c75396d596642624c54347142496e4c79567655675a755f227d2d4141424141414949486b5a4a573575707a426e7132387131765958564a7441343134744f386267577632646b4d59492d614a443242546a424f5a6630704954625742414a6d68646b69555f65736d7a58774537624f4e4c633638422d47414230414141414141414141414141414141414141414141414245414d73494c4f675053486455655941704e7a584d6f543650444a6d417145796e3243436b46563263393544"
+      },
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303132625f222c2274223a22696370222c2264223a224548503754535242614c7474526c4b4e363537424c75396d596642624c54347142496e4c79567655675a755f222c2269223a224548503754535242614c7474526c4b4e363537424c75396d596642624c54347142496e4c79567655675a755f222c2273223a2230222c226b74223a2231222c226b223a5b2244454f6e4a53364770422d57625437524f62714371773776395566347a4c32677265435f694a3568714c7542225d2c226e74223a2231222c226e223a5b22454f6d78695030476b75506a30335555346c6a674b452d665a574732557a73766735534b5a3471694e7a3642225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4141424141426b67774974337374543235763442425a714c544b43496952676e64766f545a46585764776b54306f463452684570735f732d577345356b624b55496b457a4b5838382d4e4f4f704d54796e374672757a335f537347"
+      },
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303133615f222c2274223a2269786e222c2264223a2245414d73494c4f675053486455655941704e7a584d6f543650444a6d417145796e3243436b46563263393544222c2269223a224548503754535242614c7474526c4b4e363537424c75396d596642624c54347142496e4c79567655675a755f222c2273223a2231222c2270223a224548503754535242614c7474526c4b4e363537424c75396d596642624c54347142496e4c79567655675a755f222c2261223a5b7b2269223a224550793335766171337076584f743343614d46766f7666716a464d4b3550584879577975772d6f39616a6d4f222c2273223a2230222c2264223a224550793335766171337076584f743343614d46766f7666716a464d4b3550584879577975772d6f39616a6d4f227d5d7d2d414142414144435569614c2d61415542695866665f7067785872546b68343134534b4676674e427a576c784a355f32347565596c487442596634314e466237516a474733555836787863516133574d482d50645f47686751675949"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/keripy1x.json#K1X-39s"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: delegated inception before its delegator: not accepted on arrival"
+}

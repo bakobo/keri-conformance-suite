@@ -1,0 +1,148 @@
+{
+  "assertions": [
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading SHOULD, inferred under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "check": "disposition",
+      "expected": "seen",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading SHOULD, inferred under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "check": "trunk",
+      "expected": true,
+      "id": "a2",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading SHOULD, inferred under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "check": "disposition",
+      "expected": "seen",
+      "id": "a3",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted).",
+      "phase": "initial"
+    },
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "Given a local or remote event, a non-controller, non-witness, non-delegator validator MUST first verify the event's controller signatures, witness signatures (if witnessed), and delegator anchoring seal (if delegated) before it can accept that event into its copy of that event's KEL.",
+        "section": "Validation Rules",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading SHOULD, inferred under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#validation-rules"
+      },
+      "check": "trunk",
+      "expected": true,
+      "id": "a4",
+      "level": "INTEROP",
+      "message": 1,
+      "note": "Decision procedure step 6 (accepted)."
+    },
+    {
+      "aid": "ELVpV4Wm42YgiseiPrQAhWx-Ok5oL3F7kaB6en1UUPgv",
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "The AIDs in the Backer Remove, `br` list MUST be removed before any AIDs in the Backer Add, `ba` list are appended.",
+        "section": "Backer remove list",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#backer-remove-list"
+      },
+      "check": "key_state",
+      "expected": {
+        "bt": "2",
+        "delegator": null,
+        "keys": [
+          "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+        ],
+        "kt": "1",
+        "ndigs": [
+          "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+        ],
+        "nt": "1",
+        "said": "EKzTFkEBGaEhRdI8fU8z_TCTSc5EoUkZrzswCZCs6IJ9",
+        "sn": 1,
+        "wits": [
+          "BCoWcsfIfUYDmS5-68Ma1qKNnGpfVP2Iyv5iaP5y-eIu",
+          "BDroKcRej4JT42Uh8jiY8vsarKrsLrsonekX087RDi7g",
+          "BN9g1lmQlSPDbUqSqrrMFo6LLCUT3Ho5qFAf0ypoBbeJ"
+        ]
+      },
+      "id": "a5",
+      "if_seen": 1,
+      "level": "INTEROP"
+    }
+  ],
+  "description": "KS-45's inception, then a rotation that removes w3, adds w4 and keeps witness threshold 2, signed by w1 and w2, which sit at the same positions in the old and new witness lists. A validator should accept the rotation, and its witness list is [w1, w2, w4]: removals first, then additions appended in order (lines 358 and 362). Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0041 (KS-52) in keri-v1.0.1.",
+  "id": "KERI-0173",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303162375f222c2274223a22696370222c2264223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2269223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2232222c2262223a5b2242436f5763736649665559446d53352d36384d6131714b4e6e4770665650324979763569615035792d654975222c224244726f4b6352656a344a5434325568386a695938767361724b72734c72736f6e656b583038375244693767222c224246753976776d623651596b42476575506c7169664a324665644d33323278756e414e524d79736f394d7064225d2c2263223a5b5d2c2261223a5b5d7d2d414142414141574d336a315259534c626d5361686b6b6675526a4c78566150507a4156625076374d3432654276435871625548564b43346c4d43687456446336767635394c613737526369414d502d764b4a526a723430635f34422d424143414142323356466c5145544e42374c61484e4a356b77454f537a67585374526d30513552656848784e786a727445414273684e5f724f794955346e426c4b546d3272506f68316c754a62666e4c6961626a7676584151304c4143417573374b686535635f4a3045627a5f33496f6e544e7167415875514a766e44364877417462665762686e324a6c61684f67356275625a4d49366b6271745252734f795562424a5055314732316d78754c6d66733847"
+      },
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303162635f222c2274223a22726f74222c2264223a22454b7a54466b454247614568526449386655387a5f544354536335456f556b5a727a7377435a437336494a39222c2269223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c2273223a2231222c2270223a22454c56705634576d3432596769736569507251416857782d4f6b356f4c3346376b614236656e315555506776222c226b74223a2231222c226b223a5b22444d6e46536d30754950563876796665665935765a6d4a7679635071356844774346486257734c2d36463274225d2c226e74223a2231222c226e223a5b2245425a394d3039584633396d6e417258464a79626c502d766b6f5758356e7679525477387264465a486a6e6a225d2c226274223a2232222c226272223a5b224246753976776d623651596b42476575506c7169664a324665644d33323278756e414e524d79736f394d7064225d2c226261223a5b22424e3967316c6d516c535044625571537172724d466f364c4c43555433486f35714641663079706f4262654a225d2c2261223a5b5d7d2d414142414141465a63334c43547a4179456152637178377168737876315955586f54637633324e2d724b61492d4a584c417a7a344636725f5751586c4e6437686f3643472d51534d51792d36707647742d7035526931325659454a2d42414341414339564e31413436745a78614877457a6d5859474d416c786b507851366254637775564d316d6b4e6a674a61784c7166372d5f557049764a4e734948554c4b736b4275434379647757526b484e44766333445775414f414244456d316b6648386c5a675f66626b4c435f6d493152543669445966363436306837566468544e3247372d373474306847583230457872744f325a7a6671355153366361355643705761744b387752426d7770535145"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/keripy1x.json#K1X-52"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.witness",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: witness rotation"
+}

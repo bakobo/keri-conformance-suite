@@ -1,0 +1,99 @@
+{
+  "assertions": [
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A set of controller-indexed signatures on an interaction or inception event (delegated or not) MUST at least satisfy the current signing threshold in order for that event to be accepted as valid.",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "check": "disposition",
+      "expected": "not-seen",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 4 (signing-threshold).",
+      "phase": "initial"
+    },
+    {
+      "aid": "EPKym3myFgqlWWYbeiFV1zkvbjQ75rEIBjPQGo0RkpQM",
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "In order to verify signatures, a verifier MUST first determine which set of keys are or were the controlling set for the AID of that event when the event was issued.",
+        "section": "Verifier",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#verifier"
+      },
+      "check": "key_state",
+      "expected": {
+        "bt": "0",
+        "delegator": null,
+        "keys": [
+          "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+          "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
+          "DBTo3WdgBSxcWOotGGO1O8uLd-CS_aLJowjJePl-aCn_"
+        ],
+        "kt": "2",
+        "ndigs": [
+          "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
+          "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy",
+          "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
+        ],
+        "nt": "2",
+        "said": "EPKym3myFgqlWWYbeiFV1zkvbjQ75rEIBjPQGo0RkpQM",
+        "sn": 0,
+        "wits": []
+      },
+      "id": "a2",
+      "if_seen": 0,
+      "level": "INTEROP"
+    }
+  ],
+  "description": "The assertions of KERI-0147 that need no declinable feature, on the same messages, so that an adapter that declines keri.escrow or kel.recovery still gives evidence for them.",
+  "id": "KERI-0148",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303165375f222c2274223a22696370222c2264223a2245504b796d336d794667716c5757596265694656317a6b76626a513735724549426a5051476f30526b70514d222c2269223a2245504b796d336d794667716c5757596265694656317a6b76626a513735724549426a5051476f30526b70514d222c2273223a2230222c226b74223a2232222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834222c22444f7874536a4168484638757267487055647939416e436648576b3965365a35525a786b4c6977555f547371222c224442546f3357646742537863574f6f7447474f314f38754c642d43535f614c4a6f776a4a65506c2d61436e5f225d2c226e74223a2232222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564222c22454a62775379705a3436544e4b4a5a7a2d666130744f5565706b4c774974685f324c555066475f6751427379222c224545704749697644745136656d3867594e6a62644168636576534c616139544447344133755635766530582d225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d41414241414143776a7a44354563366c637170325a70563542463869754573797a6c565674766542395875764c30764d4f47534379685a41742d6c7251795433323050427a51556378524c6c594e4561534a74534b5a7865426743"
+      },
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303165375f222c2274223a22696370222c2264223a2245504b796d336d794667716c5757596265694656317a6b76626a513735724549426a5051476f30526b70514d222c2269223a2245504b796d336d794667716c5757596265694656317a6b76626a513735724549426a5051476f30526b70514d222c2273223a2230222c226b74223a2232222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834222c22444f7874536a4168484638757267487055647939416e436648576b3965365a35525a786b4c6977555f547371222c224442546f3357646742537863574f6f7447474f314f38754c642d43535f614c4a6f776a4a65506c2d61436e5f225d2c226e74223a2232222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564222c22454a62775379705a3436544e4b4a5a7a2d666130744f5565706b4c774974685f324c555066475f6751427379222c224545704749697644745136656d3867594e6a62644168636576534c616139544447344133755635766530582d225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d4141424143437432557858374a6a494e66316a4c357a6e576a7355596c4e695256535f43432d304d6a5238585669423051504b44484854314d6176386974316c4a587962446b4d69655074776c476c514851696c724c6e65464d4f"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/keripy1x.json#K1X-06s"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.multisig.numeric",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: signing threshold completed by a second copy (ungated half)"
+}
