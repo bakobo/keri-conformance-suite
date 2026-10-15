@@ -44,6 +44,7 @@ RESULTS_DIR = "results"
 E_SITE_OUT = "e.state.conflict.site-out.f"
 E_SITE_COLLISION = "e.self.config.site-collision.f"
 E_RESULT_SLUG = "e.rule.result.slug-collision.f"
+E_PROFILE_NAME = "e.self.config.profile-name.f"
 
 LABELS = {"reproduced": "Reproduced by CI", "submitted": "Submitted claim, not reproduced"}
 ADMONITION = {"reproduced": "success", "submitted": "warning"}
@@ -73,6 +74,54 @@ EXPLAINED = {
     "Aborted": "verdicts.md#conformance-verdicts",
 }
 
+# One-sentence definitions shown as tooltips wherever one of these exact values appears on a
+# results page. Each is explained in full on a page under docs/, which a test checks. A value from
+# a result gets a tooltip only when it equals a key here, so the tooltip's text is always ours.
+GLOSSARY = {
+    "conformant": "Every active MUST assertion that was evaluated passed, and at least one did.",
+    "not-conformant": "At least one active MUST assertion failed.",
+    "incomplete": ("No deciding assertion failed, but at least one uses a check this runner "
+                   "version cannot evaluate."),
+    "no-evidence": ("No deciding assertion passed or failed, usually because the adapter declared "
+                    "none of the features the profile's cases need."),
+    "aborted": "The run stopped part way, because a restarted adapter refused or changed its hello.",
+    "interoperable": ("Every active INTEROP assertion that was evaluated passed. An "
+                      "interoperability verdict, never a conformance claim."),
+    "not-interoperable": "At least one active INTEROP assertion failed.",
+    "not-supported": ("The case needs a feature or operation the adapter did not declare, so it "
+                      "was not sent."),
+    "not-applicable": "A conditional assertion whose condition did not hold.",
+    "not-implemented": "This runner version cannot evaluate the assertion's check.",
+    "skipped": "The case is deprecated, so it was not run.",
+    "active": "A case whose MUST assertions decide the verdict.",
+    "draft": "A case that is run and reported but does not decide the verdict yet.",
+    "disputed": ("A case whose expected values an implementation contradicts where the clause "
+                 "seems to say otherwise; excluded from the verdict until settled."),
+    "deprecated": "A case replaced by a corrected one under a new id; skipped.",
+    LABELS["reproduced"]: "This repository's CI ran this, from a pinned adapter and implementation.",
+    LABELS["submitted"]: ("An implementation's maintainer sent this; the suite checked it agrees "
+                          "with itself but did not run it."),
+}
+
+# The same idea for a claim table's field labels, shown as the title of the label's link.
+LABEL_TIPS = {
+    "Suite version": "The version of this suite, and so of its cases, that the run used.",
+    "Profile": "The named set of cases the run claims against.",
+    "Verdict": "The run's one-word summary, decided by its active MUST assertions.",
+    "Active MUST assertions": "MUST assertions of active cases, by outcome.",
+    "Active SHOULD assertions": "SHOULD assertions of active cases, by outcome.",
+    "Active INTEROP assertions": "Assertions resting on common practice rather than a clause.",
+    "Interoperability (never part of the verdict)": "The verdict of the run's INTEROP assertions.",
+    "Composes": "Behaviour the adapter supplies itself rather than the implementation.",
+    "Self-agreement": "Passes where keripy produced the expected value and is also under test.",
+    "Runner": "The kcs version that ran the cases, and the adapter protocol it spoke.",
+    "Active cases not supported": "Cases not sent, because the adapter did not declare what they need.",
+    "Aborted": "Why the run stopped part way.",
+}
+
+PROFILES_DIR = "profiles"
+_PROFILE_NAME = re.compile(r"[a-z0-9][a-z0-9.-]*")
+
 _ENTITIES = {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}
 # Python-Markdown's escapable characters, with "|" from its tables extension.
 _MARKDOWN = set("\\`*_{}[]()>#+-.!|")
@@ -97,6 +146,18 @@ def text(value: str, limit: int | None = None) -> str:
         else:
             out.append(char)
     return "".join(out) + ("…" if cut else "")
+
+
+def html_attr(value: str) -> str:
+    """`value` safe inside a double-quoted HTML attribute."""
+    return "".join(_ENTITIES.get(char, char) for char in value)
+
+
+def term(value: str) -> str:
+    """`value` made inert, with its definition as a tooltip when it is a glossary term."""
+    if value in GLOSSARY:
+        return f'<abbr title="{html_attr(GLOSSARY[value])}">{text(value)}</abbr>'
+    return text(value)
 
 
 def _rewrite_target(url: str, source: str, target: str) -> str:
@@ -170,7 +231,8 @@ def _cases_ref(provenance: dict) -> str:
 
 def _row(label: str, value: str) -> str:
     target = EXPLAINED.get(label)
-    shown = f"[{label}]({_DOCS}{target})" if target else label
+    shown = (f'[{label}]({_DOCS}{target} "{html_attr(LABEL_TIPS[label])}")' if target
+             else label)
     return f"| {shown} | {value} |"
 
 
@@ -192,7 +254,7 @@ def _tally(report: dict, level: str) -> tuple[str, str]:
 
 def _cell(report: dict, link: str) -> str:
     must, should = _tally(report, "MUST"), _tally(report, "SHOULD")
-    cell = (f"[{text(report['verdict'])}]({link}) · MUST {must[0]} pass, {must[1]} fail · "
+    cell = (f"[{term(report['verdict'])}]({link}) · MUST {must[0]} pass, {must[1]} fail · "
             f"SHOULD {should[0]} pass, {should[1]} fail")
     # A non-normative profile's assertions are all INTEROP, so its verdict is the interoperability
     # verdict; any other run's interoperability verdict is shown beside its verdict, never in it.
@@ -200,7 +262,7 @@ def _cell(report: dict, link: str) -> str:
         interop = _tally(report, "INTEROP")
         cell += f" · INTEROP {interop[0]} pass, {interop[1]} fail"
         if report["summary"]["interop_verdict"] not in (None, report["verdict"]):
-            cell += f" ({text(report['summary']['interop_verdict'])})"
+            cell += f" ({term(report['summary']['interop_verdict'])})"
     unsupported = len(report["summary"]["not_supported_active"])
     if unsupported:
         cell += f" · {_n(unsupported)} active case{'' if unsupported == 1 else 's'} not supported"
@@ -210,7 +272,7 @@ def _cell(report: dict, link: str) -> str:
 def _row_label(result: Result, link: str) -> str:
     impl = _impl(result)
     return (f"[{text(impl['name'], 80)}]({link}) {text(impl['version'], 80)} · "
-            f"{LABELS[result.doc['provenance']['kind']]}")
+            f"{term(LABELS[result.doc['provenance']['kind']])}")
 
 
 def _self_agreement(report: dict) -> str:
@@ -234,28 +296,127 @@ def _empty_cell(row: dict[str, Result], profile: str, profile_ops: dict) -> str:
     return "no result published"
 
 
-def profile_operations(repo) -> dict[str, frozenset]:
-    """The adapter operations each profile's cases use, read from profiles/ and cases/."""
-    repo, ops = Path(repo), {}
+def load_profiles(repo) -> tuple[dict, dict]:
+    """The repository's profiles by name, and every case they list by id. Both are the suite's own
+    files, not results, so they are trusted; a profile name must still be a plain slug, because it
+    becomes a path."""
+    repo, profiles, cases = Path(repo), {}, {}
     for path in sorted((repo / "profiles").glob("*.json")):
         profile = read_json(path, MAX_RESULT_BYTES)
         if "cases" not in profile:
             continue
-        ops[profile["name"]] = frozenset(
-            read_json(repo / "cases" / cid.split("-")[0].lower() / f"{cid}.json",
-                      MAX_RESULT_BYTES)["operation"]
-            for cid in profile["cases"])
-    return ops
+        if not _PROFILE_NAME.fullmatch(profile["name"]):
+            raise RunnerError(E_PROFILE_NAME, f"The profile {path} is named "
+                                              f"{json.dumps(profile['name'][:80])}, which is not "
+                                              "a plain slug, so it cannot name a page. Rename it.")
+        profiles[profile["name"]] = profile
+        for cid in profile["cases"]:
+            cases[cid] = read_json(repo / "cases" / cid.split("-")[0].lower() / f"{cid}.json",
+                                   MAX_RESULT_BYTES)
+    return profiles, cases
 
 
-def _version_tables(results: list[Result], prefix: str, profile_ops: dict) -> list[str]:
+def profile_operations(repo) -> dict[str, frozenset]:
+    """The adapter operations each profile's cases use, read from profiles/ and cases/."""
+    profiles, cases = load_profiles(repo)
+    return _operations(profiles, cases)
+
+
+def _operations(profiles: dict, cases: dict) -> dict[str, frozenset]:
+    return {name: frozenset(cases[cid]["operation"] for cid in profile["cases"])
+            for name, profile in profiles.items()}
+
+
+def _profile_page(profile: dict, cases: dict) -> str:
+    lines = [f"# {profile['name']}", ""]
+    if profile.get("normative"):
+        spec = profile["spec"]
+        url = f"{spec['repository']}/blob/{spec['commit']}"
+        lines += [(f"A normative profile: its cases' assertions cite the {spec['name']} "
+                   f"specification [{spec['tag']}]({url}), at commit `{spec['commit'][:12]}`. "
+                   "Passing every active MUST assertion in it, stated with the SHOULD results, "
+                   "is a conformance claim."), ""]
+    else:
+        basis = profile["basis"]
+        if isinstance(basis, dict):
+            basis = (f"the behaviour of {basis['implementation']} {basis['version']}, at commit "
+                     f"`{basis['commit'][:12]}`.")
+        lines += [("A non-normative profile: passing it is never a conformance claim. What its "
+                   f"assertions rest on: {basis}"), ""]
+    about = _reader_about(profile["about"])
+    lines += ([about, ""] if about else []) + [
+              ("The cases below are the profile as it stands in this suite version. A profile's "
+               "cases grow from one suite version to the next, so a claim names both."), ""]
+    if not profile["cases"]:
+        return "\n".join(lines + ["No cases yet.", ""])
+    lines += ["| Case | Title | Status | Operation |", "|---|---|---|---|"]
+    for cid in profile["cases"]:
+        case = cases[cid]
+        lines.append(f"| {_case_link(cid, 'main')} | {text(case['title'])} | "
+                     f"{term(case['status'])} | {text(case['operation'])} |")
+    return "\n".join(lines) + "\n"
+
+
+_ABOUT_PREAMBLE = re.compile(
+    r"^(?:A profile is a named set of cases an implementation can claim: '[^']*'"
+    r"(?:, stated together with its SHOULD results)?\. ?|A non-normative profile: )")
+
+
+def _reader_about(about: str) -> str:
+    """The part of a profile file's `about` written for a reader: without the definition every
+    profile repeats, and without the notes for whoever edits the file (from "This file is
+    generated" on), which the page itself makes moot."""
+    about = _ABOUT_PREAMBLE.sub("", about.split("This file is generated")[0]).strip()
+    return about[:1].upper() + about[1:]
+
+
+def render_profiles(profiles: dict, cases: dict) -> dict[str, str]:
+    """A page for each profile, listing its cases, and an index of them."""
+    lines = ["# Profiles", "",
+             ("A profile is a named set of cases that an implementation can claim. The results "
+              "matrix has a column for each profile a result was run against. A normative profile "
+              "is named for the exact tag of the specification text its assertions cite; a "
+              "non-normative one is named for the practice it tests, and passing it is never a "
+              "conformance claim ([Targets and profiles in the design]"
+              "(../design.md#targets-and-profiles))."), "",
+             "| Profile | Kind | Cases | What it is |", "|---|---|---|---|"]
+    pages = {}
+    for name, profile in sorted(profiles.items()):
+        pages[f"{PROFILES_DIR}/{name}.md"] = _profile_page(profile, cases)
+        kind = "normative" if profile.get("normative") else "non-normative"
+        lines.append(f"| [{name}]({name}.md) | {kind} | {len(profile['cases'])} | "
+                     f"{text(_profile_tip(profile))} |")
+    pages[f"{PROFILES_DIR}/index.md"] = "\n".join(lines) + "\n"
+    return dict(sorted(pages.items()))
+
+
+def _profile_tip(profile: dict) -> str:
+    """A profile's one-line description, from its own file."""
+    if profile.get("normative"):
+        spec = profile["spec"]
+        return f"Cases citing the {spec['name']} specification {spec['tag']}."
+    about = profile["about"].removeprefix("A non-normative profile: ")
+    return "Non-normative: " + about.split(". ")[0].rstrip(".") + "."
+
+
+def _profile_header(name: str, prefix: str, known: dict) -> str:
+    """A matrix column header: a link to the profile's page when the profile is one of ours."""
+    if name in known:
+        return (f"[{text(name)}]({prefix}../{PROFILES_DIR}/{name}.md "
+                f'"{html_attr(_profile_tip(known[name]))}")')
+    return text(name)
+
+
+def _version_tables(results: list[Result], prefix: str, profile_ops: dict,
+                    known: dict) -> list[str]:
     """The matrix and the detail table for results that all ran against one suite version."""
     profiles = sorted({r.doc["report"]["filters"]["profile"] for r in results})
     rows: dict[tuple, dict[str, Result]] = {}
     for result in sorted(results, key=_sort_key):
         key = (result.path.parts[0], result.path.parts[1], result.doc["provenance"]["kind"])
         rows.setdefault(key, {})[result.doc["report"]["filters"]["profile"]] = result
-    lines = ["| Implementation | " + " | ".join(text(p) for p in profiles) + " |",
+    lines = ["| Implementation | " + " | ".join(_profile_header(p, prefix, known)
+                                               for p in profiles) + " |",
              "|---|" + "---|" * len(profiles)]
     for row in rows.values():
         first = next(iter(row.values()))
@@ -292,19 +453,19 @@ Results are grouped by the suite version they ran against, and no table compares
 """
 
 
-def _index(results: list[Result], profile_ops: dict) -> str:
+def _index(results: list[Result], profile_ops: dict, known: dict) -> str:
     lines = [INDEX_INTRO]
     if not results:
         lines.append("No results have been published yet.\n")
         return "\n".join(lines)
     for version, group in _by_suite_version(results):
         lines += [_version_heading(version), ""]
-        lines += _version_tables(group, "", profile_ops)
+        lines += _version_tables(group, "", profile_ops, known)
         lines.append("")
     return "\n".join(lines)
 
 
-def _implementation_page(results: list[Result], profile_ops: dict) -> str:
+def _implementation_page(results: list[Result], profile_ops: dict, known: dict) -> str:
     # Headings hold only path segments: Zensical 0.0.69 copies a page's first heading into <title>
     # with its entities decoded, so result text in a heading would reach the page unescaped.
     first = min(results, key=_sort_key)
@@ -315,7 +476,7 @@ def _implementation_page(results: list[Result], profile_ops: dict) -> str:
     for version, group in _by_suite_version(results):
         lines += [_version_heading(version), ""]
         own = f"](../{group[0].path.parts[0]}/"
-        lines += [line.replace(own, "](") for line in _version_tables(group, "../", profile_ops)]
+        lines += [line.replace(own, "](") for line in _version_tables(group, "../", profile_ops, known)]
         lines.append("")
     return "\n".join(lines)
 
@@ -337,7 +498,7 @@ def _provenance_block(provenance: dict) -> list[str]:
 
 def _outcome_counts(report: dict, level: str) -> str:
     counts = report["summary"]["counts"].get("active", {}).get(level, {})
-    return ", ".join(f"{_n(n)} {text(k)}" for k, n in sorted(counts.items())) or "none"
+    return ", ".join(f"{_n(n)} {term(k)}" for k, n in sorted(counts.items())) or "none"
 
 
 def _case_notes(entry: dict) -> str:
@@ -373,7 +534,7 @@ def _detail_page(result: Result) -> str:
         "| Field | Value |", "|---|---|",
         _row("Suite version", text(report["suite_version"])),
         _row("Profile", text(report["filters"]["profile"])),
-        _row("Verdict", text(report["verdict"])),
+        _row("Verdict", term(report["verdict"])),
         _row("Active MUST assertions",
              f"{must[0]} passed, {must[1]} failed ({_outcome_counts(report, 'MUST')})"),
         _row("Active SHOULD assertions",
@@ -385,7 +546,7 @@ def _detail_page(result: Result) -> str:
                                                        f"failed ({_outcome_counts(report, 'INTEROP')})"))
         if report["summary"]["interop_verdict"] not in (None, report["verdict"]):
             lines.append(_row("Interoperability (never part of the verdict)",
-                              text(report["summary"]["interop_verdict"])))
+                              term(report["summary"]["interop_verdict"])))
     lines += [
         _row("Implementation", f"{text(impl['name'], 80)} {text(impl['version'], 80)}, commit "
                                f"{text(impl['commit'])}"),
@@ -405,13 +566,14 @@ def _detail_page(result: Result) -> str:
               "## Cases", "", "| Case | Status | Operation | Outcome | Notes |",
               "|---|---|---|---|---|"]
     for entry in sorted(report["cases"], key=lambda e: e["id"]):
-        lines.append(f"| {_case_link(entry['id'], ref)} | {text(entry['status'])} | "
-                     f"{text(entry['operation'], 80)} | {text(entry['outcome'])} | "
+        lines.append(f"| {_case_link(entry['id'], ref)} | {term(entry['status'])} | "
+                     f"{text(entry['operation'], 80)} | {term(entry['outcome'])} | "
                      f"{_case_notes(entry)} |")
     return "\n".join(lines) + "\n"
 
 
-def render_results(results: list[Result], profile_ops: dict | None = None) -> dict[str, str]:
+def render_results(results: list[Result], profile_ops: dict | None = None,
+                   profiles: dict | None = None) -> dict[str, str]:
     """Every results page, keyed by its path in the site source, with each result's file beside
     its page so a reader can check the page against it. Every result must have come through
     load_results; each is checked again here, so the links built from its provenance and its path
@@ -425,7 +587,7 @@ def render_results(results: list[Result], profile_ops: dict | None = None) -> di
             raise RunnerError(E_RESULT_PATH, f"The result at {result.path.as_posix()[:200]} "
                                              "is not at the path its report implies.")
     _distinct_slugs(results)
-    pages = {f"{RESULTS_DIR}/index.md": _index(results, profile_ops or {})}
+    pages = {f"{RESULTS_DIR}/index.md": _index(results, profile_ops or {}, profiles or {})}
     by_impl: dict[str, list[Result]] = defaultdict(list)
     for result in results:
         by_impl[result.path.parts[0]].append(result)
@@ -434,7 +596,7 @@ def render_results(results: list[Result], profile_ops: dict | None = None) -> di
         pages[f"{RESULTS_DIR}/{page[:-3]}.json"] = json.dumps(
             result.doc, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     for impl, group in by_impl.items():
-        pages[f"{RESULTS_DIR}/{impl}/index.md"] = _implementation_page(group, profile_ops or {})
+        pages[f"{RESULTS_DIR}/{impl}/index.md"] = _implementation_page(group, profile_ops or {}, profiles or {})
     return dict(sorted(pages.items()))
 
 
@@ -496,9 +658,10 @@ def assemble(repo, out, results: list[Result]) -> None:
                                           "directory or remove it.")
         shutil.rmtree(out)
     docs = repo / "docs"
-    if (docs / RESULTS_DIR).exists():
-        raise RunnerError(E_SITE_COLLISION, f"{docs / RESULTS_DIR} exists, but the site's "
-                                            f"{RESULTS_DIR}/ pages are generated; move it.")
+    for generated in (RESULTS_DIR, PROFILES_DIR):
+        if (docs / generated).exists():
+            raise RunnerError(E_SITE_COLLISION, f"{docs / generated} exists, but the site's "
+                                                f"{generated}/ pages are generated; move it.")
     out.mkdir(parents=True)
     (out / MARKER).write_text("Written by tools/site_source.py; safe to delete.\n")
     for path in sorted(docs.rglob("*")):
@@ -515,7 +678,10 @@ def assemble(repo, out, results: list[Result]) -> None:
     readme = (repo / "README.md").read_text(encoding="utf-8")
     (out / "index.md").write_text(rewrite_links(readme, "README.md", "index.md"),
                                   encoding="utf-8")
-    for relative, content in render_results(results, profile_operations(repo)).items():
+    profiles, cases = load_profiles(repo)
+    pages = render_results(results, _operations(profiles, cases), profiles)
+    pages.update(render_profiles(profiles, cases))
+    for relative, content in pages.items():
         target = out / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content, encoding="utf-8")

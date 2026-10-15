@@ -18,7 +18,7 @@ How to submit a result is in [Publishing a result](publishing-results.md).
 
 ## Pass and fail counts
 
-Each case makes several assertions, each at a requirement level: MUST, SHOULD, or INTEROP for an assertion that rests on common practice rather than a clause. A page counts the assertions of active cases at each level by outcome: `pass`, `fail`, `not-applicable` (a conditional assertion whose condition did not hold), `not-implemented` (this runner version cannot evaluate it) and `not-supported` (its case was not sent). Draft and disputed cases are run and deprecated cases skipped, and all three are listed but never counted. SHOULD results are always shown beside the verdict, because in the KERI layer a validator that accepts nothing passes every MUST assertion, and only its SHOULD failures give it away.
+Each case makes several assertions, each at a requirement level: MUST, SHOULD, or INTEROP for an assertion that rests on common practice rather than a clause. A page counts the assertions of active cases at each level by outcome: `pass`, `fail`, `not-applicable` (a conditional assertion whose condition did not hold), `not-implemented` (this runner version cannot evaluate it) and `not-supported` (its case was not sent). A deprecated case's outcome is `skipped`. Draft and disputed cases are run and deprecated cases skipped, and all three are listed but never counted. SHOULD results are always shown beside the verdict, because in the KERI layer a validator that accepts nothing passes every MUST assertion, and only its SHOULD failures give it away.
 
 ## Composes
 

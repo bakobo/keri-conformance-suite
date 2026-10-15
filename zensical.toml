@@ -27,14 +27,18 @@ nav = [
     { "Results" = "results/index.md" },
     { "Reading a result" = "reading-a-result.md" },
     { "Verdicts" = "verdicts.md" },
+    { "Profiles" = "profiles/index.md" },
     { "Publishing a result" = "publishing-results.md" },
   ] },
-  { "Design" = "design.md" },
-  { "Adapter protocol" = "adapter-protocol.md" },
-  { "Clause coverage" = [
-    { "Overview" = "coverage/README.md" },
-    { "CESR" = "coverage/cesr.md" },
-    { "KERI" = "coverage/keri.md" },
+  { "Suite" = [
+    { "Design" = "design.md" },
+    { "Adapter protocol" = "adapter-protocol.md" },
+    { "Clause coverage" = [
+      { "Overview" = "coverage/README.md" },
+      { "CESR clauses" = "coverage/cesr.md" },
+      { "KERI clauses" = "coverage/keri.md" },
+      { "ACDC clauses" = "coverage/acdc.md" },
+    ] },
     { "Self-assessment" = "coverage/assessment-2026-10.md" },
   ] },
 ]
@@ -50,6 +54,7 @@ invalid_link_anchors = false
 language = "en"
 features = [
   "content.code.copy",
+  "content.tooltips",
   "navigation.footer",
   "navigation.indexes",
   "navigation.path",
