@@ -10,7 +10,7 @@
 //! message routing cannot hand to a Kever is reported rejected with a reason marked `routing:`.
 //! README.md, "keri.process", says where each reported value comes from.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 use affinidi_keri_core::kever::Kever;
 use affinidi_keri_core::parser::{self, Attachment, ParsedMessage};
@@ -23,21 +23,16 @@ use crate::protocol::{E_MALFORMED, OpError, decode_hex};
 
 pub const E_PERSPECTIVE: &str = "e.feature.unsupported.perspective.f";
 
-/// One event body Affinidi accepted, kept so that a later delivery of the same body reads as seen
-/// and so that a delegated event can be checked against its delegator's accepted anchors.
-struct Accepted {
-    prefix: String,
-    sn: u64,
-    said: String,
-    body: Vec<u8>,
-    anchors: Vec<Value>,
-}
-
 /// Fresh for every request: the protocol requires each request to start from empty state.
 #[derive(Default)]
 struct Validator {
     kevers: BTreeMap<String, Kever>,
-    accepted: Vec<Accepted>,
+    /// The body of every event Affinidi accepted, so that a later delivery of the same body reads
+    /// as seen. A set, so that a long KEL costs one lookup per reading rather than a scan.
+    bodies: HashSet<Vec<u8>>,
+    /// The anchors (`a`) of every accepted event, by prefix, sequence number and SAID, so that a
+    /// delegated event is checked only against its delegator's accepted events.
+    anchors: HashMap<(String, u64, String), Vec<Value>>,
 }
 
 impl DelegatorAnchors for Validator {
@@ -49,10 +44,9 @@ impl DelegatorAnchors for Validator {
         said: &str,
     ) -> Result<Option<Vec<Value>>, CoreError> {
         Ok(self
-            .accepted
-            .iter()
-            .find(|a| a.prefix == delegator && a.sn == sn && a.said == said)
-            .map(|a| a.anchors.clone()))
+            .anchors
+            .get(&(delegator.to_string(), sn, said.to_string()))
+            .cloned())
     }
 }
 
@@ -64,7 +58,7 @@ impl Validator {
     fn holds(&self, ident: &Ident) -> bool {
         ident
             .as_ref()
-            .is_some_and(|body| self.accepted.iter().any(|a| &a.body == body))
+            .is_some_and(|body| self.bodies.contains(body))
     }
 
     /// Deliver one stream. Returns the body of the key event it carries, if Affinidi could parse
@@ -168,13 +162,8 @@ impl Validator {
             .and_then(Value::as_array)
             .cloned()
             .unwrap_or_default();
-        self.accepted.push(Accepted {
-            prefix,
-            sn,
-            said,
-            body: serder.raw().to_vec(),
-            anchors,
-        });
+        self.anchors.insert((prefix, sn, said), anchors);
+        self.bodies.insert(serder.raw().to_vec());
         Ok(())
     }
 }
