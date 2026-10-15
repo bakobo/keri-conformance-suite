@@ -50,6 +50,7 @@ THRESHOLD_REASONS = ("signing-threshold", "witness-threshold")
 # Steps 3 and 5 judge an event version whose SAID step 1 has verified, so their refusal covers
 # every copy of it. A step-1 failure names no version: its claimed SAID is the thing that failed.
 VERSION_STEPS = (3, 5)
+CANONICAL_HEX = re.compile(r"0|[1-9a-f][0-9a-f]*")  # line 323: hex with no leading zeros
 BASIC_CODES = ("D", "B")  # transferable and non-transferable Ed25519 prefixes
 MAX_SN = 2 ** 128 - 1  # line 323
 
@@ -162,6 +163,10 @@ def parse(t: Tables, stream: bytes) -> Parsed:
     return p
 
 
+def _canonical_hex(value) -> bool:
+    return isinstance(value, str) and CANONICAL_HEX.fullmatch(value) is not None
+
+
 def _names(receipt: Parsed, ev: Parsed) -> bool:
     return (receipt.said, receipt.pre, receipt.sn) == (ev.said, ev.pre, ev.sn)
 
@@ -184,6 +189,9 @@ def intrinsic(t: Tables, p: Parsed) -> str | None:
         return "ilk"
     if ilk not in FIELDS or tuple(p.body) != FIELDS[ilk]:
         return "fields"
+    if not _canonical_hex(p.body["s"]):
+        raise ScenarioError(f"A sequence number of {p.body['s']!r}, which is not hex without "
+                            f"leading zeros (line 323), is not modelled.")
     if sized(dict(p.body)) != p.raw:
         # A body that is not its own compact serialization (whitespace, escapes, a repeated
         # label) may still carry a correct SAID; whether it is valid is K-I4, so no case grades it.
@@ -225,11 +233,11 @@ def _establishment_values(t: Tables, p: Parsed) -> str | None:
     335), backer lists without repeats of only non-transferable witnesses (lines 353, 1252), and
     an inception's backer threshold no larger than its backer list (line 345). A rotation's
     threshold is checked against the effective list, which depends on state, at step 4."""
-    if not re.fullmatch(r"0|[1-9a-f][0-9a-f]*", p.body["bt"]):
-        raise ScenarioError(f"A backer threshold of {p.body['bt']!r}, which is not hex without "
-                            f"leading zeros (line 345), is not modelled.")
     if not p.body["k"]:
         return "empty-keys"
+    if not _canonical_hex(p.body["bt"]):
+        raise ScenarioError(f"A backer threshold of {p.body['bt']!r}, which is not hex without "
+                            f"leading zeros (line 345), is not modelled.")
     lists = [p.body["b"]] if p.ilk in INCEPTIONS else [p.body["br"], p.body["ba"]]
     if any(len(set(backers)) != len(backers) for backers in lists):
         return "backer-duplicate"

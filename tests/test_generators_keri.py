@@ -835,7 +835,26 @@ def test_a_receipt_none_of_whose_signatures_verify_is_dropped():
     assert tags(events, deliveries)[2] == ["2/receipt-unverified"] * 2
 
 
-@pytest.mark.parametrize("bt", ["-1", "x", "01"])
+@pytest.mark.parametrize("bt", ["-1", "x", "01", 2])
 def test_a_backer_threshold_that_is_not_canonical_hex_is_not_modelled(bt):
     with pytest.raises(ScenarioError, match="backer threshold"):
         tags([{**ICP, "bt": bt}], [msg("icp", ["a0"])])
+
+
+@pytest.mark.parametrize("sn", ["-0", "g", "01", 1, None])
+def test_a_sequence_number_that_is_not_canonical_hex_is_not_modelled(sn):
+    """A receipt's or event's s is read only once it is hex without leading zeros, so "-0"
+    cannot pass as 0 and supply a missing witness signature."""
+    events = [WITNESSED]
+    deliveries = [msg("icp", ["a0"]), {"receipt": "icp", "wigs": ["w1"]}]
+    s = streams(events, deliveries)
+    rct = keri_model.parse(T, s[1])
+    bad = keri_events.GENUS_CODE.encode() + keri_events.sized(dict(rct.body, s=sn)) + s[1][
+        len(keri_events.GENUS_CODE) + len(rct.raw):]
+    with pytest.raises(ScenarioError, match="sequence number"):
+        keri_model.run(T, [s[0], bad], "all")
+
+
+def test_an_empty_key_list_is_refused_before_the_backer_threshold_is_read():
+    events = [{**ICP, "keys": [], "tamper": {"fields": {"set": {"bt": []}}}}]
+    assert tags(events, [msg("icp", [{"key": "a0", "index": 0}])]) == [["1/empty-keys"] * 2]
