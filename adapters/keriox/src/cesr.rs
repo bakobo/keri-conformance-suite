@@ -415,14 +415,18 @@ pub fn encode(code: &str, raw: &[u8], domain: &str) -> Result<Value, OpError> {
     } else {
         // cesrox refusing the code is its answer, reported as a rejection whose class is the
         // variant of cesrox's own error (adapter protocol, cesr.encode).
-        let refusal = [
+        // Only when every family refuses: a family that reads the code and cannot give it back
+        // exactly has not refused it.
+        let refusals = [
             Basic::from_str(code).err(),
             SelfAddressing::from_str(code).err(),
             SelfSigning::from_str(code).err(),
-        ]
-        .into_iter()
-        .flatten()
-        .next();
+        ];
+        let refusal = if refusals.iter().all(Option::is_some) {
+            refusals.into_iter().flatten().next()
+        } else {
+            None
+        };
         return match refusal {
             Some(e) => {
                 let class = format!("{e:?}");
