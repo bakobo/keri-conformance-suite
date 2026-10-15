@@ -18,7 +18,7 @@ path = "src/main.rs"
 # requires cesrox ^0.1.8 with the cesr-proof feature and said ^0.4.0 (0.4.3 is the newest 0.4.x).
 cesrox = { version = "=0.1.8", features = ["cesr-proof"] }
 said = { version = "=0.4.3" }
-keri-core = { version = "=0.17.13", default-features = false }
+keri-core = { version = "=0.18.0", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tempfile = "3"
