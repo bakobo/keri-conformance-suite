@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "b270e09296a924794b4f1f8d909299351e46a1e4",
+    "commit": "9712c8793ce1fd2ae32b6b559cee916b3f20b8fa",
     "date": "2026-10-15"
   },
   "report": {
@@ -17,32 +17,47 @@
     "negotiated_protocol": 1,
     "hello": {
       "adapter": {
-        "name": "kcs-adapter-keriox",
+        "name": "kcs-adapter-keri-go",
         "version": "0.1.0"
       },
-      "composes": [],
+      "composes": [
+        "keri.routing"
+      ],
       "features": [
         "cesr.genus-1.00",
         "cesr.serialization.json",
+        "crypto.ed25519",
+        "kel.basic",
+        "kel.multisig.numeric",
+        "kel.multisig.weighted",
+        "keri.routing",
         "keri.version-1.x"
       ],
       "implementation": {
-        "commit": "40840948fb669424a0b7629979291ee0c777bb0e (said a385e69028fa2d9bd8fda31a9401ad0a630e1361)",
-        "name": "cesrox",
-        "version": "0.1.8 (said 0.4.3)"
+        "commit": "f06d1dac5a36dea4b619eb6934e43e6fdc68b835",
+        "name": "keri-go",
+        "version": "0.1.5"
       },
       "operations": [
         "cesr.parse",
-        "cesr.encode"
+        "cesr.encode",
+        "keri.process"
       ],
       "protocol": 1
     },
     "declared_features": [
       "cesr.genus-1.00",
       "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.multisig.numeric",
+      "kel.multisig.weighted",
+      "keri.routing",
       "keri.version-1.x"
     ],
-    "composes": [],
+    "composes": [
+      "keri.routing"
+    ],
     "filters": {
       "profile": "cesr-v1.0",
       "cases_dir": "cases"

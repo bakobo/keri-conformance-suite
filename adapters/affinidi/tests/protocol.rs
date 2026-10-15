@@ -42,16 +42,26 @@ fn hello_negotiates_the_highest_version_both_speak_from_supported() {
         json!({"name": "affinidi-keri-core", "version": "0.4.0 (affinidi-cesr 0.1.3)",
                "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c (affinidi-cesr b970cb01bdd1acd0530137b67460579e4624ab47)"})
     );
-    assert_eq!(result["operations"], json!(["cesr.parse", "cesr.encode"]));
+    assert_eq!(
+        result["operations"],
+        json!(["cesr.parse", "cesr.encode", "keri.process"])
+    );
     assert_eq!(
         result["features"],
         json!([
             "cesr.genus-1.00",
             "cesr.serialization.json",
+            "crypto.ed25519",
+            "kel.basic",
+            "kel.delegation",
+            "kel.multisig.numeric",
+            "kel.multisig.weighted",
+            "kel.witness",
+            "keri.routing",
             "keri.version-1.x"
         ])
     );
-    assert_eq!(result["composes"], json!([]));
+    assert_eq!(result["composes"], json!(["keri.routing"]));
 }
 
 #[test]
@@ -150,11 +160,9 @@ fn unknown_and_undeclared_ops_are_errors() {
     assert_eq!(unknown["id"], 11);
     assert_eq!(error_kind(&unknown), "harness");
     assert!(error_message(&unknown).starts_with(protocol::E_UNKNOWN_OP));
-    for op in ["keri.process", "keri.emit"] {
-        let response = ask(json!({"id": 12, "op": op}));
-        assert_eq!(error_kind(&response), "unsupported");
-        assert!(error_message(&response).starts_with(protocol::E_UNDECLARED_OP));
-    }
+    let response = ask(json!({"id": 12, "op": "keri.emit"}));
+    assert_eq!(error_kind(&response), "unsupported");
+    assert!(error_message(&response).starts_with(protocol::E_UNDECLARED_OP));
 }
 
 #[test]

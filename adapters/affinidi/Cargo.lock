@@ -629,6 +629,7 @@ version = "0.1.0"
 dependencies = [
  "affinidi-cesr",
  "affinidi-keri-core",
+ "affinidi-keri-crypto",
  "serde_json",
 ]
 
