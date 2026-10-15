@@ -91,6 +91,12 @@ An exception raised inside cesrixir's decoder is a `harness` error (`e.self.unkn
 ## Results
 
 <!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
+
+| Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| cesrixir 1.0.1 | `cesr-v1.0` | not-conformant | 11 / 18 | 5 / 5 | 0 / 0 | 0 | [2026-10-15, suite bce12f8d](../../results/cesrixir/1.0.1/cesr-v1.0.json) |
+| cesrixir 1.0.1 | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 4 / 5 | 0 | [2026-10-15, suite bce12f8d](../../results/cesrixir/1.0.1/keripy-1x-interop.json) |
+
 <!-- END generated results -->
 
 What follows explains the failures behind the table; every one traces to cesrixir, through the stack trace each harness error leaves in the committed result. It was written from runs against the cases on `main` at `9f92ff2`.
