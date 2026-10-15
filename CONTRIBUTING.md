@@ -61,6 +61,10 @@ A published case's expected verdict never changes. If a case turns out to be wro
 
 If you believe a case contradicts the spec, open an issue citing the clause. Do not change the case in the same pull request that makes your implementation pass it.
 
+## Submitting a conformance result
+
+If you maintain an implementation, you can publish its result on the suite's site by adding the report `kcs run --report` wrote, wrapped with `scripts/results wrap --submitted`, under `results/` in a pull request. The site shows it as your claim, distinct from the results this repository's CI reproduces. [`docs/publishing-results.md`](docs/publishing-results.md) has the steps and the checks CI runs on it.
+
 ## Using AI to write your contribution
 
 That is fine, and we do it too. Two conditions.

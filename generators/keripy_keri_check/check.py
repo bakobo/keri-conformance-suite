@@ -26,6 +26,21 @@ keripy is never the authority here. A disagreement is reported for a maintainer 
   evaluated with the runner's own evaluator, so a disagreement here is what a keripy adapter that
   read the same state would be graded on.
 
+Exchange-message cases (``exn.verify``) are checked the same way, with keripy's exchange
+processing:
+
+- **Bytes.** Every ``xip`` and ``exn`` body is rebuilt by ``SerderKERI(sad=..., makify=True)`` and
+  must equal the case's body, unless its scenario added a field or changed one after the SAID on
+  purpose, in which case keripy must not reproduce it. Every signature in each transferable
+  signature group is verified with keripy's ``Verfer`` against the keys of the establishment
+  event the group names, read from the case's KEL streams; a signature a scenario forged, or made
+  with a key outside that event, must fail, and any other must verify.
+- **Verdicts.** The KELs and then the messages go through keripy's ``Parser`` into a fresh
+  ``Kevery`` and an ``Exchanger`` with no route handlers, over a temporary ``Habery``, with
+  ``Kevery.processEscrows`` and ``Exchanger.processEscrow`` run after each delivery until
+  keripy's tables stop changing. A message reads ``accepted`` if keripy logged it (``.exns``),
+  else ``rejected``; no case delivers one body twice, so the log names the delivery.
+
 This module and the keripy adapter under ``adapters/keripy`` do not share code, so the adapter is
 not graded against the reading this module makes.
 """
@@ -39,11 +54,13 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+from keri.app import habbing
 from keri.core import parsing, serdering
 from keri.core.coring import Verfer
 from keri.core.eventing import Kevery
 from keri.db import basing
 from keri.kering import Vrsn_2_0
+from keri.peer import exchanging
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
@@ -251,11 +268,107 @@ def run_case(case) -> dict:
     return result
 
 
+def check_exn_bytes(case) -> list[str]:
+    """Where keripy disagrees with how an exchange-message case's bytes were made."""
+    notes = []
+    spec = scenario_of(case)
+    exchanges = {e["name"]: e for e in spec["exchanges"]}
+    kels = {}
+    for k in case["input"]["kels"]:
+        body, _ = body_of(bytes.fromhex(k["stream"]))
+        kels[(body["i"], int(body["s"], 16), body["d"])] = body["k"]
+    for i, (m, d) in enumerate(zip(case["input"]["messages"], spec["messages"], strict=True)):
+        stream = bytes.fromhex(m["stream"])
+        body, raw = body_of(stream)
+        ex = exchanges[d["exchange"]]
+        altered = bool(ex.get("extra") or ex.get("tamper"))
+        try:
+            same = serdering.SerderKERI(sad=dict(body), makify=True).raw == raw
+            why = ""
+        except Exception as e:  # noqa: BLE001 - keripy refusing the fields is a finding
+            same, why = False, f" ({type(e).__name__}: {e})"
+        if same == altered:
+            notes.append(f"message {i} ({d['exchange']}): keripy's SerderKERI(makify=True) "
+                         f"{'reproduces' if same else 'does not reproduce'} the body{why}")
+        if altered:
+            continue  # keripy's parser refuses the body, which the verdicts check
+        try:
+            exts = extract(stream)
+        except Exception as e:  # noqa: BLE001
+            if d.get("sigs"):
+                notes.append(f"message {i}: keripy's Parser does not extract it "
+                             f"({type(e).__name__}: {e})")
+            continue
+        made = [k for g in d.get("sigs", []) for k in g["keys"]]
+        got = [(prefixer, number, diger, siger) for prefixer, number, diger, sigers in exts.tsgs
+               for siger in sigers]
+        if len(got) != len(made):
+            notes.append(f"message {i}: keripy extracted {len(got)} signatures, not {len(made)}")
+            continue
+        for (prefixer, number, diger, siger), (sig, group) in zip(
+                got, [(k, g) for g in d["sigs"] for k in g["keys"]], strict=True):
+            keys = kels[(prefixer.qb64, number.sn, diger.qb64)]
+            ok = Verfer(qb64=keys[siger.index]).verify(siger.raw, raw)
+            sig = {"key": sig} if isinstance(sig, str) else sig
+            genuine = not sig.get("forged") and "index" not in sig
+            if ok != genuine:
+                notes.append(f"message {i}: keripy's Verfer says the signature at index "
+                             f"{siger.index} by {group['aid']} {'verifies' if ok else 'fails'}")
+    return notes
+
+
+def exn_tables(db):
+    out = []
+    for name in ("kels", "fels", *PENDING_ESCROWS, "exns", "epse", "esigs"):
+        sdb = getattr(db, name).sdb
+        with db.env.begin(db=sdb) as txn:
+            out.append((name, txn.stat(sdb)["entries"]))
+    return tuple(out)
+
+
+def run_exn_case(case) -> dict:
+    kels = [bytes.fromhex(k["stream"]) for k in case["input"]["kels"]]
+    messages = [bytes.fromhex(m["stream"]) for m in case["input"]["messages"]]
+    saids = [body_of(s)[0]["d"] for s in messages]
+    result = {"verdicts": [], "errors": []}
+    with habbing.openHby(name="kcs-keri-check-exn", temp=True) as hby:
+        kvy = Kevery(db=hby.db, lax=False, local=False)
+        exc = exchanging.Exchanger(hby=hby, handlers=[])
+        parser = parsing.Parser(kvy=kvy, exc=exc, version=Vrsn_2_0)
+
+        def deliver(i, s):
+            try:
+                parser.parse(ims=bytearray(s))
+            except Exception as e:  # noqa: BLE001 - keripy refusing a message drops it
+                result["errors"].append(f"{i}: {type(e).__name__}: {e}")
+            before = None
+            for _ in range(50):
+                kvy.processEscrows()
+                exc.processEscrow()
+                now = exn_tables(hby.db)
+                if now == before:
+                    break
+                before = now
+
+        for i, s in enumerate(kels):
+            deliver(f"kel {i}", s)
+        on_delivery = []
+        for i, s in enumerate(messages):
+            deliver(f"message {i}", s)
+            on_delivery.append(hby.db.exns.get(keys=(saids[i],)) is not None)
+        for first, said in zip(on_delivery, saids, strict=True):
+            final = hby.db.exns.get(keys=(said,)) is not None
+            result["verdicts"].append({"on_delivery": "accepted" if first else "rejected",
+                                       "verdict": "accepted" if final else "rejected"})
+    return result
+
+
 def check(case) -> dict:
     signal.signal(signal.SIGALRM, _alarm)
     signal.alarm(TIMEOUT_SECONDS)
+    exn = case["operation"] == "exn.verify"
     try:
-        got = run_case(case)
+        got = run_exn_case(case) if exn else run_case(case)
     except Hang as e:
         return {"id": case["id"], "hang": str(e)}
     except Exception as e:  # noqa: BLE001 - a crash in keripy or here is reported, not raised
@@ -269,9 +382,10 @@ def check(case) -> dict:
             out.append({"assertion": a["id"], "level": a["level"], "check": a["check"],
                         "expected": a.get("expected"), "keripy": ev.actual,
                         "detail": ev.detail})
-    return {"id": case["id"], "profile": case["profile"], "disagreements": out,
-            "bytes": check_bytes(case), "keripy_errors": got["errors"],
-            "readings": got["dispositions"]}
+    return {"id": case["id"], "profile": case["profile"], "status": case["status"],
+            "disagreements": out, "bytes": check_exn_bytes(case) if exn else check_bytes(case),
+            "keripy_errors": got["errors"],
+            "readings": got["verdicts"] if exn else got["dispositions"]}
 
 
 def main() -> int:
@@ -284,7 +398,8 @@ def main() -> int:
         r = check(case)
         results.append(r)
         bad = r.get("disagreements") or r.get("bytes") or "hang" in r or "crash" in r
-        print(f"{case['id']}: {'DISAGREES' if bad else 'agrees'}")
+        print(f"{case['id']}: {'DISAGREES' if bad else 'agrees'}"
+              f"{' (disputed)' if case['status'] == 'disputed' else ''}")
         for d in r.get("disagreements", []):
             print(f"    {d['assertion']} {d['level']} {d['check']}: {d['detail']}")
         for b in r.get("bytes", []):

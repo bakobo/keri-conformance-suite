@@ -238,21 +238,30 @@ def map_quote(text: str, sentences: list[Sentence], quote: str) -> list[Sentence
 
 _DISPOSITIONS = {"seen": "positive", "not-seen": "negative", "rejected": "negative",
                  "pending": "negative"}
+_EXN_VERDICTS = {"accepted": "positive", "rejected": "negative"}
 
 
 def polarity(assertion: dict, where: str) -> str:
     """Whether an assertion expects a positive outcome (something parsed, encoded, accepted or
     held) or a negative one (something refused, not accepted, or left off the trunk)."""
     check, expected = assertion.get("check"), assertion.get("expected")
-    if check in ("decoded", "encoded", "key_state"):
+    if check in ("decoded", "encoded", "key_state", "registry_state", "edge_reported"):
         return "positive"
+    if check == "verdict" and expected in ("valid", "not-valid"):
+        return "positive" if expected == "valid" else "negative"
+    if check in ("registry_reported", "edge_valid") and isinstance(expected, bool):
+        return "positive" if expected else "negative"
+    if check in ("verdict", "registry_reported", "edge_valid"):
+        raise CoverageError(f"{where}: a {check} of {expected!r} has no known polarity.", E_CASE)
     if check == "rejected":
         return "negative"
     if check == "disposition" and isinstance(expected, str) and expected in _DISPOSITIONS:
         return _DISPOSITIONS[expected]
     if check == "trunk" and isinstance(expected, bool):
         return "positive" if expected else "negative"
-    if check in ("disposition", "trunk"):
+    if check == "exn_verdict" and isinstance(expected, str) and expected in _EXN_VERDICTS:
+        return _EXN_VERDICTS[expected]
+    if check in ("disposition", "trunk", "exn_verdict"):
         raise CoverageError(f"{where}: a {check} of {expected!r} has no known polarity "
                             f"(disposition {expected!r}).", E_CASE)
     raise CoverageError(f"{where}: unknown check {check!r}. Clause coverage defines a polarity for "
@@ -303,7 +312,7 @@ def _case_problem(case, stem: str) -> str | None:
             return "an assertion id is missing"
         if not _is_text(a.get("check")):
             return f"assertion {a['id']} has no check"
-        if a["check"] != "rejected" and a.get("expected") is None:
+        if a["check"] not in ("rejected", "edge_reported") and a.get("expected") is None:
             return f"assertion {a['id']} has no expected result"
         if a.get("level") not in ASSERTION_LEVELS:
             return f"assertion {a['id']} has level {a.get('level')!r}"
