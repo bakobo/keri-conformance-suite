@@ -280,35 +280,45 @@ class _SediModel(am._Model):
         return grade, ([] if grade == VALID else findings)
 
     def edge(self, near: dict, block: dict, path: str, verdict_of) -> tuple[str, list[Finding]]:
+        """The grade of one edge: every check it can make is made, so something it cannot
+        evaluate (an unknown operator, a missing schema) never hides one that fails
+        (failure-precedence)."""
         if not isinstance(block.get("d"), str):
             return INVALID, [Finding(INVALID, path, "edge-said")]
+        found = []
         ops, bad = operators(block.get("o"))
         if bad:
-            return bad, [Finding(bad, path, "operator-shape")]
-        unknown = [op for op in ops if op not in UNARY]
-        if unknown:
-            return INCOMPLETE, [Finding(INCOMPLETE, path, "operator-unknown")]
+            found.append(Finding(bad, path, "operator-shape"))
+            ops = []
+        elif any(op not in UNARY for op in ops):
+            found.append(Finding(INCOMPLETE, path, "operator-unknown"))
         far = self.far.get(block.get("n"))
         if far is None:
-            return INCOMPLETE, [Finding(INCOMPLETE, path, "far-absent")]
+            found.append(Finding(INCOMPLETE, path, "far-absent"))
+            return combine([f.grade for f in found]), found
         node, _ = far
-        if "s" in block and self.satisfies(node.body, block["s"]):
-            return INVALID, [Finding(INVALID, path, "edge-schema")]
+        if "s" in block:
+            missing = self.satisfies(node.body, block["s"])
+            if missing == ["schema-absent"]:
+                found.append(Finding(INCOMPLETE, path, "edge-schema-absent"))
+            elif missing:
+                found.append(Finding(INVALID, path, "edge-schema"))
         far_issuee = issuee(node.body)
         if not any(op in UNARY for op in ops):
             ops.append("NI2I" if far_issuee is None else "I2I")
         relation = next((op for op in reversed(ops) if op in ISSUER_OPS), None)
         problem = self._relation(relation, near, far_issuee)
-        if not problem and "E1E" in ops:
+        if problem:
+            found.append(Finding(problem[0], path, problem[1]))
+        if "E1E" in ops:
             mine = issuee(near)
             if mine is ... or far_issuee is ...:
-                problem = (INCOMPLETE, "e1e-hidden")
+                found.append(Finding(INCOMPLETE, path, "e1e-hidden"))
             elif mine is None or far_issuee is None or mine != far_issuee:
-                problem = (INVALID, "e1e-issuee")
-        if problem:
-            return problem[0], [Finding(problem[0], path, problem[1])]
-        grade, found = verdict_of(node)
-        return grade, found
+                found.append(Finding(INVALID, path, "e1e-issuee"))
+        grade, far_found = verdict_of(node)
+        found += far_found
+        return combine([f.grade for f in found] + [grade]), found
 
     def _relation(self, relation, near: dict, far_issuee):
         if relation in (None, "NI2I"):

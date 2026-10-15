@@ -382,3 +382,28 @@ def test_a_registry_is_walked_once_per_model():
 
 def test_the_model_rests_on_the_acdc_model():
     assert issubclass(sm._SediModel, am._Model)
+
+
+def test_an_unevaluable_operator_never_hides_a_failure_beside_it():
+    creds = single(o="XYZ")
+    creds["F"] = cred("Q", "I", states=("issued", "revoked"))
+    result, _ = run(world(creds, "N"))
+    assert result.verdict == sm.INVALID
+    assert reasons(result) == ["incomplete/operator-unknown", "invalid/revoked"]
+    creds = single(o=["XYZ", "I2I"])
+    creds["F"] = cred("Q", "R")
+    assert reasons(run(world(creds, "N"))[0]) == ["incomplete/operator-unknown",
+                                                  "invalid/i2i-issuee"]
+    creds = single(o=[1])
+    creds["F"] = cred("Q", "R")
+    assert reasons(run(world(creds, "N"))[0]) == ["incomplete/operator-shape",
+                                                  "invalid/i2i-issuee"]
+
+
+def test_an_edge_schema_absent_from_the_bundle_cannot_be_evaluated():
+    frag = world(single(), "N")
+    frag["schemas"].append({"name": "S2", "schema": {**S1, "title": "other"}})
+    next(a for a in frag["acdcs"] if a["name"] == "N")["e"]["le"]["s"] = {"schema": "S2"}
+    frag["omit"] = ["S2"]
+    result, _ = run(frag)
+    assert result.verdict == sm.INCOMPLETE and reasons(result) == ["incomplete/edge-schema-absent"]
