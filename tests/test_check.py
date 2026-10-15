@@ -3,13 +3,14 @@
 import json
 import shlex
 
+import issued_world
 import pytest
 from conftest import ROOT, bad, good
 
 from keri_conformance import cli, errors
 from keri_conformance import session as session_module
 from keri_conformance.check import _CONTEXT as CONTEXT
-from keri_conformance.check import PROBES, check_adapter
+from keri_conformance.check import ISSUE_PROBE, PROBES, check_adapter
 from keri_conformance.check import exit_code as check_exit_code
 from keri_conformance.session import AdapterSession, Limits
 
@@ -118,8 +119,8 @@ def test_a_refused_hello_fails_and_skips_the_rest(vocabulary):
     result = probes(bad("hello-crash"), vocabulary)
     assert result["hello"].status == "fail"
     assert [result[n].status for n in PROBES[1:4]] == ["not-run"] * 3
-    assert [result[n].status for n in PROBES[6:9]] == ["not-run"] * 3
-    assert [result[n].status for n in PROBES[9:]] == ["not-yet-available"] * 2
+    assert [result[n].status for n in PROBES[6:10]] == ["not-run"] * 4
+    assert [result[n].status for n in PROBES[10:]] == ["not-yet-available"]
     assert all(result[n].reason for n in PROBES)
 
 
@@ -137,8 +138,14 @@ VERDICT = {"verdict": "invalid", "registry": None, "edges": []}
 CONTROL = {"match": {"op": "acdc.verify", "presentation": CONTEXT}, "result": VERDICT}
 
 
-def issuer(write_json, *entries, control=True):
-    table = write_json("table.json", [ECHO, *([CONTROL] if control else []), *entries])
+# The repeatability probe's issuance, answered with one that verifies (tests/issued_world.py).
+ISSUANCE = {"match": {"op": "acdc.issue", "credentials": ISSUE_PROBE["credentials"]},
+            "result": issued_world.issuance()[1]}
+
+
+def issuer(write_json, *entries, control=True, issuance=True):
+    table = write_json("table.json", [ECHO, *([CONTROL] if control else []), *entries,
+                                      *([ISSUANCE] if issuance else [])])
     return good("--table", table, "--hello", write_json("hello.json", ISSUER_HELLO))
 
 
@@ -147,7 +154,7 @@ def test_an_issuer_that_errors_on_malformed_requests_passes(vocabulary, write_js
     assert result["issue-malformed"].status == "pass"
     assert result["present-malformed"].status == "pass"
     assert result["presentation-malformed"].status == "pass"
-    assert result["issue-repeatable"].status == "not-yet-available"
+    assert result["issue-repeatable"].status == "pass"
     assert result["present-independence"].status == "not-yet-available"
     assert check_exit_code(list(result.values())) == 0
 
@@ -306,3 +313,26 @@ def test_an_adapter_that_answers_only_once_fails_the_presentation_probe(vocabula
 
 def test_the_control_names_a_well_formed_verifier_aid():
     assert len(CONTEXT["verifier"]) == 44 and CONTEXT["verifier"][0] == "E"
+
+
+@pytest.mark.parametrize(("answer", "words"), [
+    (None, "did not answer issuance 1"),
+    ({"result": {"refused": {"reason": "no"}}}, "refused issuance 1"),
+    ({"result": {**issued_world.issuance()[1], "kels": {"issuer": "00", "holder": "00"}}},
+     "does not verify"),
+])
+def test_an_issuer_whose_plain_issuance_does_not_verify_fails(vocabulary, write_json, answer,
+                                                              words):
+    entries = [] if answer is None else [{"match": ISSUANCE["match"], **answer}]
+    result = probes(issuer(write_json, *entries, issuance=False), vocabulary)
+    assert result["issue-repeatable"].status == "fail"
+    assert words in result["issue-repeatable"].reason
+
+
+def test_an_adapter_that_does_not_issue_skips_the_repeatability_probe(vocabulary):
+    assert probes(good(), vocabulary)["issue-repeatable"].status == "not-applicable"
+
+
+def test_an_issuer_that_crashes_on_the_plain_issuance_fails_it(vocabulary):
+    result = probes(bad("crash-on-op", "acdc.issue"), vocabulary, timeout=1.0)
+    assert result["issue-repeatable"].status == "fail"

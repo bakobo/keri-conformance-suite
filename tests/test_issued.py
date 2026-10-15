@@ -330,28 +330,39 @@ def test_acdc_compaction_covers_schemas_aggregates_and_nested_blocks():
     body = {"v": "", "d": "", "s": {"$id": "", "type": "object"},
             "A": ["agid", {"d": "", "x": 1}, "Ecompact"], "a": nested}
     assert iss.acdc_said(body).startswith("E")
-    assert iss.schema_said(iss.serialize({"$id": "x", "type": "object"})).startswith("E")
+    said, raw = w.schema()
+    assert iss.schema_said(bytes.fromhex(raw)) == said
+    assert iss.schema_said(iss.serialize({"$id": "x", "type": "object"})) == ""
+    assert iss.schema_said(b"[1]") == "" and iss.schema_said(b'{"type": "object"}') == ""
 
 
 # -- edges ------------------------------------------------------------------------------------
 
-def edged(edges, far_edges=None):
-    """A request for F then N, N's edges as asked, and the result an issuer would return."""
-    request, result, parts = w.issuance()
-    issuer, holder = parts["issuer"], parts["holder"]
+FAR = "far"  # in an issued edge section, stands for the far credential's SAID
+
+
+def edged(edges, far_edges=None, near_issuer="holder", far_issuee=True):
+    """A request for C, issued by the issuer to the holder, then N, whose edges are as asked,
+    and the result an issuer would return."""
+    request, result, parts = w.issuance(issuee=far_issuee)
+    kels = {"issuer": parts["issuer"], "holder": parts["holder"]}
+    signer = kels[near_issuer]
     far = parts["acdc"]
+    if far_edges is not None:
+        far_edges = json.loads(json.dumps(far_edges).replace(f'"{FAR}"', json.dumps(far["d"])))
     e = {"d": "", **(far_edges if far_edges is not None else {
         "le": {"d": "", "n": far["d"], "o": "I2I"}})}
-    r = w.rip(issuer.prefix, u=w.salt("rip2"))
-    a = {"d": "", "i": holder.prefix, "name": "N"}
+    e = _saided(e)
+    r = w.rip(signer.prefix, u=w.salt("rip2"))
+    a = {"d": "", "i": parts["holder"].prefix, "name": "N"}
     a["d"] = iss.block_said(a)
-    near = w.acdc(issuer.prefix, parts["schema"], r["d"], a, e)
+    near = w.acdc(signer.prefix, parts["schema"], r["d"], a, e)
     disclosure = w.block(near["d"])
     update = w.bup(r["d"], 1, r["d"], disclosure[:44])
-    issuer.ixn([{"s": "0", "d": r["d"]}])
-    issuer.ixn([{"s": "1", "d": update["d"]}])
-    result["kels"]["issuer"] = issuer.stream().hex()
-    request["credentials"].insert(0, {"name": "n", "issuer": "issuer", "issuee": "holder",
+    signer.ixn([{"s": "0", "d": r["d"]}])
+    signer.ixn([{"s": "1", "d": update["d"]}])
+    result["kels"][near_issuer] = signer.stream().hex()
+    request["credentials"].insert(0, {"name": "n", "issuer": near_issuer, "issuee": "holder",
                                       "schema": parts["schema"], "attributes": {"name": "N"},
                                       "registry": "bup", "edges": edges})
     result["credentials"]["n"] = {"acdc": (iss.GENUS + iss.serialize(near)).hex(),
@@ -359,28 +370,56 @@ def edged(edges, far_edges=None):
     return iss.grade(request, result)
 
 
+def _saided(block):
+    """Every map with a d in it given its own SAID, innermost first."""
+    if not isinstance(block, dict):
+        return block
+    out = {k: _saided(v) for k, v in block.items()}
+    if out.get("d") == "":
+        out["d"] = iss.block_said(out)
+    return out
+
+
 def test_edges_as_asked_verify():
     assert edged({"le": {"credential": "c", "o": "I2I"}}) == []
     assert edged({"le": {"credential": "c", "o": ["I2I"]}}) == []
+    assert edged({"le": {"credential": "c"}}, {"le": {"d": "", "n": ""}}) != []
+    # The default operator: I2I to a targeted credential, NI2I to an untargeted one.
+    assert edged({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR}}) == []
+    assert edged({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR, "o": "I2I"}}) == []
+    assert edged({"le": {"credential": "c", "o": "NI2I"}},
+                 {"le": {"d": "", "n": FAR, "o": "NI2I"}}, near_issuer="issuer") == []
+    assert edged({"le": {"credential": "c", "o": "E1E"}},
+                 {"le": {"d": "", "n": FAR, "o": "E1E"}}, near_issuer="issuer") == []
     assert edged({"o": "OR", "g": {"le": {"credential": "c"}}},
-                 {"o": "OR", "g": {"le": {"d": "", "n": "x"}}}) != []
+                 {"o": "OR", "g": {"d": "", "le": {"d": "", "n": FAR}}}) == []
 
 
-@pytest.mark.parametrize("asked,issued,words", [
-    ({"le": {"credential": "c", "o": "NI2I"}}, None, "operators"),
-    ({"le": {"credential": "nope"}}, None, "does not name"),
-    ({"other": {"credential": "c"}}, None, "labels"),
-    ({"o": "OR", "le": {"credential": "c"}}, None, "operator is not"),
-    ({"le": {"credential": "c"}}, {"le": "Ecompact"}, "not a map"),
+@pytest.mark.parametrize("asked,issued,words,kwargs", [
+    ({"le": {"credential": "c", "o": "NI2I"}}, None, "operators are not", {}),
+    ({"le": {"credential": "c"}}, {"le": {"d": "", "n": FAR, "o": "NI2I"}}, "operators are not",
+     {}),
+    ({"le": {"credential": "nope"}}, None, "does not name", {}),
+    ({"other": {"credential": "c"}}, None, "labels", {}),
+    ({"o": "OR", "le": {"credential": "c"}}, None, "operator is not", {}),
+    ({"le": {"credential": "c"}}, {"le": "Ecompact"}, "not a map", {}),
     ({"g": {"le": {"credential": "c"}}}, {"g": {"d": "", "le": {"d": "", "n": "Ewrong"}}},
-     "does not name"),
+     "does not name", {}),
+    ({"le": {"credential": "c"}}, {"le": {"n": FAR}}, "no SAID of its own", {}),
+    ({"le": {"credential": "c", "o": "I2I"}}, None, "do not hold", {"near_issuer": "issuer"}),
+    ({"le": {"credential": "c", "o": "DI2I"}}, {"le": {"d": "", "n": FAR, "o": "DI2I"}},
+     "do not hold", {"near_issuer": "issuer"}),
+    ({"le": {"credential": "c", "o": "E1E"}}, {"le": {"d": "", "n": FAR, "o": "E1E"}},
+     "do not hold", {"far_issuee": False}),
+    ({"le": {"credential": "c", "o": "I2I"}}, {"le": {"d": "", "n": FAR, "o": "I2I"}},
+     "do not hold", {"far_issuee": False}),
 ])
-def test_edges_not_as_asked_fail(asked, issued, words):
-    assert any(words in p for p in edged(asked, issued))
+def test_edges_not_as_asked_fail(asked, issued, words, kwargs):
+    assert any(words in p for p in edged(asked, issued, **kwargs))
 
 
 def test_an_edge_section_that_is_not_a_map():
-    assert iss._edges({"le": {}}, "Ecompact", {}) == ["the edge section is not a map"]
+    assert iss._edges({"le": {}}, "Ecompact", {}, {}) == ["the edge section is not a map"]
 
 
 def test_credentials_are_checked_far_first_whatever_the_order():
@@ -400,3 +439,36 @@ def test_missing_and_broken_kels_are_reported():
     assert any("issuer's KEL" in p for p in problems)
     request["schemas"].append("7b")
     assert iss.grade(request, copy.deepcopy(result))
+
+
+def test_an_acdc_must_be_genus_pinned_and_of_type_acm():
+    problems = acdc_problems(lambda r, c, p: c.update(acdc=c["acdc"][16:]))
+    assert any("genus/version code" in x for x in problems)
+    problems = acdc_problems(lambda r, c, p: c.update(acdc=rebuilt(p, t="zzz")))
+    assert any("type is not acm" in x for x in problems)
+
+
+def test_a_nested_block_whose_said_is_false_fails():
+    def change(r, c, p):
+        c.update(acdc=rebuilt(p, a={**p["acdc"]["a"], "d": "E" + "A" * 43}))
+    assert any("does not verify against its own SAID" in x for x in acdc_problems(change))
+
+    def in_a_list(r, c, p):
+        c.update(acdc=rebuilt(p, r=[{"d": "E" + "A" * 43, "x": 1}]))
+    assert any("does not verify against its own SAID" in x for x in acdc_problems(in_a_list))
+
+
+def test_an_issuance_whose_schema_the_request_does_not_carry_fails():
+    request, result, _ = w.issuance()
+    request["schemas"] = ["7b7d", "zz"]
+    assert any("no schema in the request" in p for p in iss.grade(request, result))
+
+
+def test_an_identifier_that_cannot_rotate_is_not_transferable():
+    assert "not transferable" in failed(w.Kel("i", nxt=()).stream())[0]
+
+
+def test_a_signature_index_that_is_not_base64_is_unreadable():
+    sig = w.sig_group(b"x", [(0, "a")])
+    with pytest.raises(iss.Unread, match="not Base64"):
+        iss.signatures(w.outer(sig[:5] + "!" + sig[6:]).encode())

@@ -191,6 +191,8 @@ def signatures(attachments: bytes) -> list[tuple[int, bytes]]:
                              "(code A or B)")
             if len(out) >= MAX_SIGNATURES:
                 raise Unread(f"a key event carries more than {MAX_SIGNATURES} signatures")
+            if item[1] not in B64 or any(c not in B64 for c in item[2:]):
+                raise Unread("a controller signature is not Base64")
             out.append((B64.index(item[1]), base64.urlsafe_b64decode("AA" + item[2:])[2:]))
     return out
 
@@ -268,6 +270,9 @@ def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
                 nt = _threshold(body.get("nt"))
                 if len(nxt) > MAX_KEYS:
                     return prefix, trunk, [f"{where} commits to more than {MAX_KEYS} next keys"]
+                if not nxt or nt < 1:
+                    return prefix, trunk, [(f"{where} commits to no next keys, so its "
+                                            "identifier is not transferable")]
             threshold = _threshold(body.get("kt")) if ilk != "ixn" else kt
             kt = threshold
             if len(_signed(raw, keys, sigs)) < max(threshold, 1):
@@ -326,8 +331,12 @@ def acdc_said(acdc: dict) -> str:
 
 
 def schema_said(raw: bytes) -> str:
+    """The SAID a schema's bytes verify as, or "" when they are not a schema with a SAID."""
     schema = json.loads(raw)
-    return digest(serialize({**schema, "$id": DUMMY}))
+    if not isinstance(schema, dict) or not isinstance(schema.get("$id"), str):
+        return ""
+    said_ = digest(serialize({**schema, "$id": DUMMY}))
+    return said_ if said_ == schema["$id"] else ""
 
 
 def _state(ts: str) -> str:
@@ -423,8 +432,9 @@ def check_registry(chain: bytes, disclosure, issuer: str, trunk: list[dict], acd
     return rd, problems
 
 
-def _edges(asked: dict, e, saids: dict[str, str]) -> list[str]:
-    """What fails in an issued edge section against the one asked for."""
+def _edges(asked: dict, e, near: dict, issued: dict[str, dict]) -> list[str]:
+    """What fails in an issued edge section against the one asked for. ``issued`` maps each
+    credential already checked to its body."""
     if not isinstance(e, dict):
         return ["the edge section is not a map"]
     problems = []
@@ -438,28 +448,68 @@ def _edges(asked: dict, e, saids: dict[str, str]) -> list[str]:
         if not isinstance(got, dict):
             problems.append(f"the edge {label} is not a map")
         elif "credential" not in want:
-            problems += _edges(want, got, saids)
-        elif got.get("n") != saids.get(want["credential"]):
-            problems.append(f"the edge {label} does not name the credential asked for")
-        elif "o" in want and _ops(got.get("o")) != _ops(want["o"]):
-            problems.append(f"the edge {label}'s operators are not the ones asked for")
+            problems += _edges(want, got, near, issued)
+        else:
+            problems += _edge(label, want, got, near, issued.get(want["credential"]))
     return problems
+
+
+def _issuee(body: dict | None):
+    a = body.get("a") if isinstance(body, dict) else None
+    return a.get("i") if isinstance(a, dict) else None
+
+
+def _edge(label: str, want: dict, got: dict, near: dict, far: dict | None) -> list[str]:
+    """What fails in one issued edge: its own SAID (edge-said), its far node, the operators
+    asked for (or the default when none was), and whether they hold between the two credentials
+    as issued. The runner's identifiers are never delegated, so DI2I holds as I2I does."""
+    if not isinstance(got.get("d"), str):
+        return [f"the edge {label} carries no SAID of its own in d"]
+    if far is None or got.get("n") != far.get("d"):
+        return [f"the edge {label} does not name the credential asked for"]
+    default = ["I2I" if _issuee(far) else "NI2I"]
+    if _ops(got.get("o", default)) != _ops(want.get("o", default)):
+        return [f"the edge {label}'s operators are not the ones asked for"]
+    ops = _ops(want.get("o", default))
+    relation = next((op for op in reversed(ops) if op in ("I2I", "NI2I", "DI2I")), None)
+    holds = True
+    if relation in ("I2I", "DI2I"):
+        holds = _issuee(far) is not None and near.get("i") == _issuee(far)
+    if "E1E" in ops:
+        holds = holds and _issuee(far) is not None and _issuee(near) == _issuee(far)
+    return [] if holds else [(f"the edge {label}'s operators do not hold between the "
+                              "credentials issued")]
 
 
 def _ops(o) -> list:
     return o if isinstance(o, list) else [o]
 
 
+def _blocks_verify(value) -> bool:
+    """Whether every SAIDed block in ``value``, at any depth, verifies against its own SAID."""
+    if isinstance(value, dict):
+        if is_saided(value) and block_said(value) != value["d"]:
+            return False
+        return all(_blocks_verify(v) for v in value.values())
+    if isinstance(value, list):
+        return all(_blocks_verify(v) for v in value)
+    return True
+
+
 def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema: str,
-               saids: dict[str, str]) -> tuple[str | None, dict | None, list[str]]:
+               issued: dict[str, dict]) -> tuple[str | None, dict | None, list[str]]:
     """The ACDC's SAID, its body, and what fails in it against what was asked."""
     if len(raw) > MAX_STREAM:
         return None, None, ["the ACDC is longer than the runner reads"]
     try:
+        if not raw.startswith(GENUS):
+            raise Unread("it does not begin with the genus/version code")
         body, framed, rest = frame(raw, b"ACDC")
     except Unread as exc:
         return None, None, [f"the ACDC cannot be read: {exc}"]
     problems = []
+    if body.get("t") != "acm":
+        problems.append("the ACDC's type is not acm, the type of an ACDC with an attribute map")
     if rest:
         problems.append("bytes follow the ACDC's body")
     keys = list(body)
@@ -470,6 +520,8 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
     try:
         if acdc_said(body) != body.get("d"):
             problems.append("the ACDC's SAID does not verify")
+        elif not all(_blocks_verify(body.get(section)) for section in ("a", "e", "r")):
+            problems.append("a SAIDed block in the ACDC does not verify against its own SAID")
     except (TypeError, ValueError, AttributeError):
         problems.append("the ACDC's SAID cannot be computed")
     if body.get("i") != issuer:
@@ -495,7 +547,7 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
             except Unread:
                 problems.append("the attribute block's salt is not a 128-bit salt")
     if "edges" in asked:
-        problems += _edges(asked["edges"], body.get("e"), saids)
+        problems += _edges(asked["edges"], body.get("e"), body, issued)
     elif body.get("e"):
         problems.append("the ACDC has edges, and none was asked for")
     return body.get("d"), body, problems
@@ -515,7 +567,13 @@ def grade(request: dict, result: dict) -> list[str]:
         prefixes[role], trunks[role] = prefix, trunk
         problems += [f"{role}'s KEL: {p}" for p in failed]
     issued = result.get("credentials") or {}
-    saids: dict[str, str] = {}
+    bodies: dict[str, dict] = {}
+    schemas = set()
+    for raw in request.get("schemas", []):
+        try:
+            schemas.add(schema_said(bytes.fromhex(raw)))
+        except (ValueError, TypeError, AttributeError):
+            continue
     # Far credentials first, so an edge can be checked against its far node's SAID.
     for asked in _ordered(request.get("credentials", [])):
         name = asked["name"]
@@ -525,12 +583,14 @@ def grade(request: dict, result: dict) -> list[str]:
             continue
         issuer = prefixes.get(asked["issuer"])
         issuee = prefixes.get(asked["issuee"]) if asked.get("issuee") else None
+        if asked["schema"] not in schemas:
+            problems.append(f"{name}: no schema in the request verifies as {asked['schema']}")
         d, body, failed = check_acdc(bytes.fromhex(out["acdc"]), asked, issuer, issuee,
-                                     asked["schema"], saids)
+                                     asked["schema"], bodies)
         problems += [f"{name}: {p}" for p in failed]
         if d is None:
             continue
-        saids[name] = d
+        bodies[name] = body
         chain = bytes.fromhex(out["registry"]) if isinstance(out.get("registry"), str) else b""
         rd, failed = check_registry(chain, out.get("disclosure"), issuer,
                                     trunks.get(asked["issuer"], []), d)
