@@ -387,6 +387,10 @@ RESULT_DEFS = {
     "keri.emit": {"$ref": "#/$defs/result_emitted"},
     "acdc.verify": {"$ref": "#/$defs/result_verified"},
     "exn.verify": {"$ref": "#/$defs/result_exchanged"},
+    "acdc.issue": {"oneOf": [{"$ref": "#/$defs/result_issued"},
+                             {"$ref": "#/$defs/result_refused"}]},
+    "acdc.present": {"oneOf": [{"$ref": "#/$defs/result_presented"},
+                               {"$ref": "#/$defs/result_refused"}]},
 }
 
 BASE_RESULTS = [
@@ -418,6 +422,12 @@ BASE_RESULTS = [
     ("exn.verify", {"verdicts": [{"on_delivery": "accepted", "verdict": "rejected",
                                   "reason": "prior"},
                                  {"on_delivery": "rejected", "verdict": "rejected"}]}),
+    ("acdc.issue", {"acdc": "7b7d", "registry": [{"event": "7b7d", "blind": "7b7e"},
+                                                 {"event": "7b7f", "blind": None}],
+                    "anchor": "2d5f"}),
+    ("acdc.issue", {"refused": {"reason": "salt too short"}}),
+    ("acdc.present", {"presented": {"stream": "2d5f"}}),
+    ("acdc.present", {"refused": {}}),
 ]
 
 

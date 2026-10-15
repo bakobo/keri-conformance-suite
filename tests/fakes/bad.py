@@ -167,6 +167,22 @@ def main():
             else:
                 send({"id": request["id"], "result": {"items": []}})
         return
+    if MODE == "crash-on-op":
+        # An issuer and holder that answers everything with an error, except that it dies on a
+        # request for the op ARG names.
+        request = read_request()
+        send({"id": request["id"], "result": {
+            **HELLO, "operations": [*HELLO["operations"], "acdc.issue", "acdc.present"]}})
+        for line in sys.stdin.buffer:
+            try:
+                request = json.loads(line)
+            except ValueError:
+                send({"id": None, "error": {"kind": "harness", "message": "bad json"}})
+                continue
+            if request.get("op") == ARG:
+                sys.exit(6)
+            send({"id": request["id"], "error": {"kind": "harness", "message": "op"}})
+        return
     if MODE == "leak":
         hello()
         for seen, line in enumerate(sys.stdin.buffer):

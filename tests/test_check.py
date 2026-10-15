@@ -9,6 +9,7 @@ from conftest import ROOT, bad, good
 from keri_conformance import cli, errors
 from keri_conformance import session as session_module
 from keri_conformance.check import PROBES, check_adapter
+from keri_conformance.check import exit_code as check_exit_code
 from keri_conformance.session import AdapterSession, Limits
 
 
@@ -20,13 +21,17 @@ def probes(argv, vocabulary, timeout=5.0):
 
 def test_probe_names_are_stable():
     assert PROBES == ("hello", "id-echo", "malformed-request", "unknown-op", "statelessness",
-                      "quiescence")
+                      "quiescence", "issue-malformed", "present-malformed", "issue-determinism",
+                      "present-independence")
 
 
 def test_a_good_adapter_passes_every_available_probe(vocabulary):
     result = probes(good(), vocabulary)
     assert [result[n].status for n in PROBES] == ["pass", "pass", "pass", "pass",
-                                                  "not-yet-available", "not-yet-available"]
+                                                  "not-yet-available", "not-yet-available",
+                                                  "not-applicable", "not-applicable",
+                                                  "not-applicable", "not-applicable"]
+    assert "acdc.issue" in result["issue-malformed"].reason
     assert "error" in result["malformed-request"].reason
     assert all(p.reason for p in result.values())
 
@@ -111,6 +116,59 @@ def test_a_refused_hello_fails_and_skips_the_rest(vocabulary):
     result = probes(bad("hello-crash"), vocabulary)
     assert result["hello"].status == "fail"
     assert [result[n].status for n in PROBES[1:4]] == ["not-run"] * 3
+    assert [result[n].status for n in PROBES[6:8]] == ["not-run"] * 2
+    assert all(result[n].reason for n in PROBES)
+
+
+# --- the issuer and holder probes (docs/adapter-protocol.md, acdc.issue and acdc.present) --------
+
+ISSUER_HELLO = {
+    "protocol": 1, "adapter": {"name": "issuer-adapter", "version": "1"},
+    "implementation": {"name": "issuer", "version": "1", "commit": "c"},
+    "operations": ["cesr.parse", "acdc.issue", "acdc.present"], "features": [],
+}
+ECHO = {"match": {"op": "cesr.parse"}, "result": {"reject": {"class": "truncated"}}}
+
+
+def issuer(write_json, *entries):
+    table = write_json("table.json", [ECHO, *entries])
+    return good("--table", table, "--hello", write_json("hello.json", ISSUER_HELLO))
+
+
+def test_an_issuer_that_errors_on_malformed_requests_passes(vocabulary, write_json):
+    result = probes(issuer(write_json), vocabulary)  # every unmatched request gets an error
+    assert result["issue-malformed"].status == "pass"
+    assert result["present-malformed"].status == "pass"
+    assert result["issue-determinism"].status == "not-yet-available"
+    assert result["present-independence"].status == "not-yet-available"
+    assert check_exit_code(list(result.values())) == 0
+
+
+@pytest.mark.parametrize(("op", "probe"), [("acdc.issue", "issue-malformed"),
+                                           ("acdc.present", "present-malformed")])
+@pytest.mark.parametrize("answer", [
+    {"result": {"refused": {"reason": "no template"}}},
+    {"result": {"acdc": "7b7d", "registry": []}},
+    {"result": {"presented": {"stream": "7b7d"}}},
+])
+def test_answering_a_malformed_issue_or_presentation_with_a_result_fails(
+        vocabulary, write_json, op, probe, answer):
+    # A request this protocol cannot read is an error, never a refusal: a refusal says the
+    # implementation judged the inputs, which it cannot have done.
+    result = probes(issuer(write_json, {"match": {"op": op}, **answer}), vocabulary)
+    assert result[probe].status == "fail"
+    assert "result" in result[probe].reason
+    assert check_exit_code(list(result.values())) == 1
+
+
+@pytest.mark.parametrize(("probe", "op"), [("issue-malformed", "acdc.issue"),
+                                           ("present-malformed", "acdc.present")])
+def test_an_issuer_that_crashes_on_a_malformed_request_fails(vocabulary, probe, op):
+    result = probes(bad("crash-on-op", op), vocabulary, timeout=1.0)
+    assert result[probe].status == "fail"
+    assert "exited" in result[probe].reason
+    other = "present-malformed" if probe == "issue-malformed" else "issue-malformed"
+    assert result[other].status == "pass"  # the session restarts after the crash
 
 
 @pytest.mark.parametrize(("mode", "needle"), [("hello-version", '"supported" list [1]'),
@@ -186,3 +244,20 @@ def test_cli_help_documents_exit_codes(capsys):
         cli.main(["check-adapter", "--help"])
     out = capsys.readouterr().out
     assert "  0  " in out and "  1  " in out and "  4  " in out
+
+
+def test_a_hello_that_changes_on_restart_fails_the_issuer_probe_that_restarted(vocabulary,
+                                                                               monkeypatch):
+    real = session_module.AdapterSession._start
+    starts = []
+
+    def start(self):
+        starts.append(1)
+        hello = real(self)
+        return {**hello, "adapter": {"name": "other", "version": "9"}} if len(starts) > 1 else hello
+
+    monkeypatch.setattr(session_module.AdapterSession, "_start", start)
+    result = probes(bad("crash-on-op", "acdc.issue"), vocabulary, timeout=1.0)
+    assert result["issue-malformed"].status == "fail"
+    assert result["present-malformed"].status == "fail"
+    assert errors.E_ADAPTER_HELLO_CHANGED in result["present-malformed"].reason

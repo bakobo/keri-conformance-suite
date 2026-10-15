@@ -28,7 +28,6 @@ from keri_conformance.errors import (
     RunnerError,
 )
 from keri_conformance.jsonfile import TRANSIENT_ERRNOS, JsonFileError, read_json
-from keri_conformance.session import OPERATIONS
 from keri_conformance.shapes import (
     Check,
     anything_object,
@@ -159,7 +158,7 @@ CASE = obj(
         "profile": string("^[a-z0-9][a-z0-9.-]*$"),
         "targets": obj({"wire": array(string(), min_items=1),
                         "features": array(string(FEATURE))}),
-        "operation": enum(*OPERATIONS),
+        "operation": enum(*INPUTS),
         "input": anything_object,
         "assertions": array(tagged("check", CHECK_FORMS), min_items=1),
         "provenance": obj({
