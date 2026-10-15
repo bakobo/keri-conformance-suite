@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "bc593657b91f7db7fd248f29a3d6f401dcfdd817",
+    "commit": "9ec34529e0e966aa445d3a2c7092729b9d20751e",
     "date": "2026-10-15"
   },
   "report": {
@@ -71,6 +71,11 @@
           "INTEROP": {
             "fail": 5,
             "pass": 4
+          }
+        },
+        "draft": {
+          "INTEROP": {
+            "not-supported": 76
           }
         }
       },
@@ -359,7 +364,7 @@
           "kind": "error-harness",
           "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    {:error,\n     \"Code in \\\"-_AAABAA-AABAAA9ks3T0lZ-LLWppJ7qiKDoJywuqyg-wx31IgvvPKN82G9dXaH993mc9xyKFBM_pA75IdqniUDzYz2l6Y0NMEvA\\\" not found\"}\n"
         },
-        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error,\n     \"Code in \\\"-_AAABAA-AABAAA9ks3T0lZ-LLWppJ7qiKDoJywuqyg-wx31IgvvPKN82G9dXaH993mc9xyKFBM_pA75IdqniUDzYz2l6Y0NMEvA\\\" not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:62: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error,\n     \"Code in \\\"-_AAABAA-AABAAA9ks3T0lZ-LLWppJ7qiKDoJywuqyg-wx31IgvvPKN82G9dXaH993mc9xyKFBM_pA75IdqniUDzYz2l6Y0NMEvA\\\" not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
         "assertions": [
           {
             "id": "a1",
@@ -466,7 +471,7 @@
           "kind": "error-harness",
           "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    {:error, \"count code not found\"}\n"
         },
-        "stderr": "\"Notfound text code == AABNF6a9gHxefw-657E7Fbdq_6TwiERw-XES5ArJ2-dFrpQwMbTxm3uTL8qJdWAxnePDbZaeBQQAG4r93bCPmn\"\n** (CaseClauseError) no case clause matching:\n\n    {:error, \"count code not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:62: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "stderr": "\"Notfound text code == AABNF6a9gHxefw-657E7Fbdq_6TwiERw-XES5ArJ2-dFrpQwMbTxm3uTL8qJdWAxnePDbZaeBQQAG4r93bCPmn\"\n** (CaseClauseError) no case clause matching:\n\n    {:error, \"count code not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
         "assertions": [
           {
             "id": "a1",
@@ -487,7 +492,7 @@
         "profile": "keripy-1x-interop",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "\n17:24:08.537 [warning] Not enough bytes in stream: -AA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
+        "stderr": "\n23:59:25.284 [warning] Not enough bytes in stream: -AA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
         "assertions": [
           {
             "id": "a1",
@@ -515,7 +520,7 @@
           "kind": "error-harness",
           "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised MatchError: no match of right hand side value:\n\n    \"-AABAACgUaRqYflGg14xU-Xpnk-qj_vFipRFhohk8Sw3edKeb9JnsTZpLunlldotOhyKXJ_XVnH05tjPX7I5j8zm0ai5\"\n"
         },
-        "stderr": "** (MatchError) no match of right hand side value:\n\n    \"-AABAACgUaRqYflGg14xU-Xpnk-qj_vFipRFhohk8Sw3edKeb9JnsTZpLunlldotOhyKXJ_XVnH05tjPX7I5j8zm0ai5\"\n\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV1.ex:250: Cesr.CountCodeKERIv1.CD_V_AttachmentGroup.from_b64/1\n    (cesrixir 1.0.1) lib/cesr.ex:433: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:62: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "stderr": "** (MatchError) no match of right hand side value:\n\n    \"-AABAACgUaRqYflGg14xU-Xpnk-qj_vFipRFhohk8Sw3edKeb9JnsTZpLunlldotOhyKXJ_XVnH05tjPX7I5j8zm0ai5\"\n\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV1.ex:250: Cesr.CountCodeKERIv1.CD_V_AttachmentGroup.from_b64/1\n    (cesrixir 1.0.1) lib/cesr.ex:433: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
         "assertions": [
           {
             "id": "a1",
@@ -539,7 +544,7 @@
           "kind": "error-harness",
           "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    {:error, \"count code not found\"}\n"
         },
-        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error, \"count code not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:62: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error, \"count code not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
         "assertions": [
           {
             "id": "a1",
@@ -578,6 +583,1168 @@
           }
         ],
         "outcome": "pass"
+      },
+      {
+        "id": "KERI-0143",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0144",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a7",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a8",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a9",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+              ],
+              "nt": "1",
+              "said": "EGijK0d8zyUh0ktrf6Zkmj55JBngUequUcH-Pyfs1LM2",
+              "sn": 3,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0145",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+                "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
+                "DBTo3WdgBSxcWOotGGO1O8uLd-CS_aLJowjJePl-aCn_"
+              ],
+              "kt": "2",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
+                "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy",
+                "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
+              ],
+              "nt": "2",
+              "said": "EPKym3myFgqlWWYbeiFV1zkvbjQ75rEIBjPQGo0RkpQM",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0146",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0147",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0148",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+                "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
+                "DBTo3WdgBSxcWOotGGO1O8uLd-CS_aLJowjJePl-aCn_"
+              ],
+              "kt": "2",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
+                "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy",
+                "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
+              ],
+              "nt": "2",
+              "said": "EPKym3myFgqlWWYbeiFV1zkvbjQ75rEIBjPQGo0RkpQM",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0149",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "rejected",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0150",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "rejected",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0151",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+                "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
+                "DBTo3WdgBSxcWOotGGO1O8uLd-CS_aLJowjJePl-aCn_"
+              ],
+              "kt": [
+                "1/2",
+                "1/2",
+                "1/2"
+              ],
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
+                "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy",
+                "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
+              ],
+              "nt": [
+                "1/2",
+                "1/2",
+                "1/2"
+              ],
+              "said": "EEmG0GNCGMmrQJolEyWKPJRMn5ARlTSaBpdGWE-imA9X",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0152",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+                "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
+                "DBTo3WdgBSxcWOotGGO1O8uLd-CS_aLJowjJePl-aCn_",
+                "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
+              ],
+              "kt": [
+                [
+                  "1/2",
+                  "1/2"
+                ],
+                [
+                  "1",
+                  "1"
+                ]
+              ],
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
+                "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy",
+                "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-",
+                "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
+              ],
+              "nt": [
+                [
+                  "1/2",
+                  "1/2"
+                ],
+                [
+                  "1",
+                  "1"
+                ]
+              ],
+              "said": "EBU-M_jITfst6S49txp_GzbwbRKvTzhvju9lBF6KYBtF",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0153",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0154",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0155",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a7",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0156",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "ENzfbqbwnHjo253wPYTGPkizE81yuZLTYvyE-V4nKryn",
+              "sn": 2,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0157",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "pending",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a6",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a7",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a8",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0158",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+              ],
+              "nt": "1",
+              "said": "ENhXyjkb0mb4XkwTaswD_Z22kLepzL0tDuempjyjuTYf",
+              "sn": 2,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "KERI-0159",
+        "status": "draft",
+        "profile": "keripy-1x-interop",
+        "operation": "keri.process",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_operation": "keri.process",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a2",
+            "check": "trunk",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": true,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a3",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a4",
+            "check": "disposition",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": "not-seen",
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          },
+          {
+            "id": "a5",
+            "check": "key_state",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
+              ],
+              "nt": "1",
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
+            },
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
       }
     ]
   }
