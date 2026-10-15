@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "5a19fc06c2e17dbee09bcb58815a1c0458625b1e",
+    "commit": "4c8f32c9dac2cd9f191f48f4395fc56339631767",
     "date": "2026-10-15"
   },
   "report": {
@@ -53,7 +53,7 @@
       "profile": "keripy-1x-interop",
       "cases_dir": "cases"
     },
-    "session_stderr": "/home/daniel/code/bakobo/keri-conformance-suite/.worktrees/kel-1x-cases-1/adapters/keripy/keripy-1.2.14/.venv/lib/python3.12/site-packages/keri/kering.py:47: SyntaxWarning: invalid escape sequence '\\.'\n  VEREX2 = b'(?P<proto2>[A-Z]{4})(?P<major2>[0-9A-Za-z_-])(?P<minor2>[0-9A-Za-z_-]{2})(?P<kind2>[A-Z]{4})(?P<size2>[0-9A-Za-z_-]{4})\\.'\n/home/daniel/code/bakobo/keri-conformance-suite/.worktrees/kel-1x-cases-1/adapters/keripy/keripy-1.2.14/.venv/lib/python3.12/site-packages/keri/core/serdering.py:150: SyntaxWarning: invalid escape sequence '\\A'\n  Begine regex with b'^' or b'\\A' to match at start of string.\n",
+    "session_stderr": "",
     "verdict": "interoperable",
     "aborted": null,
     "probes": {

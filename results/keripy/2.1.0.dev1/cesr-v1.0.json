@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "5a19fc06c2e17dbee09bcb58815a1c0458625b1e",
+    "commit": "4c8f32c9dac2cd9f191f48f4395fc56339631767",
     "date": "2026-10-15"
   },
   "report": {
@@ -86,7 +86,7 @@
       "profile": "cesr-v1.0",
       "cases_dir": "cases"
     },
-    "session_stderr": "/home/daniel/code/bakobo/keri-conformance-suite/.worktrees/kel-1x-cases-1/adapters/keripy/.venv/lib/python3.14/site-packages/hio/help/doming.py:364: SyntaxWarning: \"\\*\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\*\"? A raw string is also an option.\n  _update(\\*pa, \\*\\*kwa): update attributes using dict like update syntax\n/home/daniel/code/bakobo/keri-conformance-suite/.worktrees/kel-1x-cases-1/adapters/keripy/.venv/lib/python3.14/site-packages/hio/help/doming.py:634: SyntaxWarning: \"\\*\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\*\"? A raw string is also an option.\n  _update(\\*pa, \\*\\*kwa): update attributes using dict like update syntax\n",
+    "session_stderr": "",
     "verdict": "conformant",
     "aborted": null,
     "probes": {
