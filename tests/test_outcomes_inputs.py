@@ -123,6 +123,23 @@ def test_a_committed_file_without_a_report_is_a_coded_error(files, content):
     assert "scripts/results check" in message
 
 
+def test_a_committed_result_of_another_kind_is_refused_when_a_kind_is_asked_for(files):
+    committed, _ = files
+    assert outcomes.read_committed(committed) == outcomes.summarize(base_report())
+    message = refused(outcomes.E_COMMITTED_FORMAT,
+                      lambda p: outcomes.read_committed(p, kind="maintainer-run"), committed)
+    assert "labelled null, not maintainer-run" in message
+    committed.write_text(json.dumps({"provenance": {"kind": "submitted"},
+                                     "report": base_report()}))
+    message = refused(outcomes.E_COMMITTED_FORMAT,
+                      lambda p: outcomes.read_committed(p, kind="maintainer-run"), committed)
+    assert 'labelled "submitted"' in message
+    committed.write_text(json.dumps({"provenance": {"kind": "maintainer-run"},
+                                     "report": base_report()}))
+    assert outcomes.read_committed(committed, kind="maintainer-run") == \
+        outcomes.summarize(base_report())
+
+
 def test_every_known_value_is_accepted():
     cases = [case(f"C-{n}", outcome, failure, a1=assertion)
              for n, (outcome, failure, assertion) in enumerate(

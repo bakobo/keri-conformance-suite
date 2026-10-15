@@ -110,7 +110,7 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 
 ## CI and the committed results
 
-The `keriox-adapter` job in `.github/workflows/ci.yml` installs the toolchain `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test` and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results, `results/cesrox/0.1.8-said-0.4.3/<profile>.json`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). After building the adapter as above:
+The `keriox-adapter` job in `.github/workflows/ci.yml` installs the toolchain `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test` and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results, `results/cesrox/0.1.8-said-0.4.3/<profile>.json`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
 
 ```sh
 uv run python scripts/reproduce-results check --adapter keriox     # compare a fresh run with the committed results

@@ -86,7 +86,7 @@ The adapter checks its arithmetic against the parser wherever both exist: a coun
 
 ## CI and the committed results
 
-The `signify-ts-adapter` job in `.github/workflows/ci.yml` installs the Node version `.node-version` names, runs `npm ci` (which refuses a `package-lock.json` that does not match `package.json`), typechecks, runs the tests with the 100% branch gate, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0` and `keripy-1x-interop`, under `results/signify-ts/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). After installing the adapter as above:
+The `signify-ts-adapter` job in `.github/workflows/ci.yml` installs the Node version `.node-version` names, runs `npm ci` (which refuses a `package-lock.json` that does not match `package.json`), typechecks, runs the tests with the 100% branch gate, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0` and `keripy-1x-interop`, under `results/signify-ts/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool installs the adapter itself, as above, before it runs it:
 
 ```sh
 uv run python scripts/reproduce-results check --adapter signify-ts     # compare fresh runs with the committed results

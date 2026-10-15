@@ -1,8 +1,8 @@
 name: Reproduce results
 
 # On demand only: builds every adapter in adapters/ at its pin, reruns each against the profiles it
-# is meant for, compares every run with the committed results (scripts/reproduce-results check),
-# and uploads the comparison and the runs, labelled reproduced, as an artifact. It never commits,
+# is meant for, and uploads those runs, labelled reproduced, with their comparison against the
+# committed results (scripts/reproduce-results reproduce), as an artifact. It never commits,
 # deploys or publishes anything: the site shows only committed results (pages.yml), and a
 # reproduced result reaches it only if a maintainer deliberately commits one. It runs
 # implementation code against hostile inputs, so it holds only a read-only token. Nothing runs it
@@ -56,17 +56,17 @@ jobs:
       - name: Install the signify-ts adapter at its pin
         working-directory: adapters/signify-ts
         run: npm ci --no-audit --no-fund
-      # Every adapter must be built; the tool refuses rather than skip one.
-      - name: Rerun the adapters as reproduced results
-        run: |
-          uv run python scripts/reproduce-results reproduce "$RUNNER_TEMP/reproduced/results" \
-            --run "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT" \
-            --commit "$GITHUB_SHA"
-      # A difference fails the job, after the comparison is saved for the artifact.
-      - name: Compare the runs with the committed results
+      # One run of every adapter: the tool rebuilds each from its lockfile (a no-op after the
+      # steps above, which keep each toolchain's log separate), writes the runs labelled
+      # reproduced, and compares those same runs with the committed results. A difference fails
+      # the job after the runs and the comparison are saved for the artifact.
+      - name: Rerun the adapters and compare with the committed results
         run: |
           set -o pipefail
-          uv run python scripts/reproduce-results check 2>&1 | tee "$RUNNER_TEMP/reproduced/check.txt"
+          mkdir -p "$RUNNER_TEMP/reproduced"
+          uv run python scripts/reproduce-results reproduce "$RUNNER_TEMP/reproduced/results" \
+            --run "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT" \
+            --commit "$GITHUB_SHA" 2>&1 | tee "$RUNNER_TEMP/reproduced/comparison.txt"
       - name: Upload the runs and the comparison
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

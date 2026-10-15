@@ -10,22 +10,26 @@ maintainer-run. This module is the one tool that writes and checks them:
     scripts/reproduce-results readmes [--check]
     scripts/reproduce-results reproduce OUT --run URL --commit SHA [--date YYYY-MM-DD]
 
-refresh runs the selected adapters (all by default) and replaces their committed results, then
-rewrites the generated results table in each adapter's README. It refuses a working tree with
-changes outside results/ and the adapter READMEs, so the suite commit a result names is the code
-that produced it. check reruns them and compares each run, outcome by outcome, with the committed
-result (tools/outcomes.py); any difference fails, an improvement included, until a refresh
-records it. readmes renders the README tables from the committed results without running
-anything; with --check it fails when one is stale, which CI checks. reproduce is for the
-on-demand workflow: it runs every adapter and writes the results labelled reproduced into OUT,
-which is never committed.
+Every command that runs adapters first builds each selected one from its lockfile, with the
+command its README and CI use, so a run never uses a build left over from other code. The
+toolchains (uv with Python 3.14 and 3.12, the Rust toolchains rust-toolchain.toml names, Node,
+libsodium) must already be installed.
 
-Every adapter must already be built at its pin, as its README says; an adapter that is not built
-is refused rather than skipped, because a run that silently leaves one out would look complete.
+refresh builds and runs the selected adapters (all by default) and replaces their committed
+results, then rewrites the generated results table in each adapter's README. It refuses a working
+tree with changes outside results/ and the adapter READMEs, before the runs and again after them,
+so the suite commit a result names is the code that produced it. check builds and reruns them
+and compares each run, outcome by outcome, with the committed maintainer-run result
+(tools/outcomes.py); any difference fails, an improvement included, until a refresh records it.
+readmes renders the README tables from the committed results without running anything; with
+--check it fails when one is stale or when a maintainer-run result names an adapter this
+repository does not ship, which CI checks. reproduce is for the on-demand workflow: it builds and
+runs every adapter, writes the results labelled reproduced into OUT, which is never committed,
+and compares those same runs with the committed results.
 
-Exit status: 0 on success; 1 when check or readmes --check finds a difference; 2 on a usage error;
-4 when the tool could not do its job (an adapter not built, a dirty tree, a report that could not
-be published).
+Exit status: 0 on success; 1 when check, reproduce or readmes --check finds a difference; 2 on a
+usage error; 4 when the tool could not do its job (an adapter that would not build, a dirty
+tree, a report that could not be published, a file it could not read or write).
 """
 
 import argparse
@@ -52,15 +56,19 @@ from tools.results import (
     wrap,
 )
 
+E_BUILD = "e.env.dependency.adapter-build.f"
 E_NOT_BUILT = "e.env.dependency.adapter-not-built.f"
 E_DIRTY = "e.state.conflict.dirty-tree.f"
 E_NO_REPORT = "e.env.command.no-report.f"
 E_ABORTED = "e.input.range.aborted-report.f"
 E_GIT = "e.env.command.git.f"
 E_README = "e.self.config.readme-markers.f"
+E_README_IO = "e.env.filesystem.readme.f"
+E_README_IO_TRANSIENT = "e.env.filesystem.readme.r"
 E_REGRESSION = "e.state.conflict.result-regression.f"
 E_STALE = "e.state.conflict.result-stale.f"
 E_UNCOMMITTED = "e.state.missing.committed-result.f"
+E_UNSHIPPED = "e.rule.result.unshipped-adapter.f"
 
 BEGIN = ("<!-- BEGIN generated results: scripts/reproduce-results writes this table from "
          "results/; do not edit it -->")
@@ -71,28 +79,42 @@ REFRESHABLE = ("results/",)
 
 @dataclass(frozen=True)
 class Instance:
-    """One shipped adapter build: what to call it, the executable its README builds, the profiles
-    it is run against, and the README whose results table lists its committed results."""
+    """One shipped adapter build: what to call it, how to build it (each step a directory, a
+    command and extra environment), the executable that build leaves, the profiles it is run
+    against, the adapter name its hello reports, and the README whose results table lists its
+    committed results."""
     name: str
+    build: tuple[tuple[str, tuple[str, ...], tuple[tuple[str, str], ...]], ...]
     executable: str
     profiles: tuple[str, ...]
-    adapter: str  # the adapter name its hello reports
+    adapter: str
     readme: str
 
 
+def _step(directory: str, *argv: str, **env: str):
+    return (directory, argv, tuple(sorted(env.items())))
+
+
 INSTANCES = (
-    Instance("keripy", "adapters/keripy/.venv/bin/kcs-adapter-keripy",
+    Instance("keripy", (_step("adapters/keripy", "uv", "sync", "--locked"),),
+             "adapters/keripy/.venv/bin/kcs-adapter-keripy",
              ("cesr-v1.0", "keri-v1.0.1", "keri-escrow", "acdc-v1.0"),
              "kcs-adapter-keripy", "adapters/keripy/README.md"),
-    Instance("keripy-1.2.14", "adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy",
+    Instance("keripy-1.2.14",
+             (_step("adapters/keripy/keripy-1.2.14", "uv", "sync", "--locked", UV_PYTHON="3.12"),),
+             "adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy",
              ("keripy-1x-interop",), "kcs-adapter-keripy", "adapters/keripy/README.md"),
-    Instance("keriox", "adapters/keriox/target/debug/kcs-adapter-keriox",
+    Instance("keriox", (_step("adapters/keriox", "cargo", "build", "--locked"),),
+             "adapters/keriox/target/debug/kcs-adapter-keriox",
              ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-keriox",
              "adapters/keriox/README.md"),
-    Instance("affinidi", "adapters/affinidi/target/debug/kcs-adapter-affinidi",
+    Instance("affinidi", (_step("adapters/affinidi", "cargo", "build", "--locked"),),
+             "adapters/affinidi/target/debug/kcs-adapter-affinidi",
              ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-affinidi",
              "adapters/affinidi/README.md"),
-    Instance("signify-ts", "adapters/signify-ts/bin/kcs-adapter-signify-ts",
+    Instance("signify-ts",
+             (_step("adapters/signify-ts", "npm", "ci", "--no-audit", "--no-fund"),),
+             "adapters/signify-ts/bin/kcs-adapter-signify-ts",
              ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-signify-ts",
              "adapters/signify-ts/README.md"),
 )
@@ -100,6 +122,23 @@ INSTANCES = (
 
 def _today() -> str:
     return datetime.now(UTC).date().isoformat()
+
+
+def build_adapter(repo: Path, instance: Instance) -> None:
+    """Build `instance` from its lockfile, as its README and CI do. Each step's output goes to
+    this process's own, so a failure explains itself."""
+    for directory, argv, env in instance.build:
+        try:
+            done = subprocess.run(list(argv), cwd=repo / directory,
+                                  env={**os.environ, **dict(env)}, check=False)
+        except OSError as exc:
+            raise RunnerError(E_BUILD, f"{instance.name} could not be built: {argv[0]} could not "
+                                       f"be started ({exc}). Install the toolchain its README "
+                                       "names.") from exc
+        if done.returncode != 0:
+            raise RunnerError(E_BUILD, f"{instance.name} could not be built: {' '.join(argv)} "
+                                       f"exited {done.returncode} in {directory}; its output "
+                                       "above says why.")
 
 
 def kcs_run(repo: Path, executable: Path, profile: str, report: Path) -> None:
@@ -128,14 +167,16 @@ def selected(names) -> tuple[Instance, ...]:
     return tuple(i for i in INSTANCES if not names or i.name in names)
 
 
-def _run_all(repo: Path, instances, work: Path, run) -> list[tuple[Instance, str, dict]]:
-    """Every (instance, profile, report) of the selected instances, refusing before it runs
-    anything if one of them is not built."""
+def _run_all(repo: Path, instances, work: Path, run, build) -> list[tuple[Instance, str, dict]]:
+    """Every (instance, profile, report) of the selected instances, building each first and
+    refusing before any runs if one of them did not leave its executable."""
+    for instance in instances:
+        build(repo, instance)
     missing = [i for i in instances if not os.access(repo / i.executable, os.X_OK)]
     if missing:
         names = ", ".join(f"{i.name} ({i.executable})" for i in missing)
-        raise RunnerError(E_NOT_BUILT, f"These adapters are not built: {names}. Build each as its "
-                                       "README says, or choose others with --adapter.")
+        raise RunnerError(E_NOT_BUILT, f"These adapters built without leaving their executable: "
+                                       f"{names}.")
     runs = []
     for instance in instances:
         for profile in instance.profiles:
@@ -171,16 +212,23 @@ def _envelope(report: dict, provenance: dict) -> dict:
     return {"result_version": 1, "provenance": provenance, "report": report}
 
 
-def refresh(repo, names=(), *, maintainer: str, day: str, run=kcs_run) -> list[str]:
+def refresh(repo, names=(), *, maintainer: str, day: str, run=kcs_run,
+            build=build_adapter) -> list[str]:
     """Replace the committed results of the selected instances with fresh runs, and remove the
     results their new runs supersede. Returns the paths written and removed, for printing."""
     repo = Path(repo)
-    provenance = {"kind": "maintainer-run", "maintainer": maintainer,
-                  "commit": _clean_commit(repo), "date": day}
+    commit = _clean_commit(repo)
+    _readmes(repo)  # a README the tables cannot be written into is refused before any result moves
+    provenance = {"kind": "maintainer-run", "maintainer": maintainer, "commit": commit,
+                  "date": day}
     results = repo / "results"
     with tempfile.TemporaryDirectory() as scratch:
         work = Path(scratch)
-        runs = _run_all(repo, selected(names), work, run)
+        runs = _run_all(repo, selected(names), work, run, build)
+        if _clean_commit(repo) != commit:
+            raise RunnerError(E_DIRTY, f"HEAD moved from {commit} while the adapters ran, so the "
+                                       "runs cannot be attributed to one commit. Nothing was "
+                                       "written; rerun the refresh.")
         for instance, profile, report in runs:
             if report["verdict"] == outcomes.ABORTED:
                 raise RunnerError(E_ABORTED, f"The {profile} run of {instance.name} was aborted, "
@@ -241,15 +289,12 @@ def _remove_superseded(results: Path, runs, kept: set[str]) -> list[str]:
     return removed
 
 
-def check(repo, names=(), *, run=kcs_run) -> list[str]:
-    """Every way a fresh run of the selected instances differs from the committed results, as
-    lines starting with a code; empty when they all match."""
-    repo = Path(repo)
+def _compare(repo: Path, runs) -> list[str]:
+    """Every way `runs` differ from the committed maintainer-run results, as lines starting with
+    a code."""
     lines = []
     probe = {"kind": "maintainer-run", "maintainer": "check", "commit": "0" * 40,
              "date": _today()}
-    with tempfile.TemporaryDirectory() as scratch:
-        runs = _run_all(repo, selected(names), Path(scratch), run)
     for instance, profile, report in runs:
         where = f"{instance.name} {profile}"
         doc = _envelope(report, probe)
@@ -264,7 +309,7 @@ def check(repo, names=(), *, run=kcs_run) -> list[str]:
             lines.append(f"{E_UNCOMMITTED}: {where}: no committed result at results/{relative}")
             continue
         try:
-            base = outcomes.read_committed(committed)
+            base = outcomes.read_committed(committed, kind="maintainer-run")
         except outcomes.InputError as exc:
             lines.append(f"{E_UNCOMMITTED}: {where}: {exc}")
             continue
@@ -273,21 +318,33 @@ def check(repo, names=(), *, run=kcs_run) -> list[str]:
         lines += [f"{E_STALE}: {where}: {line} (an improvement; record it with "
                   f"scripts/reproduce-results refresh --adapter {instance.name})"
                   for line in improvements]
-    return lines + check_readmes(repo)
+    return lines
 
 
-def reproduce(repo, out, *, run_url: str, commit: str, day: str, run=kcs_run) -> list[str]:
-    """Run every instance and write each result, labelled reproduced, under `out`."""
+def check(repo, names=(), *, run=kcs_run, build=build_adapter) -> list[str]:
+    """Every way a fresh run of the selected instances differs from the committed results, and
+    every stale README table, as lines starting with a code; empty when they all match."""
+    repo = Path(repo)
+    with tempfile.TemporaryDirectory() as scratch:
+        runs = _run_all(repo, selected(names), Path(scratch), run, build)
+    return _compare(repo, runs) + check_readmes(repo)
+
+
+def reproduce(repo, out, *, run_url: str, commit: str, day: str, run=kcs_run,
+              build=build_adapter) -> tuple[list[str], list[str]]:
+    """Build and run every instance, write each result, labelled reproduced, under `out`, and
+    compare those same runs with the committed results. Returns (lines written, differences)."""
     repo, out = Path(repo), Path(out)
     provenance = {"kind": "reproduced", "run": run_url, "commit": commit, "date": day}
     written = []
     with tempfile.TemporaryDirectory() as scratch:
         work = Path(scratch)
-        for n, (_, _, report) in enumerate(_run_all(repo, INSTANCES, work, run)):
+        runs = _run_all(repo, INSTANCES, work, run, build)
+        for n, (_, _, report) in enumerate(runs):
             source = work / f"{n}.report.json"
             source.write_text(json.dumps(report), encoding="utf-8")
             written.append(f"wrote {wrap(source, provenance, out)}")
-    return written
+    return written, _compare(repo, runs)
 
 
 # --- the README tables ---------------------------------------------------------------------------
@@ -325,12 +382,23 @@ def render_table(results, readme: str) -> str:
     return "\n".join([*rows, "", END])
 
 
+def _readme_error(path: Path, exc: OSError, verb: str) -> RunnerError:
+    code = E_README_IO_TRANSIENT if exc.errno in outcomes.TRANSIENT_ERRNOS else E_README_IO
+    return RunnerError(code, f"The README {path} could not be {verb}: {exc}.")
+
+
 def _readmes(repo: Path) -> dict[str, tuple[str, str]]:
     """Each adapter README's current text and the text it should have."""
     results = load_results(repo / "results", kinds=COMMITTED_KINDS)
     found = {}
     for readme in sorted({i.readme for i in INSTANCES}):
-        text = (repo / readme).read_text(encoding="utf-8")
+        try:
+            text = (repo / readme).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            if isinstance(exc, UnicodeDecodeError):
+                raise RunnerError(E_README, f"The README {repo / readme} is not UTF-8 text.") \
+                    from exc
+            raise _readme_error(repo / readme, exc, "read") from exc
         if text.count(BEGIN) != 1 or text.count(END) != 1 or text.index(BEGIN) > text.index(END):
             raise RunnerError(E_README, f"{readme} must hold the generated results table's "
                                         "markers exactly once each, BEGIN before END, so the "
@@ -345,15 +413,32 @@ def update_readmes(repo) -> list[str]:
     changed = []
     for readme, (text, wanted) in _readmes(Path(repo)).items():
         if text != wanted:
-            (Path(repo) / readme).write_text(wanted, encoding="utf-8")
+            try:
+                (Path(repo) / readme).write_text(wanted, encoding="utf-8")
+            except OSError as exc:
+                raise _readme_error(Path(repo) / readme, exc, "written") from exc
             changed.append(f"rewrote the results table in {readme}")
     return changed
 
 
+def _unshipped(repo: Path) -> list[str]:
+    """A maintainer-run result says the suite's maintainer ran an adapter this repository ships;
+    one naming any other adapter is a claim mislabelled, so it is refused."""
+    shipped = {i.adapter for i in INSTANCES}
+    return [f"{E_UNSHIPPED}: results/{r.path.as_posix()} is labelled maintainer-run but names the "
+            f"adapter {json.dumps(r.doc['report']['hello']['adapter']['name'][:80])}, which this "
+            "repository does not ship; a result from any other adapter is submitted"
+            for r in load_results(repo / "results", kinds=COMMITTED_KINDS)
+            if r.doc["provenance"]["kind"] == "maintainer-run"
+            and r.doc["report"]["hello"]["adapter"]["name"] not in shipped]
+
+
 def check_readmes(repo) -> list[str]:
-    return [f"{E_STALE}: the results table in {readme} does not match results/; rewrite it with "
-            "scripts/reproduce-results readmes"
-            for readme, (text, wanted) in _readmes(Path(repo)).items() if text != wanted]
+    repo = Path(repo)
+    return _unshipped(repo) + [
+        f"{E_STALE}: the results table in {readme} does not match results/; rewrite it with "
+        "scripts/reproduce-results readmes"
+        for readme, (text, wanted) in _readmes(repo).items() if text != wanted]
 
 
 # --- command line --------------------------------------------------------------------------------
@@ -375,10 +460,10 @@ def _parser() -> argparse.ArgumentParser:
                         help=argparse.SUPPRESS)
     commands = parser.add_subparsers(dest="command", required=True)
     names = [i.name for i in INSTANCES]
-    refresh_ = commands.add_parser("refresh", help="rerun adapters and replace their committed "
-                                                   "results")
-    check_ = commands.add_parser("check", help="rerun adapters and compare with the committed "
-                                               "results")
+    refresh_ = commands.add_parser("refresh", help="rebuild and rerun adapters and replace their "
+                                                   "committed results")
+    check_ = commands.add_parser("check", help="rebuild and rerun adapters and compare with the "
+                                               "committed results")
     for sub in (refresh_, check_):
         sub.add_argument("--adapter", action="append", choices=names, default=[],
                          help="only this adapter build (repeatable; default: every one)")
@@ -387,8 +472,9 @@ def _parser() -> argparse.ArgumentParser:
     readmes = commands.add_parser("readmes", help="rewrite the adapter READMEs' results tables "
                                                   "from results/")
     readmes.add_argument("--check", action="store_true", help="fail if one is stale; write nothing")
-    reproduce_ = commands.add_parser("reproduce", help="run every adapter and write reproduced "
-                                                       "results into a directory (workflow use)")
+    reproduce_ = commands.add_parser("reproduce", help="rebuild and rerun every adapter, write "
+                                                       "reproduced results into a directory and "
+                                                       "compare them (workflow use)")
     reproduce_.add_argument("out")
     reproduce_.add_argument("--run", required=True, help="the workflow run's URL")
     reproduce_.add_argument("--commit", required=True, help="the suite commit the run used")
@@ -403,6 +489,15 @@ def _maintainer(args) -> str:
     if not name:
         raise _UsageError("no --maintainer was given and git config user.name is empty")
     return name
+
+
+def _differences(found: list[str], matched: str) -> int:
+    for line in found:
+        print(line)
+    if found:
+        return 1
+    print(matched)
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -422,24 +517,20 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "refresh":
             lines = refresh(repo, args.adapter, maintainer=maintainer, day=args.date)
         elif args.command == "reproduce":
-            lines = reproduce(repo, args.out, run_url=args.run, commit=args.commit,
-                              day=args.date)
+            lines, found = reproduce(repo, args.out, run_url=args.run, commit=args.commit,
+                                     day=args.date)
+            for line in lines:
+                print(line)
+            return _differences(found, "The runs match the committed results.")
         elif args.command == "readmes" and not args.check:
             lines = update_readmes(repo)
+        elif args.command == "check":
+            return _differences(check(repo, args.adapter), "The runs match the committed results.")
         else:
-            found = (check(repo, args.adapter) if args.command == "check"
-                     else check_readmes(repo))
-            for line in found:
-                print(line)
-            if found:
-                return 1
-            print("The runs match the committed results." if args.command == "check"
-                  else "The README results tables match results/.")
-            return 0
+            return _differences(check_readmes(repo), "The README results tables match results/.")
     except RunnerError as err:
         print(f"scripts/reproduce-results: {err}", file=sys.stderr)
         return EXIT_FAULT
     for line in lines:
         print(line)
     return 0
-

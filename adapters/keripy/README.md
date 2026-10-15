@@ -63,7 +63,7 @@ uv run coverage combine .coverage.main .coverage.onex && uv run coverage report 
 
 ## CI and the committed results
 
-The `keripy-adapter` job in `.github/workflows/ci.yml` builds both instances from their lockfiles: Python 3.14 with keripy main, and Python 3.12 with keripy 1.2.14. It runs the adapter's tests in each, gates on their combined branch coverage being 100%, and runs `kcs check-adapter` on both. It does not run a profile. The table under Results is generated from this adapter's committed results, `results/keripy/<version>/<profile>.json`: `cesr-v1.0`, `keri-v1.0.1`, `keri-escrow` and `acdc-v1.0` on keripy main, and `keripy-1x-interop` on keripy 1.2.14. The suite's maintainer refreshes and checks them locally (`docs/design.md`, Continuous integration). After building both instances as above:
+The `keripy-adapter` job in `.github/workflows/ci.yml` builds both instances from their lockfiles: Python 3.14 with keripy main, and Python 3.12 with keripy 1.2.14. It runs the adapter's tests in each, gates on their combined branch coverage being 100%, and runs `kcs check-adapter` on both. It does not run a profile. The table under Results is generated from this adapter's committed results, `results/keripy/<version>/<profile>.json`: `cesr-v1.0`, `keri-v1.0.1`, `keri-escrow` and `acdc-v1.0` on keripy main, and `keripy-1x-interop` on keripy 1.2.14. The suite's maintainer refreshes and checks them locally (`docs/design.md`, Continuous integration). The tool builds both instances itself, as above, before it runs them:
 
 ```sh
 uv run python scripts/reproduce-results check --adapter keripy --adapter keripy-1.2.14     # compare fresh runs with the committed results

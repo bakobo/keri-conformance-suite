@@ -217,12 +217,19 @@ def read_report(path) -> dict:
     return report
 
 
-def read_committed(path) -> dict:
+def read_committed(path, *, kind: str | None = None) -> dict:
     """The summary of the committed result at path (a report inside a provenance envelope),
-    refused with an InputError if it cannot be compared."""
+    refused with an InputError if it cannot be compared. With `kind`, the result must also carry
+    that provenance kind, so a fresh run is never measured against another kind of result that
+    happens to sit at the same path."""
     doc = _load(path, "committed result", E_COMMITTED_FORMAT)
     report = doc.get("report") if isinstance(doc, dict) else None
     problem = "it has no report" if report is None else report_problem(report)
+    if not problem and kind is not None:
+        provenance = doc.get("provenance")
+        found = provenance.get("kind") if isinstance(provenance, dict) else None
+        if found != kind:
+            problem = f"it is labelled {json.dumps(found)}, not {kind}"
     if problem:
         raise InputError(f"{E_COMMITTED_FORMAT}: The committed result {path} cannot be compared "
                          f"({problem}); scripts/results check names what is wrong with it.")

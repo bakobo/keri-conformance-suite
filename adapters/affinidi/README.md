@@ -74,7 +74,7 @@ This is the central limitation. Affinidi's parser returns attachments as decoded
 
 ## CI and the committed results
 
-The `affinidi-adapter` job in `.github/workflows/ci.yml` installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0` and `keripy-1x-interop`, under `results/affinidi-keri-core/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). After building the adapter as above:
+The `affinidi-adapter` job in `.github/workflows/ci.yml` installs Rust 1.95.0 with rustup, builds with `--locked`, runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`, and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results for `cesr-v1.0` and `keripy-1x-interop`, under `results/affinidi-keri-core/`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
 
 ```sh
 uv run python scripts/reproduce-results check --adapter affinidi     # compare fresh runs with the committed results

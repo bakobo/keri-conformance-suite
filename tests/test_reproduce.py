@@ -1,6 +1,7 @@
 """tools/reproduce.py: refresh, check, readmes and reproduce for the shipped adapters' committed
-results. Adapter runs are replaced by a function that writes a prepared report, except in the one
-test that drives the real runner against a fake adapter."""
+results. Adapter builds are recorded rather than run and adapter runs are replaced by a function
+that writes a prepared report, except in the tests that drive the real build step and the real
+runner."""
 
 import json
 import os
@@ -15,10 +16,10 @@ from keri_conformance.errors import RunnerError
 from tools import reproduce as P
 from tools.results import result_path
 
-ALPHA = P.Instance("alpha", "adapters/alpha/bin/run", ("cesr-v1.0", "keri-v1.0.1"),
-                   "kcs-adapter-keripy", "adapters/alpha/README.md")
-BETA = P.Instance("beta", "adapters/beta/bin/run", ("cesr-v1.0",), "kcs-adapter-beta",
-                  "adapters/beta/README.md")
+ALPHA = P.Instance("alpha", (P._step("adapters/alpha", "make"),), "adapters/alpha/bin/run",
+                   ("cesr-v1.0", "keri-v1.0.1"), "kcs-adapter-keripy", "adapters/alpha/README.md")
+BETA = P.Instance("beta", (P._step("adapters/beta", "make", CC="cc"),), "adapters/beta/bin/run",
+                  ("cesr-v1.0",), "kcs-adapter-beta", "adapters/beta/README.md")
 TABLE = f"intro\n\n{P.BEGIN}\nold\n{P.END}\n\nmore\n"
 
 
@@ -46,6 +47,16 @@ def default_reports(overrides=None):
                ("beta", "cesr-v1.0"): beta}
     reports.update(overrides or {})
     return reports
+
+
+@pytest.fixture(autouse=True)
+def builds(monkeypatch):
+    """Every build the tool asks for, in order; nothing is really built."""
+    built = []
+    for fn in (P.refresh, P.check, P.reproduce):
+        monkeypatch.setattr(fn, "__kwdefaults__",
+                            {**fn.__kwdefaults__, "build": lambda repo, i: built.append(i.name)})
+    return built
 
 
 def git(repo, *args):
@@ -187,13 +198,88 @@ def test_refresh_refuses_an_unpublishable_report_and_writes_nothing(repo):
     assert not (repo / "results" / "keripy").exists()
 
 
-def test_an_adapter_that_is_not_built_is_refused_before_anything_runs(repo):
+def test_every_selected_adapter_is_built_before_any_runs(repo, builds):
+    runs = Runs(default_reports())
+    refresh(repo, runs)
+    assert builds == ["alpha", "beta"]
+    builds.clear()
+    refresh(repo, runs, ["beta"])
+    assert builds == ["beta"]
+
+
+def test_a_build_that_leaves_no_executable_is_refused_before_anything_runs(repo):
     (repo / BETA.executable).unlink()
     runs = Runs(default_reports())
     with pytest.raises(RunnerError) as info:
         refresh(repo, runs)
     assert info.value.code == P.E_NOT_BUILT and "beta" in str(info.value)
     assert runs.calls == []
+
+
+def test_a_head_that_moves_while_the_adapters_run_is_refused_and_writes_nothing(repo):
+    class Committing(Runs):
+        def __call__(self, repo_, executable, profile, out):
+            super().__call__(repo_, executable, profile, out)
+            if len(self.calls) == 1:
+                git(repo, "-c", "user.name=T", "-c", "user.email=t@x", "commit", "-q",
+                    "--allow-empty", "-m", "meanwhile")
+
+    with pytest.raises(RunnerError) as info:
+        refresh(repo, Committing(default_reports()))
+    assert info.value.code == P.E_DIRTY and "HEAD moved" in str(info.value)
+    assert not (repo / "results" / "keripy").exists()
+
+
+def test_a_tree_edited_while_the_adapters_run_is_refused(repo):
+    class Editing(Runs):
+        def __call__(self, repo_, executable, profile, out):
+            super().__call__(repo_, executable, profile, out)
+            (repo / "edited.txt").write_text("x")
+
+    with pytest.raises(RunnerError) as info:
+        refresh(repo, Editing(default_reports()))
+    assert info.value.code == P.E_DIRTY and "edited.txt" in str(info.value)
+
+
+def test_a_readme_that_cannot_take_its_table_is_refused_before_any_result_moves(repo):
+    (repo / BETA.readme).write_text("no markers\n")
+    with pytest.raises(RunnerError) as info:
+        refresh(repo)
+    assert info.value.code == P.E_README
+    assert not (repo / "results" / "keripy").exists()
+
+
+# --- the real build step ---------------------------------------------------------------------------
+
+def _instance(*steps):
+    return P.Instance("x", steps, "bin/x", ("cesr-v1.0",), "kcs-adapter-x", "README.md")
+
+
+def test_build_adapter_runs_each_step_in_its_directory_with_its_environment(tmp_path):
+    (tmp_path / "a").mkdir()
+    script = ("import os, pathlib; pathlib.Path('out.txt').write_text(os.environ['KCS_X'])")
+    P.build_adapter(tmp_path, _instance(P._step("a", sys.executable, "-c", script, KCS_X="1")))
+    assert (tmp_path / "a" / "out.txt").read_text() == "1"
+
+
+def test_a_failing_build_step_is_a_coded_error(tmp_path):
+    with pytest.raises(RunnerError) as info:
+        P.build_adapter(tmp_path, _instance(P._step(".", sys.executable, "-c", "raise SystemExit(3)")))
+    assert info.value.code == P.E_BUILD and "exited 3" in str(info.value)
+
+
+def test_a_build_tool_that_is_not_installed_is_a_coded_error(tmp_path):
+    with pytest.raises(RunnerError) as info:
+        P.build_adapter(tmp_path, _instance(P._step(".", "kcs-no-such-tool")))
+    assert info.value.code == P.E_BUILD and "Install the toolchain" in str(info.value)
+
+
+def test_the_real_instances_build_from_their_lockfiles():
+    commands = {i.name: [" ".join(argv) for _, argv, _ in i.build] for i in P.INSTANCES}
+    assert commands["keripy-1.2.14"] == ["uv sync --locked"]
+    assert dict(P.INSTANCES[1].build[0][2]) == {"UV_PYTHON": "3.12"}
+    assert commands["keriox"] == commands["affinidi"] == ["cargo build --locked"]
+    assert commands["signify-ts"] == ["npm ci --no-audit --no-fund"]
 
 
 def test_an_adapter_that_writes_no_report_is_refused(repo):
@@ -245,6 +331,17 @@ def test_check_reports_a_run_with_no_committed_result(repo):
                         "results/betaimpl/3/cesr-v1.0.json")
 
 
+def test_check_never_compares_with_a_submitted_claim_at_the_same_path(repo, monkeypatch):
+    monkeypatch.setattr(P, "check_readmes", lambda repo: [])
+    beta = default_reports()[("beta", "cesr-v1.0")]
+    committed(repo, result(beta, SUBMITTED))
+    lines = P.check(repo, ["beta"], run=Runs(default_reports()))
+    assert lines == [(f"{P.E_UNCOMMITTED}: beta cesr-v1.0: {P.outcomes.E_COMMITTED_FORMAT}: The "
+                      f"committed result {repo}/results/betaimpl/3/cesr-v1.0.json cannot be "
+                      "compared (it is labelled \"submitted\", not maintainer-run); "
+                      "scripts/results check names what is wrong with it.")]
+
+
 def test_check_reports_a_committed_result_it_cannot_read(repo, monkeypatch):
     # The README tables would refuse the tree first; scripts/results check names the problem too.
     monkeypatch.setattr(P, "check_readmes", lambda repo: [])
@@ -282,6 +379,43 @@ def test_the_table_lists_only_its_own_adapters_maintainer_runs(repo):
     assert P.check_readmes(repo) == []
 
 
+def test_a_maintainer_run_result_from_an_adapter_not_shipped_is_refused(repo):
+    stranger = report(name="other")
+    stranger["hello"]["adapter"]["name"] = "kcs-adapter-elsewhere"
+    committed(repo, result(stranger, MAINTAINER_RUN))
+    claim = report(name="claimed")
+    claim["hello"]["adapter"]["name"] = "kcs-adapter-elsewhere"
+    committed(repo, result(claim, SUBMITTED))
+    P.update_readmes(repo)
+    assert P.check_readmes(repo) == [
+        (f"{P.E_UNSHIPPED}: results/other/2.1.0.dev1/cesr-v1.0.json is labelled maintainer-run "
+         'but names the adapter "kcs-adapter-elsewhere", which this repository does not ship; '
+         "a result from any other adapter is submitted")]
+
+
+def test_a_readme_that_cannot_be_read_is_a_coded_error(repo):
+    (repo / BETA.readme).unlink()
+    with pytest.raises(RunnerError) as info:
+        P.check_readmes(repo)
+    assert info.value.code == P.E_README_IO
+    (repo / BETA.readme).write_bytes(b"\xff\xfe")
+    with pytest.raises(RunnerError) as info:
+        P.check_readmes(repo)
+    assert info.value.code == P.E_README
+
+
+@pytest.mark.parametrize(("errno_", "code"), [(13, "e.env.filesystem.readme.f"),
+                                               (28, "e.env.filesystem.readme.r")])
+def test_a_readme_that_cannot_be_written_is_a_coded_error(repo, monkeypatch, errno_, code):
+    def fail(self, *args, **kwargs):
+        raise OSError(errno_, "simulated")
+
+    monkeypatch.setattr(P.Path, "write_text", fail)
+    with pytest.raises(RunnerError) as info:
+        P.update_readmes(repo)
+    assert info.value.code == code
+
+
 @pytest.mark.parametrize("text", ["no markers\n", f"{P.END}\n{P.BEGIN}\n",
                                   f"{P.BEGIN}\n{P.BEGIN}\n{P.END}\n"])
 def test_a_readme_without_one_well_placed_pair_of_markers_is_refused(repo, text):
@@ -293,15 +427,22 @@ def test_a_readme_without_one_well_placed_pair_of_markers_is_refused(repo, text)
 
 # --- reproduce -----------------------------------------------------------------------------------
 
-def test_reproduce_writes_reproduced_results_into_a_directory(repo, tmp_path):
+def test_reproduce_writes_reproduced_results_and_compares_the_same_runs(repo, tmp_path):
     run_url = "https://github.com/bakobo/keri-conformance-suite/actions/runs/9"
-    lines = P.reproduce(repo, tmp_path / "out", run_url=run_url, commit="2" * 40,
-                        day="2026-10-15", run=Runs(default_reports()))
-    assert len(lines) == 3
+    refresh(repo)
+    worse = report([case(outcome="fail", records=[record(outcome="fail")])])
+    runs = Runs(default_reports({("alpha", "cesr-v1.0"): worse}))
+    lines, found = P.reproduce(repo, tmp_path / "out", run_url=run_url, commit="2" * 40,
+                               day="2026-10-15", run=runs)
+    assert len(lines) == 3 and len(runs.calls) == 3  # each adapter profile ran once
+    assert f"{P.E_REGRESSION}: alpha cesr-v1.0: CESR-0001: outcome pass -> fail" in found
+    written = json.loads((tmp_path / "out/keripy/2.1.0.dev1/cesr-v1.0.json").read_text())
+    assert written["report"]["verdict"] == "not-conformant"
     doc = json.loads((tmp_path / "out/betaimpl/3/cesr-v1.0.json").read_text())
     assert doc["provenance"] == {"kind": "reproduced", "run": run_url, "commit": "2" * 40,
                                  "date": "2026-10-15"}
-    assert not (repo / "results" / "betaimpl").exists()
+    assert json.loads((repo / "results/betaimpl/3/cesr-v1.0.json").read_text())[
+        "provenance"]["kind"] == "maintainer-run"
 
 
 # --- the real runner ------------------------------------------------------------------------------
@@ -383,11 +524,15 @@ def test_main_readmes(repo, capsys):
     assert "match results/" in capsys.readouterr().out
 
 
-def test_main_reproduce(repo, fake_runs, tmp_path):
-    assert main(repo, "reproduce", tmp_path / "out", "--run",
-                "https://github.com/bakobo/keri-conformance-suite/actions/runs/9",
-                "--commit", "2" * 40) == 0
-    assert (tmp_path / "out/betaimpl/3/cesr-v1.0.json").is_file()
+def test_main_reproduce(repo, fake_runs, tmp_path, capsys):
+    args = ["--run", "https://github.com/bakobo/keri-conformance-suite/actions/runs/9",
+            "--commit", "2" * 40]
+    assert main(repo, "reproduce", tmp_path / "first", *args) == 1
+    assert P.E_UNCOMMITTED in capsys.readouterr().out
+    assert (tmp_path / "first/betaimpl/3/cesr-v1.0.json").is_file()
+    refresh(repo, fake_runs)
+    assert main(repo, "reproduce", tmp_path / "second", *args) == 0
+    assert "match the committed results" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("args", [[], ["frobnicate"], ["check", "--adapter", "nope"],

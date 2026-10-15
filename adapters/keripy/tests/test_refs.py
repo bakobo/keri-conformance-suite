@@ -42,7 +42,8 @@ def suite(tmp_path):
     for version, profile in (*(("2", p) for p in MAIN_PROFILES), ("1.2.14", "keripy-1x-interop")):
         path = root / "results" / "keripy" / version / f"{profile}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"result_version": 1, "report": report(profile, "pinned")}))
+        path.write_text(json.dumps({"result_version": 1, "provenance": {"kind": "maintainer-run"},
+                                    "report": report(profile, "pinned")}))
     return root
 
 

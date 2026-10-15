@@ -250,7 +250,7 @@ def check_ref(item, sha, suite, work, run):
              "--adapter", str(venv / "bin" / "kcs-adapter-keripy"), "--profile", profile,
              "--report", str(report_path)], check=False)
         try:
-            base = outcomes.read_committed(committed_result(suite, profile))
+            base = outcomes.read_committed(committed_result(suite, profile), kind="maintainer-run")
             report = outcomes.read_report(report_path)
         except outcomes.InputError as exc:
             raise CommandError(f"{E_INSTALL}: {item['name']}: {profile} produced no usable "
