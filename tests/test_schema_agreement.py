@@ -337,6 +337,14 @@ def test_cross_field_rules_agree_with_the_case_schema(base):
             documents.append(_replace(base, ("assertions", a, "phase"), "initial"))
             for retired in ("accepted", "not-accepted", "superseded"):
                 documents.append(_replace(base, ("assertions", a, "expected"), retired))
+        if assertion_["check"] == "verdict":
+            for refined in ("invalid", "incomplete"):
+                documents.append(_replace(base, ("assertions", a, "expected"), refined))
+                interop = _replace(base, ("assertions", a, "expected"), refined)
+                interop["assertions"][a]["level"] = "INTEROP"
+                interop["assertions"][a]["basis"] = "b"
+                del interop["assertions"][a]["clause"]
+                documents.append(interop)
         if assertion_["check"] == "trunk":
             documents.append(_replace(base, ("assertions", a, "expected"), True))
             documents.append(_replace(base, ("assertions", a, "phase"), "final"))
