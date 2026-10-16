@@ -153,10 +153,11 @@ def test_registry_checks_that_fail():
     assert reasons(run(frag)[0]) == ["invalid/bup-prior"]
     frag = world({"A": cred("I", states=("issued", "revoked"))}, "A")
     frag["registries"][2]["alter"] = [{"path": "dt", "value": "2026-07-04T17:50:00.000000+00:00"}]
-    assert reasons(run(frag)[0]) == ["invalid/bup-said"]
+    # An event whose SAID does not verify also accounts for none of the seals naming it.
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen", "invalid/bup-said"]
     frag = world({"A": cred("I", states=("issued", "revoked"))}, "A")
     frag["registries"][2]["alter"] = [{"path": "t", "value": "upd"}]
-    assert reasons(run(frag)[0]) == ["invalid/registry-kind-mixed"]
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen", "invalid/registry-kind-mixed"]
     frag = world({"A": cred("I", states=("issued", "revoked"))}, "A")
     frag["registries"][2]["n"] = 0
     assert reasons(run(frag)[0]) == ["invalid/bup-sn"]
@@ -435,6 +436,33 @@ def test_a_known_event_sealed_at_another_s_names_an_absent_event():
                            "a": [{"registry": "bup-A-1", "shape": "sd", "extra": {"s": "2"}}]})
     frag["kels"].append({"event": "ixn-x", "sigs": ["I0"]})
     assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_an_event_seal_is_accounted_for_only_by_an_event_of_its_registry():
+    frag = world({"A": cred("I")}, "A")
+    frag["registries"] += [
+        {"name": "rip-B", "t": "rip", "issuer": "I"},
+        {"name": "bup-B-1", "t": "bup", "registry": "rip-B", "disclose": True,
+         "state": {"u": "s-B-0", "td": {"acdc": "A"}, "ts": "issued"}}]
+    # I's KEL seals B's update as if it were A's: an event seal naming A's registry at s=1, whose
+    # d is the SAID of an event the bundle carries, but of B's registry.
+    frag["events"].append({"name": "ixn-x", "aid": "I", "t": "ixn",
+                           "a": [{"registry": "bup-B-1", "shape": "isd",
+                                  "i": {"registry": "rip-A"}}]})
+    frag["kels"].append({"event": "ixn-x", "sigs": ["I0"]})
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_a_carried_event_that_does_not_verify_accounts_for_nothing():
+    _, b = run(world({"A": cred("I")}, "A"))
+    model = sm._SediModel(T, b.request)
+    rd = b.saids["rip-A"]
+    issuer = model.node(bytes.fromhex(b.request["presented"]["stream"]))[0].body["i"]
+    model.registry_streams.append(({"d": "Ex", "n": ["1"], "t": "bup"}, b"", []))
+    model.registry_streams.append(({"d": "Ey", "n": "1", "rd": rd, "t": "bup"}, b"", []))
+    model.registry_streams.append(({"d": "Ez", "n": "1", "x": "\ud800", "t": "bup"}, b"", []))
+    head, problems = model.head(rd, issuer)
+    assert head.n == 1 and "registry-unseen" not in [r for _, r in problems]
 
 
 def test_a_seal_whose_d_is_not_a_string_names_nothing_the_bundle_holds():
