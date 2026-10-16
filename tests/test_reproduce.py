@@ -620,7 +620,7 @@ def test_each_shipped_build_has_a_result_for_every_profile_it_can_take():
         offered, profiles = builds.setdefault(key, (set(), set()))
         offered.update(hello["operations"])
         profiles.add(r.doc["report"]["filters"]["profile"])
-    assert builds
+    assert {i.adapter for i in P.INSTANCES} <= {key[0] for key in builds}
     missing = [(key, name) for key, (offered, profiles) in builds.items()
                for name, needed in operations.items()
                if needed & offered and name not in profiles]
