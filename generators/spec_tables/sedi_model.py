@@ -56,7 +56,7 @@ from dataclasses import dataclass, field
 
 from . import acdc_model as am
 from . import acdc_saids as sa
-from . import exn_build
+from . import b64, exn_build
 from .tables import Tables
 
 VALID, INVALID, INCOMPLETE = "valid", "invalid", "incomplete"
@@ -68,6 +68,14 @@ BLOCK_FIELDS = ("d", "u", "o", "w")
 ISSUED, REVOKED = "issued", "revoked"
 # The route of the message that presents an ACDC (this.i 7krs5hfz).
 GRANT_ROUTE = "/ipex/grant"
+
+# The groups sedi-1 reads in an attachments group, with the primitives in each item: the seal
+# source couple at -S## (seal-couple-code; ACDC line 1931's -T## is CESR's triple and is
+# refused) and the blinded state quadruple at -a## or the 8-character --a##### (blind-state-code;
+# ACDC's 9-character --a###### breaks quadlet alignment and is refused).
+GROUPS = {"-S": 2, "-a": 4, "--a": 4}
+WRAPPERS = ("-C", "--C")
+QUADRUPLES = ("-a", "--a")
 
 # How acdc_model's step failures grade under sedi-1. A failure not listed here fails a check.
 INCOMPLETE_REASONS = {"schema-absent", "issuer-kel"}
@@ -106,6 +114,57 @@ class Result:
 
     def tags(self) -> list[str]:
         return [f.tag for f in self.findings]
+
+
+def _count(t: Tables, text: str, i: int) -> tuple[str, int, int]:
+    """The count code at i, its count and the index after it: a code is two characters, or
+    three when it opens with --."""
+    code = text[i:i + 3] if text.startswith("--", i) else text[i:i + 2]
+    if code not in t.count_codes:
+        raise ValueError(f"unknown count code {code!r}")
+    digits, end = am._take(text, i + len(code), t.count_scheme(code).ss)
+    return code, b64.b64_to_int(digits), end
+
+
+def attachments(t: Tables, text: str) -> list[tuple[str, ...]]:
+    """The blinded state quadruples in an attachments group as sedi-1 reads it, every item of
+    every group parsed whole; any other group, or a group whose count does not frame its items,
+    raises ValueError (seal-couple-code, blind-state-code)."""
+    if not text:
+        return []
+    code, count, i = _count(t, text, 0)
+    if code not in WRAPPERS or len(text) != i + 4 * count:
+        raise ValueError("not one attachments group")
+    out = []
+    while i < len(text):
+        code, count, i = _count(t, text, i)
+        if code not in GROUPS:
+            raise ValueError(f"sedi-1 does not read the group {code}")
+        content, i = am._take(text, i, 4 * count)
+        j = 0
+        while j < len(content):
+            fields = []
+            for _ in range(GROUPS[code]):
+                size = t.primitives[am._primitive_code(t, content[j:])].fs
+                value, j = am._take(content, j, size)
+                fields.append(value)
+            if code in QUADRUPLES:
+                out.append(tuple(fields))
+    return out
+
+
+def _parse(t: Tables, stream: bytes):
+    """A stream as sedi-1 reads it: None when no ACDC 2.00 body frames it, else the body, its
+    raw bytes and its blinded state blocks, which are None when sedi-1 cannot read the
+    attachments."""
+    framed = am._parse(t, stream, attachments=lambda _t, _text: [])
+    if framed is None:
+        return None
+    body, raw, _ = framed
+    try:
+        return body, raw, attachments(t, stream[len(am.GENUS) + len(raw):].decode("ascii"))
+    except (ValueError, KeyError, UnicodeDecodeError):
+        return body, raw, None
 
 
 def combine(grades: list[str], operator: str = "AND") -> str:
@@ -159,6 +218,24 @@ class _SediModel(am._Model):
     def __init__(self, t: Tables, request: dict, trunks: am._Kels | None = None):
         self.heads: dict = {}
         super().__init__(t, request, sa.DEFAULT, trunks)
+        self.registry_streams = [_parse(t, bytes.fromhex(r["stream"]))
+                                 for r in request["registry"]]
+
+    def node(self, stream: bytes) -> tuple[am.Node, bytes]:
+        """acdc_model's reading of an ACDC, over the body and blocks sedi-1 reads; an ACDC
+        whose attachments sedi-1 cannot read fails a check."""
+        parsed = _parse(self.t, stream)
+        if parsed is None:
+            return super().node(stream)
+        body, raw, blocks = parsed
+        node = am.Node(body)
+        if blocks is None:
+            node.failures.append(am.Failure(1, "attachments"))
+            return node, raw
+        node.failures += self._intrinsic(body)
+        node.failures += self._schema(body)
+        node.failures += self._commitment(node)
+        return node, raw
 
     # -- seals ----------------------------------------------------------------------------------
 
@@ -215,6 +292,8 @@ class _SediModel(am._Model):
             return None, [(INCOMPLETE, "registry-kind")]
         if not self._event_said(body):
             return None, [(INVALID, "rip-said")]
+        if inception[2] is None:
+            return None, [(INVALID, "rip-attachments")]
         if body.get("i") != issuer:
             return None, [(INVALID, "rip-issuer")]
         grade = self.anchor(issuer, rd, "0", rd)
@@ -231,6 +310,10 @@ class _SediModel(am._Model):
                 continue
             if not self._event_said(update):
                 problems.append((INVALID, "bup-said"))
+                continue
+            if p[2] is None:
+                # Attachments sedi-1 cannot read (seal-couple-code, blind-state-code).
+                problems.append((INVALID, "bup-attachments"))
                 continue
             n = _sn(update.get("n"))
             if n is None or n < 1:
