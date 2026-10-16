@@ -245,9 +245,53 @@ def test_main_current_only_code_with_nonzero_ondex_is_keripys_rejection():
 
 
 @pytest.mark.main
-def test_main_refuses_a_genus_less_1_x_stream():
+def test_main_reads_a_genus_less_keri_1_x_stream_with_the_1_00_table():
     serder = event(V1)
-    assert "reject" in cesr.parse(serder.raw + ctr("-A", 1, V1) + sigs(serder, 1))
+    stream = serder.raw + ctr("-A", 1, V1) + sigs(serder, 1)
+    n = serder.size
+    assert cesr.parse(stream) == {"items": [
+        m_item(0, serder, "1.0"), c_item(n, "-A", 1, n + 92), *i_items(n + 4, serder, 1),
+    ]}
+
+
+@pytest.mark.main
+def test_main_keeps_the_2_00_table_for_a_genus_less_keri_2_x_stream():
+    serder = event(V2)
+    m = serder.size
+    assert cesr.parse(serder.raw + main_frame(serder))["items"][:2] == [
+        m_item(0, serder, "2.0"), c_item(m, "-C", 23, m + 96)]
+
+
+@pytest.mark.main
+def test_main_keeps_the_genus_codes_table_for_a_prefixed_keri_1_x_stream():
+    serder = event(V1)
+    assert "reject" in cesr.parse(genus() + serder.raw + ctr("-A", 1, V1) + sigs(serder, 1))
+
+
+# Each stream reaches a different exit: too short to smell, no version string, a count code
+# first, an ACDC 1.x body, and a KERI 1.x body behind a genus-version code (the normative shape).
+@pytest.mark.main
+@pytest.mark.parametrize("stream", [
+    b"", b"not a message " * 10, b"-_AAACAA",
+    b'{"v":"ACDC10JSON000060_","d":"","i":"","s":"","a":{}}' + b" " * 40,
+])
+def test_main_uses_keripys_default_table_unless_a_keri_1_x_body_comes_first(stream):
+    assert cesr.api().parser_kwargs(stream) == {}
+
+
+@pytest.mark.main
+def test_main_leaves_a_genus_prefixed_keri_1_x_stream_to_its_genus_code():
+    assert cesr.api().parser_kwargs(genus() + event(V1).raw) == {}
+
+
+@pytest.mark.main
+def test_main_names_the_1_00_table_for_a_keri_1_x_body():
+    assert cesr.api().parser_kwargs(event(V1).raw) == {"version": V1}
+
+
+@pytest.mark.onex
+def test_onex_never_names_a_table():
+    assert cesr.api().parser_kwargs(event(V1).raw) == {}
 
 
 # --- keripy 1.x ---------------------------------------------------------------------------------

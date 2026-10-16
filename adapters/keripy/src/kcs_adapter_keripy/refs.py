@@ -197,14 +197,18 @@ def fingerprint(item):
     return json.dumps(item, sort_keys=True)
 
 
-def committed_result(suite, profile):
-    """The suite's one committed keripy result for profile. Each keripy profile is run by exactly
-    one pinned keripy generation, so exactly one version directory holds it."""
-    found = sorted((Path(suite) / "results" / "keripy").glob(f"*/{profile}.json"))
+def committed_result(suite, profile, version):
+    """The suite's one committed keripy result for profile from the generation of keripy
+    `version` (its major version), which is what a ref running that keripy is compared with.
+    keripy main and keripy 1.x can both have a result for one profile."""
+    major = str(version).split(".")[0]
+    found = sorted(path for path in (Path(suite) / "results" / "keripy").glob(f"*/{profile}.json")
+                   if path.parent.name.split(".")[0] == major)
     if len(found) != 1:
-        raise CommandError(f"{E_NO_RESULT}: the suite holds {len(found)} committed keripy results "
-                           f"for {profile}, not one, so there is nothing unambiguous to compare "
-                           "with; refresh them with scripts/reproduce-results refresh.")
+        raise CommandError(f"{E_NO_RESULT}: the suite holds {len(found)} committed results of "
+                           f"keripy {major}.x for {profile}, not one, so there is nothing "
+                           "unambiguous to compare with; refresh them with "
+                           "scripts/reproduce-results refresh.")
     return found[0]
 
 
@@ -256,8 +260,10 @@ def check_ref(item, sha, suite, work, run):
              "--adapter", str(venv / "bin" / "kcs-adapter-keripy"), "--profile", profile,
              "--report", str(report_path)], check=False)
         try:
-            base = outcomes.read_committed(committed_result(suite, profile), kind="maintainer-run")
             report = outcomes.read_report(report_path)
+            version = report["hello"]["implementation"]["version"]
+            base = outcomes.read_committed(committed_result(suite, profile, version),
+                                           kind="maintainer-run")
         except outcomes.InputError as exc:
             raise CommandError(f"{E_INSTALL}: {item['name']}: {profile} produced no usable "
                                f"report: {exc}") from exc

@@ -1,0 +1,166 @@
+{
+  "result_version": 1,
+  "provenance": {
+    "kind": "maintainer-run",
+    "maintainer": "Daniel Hardman",
+    "commit": "f5e5346aaaa8958749050364337658d1c53ca8e6",
+    "date": "2026-10-16"
+  },
+  "report": {
+    "report_version": 1,
+    "runner_version": "0.0.1",
+    "suite_version": "0.0.1",
+    "protocol_version": 1,
+    "supported_protocols": [
+      1
+    ],
+    "negotiated_protocol": 1,
+    "hello": {
+      "protocol": 1,
+      "adapter": {
+        "name": "kcs-adapter-keripy",
+        "version": "0.1.0"
+      },
+      "implementation": {
+        "name": "keripy",
+        "version": "2.1.0.dev1",
+        "commit": "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode",
+        "keri.process",
+        "acdc.verify",
+        "exn.verify"
+      ],
+      "features": [
+        "cesr.domain.binary",
+        "cesr.genus-1.00",
+        "cesr.genus-2.00",
+        "cesr.item-extents",
+        "cesr.serialization.cbor",
+        "cesr.serialization.json",
+        "cesr.serialization.mgpk",
+        "keri.version-1.x",
+        "keri.version-2.x",
+        "crypto.ed25519",
+        "kel.basic",
+        "kel.delegation",
+        "kel.multisig.numeric",
+        "kel.multisig.weighted",
+        "kel.nontransferable",
+        "kel.partial-rotation",
+        "kel.recovery",
+        "kel.witness",
+        "keri.duplicity",
+        "keri.escrow",
+        "keri.routing"
+      ],
+      "composes": []
+    },
+    "declared_features": [
+      "cesr.domain.binary",
+      "cesr.genus-1.00",
+      "cesr.genus-2.00",
+      "cesr.item-extents",
+      "cesr.serialization.cbor",
+      "cesr.serialization.json",
+      "cesr.serialization.mgpk",
+      "keri.version-1.x",
+      "keri.version-2.x",
+      "crypto.ed25519",
+      "kel.basic",
+      "kel.delegation",
+      "kel.multisig.numeric",
+      "kel.multisig.weighted",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "kel.recovery",
+      "kel.witness",
+      "keri.duplicity",
+      "keri.escrow",
+      "keri.routing"
+    ],
+    "composes": [],
+    "filters": {
+      "profile": "cesr-strict",
+      "cases_dir": "cases"
+    },
+    "session_stderr": "",
+    "verdict": "interoperable",
+    "aborted": null,
+    "probes": {
+      "statelessness": "not-yet-available"
+    },
+    "summary": {
+      "counts": {
+        "active": {
+          "INTEROP": {
+            "pass": 2
+          }
+        }
+      },
+      "should": {},
+      "should_failed": 0,
+      "interop": {
+        "pass": 2
+      },
+      "interop_verdict": "interoperable",
+      "should_warning": null,
+      "not_supported_active": [],
+      "self_agreement_passes": 0
+    },
+    "cases": [
+      {
+        "id": "CESR-0043",
+        "status": "active",
+        "profile": "cesr-strict",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "keripy rejected the stream: SizedGroupError: Error processing attachment group of size={eags}\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "SizedGroupError"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      },
+      {
+        "id": "CESR-0044",
+        "status": "active",
+        "profile": "cesr-strict",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "keripy rejected the stream: SizedGroupError: Error processing attachment group of size={eags}\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "INTEROP",
+            "outcome": "pass",
+            "expected": null,
+            "actual": {
+              "reject": {
+                "class": "SizedGroupError"
+              }
+            },
+            "detail": null,
+            "self_agreement": false
+          }
+        ],
+        "outcome": "pass"
+      }
+    ]
+  }
+}

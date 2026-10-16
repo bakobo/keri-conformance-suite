@@ -106,9 +106,11 @@ Nothing is escrowed, so a message's reading after the last delivery is its readi
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| keri-go 0.1.5 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite fe513a6c](../../results/keri-go/0.1.5/cesr-v1.0.json) |
-| keri-go 0.1.5 | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 114 | [2026-10-16, suite fe513a6c](../../results/keri-go/0.1.5/keri-v1.0.1.json) |
-| keri-go 0.1.5 | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 69 / 7 | 21 | [2026-10-16, suite fe513a6c](../../results/keri-go/0.1.5/keripy-1x-interop.json) |
+| keri-go 0.1.5 | `cesr-strict` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 2 | [2026-10-16, suite 32a93245](../../results/keri-go/0.1.5/cesr-strict.json) |
+| keri-go 0.1.5 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite 32a93245](../../results/keri-go/0.1.5/cesr-v1.0.json) |
+| keri-go 0.1.5 | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-16, suite 32a93245](../../results/keri-go/0.1.5/keri-escrow.json) |
+| keri-go 0.1.5 | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 114 | [2026-10-16, suite 32a93245](../../results/keri-go/0.1.5/keri-v1.0.1.json) |
+| keri-go 0.1.5 | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 69 / 7 | 21 | [2026-10-16, suite 32a93245](../../results/keri-go/0.1.5/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 
@@ -121,5 +123,5 @@ uv run python scripts/reproduce-results check --adapter keri-go     # compare fr
 uv run python scripts/reproduce-results refresh --adapter keri-go   # rewrite them, from a clean tree
 ```
 
-`keri-v1.0.1` is run, although no case reaches the adapter, so that its result records that every case there needs a feature keri-go does not have. `keri-escrow` is not run: every case in it needs `keri.escrow`, which the adapter does not declare.
+`keri-v1.0.1` is run, although no case reaches the adapter, so that its result records that every case there needs a feature keri-go does not have. `keri-escrow` and `cesr-strict` are run for the same reason: every `keri-escrow` case needs `keri.escrow` and every `cesr-strict` case needs `cesr.genus-2.00`, neither of which the adapter declares, so both verdicts are `no-evidence`.
 
