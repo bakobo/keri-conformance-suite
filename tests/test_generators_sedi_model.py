@@ -116,9 +116,19 @@ def test_withheld_and_undisclosed_updates_are_never_valid():
     frag["registries"][3]["prior"] = "bup-A-1"
     frag["registries"][3]["n"] = 3
     result, _ = run(frag)
+    # n=3 names n=1 as its prior, so it skipped n=2 whether or not n=2 exists: a failed check.
     # n=2's seal is still in the KEL, so its absence is also anchored evidence unseen.
+    assert reasons(result) == ["incomplete/registry-unseen", "invalid/bup-sequence"]
+    assert result.verdict == sm.INVALID and result.head.n == 1
+    # n=3 chaining to the withheld n=2 is only a gap.
+    frag = world({"A": cred("I", states=("issued", "issued", "revoked"))}, "A")
+    frag["omit"] = ["bup-A-2"]
+    result, _ = run(frag)
     assert reasons(result) == ["incomplete/registry-gap", "incomplete/registry-unseen"]
-    assert result.head.n == 1
+    # The first update claims n=2 with the inception as its prior.
+    frag = world({"A": cred("I")}, "A")
+    frag["registries"][1]["n"] = 2
+    assert reasons(run(frag)[0]) == ["invalid/bup-sequence"]
     # n=2 withheld and nothing after it in the bundle, but a third event anchored in the KEL.
     frag = world({"A": cred("I", states=("issued", "issued", "revoked"))}, "A")
     frag["omit"] = ["bup-A-2", "bup-A-3"]

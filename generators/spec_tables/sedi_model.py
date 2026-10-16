@@ -14,8 +14,9 @@ replaces what it does:
 - **The registry** (tel-sequence, registry-head, registry-evidence). Events are walked by ``n``,
   not by delivery order. The head is the highest event that chain-verifies from the inception and
   is anchored. Evidence the walk cannot account for keeps the verdict from ``valid``: a gap or an
-  unanchored event leaves it ``incomplete``, a failed check (a SAID, a prior, a repeated ``n``
-  anchored twice, an event of another registry kind) makes it ``invalid``, and so does a later
+  unanchored event leaves it ``incomplete``, a failed check (a SAID, a prior, an anchored ``n``
+  that skips past the head it names as prior, a repeated ``n`` anchored twice, an event of
+  another registry kind) makes it ``invalid``, and so does a later
   event anchored in the issuer's KEL that the bundle does not carry, which is ``incomplete``. An
   inception of a registry kind sedi-1 does not support (``vcp``) is ``incomplete``.
 - **Edges** (edge-said, operator-list, operator-shape, default-operator, unknown-operator). Every
@@ -230,7 +231,13 @@ class _SediModel(am._Model):
         for n in range(1, last + 1):
             candidates = by_n.get(n, [])
             if not candidates:
-                problems.append((INCOMPLETE, "registry-gap"))
+                # A later anchored event naming the head as its prior skipped this n, which is
+                # a failed check (tel-sequence); otherwise an event here may be withheld.
+                skipped = any(c[0].get("p") == head.d
+                              and self.anchor(issuer, rd, f"{m:x}", c[0]["d"]) is None
+                              for m, later in by_n.items() if m > n for c in later)
+                problems.append((INVALID, "bup-sequence") if skipped
+                                else (INCOMPLETE, "registry-gap"))
                 break
             grades = {c[0]["d"]: self.anchor(issuer, rd, f"{n:x}", c[0]["d"]) for c in candidates}
             anchored = [c for c in candidates if grades[c[0]["d"]] is None]
