@@ -88,7 +88,8 @@ def _two_versions():
     return loaded(old, new, keri)
 
 
-def test_index_has_one_matrix_per_suite_version_newest_first():
+def test_index_has_one_matrix_per_suite_version_newest_first(monkeypatch):
+    monkeypatch.setattr(S, "CURRENT_SUITE_VERSION", "0.0.1")
     index = S.render_results(_two_versions())["results/index.md"]
     headings = re.findall(r"^## (.*)$", index, re.MULTILINE)
     assert headings == ["Suite version 0\\.1\\.0", "Current suite version (0\\.0\\.1)"]
@@ -166,7 +167,8 @@ def test_detail_page_for_a_maintainer_run_result():
     assert "`scripts/reproduce-results check`" in page
 
 
-def test_implementation_page_lists_its_results_by_suite_version():
+def test_implementation_page_lists_its_results_by_suite_version(monkeypatch):
+    monkeypatch.setattr(S, "CURRENT_SUITE_VERSION", "0.0.1")
     pages = S.render_results(_two_versions())
     page = pages["results/keripy/index.md"]
     assert page.startswith("# keripy\n")
@@ -194,6 +196,8 @@ def test_output_is_deterministic():
 def test_suite_versions_sort_numerically():
     assert S.version_key("0.10.0") > S.version_key("0.9.1")
     assert S.version_key("1.0.0") > S.version_key("1.0.0rc1")
+    assert S.version_key("2026.10.1") > S.version_key("2026.10") > S.version_key("2026.9")
+    assert S.version_key("2026.10") > S.version_key("0.0.1")
 
 
 # --- assembling the site source -----------------------------------------------------------------

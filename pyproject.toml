@@ -1,6 +1,6 @@
 [project]
 name = "keri-conformance-suite"
-version = "0.0.1"
+version = "2026.10"
 description = "Conformance suite for CESR, KERI, ACDC and IPEX implementations: cases, a runner, and adapters."
 readme = "README.md"
 requires-python = ">=3.12"

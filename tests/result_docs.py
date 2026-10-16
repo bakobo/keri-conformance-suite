@@ -22,7 +22,7 @@ def case(cid="CESR-0001", status="active", outcome="pass", records=None, profile
 
 
 def report(cases=None, *, profile="cesr-v1.0", name="keripy", version="2.1.0.dev1",
-           suite_version="0.0.1", composes=None, aborted=None):
+           suite_version="2026.10", composes=None, aborted=None):
     cases = [case()] if cases is None else cases
     summary, verdict = summarize(cases)
     hello = {"protocol": 1, "adapter": {"name": "kcs-adapter-keripy", "version": "0.1.0"},
@@ -30,7 +30,7 @@ def report(cases=None, *, profile="cesr-v1.0", name="keripy", version="2.1.0.dev
              "operations": ["cesr.parse"], "features": ["cesr.genus-2.00"],
              "composes": list(composes or [])}
     return {
-        "report_version": 1, "runner_version": "0.0.1", "suite_version": suite_version,
+        "report_version": 1, "runner_version": "2026.10", "suite_version": suite_version,
         "protocol_version": 1, "supported_protocols": [1], "negotiated_protocol": 1,
         "hello": hello, "declared_features": hello["features"],
         "composes": list(composes or []),
