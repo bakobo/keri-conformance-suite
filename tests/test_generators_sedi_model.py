@@ -125,6 +125,13 @@ def test_withheld_and_undisclosed_updates_are_never_valid():
     frag["omit"] = ["bup-A-2"]
     result, _ = run(frag)
     assert reasons(result) == ["incomplete/registry-gap", "incomplete/registry-unseen"]
+    # An unanchored event at the skipped n does not hide the skip.
+    frag = world({"A": cred("I", states=("issued", "issued"))}, "A")
+    frag["registries"][2]["n"] = 3
+    frag["registries"].append({"name": "bup-A-x", "t": "bup", "registry": "rip-A", "n": 2,
+                               "prior": "bup-A-1", "disclose": True,
+                               "state": {"u": "x", "td": {"acdc": "A"}, "ts": "revoked"}})
+    assert reasons(run(frag)[0]) == ["invalid/bup-sequence"]
     # The first update claims n=2 with the inception as its prior.
     frag = world({"A": cred("I")}, "A")
     frag["registries"][1]["n"] = 2

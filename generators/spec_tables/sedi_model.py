@@ -228,15 +228,19 @@ class _SediModel(am._Model):
                 continue
             by_n.setdefault(n, []).append(p)
         last = max(by_n, default=0)
+
+        def skipped(n: int) -> bool:
+            """A later anchored event names the head as its prior, so it skipped n: a failed
+            check (tel-sequence), whatever the bundle holds at n."""
+            return any(c[0].get("p") == head.d
+                       and self.anchor(issuer, rd, f"{m:x}", c[0]["d"]) is None
+                       for m, later in by_n.items() if m > n for c in later)
+
         for n in range(1, last + 1):
             candidates = by_n.get(n, [])
             if not candidates:
-                # A later anchored event naming the head as its prior skipped this n, which is
-                # a failed check (tel-sequence); otherwise an event here may be withheld.
-                skipped = any(c[0].get("p") == head.d
-                              and self.anchor(issuer, rd, f"{m:x}", c[0]["d"]) is None
-                              for m, later in by_n.items() if m > n for c in later)
-                problems.append((INVALID, "bup-sequence") if skipped
+                # Otherwise an event here may be withheld.
+                problems.append((INVALID, "bup-sequence") if skipped(n)
                                 else (INCOMPLETE, "registry-gap"))
                 break
             grades = {c[0]["d"]: self.anchor(issuer, rd, f"{n:x}", c[0]["d"]) for c in candidates}
@@ -245,8 +249,12 @@ class _SediModel(am._Model):
                 problems.append((INVALID, "registry-duplicity"))
                 break
             if not anchored:
-                problems.append((INVALID if INVALID in grades.values() else INCOMPLETE,
-                                 "bup-anchor"))
+                # An unanchored event at n cannot hide a skip a later anchored event proves.
+                if INVALID not in grades.values() and skipped(n):
+                    problems.append((INVALID, "bup-sequence"))
+                else:
+                    problems.append((INVALID if INVALID in grades.values() else INCOMPLETE,
+                                     "bup-anchor"))
                 break
             update, _, attachments = anchored[0]
             if update.get("p") != head.d:
