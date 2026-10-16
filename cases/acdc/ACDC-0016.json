@@ -15,7 +15,7 @@
       "expected": "not-valid",
       "id": "a1",
       "level": "SHOULD",
-      "note": "Decided at step 2 (schema-dialect). Derivations: step 2 schema-dialect: SHOULD, direct, because line 226 says a dialect mismatch SHOULD fail validation. Graded at the highest, over the derivations, of the level of each."
+      "note": "Decided at step 2 (schema-dialect). Derivations: step 2 schema-dialect: SHOULD, direct, because line 226 says a dialect mismatch SHOULD fail validation; the same line's MUST that the dialect be JSON Schema 2020-12 binds schema authors, so a validator's refusal derived from it is also SHOULD. Graded at the highest, over the derivations, of the level of each."
     }
   ],
   "dag": {

@@ -90,7 +90,9 @@ REASONS = {
     "schema-nonlocal": ("schema-nonlocal", "producer-nonlocal",
                         "line 206 forbids non-local references, a rule for schema authors"),
     "schema-dialect": ("schema-dialect", None, ("line 226 says a dialect mismatch SHOULD fail "
-                       "validation")),
+                       "validation; the same line's MUST that the dialect be JSON Schema 2020-12 "
+                       "binds schema authors, so a validator's refusal derived from it is also "
+                       "SHOULD")),
     "issuer-kel": ("key-state", "issuer-kel", ("line 95, with the issuer commitment no keyword "
                    "requires (A-G1)")),
     "no-commitment": ("key-state", "commitment", ("line 95 makes the issuer's key state the "
