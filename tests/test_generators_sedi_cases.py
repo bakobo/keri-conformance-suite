@@ -138,3 +138,15 @@ def test_found_names_nodes_and_edge_paths():
     result = sedi_cases.sm.Result("invalid", [sedi_cases.sm.Finding("invalid", "E1.e.x", "r"),
                                               sedi_cases.sm.Finding("invalid", "E2", "s")])
     assert sedi_cases.found(result, {"E1": "N"}) == ["E2 invalid/s", "N:e.x invalid/r"]
+
+
+def test_an_edge_section_without_an_edge_still_needs_edge_support():
+    empty = world({"N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "AND"}})}, "N")
+    case = {"id": "ACDC-0901", "key": "SV-01", "title": "Empty group", "description": "Empty.",
+            "base": "empty", "choices": ["operator-shape"], "triage": "None.",
+            "expect": ["N:e.g invalid/group-empty"], "pair": "SV-02"}
+    ev = sedi_cases.build(T, {"empty": empty}, case)
+    assert ev.bundle.dag["edges"] == []
+    made = sedi_cases.build_sedi_case("s.json", case, ev, {"SV-02": ("ACDC-0902", "valid")},
+                                      READINGS)
+    assert "acdc.edges" in made["targets"]["features"]

@@ -427,7 +427,8 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
     head = None
     if "rd" in presented.body:
         head = model.heads.get((presented.body["rd"], presented.body.get("i")), (None,))[0]
-    return Result(verdict, findings, head)
+    # A node reached by two paths (a diamond) contributes its findings once.
+    return Result(verdict, list(dict.fromkeys(findings)), head)
 
 
 def _presentation(t: Tables, request: dict, presented: am.Node) -> list[Finding]:

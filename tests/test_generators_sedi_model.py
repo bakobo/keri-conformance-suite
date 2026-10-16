@@ -390,6 +390,14 @@ def test_the_builder_refuses_an_unknown_seal_shape():
         ab.build_bundle(T, frag)
 
 
+def test_a_node_reached_by_two_paths_reports_once():
+    diamond = {"G": cred("R", "Q", states=("issued", "revoked")),
+               "F1": cred("Q", "I", e={"d": "", "le": edge("G")}),
+               "F2": cred("Q", "I", e={"d": "", "le": edge("G")}),
+               "N": cred("I", "H", e={"d": "", "le1": edge("F1"), "le2": edge("F2")})}
+    assert reasons(run(world(diamond, "N"))[0]) == ["invalid/revoked"]
+
+
 def test_a_registry_is_walked_once_per_model():
     _, b = run(world({"A": cred("I")}, "A"))
     model = sm._SediModel(T, b.request)

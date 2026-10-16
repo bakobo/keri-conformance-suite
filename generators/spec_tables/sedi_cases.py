@@ -70,11 +70,12 @@ def build(t, fixtures: dict, case: dict) -> Evaluation:
 
 def _features(ev: Evaluation) -> list[str]:
     """A sedi-1 credential is committed only through a blindable registry, so every case needs
-    acdc.registry.bup, and one with edges needs acdc.edges; sedi-1 requires both of a claimant,
-    so neither hides a case from an adapter that can claim the profile. A case with a
-    presentation context needs acdc.presentation, which sedi-1 also requires."""
+    acdc.registry.bup, and one with an edge section needs acdc.edges, even an empty group with
+    no edge in it; sedi-1 requires both of a claimant, so neither hides a case from an adapter
+    that can claim the profile. A case with a presentation context needs acdc.presentation,
+    which sedi-1 also requires."""
     features = {*ac.BASE_FEATURES, BUP}
-    if ev.bundle.dag.get("edges"):
+    if ev.bundle.dag.get("edges") or any("e" in acdc for acdc in ev.bundle.expanded.values()):
         features.add(EDGES)
     if "presentation" in ev.bundle.request:
         features.add(PRESENTATION)
