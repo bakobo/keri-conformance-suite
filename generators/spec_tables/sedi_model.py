@@ -45,12 +45,11 @@ replaces what it does:
 whose ``di`` is the far issuee); a delegation chain of more than one step is not followed.
 
 A seal-bearing KEL event that names a registry-looking ``{s, d}`` the bundle does not carry, at
-or past a registry's head or at an ``s`` that is not canonical, is counted against every registry
-of that issuer, because a couple does not say which registry it belongs to; the cost falls on an
-issuer with several registries, whose bundles read ``incomplete`` until they carry the other
-registries' later events too. An event seal ``{i, s, d}`` counts only against the registry its
-``i`` names, at any ``s``. An unseen couple below the head is not counted, so a second anchored
-event at an earlier ``n`` is caught only when the bundle carries it.
+any ``s``, is counted against every registry of that issuer, because a couple does not say which
+registry it belongs to, and a withheld couple below the head may be a second update at an
+earlier ``n``. The cost falls on an issuer with several registries anchored by couples, whose
+bundles read ``incomplete`` until they carry every registry's events; an event seal ``{i, s, d}``
+counts only against the registry its ``i`` names, which is how such an issuer avoids it.
 """
 
 from dataclasses import dataclass, field
@@ -272,21 +271,17 @@ class _SediModel(am._Model):
         return head, problems
 
     def _unaccounted(self, issuer, head: Head) -> list[tuple[str, str]]:
-        """A registry-shaped seal in the issuer's KEL whose event the bundle lacks: an event seal
-        naming this registry at any n, or a couple, which names no registry, at the head's n or
-        later or at an n that is not canonical, so it might be this registry's."""
+        """A registry-shaped seal in the issuer's KEL whose event the bundle lacks (test-plan
+        item 6: an s naming an absent event is incomplete): an event seal naming this registry,
+        or a couple, which names no registry and so might be this registry's, at any s."""
         known = {p[0].get("d") for p in self.registry_streams
                  if p is not None and isinstance(p[0], dict)}
         for seal in self._seals(issuer):
-            if (not isinstance(seal, dict) or set(seal) not in ({"s", "d"}, {"i", "s", "d"})
-                    or seal.get("d") in known):
+            if not isinstance(seal, dict) or set(seal) not in ({"s", "d"}, {"i", "s", "d"}):
                 continue
-            if "i" in seal:
-                if seal["i"] == head.rd:
-                    return [(INCOMPLETE, "registry-unseen")]
+            if isinstance(seal["d"], str) and seal["d"] in known:
                 continue
-            n = _sn(seal.get("s"))
-            if n is None or n >= head.n:
+            if "i" not in seal or seal["i"] == head.rd:
                 return [(INCOMPLETE, "registry-unseen")]
         return []
 
@@ -296,13 +291,13 @@ class _SediModel(am._Model):
         """The grade of an edge-group (the edge section is one) and why."""
         o = block.get("o", "AND")
         members = [(k, v) for k, v in block.items() if k not in BLOCK_FIELDS]
+        if not members:
+            return INVALID, [Finding(INVALID, path, "group-empty")]
         if o not in MARY:
             # Its members are still evaluated, so a failure among them is not hidden behind an
             # operator nobody can evaluate (failure-precedence).
             grades, findings = [INCOMPLETE], [Finding(INCOMPLETE, path, "group-operator")]
             o = "AND"
-        elif not members:
-            return INVALID, [Finding(INVALID, path, "group-empty")]
         else:
             grades, findings = [], []
         for label, member in members:

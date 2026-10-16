@@ -415,13 +415,29 @@ def test_a_seal_whose_event_the_bundle_lacks_is_never_valid(n, seal):
     assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
 
 
-def test_a_seal_naming_another_registry_or_an_earlier_n_is_not_this_registrys():
+def test_an_event_seal_naming_another_registry_is_not_this_registrys():
     frag = world({"A": cred("I", states=("issued", "issued"))}, "A")
     frag["registries"].append({"name": "rip-B", "t": "rip", "issuer": "I"})
     frag["omit"] = ["rip-B"]
     frag = sealed_unseen(frag, "rip-B", 5, shape="isd")
-    frag = sealed_unseen(frag, "rip-A", 1, shape="sd")
     assert run(frag)[0].verdict == sm.VALID
+
+
+def test_a_withheld_couple_below_the_head_may_be_a_second_update_there():
+    frag = sealed_unseen(world({"A": cred("I", states=("issued", "issued"))}, "A"), "rip-A", 1,
+                         shape="sd")
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_a_seal_whose_d_is_not_a_string_names_nothing_the_bundle_holds():
+    frag = sealed_unseen(world({"A": cred("I")}, "A"), "rip-A", 1, shape="sd",
+                         extra={"d": ["x"]})
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_an_empty_group_is_invalid_whatever_its_operator():
+    creds = {"N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "XOR"}})}
+    assert reasons(run(world(creds, "N"))[0]) == ["invalid/group-empty"]
 
 
 def test_an_unknown_group_operator_does_not_hide_a_failure_inside_it():
