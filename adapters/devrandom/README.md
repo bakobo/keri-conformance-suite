@@ -102,7 +102,7 @@ uv run python scripts/reproduce-results check --adapter devrandom     # compare 
 uv run python scripts/reproduce-results refresh --adapter devrandom   # replace them, from a clean tree
 ```
 
-Every case in the three normative profiles requires `cesr.genus-2.00` or `keri.version-2.x`, so the runner sends none of them and each verdict is `no-evidence`: the accurate result for a KERI 1.x implementation. In `keripy-1x-interop`, the cases with a `decoded` assertion need `cesr.item-extents` and are not sent; the must-reject cases on KERI 1.0 streams are sent, and devrandom rejects them, as keripy 1.2.14 does.
+Every case in the three normative profiles requires `cesr.genus-2.00` or `keri.version-2.x`, so the runner sends none of them and each verdict is `no-evidence`: the accurate result for a KERI 1.x implementation. In `keripy-1x-interop`, the cases with a `decoded` assertion need `cesr.item-extents` and are not sent; the must-reject cases on KERI 1.0 streams are sent, and devrandom rejects them, as keripy 1.2.14 does. Every KERI 1.x case is sent and passes.
 
 ## Errors
 
