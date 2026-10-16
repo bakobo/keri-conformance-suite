@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "fe513a6c9ffeff23a92ad8bdadbb283e7e64f7fe",
+    "commit": "32a932452f16d74b09d174a05baa53de14cb4681",
     "date": "2026-10-16"
   },
   "report": {
@@ -2077,7 +2077,7 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "\n18:30:56.146 [warning] Not enough bytes in stream: -CA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
+        "stderr": "\n18:55:22.300 [warning] Not enough bytes in stream: -CA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
         "assertions": [
           {
             "id": "a1",

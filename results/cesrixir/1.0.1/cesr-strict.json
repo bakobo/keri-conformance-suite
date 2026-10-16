@@ -1,0 +1,137 @@
+{
+  "result_version": 1,
+  "provenance": {
+    "kind": "maintainer-run",
+    "maintainer": "Daniel Hardman",
+    "commit": "32a932452f16d74b09d174a05baa53de14cb4681",
+    "date": "2026-10-16"
+  },
+  "report": {
+    "report_version": 1,
+    "runner_version": "0.0.1",
+    "suite_version": "0.0.1",
+    "protocol_version": 1,
+    "supported_protocols": [
+      1
+    ],
+    "negotiated_protocol": 1,
+    "hello": {
+      "adapter": {
+        "name": "kcs-adapter-cesrixir",
+        "version": "1.0.1-1"
+      },
+      "composes": [],
+      "features": [
+        "cesr.domain.binary",
+        "cesr.genus-1.00",
+        "cesr.genus-2.00",
+        "cesr.item-extents",
+        "cesr.serialization.cbor",
+        "cesr.serialization.json",
+        "cesr.serialization.mgpk",
+        "keri.version-1.x",
+        "keri.version-2.x"
+      ],
+      "implementation": {
+        "commit": "1e4944a25a7f1aa6c00db1192afb930a88aa444e",
+        "name": "cesrixir",
+        "version": "1.0.1"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode"
+      ],
+      "protocol": 1
+    },
+    "declared_features": [
+      "cesr.domain.binary",
+      "cesr.genus-1.00",
+      "cesr.genus-2.00",
+      "cesr.item-extents",
+      "cesr.serialization.cbor",
+      "cesr.serialization.json",
+      "cesr.serialization.mgpk",
+      "keri.version-1.x",
+      "keri.version-2.x"
+    ],
+    "composes": [],
+    "filters": {
+      "profile": "cesr-strict",
+      "cases_dir": "cases"
+    },
+    "session_stderr": "",
+    "verdict": "not-interoperable",
+    "aborted": null,
+    "probes": {
+      "statelessness": "not-yet-available"
+    },
+    "summary": {
+      "counts": {
+        "active": {
+          "INTEROP": {
+            "fail": 2
+          }
+        }
+      },
+      "should": {},
+      "should_failed": 0,
+      "interop": {
+        "fail": 2
+      },
+      "interop_verdict": "not-interoperable",
+      "should_warning": null,
+      "not_supported_active": [],
+      "self_agreement_passes": 0
+    },
+    "cases": [
+      {
+        "id": "CESR-0043",
+        "status": "active",
+        "profile": "cesr-strict",
+        "operation": "cesr.parse",
+        "failure": {
+          "kind": "error-harness",
+          "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    {:error, \"Code in \\\"-dABAAAA\\\" not found\"}\n"
+        },
+        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error, \"Code in \\\"-dABAAAA\\\" not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "INTEROP",
+            "outcome": "fail",
+            "expected": null,
+            "actual": null,
+            "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    {:error, \"Code in \\\"-dABAAAA\\\" not found\"}\n",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      },
+      {
+        "id": "CESR-0044",
+        "status": "active",
+        "profile": "cesr-strict",
+        "operation": "cesr.parse",
+        "failure": {
+          "kind": "error-harness",
+          "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    :notfound\n"
+        },
+        "stderr": "** (CaseClauseError) no case clause matching:\n\n    :notfound\n\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:241: Cesr.CountCodeKERIv2.CountCodeConsumptionUtilities.trivial/2\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:163: Cesr.CountCodeKERIv2.CD_M_NonTransReceiptCouples.consume_count_code_T/3\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:113: Cesr.CountCodeKERIv2.CD_M_NonTransReceiptCouples.from_b64/1\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:298: Cesr.CountCodeKERIv2.CountCodeConsumptionUtilities._universal_T/3\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:163: Cesr.CountCodeKERIv2.CD_C_AttachmentGroup.consume_count_code_T/3\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:113: Cesr.CountCodeKERIv2.CD_C_AttachmentGroup.from_b64/1\n    (cesrixir 1.0.1) lib/cesr.ex:434: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n\n",
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "INTEROP",
+            "outcome": "fail",
+            "expected": null,
+            "actual": null,
+            "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    :notfound\n",
+            "self_agreement": false
+          }
+        ],
+        "outcome": "fail"
+      }
+    ]
+  }
+}

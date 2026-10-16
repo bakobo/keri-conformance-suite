@@ -1,0 +1,136 @@
+{
+  "result_version": 1,
+  "provenance": {
+    "kind": "maintainer-run",
+    "maintainer": "Daniel Hardman",
+    "commit": "32a932452f16d74b09d174a05baa53de14cb4681",
+    "date": "2026-10-16"
+  },
+  "report": {
+    "report_version": 1,
+    "runner_version": "0.0.1",
+    "suite_version": "0.0.1",
+    "protocol_version": 1,
+    "supported_protocols": [
+      1
+    ],
+    "negotiated_protocol": 1,
+    "hello": {
+      "protocol": 1,
+      "adapter": {
+        "name": "kcs-adapter-keripy",
+        "version": "0.1.0"
+      },
+      "implementation": {
+        "name": "keripy",
+        "version": "1.2.14",
+        "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode"
+      ],
+      "features": [
+        "cesr.domain.binary",
+        "cesr.genus-1.00",
+        "cesr.serialization.cbor",
+        "cesr.serialization.json",
+        "cesr.serialization.mgpk",
+        "keri.version-1.x"
+      ],
+      "composes": []
+    },
+    "declared_features": [
+      "cesr.domain.binary",
+      "cesr.genus-1.00",
+      "cesr.serialization.cbor",
+      "cesr.serialization.json",
+      "cesr.serialization.mgpk",
+      "keri.version-1.x"
+    ],
+    "composes": [],
+    "filters": {
+      "profile": "cesr-strict",
+      "cases_dir": "cases"
+    },
+    "session_stderr": "",
+    "verdict": "no-evidence",
+    "aborted": null,
+    "probes": {
+      "statelessness": "not-yet-available"
+    },
+    "summary": {
+      "counts": {
+        "active": {
+          "INTEROP": {
+            "not-supported": 2
+          }
+        }
+      },
+      "should": {},
+      "should_failed": 0,
+      "interop": {
+        "not-supported": 2
+      },
+      "interop_verdict": "no-evidence",
+      "should_warning": null,
+      "not_supported_active": [
+        "CESR-0043",
+        "CESR-0044"
+      ],
+      "self_agreement_passes": 0
+    },
+    "cases": [
+      {
+        "id": "CESR-0043",
+        "status": "active",
+        "profile": "cesr-strict",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      },
+      {
+        "id": "CESR-0044",
+        "status": "active",
+        "profile": "cesr-strict",
+        "operation": "cesr.parse",
+        "failure": null,
+        "stderr": "",
+        "outcome": "not-supported",
+        "missing_features": [
+          "cesr.genus-2.00",
+          "keri.version-2.x"
+        ],
+        "assertions": [
+          {
+            "id": "a1",
+            "check": "rejected",
+            "level": "INTEROP",
+            "outcome": "not-supported",
+            "expected": null,
+            "actual": null,
+            "detail": null,
+            "self_agreement": false
+          }
+        ]
+      }
+    ]
+  }
+}

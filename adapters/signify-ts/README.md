@@ -80,8 +80,9 @@ The adapter checks its arithmetic against the parser wherever both exist: a coun
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-v1.0` | not-conformant | 7 / 15 | 12 / 0 | 0 / 0 | 8 | [2026-10-16, suite fe513a6c](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-v1.0.json) |
-| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 8 / 1 | 34 | [2026-10-16, suite fe513a6c](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/keripy-1x-interop.json) |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-strict` | interoperable | 0 / 0 | 0 / 0 | 2 / 0 | 0 | [2026-10-16, suite 32a93245](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-strict.json) |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-v1.0` | not-conformant | 7 / 15 | 12 / 0 | 0 / 0 | 8 | [2026-10-16, suite 32a93245](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-v1.0.json) |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 8 / 1 | 34 | [2026-10-16, suite 32a93245](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 
@@ -98,4 +99,4 @@ uv run python scripts/reproduce-results refresh --adapter signify-ts   # replace
 
 The committed `cesr-v1.0` result at `c5bc46a` is `not-conformant`: 16 cases pass, 17 fail and 8 are not sent. The 8 need `cesr.domain.binary`. The 7 `cesr.encode` cases in the text domain pass. Every `cesr.parse` case in this profile opens with a top-level genus/version code (`-_AAACAA`) before its first message, and `parse()` cannot read one there: it looks for a version string anywhere in the first 128 bytes rather than at the start, finds the message's own version string 8 bytes in, takes the message to start at byte 0, and rejects the body as `malformed-body`. So all 17 cases that expect decoded items fail, and the 9 must-reject cases pass for that reason rather than for the defect each one tests. Those 9 passes are not evidence about the parser yet.
 
-In `keripy-1x-interop` the five must-reject cases on KERI 1.0 streams (CESR-0049, CESR-0050, CESR-0052, CESR-0054, CESR-0057) are rejected and pass, as are the three item-counted 1.00 cases CESR-0045, CESR-0046 and CESR-0047, whose decoded items match. CESR-0048 fails, for the leading genus/version code above, so the verdict is `not-interoperable`, the verdict a non-normative profile gets instead of a conformance one. In `cesr-strict` both cases pass and the verdict is `interoperable`; that profile has no committed result, as for the other adapters.
+In `keripy-1x-interop` the five must-reject cases on KERI 1.0 streams (CESR-0049, CESR-0050, CESR-0052, CESR-0054, CESR-0057) are rejected and pass, as are the three item-counted 1.00 cases CESR-0045, CESR-0046 and CESR-0047, whose decoded items match. CESR-0048 fails, for the leading genus/version code above, so the verdict is `not-interoperable`, the verdict a non-normative profile gets instead of a conformance one. In `cesr-strict` both cases pass and the verdict is `interoperable`.
