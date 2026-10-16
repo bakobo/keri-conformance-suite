@@ -53,15 +53,15 @@ uv run coverage combine .coverage.main .coverage.onex && uv run coverage report 
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| keripy 1.2.14 | `cesr-strict` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 2 | [2026-10-16, suite 32a93245](../../results/keripy/1.2.14/cesr-strict.json) |
-| keripy 1.2.14 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite 32a93245](../../results/keripy/1.2.14/cesr-v1.0.json) |
-| keripy 1.2.14 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 38 | [2026-10-16, suite 32a93245](../../results/keripy/1.2.14/keripy-1x-interop.json) |
-| keripy 2.1.0.dev1 | `acdc-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 0 | [2026-10-16, suite 32a93245](../../results/keripy/2.1.0.dev1/acdc-v1.0.json) |
-| keripy 2.1.0.dev1 | `cesr-strict` | interoperable | 0 / 0 | 0 / 0 | 2 / 0 | 0 | [2026-10-16, suite 32a93245](../../results/keripy/2.1.0.dev1/cesr-strict.json) |
-| keripy 2.1.0.dev1 | `cesr-v1.0` | conformant | 29 / 0 | 13 / 0 | 0 / 0 | 0 | [2026-10-16, suite 32a93245](../../results/keripy/2.1.0.dev1/cesr-v1.0.json) |
-| keripy 2.1.0.dev1 | `keri-escrow` | interoperable | 0 / 0 | 0 / 0 | 16 / 0 | 0 | [2026-10-16, suite 32a93245](../../results/keripy/2.1.0.dev1/keri-escrow.json) |
-| keripy 2.1.0.dev1 | `keri-v1.0.1` | conformant | 215 / 0 | 351 / 0 | 0 / 0 | 2 | [2026-10-16, suite 32a93245](../../results/keripy/2.1.0.dev1/keri-v1.0.1.json) |
-| keripy 2.1.0.dev1 | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 43 / 105 | 0 | [2026-10-16, suite 32a93245](../../results/keripy/2.1.0.dev1/keripy-1x-interop.json) |
+| keripy 1.2.14 | `cesr-strict` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 2 | [2026-10-16, suite f5e5346a](../../results/keripy/1.2.14/cesr-strict.json) |
+| keripy 1.2.14 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite f5e5346a](../../results/keripy/1.2.14/cesr-v1.0.json) |
+| keripy 1.2.14 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 38 | [2026-10-16, suite f5e5346a](../../results/keripy/1.2.14/keripy-1x-interop.json) |
+| keripy 2.1.0.dev1 | `acdc-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 0 | [2026-10-16, suite f5e5346a](../../results/keripy/2.1.0.dev1/acdc-v1.0.json) |
+| keripy 2.1.0.dev1 | `cesr-strict` | interoperable | 0 / 0 | 0 / 0 | 2 / 0 | 0 | [2026-10-16, suite f5e5346a](../../results/keripy/2.1.0.dev1/cesr-strict.json) |
+| keripy 2.1.0.dev1 | `cesr-v1.0` | conformant | 29 / 0 | 13 / 0 | 0 / 0 | 0 | [2026-10-16, suite f5e5346a](../../results/keripy/2.1.0.dev1/cesr-v1.0.json) |
+| keripy 2.1.0.dev1 | `keri-escrow` | interoperable | 0 / 0 | 0 / 0 | 16 / 0 | 0 | [2026-10-16, suite f5e5346a](../../results/keripy/2.1.0.dev1/keri-escrow.json) |
+| keripy 2.1.0.dev1 | `keri-v1.0.1` | conformant | 215 / 0 | 351 / 0 | 0 / 0 | 2 | [2026-10-16, suite f5e5346a](../../results/keripy/2.1.0.dev1/keri-v1.0.1.json) |
+| keripy 2.1.0.dev1 | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 174 / 1 | 0 | [2026-10-16, suite f5e5346a](../../results/keripy/2.1.0.dev1/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 
@@ -84,6 +84,8 @@ On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, `cesr-v1.0` is confor
 Each instance is also run against every other profile whose operations it offers, so that the results page records what happened rather than leaving the cell blank. keripy main passes both `cesr-strict` cases. keripy 1.2.14 declares neither `cesr.genus-2.00` nor `cesr.item-extents`, so no `cesr-v1.0` or `cesr-strict` case is sent to it and both verdicts are `no-evidence`.
 
 **Which table keripy main applies to a KERI 1.x stream.** keripy main's `Parser` takes the CESR table for attachments from its `version` argument, which defaults to 2.00, or from a leading genus-version code. It never takes it from a body's `KERI10` version string. Every `keripy-1x-interop` stream lacks that code, because keripy 1.x reads none. So for `kel.process` and `cesr.parse` the adapter constructs keripy main's `Parser` with `version=Vrsn_1_0` when the request's first stream begins with a message body, rather than a count code, whose version string keripy's own `smell` reads as KERI major version 1. Otherwise it leaves keripy's default (`keripy_api.Main.parser_kwargs`). This is the configuration a keripy main deployment that talks to 1.x peers passes, so on that profile keripy main is credited with a table choice the adapter makes. With the default, keripy main framed every 1.x stream's attachments with the 2.00 table and kept no key state for any KERI 1.x event. Which table a 2.x parser must apply to a stream with no genus-version code is unruled (`generators/SPEC-ISSUES.md`, G1). Every stream in a normative profile begins with a genus-version code, so the choice never decides a normative case, and the refresh that introduced it left every normative keripy main outcome unchanged.
+
+With the 1.00 table keripy main passes every `keripy-1x-interop` case but one. CESR-0052 is a KERI 1.0 inception followed by a 1.00 `-V` attachment group that declares 30 quadlets while 23 remain. keripy main accepts it, reading the group to the end of the stream, where keripy 1.2.14 asks for more bytes and so rejects it. Under the 2.00 default keripy main had rejected it only because it misread the group.
 
 ## Other keripy refs
 
