@@ -14,7 +14,8 @@ from result_docs import MAINTAINER_RUN, SUBMITTED, case, record, report, result
 
 from keri_conformance.errors import RunnerError
 from tools import reproduce as P
-from tools.results import result_path
+from tools.results import COMMITTED_KINDS, load_results, result_path
+from tools.site_source import profile_operations
 
 ALPHA = P.Instance("alpha", (P._step("adapters/alpha", "make"),), "adapters/alpha/bin/run",
                    ("cesr-v1.0", "keri-v1.0.1"), "kcs-adapter-keripy", "adapters/alpha/README.md")
@@ -602,3 +603,25 @@ def test_the_real_instances_name_built_adapters_readmes_and_profiles():
         assert (ROOT / instance.readme).is_file()
         for profile in instance.profiles:
             assert (ROOT / "profiles" / f"{profile}.json").is_file()
+
+
+def test_each_shipped_build_has_a_result_for_every_profile_it_can_take():
+    """A build whose adapter offers an operation some case of a profile uses is run against that
+    profile, even when every case is then unsent, so the results page never shows a blank cell
+    for a pair nobody tried (this.i, Maintainer runs cover every profile an adapter can take)."""
+    operations = profile_operations(ROOT)
+    builds: dict[tuple, tuple[set, set]] = {}
+    for r in load_results(ROOT / "results", kinds=COMMITTED_KINDS):
+        if r.doc["provenance"]["kind"] != "maintainer-run":
+            continue
+        hello = r.doc["report"]["hello"]
+        key = (hello["adapter"]["name"], hello["implementation"]["name"],
+               hello["implementation"]["version"])
+        offered, profiles = builds.setdefault(key, (set(), set()))
+        offered.update(hello["operations"])
+        profiles.add(r.doc["report"]["filters"]["profile"])
+    assert builds
+    missing = [(key, name) for key, (offered, profiles) in builds.items()
+               for name, needed in operations.items()
+               if needed & offered and name not in profiles]
+    assert missing == []
