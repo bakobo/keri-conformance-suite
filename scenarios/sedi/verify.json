@@ -894,7 +894,7 @@
      "a": [
       {
        "registry": "rip-A",
-       "shape": "isd"
+       "shape": "sd"
       }
      ]
     },
