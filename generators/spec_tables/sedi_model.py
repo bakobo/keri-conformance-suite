@@ -274,12 +274,15 @@ class _SediModel(am._Model):
         """A registry-shaped seal in the issuer's KEL whose event the bundle lacks (test-plan
         item 6: an s naming an absent event is incomplete): an event seal naming this registry,
         or a couple, which names no registry and so might be this registry's, at any s."""
-        known = {p[0].get("d") for p in self.registry_streams
-                 if p is not None and isinstance(p[0], dict)}
+        # Each carried event by its SAID and sequence number: a seal accounts for an event only
+        # by naming both, so a known d at another s still names an absent event.
+        known = {(p[0].get("d"), p[0].get("n", "0" if p[0].get("t") == "rip" else None))
+                 for p in self.registry_streams if p is not None and isinstance(p[0], dict)}
         for seal in self._seals(issuer):
             if not isinstance(seal, dict) or set(seal) not in ({"s", "d"}, {"i", "s", "d"}):
                 continue
-            if isinstance(seal["d"], str) and seal["d"] in known:
+            if (isinstance(seal["d"], str) and isinstance(seal["s"], str)
+                    and (seal["d"], seal["s"]) in known):
                 continue
             if "i" not in seal or seal["i"] == head.rd:
                 return [(INCOMPLETE, "registry-unseen")]

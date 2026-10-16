@@ -429,6 +429,14 @@ def test_a_withheld_couple_below_the_head_may_be_a_second_update_there():
     assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
 
 
+def test_a_known_event_sealed_at_another_s_names_an_absent_event():
+    frag = world({"A": cred("I")}, "A")
+    frag["events"].append({"name": "ixn-x", "aid": "I", "t": "ixn",
+                           "a": [{"registry": "bup-A-1", "shape": "sd", "extra": {"s": "2"}}]})
+    frag["kels"].append({"event": "ixn-x", "sigs": ["I0"]})
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
 def test_a_seal_whose_d_is_not_a_string_names_nothing_the_bundle_holds():
     frag = sealed_unseen(world({"A": cred("I")}, "A"), "rip-A", 1, shape="sd",
                          extra={"d": ["x"]})
