@@ -3,13 +3,13 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "f5e5346aaaa8958749050364337658d1c53ca8e6",
+    "commit": "819ecdd4f8d246330b12cd86faefc6627559c177",
     "date": "2026-10-16"
   },
   "report": {
     "report_version": 1,
-    "runner_version": "0.0.1",
-    "suite_version": "0.0.1",
+    "runner_version": "2026.10",
+    "suite_version": "2026.10",
     "protocol_version": 1,
     "supported_protocols": [
       1

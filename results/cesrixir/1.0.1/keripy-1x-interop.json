@@ -3,13 +3,13 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "32a932452f16d74b09d174a05baa53de14cb4681",
+    "commit": "819ecdd4f8d246330b12cd86faefc6627559c177",
     "date": "2026-10-16"
   },
   "report": {
     "report_version": 1,
-    "runner_version": "0.0.1",
-    "suite_version": "0.0.1",
+    "runner_version": "2026.10",
+    "suite_version": "2026.10",
     "protocol_version": 1,
     "supported_protocols": [
       1
@@ -524,7 +524,7 @@
         "profile": "keripy-1x-interop",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "\n18:55:32.615 [warning] Not enough bytes in stream: -AA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
+        "stderr": "\n21:11:06.671 [warning] Not enough bytes in stream: -AA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
         "assertions": [
           {
             "id": "a1",
