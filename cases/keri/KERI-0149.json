@@ -1,0 +1,93 @@
+{
+  "assertions": [
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "check": "disposition",
+      "expected": "rejected",
+      "id": "a1",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 2 (unverified).",
+      "phase": "initial",
+      "spec_conflicts": [
+        {
+          "line": 541,
+          "quote": "A Validator MAY drop any provided key event message body that does not have at least one attached signature from the current controlling key state of the AID of the associated [[ref: KEL]].",
+          "section": "Key event messages",
+          "why": "Line 541 makes dropping an unsigned key event a MAY; line 1266 makes it a MUST. The cases follow line 1266, the later and more specific sentence."
+        }
+      ]
+    },
+    {
+      "basis": {
+        "commit": "71cb54ebb445dd9d8cb33cd29a5f50894fafc569",
+        "quote": "A [[ref: Validator]] that receives a key event or non-key-event message that does not have attached at least one verifiable Controller signature MUST drop that message (i.e., not escrow or otherwise accept it).",
+        "section": "Indexed Signatures",
+        "spec": "keri",
+        "text": "Interoperability with keripy 1.x, not conformance: the reading the suite's KERI decision procedure (docs/design.md, KERI) gives a KERI 1.0 body with keripy 1.x's field set, where keri-v1.0.1 would grade the same reading MUST under the quoted sentence. No specification defines the KERI 1.x field sets or the CESR 1.00 attachment codes. keripy 1.2.14 (commit bab95c16e949b61398129a3e41a8f68bad84c94f) is the cross-check (generators/keripy1x_check, generators/DISAGREEMENTS.md).",
+        "url": "https://github.com/trustoverip/kswg-keri-specification/blob/71cb54ebb445dd9d8cb33cd29a5f50894fafc569/spec/spec-body.md#indexed-signatures"
+      },
+      "check": "disposition",
+      "expected": "not-seen",
+      "id": "a2",
+      "level": "INTEROP",
+      "message": 0,
+      "note": "Decision procedure step 2 (unverified).",
+      "phase": "final",
+      "spec_conflicts": [
+        {
+          "line": 541,
+          "quote": "A Validator MAY drop any provided key event message body that does not have at least one attached signature from the current controlling key state of the AID of the associated [[ref: KEL]].",
+          "section": "Key event messages",
+          "why": "Line 541 makes dropping an unsigned key event a MAY; line 1266 makes it a MUST. The cases follow line 1266, the later and more specific sentence."
+        }
+      ]
+    }
+  ],
+  "description": "A single-key inception whose only signature was made by a key other than the one it lists. The validator holds everything it needs to verify the signature, so it must drop the event. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0006 (KS-07) in keri-v1.0.1.",
+  "id": "KERI-0149",
+  "input": {
+    "messages": [
+      {
+        "source": "controller",
+        "stream": "7b2276223a224b45524931304a534f4e3030303132625f222c2274223a22696370222c2264223a22454c5342754e645244445f6157344268704d4678302d65645334592d4f7248736d636c4a366e717a75533135222c2269223a22454c5342754e645244445f6157344268704d4678302d65645334592d4f7248736d636c4a366e717a75533135222c2273223a2230222c226b74223a2231222c226b223a5b224441616d74575f4c2d5a51734c567a584a4e76434b756d3972784c745f384531664c5a4e6158593845316834225d2c226e74223a2231222c226e223a5b22454c37487268797866394262553952737454716459504579534d7a554b664e6a516c7649316c32634f447564225d2c226274223a2230222c2262223a5b5d2c2263223a5b5d2c2261223a5b5d7d2d414142414141584a704d75486b5a62695a535f73354c56796e7757664a30706e6e696a365932477871615948426e2d31695a6f6444413552625a59646c73664c6b4d6865777631756f627949536f4d636a2d6a675131394e54774e"
+      }
+    ],
+    "perspective": {
+      "role": "validator"
+    }
+  },
+  "operation": "keri.process",
+  "profile": "keripy-1x-interop",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-keri",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/keri/keripy1x.json#K1X-07"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "cesr.genus-1.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-1.x"
+    ],
+    "wire": [
+      "CESR-1.00",
+      "KERI10JSON"
+    ]
+  },
+  "title": "keripy 1.x: inception with a forged signature"
+}

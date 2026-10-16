@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "bc593657b91f7db7fd248f29a3d6f401dcfdd817",
+    "commit": "9ec34529e0e966aa445d3a2c7092729b9d20751e",
     "date": "2026-10-15"
   },
   "report": {
@@ -1779,7 +1779,7 @@
           "kind": "error-harness",
           "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    {:error,\n     \"Code in \\\"-_AAACAA-KAWAADNx-zQEvc25eYgzLDFAEzmwYPKDgt0W7cn9Dds5Jcn91OueXO_jp4kItiXCLtNFy4VOtW6wLPacOyTeodwnxWm\\\" not found\"}\n"
         },
-        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error,\n     \"Code in \\\"-_AAACAA-KAWAADNx-zQEvc25eYgzLDFAEzmwYPKDgt0W7cn9Dds5Jcn91OueXO_jp4kItiXCLtNFy4VOtW6wLPacOyTeodwnxWm\\\" not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:62: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error,\n     \"Code in \\\"-_AAACAA-KAWAADNx-zQEvc25eYgzLDFAEzmwYPKDgt0W7cn9Dds5Jcn91OueXO_jp4kItiXCLtNFy4VOtW6wLPacOyTeodwnxWm\\\" not found\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
         "assertions": [
           {
             "id": "a1",
@@ -2035,7 +2035,7 @@
           "kind": "error-harness",
           "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised MatchError: no match of right hand side value:\n\n    \"-KAWAACVW-nOW8fpFvXA8DRKwhdziKzYeoAEub51YdmFxxAY-SyTzJ_dk4AGZlGgbhOIfNPIqHU7S9IENvr1N-2JLe\"\n"
         },
-        "stderr": "** (MatchError) no match of right hand side value:\n\n    \"-KAWAACVW-nOW8fpFvXA8DRKwhdziKzYeoAEub51YdmFxxAY-SyTzJ_dk4AGZlGgbhOIfNPIqHU7S9IENvr1N-2JLe\"\n\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:112: Cesr.CountCodeKERIv2.CD_C_AttachmentGroup.from_b64/1\n    (cesrixir 1.0.1) lib/cesr.ex:434: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:62: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "stderr": "** (MatchError) no match of right hand side value:\n\n    \"-KAWAACVW-nOW8fpFvXA8DRKwhdziKzYeoAEub51YdmFxxAY-SyTzJ_dk4AGZlGgbhOIfNPIqHU7S9IENvr1N-2JLe\"\n\n    (cesrixir 1.0.1) lib/CountCode/CntCodeGeneratorV2.ex:112: Cesr.CountCodeKERIv2.CD_C_AttachmentGroup.from_b64/1\n    (cesrixir 1.0.1) lib/cesr.ex:434: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
         "assertions": [
           {
             "id": "a1",
@@ -2080,7 +2080,7 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "\n17:23:57.604 [warning] Not enough bytes in stream: -CA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
+        "stderr": "\n23:59:18.296 [warning] Not enough bytes in stream: -CA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
         "assertions": [
           {
             "id": "a1",
@@ -2158,7 +2158,7 @@
           "kind": "error-harness",
           "detail": "The adapter answered with a harness error: e.self.unknown.exception.f: cesrixir or the adapter raised CaseClauseError: no case clause matching:\n\n    {:error, \"Doesn't match Elixir.Cesr.Primitive.CD_H_SHA3_256\"}\n"
         },
-        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error, \"Doesn't match Elixir.Cesr.Primitive.CD_H_SHA3_256\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:62: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
+        "stderr": "** (CaseClauseError) no case clause matching:\n\n    {:error, \"Doesn't match Elixir.Cesr.Primitive.CD_H_SHA3_256\"}\n\n    (cesrixir 1.0.1) lib/cesr.ex:439: Cesr.process_T_cnt_code/2\n    (cesrixir 1.0.1) lib/cesr.ex:50: Cesr._consume_stream/4\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/parse.ex:29: KcsAdapterCesrixir.Parse.parse/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/protocol.ex:30: KcsAdapterCesrixir.Protocol.respond/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:92: KcsAdapterCesrixir.CLI.run/1\n    (kcs_adapter_cesrixir 1.0.1-1) lib/kcs_adapter_cesrixir/cli.ex:77: anonymous fn/3 in KcsAdapterCesrixir.CLI.answer/2\n\n",
         "assertions": [
           {
             "id": "a1",
