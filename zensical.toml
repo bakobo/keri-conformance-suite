@@ -39,7 +39,7 @@ nav = [
       { "KERI clauses" = "coverage/keri.md" },
       { "ACDC clauses" = "coverage/acdc.md" },
     ] },
-    { "Self-assessment" = "coverage/assessment-2026-10.md" },
+    { "Self-assessment" = "coverage/assessment-2026-10-16.md" },
   ] },
 ]
 

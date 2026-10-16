@@ -1,5 +1,7 @@
 # Self-assessment: CESR and KERI case adequacy
 
+Superseded on 2026-10-16 by [the assessment of that date](assessment-2026-10-16.md), which marks which of the missing cases below are now covered; this file stays as the dated record.
+
 This is a dated assessment of how well the suite's public CESR and KERI cases test their specifications, written on 2026-10-09 against 52 CESR cases and 60 KERI cases. It reads the generated clause coverage report in [README.md](README.md), [cesr.md](cesr.md) and [keri.md](keri.md), and adds the judgment that the report deliberately leaves out: whether the cases that cite a sentence probe it at its edges, and which missing cases matter most. Line numbers are those of the pinned texts, CESR v1.0 at commit `0371296` and KERI v1.0.1 at commit `71cb54e`. It will go stale as cases are added; the report will not, because CI regenerates it.
 
 ## What the report measures, and what it does not
