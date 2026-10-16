@@ -10,7 +10,7 @@ cd generators/keripy1x_check && uv run python check.py --report /tmp/keripy1x-re
 ```
 
 - `generators/keripy_check` pins keripy main at `9a8b7aa70960f16fe7acffd8cf7901941ac912a1` (Python 3.14). Every `cesr.parse` case goes through keripy's own `Parser.msgParsator`, framed, once per message: keripy handles the leading genus/version code, reaps and verifies each body with `Serdery` (so a body with a wrong SAID or field set is refused), and extracts the attachments. Every `cesr.encode` case goes through keripy's `Matter`.
-- `generators/keripy1x_check` pins keripy 1.2.14 (`bab95c16e949b61398129a3e41a8f68bad84c94f`, Python 3.12) and runs the `keripy-1x-interop` cases through keripy 1.2.14's `Parser.msgParsator`, with a recording stand-in for the `Kevery` it dispatches to, so it sees what the Parser extracted and runs no KERI validation.
+- `generators/keripy1x_check` pins keripy 1.2.14 (`bab95c16e949b61398129a3e41a8f68bad84c94f`, Python 3.12) and runs the `keripy-1x-interop` CESR cases through keripy 1.2.14's `Parser.msgParsator`, with a recording stand-in for the `Kevery` it dispatches to, so it sees what the Parser extracted and runs no KERI validation. The same run checks the profile's KERI cases against a real `Kevery`; those results are under "The keripy-1x-interop KERI cases", in the KERI half of this file.
 
 Last run: 2026-10-15, all cases in `cases/cesr/`.
 
@@ -93,7 +93,7 @@ Every assertion of every KERI case except those of KERI-0108 and KERI-0123 to KE
 
 Two conventions the cases share with keripy, which the specification does not pin down (both are in `generators/SPEC-ISSUES.md`): a next-key digest is the digest, by the algorithm its own code names, of the qualified public key's text (K-I1), and each stream starts with the genus/version code `-_AAACAA` (K-G6). keripy main reads streams with or without that code the same way.
 
-keripy 1.2.14 was not run through the full cross-check. It implements KERI 1.x bodies only, and every case carries 2.XX bodies. It was probed by hand for this batch's published duplicate-signature cases and agrees with keripy main.
+keripy 1.2.14 was not run through this cross-check. It implements KERI 1.x bodies only, and every `keri-v1.0.1` and `keri-escrow` case carries 2.XX bodies. It was probed by hand for this batch's published duplicate-signature cases and agrees with keripy main. The `keripy-1x-interop` KERI cases, which carry 1.x bodies, are cross-checked against keripy 1.2.14 instead, and are skipped here (see "The keripy-1x-interop KERI cases" below).
 
 The second batch (KERI-0054 onward) adds companion safety cases, duplicate-signature and witness-threshold cases, delegated-rotation seal cases, a delegatee interaction, a corrupt-copy case and a post-recovery disputed-branch case. Every assertion of every published case agrees with keripy main. A few additional safety cases in this area are held out of the public tree under the embargo policy (`docs/design.md`, Security) and are not described here.
 
@@ -133,6 +133,23 @@ Last run: 2026-10-09.
 - **Disputed: transaction links are not checked on a route with no handler** (KERI-0072, KERI-0073, KERI-0074). keripy's generic exchange processing (`Exchanger.processEvent`) reads neither `p` nor `x`, so it accepts a signed `exn` whose `p` names nothing (KERI-0072), whose `x` names an `exn` it accepted rather than an `xip` (KERI-0073), or whose `x` is not empty though no `xip` was delivered (KERI-0074). The cases grade those refusals at SHOULD, inferred from lines 975 and 979, which bind the sender. The keripy adapter's README already notes this behaviour.
 
 No MUST assertion of an exchange-message case disagrees with keripy main. keripy 1.2.14 does not implement `exn.verify`, and every one of these cases is not-supported there.
+
+## The keripy-1x-interop KERI cases
+
+KERI-0143 to KERI-0176 mirror 29 `keri-v1.0.1` scenarios on keripy 1.x's wire (`docs/design.md`, KERI 1.x). Their expected readings come from the same decision procedure and model, applied to the 1.x bytes; keripy 1.2.14 is only the cross-check. It runs with the CESR cross-check:
+
+```sh
+cd generators/keripy1x_check && uv run python check.py --report /tmp/keripy1x-report.json
+```
+
+`generators/keripy1x_check/kel.py` makes the same two checks as `generators/keripy_keri_check`, on keripy 1.2.14's API: `SerderKERI(sad=..., makify=True)` must rebuild every untampered body, receipts included, and keripy's `Verfer` must verify every signature the scenario made and refuse every one it forged; then the messages go through keripy's parser into a fresh `Kevery(lax=False, local=False)`, with `processEscrows()` run to quiescence after each delivery, and the assertions are evaluated with the runner's own evaluator. One difference: keripy 1.2.14's `Parser.parse` swallows every exception and, after a message with no attachments, waits for more bytes forever. The check therefore drives `Parser.msgParsator` itself and treats a request for more bytes after the whole stream as a refusal, which is what the adapter protocol's end-of-input rule requires of an adapter.
+
+Last run: 2026-10-15, KERI-0143 to KERI-0176.
+
+Every assertion of every case agrees with keripy 1.2.14, including the readings gated on `keri.escrow` (an event that arrives before its prior event or its delegator's KEL is held and then accepted) and the superseding recovery of KERI-0176. keripy rebuilds every untampered 1.x body byte for byte, including rotations without a `c` field, and verifies or refuses each signature as the scenarios made it. Two readings agree for a reason other than the procedure's, as their 2.x twins do above:
+
+- **KERI-0161, a rotation after a non-transferable inception**, mirrors KERI-0024. keripy refuses the rotation when it parses the body (`Non-transferable code = B with non-empty nxt`), so `SerderKERI` will not build it and the byte check reports that it cannot reproduce it; the procedure refuses it at step 3. Both readings are not seen, which is all the case grades.
+- **KERI-0150, an unsigned inception**, mirrors KERI-0007. keripy 1.2.14's parser waits for attachments after the body instead of refusing it; under the end-of-input rule that is a refusal, and the event is not seen, as the case grades.
 
 # Disagreements between the ACDC generator's primitives and keripy
 

@@ -753,6 +753,1013 @@
           "clause": "prerotation"
         }
       }
+    },
+    {
+      "id": "KERI-0160",
+      "key": "K1X-27",
+      "status": "draft",
+      "title": "keripy 1.x: partial rotation holding a key in reserve",
+      "description": "An inception with keys [a0, b0, c0], threshold 2, committing to a1, b1 and c1 with next threshold 2. The rotation exposes only a1 and b1, signed by both, and commits to c1 again in its own next keys. A validator should accept it. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0023 (KS-27) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0",
+            "b0",
+            "c0"
+          ],
+          "kt": "2",
+          "next": [
+            "a1",
+            "b1",
+            "c1"
+          ],
+          "nt": "2"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1",
+            "b1"
+          ],
+          "kt": "2",
+          "next": [
+            "a2",
+            "b2",
+            "c1"
+          ],
+          "nt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0",
+            "b0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1",
+            "b1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0161",
+      "key": "K1X-31",
+      "status": "draft",
+      "title": "keripy 1.x: rotation after a non-transferable inception",
+      "description": "A non-transferable inception (empty next keys, basic non-transferable prefix), then a rotation of the same identifier, signed by its own key. No more key events are allowed after a non-transferable inception (line 340), so a validator must not accept the rotation. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0024 (KS-31) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [],
+          "nt": "0",
+          "prefix": "nontransferable"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "x"
+          ],
+          "next": [
+            "x2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "x"
+          ],
+          "expect": [
+            "3/nontransferable",
+            "3/nontransferable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0162",
+      "key": "K1X-33",
+      "status": "draft",
+      "title": "keripy 1.x: establishment-only KEL",
+      "description": "An inception with the EO trait, then an interaction, then a rotation at sequence number 1. A validator must drop the interaction (line 377) and should accept the rotation. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0027 (KS-33) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "c": [
+            "EO"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "prior": "icp",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "3/establishment-only",
+            "3/establishment-only"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0163",
+      "key": "K1X-37",
+      "status": "draft",
+      "title": "keripy 1.x: delegated inception, anchor first",
+      "description": "A delegator's inception, then its interaction anchoring the delegated inception's seal, then the delegated inception with a seal source couple naming that interaction. A validator should accept all three. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0030 (KS-37) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0164",
+      "key": "K1X-39",
+      "status": "draft",
+      "title": "keripy 1.x: delegated inception before its delegator, kept and accepted later",
+      "description": "The delegated inception of KS-37 arrives before the delegator's KEL. A validator must not accept it until it has seen the delegating seal (line 1612). Whether it is accepted once the anchor arrives depends on escrow the specification does not require; that half is in the keri-escrow profile. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0031 (KS-39) in keri-v1.0.1. keripy 1.x keeps an event that arrives before what it depends on, so this case also grades that the early event is held and then accepted, which keri-v1.0.1 leaves to keri-escrow; it needs keri.escrow, and its companion carries the readings that do not.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "4/delegation",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        },
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        }
+      ],
+      "companion": {
+        "id": "KERI-0165",
+        "key": "K1X-39s",
+        "title": "keripy 1.x: delegated inception before its delegator: not accepted on arrival",
+        "description": "The assertions of KERI-0164 that need no declinable feature, on the same messages, so that an adapter that declines keri.escrow or kel.recovery still gives evidence for them."
+      }
+    },
+    {
+      "id": "KERI-0166",
+      "key": "K1X-40",
+      "status": "draft",
+      "title": "keripy 1.x: delegated inception with no anchor",
+      "description": "A delegator's inception, then a delegated inception naming it as delegator, with no delegating seal anywhere. A validator must not accept the delegated inception. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0033 (KS-40) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "4/delegation",
+            "4/delegation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0167",
+      "key": "K1X-42",
+      "status": "draft",
+      "title": "keripy 1.x: delegated rotation anchored in the delegator's rotation",
+      "description": "KS-37's delegation, then a delegator rotation anchoring a delegated rotation, then the delegated rotation. A validator should accept all five, and the delegatee's key state is its rotation's, with its delegator. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0035 (KS-42) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "Dicp",
+          "aid": "D",
+          "t": "icp",
+          "keys": [
+            "d0"
+          ],
+          "next": [
+            "d1"
+          ]
+        },
+        {
+          "name": "Dixn1",
+          "aid": "D",
+          "t": "ixn",
+          "a": [
+            {
+              "event": "Edip"
+            }
+          ]
+        },
+        {
+          "name": "Edip",
+          "aid": "E",
+          "t": "dip",
+          "delegator": "D",
+          "keys": [
+            "e0"
+          ],
+          "next": [
+            "e1"
+          ]
+        },
+        {
+          "name": "Drot2",
+          "aid": "D",
+          "t": "rot",
+          "keys": [
+            "d1"
+          ],
+          "next": [
+            "d2"
+          ],
+          "a": [
+            {
+              "event": "Edrt1"
+            }
+          ]
+        },
+        {
+          "name": "Edrt1",
+          "aid": "E",
+          "t": "drt",
+          "keys": [
+            "e1"
+          ],
+          "next": [
+            "e2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "Dicp",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Dixn1",
+          "sigs": [
+            "d0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edip",
+          "sigs": [
+            "e0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Dixn1"
+        },
+        {
+          "event": "Drot2",
+          "sigs": [
+            "d1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "Edrt1",
+          "sigs": [
+            "e1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "source_seal": "Drot2"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0168",
+      "key": "K1X-45",
+      "status": "draft",
+      "title": "keripy 1.x: witnessed inception with its witness signatures attached",
+      "description": "An inception with three witnesses and witness threshold 2, carrying the controller's signature and witness-indexed signatures from the first and third witnesses. A validator should accept it. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0036 (KS-45) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0169",
+      "key": "K1X-46",
+      "status": "draft",
+      "title": "keripy 1.x: witnessed inception under its witness threshold",
+      "description": "The inception of KS-45 with only one witness signature. A validator must not accept it (line 1264), and should keep it for the missing witness signature (line 1266). Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0037 (KS-46) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ],
+          "wigs": [
+            "w1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0170",
+      "key": "K1X-47",
+      "status": "draft",
+      "title": "keripy 1.x: witness threshold completed by receipts",
+      "description": "The inception of KS-45 with no witness signatures, then receipts from two of its witnesses. A validator that kept the inception, as line 1266 says it should, accepts it once the receipts satisfy the threshold. The safety half, graded at MUST without keri.escrow, is the companion case KS-47s. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0038 (KS-47) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "6/accepted"
+          ]
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "6/receipt"
+          ],
+          "wigs": [
+            "w1"
+          ],
+          "source": "witness-w1"
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "6/receipt",
+            "6/receipt"
+          ],
+          "wigs": [
+            "w2"
+          ],
+          "source": "witness-w2"
+        }
+      ],
+      "companion": {
+        "id": "KERI-0171",
+        "key": "K1X-47s",
+        "title": "keripy 1.x: witness threshold completed by receipts (ungated half)",
+        "description": "The assertions of KERI-0170 that need no declinable feature, on the same messages, so that an adapter that declines keri.escrow or kel.recovery still gives evidence for them."
+      }
+    },
+    {
+      "id": "KERI-0172",
+      "key": "K1X-48",
+      "status": "draft",
+      "title": "keripy 1.x: receipt with a forged witness signature",
+      "description": "The inception of KS-45 with no witness signatures, a receipt from the first witness, and a receipt whose signature, indexed to the second witness, was not made by it. Only one witness signature verifies, so a validator must not accept the inception. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0039 (KS-48) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "4/witness-threshold",
+            "4/witness-threshold"
+          ]
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "4/receipt"
+          ],
+          "wigs": [
+            "w1"
+          ],
+          "source": "witness-w1"
+        },
+        {
+          "receipt": "icp",
+          "expect": [
+            "4/receipt",
+            "4/receipt"
+          ],
+          "wigs": [
+            {
+              "key": "w2",
+              "forged": true
+            }
+          ],
+          "source": "witness-w2"
+        }
+      ]
+    },
+    {
+      "id": "KERI-0173",
+      "key": "K1X-52",
+      "status": "draft",
+      "title": "keripy 1.x: witness rotation",
+      "description": "KS-45's inception, then a rotation that removes w3, adds w4 and keeps witness threshold 2, signed by w1 and w2, which sit at the same positions in the old and new witness lists. A validator should accept the rotation, and its witness list is [w1, w2, w4]: removals first, then additions appended in order (lines 358 and 362). Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0041 (KS-52) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "wits": [
+            "w1",
+            "w2",
+            "w3"
+          ],
+          "bt": "2"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ],
+          "br": [
+            "w3"
+          ],
+          "ba": [
+            "w4"
+          ],
+          "bt": "2"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w3"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ],
+          "wigs": [
+            "w1",
+            "w2"
+          ]
+        }
+      ],
+      "key_state": {
+        "A": {
+          "clause": "wit-list-order"
+        }
+      }
+    },
+    {
+      "id": "KERI-0174",
+      "key": "K1X-59",
+      "status": "draft",
+      "title": "keripy 1.x: conflicting interaction, validly signed",
+      "description": "An inception and an interaction, then a different interaction at the same sequence number, also signed by the current key. A second interaction cannot supersede the first (rule A2), so a validator should not accept it, and its key state stays at the first interaction. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0042 (KS-59) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "ixn1b",
+          "aid": "A",
+          "t": "ixn",
+          "prior": "icp",
+          "a": [
+            {
+              "event": "icp"
+            }
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1b",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "5/conflict",
+            "5/conflict"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0175",
+      "key": "K1X-61",
+      "status": "draft",
+      "title": "keripy 1.x: conflicting inception of a basic prefix",
+      "description": "A transferable basic-prefix inception, then a different inception of the same prefix (another next-key commitment), also signed by its key. A validator should not accept the second. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0044 (KS-61) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ],
+          "prefix": "basic"
+        },
+        {
+          "name": "icp2",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "b1"
+          ],
+          "prefix": "basic"
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "icp2",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "5/conflict",
+            "5/conflict"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "KERI-0176",
+      "key": "K1X-63",
+      "status": "draft",
+      "title": "keripy 1.x: superseding recovery of one interaction",
+      "description": "An inception and an interaction signed by the current key, then a rotation at sequence number 1, signed by the pre-rotated key, that supersedes the interaction (rule A0). A validator should accept the rotation and keep the interaction as seen but off the trunk. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0046 (KS-63) in keri-v1.0.1.",
+      "events": [
+        {
+          "name": "icp",
+          "aid": "A",
+          "t": "icp",
+          "keys": [
+            "a0"
+          ],
+          "next": [
+            "a1"
+          ]
+        },
+        {
+          "name": "ixn1",
+          "aid": "A",
+          "t": "ixn"
+        },
+        {
+          "name": "rot1",
+          "aid": "A",
+          "t": "rot",
+          "prior": "icp",
+          "keys": [
+            "a1"
+          ],
+          "next": [
+            "a2"
+          ]
+        }
+      ],
+      "messages": [
+        {
+          "event": "icp",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "ixn1",
+          "sigs": [
+            "a0"
+          ],
+          "expect": [
+            "6/accepted",
+            "6/accepted"
+          ]
+        },
+        {
+          "event": "rot1",
+          "sigs": [
+            "a1"
+          ],
+          "expect": [
+            "5/supersedes",
+            "5/supersedes"
+          ]
+        }
+      ]
     }
   ]
 }
