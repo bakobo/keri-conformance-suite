@@ -674,7 +674,9 @@ def test_a_seal_source_couple_is_a_sequence_number_then_a_digest():
     assert sm.attachments(T, couple_group(SN + DIG)) == []
     for item, words in ((DIG + SN, "sequence number and a digest"),
                         ("4AAG" + "A" * 20 + DIG, "variable size"),
-                        (SN + "E!" + "A" * 42, "not text-domain")):
+                        (SN + "E!" + "A" * 42, "not text-domain"),
+                        ("0A_" + "A" * 21 + DIG, "canonically encoded"),
+                        (SN + "E_" + "A" * 42, "canonically encoded")):
         with pytest.raises(ValueError, match=words):
             sm.attachments(T, couple_group(item))
 

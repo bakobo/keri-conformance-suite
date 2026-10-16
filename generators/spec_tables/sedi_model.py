@@ -56,7 +56,7 @@ from dataclasses import dataclass, field
 
 from . import acdc_model as am
 from . import acdc_saids as sa
-from . import b64, exn_build
+from . import b64, encoding, exn_build
 from .tables import Tables
 
 VALID, INVALID, INCOMPLETE = "valid", "invalid", "incomplete"
@@ -129,6 +129,13 @@ def _count(t: Tables, text: str, i: int) -> tuple[str, int, int]:
     return code, b64.b64_to_int(digits), end
 
 
+def _canonical(t: Tables, code: str, text: str) -> bool:
+    """Whether a fixed-size primitive is its raw value encoded again: its code's pad bits zero,
+    so that no two texts decode to one value."""
+    raw = b64.decode("A" * len(code) + text[len(code):])[-t.raw_size(code):]
+    return encoding.primitive(t, code, raw) == text
+
+
 def attachments(t: Tables, text: str) -> list[tuple[str, ...]]:
     """The blinded state quadruples in an attachments group as sedi-1 reads it, every item of
     every group parsed whole; any other group, or a group whose count does not frame its items,
@@ -155,9 +162,10 @@ def attachments(t: Tables, text: str) -> list[tuple[str, ...]]:
                     raise ValueError("a primitive of variable size in a fixed-size item")
                 value, j = am._take(content, j, size)
                 fields.append(value)
-            if code == "-S" and not all(f.startswith(c) and am._primitive_code(t, f) == c
+            if code == "-S" and not all(am._primitive_code(t, f) == c and _canonical(t, c, f)
                                         for f, c in zip(fields, COUPLE_CODES)):
-                raise ValueError("a seal source couple is a sequence number and a digest")
+                raise ValueError("a seal source couple is a sequence number and a digest, each "
+                                 "canonically encoded")
             if code in QUADRUPLES:
                 out.append(tuple(fields))
     return out
