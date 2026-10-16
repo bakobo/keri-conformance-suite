@@ -76,14 +76,15 @@ def quiesce(kvy, db, extra=(), tables=TABLES):
                        "the adapter stopped.")
 
 
-def extract(api, stream: bytes, exact=False):
+def extract(api, stream: bytes, exact=False, table=None):
     """keripy's own parse of one message and its attachments (its MsgParseDom), or None if keripy
     cannot parse it. Uses a parser with no processors attached, so parsing never changes keripy's
     state. With exact, the stream must be that one message and nothing more: bytes keripy's parse
-    leaves over make the stream unframeable as one message, and the answer None."""
+    leaves over make the stream unframeable as one message, and the answer None. table is the
+    request's Parser arguments (keripy_api parser_kwargs), so the parse uses the request's table."""
     ims = bytearray(stream)
     try:
-        gen = api.run(parsing.Parser(), ims)
+        gen = api.run(parsing.Parser(**(table or {})), ims)
         while True:
             next(gen)
     except StopIteration as done:
@@ -98,9 +99,9 @@ def extract(api, stream: bytes, exact=False):
     return exts
 
 
-def identify(api, stream: bytes):
+def identify(api, stream: bytes, table=None):
     """What keripy's own parser says the message is, or None if keripy cannot parse it."""
-    exts = extract(api, stream)
+    exts = extract(api, stream, table=table)
     if exts is None:
         return None
     serder = exts.serder
@@ -221,8 +222,11 @@ def process(request) -> dict:
     with basing.openDB(name="kcs-adapter-keripy", temp=True) as db:
         # A fresh database, Kevery and Parser for every request: nothing carries over.
         kvy = eventing.Kevery(db=db, lax=False, local=False)
-        parser = parsing.Parser(kvy=kvy)
-        idents = [identify(api, s) for s in messages]
+        # The request's first stream picks the table for all of them, as a deployment's
+        # configuration would (keripy_api parser_kwargs).
+        table = api.parser_kwargs(messages[0]) if messages else {}
+        parser = parsing.Parser(kvy=kvy, **table)
+        idents = [identify(api, s, table) for s in messages]
         initial = []
         for s, ident in zip(messages, idents, strict=True):
             deliver(parser, s)

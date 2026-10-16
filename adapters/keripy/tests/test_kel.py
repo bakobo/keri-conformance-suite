@@ -262,3 +262,22 @@ def test_a_keripy_exception_while_delivering_is_logged_and_the_message_reported(
 def test_an_empty_message_list_is_an_empty_result():
     assert process()["result"] == {"dispositions": [], "key_states": {}}
 
+
+
+def onex(serder, signers):
+    """A KERI 1.x message as keripy 1.x emits it: the body, then a bare CESR 1.00 -A group of
+    controller signatures, with no genus-version code."""
+    from keri.core.counting import Counter
+    from keri.kering import Vrsn_1_0
+    sigs = b"".join(bytes(s.sign(serder.raw, index=i).qb64b) for i, s in enumerate(signers))
+    return serder.raw + bytes(Counter(code="-A", count=len(signers), version=Vrsn_1_0).qb64b) + sigs
+
+
+def test_a_genus_less_keri_1_x_kel_is_read_with_the_1_00_table():
+    from keri.kering import Vrsn_1_0
+    i = eventing.incept(keys=[A0.verfer.qb64], isith="1", ndigs=[dig(A1)], nsith="1",
+                        code=MtrDex.Blake3_256, pvrsn=Vrsn_1_0, kind=Kinds.json)
+    x1 = eventing.interact(pre=i.pre, dig=i.said, sn=1, pvrsn=Vrsn_1_0, kind=Kinds.json)
+    response = process(onex(i, [A0]), onex(x1, [A0]))
+    assert readings(response) == [SEEN, SEEN]
+    assert response["result"]["key_states"][i.pre]["sn"] == 1

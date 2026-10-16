@@ -29,8 +29,9 @@ def case(cid, outcome="pass", **assertions):
 
 
 def report(profile, commit, *cases, verdict="conformant"):
+    version = "1.2.14" if profile == "keripy-1x-interop" else "2"
     return {"filters": {"profile": profile},
-            "hello": {"implementation": {"name": "keripy", "version": "2", "commit": commit}},
+            "hello": {"implementation": {"name": "keripy", "version": version, "commit": commit}},
             "verdict": verdict, "cases": list(cases) or [case("CESR-0001")]}
 
 
@@ -228,28 +229,39 @@ class TestLoadRefs:
         adapter = pathlib.Path(refs.__file__).resolve().parents[2]
         listed = refs.load_refs(adapter / "refs.json")
         assert listed
+        # keripy main needs Python 3.14 and keripy 1.x runs on 3.12, so a ref's Python names
+        # the generation whose committed result it is compared with.
+        version = {"3.14": "2", "3.12": "1"}
         for item in listed:
             for profile in item["profiles"]:
-                assert refs.committed_result(adapter.parents[1], profile).is_file(), \
+                assert refs.committed_result(adapter.parents[1], profile,
+                                             version[item["python"]]).is_file(), \
                     (item["name"], profile)
 
 
 class TestCommittedResult:
     def test_the_one_committed_result_for_a_profile_is_found(self, suite):
-        assert refs.committed_result(suite, "keripy-1x-interop") == (
+        assert refs.committed_result(suite, "keripy-1x-interop", "1.3.6") == (
             suite / "results" / "keripy" / "1.2.14" / "keripy-1x-interop.json")
+
+    def test_the_result_of_the_refs_own_generation_is_chosen(self, suite):
+        other = suite / "results" / "keripy" / "1.2.14" / "cesr-v1.0.json"
+        other.write_text("{}")
+        assert refs.committed_result(suite, "cesr-v1.0", "2.0.0.dev6") == (
+            suite / "results" / "keripy" / "2" / "cesr-v1.0.json")
+        assert refs.committed_result(suite, "cesr-v1.0", "1.3.6") == other
 
     @pytest.mark.parametrize("extra", [False, True])
     def test_none_or_two_is_an_error(self, suite, extra):
         if extra:
-            other = suite / "results" / "keripy" / "9" / "cesr-v1.0.json"
+            other = suite / "results" / "keripy" / "2.9" / "cesr-v1.0.json"
             other.parent.mkdir()
             other.write_text("{}")
             profile, count = "cesr-v1.0", 2
         else:
             profile, count = "acdc-v1.0", 0
         with pytest.raises(refs.CommandError, match=rf"^{refs.E_NO_RESULT}: .* {count} "):
-            refs.committed_result(suite, profile)
+            refs.committed_result(suite, profile, "2.1.0")
 
 
 class TestState:

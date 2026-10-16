@@ -201,8 +201,9 @@ class Recorder:
                 and (not root or self.keripy.sniff(bytearray(root)) == kering.Colds.msg))
 
 
-def instrumented_parser(keripy, recorder):
-    """A fresh subclass instance of keripy's Parser that reports to recorder."""
+def instrumented_parser(keripy, recorder, **kwargs):
+    """A fresh subclass instance of keripy's Parser that reports to recorder, constructed with
+    kwargs (keripy_api parser_kwargs)."""
     base = keripy.Parser
 
     class Instrumented(base):
@@ -236,7 +237,7 @@ def instrumented_parser(keripy, recorder):
 
     for name in keripy.GROUP_METHODS:
         setattr(Instrumented, name, _wrap(base, name, recorder))
-    return Instrumented()
+    return Instrumented(**kwargs)
 
 
 def _wrap(base, name, recorder):
@@ -261,7 +262,7 @@ def _wrap(base, name, recorder):
 def parse(keripy, stream):
     """Items for stream, as measured from keripy's parser, or a Rejection."""
     recorder = Recorder(keripy)
-    parser = instrumented_parser(keripy, recorder)
+    parser = instrumented_parser(keripy, recorder, **keripy.parser_kwargs(stream))
     root = Tracked(stream, 0, recorder)
     while root:
         recorder.begin_round()

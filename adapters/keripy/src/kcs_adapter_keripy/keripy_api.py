@@ -57,6 +57,11 @@ class _Common:
         proto, pvrsn, kind, size = tuple(keri(kering.smell, buf))[:4]
         return proto, pvrsn, kind, size
 
+    def parser_kwargs(self, stream):
+        """Arguments for keripy's Parser beyond its processors: none, so keripy's own default
+        table applies."""
+        return {}
+
     def genus_version(self, ctr):
         """(genus, table version text) of a genus-version code, as keripy's parser reads it."""
         version = keri(lambda: self.Counter.b64ToVer(ctr.countToB64(l=3)))
@@ -95,6 +100,27 @@ class Main(_Common):
 
     def run(self, parser, ims):
         return parser.msgParsator(ims=ims, framed=True, piped=False, version=None)
+
+    def parser_kwargs(self, stream):
+        """The 1.00 table when the stream begins with a KERI 1.x message body, as a keripy main
+        deployment that talks to 1.x peers is configured; otherwise keripy's 2.00 default.
+
+        keripy main picks the table for attachments from this argument or a leading
+        genus-version code, never from a body's version string, and a keripy 1.x stream carries
+        no genus-version code. Which table a 2.x parser must apply to such a stream is unruled
+        (generators/SPEC-ISSUES.md G1); every normative stream begins with a genus-version code,
+        so this never decides a normative case. this.i: keripy main reads an unprefixed KERI 1.x
+        stream with the 1.00 table."""
+        buf = bytearray(stream)
+        try:
+            if kering.sniff(buf) != kering.Colds.msg:
+                return {}
+            proto, pvrsn = tuple(kering.smell(buf))[:2]
+        except Exception:  # noqa: BLE001 - nothing readable comes first, so keripy's default
+            return {}
+        if proto == kering.Protocols.keri and pvrsn.major == 1:
+            return {"version": kering.Vrsn_1_0}
+        return {}
 
 
 class OneX(_Common):
