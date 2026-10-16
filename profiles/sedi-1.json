@@ -18,8 +18,7 @@
     "ACDC-0114",
     "ACDC-0115",
     "ACDC-0116",
-    "ACDC-0117",
-    "ACDC-0118"
+    "ACDC-0117"
   ],
   "choices": [
     {
@@ -302,9 +301,7 @@
     {
       "basis": "Otherwise adding an unknown operator to a forged credential would turn a reject into a retry.",
       "cases": {
-        "negative": [
-          "ACDC-0118"
-        ],
+        "negative": [],
         "positive": []
       },
       "decided": "3g4le6js",

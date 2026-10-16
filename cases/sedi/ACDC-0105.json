@@ -23,7 +23,7 @@
     "edges": [],
     "root": "EGTdhAXSQt1FTBqPViGj-ihJxr57y4eaxMCOTGGsfBg1"
   },
-  "description": "As SV-02, but the update's seal carries a field beyond s and d. A sedi-1 verifier should find it invalid. Its positive pair is SV-01 (ACDC-0101), which differs from it only in the defect.",
+  "description": "As SV-02, but the update's seal carries a field beyond s and d. A sedi-1 verifier should find it invalid. Its positive pair is SV-02 (ACDC-0102), which differs from it only in the defect.",
   "id": "ACDC-0105",
   "input": {
     "acdcs": [],
