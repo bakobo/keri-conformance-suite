@@ -1,0 +1,1357 @@
+{
+ "about": "sedi-1's group-code cases (seal-couple-code, blind-state-code): each fixture is a bundle in the form acdc_build reads; each case names the sedi-1 choices its verdict rests on and its security triage, and lists every finding the sedi-1 model makes. The verdict itself is the model's (generators/spec_tables/sedi_cases.py).",
+ "profile": "sedi-1",
+ "fixtures": {
+  "SK-01": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     },
+     "source_seal": {
+      "event": "ixn-bup-A-1"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SK-02": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     },
+     "source_seal": {
+      "event": "ixn-bup-A-1",
+      "code": "-T"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SK-03": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     },
+     "source_seal": "ixn-bup-A-1"
+    }
+   ],
+   "presented": "A"
+  },
+  "SK-04": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     },
+     "source_seal": {
+      "event": "ixn-bup-A-1",
+      "code": "-T"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SK-05": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     },
+     "block_code": "--a"
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SK-06": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     },
+     "block_code": "--a9"
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  }
+ },
+ "cases": [
+  {
+   "id": "ACDC-0151",
+   "key": "SK-01",
+   "title": "Update carrying its seal source couple at -S##",
+   "description": "As SV-01, but the n=1 update carries a seal source couple pointing to the interaction event that anchors it, in a group with the count code -S##. A sedi-1 verifier should find it valid.",
+   "base": "SK-01",
+   "choices": [
+    "seal-couple-code"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0152",
+   "key": "SK-02",
+   "title": "Seal source couple at -T##",
+   "description": "As SK-01, but the couple is in a group with the count code -T##, as ACDC line 1931 writes it. CESR gives -T## to the seal source triple, so the group does not frame a couple, and sedi-1 reads a couple only at -S##. A sedi-1 verifier should find it invalid.",
+   "base": "SK-02",
+   "choices": [
+    "seal-couple-code"
+   ],
+   "triage": "Accepting it accepts attachments whose count code says they are something else.",
+   "expect": [
+    "A invalid/bup-attachments"
+   ],
+   "pair": "SK-01"
+  },
+  {
+   "id": "ACDC-0153",
+   "key": "SK-03",
+   "title": "Credential carrying a seal source couple at -S##",
+   "description": "As SV-01, but the credential itself carries a seal source couple pointing to the interaction event that anchors its registry's n=1 update, in a group with the count code -S##. A sedi-1 verifier should find it valid.",
+   "base": "SK-03",
+   "choices": [
+    "seal-couple-code"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0154",
+   "key": "SK-04",
+   "title": "Credential carrying a seal source couple at -T##",
+   "description": "As SK-03, but the couple is in a group with the count code -T##. A sedi-1 verifier should find it invalid.",
+   "base": "SK-04",
+   "choices": [
+    "seal-couple-code"
+   ],
+   "triage": "Accepting it accepts attachments whose count code says they are something else.",
+   "expect": [
+    "A invalid/attachments"
+   ],
+   "pair": "SK-03"
+  },
+  {
+   "id": "ACDC-0155",
+   "key": "SK-05",
+   "title": "Blinded state at the big 8-character code",
+   "description": "As SV-01, but the n=1 update's disclosed blinded state is in a group with the big count code --a#####, eight characters with a five-character count. A sedi-1 verifier should find it valid.",
+   "base": "SK-05",
+   "choices": [
+    "blind-state-code"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0156",
+   "key": "SK-06",
+   "title": "Blinded state at a 9-character code",
+   "description": "As SK-05, but the big code has a six-character count, nine characters in all, as ACDC lines 2062, 2145 and 2367 write it. That breaks quadlet alignment, so the group cannot be read. A sedi-1 verifier should find it invalid.",
+   "base": "SK-06",
+   "choices": [
+    "blind-state-code"
+   ],
+   "triage": "Accepting it reads a blinded state out of attachments that do not frame it.",
+   "expect": [
+    "A invalid/bup-attachments"
+   ],
+   "pair": "SK-05"
+  }
+ ]
+}
