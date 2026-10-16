@@ -31,7 +31,21 @@
     "ACDC-0127",
     "ACDC-0128",
     "ACDC-0129",
-    "ACDC-0130"
+    "ACDC-0130",
+    "ACDC-0131",
+    "ACDC-0132",
+    "ACDC-0133",
+    "ACDC-0134",
+    "ACDC-0135",
+    "ACDC-0136",
+    "ACDC-0137",
+    "ACDC-0138",
+    "ACDC-0139",
+    "ACDC-0140",
+    "ACDC-0141",
+    "ACDC-0142",
+    "ACDC-0143",
+    "ACDC-0144"
   ],
   "choices": [
     {
@@ -58,7 +72,8 @@
           "ACDC-0109"
         ],
         "positive": [
-          "ACDC-0101"
+          "ACDC-0101",
+          "ACDC-0131"
         ]
       },
       "decided": "8g9vtxvc",
@@ -122,7 +137,8 @@
         "negative": [
           "ACDC-0103",
           "ACDC-0104",
-          "ACDC-0105"
+          "ACDC-0105",
+          "ACDC-0136"
         ],
         "positive": [
           "ACDC-0101",
@@ -139,7 +155,9 @@
       "basis": "ACDC line 1154 makes an edge block's d optional and, when present, the SAID of its block; Daniel's answer to the profile interview, Q2, makes it required.",
       "cases": {
         "negative": [
-          "ACDC-0117"
+          "ACDC-0117",
+          "ACDC-0137",
+          "ACDC-0138"
         ],
         "positive": [
           "ACDC-0110"
@@ -155,7 +173,10 @@
       "basis": "Every unary operator narrows what satisfies an edge, so skipping an unknown one would apply a more permissive rule than the issuer wrote. NOT waits for 67i2.",
       "cases": {
         "negative": [
-          "ACDC-0113"
+          "ACDC-0113",
+          "ACDC-0139",
+          "ACDC-0140",
+          "ACDC-0141"
         ],
         "positive": [
           "ACDC-0125"
@@ -191,7 +212,8 @@
         ],
         "positive": [
           "ACDC-0110",
-          "ACDC-0126"
+          "ACDC-0126",
+          "ACDC-0134"
         ]
       },
       "decided": "8g9vtxvc",
@@ -204,11 +226,17 @@
       "basis": "ACDC lines 1197 and 1186 settle the empty o and the conflicting list; the text says nothing of an empty group or a nested list, which sedi-1 treats as malformed instructions, not unevaluable ones.",
       "cases": {
         "negative": [
-          "ACDC-0116"
+          "ACDC-0116",
+          "ACDC-0139",
+          "ACDC-0140",
+          "ACDC-0141",
+          "ACDC-0143",
+          "ACDC-0144"
         ],
         "positive": [
           "ACDC-0114",
-          "ACDC-0115"
+          "ACDC-0115",
+          "ACDC-0142"
         ]
       },
       "decided": "599d5f5f",
@@ -302,10 +330,12 @@
       "basis": "The specification has no revoked verdict and names issued and revoked only as example states; SEDI needs one.",
       "cases": {
         "negative": [
-          "ACDC-0106"
+          "ACDC-0106",
+          "ACDC-0135"
         ],
         "positive": [
-          "ACDC-0122"
+          "ACDC-0122",
+          "ACDC-0134"
         ]
       },
       "decided": "8fh68wt6",
@@ -319,10 +349,13 @@
       "cases": {
         "negative": [
           "ACDC-0107",
-          "ACDC-0108"
+          "ACDC-0108",
+          "ACDC-0132",
+          "ACDC-0133"
         ],
         "positive": [
-          "ACDC-0122"
+          "ACDC-0122",
+          "ACDC-0131"
         ]
       },
       "decided": "3g4le6js",
