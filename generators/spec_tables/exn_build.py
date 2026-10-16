@@ -149,9 +149,12 @@ class ExchangeBuilder:
     """Builds a case's exchange messages, each once and in scenario order, over the key events
     of its KELs."""
 
-    def __init__(self, t: Tables, events: list[dict], exchanges: list[dict]):
+    def __init__(self, t: Tables, events: list[dict], exchanges: list[dict],
+                 event_builder: EventBuilder | None = None):
+        """``event_builder``, when given, is the builder of ``events`` already in use, as when an
+        ACDC bundle's key events carry seals only its own builder resolves."""
         self.t = t
-        self.events = EventBuilder(t, events)
+        self.events = event_builder or EventBuilder(t, events)
         self.specs = events
         self.built: dict[str, Exchange] = {}
         for spec in exchanges:

@@ -14,7 +14,7 @@ import pytest
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from sedi_world import AIDS, S1, cred, edge, single, world
+from sedi_world import AIDS, S1, cred, edge, presented_by, single, world
 
 from generators.spec_tables import acdc_build as ab
 from generators.spec_tables import acdc_model as am
@@ -408,3 +408,67 @@ def test_an_edge_schema_absent_from_the_bundle_cannot_be_evaluated():
     frag["omit"] = ["S2"]
     result, _ = run(frag)
     assert result.verdict == sm.INCOMPLETE and reasons(result) == ["incomplete/edge-schema-absent"]
+
+
+# -- the presentation context (this.i 09snlyre, 7krs5hfz) ------------------------------------------
+
+
+def grant(frag):
+    return frag["presentation"]["exchanges"][0]
+
+
+@pytest.mark.parametrize("sender,found", [("H", []), ("R", ["invalid/presenter"]),
+                                          ("I", ["invalid/presenter"])])
+def test_the_presenter_is_bound_to_the_issuee(sender, found):
+    result, _ = run(presented_by(world({"A": cred("I")}, "A"), sender))
+    assert reasons(result) == found
+    assert result.verdict == (sm.VALID if not found else sm.INVALID)
+
+
+def test_an_untargeted_credential_is_a_bearer_credential():
+    result, _ = run(presented_by(world({"A": cred("I", None)}, "A"), "R"))
+    assert result.verdict == sm.VALID
+
+
+def test_an_issuee_the_presentation_hides_cannot_be_bound():
+    frag = presented_by(world({"A": cred("I")}, "A"), "H")
+    frag["acdcs"][0]["form"] = {"compact": ["a"]}
+    result, _ = run(frag)
+    assert result.verdict == sm.INCOMPLETE and reasons(result) == ["incomplete/presenter-undisclosed"]
+
+
+def test_a_grant_to_another_verifier_is_a_replay():
+    result, _ = run(presented_by(world({"A": cred("I")}, "A"), "H", receiver="W"))
+    assert reasons(result) == ["invalid/presentation-verifier"]
+
+
+@pytest.mark.parametrize("a", [{"o": []}, {"o": [{"nothing": "other"}]}, "flat",
+                               {"o": [{"acdc": "A"}, {"acdc": "A"}]}])
+def test_the_grant_must_name_exactly_the_presented_acdc(a):
+    frag = presented_by(world({"A": cred("I")}, "A"), "H")
+    grant(frag)["a"] = a
+    assert reasons(run(frag)[0]) == ["invalid/presentation-names"]
+
+
+def test_a_grant_the_exchange_model_refuses_proves_no_presenter():
+    frag = presented_by(world({"A": cred("I")}, "A"), "H")
+    frag["presentation"]["messages"][0]["sigs"] = []
+    result, _ = run(frag)
+    assert result.verdict == sm.INVALID and reasons(result) == ["invalid/grant-unsigned"]
+
+
+def test_without_a_context_the_presenter_is_not_judged():
+    frag = presented_by(world({"A": cred("I")}, "A"), "R")
+    del frag["presentation"]
+    assert run(frag)[0].verdict == sm.VALID
+
+
+@pytest.mark.parametrize("change,words", [
+    (lambda p: p.update(extra=1), "unknown fields"),
+    (lambda p: p.update(messages=[]), "at least one message"),
+])
+def test_the_builder_refuses_a_malformed_presentation(change, words):
+    frag = presented_by(world({"A": cred("I")}, "A"), "H")
+    change(frag["presentation"])
+    with pytest.raises(ScenarioError, match=words):
+        ab.build_bundle(T, frag)

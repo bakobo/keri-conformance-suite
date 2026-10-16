@@ -153,7 +153,9 @@ INPUTS = {
                         "registry": array(STREAM), "schemas": array(HEX_STRING),
                         "acdcs": array(STREAM, max_items=MAX_DAG_ACDCS - 1),
                         "presented": STREAM},
-                       {"expect_schema": SAID}),
+                       {"expect_schema": SAID,
+                        "presentation": obj({"messages": array(SOURCED, min_items=1),
+                                             "verifier": string(min_length=1)})}),
     "exn.verify": obj({"perspective": PERSPECTIVE, "kels": array(SOURCED),
                        "messages": array(SOURCED, min_items=1)}),
     # An issuance asked for, not bytes: the identifiers to create by role and the credentials to
@@ -221,6 +223,11 @@ def _cross_field_problem(case: dict) -> str | None:
             return f'an acdc.verify case needs "{field}"'
         if not acdc and field in case:
             return f'only an acdc.verify case carries "{field}"'
+    if (acdc and "presentation" in case["input"]
+            and "acdc.presentation" not in case["targets"]["features"]):
+        # An adapter ignores a field it does not know, so only one declaring the feature may be
+        # sent a presentation context (docs/adapter-protocol.md, acdc.verify).
+        return 'an acdc.verify case with a "presentation" requires the feature acdc.presentation'
     checks = OPERATION_CHECKS[case["operation"]]
     for n, assertion in enumerate(case["assertions"]):
         if assertion["check"] not in checks:

@@ -36,6 +36,10 @@ docs/design.md fixes, through ``acdc_saids``:
   is bounded at 16 ACDCs and a longest path of 8 edges. An omitted ACDC leaves ``acdcs``, and
   so does every ACDC that only it reaches, because a validator cannot see the omitted node's
   edges; the ``dag`` lists only the edges of nodes the bundle carries.
+- **The presentation context**, when the fragment has a ``presentation``, is the request's
+  optional ``presentation``: exchange messages built by exn_build over the fragment's key events
+  (its ``exchanges`` and ``messages``, in exn_build's scenario form) and the ``verifier``'s
+  prefix. A case's grant names the presented ACDC in ``a.o`` (this.i 7krs5hfz).
 
 Inside an ACDC's sections, a map with one key names another thing in the fragment: ``{"aid": X}``
 is the prefix of X's inception, ``{"acdc": N}`` N's most compact SAID, ``{"schema": S}`` S's
@@ -53,6 +57,7 @@ from . import acdc_saids as sa
 from . import encoding
 from . import json_schema_subset as js
 from .errors import GeneratorError, ScenarioError
+from .exn_build import ExchangeBuilder
 from .keri_events import GENUS_CODE, EventBuilder, label_digest
 from .tables import Tables
 
@@ -571,6 +576,22 @@ class _Builder:
         data = GENUS_CODE.encode() + sa.serialize(body, self.readings) + attachments.encode()
         return data.hex()
 
+    def presentation(self, spec: dict) -> dict:
+        """The presentation context: the ``exchanges`` built over the fragment's key events, a
+        reference to a named ACDC, schema or registry event in an exchange's ``q`` or ``a``
+        resolved first, then delivered as ``messages`` names them, to the ``verifier``."""
+        unknown = set(spec) - {"verifier", "exchanges", "messages"}
+        if unknown:
+            raise ScenarioError(f"The presentation has unknown fields {sorted(unknown)!r}.")
+        exchanges = [{**x, **{k: self._resolve(x[k]) for k in ("q", "a") if k in x}}
+                     for x in spec["exchanges"]]
+        xb = ExchangeBuilder(self.t, self.frag.get("events", []), exchanges, event_builder=self.eb)
+        messages = [xb.message(d) for d in spec["messages"]]
+        if not messages:
+            raise ScenarioError("A presentation delivers at least one message.")
+        return {"messages": [{"stream": m.stream.hex(), "source": m.source} for m in messages],
+                "verifier": self.eb.prefix(spec["verifier"])}
+
     def bundle(self) -> Bundle:
         presented = self.frag["presented"]
         if presented not in self.acdcs:
@@ -627,6 +648,8 @@ class _Builder:
             "acdcs": [acdc_entry(n) for n in far],
             "presented": acdc_entry(presented),
         }
+        if "presentation" in self.frag:
+            request["presentation"] = self.presentation(self.frag["presentation"])
         return Bundle(request=request, saids=dict(self.saids), expanded=dict(self.expanded),
                       forms=forms, graph=graph, dag=dag, as_of=as_of)
 

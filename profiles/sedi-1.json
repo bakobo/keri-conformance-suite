@@ -18,7 +18,11 @@
     "ACDC-0114",
     "ACDC-0115",
     "ACDC-0116",
-    "ACDC-0117"
+    "ACDC-0117",
+    "ACDC-0118",
+    "ACDC-0119",
+    "ACDC-0120",
+    "ACDC-0121"
   ],
   "choices": [
     {
@@ -199,8 +203,13 @@
     {
       "basis": "Lines 312 and 344 make presentation by the issuee a capability, and no clause obliges a validator to check it; without the check, anyone who has seen a credential can present it as theirs.",
       "cases": {
-        "negative": [],
-        "positive": []
+        "negative": [
+          "ACDC-0119",
+          "ACDC-0120"
+        ],
+        "positive": [
+          "ACDC-0118"
+        ]
       },
       "decided": "09snlyre",
       "id": "presenter-binding",
@@ -225,7 +234,9 @@
       "basis": "The text defines untargeted ACDCs and no presenter they could be bound to.",
       "cases": {
         "negative": [],
-        "positive": []
+        "positive": [
+          "ACDC-0121"
+        ]
       },
       "decided": "09snlyre",
       "id": "bearer-untargeted",
