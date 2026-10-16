@@ -108,7 +108,7 @@ What follows explains the failures behind the table; every one traces to cesrixi
 - CESR-0028 gets a summary: cesrixir reads the 88-character signature in its `--C` group as two 44-character primitives, and their re-encoding differs from the stream. CESR-0045 gets one because cesrixir returns the two signatures of its `-A` group in reverse order.
 - CESR-0039 is accepted although it must be rejected: cesrixir ignores the pad bits of a primitive, so non-zero ones pass.
 
-- Three cases promoted to active after that run fail too. CESR-0062 and CESR-0063 put a genus/version code at the head of a `-K` and a `-X` group, and cesrixir raises `CaseClauseError` reading the group's signatures, the defect in the first item. CESR-0066 is accepted although it must be rejected: cesrixir decodes a text-domain primitive that ends in `=`, which is outside the text-domain alphabet.
+- Three cases promoted to active after the run these notes were written from fail in the committed results too. CESR-0062 and CESR-0063 put a genus/version code at the head of a `-K` and a `-X` group, and cesrixir raises `CaseClauseError` reading the group's signatures, the defect in the first item. CESR-0066 is accepted although it must be rejected: cesrixir decodes a text-domain primitive that ends in `=`, which is outside the text-domain alphabet.
 
 All `cesr.encode` cases pass in both domains, CESR-0046 and CESR-0047 decode to exactly the expected items, and the must-reject cases CESR-0034, CESR-0035, CESR-0037, CESR-0040, CESR-0042, CESR-0050 and CESR-0057 are rejected.
 

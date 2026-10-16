@@ -56,7 +56,7 @@ Two known weaknesses in individual cases are recorded as ticks rather than fixed
 
 ## The most consequential missing cases
 
-These are ranked by what an implementation that gets the requirement wrong would expose, safety first and then interoperability. Each names the clause and a case that would test it. None describes a known defect in any implementation; each is a requirement no active case tests yet.
+These are ranked by what an implementation that gets the requirement wrong would expose, safety first and then interoperability. Each names the clause and a case that would test it. Each is a requirement no active case tests yet. Where a case exists and keripy disagrees with it, the item says so; otherwise none describes a known defect in any implementation.
 
 Of the nineteen items in the 2026-10-09 assessment, items 1 to 5, 8, 10, 14 and 16 are now covered by active cases, and items 9, 13 and 17 partly so. Items 7 and 15 have cases written that cover nothing yet, as described above. Items 6, 9's remaining variants, 11's normative form, 12 and 19 were left out pending a ruling or a decision, and item 18 is still open. What remains, renumbered:
 
