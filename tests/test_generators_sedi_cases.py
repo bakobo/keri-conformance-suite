@@ -57,6 +57,10 @@ def scenario():
 @pytest.fixture
 def tree(tmp_path):
     shutil.copytree(ROOT / "scenarios", tmp_path / "scenarios")
+    # Only the test's own scenario: the committed sedi cases would share its keys and ids.
+    for path in (tmp_path / "scenarios/sedi").glob("*.json"):
+        if path.name != "profile.json":
+            path.unlink()
     (tmp_path / "profiles").mkdir()
     shutil.copy(ROOT / "profiles" / "features.json", tmp_path / "profiles")
     shutil.copy(ROOT / "pyproject.toml", tmp_path)
