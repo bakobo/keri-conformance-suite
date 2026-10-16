@@ -703,7 +703,7 @@
     {
       "id": "KERI-0090",
       "key": "AS-05",
-      "status": "draft",
+      "status": "active",
       "title": "Delegating seal in a KEL other than the named delegator's",
       "description": "Two identifiers D and F, then a delegated inception naming D as its delegator, whose delegating seal is anchored only by an interaction in F's KEL. The seal must be in the delegator's KEL (line 1612), and D's KEL holds none, so a validator must not accept the delegated inception, even when the attachment points at F's anchoring interaction.",
       "events": [

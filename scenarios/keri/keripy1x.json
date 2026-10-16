@@ -5,7 +5,7 @@
     {
       "id": "KERI-0143",
       "key": "K1X-01",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: single-key inception",
       "description": "A self-addressing, single-key inception with no witnesses, signed by its one key. A validator should accept it and hold its key state. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0001 (KS-01) in keri-v1.0.1.",
       "events": [
@@ -37,7 +37,7 @@
     {
       "id": "KERI-0144",
       "key": "K1X-02",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: in-order KEL: inception, interaction, rotation, interaction",
       "description": "Four events of one identifier delivered in order, each properly signed. The rotation exposes the pre-rotated key a1 and commits to a2, and the last interaction is signed by a1. A validator should accept all four and end with the rotation's keys. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0002 (KS-02) in keri-v1.0.1.",
       "events": [
@@ -120,7 +120,7 @@
     {
       "id": "KERI-0145",
       "key": "K1X-04",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: multi-key inception, signing threshold met",
       "description": "An inception with three keys and signing threshold 2, signed by the first and third keys. A validator should accept it. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0003 (KS-04) in keri-v1.0.1.",
       "events": [
@@ -159,7 +159,7 @@
     {
       "id": "KERI-0146",
       "key": "K1X-05",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: multi-key inception under its signing threshold",
       "description": "An inception with three keys and signing threshold 2, signed by one key only. A validator must not accept it, and should keep it in case the missing signature arrives (line 1266). Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0004 (KS-05) in keri-v1.0.1.",
       "events": [
@@ -197,7 +197,7 @@
     {
       "id": "KERI-0147",
       "key": "K1X-06",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: signing threshold completed by a second copy",
       "description": "The inception of KS-05 arrives signed by one key, then again signed by another. Together the two copies satisfy the threshold, so a validator that kept the first copy, as line 1266 says it should, accepts the event. The safety half, graded at MUST without keri.escrow, is the companion case KS-06s. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0005 (KS-06) in keri-v1.0.1.",
       "events": [
@@ -251,7 +251,7 @@
     {
       "id": "KERI-0149",
       "key": "K1X-07",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: inception with a forged signature",
       "description": "A single-key inception whose only signature was made by a key other than the one it lists. The validator holds everything it needs to verify the signature, so it must drop the event. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0006 (KS-07) in keri-v1.0.1.",
       "events": [
@@ -286,7 +286,7 @@
     {
       "id": "KERI-0150",
       "key": "K1X-08",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: unsigned inception",
       "description": "A single-key inception delivered with no attachments at all. A validator must drop a key event with no controller signature. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0007 (KS-08) in keri-v1.0.1.",
       "events": [
@@ -316,7 +316,7 @@
     {
       "id": "KERI-0151",
       "key": "K1X-11",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: weighted threshold, one clause",
       "description": "An inception with three keys and the weighted threshold [1/2, 1/2, 1/2], signed by keys 0 and 2, whose weights sum to 1. Then an interaction signed by key 1 alone, whose weight is 1/2. A validator should accept the inception and must not accept the interaction. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0008 (KS-11) in keri-v1.0.1.",
       "events": [
@@ -378,7 +378,7 @@
     {
       "id": "KERI-0152",
       "key": "K1X-11b",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: weighted threshold, two clauses",
       "description": "An inception with four keys and the two-clause weighted threshold [[1/2, 1/2], [1, 1]], signed by keys 0, 1 and 3, which satisfies both clauses. Then an interaction signed by keys 0 and 2, which satisfies the second clause but not the first. Every clause must be satisfied (line 1419), so a validator should accept the inception and must not accept the interaction. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0009 (KS-11b) in keri-v1.0.1.",
       "events": [
@@ -454,7 +454,7 @@
     {
       "id": "KERI-0153",
       "key": "K1X-17",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: interaction whose SAID does not match its content",
       "description": "An accepted inception, then an interaction whose d is not the digest of its body, signed by the current key. Verifying an event's structure includes its SAID (line 1737), so a validator must not accept the interaction. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0011 (KS-17) in keri-v1.0.1.",
       "events": [
@@ -504,7 +504,7 @@
     {
       "id": "KERI-0154",
       "key": "K1X-20",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: interaction whose prior digest names no event",
       "description": "An accepted inception, then an interaction at sequence number 1 whose p is not the inception's SAID, signed by the current key. A validator must not accept it. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0012 (KS-20) in keri-v1.0.1.",
       "events": [
@@ -554,7 +554,7 @@
     {
       "id": "KERI-0155",
       "key": "K1X-22",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: one event early, kept and accepted later",
       "description": "An inception, then the interaction at sequence number 2, then the one at 1. The early interaction cannot be accepted when it arrives, because its prior has not been seen. Whether it is accepted later depends on escrow the specification does not require, so this case grades only its arrival; KS-22's escrow half is in the keri-escrow profile. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0016 (KS-22) in keri-v1.0.1. keripy 1.x keeps an event that arrives before what it depends on, so this case also grades that the early event is held and then accepted, which keri-v1.0.1 leaves to keri-escrow; it needs keri.escrow, and its companion carries the readings that do not.",
       "events": [
@@ -622,7 +622,7 @@
     {
       "id": "KERI-0157",
       "key": "K1X-23",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: KEL delivered in reverse, kept and accepted later",
       "description": "An interaction at sequence number 2, then the rotation at 1, then the inception. Neither early event can be accepted on arrival. Whether they are accepted once the inception arrives depends on escrow the specification does not require; that half is in the keri-escrow profile. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0018 (KS-23) in keri-v1.0.1. keripy 1.x keeps an event that arrives before what it depends on, so this case also grades that the early event is held and then accepted, which keri-v1.0.1 leaves to keri-escrow; it needs keri.escrow, and its companion carries the readings that do not.",
       "events": [
@@ -696,7 +696,7 @@
     {
       "id": "KERI-0159",
       "key": "K1X-25",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: rotation that breaks the pre-rotation commitment",
       "description": "An accepted inception committing to the digest of a1, then a rotation to an unrelated key x, signed by x. The rotation's keys include no subset of the prior next keys, so a validator must not accept it (lines 1262 and 1494), and its key state stays the inception's. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0021 (KS-25) in keri-v1.0.1.",
       "events": [
@@ -757,7 +757,7 @@
     {
       "id": "KERI-0160",
       "key": "K1X-27",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: partial rotation holding a key in reserve",
       "description": "An inception with keys [a0, b0, c0], threshold 2, committing to a1, b1 and c1 with next threshold 2. The rotation exposes only a1 and b1, signed by both, and commits to c1 again in its own next keys. A validator should accept it. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0023 (KS-27) in keri-v1.0.1.",
       "events": [
@@ -823,7 +823,7 @@
     {
       "id": "KERI-0161",
       "key": "K1X-31",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: rotation after a non-transferable inception",
       "description": "A non-transferable inception (empty next keys, basic non-transferable prefix), then a rotation of the same identifier, signed by its own key. No more key events are allowed after a non-transferable inception (line 340), so a validator must not accept the rotation. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0024 (KS-31) in keri-v1.0.1.",
       "events": [
@@ -876,7 +876,7 @@
     {
       "id": "KERI-0162",
       "key": "K1X-33",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: establishment-only KEL",
       "description": "An inception with the EO trait, then an interaction, then a rotation at sequence number 1. A validator must drop the interaction (line 377) and should accept the rotation. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0027 (KS-33) in keri-v1.0.1.",
       "events": [
@@ -948,7 +948,7 @@
     {
       "id": "KERI-0163",
       "key": "K1X-37",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: delegated inception, anchor first",
       "description": "A delegator's inception, then its interaction anchoring the delegated inception's seal, then the delegated inception with a seal source couple naming that interaction. A validator should accept all three. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0030 (KS-37) in keri-v1.0.1.",
       "events": [
@@ -1023,7 +1023,7 @@
     {
       "id": "KERI-0164",
       "key": "K1X-39",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: delegated inception before its delegator, kept and accepted later",
       "description": "The delegated inception of KS-37 arrives before the delegator's KEL. A validator must not accept it until it has seen the delegating seal (line 1612). Whether it is accepted once the anchor arrives depends on escrow the specification does not require; that half is in the keri-escrow profile. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0031 (KS-39) in keri-v1.0.1. keripy 1.x keeps an event that arrives before what it depends on, so this case also grades that the early event is held and then accepted, which keri-v1.0.1 leaves to keri-escrow; it needs keri.escrow, and its companion carries the readings that do not.",
       "events": [
@@ -1104,7 +1104,7 @@
     {
       "id": "KERI-0166",
       "key": "K1X-40",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: delegated inception with no anchor",
       "description": "A delegator's inception, then a delegated inception naming it as delegator, with no delegating seal anywhere. A validator must not accept the delegated inception. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0033 (KS-40) in keri-v1.0.1.",
       "events": [
@@ -1158,7 +1158,7 @@
     {
       "id": "KERI-0167",
       "key": "K1X-42",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: delegated rotation anchored in the delegator's rotation",
       "description": "KS-37's delegation, then a delegator rotation anchoring a delegated rotation, then the delegated rotation. A validator should accept all five, and the delegatee's key state is its rotation's, with its delegator. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0035 (KS-42) in keri-v1.0.1.",
       "events": [
@@ -1281,7 +1281,7 @@
     {
       "id": "KERI-0168",
       "key": "K1X-45",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: witnessed inception with its witness signatures attached",
       "description": "An inception with three witnesses and witness threshold 2, carrying the controller's signature and witness-indexed signatures from the first and third witnesses. A validator should accept it. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0036 (KS-45) in keri-v1.0.1.",
       "events": [
@@ -1323,7 +1323,7 @@
     {
       "id": "KERI-0169",
       "key": "K1X-46",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: witnessed inception under its witness threshold",
       "description": "The inception of KS-45 with only one witness signature. A validator must not accept it (line 1264), and should keep it for the missing witness signature (line 1266). Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0037 (KS-46) in keri-v1.0.1.",
       "events": [
@@ -1364,7 +1364,7 @@
     {
       "id": "KERI-0170",
       "key": "K1X-47",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: witness threshold completed by receipts",
       "description": "The inception of KS-45 with no witness signatures, then receipts from two of its witnesses. A validator that kept the inception, as line 1266 says it should, accepts it once the receipts satisfy the threshold. The safety half, graded at MUST without keri.escrow, is the companion case KS-47s. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0038 (KS-47) in keri-v1.0.1.",
       "events": [
@@ -1430,7 +1430,7 @@
     {
       "id": "KERI-0172",
       "key": "K1X-48",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: receipt with a forged witness signature",
       "description": "The inception of KS-45 with no witness signatures, a receipt from the first witness, and a receipt whose signature, indexed to the second witness, was not made by it. Only one witness signature verifies, so a validator must not accept the inception. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0039 (KS-48) in keri-v1.0.1.",
       "events": [
@@ -1493,7 +1493,7 @@
     {
       "id": "KERI-0173",
       "key": "K1X-52",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: witness rotation",
       "description": "KS-45's inception, then a rotation that removes w3, adds w4 and keeps witness threshold 2, signed by w1 and w2, which sit at the same positions in the old and new witness lists. A validator should accept the rotation, and its witness list is [w1, w2, w4]: removals first, then additions appended in order (lines 358 and 362). Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0041 (KS-52) in keri-v1.0.1.",
       "events": [
@@ -1572,7 +1572,7 @@
     {
       "id": "KERI-0174",
       "key": "K1X-59",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: conflicting interaction, validly signed",
       "description": "An inception and an interaction, then a different interaction at the same sequence number, also signed by the current key. A second interaction cannot supersede the first (rule A2), so a validator should not accept it, and its key state stays at the first interaction. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0042 (KS-59) in keri-v1.0.1.",
       "events": [
@@ -1640,7 +1640,7 @@
     {
       "id": "KERI-0175",
       "key": "K1X-61",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: conflicting inception of a basic prefix",
       "description": "A transferable basic-prefix inception, then a different inception of the same prefix (another next-key commitment), also signed by its key. A validator should not accept the second. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0044 (KS-61) in keri-v1.0.1.",
       "events": [
@@ -1695,7 +1695,7 @@
     {
       "id": "KERI-0176",
       "key": "K1X-63",
-      "status": "draft",
+      "status": "active",
       "title": "keripy 1.x: superseding recovery of one interaction",
       "description": "An inception and an interaction signed by the current key, then a rotation at sequence number 1, signed by the pre-rotated key, that supersedes the interaction (rule A0). A validator should accept the rotation and keep the interaction as seen but off the trunk. Built on keripy 1.x's wire: KERI 1.0 bodies with keripy 1.x's field sets and CESR 1.00 attachments, mirroring KERI-0046 (KS-63) in keri-v1.0.1.",
       "events": [

@@ -69,7 +69,7 @@
     "scenario": "scenarios/keri/tamper.json#KS-BT16"
   },
   "schema_version": 1,
-  "status": "draft",
+  "status": "active",
   "targets": {
     "features": [
       "cesr.genus-2.00",

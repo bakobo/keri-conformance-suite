@@ -126,7 +126,7 @@
     "scenario": "scenarios/keri/keripy1x.json#K1X-40"
   },
   "schema_version": 1,
-  "status": "draft",
+  "status": "active",
   "targets": {
     "features": [
       "cesr.genus-1.00",

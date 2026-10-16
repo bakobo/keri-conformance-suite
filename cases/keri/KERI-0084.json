@@ -196,7 +196,7 @@
     "scenario": "scenarios/keri/prerotation.json#AS-01"
   },
   "schema_version": 1,
-  "status": "draft",
+  "status": "active",
   "targets": {
     "features": [
       "cesr.genus-2.00",

@@ -73,7 +73,7 @@
     "scenario": "scenarios/keri/signatures.json#AS-03a"
   },
   "schema_version": 1,
-  "status": "draft",
+  "status": "active",
   "targets": {
     "features": [
       "cesr.genus-2.00",

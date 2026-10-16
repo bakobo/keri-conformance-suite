@@ -52,7 +52,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 > The Text, ‘T’, domain representations in CESR MUST use only the characters from the URL/filename safe variant of the IETF RFC-4648 Base64 standard[[RFC4648](#RFC4648)].
 
-<span class="kcs-mark kcs-uncovered">○</span> [Line 93](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L93) · MUST · validator · cited by [CESR-0066](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0066.json) (inferred, draft) · 1 SHOULD assertion
+<span class="kcs-mark kcs-covered">●</span> [Line 93](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L93) · MUST · validator · covered by [CESR-0066](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0066.json) (inferred) · 1 SHOULD assertion · negative only
 
 #### Conversions
 
@@ -400,7 +400,7 @@ The pinned text is [spec/spec-body.md at 037129608b9e](https://github.com/trusto
 
 > The presence of a genus/version count code that appears as the first element within the framed material of any non-overrideable count code (universal or not) MUST have no special meaning as an override to the stream parser.
 
-<span class="kcs-mark kcs-uncovered">○</span> [Line 816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) · MUST · validator, security · cited by [CESR-0062](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0062.json) (inferred, draft), [CESR-0063](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0063.json) (inferred, draft) · 2 SHOULD assertions
+<span class="kcs-mark kcs-covered">●</span> [Line 816](https://github.com/trustoverip/kswg-cesr-specification/blob/037129608b9e6960858b752019ac273d40d7386c/spec/spec-body.md?plain=1#L816) · MUST · validator, security · covered by [CESR-0062](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0062.json) (inferred), [CESR-0063](https://github.com/bakobo/keri-conformance-suite/blob/main/cases/cesr/CESR-0063.json) (inferred) · 2 SHOULD assertions · negative only
 
 > In other words, the parser MUST only treat the genus/version count code, especially as an override, when it appears as the first count code within the framed material of an overrideable universal count code.
 

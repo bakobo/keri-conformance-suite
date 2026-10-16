@@ -4,7 +4,7 @@
     {
       "id": "KERI-0117",
       "key": "KS-DA01",
-      "status": "draft",
+      "status": "active",
       "title": "A KEL whose digests are all SHA2-256",
       "description": "An inception, a rotation and an interaction whose SAIDs, digest prefix, prior digests and next-key digests all use SHA2-256 (code I). CESR line 1186 lets each serialization use the digest algorithm its derivation code names, and the SAID verification protocol computes the digest with that algorithm (CESR line 1194), so every event should be accepted. No sentence requires a validator to support SHA2-256, so the case needs crypto.sha2-256, and its MUST assertions are in KERI-0118.",
       "events": [
@@ -81,7 +81,7 @@
     {
       "id": "KERI-0119",
       "key": "KS-DA02",
-      "status": "draft",
+      "status": "active",
       "title": "A KEL whose digests are all Blake2b-256",
       "description": "An inception, a rotation and an interaction whose SAIDs, digest prefix, prior digests and next-key digests all use Blake2b-256 (code F), computed with a 32-byte digest length rather than truncated from Blake2b-512. CESR line 1186 lets each serialization use the digest algorithm its derivation code names, and the SAID verification protocol computes the digest with that algorithm (CESR line 1194), so every event should be accepted. No sentence requires a validator to support Blake2b-256, so the case needs crypto.blake2b-256, and its MUST assertions are in KERI-0120.",
       "events": [
@@ -158,7 +158,7 @@
     {
       "id": "KERI-0121",
       "key": "KS-DA03",
-      "status": "draft",
+      "status": "active",
       "title": "SAID coded SHA2-256 but computed with Blake3-256",
       "description": "A self-addressing inception whose SAID and prefix carry the SHA2-256 code (I) while their value is the Blake3-256 digest of the body. The SAID verification protocol computes the digest with the algorithm the SAID's own code names (CESR line 1194), so the SAID does not verify and the inception must not be accepted. A validator that always uses Blake3, whatever the code says, accepts it. The case needs no digest feature, because a validator without SHA2-256 refuses it too.",
       "events": [
@@ -194,7 +194,7 @@
     {
       "id": "KERI-0122",
       "key": "KS-DA04",
-      "status": "draft",
+      "status": "active",
       "title": "SAID coded Blake3-256 but computed with SHA2-256",
       "description": "A self-addressing inception whose SAID and prefix carry the Blake3-256 code (E) while their value is the SHA2-256 digest of the body. The SAID verification protocol computes the digest with the algorithm the SAID's own code names (CESR line 1194), so the SAID does not verify and the inception must not be accepted. A validator that tries each algorithm it knows until one matches accepts it.",
       "events": [
