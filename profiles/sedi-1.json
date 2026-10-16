@@ -22,16 +22,28 @@
     "ACDC-0118",
     "ACDC-0119",
     "ACDC-0120",
-    "ACDC-0121"
+    "ACDC-0121",
+    "ACDC-0122",
+    "ACDC-0123",
+    "ACDC-0124",
+    "ACDC-0125",
+    "ACDC-0126",
+    "ACDC-0127",
+    "ACDC-0128",
+    "ACDC-0129",
+    "ACDC-0130"
   ],
   "choices": [
     {
       "basis": "ACDC line 2135 says n MUST increment, which reads as plus one; line 2023 says only strictly monotonically increasing, which would allow gaps. keripy and heti both require plus one.",
       "cases": {
         "negative": [
-          "ACDC-0107"
+          "ACDC-0107",
+          "ACDC-0123"
         ],
-        "positive": []
+        "positive": [
+          "ACDC-0122"
+        ]
       },
       "decided": "8g9vtxvc",
       "id": "tel-sequence",
@@ -145,7 +157,9 @@
         "negative": [
           "ACDC-0113"
         ],
-        "positive": []
+        "positive": [
+          "ACDC-0125"
+        ]
       },
       "decided": "8g9vtxvc",
       "id": "unknown-operator",
@@ -172,9 +186,12 @@
     {
       "basis": "Lines 1186, 1199 and 1201 treat o as an effective list; keripy's verifier reads only a string.",
       "cases": {
-        "negative": [],
+        "negative": [
+          "ACDC-0127"
+        ],
         "positive": [
-          "ACDC-0110"
+          "ACDC-0110",
+          "ACDC-0126"
         ]
       },
       "decided": "8g9vtxvc",
@@ -205,10 +222,12 @@
       "cases": {
         "negative": [
           "ACDC-0119",
-          "ACDC-0120"
+          "ACDC-0120",
+          "ACDC-0130"
         ],
         "positive": [
-          "ACDC-0118"
+          "ACDC-0118",
+          "ACDC-0128"
         ]
       },
       "decided": "09snlyre",
@@ -221,8 +240,13 @@
     {
       "basis": "keripy reads the issuee there (iseaid), though no builder writes it and the text leaves the position open.",
       "cases": {
-        "negative": [],
-        "positive": []
+        "negative": [
+          "ACDC-0129",
+          "ACDC-0130"
+        ],
+        "positive": [
+          "ACDC-0128"
+        ]
       },
       "decided": "09snlyre",
       "id": "aggregate-issuee",
@@ -247,8 +271,12 @@
     {
       "basis": "Utah's KERI-012 asks for positive, negative and unresolved outcomes, which a relying party acts on as accept, reject and retry; acdc-v1.0 leaves the distinction informative.",
       "cases": {
-        "negative": [],
-        "positive": []
+        "negative": [
+          "ACDC-0124"
+        ],
+        "positive": [
+          "ACDC-0122"
+        ]
       },
       "decided": "8fh68wt6",
       "id": "unresolved-grading",
@@ -258,7 +286,9 @@
     {
       "basis": "acdc-v1.0 grades acceptance as an inferred SHOULD; without this, an adapter answering incomplete or invalid to everything would pass every sedi-1 refusal.",
       "cases": {
-        "negative": [],
+        "negative": [
+          "ACDC-0124"
+        ],
         "positive": [
           "ACDC-0101"
         ]
@@ -274,7 +304,9 @@
         "negative": [
           "ACDC-0106"
         ],
-        "positive": []
+        "positive": [
+          "ACDC-0122"
+        ]
       },
       "decided": "8fh68wt6",
       "id": "revoked",
@@ -289,7 +321,9 @@
           "ACDC-0107",
           "ACDC-0108"
         ],
-        "positive": []
+        "positive": [
+          "ACDC-0122"
+        ]
       },
       "decided": "3g4le6js",
       "id": "registry-evidence",
