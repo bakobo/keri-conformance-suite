@@ -151,10 +151,10 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 39 | [2026-10-16, suite 6b1b01aa](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/cesr-v1.0.json) |
-| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-16, suite 6b1b01aa](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keri-escrow.json) |
-| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 69 | [2026-10-16, suite 6b1b01aa](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keri-v1.0.1.json) |
-| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 5 / 0 | 4 | [2026-10-16, suite 6b1b01aa](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keripy-1x-interop.json) |
+| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite fe513a6c](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/cesr-v1.0.json) |
+| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-16, suite fe513a6c](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keri-escrow.json) |
+| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 114 | [2026-10-16, suite fe513a6c](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keri-v1.0.1.json) |
+| keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 146 / 16 | 5 | [2026-10-16, suite fe513a6c](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 

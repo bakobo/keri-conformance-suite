@@ -73,7 +73,7 @@
     "scenario": "scenarios/keri/signatures.json#KS-MR19"
   },
   "schema_version": 1,
-  "status": "draft",
+  "status": "active",
   "targets": {
     "features": [
       "cesr.genus-2.00",

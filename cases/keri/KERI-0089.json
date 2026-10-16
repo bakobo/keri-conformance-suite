@@ -73,7 +73,7 @@
     "scenario": "scenarios/keri/witnesses.json#AS-03b"
   },
   "schema_version": 1,
-  "status": "draft",
+  "status": "active",
   "targets": {
     "features": [
       "cesr.genus-2.00",

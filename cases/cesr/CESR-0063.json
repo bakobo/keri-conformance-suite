@@ -36,7 +36,7 @@
     "scenario": "scenarios/cesr/reject.json#reject-genus-code-opening-trans-sig-group"
   },
   "schema_version": 1,
-  "status": "draft",
+  "status": "active",
   "targets": {
     "features": [
       "cesr.genus-2.00",

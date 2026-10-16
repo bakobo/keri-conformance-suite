@@ -4,7 +4,7 @@
     {
       "id": "KERI-0100",
       "key": "KS-BT01",
-      "status": "draft",
+      "status": "active",
       "title": "Interaction carrying the inception's signature",
       "description": "An accepted inception, then an interaction whose only controller signature is the current key's valid signature over the inception's bytes, not the interaction's. No controller signature on the interaction verifies, so line 1266 requires it dropped.",
       "events": [
@@ -54,7 +54,7 @@
     {
       "id": "KERI-0101",
       "key": "KS-BT02",
-      "status": "draft",
+      "status": "active",
       "title": "Interaction carrying the previous interaction's signature",
       "description": "An accepted inception and interaction, then a second interaction whose only controller signature is the current key's valid signature over the first interaction. The signer and key state are right but the bytes are not, so no controller signature on it verifies and line 1266 requires it dropped.",
       "events": [
@@ -119,7 +119,7 @@
     {
       "id": "KERI-0102",
       "key": "KS-BT03",
-      "status": "draft",
+      "status": "active",
       "title": "Witness signature over another event",
       "description": "A witnessed inception with witness threshold 1, accepted with its witness's signature, then an interaction signed by the controller whose only witness signature is the witness's valid signature over the inception. The interaction's witness threshold is not met, so a validator must not accept it (line 1264).",
       "events": [
@@ -179,7 +179,7 @@
     {
       "id": "KERI-0103",
       "key": "KS-BT04",
-      "status": "draft",
+      "status": "active",
       "title": "Receipt whose SAID is not the event its signatures cover",
       "description": "A witnessed inception with witness threshold 1, accepted, then an interaction signed by the controller with no witness signature, then a receipt naming the interaction's identifier and sequence number but a different SAID, carrying the witness's valid signature over the interaction. A receipt's signatures are on the event its fields name (line 882), which the validator does not hold, so they cannot be attached to the interaction and its witness threshold stays unmet.",
       "events": [
@@ -244,7 +244,7 @@
     {
       "id": "KERI-0104",
       "key": "KS-BT05",
-      "status": "draft",
+      "status": "active",
       "title": "Receipt naming an earlier event, with signatures over a later one",
       "description": "A witnessed inception with witness threshold 1, accepted, then an interaction signed by the controller with no witness signature, then a receipt naming the inception but carrying the witness's valid signature over the interaction. The signature verifies only against the interaction, which the receipt does not name, so the interaction's witness threshold stays unmet.",
       "events": [
@@ -311,7 +311,7 @@
     {
       "id": "KERI-0105",
       "key": "KS-BT06",
-      "status": "draft",
+      "status": "active",
       "title": "Inception whose witness threshold exceeds its witness list",
       "description": "An inception naming one witness with witness threshold 2, carrying the controller's signature and the witness's. Line 345 makes the threshold the number of backers in the list that must support the event for it to be valid, and one witness cannot be two, so a validator must not accept it.",
       "events": [
@@ -350,7 +350,7 @@
     {
       "id": "KERI-0106",
       "key": "KS-BT07",
-      "status": "draft",
+      "status": "active",
       "title": "Inception listing one witness twice",
       "description": "An inception whose witness list names the same witness twice, with witness threshold 2, carrying the witness's signature at both indexes. Line 353 forbids an AID appearing more than once in a backer list; a validator that accepted it would let one witness meet a threshold of two.",
       "events": [
@@ -397,7 +397,7 @@
     {
       "id": "KERI-0107",
       "key": "KS-BT08",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation adding one witness twice",
       "description": "An accepted inception with no witnesses, then a rotation whose backer add list names the same witness twice, with witness threshold 1, signed by the exposed next key and the witness. Line 353 forbids an AID appearing more than once in any backer list, so a validator should not accept the rotation, and the key state stays the inception's.",
       "events": [
@@ -512,7 +512,7 @@
     {
       "id": "KERI-0109",
       "key": "KS-BT10",
-      "status": "draft",
+      "status": "active",
       "title": "Inception with an extra top-level field",
       "description": "A signed inception with one top-level field beyond the inception's field set, its SAID computed over the body as sent. Line 556 allows no other top-level fields, and verifying structure includes the appearance of fields (line 1737), so a validator must not accept it.",
       "events": [
@@ -551,7 +551,7 @@
     {
       "id": "KERI-0110",
       "key": "KS-BT11",
-      "status": "draft",
+      "status": "active",
       "title": "Interaction missing a required field",
       "description": "An accepted inception, then a signed interaction without its anchors field a, its SAID computed over the body as sent. Line 627 requires every interaction field, so a validator must not accept it.",
       "events": [
@@ -605,7 +605,7 @@
     {
       "id": "KERI-0111",
       "key": "KS-BT12",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation with two fields out of order",
       "description": "An accepted inception, then a rotation by the exposed next key whose key list k comes before its signing threshold kt, its SAID computed over the body as sent. Line 665 fixes the rotation's field order, so a validator must not accept it, and the key state stays the inception's.",
       "events": [
@@ -666,7 +666,7 @@
     {
       "id": "KERI-0112",
       "key": "KS-BT13",
-      "status": "draft",
+      "status": "active",
       "title": "Inception with a nonzero sequence number",
       "description": "A signed inception whose sequence number is 1. Line 323 says an inception's sequence number must be 0, so a validator should not accept it.",
       "events": [
@@ -699,7 +699,7 @@
     {
       "id": "KERI-0113",
       "key": "KS-BT14",
-      "status": "draft",
+      "status": "active",
       "title": "Interaction whose sequence number exceeds the maximum",
       "description": "An accepted inception, then a signed interaction whose prior is the inception and whose sequence number is 2^128 + 1, one more than the maximum plus one (line 323). A parser that keeps only the low 128 bits reads it as 1, the next sequence number, so a validator should refuse it for its range rather than accept it.",
       "events": [
@@ -747,7 +747,7 @@
     {
       "id": "KERI-0114",
       "key": "KS-BT15",
-      "status": "draft",
+      "status": "active",
       "title": "Message with an unknown type",
       "description": "An accepted inception, then a signed message with an interaction's fields and values whose type is ixx, which is not a key event type. Line 539 lists the key event types, so a validator should not accept it.",
       "events": [
@@ -801,7 +801,7 @@
     {
       "id": "KERI-0115",
       "key": "KS-BT16",
-      "status": "draft",
+      "status": "active",
       "title": "Inception with an empty key list",
       "description": "A signed inception whose key list is empty, with signing threshold 1 and a signature at index 0. Line 335 says the key list must not be empty, so a validator should not accept it.",
       "events": [
@@ -834,7 +834,7 @@
     {
       "id": "KERI-0116",
       "key": "KS-BT17",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation with an empty key list",
       "description": "An accepted inception, then a rotation whose key list is empty, carrying the exposed next key's signature at index 0. Line 335 says the key list must not be empty, so a validator should not accept it, and the key state stays the inception's.",
       "events": [

@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "6b1b01aabff55b9b7bbfd747b604ac464ab3bf0c",
+    "commit": "fe513a6c9ffeff23a92ad8bdadbb283e7e64f7fe",
     "date": "2026-10-16"
   },
   "report": {
@@ -79,7 +79,7 @@
             "not-supported": 29
           },
           "SHOULD": {
-            "not-supported": 10
+            "not-supported": 13
           }
         },
         "disputed": {
@@ -90,14 +90,11 @@
         "draft": {
           "MUST": {
             "not-supported": 4
-          },
-          "SHOULD": {
-            "not-supported": 3
           }
         }
       },
       "should": {
-        "not-supported": 10
+        "not-supported": 13
       },
       "should_failed": 0,
       "interop": {},
@@ -142,7 +139,10 @@
         "CESR-0039",
         "CESR-0040",
         "CESR-0041",
-        "CESR-0042"
+        "CESR-0042",
+        "CESR-0062",
+        "CESR-0063",
+        "CESR-0066"
       ],
       "self_agreement_passes": 0
     },
@@ -2682,7 +2682,7 @@
       },
       {
         "id": "CESR-0062",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
@@ -2707,7 +2707,7 @@
       },
       {
         "id": "CESR-0063",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
@@ -2732,7 +2732,7 @@
       },
       {
         "id": "CESR-0066",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,

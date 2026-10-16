@@ -11,15 +11,15 @@ This directory measures how much of each pinned specification the suite's public
 | MUST sentences | 228 | 88 | 222 |
 | SHOULD sentences | 14 | 0 | 22 |
 | MAY and OPTIONAL sentences | 141 | 12 | 59 |
-| Obligations covered by an active case | 0 | 12 | 19 |
-| Obligations not covered | 242 | 76 | 225 |
-| Covered obligations tested with both polarities | 0 | 5 | 6 |
+| Obligations covered by an active case | 0 | 14 | 28 |
+| Obligations not covered | 242 | 74 | 216 |
+| Covered obligations tested with both polarities | 0 | 5 | 11 |
 | Obligations triaged testable by a validator | 193 | 70 | 159 |
 | Obligations triaged out of scope | 16 | 18 | 70 |
 | Obligations triaged untestable | 33 | 0 | 15 |
 | Obligations not yet assessed | 0 | 0 | 0 |
-| Security-bearing obligations covered | 0 | 4 | 17 |
-| Security-bearing obligations not covered | 69 | 7 | 62 |
+| Security-bearing obligations covered | 0 | 5 | 20 |
+| Security-bearing obligations not covered | 69 | 6 | 59 |
 | Practice sentences | 10 | 0 | 0 |
 | Practice sentences covered by an active case | 0 | 0 | 0 |
 | Quotes that match no keyword sentence | 5 | 0 | 2 |

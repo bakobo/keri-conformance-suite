@@ -364,7 +364,7 @@
     {
       "id": "KERI-0084",
       "key": "AS-01",
-      "status": "draft",
+      "status": "active",
       "title": "Interaction after a rotation signed by the rotated-out key",
       "description": "An inception with key a0 committing to a1, a rotation to a1, then an interaction at the next sequence number signed by a0 at index 0. The interaction's controlling keys are the rotation's (line 1737), and a0's signature does not verify against a1, so the interaction carries no verifiable controller signature and a validator must drop it (line 1266). The key state stays the rotation's.",
       "events": [
@@ -435,7 +435,7 @@
     {
       "id": "KERI-0085",
       "key": "AS-02a",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation that exposes the next key but is signed only by the current key",
       "description": "An inception with key a0 committing to a1, then a rotation to [a0, a1] with signing threshold 1, signed only by a0. The rotation's keys include the pre-rotated a1, and a0's signature satisfies the new signing threshold, but a0 is not among the prior next keys, so nothing satisfies the prior next threshold and a validator must not accept the rotation (lines 1262 and 1494). As a threshold shortfall it should keep it. The key state stays the inception's.",
       "events": [
@@ -498,7 +498,7 @@
     {
       "id": "KERI-0086",
       "key": "AS-02b",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation that keeps the current key and omits the next key",
       "description": "An inception with key a0 committing to a1, then a rotation whose key list is [a0] alone, signed by a0. The rotation's keys include no subset of the prior next keys, so a validator must not accept it (line 1494), even though its one signature verifies against its own key list. The key state stays the inception's.",
       "events": [
@@ -559,7 +559,7 @@
     {
       "id": "KERI-0087",
       "key": "AS-02c",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation to the next key signed by the current key",
       "description": "An inception with key a0 committing to a1, then a rotation to [a1] signed by a0 at index 0. A rotation's signatures are verified against its own key list, so a0's signature does not verify against a1 and the rotation carries no verifiable controller signature; a validator must drop it (line 1266). The key state stays the inception's.",
       "events": [
@@ -616,7 +616,7 @@
     {
       "id": "KERI-0127",
       "key": "KS-MR05",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation meeting the prior next threshold but not its own",
       "description": "An inception committing to a1, then a rotation to [a1, x1] with signing threshold 2, signed only by a1. a1's signature satisfies the prior next threshold, but one signature does not meet the rotation's own threshold, and a rotation must satisfy both (lines 1262 and 1494). A validator must not accept it; as a threshold shortfall it should keep it (line 1266). The key state stays the inception's.",
       "events": [
@@ -671,7 +671,7 @@
     {
       "id": "KERI-0128",
       "key": "KS-MR06",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation meeting its own threshold but not the prior next",
       "description": "An inception committing to a1 and b1 with next threshold 2, then a rotation to [a1, b1] with signing threshold 1, signed only by a1. The signature meets the rotation's own threshold, but one of the two exposed next keys does not satisfy the prior next threshold of 2, and a rotation must satisfy both (lines 1262 and 1494). A validator must not accept it; as a threshold shortfall it should keep it (line 1266).",
       "events": [
@@ -730,7 +730,7 @@
     {
       "id": "KERI-0129",
       "key": "KS-MR07",
-      "status": "draft",
+      "status": "active",
       "title": "Rotation signed only by a key that was never pre-rotated",
       "description": "An inception committing to a1, then a rotation to [a1, x1] with signing threshold 1, signed only by x1 with a current-only signature. The rotation exposes a1, so its keys satisfy the pre-rotation commitment, and x1's signature meets the rotation's own threshold, but no signature by an exposed next key satisfies the prior next threshold (lines 1262 and 1494). A validator must not accept a rotation that only a newly added key signed; as a threshold shortfall it should keep it (line 1266).",
       "events": [
@@ -785,7 +785,7 @@
     {
       "id": "KERI-0130",
       "key": "KS-MR08",
-      "status": "draft",
+      "status": "active",
       "title": "Weighted next threshold met by a partial rotation",
       "description": "An inception committing to a1, b1 and c1 with next threshold [1/2, 1/2, 1/2], then a rotation that exposes a1 and b1 only, with signing threshold 2, signed by both, and commits to c1 again in its next keys. The two exposed keys' weights sum to one, which satisfies the prior next threshold (lines 1419 and 1494), and their signatures meet the rotation's own threshold, so a validator should accept it.",
       "events": [
@@ -855,7 +855,7 @@
     {
       "id": "KERI-0131",
       "key": "KS-MR09",
-      "status": "draft",
+      "status": "active",
       "title": "Weighted next threshold short by one signature",
       "description": "An inception committing to a1, b1 and c1 with next threshold [1/2, 1/2, 1/2], then a rotation to [a1, b1] with signing threshold 1, signed only by a1. The rotation's keys could satisfy the prior next threshold, and a1's signature meets its own threshold, but the signed weight toward the prior next threshold is 1/2, short of one (lines 1262, 1419 and 1494). A validator must not accept it; as a threshold shortfall it should keep it (line 1266).",
       "events": [
@@ -924,7 +924,7 @@
     {
       "id": "KERI-0132",
       "key": "KS-MR10",
-      "status": "draft",
+      "status": "active",
       "title": "The specification's reserve rotation example",
       "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The inception is signed by r0 and r1; each rotation is signed as its commentary requires: rotation 2 by all of r10, r8 and r9 (line 1537), rotation 4 by r18, r20 and the newly added r21, and rotation 5 by r22, r16 and r17 for rotation authority and r22 and r25 for signing authority (line 1543). Every event satisfies both thresholds, so a validator should accept the whole KEL.",
       "events": [
@@ -1189,7 +1189,7 @@
     {
       "id": "KERI-0133",
       "key": "KS-MR11",
-      "status": "draft",
+      "status": "active",
       "title": "Reserve rotation 2 without one of its reserve keys",
       "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The first three events are delivered, with rotation 2 signed by r10 and r8 only. Those two meet its own threshold, but line 1537 says the rotation MUST be signed by all three of r10, r8 and r9, because r8 and r9 weigh only 1/4 each in the prior next threshold, so the signed weight there is 3/4. A validator must not accept rotation 2 (line 1262); as a threshold shortfall it should keep it.",
       "events": [
@@ -1325,7 +1325,7 @@
     {
       "id": "KERI-0134",
       "key": "KS-MR12",
-      "status": "draft",
+      "status": "active",
       "title": "Reserve rotation 5 signed without signing authority",
       "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The whole KEL is delivered, with rotation 5 signed only by r22, r16 and r17. They satisfy the prior next threshold, but r16 and r17 weigh 0 in the rotation's own threshold, so the signed weight there is 1/2 (line 1543). A validator must not accept rotation 5 (line 1262); as a threshold shortfall it should keep it, and the key state stays rotation 4's.",
       "events": [
@@ -1589,7 +1589,7 @@
     {
       "id": "KERI-0135",
       "key": "KS-MR13",
-      "status": "draft",
+      "status": "active",
       "title": "Reserve rotation 5 signed without rotation authority",
       "description": "The specification's reserve rotation example (lines 1505-1543), keys A0 to A31 written r0 to r31, with its thresholds exactly as the table gives them. The whole KEL is delivered, with rotation 5 signed only by r22, r25 and r26. They meet the rotation's own threshold, but r25 and r26 were never pre-rotated, so the signed weight toward the prior next threshold is r22's 1/2 (line 1543). A validator must not accept rotation 5 (line 1262); as a threshold shortfall it should keep it, and the key state stays rotation 4's.",
       "events": [
@@ -1853,7 +1853,7 @@
     {
       "id": "KERI-0136",
       "key": "KS-MR14",
-      "status": "draft",
+      "status": "active",
       "title": "The specification's custodial rotation example",
       "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception is signed by the first custodian's c0 and c1. Each rotation is signed by two of the owner's exposed rotation keys, whose dual-indexed signatures satisfy the prior next threshold, and by two of the new custodian's keys, whose current-only signatures meet the new signing threshold, in which the owner's keys weigh 0 (line 1574). A validator should accept the whole KEL.",
       "events": [
@@ -1988,7 +1988,7 @@
     {
       "id": "KERI-0137",
       "key": "KS-MR15",
-      "status": "draft",
+      "status": "active",
       "title": "Custodial rotation signed only by the new custodian",
       "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception and rotation 1 are delivered, with the rotation signed only by the new custodian's c6, c7 and c8. They meet the new signing threshold, but the custodian holds no rotation authority: no signature satisfies the prior next threshold, which only the owner's keys can (lines 1262 and 1574). A validator must not accept the rotation; as a threshold shortfall it should keep it.",
       "events": [
@@ -2078,7 +2078,7 @@
     {
       "id": "KERI-0138",
       "key": "KS-MR16",
-      "status": "draft",
+      "status": "active",
       "title": "Custodial rotation signed only by the owner",
       "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception and rotation 1 are delivered, with the rotation signed only by the owner's c3, c4 and c5. They satisfy the prior next threshold, but they weigh 0 in the new signing threshold, so the rotation must also be signed by two of the new custodian's keys (line 1574). A validator must not accept it (line 1262); as a threshold shortfall it should keep it.",
       "events": [
@@ -2168,7 +2168,7 @@
     {
       "id": "KERI-0139",
       "key": "KS-MR17",
-      "status": "draft",
+      "status": "active",
       "title": "Interaction signed only by keys of zero weight",
       "description": "The specification's custodial rotation example (lines 1549-1574), keys A0 to A17 written c0 to c17, with its thresholds exactly as the table gives them. The inception and rotation 1 are accepted, then an interaction is signed only by the owner's c3, c4 and c5, which are current keys of weight 0 after the rotation (line 1574). Their signatures verify but carry no signing authority, so the interaction does not meet the signing threshold (lines 1258 and 1419). A validator must not accept it; as a threshold shortfall it should keep it.",
       "events": [

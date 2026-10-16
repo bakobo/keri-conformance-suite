@@ -115,7 +115,7 @@ def test_profile_levels_features_and_provenance_agree(cid):
         assert {"kel.basic", "keri.version-1.x", "cesr.genus-1.00", "crypto.ed25519"} <= features
         assert not {"keri.version-2.x", "cesr.genus-2.00"} & features
         assert case["targets"]["wire"] == [keri_events.V1.cesr, keri_events.V1.target]
-        assert levels == {"INTEROP"} and case["status"] == "draft"
+        assert levels == {"INTEROP"} and case["status"] in ("draft", "active")
     else:
         assert {"kel.basic", "keri.version-2.x", "crypto.ed25519"} <= features
         assert case["targets"]["wire"] == ["CESR-2.00", keri_events.WIRE]
