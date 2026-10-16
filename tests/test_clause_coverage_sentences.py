@@ -192,6 +192,8 @@ def test_headings_and_fenced_code_are_not_sentences():
     ("key_state", {"sn": 0}, "positive"),
     ("verdict", "valid", "positive"),
     ("verdict", "not-valid", "negative"),
+    ("verdict", "invalid", "negative"),
+    ("verdict", "incomplete", "negative"),
     ("registry_reported", True, "positive"),
     ("registry_reported", False, "negative"),
     ("registry_state", {"n": 0}, "positive"),
@@ -208,6 +210,7 @@ def test_each_check_has_a_polarity(check, expected, polarity):
 @pytest.mark.parametrize("assertion, message", [
     ({"check": "bogus", "expected": "valid"}, "unknown check 'bogus'"),
     ({"check": "verdict", "expected": "maybe"}, "verdict of 'maybe'"),
+    ({"check": "verdict", "expected": 0}, "verdict of 0"),
     ({"check": "edge_valid", "expected": "yes"}, "edge_valid"),
     ({"check": "registry_reported", "expected": 1}, "registry_reported"),
     ({"check": "disposition", "expected": "duplicitous"}, "disposition 'duplicitous'"),

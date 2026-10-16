@@ -239,6 +239,9 @@ def map_quote(text: str, sentences: list[Sentence], quote: str) -> list[Sentence
 _DISPOSITIONS = {"seen": "positive", "not-seen": "negative", "rejected": "negative",
                  "pending": "negative"}
 _EXN_VERDICTS = {"accepted": "positive", "rejected": "negative"}
+# An acdc.verify verdict. A profile's three-way verdict (sedi-1) refuses as invalid or incomplete.
+_VERDICTS = {"valid": "positive", "not-valid": "negative", "invalid": "negative",
+             "incomplete": "negative"}
 
 
 def polarity(assertion: dict, where: str) -> str:
@@ -247,8 +250,8 @@ def polarity(assertion: dict, where: str) -> str:
     check, expected = assertion.get("check"), assertion.get("expected")
     if check in ("decoded", "encoded", "key_state", "registry_state", "edge_reported"):
         return "positive"
-    if check == "verdict" and expected in ("valid", "not-valid"):
-        return "positive" if expected == "valid" else "negative"
+    if check == "verdict" and isinstance(expected, str) and expected in _VERDICTS:
+        return _VERDICTS[expected]
     if check in ("registry_reported", "edge_valid") and isinstance(expected, bool):
         return "positive" if expected else "negative"
     if check in ("verdict", "registry_reported", "edge_valid"):
