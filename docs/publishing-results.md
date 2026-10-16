@@ -8,6 +8,8 @@ A result is the JSON report that `kcs run --report` writes, unchanged, inside a 
 
 Each result is one implementation version run against one profile, and its place follows from its content: `results/<implementation>/<version>/<profile>.json`. The first two segments are the implementation name and version that the adapter reported in its hello, lowercased, with every run of characters other than letters, digits and `. + _ -` replaced by a hyphen, so `0.1.8 (said 0.4.3)` becomes `0.1.8-said-0.4.3`. A report is published only if it was run with `--profile`.
 
+Every report names the suite version it ran against, and the results page groups results by it, newest first, marking the matrix for the version of the suite that built the site as current. Suite versions are calendar versions, `2026.10` and then `2026.10.1` for a second release in the same month (Versioning in [the design](design.md#versioning)), so a result run against an older suite stays published under its own version rather than being compared with newer ones. The committed results of the shipped adapters are refreshed when the suite version changes, so they always appear under the current one.
+
 ## What the checks refuse
 
 Results are read through one function, `load_results` in `tools/results.py`, which treats every file as untrusted. In order, it refuses:

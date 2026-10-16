@@ -85,11 +85,11 @@ Each request starts a fresh host (`src/kel.rs`). Messages are delivered in order
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| devrandom-labs/cesr keri-rs-v0.1.0 | `cesr-strict` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 2 | [2026-10-16, suite 32a93245](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/cesr-strict.json) |
-| devrandom-labs/cesr keri-rs-v0.1.0 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite 32a93245](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/cesr-v1.0.json) |
-| devrandom-labs/cesr keri-rs-v0.1.0 | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-16, suite 32a93245](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keri-escrow.json) |
-| devrandom-labs/cesr keri-rs-v0.1.0 | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 114 | [2026-10-16, suite 32a93245](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keri-v1.0.1.json) |
-| devrandom-labs/cesr keri-rs-v0.1.0 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 171 / 0 | 4 | [2026-10-16, suite 32a93245](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keripy-1x-interop.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `cesr-strict` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 2 | [2026-10-16, suite 819ecdd4](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/cesr-strict.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite 819ecdd4](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/cesr-v1.0.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-16, suite 819ecdd4](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keri-escrow.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 114 | [2026-10-16, suite 819ecdd4](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keri-v1.0.1.json) |
+| devrandom-labs/cesr keri-rs-v0.1.0 | `keripy-1x-interop` | interoperable | 0 / 0 | 0 / 0 | 171 / 0 | 4 | [2026-10-16, suite 819ecdd4](../../results/devrandom-labs-cesr/keri-rs-v0.1.0/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 

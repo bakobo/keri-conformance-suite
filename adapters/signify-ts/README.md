@@ -80,9 +80,9 @@ The adapter checks its arithmetic against the parser wherever both exist: a coun
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-strict` | interoperable | 0 / 0 | 0 / 0 | 2 / 0 | 0 | [2026-10-16, suite 32a93245](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-strict.json) |
-| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-v1.0` | not-conformant | 7 / 15 | 12 / 0 | 0 / 0 | 8 | [2026-10-16, suite 32a93245](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-v1.0.json) |
-| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 8 / 1 | 34 | [2026-10-16, suite 32a93245](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/keripy-1x-interop.json) |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-strict` | interoperable | 0 / 0 | 0 / 0 | 2 / 0 | 0 | [2026-10-16, suite 819ecdd4](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-strict.json) |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `cesr-v1.0` | not-conformant | 7 / 15 | 12 / 0 | 0 / 0 | 8 | [2026-10-16, suite 819ecdd4](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/cesr-v1.0.json) |
+| signify-ts 0.4.1 (dhh1128/signify-ts fork) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 8 / 1 | 34 | [2026-10-16, suite 819ecdd4](../../results/signify-ts/0.4.1-dhh1128-signify-ts-fork/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 
