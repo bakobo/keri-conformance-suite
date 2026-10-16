@@ -29,7 +29,7 @@ This repository is responsible for the conformance runner, the case generators, 
 
 A vulnerability in an implementation under test — keripy, keriox, affinidi-keri-rs, devrandom-labs/cesr, keri-go, signify-ts, cesrixir, KERIA or any other — belongs to that project. Report it to them, not to us.
 
-**Cases can disclose vulnerabilities.** A must-reject case that an implementation wrongly accepts is, in effect, a public proof of concept against that implementation. If you are contributing a case that exposes an unpatched security defect in a released implementation, report it to that project privately first, and to us through the channels above. We hold such a case out of the public tree until the affected project has had a chance to ship a fix, on the same 90-day default described below.
+**Cases can disclose vulnerabilities.** A released implementation that fails a conformance case, by accepting what it must reject or rejecting what it must accept, is published in the results like any other outcome; when the failure bypasses a security control, we tell its maintainers as we publish. A case that makes a released implementation crash, hang or corrupt memory on hostile input is different: it is, in effect, a working exploit. If you are contributing such a case against an unpatched release, report it to that project privately first, and to us through the channels above. We hold such a case out of the public tree until the affected project has had a chance to ship a fix, on the same 90-day default described below.
 
 A vulnerability in a dependency should go to that project, not to us. If you are not sure which side of the line something falls on, report it here and we will route it — that is our job, not yours.
 
