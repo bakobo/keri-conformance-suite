@@ -641,7 +641,8 @@ def test_an_acdc_whose_attachments_sedi_cannot_read_fails():
 
 
 @pytest.mark.parametrize("text,words", [
-    ("-!", "unknown count code"),
+    ("-dAA", "unknown count code"),
+    ("-!", "not text-domain"),
     ("-AAA", "not one attachments group"),
     ("-CAC", "not one attachments group"),
     ("-CAB-TAA", "does not read the group -T"),
@@ -659,3 +660,27 @@ def test_the_attachments_reader_refuses_what_sedi_does_not_read(text, words):
 def test_the_builder_refuses_an_unknown_code(over, words):
     with pytest.raises(ScenarioError, match=words):
         ab.build_bundle(T, with_update(**over))
+
+
+SN, DIG = "0A" + "A" * 22, "E" + "A" * 43
+
+
+def couple_group(item: str) -> str:
+    """An attachments group holding one -S group of ``item``, which is 68 characters."""
+    return "-CAS-SAR" + item
+
+
+def test_a_seal_source_couple_is_a_sequence_number_then_a_digest():
+    assert sm.attachments(T, couple_group(SN + DIG)) == []
+    for item, words in ((DIG + SN, "sequence number and a digest"),
+                        ("4AAG" + "A" * 20 + DIG, "variable size"),
+                        (SN + "E!" + "A" * 42, "not text-domain")):
+        with pytest.raises(ValueError, match=words):
+            sm.attachments(T, couple_group(item))
+
+
+def test_a_couple_pointing_at_another_event_is_only_a_pointer():
+    """A source couple names where to look; the seal is still found on the issuer's trunk
+    (docs/design.md, ACDC step 4), so one naming another event changes nothing."""
+    frag = with_update(source_seal={"event": "ixn-rip-A"})
+    assert run(frag)[0].verdict == sm.VALID

@@ -74,6 +74,9 @@ GRANT_ROUTE = "/ipex/grant"
 # refused) and the blinded state quadruple at -a## or the 8-character --a##### (blind-state-code;
 # ACDC's 9-character --a###### breaks quadlet alignment and is refused).
 GROUPS = {"-S": 2, "-a": 4, "--a": 4}
+# A seal source couple is a sequence number and a Blake3-256 digest (CESR line 925).
+COUPLE_CODES = ("0A", "E")
+BASE64 = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
 WRAPPERS = ("-C", "--C")
 QUADRUPLES = ("-a", "--a")
 
@@ -132,6 +135,8 @@ def attachments(t: Tables, text: str) -> list[tuple[str, ...]]:
     raises ValueError (seal-couple-code, blind-state-code)."""
     if not text:
         return []
+    if not set(text) <= BASE64:
+        raise ValueError("not text-domain CESR")
     code, count, i = _count(t, text, 0)
     if code not in WRAPPERS or len(text) != i + 4 * count:
         raise ValueError("not one attachments group")
@@ -146,8 +151,13 @@ def attachments(t: Tables, text: str) -> list[tuple[str, ...]]:
             fields = []
             for _ in range(GROUPS[code]):
                 size = t.primitives[am._primitive_code(t, content[j:])].fs
+                if size is None:
+                    raise ValueError("a primitive of variable size in a fixed-size item")
                 value, j = am._take(content, j, size)
                 fields.append(value)
+            if code == "-S" and not all(f.startswith(c) and am._primitive_code(t, f) == c
+                                        for f, c in zip(fields, COUPLE_CODES)):
+                raise ValueError("a seal source couple is a sequence number and a digest")
             if code in QUADRUPLES:
                 out.append(tuple(fields))
     return out
