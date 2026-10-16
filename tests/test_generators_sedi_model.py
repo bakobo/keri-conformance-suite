@@ -450,6 +450,20 @@ def test_the_grant_must_name_exactly_the_presented_acdc(a):
     assert reasons(run(frag)[0]) == ["invalid/presentation-names"]
 
 
+@pytest.mark.parametrize("change", [
+    {"r": "/kcs/exchange"},
+    {"t": "xip", "nonce": "n", "x": None, "p": None},
+])
+def test_only_a_grant_presents(change):
+    frag = presented_by(world({"A": cred("I")}, "A"), "H")
+    spec = grant(frag)
+    spec.update(change)
+    for field in [k for k, v in change.items() if v is None]:
+        del spec[field]
+    result, _ = run(frag)
+    assert result.verdict == sm.INVALID and reasons(result) == ["invalid/presentation-not-grant"]
+
+
 def test_a_grant_the_exchange_model_refuses_proves_no_presenter():
     frag = presented_by(world({"A": cred("I")}, "A"), "H")
     frag["presentation"]["messages"][0]["sigs"] = []
