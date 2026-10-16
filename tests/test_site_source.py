@@ -18,8 +18,10 @@ def loaded(*docs):
 
 
 def plain(page: str) -> str:
-    """`page` without its tooltips: abbr tags and link titles, which tests of other things ignore."""
-    page = re.sub(r"<abbr title=\"[^\"]*\">|</abbr>", "", page)
+    """`page` without its tooltips and colours: abbr and span tags and link titles, which tests of
+    other things ignore."""
+    page = re.sub(r"<abbr(?: class=\"[^\"]*\")? title=\"[^\"]*\">|</abbr>", "", page)
+    page = re.sub(r"<span class=\"kcs-[^\"]*\">|</span>", "", page)
     return re.sub(r'(\]\([^()\s]+) "[^"]*"\)', r"\1)", page)
 
 
@@ -529,6 +531,9 @@ def test_an_empty_cell_says_why():
     assert "not applicable: the adapter offers no keri\\.process" in index
     # keripy's adapter offers cesr.parse, so cesr-v1.0 applies; nobody published that run.
     assert "no result published" in index
+    # Both reasons are greyed, so the cells with results stand out.
+    assert '<span class="kcs-absent">no result published</span>' in index
+    assert '<span class="kcs-absent">not applicable: ' in index
 
 
 def test_an_empty_cell_for_a_profile_with_unknown_operations_says_only_that_none_is_published():

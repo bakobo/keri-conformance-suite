@@ -114,8 +114,13 @@ INSTANCES = (
              "adapters/keriox/README.md"),
     Instance("affinidi", (_step("adapters/affinidi", "cargo", "build", "--locked"),),
              "adapters/affinidi/target/debug/kcs-adapter-affinidi",
-             ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-affinidi",
+             ("cesr-v1.0", "keri-v1.0.1", "keri-escrow", "keripy-1x-interop"),
+             "kcs-adapter-affinidi",
              "adapters/affinidi/README.md"),
+    Instance("devrandom", (_step("adapters/devrandom", "cargo", "build", "--locked"),),
+             "adapters/devrandom/target/debug/kcs-adapter-devrandom",
+             ("cesr-v1.0", "keri-v1.0.1", "keri-escrow", "keripy-1x-interop"),
+             "kcs-adapter-devrandom", "adapters/devrandom/README.md"),
     Instance("keri-go",
              (_step("adapters/keri-go", "go", "build", "-mod=readonly", "-o",
                     "kcs-adapter-keri-go", "."),),
@@ -127,6 +132,12 @@ INSTANCES = (
              "adapters/signify-ts/bin/kcs-adapter-signify-ts",
              ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-signify-ts",
              "adapters/signify-ts/README.md"),
+    # The cesrixir adapter runs in a Docker image; bin/build builds and tests it, and the
+    # launcher refuses to start until the image for the current sources exists.
+    Instance("cesrixir", (_step("adapters/cesrixir", "bin/build"),),
+             "adapters/cesrixir/bin/kcs-adapter-cesrixir",
+             ("cesr-v1.0", "keripy-1x-interop"), "kcs-adapter-cesrixir",
+             "adapters/cesrixir/README.md"),
 )
 
 

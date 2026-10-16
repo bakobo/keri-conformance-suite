@@ -1,0 +1,33 @@
+[package]
+name = "kcs-adapter-devrandom"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95.0"
+license = "Apache-2.0"
+description = "KERI conformance suite adapter (protocol v1) for devrandom-labs/cesr"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "kcs-adapter-devrandom"
+path = "src/main.rs"
+
+[dependencies]
+keri-rs = { version = "=0.1.0", features = ["std", "wire"] }
+keri-codec = { version = "=0.10.0", features = ["std"] }
+keri-events = { version = "=0.6.0", features = ["std"] }
+cesr-rs = { version = "=0.12.0", features = ["std", "core", "crypto", "b64"] }
+cesr-stream = { version = "=0.7.0", features = ["std"] }
+serde_json = "1"
+
+[profile.dev]
+# Panics inside devrandom are caught and reported; they must unwind, never abort.
+panic = "unwind"
+
+# Dependencies are optimized, as devrandom ships them in a release build, while keeping the debug
+# profile's overflow checks and debug assertions, so hostile input still trips them. Unoptimized,
+# signature verification alone takes milliseconds per signature, which would make the adapter's
+# timing a property of the build rather than of the library.
+[profile.dev.package."*"]
+opt-level = 3

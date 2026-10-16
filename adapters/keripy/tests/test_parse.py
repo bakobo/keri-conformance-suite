@@ -206,6 +206,10 @@ def test_main_big_attachments_code():
     # the stream resumes with a bare primitive after the attachments
     (lambda s: ctr("-C", 23, V2) + ctr("-K", 22, V2) + sigs(s, 1)
      + bytes(Matter(raw=bytes(32), code="D").qb64b), "UnexpectedCodeError"),
+    # a generic list inside an attachments group: keripy main has no method for -J there and
+    # fails looking one up, after the message but while framing its attachments (tick 5qkx)
+    (lambda s: ctr("-C", 4, V2) + ctr("-J", 3, V2) + bytes(Matter(raw=bytes(6), code="4B").qb64b),
+     "TypeError"),
 ])
 def test_main_rejections(tail, expected):
     serder = event(V2)

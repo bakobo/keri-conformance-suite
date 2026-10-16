@@ -192,10 +192,12 @@ class Recorder:
     def post_extraction(self, exc, root):
         """True when keripy raised only after it had consumed a whole message and its
         attachments: keripy 1.x dispatches the message to its KERI processors inside
-        msgParsator, and with none attached that dispatch fails. Such an error is about KERI
-        processing, not framing."""
-        return (self.messages > 0 and not self.raised_in_extraction
-                and not isinstance(exc, kering.ExtractionError)
+        msgParsator, and with none attached that dispatch fails with a ValidationError. Such an
+        error is about KERI processing, not framing. keripy main's msgParsator only frames, so
+        every error it raises is a rejection, including one raised while framing attachments
+        after the message (a TypeError for -J inside -C)."""
+        return (self.keripy.dispatches and isinstance(exc, kering.ValidationError)
+                and self.messages > 0 and not self.raised_in_extraction
                 and (not root or self.keripy.sniff(bytearray(root)) == kering.Colds.msg))
 
 

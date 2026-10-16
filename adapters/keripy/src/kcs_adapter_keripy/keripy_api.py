@@ -31,6 +31,9 @@ def implementation():
 class _Common:
     generation = None
     features = ()
+    # Whether msgParsator hands the finished message to keripy's KERI processors itself, so that
+    # it can raise after framing is complete (measure.Recorder.post_extraction).
+    dispatches = False
     Counter = counting.Counter
     Matter = coring.Matter
     Indexer = indexing.Indexer
@@ -98,6 +101,7 @@ class OneX(_Common):
     """keripy 1.x (1.2.14)."""
 
     generation = "1.x"
+    dispatches = True
     # Not cesr.item-extents: that promises the decoded items of every stream keripy accepts, and
     # the adapter cannot measure -H and -J groups on this generation (UNMEASURABLE below).
     features = ("cesr.domain.binary", "cesr.genus-1.00", "cesr.serialization.cbor",

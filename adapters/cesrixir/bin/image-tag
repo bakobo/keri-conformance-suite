@@ -1,0 +1,31 @@
+#!/bin/sh
+# Prints the image reference for the adapter's current sources: a digest of every file the image is
+# built from, the Dockerfile with its pinned base image included, so a stale image is never run by
+# mistake. bin/build and bin/kcs-adapter-cesrixir agree on it by both calling this.
+set -eu
+here=$(cd "$(dirname "$0")/.." && pwd)
+cd "$here"
+for input in Dockerfile mix.exs mix.lock config lib; do
+  if [ ! -e "$input" ]; then
+    echo "e.env.dependency.image-input.f: adapters/cesrixir/$input is missing, so the image cannot be named." >&2
+    exit 1
+  fi
+done
+# -L follows symlinks, as docker build's COPY does, so a link's target is part of the digest. The
+# list goes through files, NUL-separated, with each step's status checked, so that a failed
+# traversal (an unreadable directory, a symlink loop) or a failed sort stops the script instead of
+# silently shortening the list, and so that any filename, spaces included, is hashed whole.
+list=$(mktemp)
+sorted=$(mktemp)
+trap 'rm -f "$list" "$sorted"' EXIT
+if ! find -L Dockerfile mix.exs mix.lock config lib -type f -print0 > "$list"; then
+  echo "e.env.filesystem.image-input.f: listing the adapter's build inputs failed, so the image cannot be named." >&2
+  exit 1
+fi
+if ! LC_ALL=C sort -z "$list" > "$sorted"; then
+  echo "e.env.filesystem.image-input.f: sorting the adapter's build inputs failed, so the image cannot be named." >&2
+  exit 1
+fi
+sums=$(xargs -0 sha256sum -- < "$sorted")
+digest=$(printf '%s\n' "$sums" | sha256sum | cut -c1-16)
+echo "kcs-adapter-cesrixir:src-$digest"
