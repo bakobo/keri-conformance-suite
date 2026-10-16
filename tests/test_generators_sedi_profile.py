@@ -252,7 +252,7 @@ def test_the_script_lists_the_unexercised_choices(capsys):
     from generators.spec_tables import cli as script
     assert script.main(["--check"]) == 0
     out = capsys.readouterr().out
-    assert "sedi-1 (draft):" in out and "revoked has no negative case" in out
+    assert "sedi-1 (draft):" in out and "has no positive case" in out
 
 
 def test_the_script_says_nothing_when_every_choice_is_exercised(monkeypatch, capsys):
