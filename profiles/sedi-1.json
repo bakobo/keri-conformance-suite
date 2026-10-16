@@ -45,7 +45,13 @@
     "ACDC-0141",
     "ACDC-0142",
     "ACDC-0143",
-    "ACDC-0144"
+    "ACDC-0144",
+    "ACDC-0145",
+    "ACDC-0146",
+    "ACDC-0147",
+    "ACDC-0148",
+    "ACDC-0149",
+    "ACDC-0150"
   ],
   "choices": [
     {
@@ -213,7 +219,8 @@
         "positive": [
           "ACDC-0110",
           "ACDC-0126",
-          "ACDC-0134"
+          "ACDC-0134",
+          "ACDC-0149"
         ]
       },
       "decided": "8g9vtxvc",
@@ -231,12 +238,16 @@
           "ACDC-0140",
           "ACDC-0141",
           "ACDC-0143",
-          "ACDC-0144"
+          "ACDC-0144",
+          "ACDC-0146",
+          "ACDC-0148"
         ],
         "positive": [
           "ACDC-0114",
           "ACDC-0115",
-          "ACDC-0142"
+          "ACDC-0142",
+          "ACDC-0145",
+          "ACDC-0147"
         ]
       },
       "decided": "599d5f5f",
@@ -331,11 +342,13 @@
       "cases": {
         "negative": [
           "ACDC-0106",
-          "ACDC-0135"
+          "ACDC-0135",
+          "ACDC-0150"
         ],
         "positive": [
           "ACDC-0122",
-          "ACDC-0134"
+          "ACDC-0134",
+          "ACDC-0149"
         ]
       },
       "decided": "8fh68wt6",

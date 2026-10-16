@@ -85,6 +85,7 @@
   "status": "draft",
   "targets": {
     "features": [
+      "acdc.edges",
       "acdc.registry.bup",
       "acdc.version-2.x",
       "cesr.genus-2.00",
