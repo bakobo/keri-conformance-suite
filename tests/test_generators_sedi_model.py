@@ -460,6 +460,7 @@ def test_a_carried_event_that_does_not_verify_accounts_for_nothing():
     issuer = model.node(bytes.fromhex(b.request["presented"]["stream"]))[0].body["i"]
     model.registry_streams.append(({"d": "Ex", "n": ["1"], "t": "bup"}, b"", []))
     model.registry_streams.append(({"d": "Ey", "n": "1", "rd": rd, "t": "bup"}, b"", []))
+    model.registry_streams.append(({"d": "Ez", "n": "1", "x": "\ud800", "t": "bup"}, b"", []))
     head, problems = model.head(rd, issuer)
     assert head.n == 1 and "registry-unseen" not in [r for _, r in problems]
 

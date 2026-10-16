@@ -189,6 +189,14 @@ class _SediModel(am._Model):
 
     # -- the registry -------------------------------------------------------------------------------
 
+    def _event_said(self, body: dict) -> bool:
+        """A body that cannot be serialized again (a lone surrogate the JSON parser let through)
+        has no SAID that verifies."""
+        try:
+            return super()._event_said(body)
+        except (UnicodeEncodeError, ValueError, TypeError):
+            return False
+
     def head(self, rd, issuer) -> tuple[Head | None, list[tuple[str, str]]]:
         """The registry's head and every (grade, reason) that keeps the verdict from valid."""
         key = (rd, issuer)
