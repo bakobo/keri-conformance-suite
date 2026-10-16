@@ -605,3 +605,84 @@ def test_the_builder_refuses_a_malformed_presentation(change, words):
     change(frag["presentation"])
     with pytest.raises(ScenarioError, match=words):
         ab.build_bundle(T, frag)
+
+
+# -- group codes (seal-couple-code, blind-state-code) ---------------------------------------------
+
+
+def with_update(**over):
+    frag = world({"A": cred("I")}, "A")
+    next(r for r in frag["registries"] if r["name"] == "bup-A-1").update(over)
+    return frag
+
+
+@pytest.mark.parametrize("over,found", [
+    ({"source_seal": {"event": "ixn-bup-A-1"}}, []),
+    ({"source_seal": {"event": "ixn-bup-A-1", "code": "-T"}}, ["invalid/bup-attachments"]),
+    ({"block_code": "--a"}, []),
+    ({"block_code": "--a9"}, ["invalid/bup-attachments"]),
+])
+def test_sedi_reads_a_couple_at_s_and_a_big_state_at_eight_characters(over, found):
+    assert reasons(run(with_update(**over))[0]) == found
+
+
+def test_an_inception_whose_attachments_sedi_cannot_read_fails():
+    frag = world({"A": cred("I")}, "A")
+    frag["registries"][0]["source_seal"] = {"event": "ixn-rip-A", "code": "-T"}
+    assert reasons(run(frag)[0]) == ["invalid/rip-attachments"]
+
+
+def test_an_acdc_whose_attachments_sedi_cannot_read_fails():
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0]["source_seal"] = {"event": "ixn-bup-A-1", "code": "-T"}
+    assert reasons(run(frag)[0]) == ["invalid/attachments"]
+    frag["acdcs"][0]["source_seal"] = "ixn-bup-A-1"
+    assert run(frag)[0].verdict == sm.VALID
+
+
+@pytest.mark.parametrize("text,words", [
+    ("-dAA", "unknown count code"),
+    ("-!", "not text-domain"),
+    ("-AAA", "not one attachments group"),
+    ("-CAC", "not one attachments group"),
+    ("-CAB-TAA", "does not read the group -T"),
+])
+def test_the_attachments_reader_refuses_what_sedi_does_not_read(text, words):
+    assert sm.attachments(T, "") == []
+    with pytest.raises(ValueError, match=words):
+        sm.attachments(T, text)
+
+
+@pytest.mark.parametrize("over,words", [
+    ({"source_seal": {"event": "ixn-bup-A-1", "code": "-Z"}}, "a couple's code is -S or -T"),
+    ({"block_code": "-z"}, "is not -a, --a or --a9"),
+])
+def test_the_builder_refuses_an_unknown_code(over, words):
+    with pytest.raises(ScenarioError, match=words):
+        ab.build_bundle(T, with_update(**over))
+
+
+SN, DIG = "0A" + "A" * 22, "E" + "A" * 43
+
+
+def couple_group(item: str) -> str:
+    """An attachments group holding one -S group of ``item``, which is 68 characters."""
+    return "-CAS-SAR" + item
+
+
+def test_a_seal_source_couple_is_a_sequence_number_then_a_digest():
+    assert sm.attachments(T, couple_group(SN + DIG)) == []
+    for item, words in ((DIG + SN, "sequence number and a digest"),
+                        ("4AAG" + "A" * 20 + DIG, "variable size"),
+                        (SN + "E!" + "A" * 42, "not text-domain"),
+                        ("0A_" + "A" * 21 + DIG, "canonically encoded"),
+                        (SN + "E_" + "A" * 42, "canonically encoded")):
+        with pytest.raises(ValueError, match=words):
+            sm.attachments(T, couple_group(item))
+
+
+def test_a_couple_pointing_at_another_event_is_only_a_pointer():
+    """A source couple names where to look; the seal is still found on the issuer's trunk
+    (docs/design.md, ACDC step 4), so one naming another event changes nothing."""
+    frag = with_update(source_seal={"event": "ixn-rip-A"})
+    assert run(frag)[0].verdict == sm.VALID

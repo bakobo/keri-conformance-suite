@@ -130,10 +130,12 @@ class Result:
 # -- reading the bytes ------------------------------------------------------------------------
 
 
-def _parse(t: Tables, stream: bytes, protocol: bytes | None = b"ACDC"):
+def _parse(t: Tables, stream: bytes, protocol: bytes | None = b"ACDC", attachments=None):
     """The message body, its raw bytes and the blinded state blocks attached to it, or None if
     the stream is not the genus/version code, one ACDC 2.00 JSON body and an attachments group.
     With ``protocol`` None, a 2.00 version string naming any protocol frames the body.
+    ``attachments`` reads the text after the body (``_blocks`` unless a profile reads it
+    otherwise), raising ValueError, KeyError or UnicodeDecodeError on text it refuses.
 
     The attachments are read here rather than by the reference parser (decoding), which does not
     read the Tag codes a blinded state block's ``ts`` uses (A-B3)."""
@@ -151,7 +153,7 @@ def _parse(t: Tables, stream: bytes, protocol: bytes | None = b"ACDC"):
     if len(raw) != size or not isinstance(body, dict):
         return None
     try:
-        blocks = _blocks(t, rest[size:].decode("ascii"))
+        blocks = (attachments or _blocks)(t, rest[size:].decode("ascii"))
     except (ValueError, KeyError, UnicodeDecodeError):
         return None
     return body, raw, blocks

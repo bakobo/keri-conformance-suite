@@ -54,7 +54,7 @@ import re
 from dataclasses import dataclass, field
 
 from . import acdc_saids as sa
-from . import encoding
+from . import b64, encoding
 from . import json_schema_subset as js
 from .errors import GeneratorError, ScenarioError
 from .exn_build import ExchangeBuilder
@@ -556,20 +556,36 @@ class _Builder:
         text = "".join(parts)
         return encoding.counter(self.t, code, len(text) // 4) + text
 
-    def attachments(self, source_seal: str | None, block: str = "") -> str:
+    def attachments(self, source_seal: str | None, block: str = "",
+                    block_code: str = "-a") -> str:
+        """The attachments group: the source seal couple, at ``-S`` unless the seal names another
+        ``code`` (``-T``, ACDC line 1931's), then the blinded state block at ``block_code``:
+        ``-a``, the big ``--a`` with its five-character count, or ``--a9``, the big code with
+        the six-character count ACDC lines 2062, 2145 and 2367 give, a tamper that breaks
+        quadlet alignment."""
         groups = []
         if source_seal is not None:
-            said = None
+            said, code = None, "-S"
             if isinstance(source_seal, dict):
                 if "event" not in source_seal:
                     raise ScenarioError(f"The source seal {source_seal!r} names no event.")
-                said = label_digest(self.t, source_seal["wrong_said"])
+                if "wrong_said" in source_seal:
+                    said = label_digest(self.t, source_seal["wrong_said"])
+                code = source_seal.get("code", "-S")
+                if code not in ("-S", "-T"):
+                    raise ScenarioError(f"The source seal {source_seal!r} names the code "
+                                        f"{code!r}; a couple's code is -S or -T.")
                 source_seal = source_seal["event"]
             anchor = self.eb.event(source_seal)
             sn = encoding.primitive(self.t, "0A", anchor.sn.to_bytes(16, "big"))
-            groups.append(self._group("-S", [sn + (said or anchor.said)]))
+            groups.append(self._group(code, [sn + (said or anchor.said)]))
         if block:
-            groups.append(self._group("-a", [block]))
+            if block_code == "--a9":
+                groups.append("--a" + b64.int_to_b64(len(block) // 4, 6) + block)
+            elif block_code in ("-a", "--a"):
+                groups.append(self._group(block_code, [block]))
+            else:
+                raise ScenarioError(f"The block code {block_code!r} is not -a, --a or --a9.")
         return self._group("-C", groups) if groups else ""
 
     def stream(self, body: dict, attachments: str) -> str:
@@ -641,7 +657,8 @@ class _Builder:
         request = {
             "kels": kels,
             "registry": [{"stream": self.stream(self.events[n][0], self.attachments(
-                self.registries[n].get("source_seal"), self.events[n][1]))}
+                self.registries[n].get("source_seal"), self.events[n][1],
+                self.registries[n].get("block_code", "-a")))}
                 for n in self.registries if n not in omit],
             "schemas": [sa.serialize(self.schema_bodies[n], self.readings).hex()
                         for n in self.schemas if n not in omit],

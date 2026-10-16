@@ -51,7 +51,13 @@
     "ACDC-0147",
     "ACDC-0148",
     "ACDC-0149",
-    "ACDC-0150"
+    "ACDC-0150",
+    "ACDC-0151",
+    "ACDC-0152",
+    "ACDC-0153",
+    "ACDC-0154",
+    "ACDC-0155",
+    "ACDC-0156"
   ],
   "choices": [
     {
@@ -116,8 +122,14 @@
     {
       "basis": "CESR lines 933 to 936 and keripy's 2.00 count-code table give -S##; ACDC line 1931 says -T##.",
       "cases": {
-        "negative": [],
-        "positive": []
+        "negative": [
+          "ACDC-0152",
+          "ACDC-0154"
+        ],
+        "positive": [
+          "ACDC-0151",
+          "ACDC-0153"
+        ]
       },
       "decided": "8g9vtxvc",
       "id": "seal-couple-code",
@@ -128,8 +140,12 @@
     {
       "basis": "ACDC lines 2062, 2145 and 2367 give a 9-character code, which breaks quadlet alignment; keripy uses 8.",
       "cases": {
-        "negative": [],
-        "positive": []
+        "negative": [
+          "ACDC-0156"
+        ],
+        "positive": [
+          "ACDC-0155"
+        ]
       },
       "decided": "8g9vtxvc",
       "id": "blind-state-code",
