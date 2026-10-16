@@ -14,7 +14,7 @@ from keri_conformance import __version__, cli, protocol
 PEP440 = re.compile(r"^\d+(\.\d+)*((a|b|rc)\d+)?(\.dev\d+)?$")
 # Calendar versioning (docs/design.md, Versioning): year.month, then .N for a further release in
 # the same month.
-CALVER = re.compile(r"^20\d\d\.(1[0-2]|[1-9])(\.[1-9]\d*)?$")
+CALVER = re.compile(r"20[0-9]{2}\.(1[0-2]|[1-9])(\.[1-9][0-9]*)?")
 PYPROJECT = Path(__file__).resolve().parents[1] / "pyproject.toml"
 
 
@@ -23,7 +23,7 @@ def test_version_is_a_pep440_release():
 
 
 def test_suite_version_is_a_calendar_version():
-    assert CALVER.match(tomllib.loads(PYPROJECT.read_text())["project"]["version"])
+    assert CALVER.fullmatch(tomllib.loads(PYPROJECT.read_text())["project"]["version"])
 
 
 def test_runner_and_suite_carry_one_version():
@@ -32,12 +32,13 @@ def test_runner_and_suite_carry_one_version():
 
 @pytest.mark.parametrize("version", ["2026.10", "2026.10.1", "2026.1", "2026.12.12"])
 def test_calendar_pattern_accepts_year_month_and_a_same_month_release(version):
-    assert CALVER.match(version)
+    assert CALVER.fullmatch(version)
 
 
-@pytest.mark.parametrize("version", ["0.0.1", "2026.13", "2026.0", "2026.09", "2026.10.0", "26.10"])
+@pytest.mark.parametrize("version", ["0.0.1", "2026.13", "2026.0", "2026.09", "2026.10.0", "26.10",
+                                     "2026.10\n", "2026.10.1a1"])
 def test_calendar_pattern_refuses_other_shapes(version):
-    assert not CALVER.match(version)
+    assert not CALVER.fullmatch(version)
 
 
 def test_protocol_version_is_current_and_supported():
