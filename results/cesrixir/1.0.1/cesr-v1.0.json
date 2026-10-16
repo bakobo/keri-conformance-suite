@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "6b1b01aabff55b9b7bbfd747b604ac464ab3bf0c",
+    "commit": "fe513a6c9ffeff23a92ad8bdadbb283e7e64f7fe",
     "date": "2026-10-16"
   },
   "report": {
@@ -73,7 +73,7 @@
             "fail": 18
           },
           "SHOULD": {
-            "fail": 5,
+            "fail": 8,
             "pass": 5
           }
         },
@@ -86,20 +86,17 @@
           "MUST": {
             "pass": 3,
             "fail": 1
-          },
-          "SHOULD": {
-            "fail": 3
           }
         }
       },
       "should": {
-        "fail": 5,
+        "fail": 8,
         "pass": 5
       },
-      "should_failed": 5,
+      "should_failed": 8,
       "interop": {},
       "interop_verdict": null,
-      "should_warning": "5 active SHOULD assertions failed. A conformance claim from this run must state its SHOULD results beside the verdict.",
+      "should_warning": "8 active SHOULD assertions failed. A conformance claim from this run must state its SHOULD results beside the verdict.",
       "not_supported_active": [],
       "self_agreement_passes": 0
     },
@@ -2080,7 +2077,7 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "\n00:21:41.342 [warning] Not enough bytes in stream: -CA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
+        "stderr": "\n18:30:56.146 [warning] Not enough bytes in stream: -CA\ncesrixir rejected the stream: Not enough bytes in cesr element\n",
         "assertions": [
           {
             "id": "a1",
@@ -2663,7 +2660,7 @@
       },
       {
         "id": "CESR-0062",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": {
@@ -2687,7 +2684,7 @@
       },
       {
         "id": "CESR-0063",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": {
@@ -2711,7 +2708,7 @@
       },
       {
         "id": "CESR-0066",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,

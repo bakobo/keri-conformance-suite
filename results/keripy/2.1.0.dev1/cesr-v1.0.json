@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "6b1b01aabff55b9b7bbfd747b604ac464ab3bf0c",
+    "commit": "fe513a6c9ffeff23a92ad8bdadbb283e7e64f7fe",
     "date": "2026-10-16"
   },
   "report": {
@@ -86,7 +86,7 @@
       "profile": "cesr-v1.0",
       "cases_dir": "cases"
     },
-    "session_stderr": "",
+    "session_stderr": "/home/daniel/code/bakobo/keri-conformance-suite/.worktrees/activate-cases/adapters/keripy/.venv/lib/python3.14/site-packages/hio/help/doming.py:364: SyntaxWarning: \"\\*\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\*\"? A raw string is also an option.\n  _update(\\*pa, \\*\\*kwa): update attributes using dict like update syntax\n/home/daniel/code/bakobo/keri-conformance-suite/.worktrees/activate-cases/adapters/keripy/.venv/lib/python3.14/site-packages/hio/help/doming.py:634: SyntaxWarning: \"\\*\" is an invalid escape sequence. Such sequences will not work in the future. Did you mean \"\\\\*\"? A raw string is also an option.\n  _update(\\*pa, \\*\\*kwa): update attributes using dict like update syntax\n",
     "verdict": "conformant",
     "aborted": null,
     "probes": {
@@ -99,7 +99,7 @@
             "pass": 29
           },
           "SHOULD": {
-            "pass": 10
+            "pass": 13
           }
         },
         "disputed": {
@@ -110,14 +110,11 @@
         "draft": {
           "MUST": {
             "fail": 4
-          },
-          "SHOULD": {
-            "pass": 3
           }
         }
       },
       "should": {
-        "pass": 10
+        "pass": 13
       },
       "should_failed": 0,
       "interop": {},
@@ -3632,7 +3629,7 @@
       },
       {
         "id": "CESR-0062",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
@@ -3657,7 +3654,7 @@
       },
       {
         "id": "CESR-0063",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
@@ -3682,7 +3679,7 @@
       },
       {
         "id": "CESR-0066",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,

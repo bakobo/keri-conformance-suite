@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "6b1b01aabff55b9b7bbfd747b604ac464ab3bf0c",
+    "commit": "fe513a6c9ffeff23a92ad8bdadbb283e7e64f7fe",
     "date": "2026-10-16"
   },
   "report": {
@@ -72,10 +72,10 @@
       "counts": {
         "active": {
           "SHOULD": {
-            "not-supported": 209
+            "not-supported": 363
           },
           "MUST": {
-            "not-supported": 127
+            "not-supported": 215
           }
         },
         "disputed": {
@@ -85,18 +85,10 @@
           "MUST": {
             "not-supported": 14
           }
-        },
-        "draft": {
-          "SHOULD": {
-            "not-supported": 154
-          },
-          "MUST": {
-            "not-supported": 88
-          }
         }
       },
       "should": {
-        "not-supported": 209
+        "not-supported": 363
       },
       "should_failed": 0,
       "interop": {},
@@ -171,7 +163,52 @@
         "KERI-0080",
         "KERI-0081",
         "KERI-0082",
-        "KERI-0083"
+        "KERI-0083",
+        "KERI-0084",
+        "KERI-0085",
+        "KERI-0086",
+        "KERI-0087",
+        "KERI-0088",
+        "KERI-0089",
+        "KERI-0090",
+        "KERI-0100",
+        "KERI-0101",
+        "KERI-0102",
+        "KERI-0103",
+        "KERI-0104",
+        "KERI-0105",
+        "KERI-0106",
+        "KERI-0107",
+        "KERI-0109",
+        "KERI-0110",
+        "KERI-0111",
+        "KERI-0112",
+        "KERI-0113",
+        "KERI-0114",
+        "KERI-0115",
+        "KERI-0116",
+        "KERI-0117",
+        "KERI-0118",
+        "KERI-0119",
+        "KERI-0120",
+        "KERI-0121",
+        "KERI-0122",
+        "KERI-0127",
+        "KERI-0128",
+        "KERI-0129",
+        "KERI-0130",
+        "KERI-0131",
+        "KERI-0132",
+        "KERI-0133",
+        "KERI-0134",
+        "KERI-0135",
+        "KERI-0136",
+        "KERI-0137",
+        "KERI-0138",
+        "KERI-0139",
+        "KERI-0140",
+        "KERI-0141",
+        "KERI-0142"
       ],
       "self_agreement_passes": 0
     },
@@ -5449,7 +5486,7 @@
       },
       {
         "id": "KERI-0084",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -5548,7 +5585,7 @@
       },
       {
         "id": "KERI-0085",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -5637,7 +5674,7 @@
       },
       {
         "id": "KERI-0086",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -5716,7 +5753,7 @@
       },
       {
         "id": "KERI-0087",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -5795,7 +5832,7 @@
       },
       {
         "id": "KERI-0088",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -5830,7 +5867,7 @@
       },
       {
         "id": "KERI-0089",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -5876,7 +5913,7 @@
       },
       {
         "id": "KERI-0090",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6020,7 +6057,7 @@
       },
       {
         "id": "KERI-0100",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6099,7 +6136,7 @@
       },
       {
         "id": "KERI-0101",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6198,7 +6235,7 @@
       },
       {
         "id": "KERI-0102",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6290,7 +6327,7 @@
       },
       {
         "id": "KERI-0103",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6382,7 +6419,7 @@
       },
       {
         "id": "KERI-0104",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6474,7 +6511,7 @@
       },
       {
         "id": "KERI-0105",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6510,7 +6547,7 @@
       },
       {
         "id": "KERI-0106",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6546,7 +6583,7 @@
       },
       {
         "id": "KERI-0107",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6662,7 +6699,7 @@
       },
       {
         "id": "KERI-0109",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6697,7 +6734,7 @@
       },
       {
         "id": "KERI-0110",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6776,7 +6813,7 @@
       },
       {
         "id": "KERI-0111",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6855,7 +6892,7 @@
       },
       {
         "id": "KERI-0112",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6890,7 +6927,7 @@
       },
       {
         "id": "KERI-0113",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -6969,7 +7006,7 @@
       },
       {
         "id": "KERI-0114",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7048,7 +7085,7 @@
       },
       {
         "id": "KERI-0115",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7083,7 +7120,7 @@
       },
       {
         "id": "KERI-0116",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7162,7 +7199,7 @@
       },
       {
         "id": "KERI-0117",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7238,7 +7275,7 @@
       },
       {
         "id": "KERI-0118",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7277,7 +7314,7 @@
       },
       {
         "id": "KERI-0119",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7353,7 +7390,7 @@
       },
       {
         "id": "KERI-0120",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7392,7 +7429,7 @@
       },
       {
         "id": "KERI-0121",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7427,7 +7464,7 @@
       },
       {
         "id": "KERI-0122",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -7948,7 +7985,7 @@
       },
       {
         "id": "KERI-0127",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8037,7 +8074,7 @@
       },
       {
         "id": "KERI-0128",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8127,7 +8164,7 @@
       },
       {
         "id": "KERI-0129",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8217,7 +8254,7 @@
       },
       {
         "id": "KERI-0130",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8304,7 +8341,7 @@
       },
       {
         "id": "KERI-0131",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8399,7 +8436,7 @@
       },
       {
         "id": "KERI-0132",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8579,7 +8616,7 @@
       },
       {
         "id": "KERI-0133",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8705,7 +8742,7 @@
       },
       {
         "id": "KERI-0134",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -8891,7 +8928,7 @@
       },
       {
         "id": "KERI-0135",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -9077,7 +9114,7 @@
       },
       {
         "id": "KERI-0136",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -9195,7 +9232,7 @@
       },
       {
         "id": "KERI-0137",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -9297,7 +9334,7 @@
       },
       {
         "id": "KERI-0138",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -9398,7 +9435,7 @@
       },
       {
         "id": "KERI-0139",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -9526,7 +9563,7 @@
       },
       {
         "id": "KERI-0140",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -9617,7 +9654,7 @@
       },
       {
         "id": "KERI-0141",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,
@@ -9662,7 +9699,7 @@
       },
       {
         "id": "KERI-0142",
-        "status": "draft",
+        "status": "active",
         "profile": "keri-v1.0.1",
         "operation": "keri.process",
         "failure": null,

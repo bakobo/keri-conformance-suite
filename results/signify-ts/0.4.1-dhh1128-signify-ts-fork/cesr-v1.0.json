@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "6b1b01aabff55b9b7bbfd747b604ac464ab3bf0c",
+    "commit": "fe513a6c9ffeff23a92ad8bdadbb283e7e64f7fe",
     "date": "2026-10-16"
   },
   "report": {
@@ -68,7 +68,7 @@
             "fail": 15
           },
           "SHOULD": {
-            "pass": 9,
+            "pass": 12,
             "not-supported": 1
           }
         },
@@ -81,14 +81,11 @@
           "MUST": {
             "fail": 3,
             "not-supported": 1
-          },
-          "SHOULD": {
-            "pass": 3
           }
         }
       },
       "should": {
-        "pass": 9,
+        "pass": 12,
         "not-supported": 1
       },
       "should_failed": 0,
@@ -2585,7 +2582,7 @@
       },
       {
         "id": "CESR-0062",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
@@ -2610,7 +2607,7 @@
       },
       {
         "id": "CESR-0063",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
@@ -2635,7 +2632,7 @@
       },
       {
         "id": "CESR-0066",
-        "status": "draft",
+        "status": "active",
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
