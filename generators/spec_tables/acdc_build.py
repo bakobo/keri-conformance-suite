@@ -424,7 +424,26 @@ class _Builder:
         """The ACDC as it is presented, after any alteration the scenario asks for."""
         out = self._protocol(name, self._form(name))
         out = self._alter(out, self.acdcs[name].get("alter", []), f"ACDC {name!r}")
-        return self._declared(name, out)
+        return self._keripy1x(name, self._declared(name, out))
+
+    def _keripy1x(self, name: str, out: dict) -> dict:
+        """The presented form with keripy 1.x's shapes where the scenario names them, each a
+        tamper over the 2.00 body whose SAIDs are already computed: ``fields`` ``1.x`` gives
+        keripy 1.x's field set (``ri`` for ``rd``, and no ``t``) under a 2.00 version string
+        sized to it, and ``version`` ``1.x`` gives a 1.x version string
+        (``ACDC10JSON<size in six hex digits>_``) sized to the body."""
+        spec = self.acdcs[name]
+        for key in ("fields", "version"):
+            if spec.get(key, "1.x") != "1.x":
+                raise ScenarioError(f"ACDC {name!r} names {key} {spec[key]!r}; the only one is "
+                                    f"1.x.")
+        if spec.get("fields") == "1.x":
+            out = sa.sized({("ri" if k == "rd" else k): v for k, v in out.items() if k != "t"},
+                           self.readings)
+        if spec.get("version") == "1.x":
+            out = {**out, "v": "ACDC10JSON000000_"}
+            out["v"] = f"ACDC10JSON{len(sa.serialize(out, self.readings)):06x}_"
+        return out
 
     def _declared(self, name: str, out: dict) -> dict:
         """The presented form with its version string declaring another form's size, if the

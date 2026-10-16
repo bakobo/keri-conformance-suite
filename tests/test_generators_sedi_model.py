@@ -686,3 +686,27 @@ def test_a_couple_pointing_at_another_event_is_only_a_pointer():
     (docs/design.md, ACDC step 4), so one naming another event changes nothing."""
     frag = with_update(source_seal={"event": "ixn-rip-A"})
     assert run(frag)[0].verdict == sm.VALID
+
+
+# -- keripy 1.x shapes (no-1x) -----------------------------------------------------------------
+
+
+def test_a_1x_version_string_or_field_set_is_never_valid():
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0]["version"] = "1.x"
+    result, b = run(frag)
+    assert reasons(result) == ["invalid/unframeable"]
+    assert bytes.fromhex(b.request["presented"]["stream"])[8:24] == b'{"v":"ACDC10JSON'
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0]["fields"] = "1.x"
+    result, b = run(frag)
+    assert result.verdict == sm.INVALID
+    assert set(b.forms["A"]) >= {"ri"} and not {"rd", "t"} & set(b.forms["A"])
+
+
+@pytest.mark.parametrize("key", ["version", "fields"])
+def test_the_builder_knows_only_the_1x_shape(key):
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0][key] = "3.x"
+    with pytest.raises(ScenarioError, match="the only one is 1.x"):
+        ab.build_bundle(T, frag)
