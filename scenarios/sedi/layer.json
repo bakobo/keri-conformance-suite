@@ -1,0 +1,6572 @@
+{
+ "about": "More of sedi-1's verifier layer (test-plan item 6): registry evidence, revocation through a chain, seals, edge SAIDs and operator shapes. Each fixture is a bundle in the form acdc_build reads; each case names the sedi-1 choices its verdict rests on and its security triage, and lists every finding the sedi-1 model makes. The verdict itself is the model's (generators/spec_tables/sedi_cases.py).",
+ "profile": "sedi-1",
+ "fixtures": {
+  "SL-01": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-2",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-2",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-3",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-3",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-2",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-3",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "bup-A-2",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-1",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "bup-A-3",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-2",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SL-02": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-2",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-2",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-3",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-3",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-2",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-3",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "bup-A-2",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-1",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "bup-A-3",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-2",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A",
+   "omit": [
+    "bup-A-2",
+    "bup-A-3"
+   ]
+  },
+  "SL-03": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-2",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-2",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "bup-A-2",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-1",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SL-04": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-05": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-2",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-2",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-2",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "bup-F-2",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-1",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "revoked"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-06": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd",
+       "extra": {
+        "d": "EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+       }
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SL-07": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      }
+     },
+     "alter": [
+      {
+       "path": "e.le.d",
+       "value": {
+        "nothing": "other"
+       }
+      }
+     ]
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-08": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      }
+     },
+     "alter": [
+      {
+       "path": "e.le.d",
+       "value": {
+        "acdc": "F"
+       }
+      }
+     ]
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-09": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": [
+        "I2I",
+        "XYZ"
+       ]
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-10": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": [
+        1
+       ]
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-11": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": {
+        "op": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-12": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "g": {
+       "d": "",
+       "o": "AND",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-13": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "g": {
+       "d": "",
+       "o": "AND"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-14": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "g": {
+       "d": "",
+       "o": "OR"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-15": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "R"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "g": {
+       "d": "",
+       "o": "OR",
+       "le1": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "I2I"
+       },
+       "le2": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-16": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "R"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "R"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "g": {
+       "d": "",
+       "o": "OR",
+       "le1": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "I2I"
+       },
+       "le2": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-17": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "g": {
+       "d": "",
+       "o": "AND",
+       "le1": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "I2I"
+       },
+       "le2": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-18": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "g": {
+       "d": "",
+       "o": "AND",
+       "le1": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "I2I"
+       },
+       "le2": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-19": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F1-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F1-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F2",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F2",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F2-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F2-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F1-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F2",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F2-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F1",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F1-1",
+     "t": "bup",
+     "registry": "rip-F1",
+     "disclose": true,
+     "state": {
+      "u": "s-F1-0",
+      "td": {
+       "acdc": "F1"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F2",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F2-1",
+     "t": "bup",
+     "registry": "rip-F2",
+     "disclose": true,
+     "state": {
+      "u": "s-F2-0",
+      "td": {
+       "acdc": "F2"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "F1",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F1",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F1"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "F2",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F2",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F2"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le1": {
+       "d": "",
+       "n": {
+        "acdc": "F1"
+       },
+       "o": "I2I"
+      },
+      "le2": {
+       "d": "",
+       "n": {
+        "acdc": "F2"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "SL-20": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-2",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-2",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F1-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F1-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F2",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F2",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F2-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F2-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-2",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F1-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F2",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F2-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "bup-G-2",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-1",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "revoked"
+     }
+    },
+    {
+     "name": "rip-F1",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F1-1",
+     "t": "bup",
+     "registry": "rip-F1",
+     "disclose": true,
+     "state": {
+      "u": "s-F1-0",
+      "td": {
+       "acdc": "F1"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F2",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F2-1",
+     "t": "bup",
+     "registry": "rip-F2",
+     "disclose": true,
+     "state": {
+      "u": "s-F2-0",
+      "td": {
+       "acdc": "F2"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "F1",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F1",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F1"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "F2",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F2",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F2"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le1": {
+       "d": "",
+       "n": {
+        "acdc": "F1"
+       },
+       "o": "I2I"
+      },
+      "le2": {
+       "d": "",
+       "n": {
+        "acdc": "F2"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  }
+ },
+ "cases": [
+  {
+   "id": "ACDC-0131",
+   "key": "SL-01",
+   "title": "Three issued updates",
+   "description": "A credential whose registry carries three updates at n=1, 2 and 3, each anchored in the issuer's KEL; the head, n=3, records it issued. A sedi-1 verifier should find it valid.",
+   "base": "SL-01",
+   "choices": [
+    "registry-evidence",
+    "registry-head"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0132",
+   "key": "SL-02",
+   "title": "Later updates withheld, their seals in the KEL",
+   "description": "As SL-01, but the bundle withholds the updates at n=2 and n=3, while the issuer's KEL still anchors them. The verifier holds the n=1 state and knows later state exists that it cannot see. A sedi-1 verifier should find it incomplete.",
+   "base": "SL-02",
+   "choices": [
+    "registry-evidence"
+   ],
+   "triage": "Accepting it lets a holder present an old state by withholding the updates after it.",
+   "expect": [
+    "A incomplete/registry-unseen"
+   ],
+   "pair": "SL-01"
+  },
+  {
+   "id": "ACDC-0133",
+   "key": "SL-03",
+   "title": "Update anchored past the KEL's end",
+   "description": "As SC-01 (two issued updates), but the bundle's KEL for the issuer stops before the interaction event that anchors the n=2 update, so the verifier cannot see that update anchored. A sedi-1 verifier should find it incomplete.",
+   "base": "SL-03",
+   "choices": [
+    "registry-evidence"
+   ],
+   "triage": "Accepting it accepts a registry state whose anchor the verifier never saw.",
+   "expect": [
+    "A incomplete/bup-anchor"
+   ],
+   "pair": "SC-01"
+  },
+  {
+   "id": "ACDC-0134",
+   "key": "SL-04",
+   "title": "Two-hop chain",
+   "description": "N, issued by I to H, has an I2I edge to F, issued by Q to I, which has an I2I edge to G, issued by R to Q. A sedi-1 verifier should find it valid.",
+   "base": "SL-04",
+   "choices": [
+    "revoked",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0135",
+   "key": "SL-05",
+   "title": "Revoked middle node of a two-hop chain",
+   "description": "As SL-04, but F, the middle node, is revoked. Validity is chain-strict, so N is not valid. A sedi-1 verifier should find it invalid.",
+   "base": "SL-05",
+   "choices": [
+    "revoked"
+   ],
+   "triage": "Accepting it lets authority flow through a revoked credential.",
+   "expect": [
+    "F invalid/revoked"
+   ],
+   "pair": "SL-04"
+  },
+  {
+   "id": "ACDC-0136",
+   "key": "SL-06",
+   "title": "Seal whose d does not match",
+   "description": "As SV-01, but the event seal anchoring the n=1 update carries a d that is not that update's SAID, so nothing in the KEL anchors the update. A sedi-1 verifier should find it incomplete.",
+   "base": "SL-06",
+   "choices": [
+    "seal-shape"
+   ],
+   "triage": "Accepting it accepts a registry update its issuer never anchored.",
+   "expect": [
+    "A incomplete/bup-anchor",
+    "A incomplete/registry-unseen"
+   ],
+   "pair": "SV-01"
+  },
+  {
+   "id": "ACDC-0137",
+   "key": "SL-07",
+   "title": "Edge whose d is wrong",
+   "description": "As SV-10, but the edge block's d is changed after issuance to a digest that is not the SAID of the block, so the block's SAID does not verify. A sedi-1 verifier should find it invalid.",
+   "base": "SL-07",
+   "choices": [
+    "edge-said"
+   ],
+   "triage": "Accepting it accepts an edge that commits to nothing.",
+   "expect": [
+    "N invalid/said"
+   ],
+   "pair": "SV-10"
+  },
+  {
+   "id": "ACDC-0138",
+   "key": "SL-08",
+   "title": "Edge whose d is the far node's SAID",
+   "description": "As SV-10, but the edge block's d is changed after issuance to the far node's SAID, which is not the block's own, so the block's SAID does not verify. A sedi-1 verifier should find it invalid.",
+   "base": "SL-08",
+   "choices": [
+    "edge-said"
+   ],
+   "triage": "Accepting it accepts an edge that commits to nothing.",
+   "expect": [
+    "N invalid/said"
+   ],
+   "pair": "SV-10"
+  },
+  {
+   "id": "ACDC-0139",
+   "key": "SL-09",
+   "title": "Unknown member in an operator list",
+   "description": "As SV-10, but the edge's o is [\"I2I\", \"XYZ\"], which sedi-1 cannot evaluate. A sedi-1 verifier should find it incomplete.",
+   "base": "SL-09",
+   "choices": [
+    "unknown-operator",
+    "operator-shape"
+   ],
+   "triage": "Accepting it applies a weaker rule than the issuer wrote.",
+   "expect": [
+    "N:e.le incomplete/operator-unknown"
+   ],
+   "pair": "SV-10"
+  },
+  {
+   "id": "ACDC-0140",
+   "key": "SL-10",
+   "title": "Operator list with a number",
+   "description": "As SV-10, but the edge's o is [1], which sedi-1 cannot evaluate. A sedi-1 verifier should find it incomplete.",
+   "base": "SL-10",
+   "choices": [
+    "unknown-operator",
+    "operator-shape"
+   ],
+   "triage": "Accepting it applies a weaker rule than the issuer wrote.",
+   "expect": [
+    "N:e.le incomplete/operator-shape"
+   ],
+   "pair": "SV-10"
+  },
+  {
+   "id": "ACDC-0141",
+   "key": "SL-11",
+   "title": "Operator as an object",
+   "description": "As SV-10, but the edge's o is {\"op\": \"I2I\"}, which sedi-1 cannot evaluate. A sedi-1 verifier should find it incomplete.",
+   "base": "SL-11",
+   "choices": [
+    "unknown-operator",
+    "operator-shape"
+   ],
+   "triage": "Accepting it applies a weaker rule than the issuer wrote.",
+   "expect": [
+    "N:e.le incomplete/operator-shape"
+   ],
+   "pair": "SV-10"
+  },
+  {
+   "id": "ACDC-0142",
+   "key": "SL-12",
+   "title": "AND group with one edge",
+   "description": "N, issued by I to H, has an edge group g with the operator AND holding one I2I edge to F, issued by Q to I. A sedi-1 verifier should find it valid.",
+   "base": "SL-12",
+   "choices": [
+    "operator-shape"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0143",
+   "key": "SL-13",
+   "title": "Empty AND group",
+   "description": "N, issued by I to H, has an edge group g with the operator AND and no members. sedi-1 treats an empty group as malformed. A sedi-1 verifier should find it invalid.",
+   "base": "SL-13",
+   "choices": [
+    "operator-shape"
+   ],
+   "triage": "Accepting it lets an empty group stand in for the edges the issuer required.",
+   "expect": [
+    "N:e.g invalid/group-empty"
+   ],
+   "pair": "SL-12"
+  },
+  {
+   "id": "ACDC-0144",
+   "key": "SL-14",
+   "title": "Empty OR group",
+   "description": "N, issued by I to H, has an edge group g with the operator OR and no members. sedi-1 treats an empty group as malformed. A sedi-1 verifier should find it invalid.",
+   "base": "SL-14",
+   "choices": [
+    "operator-shape"
+   ],
+   "triage": "Accepting it lets an empty group stand in for the edges the issuer required.",
+   "expect": [
+    "N:e.g invalid/group-empty"
+   ],
+   "pair": "SL-12"
+  },
+  {
+   "id": "ACDC-0145",
+   "key": "SL-15",
+   "title": "OR group with one edge that holds",
+   "description": "N, issued by I to H, has an edge group g with the operator OR holding two I2I edges: one to F, issued by Q to I, which holds, and one to G, issued by Q to R, which does not. An OR needs one member valid. A sedi-1 verifier should find it valid.",
+   "base": "SL-15",
+   "choices": [
+    "operator-shape"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0146",
+   "key": "SL-16",
+   "title": "OR group with no edge that holds",
+   "description": "As SL-15, but F is also issued to R, so neither I2I edge holds. A sedi-1 verifier should find it invalid.",
+   "base": "SL-16",
+   "choices": [
+    "operator-shape"
+   ],
+   "triage": "Accepting it accepts an OR none of whose alternatives holds.",
+   "expect": [
+    "N:e.g.le1 invalid/i2i-issuee",
+    "N:e.g.le2 invalid/i2i-issuee"
+   ],
+   "pair": "SL-15"
+  },
+  {
+   "id": "ACDC-0147",
+   "key": "SL-17",
+   "title": "AND group whose edges all hold",
+   "description": "N, issued by I to H, has an edge group g with the operator AND holding two I2I edges, to F, issued by Q to I, and to G, issued by R to I; both hold. A sedi-1 verifier should find it valid.",
+   "base": "SL-17",
+   "choices": [
+    "operator-shape"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0148",
+   "key": "SL-18",
+   "title": "AND group with one edge that fails",
+   "description": "As SL-17, but G is issued to H, so its I2I edge does not hold. An AND needs every member valid, so an implementation that evaluates AND as OR accepts it. A sedi-1 verifier should find it invalid.",
+   "base": "SL-18",
+   "choices": [
+    "operator-shape"
+   ],
+   "triage": "Accepting it accepts a chain of authority one of whose required links fails.",
+   "expect": [
+    "N:e.g.le2 invalid/i2i-issuee"
+   ],
+   "pair": "SL-17"
+  },
+  {
+   "id": "ACDC-0149",
+   "key": "SL-19",
+   "title": "Diamond",
+   "description": "N, issued by I to H, has I2I edges to F1 and F2, both issued by Q to I, and each of those has an I2I edge to G, issued by R to Q, so G is reached by two paths. A sedi-1 verifier should find it valid.",
+   "base": "SL-19",
+   "choices": [
+    "revoked",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0150",
+   "key": "SL-20",
+   "title": "Diamond whose shared far node is revoked",
+   "description": "As SL-19, but G, reached by both paths, is revoked. A sedi-1 verifier should find it invalid.",
+   "base": "SL-20",
+   "choices": [
+    "revoked"
+   ],
+   "triage": "Accepting it lets authority flow through a revoked credential reached twice.",
+   "expect": [
+    "G invalid/revoked"
+   ],
+   "pair": "SL-19"
+  }
+ ]
+}

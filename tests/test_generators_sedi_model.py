@@ -390,6 +390,80 @@ def test_the_builder_refuses_an_unknown_seal_shape():
         ab.build_bundle(T, frag)
 
 
+def sealed_unseen(frag, registry, n, **seal):
+    """``frag`` with an update of ``registry`` at ``n`` that the bundle omits, sealed in an
+    interaction event of I's KEL as ``seal`` describes."""
+    name = f"phantom-{registry}-{n}"
+    frag["registries"].append({"name": name, "t": "bup", "registry": registry, "n": n,
+                               "prior": registry, "disclose": True,
+                               "state": {"u": name, "td": {"acdc": "A"}, "ts": "revoked"}})
+    frag["omit"] = frag.get("omit", []) + [name]
+    frag["events"].append({"name": f"ixn-{name}", "aid": "I", "t": "ixn",
+                           "a": [{"registry": name, **seal}]})
+    frag["kels"].append({"event": f"ixn-{name}", "sigs": ["I0"]})
+    return frag
+
+
+@pytest.mark.parametrize("n,seal", [
+    (1, {"shape": "sd"}),  # a second couple at the head's own n
+    (2, {"shape": "sd", "extra": {"s": "02"}}),  # an n that is not canonical
+    (2, {"shape": "sd", "extra": {"s": ""}}),
+    (1, {"shape": "isd", "extra": {"s": "0"}}),  # this registry, at any n
+])
+def test_a_seal_whose_event_the_bundle_lacks_is_never_valid(n, seal):
+    frag = sealed_unseen(world({"A": cred("I")}, "A"), "rip-A", n, **seal)
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_an_event_seal_naming_another_registry_is_not_this_registrys():
+    frag = world({"A": cred("I", states=("issued", "issued"))}, "A")
+    frag["registries"].append({"name": "rip-B", "t": "rip", "issuer": "I"})
+    frag["omit"] = ["rip-B"]
+    frag = sealed_unseen(frag, "rip-B", 5, shape="isd")
+    assert run(frag)[0].verdict == sm.VALID
+
+
+def test_a_withheld_couple_below_the_head_may_be_a_second_update_there():
+    frag = sealed_unseen(world({"A": cred("I", states=("issued", "issued"))}, "A"), "rip-A", 1,
+                         shape="sd")
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_a_known_event_sealed_at_another_s_names_an_absent_event():
+    frag = world({"A": cred("I")}, "A")
+    frag["events"].append({"name": "ixn-x", "aid": "I", "t": "ixn",
+                           "a": [{"registry": "bup-A-1", "shape": "sd", "extra": {"s": "2"}}]})
+    frag["kels"].append({"event": "ixn-x", "sigs": ["I0"]})
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_a_seal_whose_d_is_not_a_string_names_nothing_the_bundle_holds():
+    frag = sealed_unseen(world({"A": cred("I")}, "A"), "rip-A", 1, shape="sd",
+                         extra={"d": ["x"]})
+    assert reasons(run(frag)[0]) == ["incomplete/registry-unseen"]
+
+
+def test_an_empty_group_is_invalid_whatever_its_operator():
+    creds = {"N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "XOR"}})}
+    assert reasons(run(world(creds, "N"))[0]) == ["invalid/group-empty"]
+
+
+def test_an_unknown_group_operator_does_not_hide_a_failure_inside_it():
+    creds = {"F": cred("Q", "I", states=("issued", "revoked")),
+             "N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "XOR", "le": edge("F")}})}
+    result, _ = run(world(creds, "N"))
+    assert result.verdict == sm.INVALID
+    assert reasons(result) == ["incomplete/group-operator", "invalid/revoked"]
+
+
+def test_a_node_reached_by_two_paths_reports_once():
+    diamond = {"G": cred("R", "Q", states=("issued", "revoked")),
+               "F1": cred("Q", "I", e={"d": "", "le": edge("G")}),
+               "F2": cred("Q", "I", e={"d": "", "le": edge("G")}),
+               "N": cred("I", "H", e={"d": "", "le1": edge("F1"), "le2": edge("F2")})}
+    assert reasons(run(world(diamond, "N"))[0]) == ["invalid/revoked"]
+
+
 def test_a_registry_is_walked_once_per_model():
     _, b = run(world({"A": cred("I")}, "A"))
     model = sm._SediModel(T, b.request)

@@ -44,10 +44,12 @@ replaces what it does:
 ``DI2I`` admits a near issuer that the far issuee delegated directly (its inception is a ``dip``
 whose ``di`` is the far issuee); a delegation chain of more than one step is not followed.
 
-A seal-bearing KEL event that names a registry-looking ``{s, d}`` the bundle does not carry is
-counted against every registry of that issuer, because a seal does not say which registry it
-belongs to; the cost falls on an issuer with several registries, whose bundles read
-``incomplete`` until they carry the other registries' later events too.
+A seal-bearing KEL event that names a registry-looking ``{s, d}`` the bundle does not carry, at
+any ``s``, is counted against every registry of that issuer, because a couple does not say which
+registry it belongs to, and a withheld couple below the head may be a second update at an
+earlier ``n``. The cost falls on an issuer with several registries anchored by couples, whose
+bundles read ``incomplete`` until they carry every registry's events; an event seal ``{i, s, d}``
+counts only against the registry its ``i`` names, which is how such an issuer avoids it.
 """
 
 from dataclasses import dataclass, field
@@ -269,12 +271,20 @@ class _SediModel(am._Model):
         return head, problems
 
     def _unaccounted(self, issuer, head: Head) -> list[tuple[str, str]]:
-        """A later registry-shaped seal in the issuer's KEL whose event the bundle lacks."""
-        known = {p[0].get("d") for p in self.registry_streams
-                 if p is not None and isinstance(p[0], dict)}
+        """A registry-shaped seal in the issuer's KEL whose event the bundle lacks (test-plan
+        item 6: an s naming an absent event is incomplete): an event seal naming this registry,
+        or a couple, which names no registry and so might be this registry's, at any s."""
+        # Each carried event by its SAID and sequence number: a seal accounts for an event only
+        # by naming both, so a known d at another s still names an absent event.
+        known = {(p[0].get("d"), p[0].get("n", "0" if p[0].get("t") == "rip" else None))
+                 for p in self.registry_streams if p is not None and isinstance(p[0], dict)}
         for seal in self._seals(issuer):
-            if (isinstance(seal, dict) and set(seal) in ({"s", "d"}, {"i", "s", "d"})
-                    and (_sn(seal.get("s")) or 0) > head.n and seal.get("d") not in known):
+            if not isinstance(seal, dict) or set(seal) not in ({"s", "d"}, {"i", "s", "d"}):
+                continue
+            if (isinstance(seal["d"], str) and isinstance(seal["s"], str)
+                    and (seal["d"], seal["s"]) in known):
+                continue
+            if "i" not in seal or seal["i"] == head.rd:
                 return [(INCOMPLETE, "registry-unseen")]
         return []
 
@@ -284,11 +294,15 @@ class _SediModel(am._Model):
         """The grade of an edge-group (the edge section is one) and why."""
         o = block.get("o", "AND")
         members = [(k, v) for k, v in block.items() if k not in BLOCK_FIELDS]
-        if o not in MARY:
-            return INCOMPLETE, [Finding(INCOMPLETE, path, "group-operator")]
         if not members:
             return INVALID, [Finding(INVALID, path, "group-empty")]
-        grades, findings = [], []
+        if o not in MARY:
+            # Its members are still evaluated, so a failure among them is not hidden behind an
+            # operator nobody can evaluate (failure-precedence).
+            grades, findings = [INCOMPLETE], [Finding(INCOMPLETE, path, "group-operator")]
+            o = "AND"
+        else:
+            grades, findings = [], []
         for label, member in members:
             where = f"{path}.{label}"
             if not isinstance(member, dict):
@@ -427,7 +441,8 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
     head = None
     if "rd" in presented.body:
         head = model.heads.get((presented.body["rd"], presented.body.get("i")), (None,))[0]
-    return Result(verdict, findings, head)
+    # A node reached by two paths (a diamond) contributes its findings once.
+    return Result(verdict, list(dict.fromkeys(findings)), head)
 
 
 def _presentation(t: Tables, request: dict, presented: am.Node) -> list[Finding]:
