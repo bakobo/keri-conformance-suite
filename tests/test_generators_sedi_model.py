@@ -700,8 +700,18 @@ def test_a_1x_version_string_or_field_set_is_never_valid():
     frag = world({"A": cred("I")}, "A")
     frag["acdcs"][0]["fields"] = "1.x"
     result, b = run(frag)
-    assert result.verdict == sm.INVALID
+    # Its SAID is recomputed over the 1.x field set, so only the field set fails.
+    assert reasons(result) == ["invalid/field-order", "invalid/no-registry"]
     assert set(b.forms["A"]) >= {"ri"} and not {"rd", "t"} & set(b.forms["A"])
+    assert b.dag["root"] == b.forms["A"]["d"] == b.saids["A"]
+
+
+@pytest.mark.parametrize("tamper", [{"protocol": "KERI"}, {"declared_size": "compact"}])
+def test_a_1x_shape_does_not_combine_with_another_version_tamper(tamper):
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0].update(fields="1.x", **tamper)
+    with pytest.raises(ScenarioError, match="combines a 1.x shape"):
+        ab.build_bundle(T, frag)
 
 
 @pytest.mark.parametrize("key", ["version", "fields"])

@@ -427,19 +427,26 @@ class _Builder:
         return self._keripy1x(name, self._declared(name, out))
 
     def _keripy1x(self, name: str, out: dict) -> dict:
-        """The presented form with keripy 1.x's shapes where the scenario names them, each a
-        tamper over the 2.00 body whose SAIDs are already computed: ``fields`` ``1.x`` gives
-        keripy 1.x's field set (``ri`` for ``rd``, and no ``t``) under a 2.00 version string
-        sized to it, and ``version`` ``1.x`` gives a 1.x version string
-        (``ACDC10JSON<size in six hex digits>_``) sized to the body."""
+        """The presented form with keripy 1.x's shapes where the scenario names them:
+        ``fields`` ``1.x`` gives keripy 1.x's field set (``ri`` for ``rd``, and no ``t``) under a
+        2.00 version string sized to it, with its top-level SAID recomputed so that only the
+        field set is wrong, and ``version`` ``1.x`` gives a 1.x version string
+        (``ACDC10JSON<size in six hex digits>_``) sized to the body, over the 2.00 body's SAID.
+        Neither combines with another version-string tamper, which it would overwrite."""
         spec = self.acdcs[name]
         for key in ("fields", "version"):
             if spec.get(key, "1.x") != "1.x":
                 raise ScenarioError(f"ACDC {name!r} names {key} {spec[key]!r}; the only one is "
                                     f"1.x.")
+        if ("fields" in spec or "version" in spec) and (
+                "protocol" in spec or "declared_size" in spec):
+            raise ScenarioError(f"ACDC {name!r} combines a 1.x shape with another version-string "
+                                f"tamper, which the 1.x shape would overwrite.")
         if spec.get("fields") == "1.x":
-            out = sa.sized({("ri" if k == "rd" else k): v for k, v in out.items() if k != "t"},
-                           self.readings)
+            out = {("ri" if k == "rd" else k): v for k, v in out.items() if k != "t"}
+            out["d"] = sa.most_compact(self.t, {**out, "d": sa.DUMMY}, self.readings)["d"]
+            out = sa.sized(out, self.readings)
+            self.saids[name] = out["d"]  # the case's dag and findings name what is presented
         if spec.get("version") == "1.x":
             out = {**out, "v": "ACDC10JSON000000_"}
             out["v"] = f"ACDC10JSON{len(sa.serialize(out, self.readings)):06x}_"
