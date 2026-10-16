@@ -226,6 +226,12 @@ def test_assemble_builds_the_source_tree(repo, tmp_path):
     assert (out / "results" / "index.md").exists()
     assert (out / "results" / "keripy" / "2.1.0.dev1" / "cesr-v1.0-submitted.md").exists()
     assert (out / S.MARKER).exists()
+    # Generated pages hide the page outline, so their tables get its width; a result's JSON is
+    # left as it is, and hand-written docs keep their outline.
+    assert (out / "results" / "index.md").read_text().startswith("---\nhide:\n  - toc\n---\n\n# ")
+    assert (out / "profiles" / "index.md").read_text().startswith(S.HIDE_TOC)
+    assert not (out / "results" / "keripy" / "2.1.0.dev1" /
+                "cesr-v1.0-submitted.json").read_text().startswith("---")
 
 
 def test_assemble_replaces_its_own_previous_output(repo, tmp_path):

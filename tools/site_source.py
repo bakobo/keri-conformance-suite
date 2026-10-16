@@ -41,6 +41,7 @@ from tools.results import (
 REPO_URL = "https://github.com/bakobo/keri-conformance-suite"
 MARKER = ".kcs-site-source"
 RESULTS_DIR = "results"
+HIDE_TOC = "---\nhide:\n  - toc\n---\n\n"
 E_SITE_OUT = "e.state.conflict.site-out.f"
 E_SITE_COLLISION = "e.self.config.site-collision.f"
 E_RESULT_SLUG = "e.rule.result.slug-collision.f"
@@ -695,6 +696,10 @@ def assemble(repo, out, results: list[Result]) -> None:
     for relative, content in pages.items():
         target = out / relative
         target.parent.mkdir(parents=True, exist_ok=True)
+        # A generated page's outline is one or two headings, and the column it takes is the width
+        # its tables need, so the theme is told to hide it.
+        if relative.endswith(".md"):
+            content = HIDE_TOC + content
         target.write_text(content, encoding="utf-8")
 
 
