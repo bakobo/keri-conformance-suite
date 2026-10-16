@@ -31,6 +31,15 @@ replaces what it does:
   ``invalid`` if any member is, else ``incomplete``. So adding an unevaluable alternative to a
   forged credential cannot turn a reject into a retry.
 
+- **The presentation context** (presenter-binding, aggregate-issuee, bearer-untargeted; this.i
+  09snlyre and 7krs5hfz). When the request carries one, its messages are read by the suite's
+  exchange-message model over the bundle's KELs, and the last is the grant. A grant that model
+  does not accept proves no presenter (``invalid``). An accepted grant must be an ``exn`` on the route
+  ``/ipex/grant``, name exactly the presented ACDC in ``a.o`` and be addressed (``ri``) to the verifier, else ``invalid``; and its
+  sender must be the issuee, else ``invalid``. An issuee the presentation does not disclose (a
+  compact ``a``, or an aggregate's undisclosed ``A[1]``) cannot be bound, so it is
+  ``incomplete``; an ACDC with no issuee is a bearer credential, which anyone may present.
+
 ``DI2I`` admits a near issuer that the far issuee delegated directly (its inception is a ``dip``
 whose ``di`` is the far issuee); a delegation chain of more than one step is not followed.
 
@@ -44,6 +53,7 @@ from dataclasses import dataclass, field
 
 from . import acdc_model as am
 from . import acdc_saids as sa
+from . import exn_build
 from .tables import Tables
 
 VALID, INVALID, INCOMPLETE = "valid", "invalid", "incomplete"
@@ -53,6 +63,8 @@ MARY = ("AND", "OR")
 # Fields of an edge or edge-group block that are not members of a group.
 BLOCK_FIELDS = ("d", "u", "o", "w")
 ISSUED, REVOKED = "issued", "revoked"
+# The route of the message that presents an ACDC (this.i 7krs5hfz).
+GRANT_ROUTE = "/ipex/grant"
 
 # How acdc_model's step failures grade under sedi-1. A failure not listed here fails a check.
 INCOMPLETE_REASONS = {"schema-absent", "issuer-kel"}
@@ -393,7 +405,37 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
         return grade, found
 
     verdict, findings = verdict_of(presented)
+    if "presentation" in request:
+        bound = _presentation(t, request, presented)
+        findings = findings + bound
+        verdict = combine([verdict, *(f.grade for f in bound)])
     head = None
     if "rd" in presented.body:
         head = model.heads.get((presented.body["rd"], presented.body.get("i")), (None,))[0]
     return Result(verdict, findings, head)
+
+
+def _presentation(t: Tables, request: dict, presented: am.Node) -> list[Finding]:
+    """What keeps the presentation context from binding the presented ACDC to its presenter."""
+    context = request["presentation"]
+    model = exn_build.run(t, [bytes.fromhex(k["stream"]) for k in request["kels"]],
+                          [bytes.fromhex(m["stream"]) for m in context["messages"]])
+    said = presented.said
+    outcome, grant = model.initial[-1], model.parsed[-1]
+    if outcome.state != exn_build.ACCEPTED:
+        return [Finding(INVALID, said, f"grant-{outcome.reason}")]
+    found = []
+    if grant.body["t"] != "exn" or grant.body["r"] != GRANT_ROUTE:
+        found.append(Finding(INVALID, said, "presentation-not-grant"))
+    attributes = grant.body["a"]
+    if not isinstance(attributes, dict) or attributes.get("o") != [said]:
+        found.append(Finding(INVALID, said, "presentation-names"))
+    if grant.body["ri"] != context["verifier"]:
+        found.append(Finding(INVALID, said, "presentation-verifier"))
+    body = presented.body
+    who = ... if isinstance(body.get("a"), str) else issuee(body)
+    if who is ...:
+        found.append(Finding(INCOMPLETE, said, "presenter-undisclosed"))
+    elif who is not None and grant.body["i"] != who:
+        found.append(Finding(INVALID, said, "presenter"))
+    return found

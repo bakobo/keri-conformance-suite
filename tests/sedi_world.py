@@ -66,3 +66,23 @@ def edge(far, o="I2I", **over):
 def single(far="F", o="I2I", **over):
     """N, issued by I to H, with one edge to F, issued by Q to I."""
     return {"F": cred("Q", "I"), "N": cred("I", "H", e={"d": "", "le": edge(far, o, **over)})}
+
+
+def presented_by(frag: dict, sender: str, verifier: str = "V", receiver: str | None = None,
+                 names: str | None = None) -> dict:
+    """``frag`` with a presentation context: one grant from ``sender`` to ``receiver`` (the
+    verifier unless named), naming ``names`` (the presented ACDC unless named) in a.o, signed by
+    the sender's current key, and presented to ``verifier``, whose key event is defined but not
+    delivered (this.i 7krs5hfz)."""
+    frag = copy.deepcopy(frag)
+    for aid in {verifier, receiver or verifier} - set(AIDS):
+        frag["events"].append({"name": f"{aid}icp", "aid": aid, "t": "icp", "keys": [f"{aid}0"],
+                               "next": [f"{aid}1"]})
+    frag["presentation"] = {
+        "verifier": verifier,
+        "exchanges": [{"name": "grant", "t": "exn", "sender": sender,
+                       "receiver": receiver or verifier, "x": "", "p": "", "r": "/ipex/grant",
+                       "q": {}, "a": {"o": [{"acdc": names or frag["presented"]}]}}],
+        "messages": [{"exchange": "grant", "sigs": [{"aid": sender, "keys": [f"{sender}0"]}]}],
+    }
+    return frag

@@ -135,6 +135,18 @@ def test_an_acdc_case_may_name_the_schema_the_validator_expects():
     assert case_problem(case) is None
 
 
+def test_a_presentation_context_requires_the_feature_that_reads_it():
+    case = acdc_case("ACDC-0001", ALL_ACDC_CHECKS)
+    case["input"]["presentation"] = {"messages": [{"stream": GENUS + "7b7d", "source": "holder"}],
+                                     "verifier": "EVer"}
+    assert CASE_SCHEMA.is_valid(case)
+    assert "requires the feature acdc.presentation" in case_problem(case)
+    case["targets"]["features"].append("acdc.presentation")
+    assert case_problem(case) is None
+    case["input"]["presentation"]["messages"] = []
+    assert not CASE_SCHEMA.is_valid(case) and case_problem(case)
+
+
 def test_an_acdc_case_needs_a_dag_and_an_evaluation_point():
     for field in ("dag", "as_of"):
         case = acdc_case("ACDC-0001", ALL_ACDC_CHECKS)

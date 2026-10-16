@@ -158,7 +158,7 @@ The apply, offer and agree messages are out of scope for sedi-1 v1, and `docs/pr
 
 ## 9. Presenter binding and replay
 
-These cases use the presentation context (09snlyre), and each has its pair:
+These cases use the presentation context (09snlyre), whose grant names the presented ACDC and nothing more (7krs5hfz), and each has its pair:
 - the grant sender is not `a.i` but signs validly;
 - the grant is signed with `a.i`'s pre-rotation key after a rotation in the bundle;
 - the grant comes from a delegate of `a.i`;
