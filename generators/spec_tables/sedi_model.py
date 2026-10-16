@@ -274,15 +274,22 @@ class _SediModel(am._Model):
         """A registry-shaped seal in the issuer's KEL whose event the bundle lacks (test-plan
         item 6: an s naming an absent event is incomplete): an event seal naming this registry,
         or a couple, which names no registry and so might be this registry's, at any s."""
-        # Each carried event by its SAID and sequence number: a seal accounts for an event only
-        # by naming both, so a known d at another s still names an absent event.
-        known = {(p[0].get("d"), p[0].get("n", "0" if p[0].get("t") == "rip" else None))
-                 for p in self.registry_streams if p is not None and isinstance(p[0], dict)}
+        # Each carried event whose SAID verifies, by its SAID and sequence number, with the
+        # registry it belongs to: a seal accounts for an event only by naming both, so a known d
+        # at another s still names an absent event, and an event seal only for an event of the
+        # registry its i names.
+        known: dict[tuple[str, str], str] = {}
+        for p in self.registry_streams:
+            body = p[0] if p is not None and isinstance(p[0], dict) else {}
+            d, n, rd = body.get("d"), body.get("n"), body.get("rd", body.get("d"))
+            if all(isinstance(v, str) for v in (d, n, rd)) and self._event_said(body):
+                known[(d, n)] = rd
         for seal in self._seals(issuer):
             if not isinstance(seal, dict) or set(seal) not in ({"s", "d"}, {"i", "s", "d"}):
                 continue
-            if (isinstance(seal["d"], str) and isinstance(seal["s"], str)
-                    and (seal["d"], seal["s"]) in known):
+            key = (seal["d"], seal["s"])
+            if (all(isinstance(v, str) for v in key) and key in known
+                    and ("i" not in seal or seal["i"] == known[key])):
                 continue
             if "i" not in seal or seal["i"] == head.rd:
                 return [(INCOMPLETE, "registry-unseen")]
