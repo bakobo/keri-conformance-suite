@@ -268,11 +268,20 @@ def test_main_keeps_the_genus_codes_table_for_a_prefixed_keri_1_x_stream():
     assert "reject" in cesr.parse(genus() + serder.raw + ctr("-A", 1, V1) + sigs(serder, 1))
 
 
+# Each stream reaches a different exit: too short to smell, no version string, a count code
+# first, an ACDC 1.x body, and a KERI 1.x body behind a genus-version code (the normative shape).
 @pytest.mark.main
-@pytest.mark.parametrize("stream", [b"", b"-_AAACAA", b'{"v":"KERI10', b'{"v":"ACDC10JSON000000_"}',
-                                    b"not a message"])
+@pytest.mark.parametrize("stream", [
+    b"", b"not a message " * 10, b"-_AAACAA",
+    b'{"v":"ACDC10JSON000060_","d":"","i":"","s":"","a":{}}' + b" " * 40,
+])
 def test_main_uses_keripys_default_table_unless_a_keri_1_x_body_comes_first(stream):
     assert cesr.api().parser_kwargs(stream) == {}
+
+
+@pytest.mark.main
+def test_main_leaves_a_genus_prefixed_keri_1_x_stream_to_its_genus_code():
+    assert cesr.api().parser_kwargs(genus() + event(V1).raw) == {}
 
 
 @pytest.mark.main

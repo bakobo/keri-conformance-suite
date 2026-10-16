@@ -179,6 +179,21 @@ class TestIdentity:
                    for d in state["upstream-main"]["differences"])
 
 
+    def test_a_main_ref_on_the_1x_profile_is_compared_with_main_s_result(self, suite, tmp_path):
+        # keripy main and keripy 1.2.14 both have a keripy-1x-interop result; a main ref's report
+        # is compared with main's, which differs from 1.2.14's here only in its case.
+        own = report("keripy-1x-interop", "pinned", case("CESR-0099"))
+        own["hello"]["implementation"]["version"] = "2"
+        path = suite / "results" / "keripy" / "2" / "keripy-1x-interop.json"
+        path.write_text(json.dumps({"result_version": 1, "provenance": {"kind": "maintainer-run"},
+                                    "report": own}))
+        now = report("keripy-1x-interop", SHA_A, case("CESR-0099"))
+        now["hello"]["implementation"]["version"] = "2.0.0.dev6"
+        fake = Fake({UPSTREAM: {"refs/heads/main": SHA_A}}, {"keripy-1x-interop": now})
+        code, state, _ = refs.check_all([entry(profiles=["keripy-1x-interop"])], {}, "h1", suite,
+                                        tmp_path / "w", fake)
+        assert (code, state["upstream-main"]["differences"]) == (0, [])
+
 class TestLoadRefs:
     def write(self, tmp_path, data):
         path = tmp_path / "refs.json"

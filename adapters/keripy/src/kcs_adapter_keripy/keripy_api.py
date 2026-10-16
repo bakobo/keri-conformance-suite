@@ -116,7 +116,7 @@ class Main(_Common):
             if kering.sniff(buf) != kering.Colds.msg:
                 return {}
             proto, pvrsn = tuple(kering.smell(buf))[:2]
-        except Exception:  # noqa: BLE001 - nothing readable comes first, so keripy's default
+        except kering.KeriError:  # nothing keripy can read comes first: keripy's default
             return {}
         if proto == kering.Protocols.keri and pvrsn.major == 1:
             return {"version": kering.Vrsn_1_0}
