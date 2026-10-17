@@ -305,7 +305,8 @@ def grade(error) -> str:
     return "invalid"
 
 
-async def _judge(home: pathlib.Path, served, schemas, regs, far, presented) -> dict:
+async def _judge(home: pathlib.Path, served, schemas, regs, far, presented, given=None,
+                 kel_streams=()) -> dict:
     server = _server(served)
     box = Lockbox.create(path=home, passcode=PASSCODE, recovery=new_recovery_code())
     try:
@@ -340,6 +341,12 @@ async def _judge(home: pathlib.Path, served, schemas, regs, far, presented) -> d
         # heti reports which far nodes it walked, not whether each edge held: in an OR group one
         # member may fail while the group holds. So no edge is reported (the protocol asks only
         # for what was evaluated, and heti does not expose a result per edge).
+        if given is not None:
+            from kcs_adapter_heti import presentation
+            problem = presentation.judge(given, presented, list(kel_streams))
+            if problem is not None:
+                return {"verdict": problem[0], "reason": problem[1], "registry": head,
+                        "edges": []}
         return {"verdict": "valid", "reason": "heti verified the ACDC", "registry": head,
                 "edges": []}
     finally:
@@ -354,8 +361,10 @@ def verify(request) -> dict:
     acdc_streams = _streams(request, "acdcs")
     schemas = _schemas(request)
     presented = _presented(request)
+    from kcs_adapter_heti import presentation  # it reads this module's helpers
+    given = presentation.context(request)
     regs = registries(registry_streams)
     far = [evidence(s, regs) for s in acdc_streams]
     with tempfile.TemporaryDirectory(prefix="kcs-adapter-heti-") as home:
         return asyncio.run(_judge(pathlib.Path(home) / "lockbox", kels(kel_streams), schemas,
-                                  regs, far, presented))
+                                  regs, far, presented, given, kel_streams))

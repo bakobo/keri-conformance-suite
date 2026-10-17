@@ -11,8 +11,8 @@
       "composable": false
     },
     "acdc.presentation": {
-      "description": "Judges an ACDC in the context it was presented in: the exchange messages that delivered it and the verifier it was presented to, given as acdc.verify's optional presentation field. Only cases that send that field require it, and the sedi-1 profile requires it of an adapter that claims the profile, because an adapter ignores a field it does not recognise.",
-      "composable": false
+      "description": "Judges an ACDC in the context it was presented in: the exchange messages that delivered it and the verifier it was presented to, given as acdc.verify's optional presentation field. Only cases that send that field require it, and the sedi-1 profile requires it of an adapter that claims the profile, because an adapter ignores a field it does not recognise. It is composable: an implementation that admits only its own grant shape has its adapter judge the context with the implementation's parts (this.i 7krs5hfz, 9fg9ufsm), and the claim then says so.",
+      "composable": true
     },
     "acdc.ptel-1x": {
       "description": "Verifies keripy 1.x's issuance and revocation registry (vcp, iss, rev). No specification defines it; cases using it belong to the acdc-keripy-1x-interop and sedi-1x-interop profiles.",

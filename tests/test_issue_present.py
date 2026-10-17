@@ -197,9 +197,11 @@ def test_an_adapter_may_declare_the_new_operations_and_the_presentation_feature(
     assert validate_hello(hello, vocabulary) == []
 
 
-def test_the_presentation_feature_is_not_composable():
+def test_the_presentation_feature_is_composable():
+    # An implementation that admits only its own grant shape has its adapter judge the context with
+    # the implementation's parts and declare it composed (this.i 7krs5hfz, 9fg9ufsm).
     features = json.loads((ROOT / "profiles" / "features.json").read_text(encoding="utf-8"))
-    assert features["features"]["acdc.presentation"]["composable"] is False
+    assert features["features"]["acdc.presentation"]["composable"] is True
 
 
 def test_holder_cases_have_inputs_and_checks():
