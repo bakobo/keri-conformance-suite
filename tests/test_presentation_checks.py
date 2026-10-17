@@ -80,6 +80,11 @@ def test_a_secret_leaked_in_any_encoding_fails(leak):
     assert evaluate(secrets("other secret", SECRET), stream(leaky)).outcome == "fail"
 
 
+def test_a_short_secret_has_no_empty_base64_form_that_would_match_anything():
+    from keri_conformance.assertions import _encodings
+    assert b"" not in _encodings("ab") and all(len(form) >= 2 for form in _encodings("ab"))
+
+
 def test_a_secret_in_the_response_outside_the_stream_fails():
     result = {**stream(), "extra": SECRET}
     assert evaluate(secrets(SECRET), result).outcome == "fail"
