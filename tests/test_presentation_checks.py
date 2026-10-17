@@ -115,6 +115,33 @@ def test_escaped_uppercase_hex_fails():
     assert evaluate(secrets(SECRET), {"refused": {"reason": escaped}}).outcome == "fail"
 
 
+def test_a_json_escaped_slash_does_not_hide_a_secret():
+    hidden = "https://private.example/id"
+    reason = {"refused": {"reason": hidden.replace("/", "\\/")}}
+    assert evaluate(secrets(hidden), reason).outcome == "fail"
+
+
+@pytest.mark.parametrize("text,decoded", [
+    (b"a\\u0041\\/b", b"aA/b"),
+    (b"\\ud83d\\ude00", "\U0001F600".encode()),
+    (b"\\ud800", "\ud800".encode("utf-8", "surrogatepass")),
+    (b"\\uZZZZ\\q", b"\\uZZZZ\\q"),  # not escapes, so they stand
+    (b"end\\", b"end\\"),
+    (b'\\"\\\\\\b\\f\\n\\r\\t', b'"\\\b\f\n\r\t'),
+])
+def test_json_escapes_are_decoded_in_one_pass(text, decoded):
+    from keri_conformance.assertions import _json_unescape
+    assert _json_unescape(text) == decoded
+
+
+def test_a_flood_of_backslashes_is_read_in_linear_time():
+    import time
+    start = time.monotonic()
+    flood = {"refused": {"reason": "\\" * 200_000}}
+    assert evaluate(secrets(SECRET), flood).outcome == "pass"
+    assert time.monotonic() - start < 2
+
+
 def test_an_unpaired_surrogate_in_a_reason_is_read_not_raised():
     assert evaluate(secrets(SECRET), {"refused": {"reason": "\ud800"}}).outcome == "pass"
 

@@ -331,9 +331,10 @@ TEXT_DOMAIN = frozenset(b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
 # a sequence number (0A) and a Blake3-256 digest (E), at -S (seal-couple-code).
 COUPLES = re.compile(r"(0A[A-Za-z0-9_-]{22}E[A-Za-z0-9_-]{43})+")
 COUPLE_SIZE = 68
-# A \uXXXX escape, after any run of backslashes (serializing JSON doubles one), which hides a
-# character from a plain search in JSON text.
-UNICODE_ESCAPE = re.compile(rb"(?:\\+u[0-9a-fA-F]{4})+")
+# JSON's two-character escapes, by the byte after the backslash.
+SIMPLE_ESCAPES = {ord('"'): b'"', ord("\\"): b"\\", ord("/"): b"/", ord("b"): b"\b",
+                  ord("f"): b"\f", ord("n"): b"\n", ord("r"): b"\r", ord("t"): b"\t"}
+HEX_DIGITS = frozenset(b"0123456789abcdefABCDEF")
 
 
 def _presented_stream(result) -> bytes:
@@ -389,29 +390,67 @@ def _encodings(secret: str) -> list[bytes]:
     return forms
 
 
-def _unescape(match) -> bytes:
-    """A run of \\uXXXX escapes as the UTF-8 text it stands for, a surrogate pair joined into
-    its one character and an unpaired surrogate kept as itself."""
-    units = re.findall(rb"u([0-9a-fA-F]{4})", match.group(0))
-    text = "".join(chr(int(u, 16)) for u in units)
-    return text.encode("utf-16-le", "surrogatepass").decode("utf-16-le", "surrogatepass").encode(
-        "utf-8", "surrogatepass")
+def _json_unescape(text: bytes) -> bytes:
+    """``text`` with every JSON string escape decoded, in one pass: a run of \\uXXXX escapes as
+    the characters it stands for (a surrogate pair joined, an unpaired surrogate kept), and the
+    two-character escapes. Anything else stands as it is."""
+    out, units, i, n = bytearray(), [], 0, len(text)
+
+    def flush():
+        if units:
+            chars = "".join(chr(u) for u in units)
+            out.extend(chars.encode("utf-16-le", "surrogatepass")
+                       .decode("utf-16-le", "surrogatepass").encode("utf-8", "surrogatepass"))
+            units.clear()
+
+    while i < n:
+        if text[i] == 0x5C and i + 1 < n:
+            after = text[i + 1]
+            if after == ord("u") and i + 6 <= n and all(c in HEX_DIGITS for c in text[i + 2:i + 6]):
+                units.append(int(text[i + 2:i + 6], 16))
+                i += 6
+                continue
+            if after in SIMPLE_ESCAPES:
+                flush()
+                out.extend(SIMPLE_ESCAPES[after])
+                i += 2
+                continue
+        flush()
+        out.append(text[i])
+        i += 1
+    flush()
+    return bytes(out)
+
+
+def _strings(value) -> list[bytes]:
+    """Every string in a parsed response, keys included, as UTF-8 (an unpaired surrogate kept)."""
+    out, stack = [], [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, str):
+            out.append(item.encode("utf-8", "surrogatepass"))
+        elif isinstance(item, dict):
+            stack.extend(item.keys())
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+    return out
 
 
 def _secrets_absent(assertion, result):
     """None of the secrets the disclosure hides is in the response, in any form _encodings
     enumerates."""
-    texts = [json.dumps(result, ensure_ascii=False).encode("utf-8", "surrogatepass")]
+    texts = _strings(result)
     if "presented" in result:
         try:
             texts.append(bytes.fromhex(result["presented"]["stream"]))
         except (TypeError, ValueError, KeyError, AttributeError):
             pass
-    # Each text as it stands, with its \uXXXX escapes decoded, and in lower case so that hex in
-    # any case matches the lowercase hex form.
+    # Each text as it stands and with its JSON escapes decoded, each also in lower case so that
+    # hex in any case matches the lowercase hex form.
     haystacks = []
     for text in texts:
-        unescaped = UNICODE_ESCAPE.sub(_unescape, text)
+        unescaped = _json_unescape(text)
         haystacks += [text, unescaped, text.lower(), unescaped.lower()]
     leaked = [n for n, secret in enumerate(assertion["expected"])
               if any(form in hay for form in _encodings(secret) for hay in haystacks)]
