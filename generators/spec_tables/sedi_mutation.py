@@ -14,7 +14,7 @@ import copy
 import pathlib
 from unittest import mock
 
-from . import acdc_build, sedi_cases, sedi_present
+from . import acdc_build, sedi_cases, sedi_issue, sedi_present
 from . import acdc_cases as ac
 from . import sedi_model as sm
 from .errors import E_SCENARIO, GeneratorError, ScenarioError
@@ -111,6 +111,9 @@ MUTANTS = {
                          lambda: _issuee(_issuee_at_first_block)),
     "bearer-untargeted": ("treats an untargeted credential as unbound",
                           lambda: _issuee(_untargeted_unbound)),
+    "issuer-issues": ("issues whatever it is asked",
+                      lambda: mock.patch.object(sedi_issue, "refusal",
+                                                lambda schemas, request: None)),
     "holder-presents": ("presents the compact form instead of refusing",
                         lambda: mock.patch.object(sedi_present, "form", _any_disclosure)),
     "unresolved-grading": ("accepts what it cannot evaluate",
@@ -139,6 +142,8 @@ def _outcome(t, fixtures, case, bundle=None):
     """A case's outcome under whatever model is in force: its verdict, and for a holder case its
     presented body. A verifier case's bundle, once built, is reused."""
     frag = ac.compose(fixtures, case)
+    if "issue" in case:
+        return (sedi_cases.IssuerEvaluation(t, frag, case["issue"]).result.verdict, None), None
     if "disclosure" in case:
         ev = sedi_cases.HolderEvaluation(t, frag, case["disclosure"])
         return (ev.result.verdict, ev.body), None

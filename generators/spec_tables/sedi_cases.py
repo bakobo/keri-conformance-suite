@@ -22,7 +22,7 @@ INTEROP, rests on the choices it names, and quotes their readings as its basis.
 
 import copy
 
-from . import acdc_build, sedi_present
+from . import acdc_build, sedi_issue, sedi_present
 from . import acdc_cases as ac
 from . import acdc_saids as sa
 from . import sedi_model as sm
@@ -35,7 +35,7 @@ BATCH_STATUS = "draft"
 EDGES, BUP, PRESENTATION = "acdc.edges", "acdc.registry.bup", "acdc.presentation"
 CASE_FIELDS = {"id", "key", "title", "description", "base", "replace", "patch", "remove",
                "append", "expect", "choices", "triage", "pair", "status", "disclosure",
-               "beyond_bound"}
+               "beyond_bound", "issue"}
 # A holder case's verdict when the holder must refuse; one it must present is valid.
 REFUSED = "refused"
 
@@ -81,6 +81,37 @@ class HolderEvaluation:
         return acdc_build.build_bundle(t, presented).forms[name]
 
 
+class IssuerEvaluation:
+    """An issuer case (choice issuer-issues): the acdc.issue request a scenario asks, and whether
+    an issuer must issue it or refuse it. What is issued is graded by the runner, by verifying it
+    (this.i 2u2ps8mt), so nothing here fixes what comes back."""
+
+    def __init__(self, t, frag: dict, issue: dict):
+        self.disclosure = None
+        named = {name: sedi_issue.schema_doc(t, schema)
+                 for name, schema in frag.get("schemas", {}).items()}
+        for name in issue["schemas"]:
+            if name not in named:
+                raise ScenarioError(f"The issuance names the schema {name!r}, which the fixture "
+                                    f"does not define.")
+        credentials = []
+        for asked in issue["credentials"]:
+            entry = {"name": asked["name"], "issuer": asked["issuer"],
+                     "schema": named[asked["schema"]]["$id"],
+                     "attributes": asked["attributes"], "registry": "bup"}
+            for key in ("issuee", "edges"):
+                if key in asked:
+                    entry[key] = asked[key]
+            credentials.append(entry)
+        self.request = {"roles": list(issue["roles"]),
+                        "schemas": [sa.serialize(named[n]).hex() for n in issue["schemas"]],
+                        "credentials": credentials}
+        why = sedi_issue.refusal({named[n]["$id"]: named[n] for n in issue["schemas"]},
+                                 self.request)
+        self.result = (sm.Result(sm.VALID, []) if why is None
+                       else sm.Result(REFUSED, [sm.Finding(REFUSED, "request", why)]))
+
+
 def found(result: sm.Result, names: dict[str, str]) -> list[str]:
     """Every finding, with each SAID replaced by the scenario's name for it."""
     out = []
@@ -100,16 +131,53 @@ def build(t, fixtures: dict, case: dict) -> Evaluation:
         if not case.get(field):
             raise ScenarioError(f"{case.get('key')}: a sedi-1 case needs {field!r}.")
     frag = ac.compose(fixtures, case)
-    if "disclosure" in case:
+    if "issue" in case:
+        ev = IssuerEvaluation(t, frag, case["issue"])
+    elif "disclosure" in case:
         ev = HolderEvaluation(t, frag, case["disclosure"])
     else:
         ev = Evaluation(t, acdc_build.build_bundle(t, frag))
-    names = {said: name for name, said in ev.bundle.saids.items()}
+    names = {said: name for name, said in getattr(ev, "bundle", None).saids.items()} \
+        if hasattr(ev, "bundle") else {}
     got = found(ev.result, names)
     if sorted(case.get("expect", [])) != got:
         raise ScenarioError(f"{case['key']}: expects the findings {sorted(case.get('expect', []))}"
                             f", but the sedi-1 model finds {got}.")
     return ev
+
+
+def _issuer_case(scenario_path: str, case: dict, ev: IssuerEvaluation, description: str,
+                 basis: str) -> dict:
+    """An acdc.issue case: the request in, and either an issuance the runner verifies or a
+    refusal."""
+    common = {"level": "INTEROP", "basis": basis, "choices": list(case["choices"])}
+    if ev.result.verdict == REFUSED:
+        assertion = {"id": "a1", "check": "issue_refused", **common,
+                     "note": f"The issuer must refuse: {ev.result.findings[0].reason}."}
+    else:
+        assertion = {"id": "a1", "check": "issued", **common,
+                     "note": "What is issued is verified, and compared with what was asked "
+                             "only after what legitimately varies is set aside (this.i 2u2ps8mt)."}
+    features = {*ac.BASE_FEATURES, BUP}
+    if any("edges" in c for c in ev.request["credentials"]):
+        features.add(EDGES)
+    return {
+        "schema_version": ac.SCHEMA_VERSION,
+        "id": case["id"],
+        "title": case["title"],
+        "description": description,
+        "status": case.get("status", BATCH_STATUS),
+        "profile": PROFILE,
+        "targets": {"wire": ["CESR-2.00", ac.KERI_WIRE, ac.WIRE], "features": sorted(features)},
+        "operation": "acdc.issue",
+        "input": ev.request,
+        "assertions": [assertion],
+        "provenance": {
+            "scenario": f"{scenario_path}#{case['key']}",
+            "generator": {"name": GENERATOR_NAME, "version": GENERATOR_VERSION},
+            "reference": None,
+        },
+    }
 
 
 def _holder_case(scenario_path: str, case: dict, ev: HolderEvaluation, description: str,
@@ -195,6 +263,8 @@ def build_sedi_case(scenario_path: str, case: dict, ev: Evaluation, pairs: dict,
     findings = "; ".join(f"{f.grade} ({f.reason})" for f in ev.result.findings)
     note = (f"The sedi-1 model finds {findings}, so the verdict is {verdict}." if findings
             else "The sedi-1 model finds nothing that keeps the ACDC from valid.")
+    if isinstance(ev, IssuerEvaluation):
+        return _issuer_case(scenario_path, case, ev, description, basis)
     b = ev.bundle
     wire = ["CESR-2.00"] + ([ac.KERI_WIRE] if b.request["kels"] else []) + [ac.WIRE]
     if ev.disclosure is not None:
