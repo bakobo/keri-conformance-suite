@@ -7108,7 +7108,7 @@
    ],
    "triage": "Accepting it means a verifier's work on a credential has no bound the profile states, and two verifiers that pick different limits disagree about the same credential.",
    "expect": [
-    "A invalid/bound-registry-events"
+    "rip-A invalid/bound-registry-events"
    ],
    "pair": "SB-01",
    "beyond_bound": "registry_events"
@@ -7248,7 +7248,7 @@
    ],
    "triage": "Accepting it means a verifier's work on a credential has no bound the profile states, and two verifiers that pick different limits disagree about the same credential.",
    "expect": [
-    "A invalid/bound-salt-chars"
+    "rip-A invalid/bound-salt-chars"
    ],
    "pair": "SB-11",
    "beyond_bound": "salt_chars"
