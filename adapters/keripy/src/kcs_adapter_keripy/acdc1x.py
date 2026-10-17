@@ -5,25 +5,34 @@ registry from a Tevery and each registry event's anchor from a Kevery. The adapt
 request a fresh, temporary Habery (so nothing is kept between requests) and delivers the bundle
 through keripy's own Parser with those three attached, in the order the adapter protocol gives:
 KELs, registry events, far ACDCs, then the presented ACDC, after which it processes every escrow
-once more. It then reads keripy's conclusion from keripy's own databases:
+once more. Each stream is delivered one message at a time through ``msgParsator``, as cesr.parse
+delivers it: when keripy asks for more bytes the stream is complete (adapter protocol, "End of
+input") and the rest of it is not delivered, so a truncated stream never makes the adapter wait,
+and when keripy refuses a message the rest of that stream is not delivered either. The adapter
+then reads keripy's conclusion from keripy's own databases:
 
 - ``valid`` when the Verifier saved the credential;
 - ``incomplete`` when it holds the credential in its missing-registry, missing-chain or
   missing-schema escrow: something the verdict needs is absent from the bundle;
 - ``invalid`` otherwise, which is what keripy does with a credential it refuses (a schema it
-  fails, an edge that cannot be walked) and with a stream it cannot read.
+  fails, an edge that cannot be walked) and with a stream it cannot read, and also when the
+  request's ``expect_schema`` names a schema other than the credential's.
 
-The Verifier compares the issuance's ``dt`` with the clock and treats a stale one as missing; its
-expiry is set past any stamp a case carries, which fixes the clock as the adapter protocol
-requires. keripy prints some refusals to stdout, which is the protocol's channel, so everything
-it prints while judging goes to stderr. A 1.x ACDC names its registry in ``ri``, not ``rd``, so
-``registry`` is null, and keripy reports no edges, so ``edges`` is empty.
+keripy's Verifier saves a revoked credential too, so its revocation is reported where the adapter
+protocol reports one, in ``registry``: the 1.x registry the credential names in ``ri``, with the
+last event of the credential's own transaction log, as ``revoked`` or ``issued``. The Verifier
+compares the issuance's ``dt`` with the clock and treats a stale one as missing; its expiry is set
+past any stamp a case carries, which fixes the clock as the adapter protocol requires. keripy
+prints some refusals to stdout, which is the protocol's channel, so everything it prints while
+judging goes to stderr. A schema keripy's resolver will not take (its ``$id`` is not its SAID) is
+one the bundle does not have. keripy reports no edges, so ``edges`` is empty.
 """
 
 import contextlib
 import json
 import sys
 
+from keri import kering
 from keri.app import habbing
 from keri.core import parsing, serdering
 from keri.vdr import verifying
@@ -31,12 +40,14 @@ from keri.vdr import verifying
 from kcs_adapter_keripy import kel
 
 NEVER = 10 ** 12  # seconds: a Verifier expiry past any stamp a case carries
+REVOKED = ("rev", "brv")
 REASONS = {"valid": "keripy 1.2.14's Verifier saved the credential",
            "mre": "keripy 1.2.14's Verifier holds it for a missing registry or issuance",
            "mce": "keripy 1.2.14's Verifier holds it for a missing chained credential",
            "mse": "keripy 1.2.14's Verifier holds it for a missing schema",
            "invalid": "keripy 1.2.14's Verifier did not save the credential",
-           "unreadable": "keripy 1.2.14 cannot read the presented stream as a 1.x ACDC"}
+           "unreadable": "keripy 1.2.14 cannot read the presented stream as a 1.x ACDC",
+           "expected": "the credential's schema is not the one the validator expects"}
 
 
 def _schemas(request) -> list[tuple[str, bytes]]:
@@ -55,6 +66,45 @@ def _schemas(request) -> list[tuple[str, bytes]]:
     return out
 
 
+def _expect_schema(request):
+    if "expect_schema" not in request:
+        return None
+    value = request["expect_schema"]
+    if not isinstance(value, str) or not value:
+        raise kel.Malformed(f'{kel.E_MALFORMED}: "expect_schema", when present, must be a '
+                            "non-empty string.")
+    return value
+
+
+def _deliver(psr, hby, vry, data: bytes) -> None:
+    """Deliver one stream a message at a time, stopping where keripy asks for more bytes (the
+    stream is complete, so it is truncated) or refuses a message."""
+    ims = bytearray(data)
+    while ims:
+        before = len(ims)
+        gen = psr.msgParsator(ims=ims, framed=True, pipeline=False, kvy=hby.kvy, tvy=vry.tvy,
+                              vry=vry)
+        try:
+            next(gen)
+            return  # keripy yielded for more bytes: end of input
+        except StopIteration:
+            pass
+        except Exception:  # noqa: BLE001 - keripy refuses a message with many kinds
+            return
+        if len(ims) >= before:  # a message keripy finished without taking a byte: stop, never spin
+            return
+
+
+def _registry(vry, ri, said):
+    """The credential's 1.x registry state, as acdc.verify reports one, or None."""
+    tever = vry.tevers.get(ri) if isinstance(ri, str) else None
+    state = tever.vcState(said) if tever is not None else None
+    if state is None:
+        return None
+    return {"rd": ri, "n": int(state.s, 16), "d": state.d, "td": said,
+            "ts": "revoked" if state.et in REVOKED else "issued"}
+
+
 def verify(request):
     kel.validator(request)
     kels = kel.streams(request, "kels")
@@ -65,26 +115,34 @@ def verify(request):
         raise kel.Malformed(f'{kel.E_MALFORMED}: "presented" must be an object.')
     stream = kel.hex_stream(presented.get("stream"), "presented")
     schemas = _schemas(request)
+    expected = _expect_schema(request)
     try:
-        said = serdering.SerderACDC(raw=bytearray(stream)).said
+        creder = serdering.SerderACDC(raw=bytearray(stream))
     except Exception:  # noqa: BLE001 - keripy raises many kinds for a stream it cannot read
         return {"verdict": "invalid", "reason": REASONS["unreadable"], "registry": None,
                 "edges": []}
+    said, ri = creder.said, creder.sad.get("ri")
     with contextlib.redirect_stdout(sys.stderr), \
             habbing.openHby(name="kcs-acdc-1x", temp=True) as hby:
         vry = verifying.Verifier(hby=hby, expiry=NEVER)
-        for key, raw in schemas:
-            vry.resolver.add(key, raw)
         psr = parsing.Parser(framed=True, kvy=hby.kvy, tvy=vry.tvy, vry=vry)
+        for key, raw in schemas:
+            try:
+                vry.resolver.add(key, raw)
+            except kering.KeriError:
+                continue  # a schema keripy will not take is one the bundle does not have
         for each in [*kels, *registry, *acdcs, stream]:
-            psr.parse(ims=bytearray(each))
+            _deliver(psr, hby, vry, each)
         hby.kvy.processEscrows()
         vry.tvy.processEscrows()
         vry.processEscrows()
+        head = _registry(vry, ri, said)
         if vry.reger.saved.get(keys=said) is not None:
             outcome, why = "valid", "valid"
         else:
             held = [name for name in ("mre", "mce", "mse")
                     if getattr(vry.reger, name).get(keys=said) is not None]
             outcome, why = ("incomplete", held[0]) if held else ("invalid", "invalid")
-    return {"verdict": outcome, "reason": REASONS[why], "registry": None, "edges": []}
+    if expected is not None and creder.sad.get("s") != expected and outcome == "valid":
+        outcome, why = "invalid", "expected"
+    return {"verdict": outcome, "reason": REASONS[why], "registry": head, "edges": []}

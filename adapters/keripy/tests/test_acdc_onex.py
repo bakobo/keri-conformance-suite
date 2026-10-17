@@ -28,7 +28,11 @@ def test_every_companion_case_gets_keripys_own_verdict(path):
     c = json.loads(path.read_text())
     result = verify(c["input"])
     assert result["verdict"] == c["assertions"][0]["expected"]
-    assert result["registry"] is None and result["edges"] == []
+    # None of them is revoked; each names its 1.x registry in ri.
+    acdc = json.loads(bytes.fromhex(c["input"]["presented"]["stream"]).split(b"-IAB")[0])
+    assert result["registry"]["rd"] == acdc["ri"] and result["registry"]["td"] == acdc["d"]
+    assert (result["registry"]["n"], result["registry"]["ts"]) == (0, "issued")
+    assert result["edges"] == []
 
 
 def test_a_bundle_without_the_registry_is_held_for_it():
@@ -36,6 +40,61 @@ def test_a_bundle_without_the_registry_is_held_for_it():
     result = verify(request)
     assert (result["verdict"], result["reason"]) == (
         "incomplete", "keripy 1.2.14's Verifier holds it for a missing registry or issuance")
+    assert result["registry"] is None
+
+
+def test_a_revocation_is_reported_in_registry_since_keripy_still_saves_the_credential():
+    fixture = json.loads((pathlib.Path(__file__).parent / "fixtures/onex-revoked.json")
+                         .read_text())
+    result = verify(fixture["request"])
+    assert result["verdict"] == "valid"
+    assert (result["registry"]["n"], result["registry"]["ts"]) == (1, "revoked")
+
+
+def test_the_expected_schema_is_held_to():
+    request = case("ACDC-0201")["input"]
+    acdc = json.loads(bytes.fromhex(request["presented"]["stream"]).split(b"-IAB")[0])
+    assert verify({**request, "expect_schema": acdc["s"]})["verdict"] == "valid"
+    other = verify({**request, "expect_schema": "E" + "A" * 43})
+    assert (other["verdict"], other["reason"]) == (
+        "invalid", "the credential's schema is not the one the validator expects")
+    # An expectation never turns a refusal or a hold into anything else.
+    held = verify({**request, "registry": [], "expect_schema": "E" + "A" * 43})
+    assert held["verdict"] == "incomplete"
+
+
+def test_a_truncated_or_refused_stream_ends_its_delivery_without_waiting():
+    request = case("ACDC-0201")["input"]
+    kels = request["kels"]
+    cut = {**request, "kels": [{**kels[0], "stream": kels[0]["stream"][:40]}, *kels[1:]]}
+    assert verify(cut)["verdict"] == "incomplete"  # the issuer's inception never arrives
+    junk = {**request, "kels": [{"stream": "00" * 8}, *kels]}
+    assert verify(junk)["verdict"] == "valid"
+
+
+def test_a_message_keripy_finishes_without_taking_a_byte_stops_delivery(monkeypatch):
+    from keri.core import parsing
+
+    from kcs_adapter_keripy import acdc1x
+
+    def takes_nothing(self, **kwargs):
+        return
+        yield  # a generator that finishes at once
+
+    calls = []
+    monkeypatch.setattr(parsing.Parser, "msgParsator",
+                        lambda self, **kw: calls.append(1) or takes_nothing(self, **kw))
+    acdc1x._deliver(parsing.Parser(), type("H", (), {"kvy": None})(),
+                    type("V", (), {"tvy": None})(), b"abc")
+    assert calls == [1]
+
+
+def test_a_schema_keripys_resolver_refuses_is_one_the_bundle_does_not_have():
+    request = case("ACDC-0201")["input"]
+    tampered = json.loads(bytes.fromhex(request["schemas"][0]))
+    tampered["title"] = "changed after its $id was computed"
+    schemas = [json.dumps(tampered).encode().hex(), *request["schemas"]]
+    assert verify({**request, "schemas": schemas})["verdict"] == "valid"
 
 
 def test_a_bundle_without_the_schema_is_held_for_it():
@@ -67,6 +126,7 @@ def test_a_schema_keripy_cannot_index_is_one_the_bundle_does_not_have():
     {"schemas": "x"},
     {"schemas": [7]},
     {"kels": "x"},
+    {"expect_schema": ""},
 ])
 def test_a_malformed_request_is_an_error(change):
     result = verify({**case("ACDC-0201")["input"], **change})
@@ -77,3 +137,4 @@ def test_a_malformed_request_is_an_error(change):
 def test_nothing_keripy_prints_reaches_the_protocol_channel(capsys):
     verify(case("ACDC-0203")["input"])  # keripy prints its schema refusal
     assert capsys.readouterr().out == ""
+
