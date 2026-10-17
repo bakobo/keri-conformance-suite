@@ -461,7 +461,8 @@ def _secrets_absent(assertion, result):
 
 
 def _present_refused(assertion, result):
-    if "refused" in result:
+    # A refusal presents nothing, whatever else the answer carries.
+    if "refused" in result and "presented" not in result:
         return Evaluation("pass", result)
     return _fail(result, "The holder presented what it must refuse.")
 

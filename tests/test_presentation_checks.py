@@ -172,3 +172,4 @@ def test_a_refusal_is_graded_by_its_shape():
     refused = {"id": "a1", "check": "present_refused", "level": "INTEROP"}
     assert evaluate(refused, {"refused": {"reason": "no"}}).outcome == "pass"
     assert evaluate(refused, stream()).outcome == "fail"
+    assert evaluate(refused, {**stream(), "refused": {"reason": "no"}}).outcome == "fail"
