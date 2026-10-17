@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 
 from keri_conformance import __version__
+from keri_conformance.agree import human_summary as agree_summary
+from keri_conformance.agree import run_agreement
 from keri_conformance.cases import load_cases
 from keri_conformance.check import check_adapter, exit_code, render
 from keri_conformance.errors import (
@@ -49,6 +51,16 @@ exit codes:
      report is written as for 3)
   5  no-evidence: no active MUST assertion (for a non-normative profile, no active INTEROP
      assertion) was evaluated, so nothing was shown
+"""
+
+AGREE_EXIT_CODES = """\
+exit codes:
+  0  every cell with an expectation agrees with it (this includes a matrix with none)
+  1  at least one verifier's verdict disagrees with what its case implies
+  2  usage error
+  3  an adapter's hello was refused
+  4  runner fault: an adapter could not be started, a case is malformed, or the report
+     could not be written
 """
 
 CHECK_EXIT_CODES = """\
@@ -122,6 +134,19 @@ def _parser() -> argparse.ArgumentParser:
                                       "report is written)")
     _adapter_options(run)
     run.set_defaults(handler=_run)
+    agree = commands.add_parser("agree", help="verify what each adapter issues and presents "
+                                              "with every adapter's acdc.verify",
+                                epilog=AGREE_EXIT_CODES,
+                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    agree.add_argument("--adapter", required=True, action="append", type=_named,
+                       metavar="NAME=CMD", help="an adapter, named for the matrix, and the "
+                                                "command that starts it; give it once per adapter")
+    agree.add_argument("--cases", help="directory of cases (default: SUITE/cases)")
+    agree.add_argument("--profile", help="draw only on the cases of this profile")
+    agree.add_argument("--report", help="write the JSON agreement matrix here (default: no "
+                                        "report is written)")
+    _adapter_options(agree)
+    agree.set_defaults(handler=_agree)
     check = commands.add_parser("check-adapter", help="probe an adapter's protocol behaviour",
                                 epilog=CHECK_EXIT_CODES,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -129,6 +154,21 @@ def _parser() -> argparse.ArgumentParser:
     _adapter_options(check)
     check.set_defaults(handler=_check)
     return parser
+
+
+def _named(text: str) -> tuple[str, str]:
+    name, sep, command = text.partition("=")
+    if not sep or not name or not command.strip():
+        raise argparse.ArgumentTypeError(f"{text!r} is not NAME=CMD")
+    return name, command
+
+
+def _write_report(path: str, report: dict) -> None:
+    try:
+        Path(path).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    except OSError as exc:
+        code = E_REPORT_WRITE_TRANSIENT if exc.errno in TRANSIENT_ERRNOS else E_REPORT_WRITE
+        raise RunnerError(code, f"The report could not be written to {path}: {exc}.") from exc
 
 
 def _session(args, command) -> AdapterSession:
@@ -147,12 +187,7 @@ def _run(args) -> int:
         report = run_suite(session, cases, profile=profile, cases_dir=cases_dir,
                            suite_version=suite_version)
     if args.report:
-        try:
-            Path(args.report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-        except OSError as exc:
-            code = E_REPORT_WRITE_TRANSIENT if exc.errno in TRANSIENT_ERRNOS else E_REPORT_WRITE
-            raise RunnerError(code, f"The report could not be written to "
-                                              f"{args.report}: {exc}.") from exc
+        _write_report(args.report, report)
     print(human_summary(report, args.report))
     aborted = report["aborted"]
     if aborted:
@@ -161,6 +196,25 @@ def _run(args) -> int:
             print(f"  - {problem}", file=sys.stderr)
         return aborted["exit_code"]
     return VERDICT_EXIT[report["verdict"]]
+
+
+def _agree(args) -> int:
+    adapters = dict(args.adapter)
+    if len(adapters) != len(args.adapter):
+        raise RunnerError(E_USAGE_INVALID, "Two adapters share a name, so the matrix could not "
+                                           "tell their cells apart; give each --adapter its own "
+                                           "NAME.", EXIT_USAGE)
+    cases_dir = args.cases or str(Path(args.suite) / "cases")
+    cases = load_cases(cases_dir)
+    if args.profile is not None:
+        members = load_profile(args.suite, args.profile).members
+        cases = [c for c in cases if c["profile"] in members]
+    report = run_agreement(lambda command: _session(args, command), adapters, cases,
+                           read_suite_version(args.suite))
+    if args.report:
+        _write_report(args.report, report)
+    print(agree_summary(report))
+    return 1 if report["summary"]["disagree"] else 0
 
 
 def _check(args) -> int:
