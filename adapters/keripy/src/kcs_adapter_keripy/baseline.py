@@ -269,13 +269,14 @@ def _baseline(path):
 
 def _git(where: Path, *args) -> tuple[int | None, str]:
     """git's exit status in ``where`` and its output with only the final newline removed, so a
-    configured path keeps any whitespace it was written with; the status is None without git."""
+    configured path keeps any whitespace it was written with; the status is None without git.
+    The output is read as bytes and decoded as the filesystem decodes names, so a carriage return
+    is never translated and no byte sequence can fail to decode."""
     try:
-        out = subprocess.run(["git", "-C", str(where), *args], capture_output=True, text=True,
-                             check=False)
+        out = subprocess.run(["git", "-C", str(where), *args], capture_output=True, check=False)
     except OSError:
         return None, ""
-    return out.returncode, out.stdout.removesuffix("\n")
+    return out.returncode, os.fsdecode(out.stdout.removesuffix(b"\n"))
 
 
 def _unreadable(why: str) -> InputError:

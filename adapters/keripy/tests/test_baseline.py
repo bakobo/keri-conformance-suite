@@ -355,7 +355,7 @@ def test_a_git_config_that_cannot_be_read_refuses(tmp_path, monkeypatch, capsys)
 
     def broken_config(argv, **kw):
         if "config" in argv:
-            return subprocess.CompletedProcess(argv, 128, "", "fatal: bad config")
+            return subprocess.CompletedProcess(argv, 128, b"", b"fatal: bad config")
         return real(argv, **kw)
 
     monkeypatch.setattr(baseline.subprocess, "run", broken_config)
@@ -363,3 +363,33 @@ def test_a_git_config_that_cannot_be_read_refuses(tmp_path, monkeypatch, capsys)
     held_report(rep)
     assert run("write", base, rep) == 2
     assert "could not be read" in capsys.readouterr().err
+
+
+def configure_by_environment(monkeypatch, value: bytes):
+    """Set kcs.embargoPatterns through git's environment, which can carry any bytes."""
+    monkeypatch.setenv("GIT_CONFIG_COUNT", "1")
+    monkeypatch.setenv("GIT_CONFIG_KEY_0", "kcs.embargoPatterns")
+    monkeypatch.setenv("GIT_CONFIG_VALUE_0", os.fsdecode(value))
+
+
+def test_a_carriage_return_in_the_configured_name_is_kept(tmp_path, monkeypatch):
+    repo = checkout(tmp_path)
+    (repo / "held\r.txt").write_text("CESR-0022\n")
+    (repo / "held\n.txt").write_text("nothing held\n")
+    configure_by_environment(monkeypatch, b"held\r.txt")
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 1
+    assert not base.exists()
+
+
+def test_a_configured_name_that_is_not_utf8_is_read_as_a_file_name(tmp_path, monkeypatch,
+                                                                    capsys):
+    repo = checkout(tmp_path)
+    configure_by_environment(monkeypatch, b"\xff")
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 2  # no file of that name: the coded refusal, not a crash
+    assert "e.input.format.embargo-patterns.f" in capsys.readouterr().err
+    (repo / os.fsdecode(b"\xff")).write_text("CESR-0022\n")
+    assert run("write", base, rep) == 1
