@@ -198,10 +198,22 @@ def test_a_block_held_only_as_its_said_carries_no_label():
     assert present._selected(sad, {"disclose": ["name"]}) == ([2], None)
 
 
-def test_compact_reduces_an_aggregate_by_revealing_none_of_its_blocks():
-    sad = body(present.present(given("ACDC-0164", disclosure={"form": "compact"})))
-    disclosed = [b for b in sad["A"][2:] if isinstance(b, dict)]
-    assert disclosed == []  # heti still reveals the issuee block, A[1], by its own rule
+@pytest.mark.parametrize("disclosure", [{"form": "compact"},
+                                        {"form": "selective", "disclose": ["name"]}])
+def test_a_form_that_hides_the_issuee_block_heti_always_reveals_is_refused(disclosure):
+    result = present.present(given("ACDC-0164", disclosure=disclosure))
+    assert result == {"refused": {"reason": present.ALWAYS_ISSUEE}}
+
+
+def test_the_issuee_block_is_one_held_disclosed():
+    assert present._issuee_block({"A": ["Eagid", {"d": "E", "i": "E"}]}) is True
+    assert present._issuee_block({"A": ["Eagid", "Eblinded"]}) is False
+    assert present._issuee_block({"a": {"d": "E"}}) is False
+
+
+def test_siblings_are_hidden_at_every_level_a_partial_form_names():
+    sad = {"a": {"d": "Ea", "x": {"d": "Ex", "y": {"d": "Ey"}, "z": {"d": "Ez"}}}}
+    assert present._hidden(sad, {"form": "partial", "expand": ["a.x.y"]}) == (["a.x.z"], None)
 
 
 def test_a_partial_form_hides_every_sub_block_it_does_not_name():

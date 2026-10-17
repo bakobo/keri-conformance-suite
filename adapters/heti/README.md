@@ -47,8 +47,9 @@ For each request the adapter builds a fresh lockbox, learns the request's schema
 
 The held ACDC is first judged by heti's verifier, through this adapter's `acdc.verify` with the held ACDC as the one presented, and whatever heti does not find valid is refused. The form then goes to heti's public `disclose` (`heti.anchored.produce.disclosing`):
 
-- `compact` and `partial` conceal the top-level blocks the form hides. heti conceals only the attribute section, so a form that would compact `e` or `r` is refused with that reason rather than compacted by the adapter.
-- `selective` reveals the aggregate's blocks by their indices in `A`, each label mapped to the block that carries it. heti always reveals the issuee block as well (its tick 4gnp), which the cases grade as heti's.
+- `compact` and `partial` hide every block the form hides, at every level a partial form names. heti conceals only the attribute section or one level of its sub-blocks, so a form that would compact `e`, `r`, a block inside them, or a deeper attribute block is refused with that reason rather than compacted by the adapter.
+- `selective` reveals the aggregate's blocks by their indices in `A`, each label mapped to the block that carries it.
+- heti always reveals an aggregate's issuee block (its tick 4gnp), so a compact form of an aggregate, and a selective form that does not name the issuee, are refused: the adapter never answers with a presentation other than the one asked for.
 - `expanded`, and a `partial` form that hides nothing, answer the held body unchanged, the one answer the adapter makes without a heti call, since the held ACDC is already fully expanded. A block held only as its SAID cannot be expanded, so an expanded form of one is refused.
 
 The protocol's own rules about the disclosure are applied before heti is asked: a partial path or selective label that names no block, one named twice, and an empty list are refused. A presentation carries no attachments, which the protocol allows.
