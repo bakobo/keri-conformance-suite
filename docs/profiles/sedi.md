@@ -2,7 +2,7 @@
 
 sedi-1 is the State of Utah SEDI program's deployment profile for KERI, CESR and ACDC. It is a layered, non-normative profile: it adds nothing to the normative profiles it sits on (`cesr-v1.0`, `keri-v1.0.1`, `acdc-v1.0`), and settles each place where the specifications are silent or disagree and SEDI needs one reading in order to interoperate. Each such reading is a numbered choice, listed below with the reason for it and the specification text that would overturn it. The profile is a draft at version 1; its machine-readable source is [`scenarios/sedi/profile.json`](https://github.com/bakobo/keri-conformance-suite/blob/utah/next/scenarios/sedi/profile.json), from which `profiles/sedi-1.json` is built, and the plan it was built to is [the test plan](sedi-test-plan.md).
 
-A choice is a profile decision, not a finding about the specification. Every choice is also drafted as a question for the specification's working group, and a different answer from the working group produces a new profile version, never an edit to this one.
+A choice is a profile decision, not a finding about the specification. The choices that read the specification where it is silent or contradicts itself are being drafted as questions for its working group, and a different answer from the working group produces a new profile version, never an edit to this one.
 
 ## Claiming sedi-1
 
