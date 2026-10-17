@@ -29,9 +29,9 @@ past any stamp a case carries, which fixes the clock as the adapter protocol req
 prints some refusals to stdout, which is the protocol's channel, so everything it prints while
 judging goes to stderr. A schema keripy's resolver will not take (its ``$id`` is not its SAID), and
 one that refers outside itself, which keripy's validator would follow, is one the bundle does not
-have. For a credential keripy saved, ``edges`` lists each edge of its edge section as holding,
-since keripy saves one only after walking them all; otherwise keripy says nothing about which it
-reached, and ``edges`` is empty.
+have. keripy's Verifier reports no result for any single edge (and its chain check never reads an
+edge's ``s``), so the adapter cannot say which edges held and ``edges`` is always empty: the
+adapter protocol lets an adapter report only what it evaluated.
 """
 
 import contextlib
@@ -49,6 +49,10 @@ NEVER = 10 ** 12  # seconds: a Verifier expiry past any stamp a case carries
 REVOKED = ("rev", "brv")
 # Schema keywords that name another schema to load.
 REFERENCES = ("$ref", "$dynamicRef", "$recursiveRef")
+# Keywords whose value is instance data, never a schema.
+DATA_KEYWORDS = ("const", "enum", "default", "examples")
+# Keywords whose value maps names to subschemas: its keys are names, not keywords.
+SCHEMA_MAPS = ("properties", "patternProperties", "$defs", "definitions", "dependentSchemas")
 REASONS = {"valid": "keripy 1.2.14's Verifier saved the credential",
            "mre": "keripy 1.2.14's Verifier holds it for a missing registry or issuance",
            "mce": "keripy 1.2.14's Verifier holds it for a missing chained credential",
@@ -75,33 +79,30 @@ def _schemas(request) -> list[tuple[str, bytes]]:
     return out
 
 
-def _reaches_out(node) -> bool:
+def _reaches_out(schema) -> bool:
     """Whether a schema refers to anything outside itself. keripy's schema validator follows a
     reference wherever it points, and the bundle is the whole world (adapter protocol,
-    acdc.verify), so such a schema is one the bundle does not have."""
-    stack = [node]
+    acdc.verify), so such a schema is one the bundle does not have. The walk goes by schema
+    position: a value under a data keyword (const, enum, default, examples) is data, and the keys
+    of a map of subschemas (properties and the like) are names, so neither is ever read as a
+    reference. Any other keyword's value is walked as a schema, which errs towards finding one."""
+    stack = [schema]
     while stack:
-        value = stack.pop()
-        if isinstance(value, dict):
-            for key, item in value.items():
-                if key in REFERENCES and not (isinstance(item, str) and item.startswith("#")):
+        node = stack.pop()
+        if isinstance(node, list):
+            stack.extend(node)
+            continue
+        if not isinstance(node, dict):
+            continue
+        for key, value in node.items():
+            if key in REFERENCES:
+                if not (isinstance(value, str) and value.startswith("#")):
                     return True
-                stack.append(item)
-        elif isinstance(value, list):
-            stack.extend(value)
+            elif key in SCHEMA_MAPS and isinstance(value, dict):
+                stack.extend(value.values())
+            elif key not in DATA_KEYWORDS:
+                stack.append(value)
     return False
-
-
-def _edges(creder, said) -> list[dict]:
-    """The edges of a credential keripy saved, each holding: keripy's Verifier saves one only
-    after walking every label of its edge section but d and o and finding each far node issued.
-    It walks no deeper, so neither does this."""
-    section = creder.sad.get("e")
-    if not isinstance(section, dict):
-        return []
-    return [{"near": said, "path": f"e.{label}", "n": node["n"], "valid": True}
-            for label, node in section.items()
-            if label not in ("d", "o") and isinstance(node, dict) and "n" in node]
 
 
 def _expect_schema(request):
@@ -213,7 +214,6 @@ def verify(request):
             held = [name for name in ("mre", "mce", "mse")
                     if getattr(vry.reger, name).get(keys=said) is not None]
             outcome, why = ("incomplete", held[0]) if held else ("invalid", "invalid")
-    edges = _edges(creder, said) if why == "valid" else []
     if expected is not None and creder.sad.get("s") != expected and outcome == "valid":
-        outcome, why, edges = "invalid", "expected", []
-    return {"verdict": outcome, "reason": REASONS[why], "registry": head, "edges": edges}
+        outcome, why = "invalid", "expected"
+    return {"verdict": outcome, "reason": REASONS[why], "registry": head, "edges": []}

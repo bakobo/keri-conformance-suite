@@ -32,10 +32,7 @@ def test_every_companion_case_gets_keripys_own_verdict(path):
     acdc = json.loads(bytes.fromhex(c["input"]["presented"]["stream"]).split(b"-IAB")[0])
     assert result["registry"]["rd"] == acdc["ri"] and result["registry"]["td"] == acdc["d"]
     assert (result["registry"]["n"], result["registry"]["ts"]) == (0, "issued")
-    # A saved credential's edges all hold; nothing is said of one keripy did not save.
-    want = [{"near": acdc["d"], "path": f"e.{label}", "n": node["n"], "valid": True}
-            for label, node in acdc.get("e", {}).items() if isinstance(node, dict)]
-    assert result["edges"] == (want if result["verdict"] == "valid" else [])
+    assert result["edges"] == []  # keripy reports no result for any single edge
 
 
 def test_a_bundle_without_the_registry_is_held_for_it():
@@ -216,6 +213,19 @@ def test_a_schema_that_refers_outside_itself_is_one_the_bundle_does_not_have(ref
     assert acdc1x._reaches_out([{"$dynamicRef": "#meta"}]) is False
 
 
+def test_a_reference_shaped_value_in_data_or_a_property_name_is_no_reference():
+    from kcs_adapter_keripy import acdc1x
+
+    away = {"$ref": "https://example.com/x.json"}
+    for data in ("const", "enum", "default", "examples"):
+        assert acdc1x._reaches_out({"properties": {"a": {data: away}}}) is False
+    assert acdc1x._reaches_out({"properties": {"$ref": {"type": "string"}}}) is False
+    assert acdc1x._reaches_out({"$defs": {"$ref": {"$ref": "#/x"}}}) is False
+    assert acdc1x._reaches_out({"$defs": {"a": away}}) is True
+    assert acdc1x._reaches_out({"not": away}) is True  # an unlisted keyword is walked as a schema
+    assert acdc1x._reaches_out({"properties": "not a map", "type": "object"}) is False
+
+
 def test_a_credential_whose_schema_reaches_out_is_held_for_its_schema():
     request = case("ACDC-0201")["input"]
     schema = json.loads(bytes.fromhex(request["schemas"][0]))
@@ -224,9 +234,3 @@ def test_a_credential_whose_schema_reaches_out_is_held_for_its_schema():
     from kcs_adapter_keripy import acdc1x
     assert acdc1x._schemas({"schemas": [json.dumps(reached).encode().hex()]}) == []
 
-
-def test_a_saved_credential_without_an_edge_section_reports_no_edges():
-    from kcs_adapter_keripy import acdc1x
-
-    creder = type("C", (), {"sad": {"e": "Esaid"}})()
-    assert acdc1x._edges(creder, "E") == []
