@@ -18,7 +18,7 @@ from unittest import mock
 from . import acdc_build, sedi_cases, sedi_present
 from . import acdc_cases as ac
 from . import sedi_model as sm
-from .errors import E_CASE_ID, GeneratorError, ScenarioError
+from .errors import E_SCENARIO, GeneratorError, ScenarioError
 from .regenerate import SEDI_RELEASED, SEDI_SOURCE
 
 DOC = "docs/profiles/sedi-mutation.md"
@@ -154,7 +154,7 @@ def run(t, root: pathlib.Path, only: set[str] | None = None) -> dict:
             # Outcomes are kept by case id, so two cases sharing one would be compared with each
             # other's; the generator refuses such scenarios too.
             raise ScenarioError(f"The case id {case['id']} is used twice in the sedi "
-                                f"scenarios.", E_CASE_ID)
+                                f"scenarios.")
         baseline[case["id"]], bundles[case["id"]] = _outcome(t, fixtures, case)
     source = json.loads((root / SEDI_SOURCE).read_text(encoding="utf-8"))
     out = {}
@@ -209,6 +209,11 @@ def main(argv=None) -> int:
         text = render(run(tables.load(spec_source.load_spec()), root))
     except GeneratorError as e:
         print(str(e), file=sys.stderr)
+        return 3
+    except (ValueError, KeyError, TypeError, LookupError, AttributeError) as e:
+        # A scenario that is not JSON or not shaped as one; scripts/regenerate refuses it too.
+        print(f"{E_SCENARIO}: the sedi scenarios cannot be read: {type(e).__name__}: {e}",
+              file=sys.stderr)
         return 3
     path = root / DOC
     if args.check:

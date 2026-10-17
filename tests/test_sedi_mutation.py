@@ -9,7 +9,7 @@ import pathlib
 import pytest
 
 from generators.spec_tables import sedi_mutation, spec_source, tables
-from generators.spec_tables.errors import E_CASE_ID, ScenarioError
+from generators.spec_tables.errors import E_SCENARIO, ScenarioError
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -74,14 +74,16 @@ def test_a_case_id_used_twice_is_refused(monkeypatch):
         yield cases[0]
 
     monkeypatch.setattr(sedi_mutation, "_scenarios", twice)
-    with pytest.raises(ScenarioError, match="kcs-case-id.*used twice"):
+    with pytest.raises(ScenarioError, match="kcs-scenario.*used twice"):
         sedi_mutation.run(T, ROOT)
 
 
-def test_the_script_reports_a_coded_error(monkeypatch, capsys):
+@pytest.mark.parametrize("error", [ScenarioError("broken"), ValueError("not JSON"),
+                                   KeyError("id"), TypeError("unhashable")])
+def test_the_script_reports_a_coded_error(monkeypatch, capsys, error):
     def broken(t, root):
-        raise ScenarioError("broken", E_CASE_ID)
+        raise error
 
     monkeypatch.setattr(sedi_mutation, "run", broken)
     assert sedi_mutation.main(["--check"]) == 3
-    assert E_CASE_ID in capsys.readouterr().err
+    assert E_SCENARIO in capsys.readouterr().err
