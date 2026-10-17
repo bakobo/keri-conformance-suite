@@ -95,7 +95,9 @@
     "ACDC-0191",
     "ACDC-0192",
     "ACDC-0193",
-    "ACDC-0195"
+    "ACDC-0195",
+    "ACDC-0196",
+    "ACDC-0197"
   ],
   "choices": [
     {
@@ -127,7 +129,8 @@
         ],
         "positive": [
           "ACDC-0101",
-          "ACDC-0131"
+          "ACDC-0131",
+          "ACDC-0196"
         ]
       },
       "decided": "8g9vtxvc",
@@ -203,7 +206,8 @@
           "ACDC-0104",
           "ACDC-0105",
           "ACDC-0136",
-          "ACDC-0168"
+          "ACDC-0168",
+          "ACDC-0197"
         ],
         "positive": [
           "ACDC-0101",
@@ -211,7 +215,8 @@
           "ACDC-0190",
           "ACDC-0191",
           "ACDC-0192",
-          "ACDC-0195"
+          "ACDC-0195",
+          "ACDC-0196"
         ]
       },
       "decided": "2082s6k4",
@@ -375,7 +380,8 @@
       "cases": {
         "negative": [
           "ACDC-0124",
-          "ACDC-0167"
+          "ACDC-0167",
+          "ACDC-0197"
         ],
         "positive": [
           "ACDC-0122"
@@ -394,7 +400,8 @@
         ],
         "positive": [
           "ACDC-0101",
-          "ACDC-0157"
+          "ACDC-0157",
+          "ACDC-0196"
         ]
       },
       "decided": "8fh68wt6",
@@ -430,7 +437,8 @@
           "ACDC-0107",
           "ACDC-0108",
           "ACDC-0132",
-          "ACDC-0133"
+          "ACDC-0133",
+          "ACDC-0197"
         ],
         "positive": [
           "ACDC-0122",
