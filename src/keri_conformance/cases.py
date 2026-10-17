@@ -118,6 +118,13 @@ CHECK_FORMS = {
     # what the case asked for (this.i 2u2ps8mt), or it refused.
     "issued": _assertion("issued"),
     "issue_refused": _assertion("issue_refused"),
+    # A holder's answer (docs/adapter-protocol.md, acdc.present): the presentation's body is the
+    # one the disclosure asks for and its attachments are well formed (this.i 37ehqmh4), it
+    # carries none of the secrets the disclosure hides, or the holder refused.
+    "presented": _assertion("presented", expected=obj({"body": HEX_STRING})),
+    "secrets_absent": _assertion("secrets_absent",
+                                 expected=array(string(min_length=8), min_items=1)),
+    "present_refused": _assertion("present_refused"),
 }
 
 # The checks that can apply to each operation's result.
@@ -130,9 +137,16 @@ OPERATION_CHECKS = {
                     "edge_valid"),
     "exn.verify": ("exn_verdict",),
     "acdc.issue": ("issued", "issue_refused"),
+    "acdc.present": ("presented", "secrets_absent", "present_refused"),
 }
 
 PERSPECTIVE = obj({"role": enum("validator")})
+HOLDER = obj({"role": enum("holder")})
+LABELS = array(string(min_length=1))
+DISCLOSURE = tagged("form", {"compact": obj({"form": enum("compact")}),
+                             "expanded": obj({"form": enum("expanded")}),
+                             "partial": obj({"form": enum("partial"), "expand": LABELS}),
+                             "selective": obj({"form": enum("selective"), "disclose": LABELS})})
 ISSUE_CREDENTIAL = obj({"name": string(min_length=1), "issuer": string(min_length=1),
                         "schema": string(min_length=1), "attributes": anything_object,
                         "registry": enum("bup")},
@@ -156,6 +170,12 @@ INPUTS = {
                        {"expect_schema": SAID,
                         "presentation": obj({"messages": array(SOURCED, min_items=1),
                                              "verifier": string(min_length=1)})}),
+    # acdc.verify's bundle with the held ACDC, fully expanded, in place of the presented one,
+    # and what to disclose of it.
+    "acdc.present": obj({"perspective": HOLDER, "kels": array(SOURCED),
+                         "registry": array(STREAM), "schemas": array(HEX_STRING),
+                         "acdcs": array(STREAM, max_items=MAX_DAG_ACDCS - 1),
+                         "held": STREAM, "disclosure": DISCLOSURE}),
     "exn.verify": obj({"perspective": PERSPECTIVE, "kels": array(SOURCED),
                        "messages": array(SOURCED, min_items=1)}),
     # An issuance asked for, not bytes: the identifiers to create by role and the credentials to
@@ -173,7 +193,8 @@ DAG = obj({"root": SAID, "edges": array(obj({"near": SAID, "path": string(EDGE_P
 AS_OF = mapping(integer(minimum=0))
 ACDC_ONLY = ("dag", "as_of")
 # The layer whose ids the new operations' cases take (docs/design.md, ACDC; exchange messages).
-LAYER_PREFIX = {"acdc.verify": "ACDC-", "exn.verify": "KERI-", "acdc.issue": "ACDC-"}
+LAYER_PREFIX = {"acdc.verify": "ACDC-", "exn.verify": "KERI-", "acdc.issue": "ACDC-",
+                "acdc.present": "ACDC-"}
 
 CASE = obj(
     {

@@ -5,6 +5,8 @@ still never assume a field is present or well-typed, because a wrong answer must
 never an exception. Equality is type-strict throughout, so `1`, `1.0` and `true` are all different.
 """
 
+import base64
+import json
 import re
 from dataclasses import dataclass
 from fractions import Fraction
@@ -323,12 +325,162 @@ def _issue_refused(assertion, result):
     return _fail(result, "The issuer issued what it must refuse.")
 
 
+# The CESR text domain.
+TEXT_DOMAIN = frozenset(b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
+# What a presentation may attach: seal source couples pointing to its issuer's commitment, each
+# a sequence number (0A) and a Blake3-256 digest (E), at -S (seal-couple-code).
+COUPLES = re.compile(r"(0A[A-Za-z0-9_-]{22}E[A-Za-z0-9_-]{43})+")
+COUPLE_SIZE = 68
+# JSON's two-character escapes, by the byte after the backslash.
+SIMPLE_ESCAPES = {ord('"'): b'"', ord("\\"): b"\\", ord("/"): b"/", ord("b"): b"\b",
+                  ord("f"): b"\f", ord("n"): b"\n", ord("r"): b"\r", ord("t"): b"\t"}
+HEX_DIGITS = frozenset(b"0123456789abcdefABCDEF")
+
+
+def _presented_stream(result) -> bytes:
+    """The presentation's bytes, or Unread if there is none, it is longer than a stream may be,
+    or it is not genus-pinned hex."""
+    text = result["presented"]["stream"]
+    if len(text) > 2 * issued.MAX_STREAM:
+        raise issued.Unread(f"the presentation is longer than {issued.MAX_STREAM} bytes")
+    stream = bytes.fromhex(text)
+    if not stream.startswith(issued.GENUS):
+        raise issued.Unread("the presentation does not begin with the genus/version code")
+    return stream
+
+
+def _presented(assertion, result):
+    """The body is the one the disclosure asks for, byte for byte, and what follows it is
+    nothing or an attachments group of seal source couples (this.i 37ehqmh4)."""
+    if "presented" not in result:
+        return _fail(result, "The holder refused to present what it must present.")
+    try:
+        _, raw, rest = issued.frame(_presented_stream(result), b"ACDC")
+        if rest and not rest.startswith((b"-C", b"--C")):
+            raise issued.Unread("what follows the body is not an attachments group")
+        if not set(rest) <= TEXT_DOMAIN:
+            raise issued.Unread("the attachments are not in the CESR text domain")
+        found = issued.groups(rest) if rest else []
+        if rest and len(found) != 1:
+            raise issued.Unread("an attachments group holds other than one group of couples")
+        for code, contents in found:
+            if code != "-S" or not COUPLES.fullmatch(contents):
+                raise issued.Unread(f"an attachment group {code} is not seal source couples")
+            for i in range(0, len(contents), COUPLE_SIZE):
+                # raw_of refuses a primitive that is not canonically encoded.
+                issued.raw_of(contents[i:i + 24], "0A", 16)
+                issued.raw_of(contents[i + 24:i + COUPLE_SIZE], "E", 32)
+    except (issued.Unread, TypeError, ValueError, KeyError, AttributeError,
+            RecursionError) as exc:
+        return _fail(None, f"The presentation cannot be read: {type(exc).__name__}: {exc}.")
+    if raw != bytes.fromhex(assertion["expected"]["body"]):
+        return _fail({"body": raw.hex()}, "The presented body is not the one the disclosure "
+                                          "asks for.")
+    return Evaluation("pass", {"body": raw.hex()})
+
+
+def _encodings(secret: str) -> list[bytes]:
+    """The forms in which a secret may leak: raw, hex, JSON-escaped, and the part of its Base64
+    and Base64url encodings that does not depend on where it starts in a stream."""
+    data = secret.encode("utf-8")
+    forms = [data, data.hex().encode(), json.dumps(secret)[1:-1].encode()]
+    for encode in (base64.b64encode, base64.urlsafe_b64encode):
+        for lead in range(3):
+            text = encode(b"\0" * lead + data)
+            core = text[-(-4 * lead // 3):(8 * (lead + len(data))) // 6]
+            if len(core) >= 4:
+                forms.append(core)
+    return forms
+
+
+def _json_unescape(text: bytes) -> bytes:
+    """``text`` with every JSON string escape decoded, in one pass: a run of \\uXXXX escapes as
+    the characters it stands for (a surrogate pair joined, an unpaired surrogate kept), and the
+    two-character escapes. Anything else stands as it is."""
+    out, units, i, n = bytearray(), [], 0, len(text)
+
+    def flush():
+        if units:
+            chars = "".join(chr(u) for u in units)
+            out.extend(chars.encode("utf-16-le", "surrogatepass")
+                       .decode("utf-16-le", "surrogatepass").encode("utf-8", "surrogatepass"))
+            units.clear()
+
+    while i < n:
+        if text[i] == 0x5C and i + 1 < n:
+            after = text[i + 1]
+            if after == ord("u") and i + 6 <= n and all(c in HEX_DIGITS for c in text[i + 2:i + 6]):
+                units.append(int(text[i + 2:i + 6], 16))
+                i += 6
+                continue
+            if after in SIMPLE_ESCAPES:
+                flush()
+                out.extend(SIMPLE_ESCAPES[after])
+                i += 2
+                continue
+        flush()
+        out.append(text[i])
+        i += 1
+    flush()
+    return bytes(out)
+
+
+def _strings(value) -> list[bytes]:
+    """Every string in a parsed response, keys included, as UTF-8 (an unpaired surrogate kept)."""
+    out, stack = [], [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, str):
+            out.append(item.encode("utf-8", "surrogatepass"))
+        elif isinstance(item, dict):
+            stack.extend(item.keys())
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+    return out
+
+
+def _secrets_absent(assertion, result):
+    """None of the secrets the disclosure hides is in the response, in any form _encodings
+    enumerates."""
+    texts = _strings(result)
+    if "presented" in result:
+        try:
+            texts.append(bytes.fromhex(result["presented"]["stream"]))
+        except (TypeError, ValueError, KeyError, AttributeError):
+            # A stream that is not hex carries no bytes beyond its own text, which _strings
+            # already holds, and the presented check fails it.
+            pass
+    # Each text as it stands and with its JSON escapes decoded, each also in lower case so that
+    # hex in any case matches the lowercase hex form.
+    haystacks = []
+    for text in texts:
+        unescaped = _json_unescape(text)
+        haystacks += [text, unescaped, text.lower(), unescaped.lower()]
+    leaked = [n for n, secret in enumerate(assertion["expected"])
+              if any(form in hay for form in _encodings(secret) for hay in haystacks)]
+    if leaked:
+        return _fail({"leaked": leaked}, f"The response carries secret(s) {leaked} that the "
+                                         f"disclosure hides.")
+    return Evaluation("pass", None)
+
+
+def _present_refused(assertion, result):
+    # A refusal presents nothing, whatever else the answer carries.
+    if "refused" in result and "presented" not in result:
+        return Evaluation("pass", result)
+    return _fail(result, "The holder presented what it must refuse.")
+
+
 # Checks that read the case's own input as well as the result: what was asked for comes only from
 # the case.
 CHECKS_WITH_INPUT = {"issued": _issued}
 
 CHECKS = {
     "issue_refused": _issue_refused,
+    "presented": _presented,
+    "secrets_absent": _secrets_absent,
+    "present_refused": _present_refused,
     "decoded": _decoded,
     "rejected": _rejected,
     "encoded": _encoded,

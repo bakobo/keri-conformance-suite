@@ -20,8 +20,11 @@ The expected verdict is never written in a scenario: it is the model's. Every as
 INTEROP, rests on the choices it names, and quotes their readings as its basis.
 """
 
-from . import acdc_build
+import copy
+
+from . import acdc_build, sedi_present
 from . import acdc_cases as ac
+from . import acdc_saids as sa
 from . import sedi_model as sm
 from .errors import ScenarioError
 
@@ -31,13 +34,50 @@ PROFILE = "sedi-1"
 BATCH_STATUS = "draft"
 EDGES, BUP, PRESENTATION = "acdc.edges", "acdc.registry.bup", "acdc.presentation"
 CASE_FIELDS = {"id", "key", "title", "description", "base", "replace", "patch", "remove",
-               "append", "expect", "choices", "triage", "pair", "status"}
+               "append", "expect", "choices", "triage", "pair", "status", "disclosure"}
+# A holder case's verdict when the holder must refuse; one it must present is valid.
+REFUSED = "refused"
 
 
 class Evaluation:
     def __init__(self, t, bundle: acdc_build.Bundle):
         self.bundle = bundle
         self.result = sm.evaluate(t, bundle.request)
+        self.disclosure = None
+
+
+class HolderEvaluation:
+    """A holder case (choice holder-presents): the held bundle, and either the body the holder
+    must present for the disclosure or why it must refuse (the verifier's findings when a
+    verifier would refuse the held ACDC), with the secrets the answer must not carry."""
+
+    def __init__(self, t, frag: dict, disclosure: dict):
+        self.bundle = acdc_build.build_bundle(t, frag)
+        self.disclosure = disclosure
+        name = frag["presented"]
+        held = self.bundle.forms[name]
+        verified = sm.evaluate(t, self.bundle.request)
+        shown, why = None, None
+        if verified.verdict == sm.VALID:
+            shown, why = sedi_present.form(held, self.bundle.expanded[name], disclosure)
+        if shown is None:
+            findings = (verified.findings if why is None
+                        else [sm.Finding(REFUSED, self.bundle.saids[name], why)])
+            self.result = sm.Result(REFUSED, findings)
+            self.body = None
+            # A refusal presents nothing, so it may carry nothing the compact form hides.
+            self.secrets = sedi_present.secrets(held, self._present(t, frag, name, "compact"))
+        else:
+            self.result = verified
+            body = self._present(t, frag, name, shown)
+            self.body = sa.serialize(body)
+            self.secrets = sedi_present.secrets(held, body)
+
+    @staticmethod
+    def _present(t, frag: dict, name: str, shown) -> dict:
+        presented = copy.deepcopy(frag)
+        next(a for a in presented["acdcs"] if a["name"] == name)["form"] = shown
+        return acdc_build.build_bundle(t, presented).forms[name]
 
 
 def found(result: sm.Result, names: dict[str, str]) -> list[str]:
@@ -58,14 +98,59 @@ def build(t, fixtures: dict, case: dict) -> Evaluation:
     for field in ("id", "key", "title", "description", "choices", "triage"):
         if not case.get(field):
             raise ScenarioError(f"{case.get('key')}: a sedi-1 case needs {field!r}.")
-    bundle = acdc_build.build_bundle(t, ac.compose(fixtures, case))
-    ev = Evaluation(t, bundle)
-    names = {said: name for name, said in bundle.saids.items()}
+    frag = ac.compose(fixtures, case)
+    if "disclosure" in case:
+        ev = HolderEvaluation(t, frag, case["disclosure"])
+    else:
+        ev = Evaluation(t, acdc_build.build_bundle(t, frag))
+    names = {said: name for name, said in ev.bundle.saids.items()}
     got = found(ev.result, names)
     if sorted(case.get("expect", [])) != got:
         raise ScenarioError(f"{case['key']}: expects the findings {sorted(case.get('expect', []))}"
                             f", but the sedi-1 model finds {got}.")
     return ev
+
+
+def _holder_case(scenario_path: str, case: dict, ev: HolderEvaluation, description: str,
+                 basis: str, wire: list[str]) -> dict:
+    """An acdc.present case: the held bundle and the disclosure in, and the body the holder must
+    present with the secrets it must not carry, or a refusal (this.i 37ehqmh4)."""
+    common = {"level": "INTEROP", "basis": basis, "choices": list(case["choices"])}
+    if ev.body is None:
+        why = "; ".join(f"{f.grade} ({f.reason})" for f in ev.result.findings)
+        assertions = [{"id": "a1", "check": "present_refused", **common,
+                       "note": f"The holder must refuse: {why}."}]
+        hidden = "Every string of the held ACDC that its compact form hides, which a refusal "
+    else:
+        assertions = [{"id": "a1", "check": "presented", **common,
+                       "note": "The body the disclosure asks for, byte for byte; the "
+                               "attachments only need to be well formed.",
+                       "expected": {"body": ev.body.hex()}}]
+        hidden = "Every string of the held ACDC that the disclosure hides, which the response "
+    if ev.secrets:
+        assertions.append({"id": "a2", "check": "secrets_absent", **common,
+                           "note": hidden + "must not carry.", "expected": ev.secrets})
+    request = ev.bundle.request
+    return {
+        "schema_version": ac.SCHEMA_VERSION,
+        "id": case["id"],
+        "title": case["title"],
+        "description": description,
+        "status": case.get("status", BATCH_STATUS),
+        "profile": PROFILE,
+        "targets": {"wire": wire, "features": _features(ev)},
+        "operation": "acdc.present",
+        "input": {"perspective": {"role": "holder"}, "kels": request["kels"],
+                  "registry": request["registry"], "schemas": request["schemas"],
+                  "acdcs": request["acdcs"], "held": request["presented"],
+                  "disclosure": ev.disclosure},
+        "assertions": assertions,
+        "provenance": {
+            "scenario": f"{scenario_path}#{case['key']}",
+            "generator": {"name": GENERATOR_NAME, "version": GENERATOR_VERSION},
+            "reference": None,
+        },
+    }
 
 
 def _features(ev: Evaluation) -> list[str]:
@@ -111,6 +196,8 @@ def build_sedi_case(scenario_path: str, case: dict, ev: Evaluation, pairs: dict,
             else "The sedi-1 model finds nothing that keeps the ACDC from valid.")
     b = ev.bundle
     wire = ["CESR-2.00"] + ([ac.KERI_WIRE] if b.request["kels"] else []) + [ac.WIRE]
+    if ev.disclosure is not None:
+        return _holder_case(scenario_path, case, ev, description, basis, wire)
     return {
         "schema_version": ac.SCHEMA_VERSION,
         "id": case["id"],

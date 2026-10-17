@@ -112,7 +112,11 @@ def _source_problem(source, *, operations, features, profiles) -> str | None:
 
 
 # An issuance that must succeed accepts; one that must be refused refuses.
-POLARITY = {"issued": "positive", "issue_refused": "negative"}
+POLARITY = {"issued": "positive", "issue_refused": "negative", "presented": "positive",
+            "present_refused": "negative"}
+# Checks that guard a case on either side (a leak canary holds for a presentation and a refusal
+# alike), so they exercise no choice on a side of their own.
+GUARDS = ("secrets_absent",)
 
 
 def _polarity(assertion: dict) -> str:
@@ -153,6 +157,8 @@ def _exercised(source: dict, cases: list[dict], pins: dict) -> dict[str, dict[st
                 raise ScenarioError(f"{where} quotes the {basis.get('spec')} text at "
                                     f"{basis.get('commit')}, which {source['name']} does not "
                                     "pin.")
+            if assertion["check"] in GUARDS:
+                continue
             polarity = _polarity(assertion)
             other = "negative" if polarity == "positive" else "positive"
             for cid in assertion["choices"]:

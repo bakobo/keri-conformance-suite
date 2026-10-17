@@ -202,6 +202,11 @@ def test_headings_and_fenced_code_are_not_sentences():
     ("edge_valid", False, "negative"),
     ("exn_verdict", "accepted", "positive"),
     ("exn_verdict", "rejected", "negative"),
+    ("issued", None, "positive"),
+    ("issue_refused", None, "negative"),
+    ("presented", {"body": ""}, "positive"),
+    ("secrets_absent", ["a-secret"], "positive"),
+    ("present_refused", None, "negative"),
 ])
 def test_each_check_has_a_polarity(check, expected, polarity):
     assert cc.polarity({"check": check, "expected": expected}, "KERI-0001 a1") == polarity

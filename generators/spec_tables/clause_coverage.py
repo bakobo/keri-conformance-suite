@@ -239,6 +239,8 @@ def map_quote(text: str, sentences: list[Sentence], quote: str) -> list[Sentence
 _DISPOSITIONS = {"seen": "positive", "not-seen": "negative", "rejected": "negative",
                  "pending": "negative"}
 _EXN_VERDICTS = {"accepted": "positive", "rejected": "negative"}
+# Checks whose outcome is the check itself, so they carry no expected value.
+NO_EXPECTED = ("rejected", "edge_reported", "issued", "issue_refused", "present_refused")
 # An acdc.verify verdict. A profile's three-way verdict (sedi-1) refuses as invalid or incomplete.
 _VERDICTS = {"valid": "positive", "not-valid": "negative", "invalid": "negative",
              "incomplete": "negative"}
@@ -257,6 +259,11 @@ def polarity(assertion: dict, where: str) -> str:
     if check in ("verdict", "registry_reported", "edge_valid"):
         raise CoverageError(f"{where}: a {check} of {expected!r} has no known polarity.", E_CASE)
     if check == "rejected":
+        return "negative"
+    # An issuer's or holder's answer: it produced what it must, or refused what it must refuse.
+    if check in ("issued", "presented", "secrets_absent"):
+        return "positive"
+    if check in ("issue_refused", "present_refused"):
         return "negative"
     if check == "disposition" and isinstance(expected, str) and expected in _DISPOSITIONS:
         return _DISPOSITIONS[expected]
@@ -315,7 +322,7 @@ def _case_problem(case, stem: str) -> str | None:
             return "an assertion id is missing"
         if not _is_text(a.get("check")):
             return f"assertion {a['id']} has no check"
-        if a["check"] not in ("rejected", "edge_reported") and a.get("expected") is None:
+        if a["check"] not in NO_EXPECTED and a.get("expected") is None:
             return f"assertion {a['id']} has no expected result"
         if a.get("level") not in ASSERTION_LEVELS:
             return f"assertion {a['id']} has level {a.get('level')!r}"

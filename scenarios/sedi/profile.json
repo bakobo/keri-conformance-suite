@@ -205,6 +205,14 @@
       "overturn": "None from the specification.",
       "decided": "3g4le6js",
       "security": true
+    },
+    {
+      "id": "holder-presents",
+      "reading": "A holder presents exactly the disclosure asked for: the held ACDC's top-level SAID, each block the disclosure names expanded and every other block compacted to its SAID or, in an aggregate, left as its blinded SAID, and nothing the disclosure hides. It refuses, and never presents something else, when a verifier would refuse the ACDC or the ACDC cannot satisfy the disclosure: a path or label that names nothing, names a block held only compact, or is named twice, and an empty choice.",
+      "basis": "Graduated and selective disclosure are the holder's side of ACDC's disclosure model, and the profile tests a holder as well as an issuer and a verifier (test-plan item 5); without a rule, a holder could present more than it was asked to, or a credential a verifier refuses.",
+      "overturn": "A SEDI decision to let holders choose the disclosure form themselves.",
+      "decided": "3lq4zrr3",
+      "security": true
     }
   ]
 }

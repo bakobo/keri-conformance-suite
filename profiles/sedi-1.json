@@ -60,7 +60,25 @@
     "ACDC-0156",
     "ACDC-0157",
     "ACDC-0158",
-    "ACDC-0159"
+    "ACDC-0159",
+    "ACDC-0160",
+    "ACDC-0161",
+    "ACDC-0162",
+    "ACDC-0163",
+    "ACDC-0164",
+    "ACDC-0165",
+    "ACDC-0166",
+    "ACDC-0167",
+    "ACDC-0168",
+    "ACDC-0169",
+    "ACDC-0170",
+    "ACDC-0171",
+    "ACDC-0172",
+    "ACDC-0173",
+    "ACDC-0174",
+    "ACDC-0175",
+    "ACDC-0176",
+    "ACDC-0177"
   ],
   "choices": [
     {
@@ -163,7 +181,8 @@
           "ACDC-0103",
           "ACDC-0104",
           "ACDC-0105",
-          "ACDC-0136"
+          "ACDC-0136",
+          "ACDC-0168"
         ],
         "positive": [
           "ACDC-0101",
@@ -330,7 +349,8 @@
       "basis": "Utah's KERI-012 asks for positive, negative and unresolved outcomes, which a relying party acts on as accept, reject and retry; acdc-v1.0 leaves the distinction informative.",
       "cases": {
         "negative": [
-          "ACDC-0124"
+          "ACDC-0124",
+          "ACDC-0167"
         ],
         "positive": [
           "ACDC-0122"
@@ -363,7 +383,8 @@
         "negative": [
           "ACDC-0106",
           "ACDC-0135",
-          "ACDC-0150"
+          "ACDC-0150",
+          "ACDC-0166"
         ],
         "positive": [
           "ACDC-0122",
@@ -424,6 +445,38 @@
       "id": "failure-precedence",
       "overturn": "None from the specification.",
       "reading": "When a bundle holds both a failed check and something that cannot be evaluated, the verdict is invalid.",
+      "security": true
+    },
+    {
+      "basis": "Graduated and selective disclosure are the holder's side of ACDC's disclosure model, and the profile tests a holder as well as an issuer and a verifier (test-plan item 5); without a rule, a holder could present more than it was asked to, or a credential a verifier refuses.",
+      "cases": {
+        "negative": [
+          "ACDC-0166",
+          "ACDC-0167",
+          "ACDC-0168",
+          "ACDC-0169",
+          "ACDC-0170",
+          "ACDC-0171",
+          "ACDC-0172",
+          "ACDC-0173",
+          "ACDC-0174",
+          "ACDC-0175",
+          "ACDC-0176",
+          "ACDC-0177"
+        ],
+        "positive": [
+          "ACDC-0160",
+          "ACDC-0161",
+          "ACDC-0162",
+          "ACDC-0163",
+          "ACDC-0164",
+          "ACDC-0165"
+        ]
+      },
+      "decided": "3lq4zrr3",
+      "id": "holder-presents",
+      "overturn": "A SEDI decision to let holders choose the disclosure form themselves.",
+      "reading": "A holder presents exactly the disclosure asked for: the held ACDC's top-level SAID, each block the disclosure names expanded and every other block compacted to its SAID or, in an aggregate, left as its blinded SAID, and nothing the disclosure hides. It refuses, and never presents something else, when a verifier would refuse the ACDC or the ACDC cannot satisfy the disclosure: a path or label that names nothing, names a block held only compact, or is named twice, and an empty choice.",
       "security": true
     }
   ],

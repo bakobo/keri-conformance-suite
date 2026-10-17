@@ -1,6 +1,6 @@
 """The issuer and holder operations, acdc.issue and acdc.present, and acdc.verify's presentation
 context: the messages docs/adapter-protocol.md gives them, as the protocol schema and the runner
-read them. No case uses them yet, so they are checked at the protocol level only."""
+read them."""
 
 import copy
 import json
@@ -202,12 +202,12 @@ def test_the_presentation_feature_is_not_composable():
     assert features["features"]["acdc.presentation"]["composable"] is False
 
 
-def test_no_case_may_present_until_the_holder_cases_exist():
-    # acdc.present gets case inputs and checks with its first cases, and until then the case
-    # schema and the runner refuse such a case. acdc.issue has them (tests/test_issuance.py).
-    assert "acdc.present" not in INPUTS and "acdc.issue" in INPUTS
+def test_holder_cases_have_inputs_and_checks():
+    # acdc.present got case inputs and checks with sedi-1's holder cases
+    # (tests/test_presentation_checks.py); acdc.issue has them too (tests/test_issuance.py).
+    assert "acdc.present" in INPUTS and "acdc.issue" in INPUTS
     case = json.loads((ROOT / "schema" / "case.schema.json").read_text(encoding="utf-8"))
-    assert "acdc.present" not in case["properties"]["operation"]["enum"]
+    assert "acdc.present" in case["properties"]["operation"]["enum"]
 
 
 # --- what a result must match in its request ------------------------------------------------------

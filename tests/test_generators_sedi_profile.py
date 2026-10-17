@@ -277,3 +277,12 @@ def test_issuance_checks_exercise_a_choice_by_their_polarity(check, side):
     case["assertions"][0]["check"] = check
     doc, _ = build(cases=[case])
     assert next(c for c in doc["choices"] if c["id"] == "revoked")["cases"][side] == ["ACDC-0901"]
+
+
+def test_a_leak_canary_guards_either_side_and_exercises_neither():
+    case = verdict_case("ACDC-0901", "valid", ["revoked"])
+    case["assertions"][0]["check"] = "present_refused"
+    case["assertions"].append({**case["assertions"][0], "id": "a2", "check": "secrets_absent"})
+    doc, _ = build(cases=[case])
+    assert next(c for c in doc["choices"] if c["id"] == "revoked")["cases"] == {
+        "positive": [], "negative": ["ACDC-0901"]}
