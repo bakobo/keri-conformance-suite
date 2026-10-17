@@ -62,3 +62,16 @@ def test_the_script_writes_the_matrix_and_checks_it(tmp_path, monkeypatch, capsy
     assert sedi_mutation.main([]) == 0
     assert (tmp_path / "matrix.md").read_text(encoding="utf-8").startswith("# sedi-1 mutation")
     assert sedi_mutation.main(["--check"]) == 0
+
+
+def test_a_case_id_used_twice_is_refused(monkeypatch):
+    real = sedi_mutation._scenarios
+
+    def twice(root):
+        cases = list(real(root))
+        yield from cases
+        yield cases[0]
+
+    monkeypatch.setattr(sedi_mutation, "_scenarios", twice)
+    with pytest.raises(ValueError, match="used twice"):
+        sedi_mutation.run(T, ROOT)

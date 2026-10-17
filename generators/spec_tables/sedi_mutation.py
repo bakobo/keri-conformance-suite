@@ -149,6 +149,10 @@ def run(t, root: pathlib.Path, only: set[str] | None = None) -> dict:
              if only is None or only & set(case["choices"])]
     baseline, bundles = {}, {}
     for fixtures, case in cases:
+        if case["id"] in baseline:
+            # Outcomes are kept by case id, so two cases sharing one would be compared with each
+            # other's; the generator refuses such scenarios too.
+            raise ValueError(f"the case id {case['id']} is used twice in the sedi scenarios")
         baseline[case["id"]], bundles[case["id"]] = _outcome(t, fixtures, case)
     source = json.loads((root / SEDI_SOURCE).read_text(encoding="utf-8"))
     out = {}
