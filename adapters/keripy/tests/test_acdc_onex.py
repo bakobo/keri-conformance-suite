@@ -287,3 +287,24 @@ def test_no_network_connection_can_be_made_while_judging():
             with pytest.raises(acdc1x.Offline):
                 attempt()
     assert socket.create_connection is before
+
+
+def test_offline_guards_nest():
+    import socket
+
+    from kcs_adapter_keripy import acdc1x
+
+    before = socket.socket.connect
+    with acdc1x._offline():
+        with acdc1x._offline():
+            pass
+        with pytest.raises(acdc1x.Offline):  # the outer guard still holds
+            socket.socket().connect(("192.0.2.1", 80))
+    assert socket.socket.connect is before
+
+
+def test_a_pointer_index_too_long_to_name_anything_resolves_to_nothing():
+    from kcs_adapter_keripy import acdc1x
+
+    assert acdc1x._reaches_out({"items": [{}], "$ref": "#/items/" + "9" * 4301}) is True
+    assert acdc1x._reaches_out({"items": [{}], "$ref": "#/items/0"}) is False

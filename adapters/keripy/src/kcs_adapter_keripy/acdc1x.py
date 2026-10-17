@@ -53,6 +53,7 @@ REVOKED = ("rev", "brv")
 # Schema keywords that name another schema to load.
 REFERENCES = ("$ref", "$dynamicRef", "$recursiveRef")
 MISSING = object()  # a local reference that resolves to nothing in the schema
+MAX_INDEX_DIGITS = 9  # a pointer's array index longer than this names nothing a schema holds
 # Keywords whose value is instance data, never a schema.
 DATA_KEYWORDS = ("const", "enum", "default", "examples")
 # Keywords whose value maps names to subschemas: its keys are names, not keywords.
@@ -96,7 +97,8 @@ def _pointer(root, ref: str):
         part = urllib.parse.unquote(part).replace("~1", "/").replace("~0", "~")
         if isinstance(node, dict) and part in node:
             node = node[part]
-        elif isinstance(node, list) and part.isdigit() and int(part) < len(node):
+        elif (isinstance(node, list) and part.isdigit() and len(part) <= MAX_INDEX_DIGITS
+              and int(part) < len(node)):
             node = node[int(part)]
         else:
             return MISSING
@@ -143,22 +145,33 @@ class Offline(OSError):
     """A network connection attempted while judging a bundle."""
 
 
+_OFFLINE = {"depth": 0, "saved": None}
+
+
+def _refuse(*args, **kwargs):
+    raise Offline("the adapter makes no network connection while judging a bundle")
+
+
 @contextlib.contextmanager
 def _offline():
     """No network connection can be made while keripy judges a bundle: the bundle is the whole
     world (adapter protocol, acdc.verify), and keripy's schema validator would otherwise follow a
-    remote reference. This holds whatever shape of reference gets past _reaches_out."""
-    def refuse(*args, **kwargs):
-        raise Offline("the adapter makes no network connection while judging a bundle")
-
-    saved = socket.create_connection, socket.socket.connect, socket.socket.connect_ex
-    socket.create_connection = refuse
-    socket.socket.connect = refuse
-    socket.socket.connect_ex = refuse
+    remote reference. This holds whatever shape of reference gets past _reaches_out. The block is
+    installed by the outermost guard and removed by it alone, so guards nest."""
+    if _OFFLINE["depth"] == 0:
+        _OFFLINE["saved"] = (socket.create_connection, socket.socket.connect,
+                             socket.socket.connect_ex)
+        socket.create_connection = _refuse
+        socket.socket.connect = _refuse
+        socket.socket.connect_ex = _refuse
+    _OFFLINE["depth"] += 1
     try:
         yield
     finally:
-        socket.create_connection, socket.socket.connect, socket.socket.connect_ex = saved
+        _OFFLINE["depth"] -= 1
+        if _OFFLINE["depth"] == 0:
+            (socket.create_connection, socket.socket.connect,
+             socket.socket.connect_ex) = _OFFLINE["saved"]
 
 
 def _expect_schema(request):
