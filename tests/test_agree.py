@@ -133,7 +133,7 @@ def test_a_clean_issuance_must_be_valid_to_every_verifier(monkeypatch):
     monkeypatch.setattr(agree, "evaluate", lambda a, r, i: type("E", (), {"outcome": "pass"}))
     issuer = Fake({"acdc.issue": ISSUED, "acdc.verify": VALID})
     other = Fake({"acdc.verify": INVALID}, operations=("acdc.verify",))
-    cells = agree.matrix({"a": issuer, "b": other}, [issue_case()])
+    cells = agree.matrix({"a": issuer, "b": other}, {"a": issuer, "b": other}, [issue_case()])
     assert [(c["verifier"], c["expected"], c["verdict"], c["agrees"]) for c in cells] == [
         ("a", "valid", "valid", True), ("b", "valid", "invalid", False)]
     assert other.sent[0][0] == "acdc.verify" and "presented" in other.sent[0][1]
@@ -143,24 +143,24 @@ def test_an_issuance_that_fails_its_own_case_is_recorded_without_an_expectation(
     issuer = Fake({"acdc.issue": Reply({**HETI["result"], "kels": {
         "issuer": HETI["result"]["kels"]["holder"], "holder": HETI["result"]["kels"]["holder"]}}),
         "acdc.verify": VALID})
-    [cell] = agree.matrix({"a": issuer}, [issue_case()])
+    [cell] = agree.matrix({"a": issuer}, {"a": issuer}, [issue_case()])
     assert cell["producer_passed"] is False and cell["expected"] is None
     assert cell["agrees"] is None
 
 
 def test_an_issuer_negative_issued_anyway_must_be_refused_by_every_verifier():
     issuer = Fake({"acdc.issue": ISSUED, "acdc.verify": VALID})
-    [cell] = agree.matrix({"a": issuer}, [issue_case("issue_refused")])
+    [cell] = agree.matrix({"a": issuer}, {"a": issuer}, [issue_case("issue_refused")])
     assert (cell["expected"], cell["verdict"], cell["agrees"]) == ("not-valid", "valid", False)
     issuer.answers["acdc.verify"] = Failure("harness", "boom")
-    [cell] = agree.matrix({"a": issuer}, [issue_case("issue_refused")])
+    [cell] = agree.matrix({"a": issuer}, {"a": issuer}, [issue_case("issue_refused")])
     assert (cell["verdict"], cell["agrees"], cell["detail"]) == (None, False, "harness: boom")
 
 
 def test_a_refusal_or_an_error_is_one_cell_with_no_verifier():
     refused = Fake({"acdc.issue": Reply({"refused": {"reason": "no"}})})
     broken = Fake({"acdc.issue": Failure("crash", "it died")})
-    cells = agree.matrix({"r": refused, "e": broken}, [issue_case("issue_refused")])
+    cells = agree.matrix({"r": refused, "e": broken}, {"r": refused, "e": broken}, [issue_case("issue_refused")])
     assert [(c["producer"], c["produced"], c["producer_passed"], c["verifier"], c["detail"])
             for c in cells] == [("r", "refused", True, None, "no"),
                                 ("e", "error", False, None, "crash: it died")]
@@ -170,16 +170,16 @@ def test_an_answer_no_bundle_can_be_built_from_disagrees_only_when_something_was
     bad = Reply({"kels": {"issuer": "2d5f414141434141", "holder": ""},
                     "credentials": {"c": {"acdc": "", "registry": ""}}})
     issuer = Fake({"acdc.issue": bad, "acdc.verify": VALID})
-    [cell] = agree.matrix({"a": issuer}, [issue_case("issue_refused")])
+    [cell] = agree.matrix({"a": issuer}, {"a": issuer}, [issue_case("issue_refused")])
     assert cell["agrees"] is False and cell["detail"].startswith("no bundle could be built")
-    [cell] = agree.matrix({"a": issuer}, [issue_case()])
+    [cell] = agree.matrix({"a": issuer}, {"a": issuer}, [issue_case()])
     assert cell["agrees"] is None
 
 
 def test_a_presentation_is_verified_and_a_refusal_case_presented_carries_no_expectation():
     holder = Fake({"acdc.present": Reply({"presented": {"stream": "2d5f"}}),
                    "acdc.verify": INVALID}, operations=("acdc.present", "acdc.verify"))
-    [cell] = agree.matrix({"h": holder}, [present_case()])
+    [cell] = agree.matrix({"h": holder}, {"h": holder}, [present_case()])
     assert (cell["credential"], cell["produced"], cell["expected"], cell["verdict"],
             cell["agrees"]) == ("presented", "presented", None, "invalid", None)
 
@@ -188,22 +188,38 @@ def test_what_a_party_does_not_declare_is_never_sent():
     case = issue_case()
     verifier = Fake({"acdc.verify": VALID}, operations=("acdc.verify",), features=())
     issuer = Fake({"acdc.issue": ISSUED}, operations=("acdc.issue",))
-    cells = agree.matrix({"i": issuer, "v": verifier},
-                         [case, {**case, "status": "deprecated"},
+    cells = agree.matrix({"i": issuer, "v": verifier}, {"i": issuer, "v": verifier}, [case, {**case, "status": "deprecated"},
                           {**case, "operation": "acdc.verify"}])
-    assert [(c["verifier"], c["detail"]) for c in cells] == [
-        ("v", "the verifier does not declare the case's features")]
+    assert [(c["verifier"], c["detail"], c["agrees"]) for c in cells] == [
+        ("v", "the verifier does not declare the case's features", None),
+        (None, "no adapter that declares acdc.verify and the case's features verified it", False)]
     assert verifier.sent == [] and len(issuer.sent) == 1
+
+
+def test_an_expectation_no_adapter_can_verify_disagrees():
+    issuer = Fake({"acdc.issue": ISSUED}, operations=("acdc.issue",))
+    [cell] = agree.matrix({"i": issuer}, {"i": issuer}, [issue_case()])
+    assert (cell["verifier"], cell["expected"], cell["agrees"]) == (None, "valid", False)
+    [cell] = agree.matrix({"i": issuer}, {"i": issuer}, [issue_case("issue_refused")])
+    assert (cell["expected"], cell["agrees"]) == ("not-valid", False)
 
 
 def test_the_report_opens_every_adapter_and_counts_disagreements(monkeypatch):
     monkeypatch.setattr(agree, "evaluate", lambda a, r, i: type("E", (), {"outcome": "pass"}))
-    fakes = {"x": Fake({"acdc.issue": ISSUED, "acdc.verify": INVALID})}
-    report = agree.run_agreement(lambda command: fakes[command], {"a": "x"}, [issue_case()],
-                                 "2026.10")
-    assert fakes["x"].opened and fakes["x"].closed
+    opened = []
+
+    def start(command):
+        opened.append(Fake({"acdc.issue": ISSUED, "acdc.verify": INVALID}))
+        return opened[-1]
+
+    report = agree.run_agreement(start, {"a": "x"}, [issue_case()], "2026.10")
+    producing, verifying = opened
+    assert all(f.opened and f.closed for f in opened)
+    # The verdict comes from a session that issued nothing.
+    assert [op for op, _ in producing.sent] == ["acdc.issue"]
+    assert [op for op, _ in verifying.sent] == ["acdc.verify"]
     assert report["summary"] == {"cells": 1, "judged": 1, "disagree": 1}
-    assert report["adapters"] == {"a": fakes["x"].hello["implementation"]}
+    assert report["adapters"] == {"a": producing.hello["implementation"]}
     text = agree.human_summary(report)
     assert "1 disagreeing" in text and "ACDC-9001 c: a issued, a said invalid" in text
     report["cells"][0]["detail"] = None

@@ -149,10 +149,12 @@ def _supports(hello: dict, op: str, case: dict) -> bool:
                                              for f in case["targets"]["features"])
 
 
-def matrix(sessions: dict, cases: list[dict]) -> list[dict]:
-    """Every cell, for opened sessions by adapter name and the cases to draw from."""
+def matrix(sessions: dict, verifying: dict, cases: list[dict]) -> list[dict]:
+    """Every cell, for opened sessions by adapter name and the cases to draw from. ``verifying``
+    holds a second session of each adapter, so no verdict can rest on what a producer's own
+    session kept from producing."""
     cells = []
-    verifiers = {n: s for n, s in sessions.items() if "acdc.verify" in s.hello["operations"]}
+    verifiers = {n: s for n, s in verifying.items() if "acdc.verify" in s.hello["operations"]}
     for case in cases:
         if case["operation"] not in PRODUCERS or case["status"] == "deprecated":
             continue
@@ -173,6 +175,7 @@ def matrix(sessions: dict, cases: list[dict]) -> list[dict]:
                                    expected=expected, agrees=_agrees(expected, None),
                                    detail=f"no bundle could be built from the answer: {exc}"))
                 continue
+            judged = False
             for verifier, vsession in verifiers.items():
                 for credential, bundle in bundles.items():
                     cell = _cell(case, producer, verifier, credential, produced=produced,
@@ -190,6 +193,13 @@ def matrix(sessions: dict, cases: list[dict]) -> list[dict]:
                         cell["detail"] = reply.result.get("reason")
                     cell["agrees"] = _agrees(expected, cell["verdict"])
                     cells.append(cell)
+                    judged = True
+            if expected is not None and not judged:
+                # Something had to be verified and nothing could verify it: that is no agreement.
+                cells.append(_cell(case, producer, produced=produced, producer_passed=passed,
+                                   expected=expected, agrees=False,
+                                   detail="no adapter that declares acdc.verify and the case's "
+                                          "features verified it"))
     return cells
 
 
@@ -197,12 +207,13 @@ def run_agreement(open_session, adapters: dict[str, str], cases: list[dict],
                   suite_version: str) -> dict:
     """The agreement report: open_session(command) gives an unopened AdapterSession."""
     with ExitStack() as stack:
-        sessions = {}
+        sessions, verifying = {}, {}
         for name, command in adapters.items():
-            session = stack.enter_context(open_session(command))
-            session.open()
-            sessions[name] = session
-        cells = matrix(sessions, cases)
+            for held in (sessions, verifying):
+                session = stack.enter_context(open_session(command))
+                session.open()
+                held[name] = session
+        cells = matrix(sessions, verifying, cases)
         implementations = {n: s.hello["implementation"] for n, s in sessions.items()}
     judged = [c for c in cells if c["agrees"] is not None]
     return {"suite_version": suite_version, "adapters": implementations, "cells": cells,
