@@ -18,7 +18,7 @@
     "edges": [],
     "root": "EPUJlQSujFTyoYyKn8taB8fhLea3REaNkPJydmRFxuQ9"
   },
-  "description": "The SX-01 claim in its 1.x form, kept in the 1.x registry it was issued in before migration, issued and not revoked there, while its 2.00 form has been revoked in its blindable registry, as in sedi-1's ACDC-0106. A keripy 1.x verifier reads only the 1.x registry, so it finds the 1.x form valid. Migrating a claim from 1.x to 2.00 therefore needs both forms revoked, unless every 1.x verifier can be expected to see the 2.00 registry (docs/profiles/sedi.md).",
+  "description": "The SX-01 claim's 1.x copy, kept in the 1.x registry it was issued in before migration, issued and not revoked there. The bundle holds only the 1.x forms, which are all a keripy 1.x verifier reads: a revocation of the claim's 2.00 form, as in sedi-1's ACDC-0106, is recorded in a blindable 2.00 registry it never consults, so it finds the 1.x copy valid. Migrating a claim from 1.x to 2.00 therefore needs both forms revoked, unless every 1.x verifier can be expected to see the 2.00 registry (docs/profiles/sedi.md).",
   "id": "ACDC-0206",
   "input": {
     "acdcs": [],
@@ -89,5 +89,5 @@
       "ACDC10JSON"
     ]
   },
-  "title": "A claim revoked only in its 2.00 form"
+  "title": "The 1.x copy a 2.00 revocation does not reach"
 }

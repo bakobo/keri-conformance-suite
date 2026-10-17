@@ -25,7 +25,7 @@
     ],
     "root": "EGdxvM4iWvdrQWWIxJXILlevSAYI7pDAd8N-fqn5qxHm"
   },
-  "description": "As SX-05, but the edge section has no u of its own, under SEDI core's 1.x profile changed only to stop requiring one. With SX-01, which omits the edge section, it shows the edge is optional (G17 incompatibility 10: Veridian treats every edge definition as mandatory). A keripy 1.x verifier finds it valid.",
+  "description": "As SX-01, but with SEDI core's optional edge section: a utahAgent edge, NI2I, to an agent credential the same issuer issued, with the u and d SEDI's schema requires of the edge, and no u of the section's own, under SEDI core's 1.x profile changed only to stop requiring one. With SX-01, which omits the edge section, it shows the edge is optional (G17 incompatibility 10: Veridian treats every edge definition as mandatory). A keripy 1.x verifier finds it valid.",
   "id": "ACDC-0207",
   "input": {
     "acdcs": [

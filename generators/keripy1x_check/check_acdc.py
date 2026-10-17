@@ -17,6 +17,7 @@ disagreement, printed and counted in the exit status.
 """
 
 import argparse
+import contextlib
 import json
 import pathlib
 import sys
@@ -32,7 +33,9 @@ NEVER = 10 ** 12  # seconds: no stamp in a case is this far from now
 
 def verdict(request: dict) -> str:
     """keripy 1.2.14's verdict on one acdc.verify request."""
-    with habbing.openHby(name="kcs-1x-check", temp=True) as hby:
+    # keripy prints some refusals; they go to stderr so the results stay readable.
+    with contextlib.redirect_stdout(sys.stderr), \
+            habbing.openHby(name="kcs-1x-check", temp=True) as hby:
         vry = verifying.Verifier(hby=hby, expiry=NEVER)
         for raw in request["schemas"]:
             schema = bytes.fromhex(raw)
@@ -69,10 +72,10 @@ def main(argv=None) -> int:
         got = verdict(request)
         expected = next((a["expected"] for a in case.get("assertions", [])
                          if a["check"] == "verdict"), None)
-        same = expected is None or got == expected
+        same = got == expected  # a case with no verdict assertion checks nothing, so it fails
         disagreements += not same
         print(f"{'ok  ' if same else 'DIFF'} {case.get('id', path.name)}: keripy 1.2.14 says "
-              f"{got}" + ("" if same else f", the case expects {expected}"))
+              f"{got}" + ("" if same else f", the case expects {expected or 'no verdict'}"))
     return 1 if disagreements else 0
 
 
