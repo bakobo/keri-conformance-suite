@@ -704,6 +704,13 @@ def test_a_1x_version_string_or_field_set_is_never_valid():
     assert reasons(result) == ["invalid/field-order", "invalid/no-registry"]
     assert set(b.forms["A"]) >= {"ri"} and not {"rd", "t"} & set(b.forms["A"])
     assert b.dag["root"] == b.forms["A"]["d"] == b.saids["A"]
+    # The field set precedes the SAID, so the registry's td, which names the ACDC's SAID,
+    # names the body presented, and so does an edge to it.
+    assert b.expanded["A"]["d"] == b.saids["A"]
+    chain = world(single(), "N")
+    chain["acdcs"] = [{**a, "fields": "1.x"} if a["name"] == "F" else a for a in chain["acdcs"]]
+    _, b = run(chain)
+    assert b.dag["edges"][0]["n"] == b.forms["F"]["d"]
 
 
 @pytest.mark.parametrize("tamper", [{"protocol": "KERI"}, {"declared_size": "compact"}])
