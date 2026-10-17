@@ -179,6 +179,18 @@ def test_delivery_follows_keripys_own_parse_loop(monkeypatch, error, result):
     assert acdc1x._deliver(parsing.Parser(), hby, vry, b"abcd") == result
 
 
+@pytest.mark.parametrize("seal", [b"-IAA", b"-AAA"])
+def test_a_copy_of_the_presented_credential_among_the_far_nodes_stands_in_for_nothing(seal):
+    # A presentation with no commitment to its issuance, beside a sealed copy of the same
+    # credential: keripy keys what it saved by SAID, so the copy must never be delivered.
+    request = case("ACDC-0201")["input"]
+    stream = request["presented"]["stream"]
+    body = bytes.fromhex(stream).split(b"-IAB")[0]
+    result = verify({**request, "acdcs": [{"stream": stream}],
+                     "presented": {"stream": (body + seal).hex()}})
+    assert result["verdict"] != "valid"
+
+
 def test_a_refused_presentation_is_unreadable_even_when_the_credential_was_saved_elsewhere():
     request = case("ACDC-0201")["input"]
     stream = request["presented"]["stream"]

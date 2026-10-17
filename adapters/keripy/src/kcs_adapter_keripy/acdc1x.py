@@ -122,6 +122,14 @@ def _registry(vry, ri, said):
             "ts": "revoked" if state.et in REVOKED else "issued"}
 
 
+def _said_of(stream: bytes):
+    """The SAID of the ACDC a stream begins with, or None if keripy cannot read one there."""
+    try:
+        return serdering.SerderACDC(raw=bytearray(stream)).said
+    except Exception:  # noqa: BLE001 - keripy raises many kinds for a stream it cannot read
+        return None
+
+
 def verify(request):
     kel.validator(request)
     kels = kel.streams(request, "kels")
@@ -133,12 +141,12 @@ def verify(request):
     stream = kel.hex_stream(presented.get("stream"), "presented")
     schemas = _schemas(request)
     expected = _expect_schema(request)
-    try:
-        creder = serdering.SerderACDC(raw=bytearray(stream))
-    except Exception:  # noqa: BLE001 - keripy raises many kinds for a stream it cannot read
+    said = _said_of(stream)
+    if said is None:
         return {"verdict": "invalid", "reason": REASONS["unreadable"], "registry": None,
                 "edges": []}
-    said, ri = creder.said, creder.sad.get("ri")
+    creder = serdering.SerderACDC(raw=bytearray(stream))
+    ri = creder.sad.get("ri")
     with contextlib.redirect_stdout(sys.stderr), \
             habbing.openHby(name="kcs-acdc-1x", temp=True) as hby:
         vry = verifying.Verifier(hby=hby, expiry=NEVER)
@@ -148,7 +156,11 @@ def verify(request):
                 vry.resolver.add(key, raw)
             except kering.KeriError:
                 continue  # a schema keripy will not take is one the bundle does not have
-        for each in [*kels, *registry, *acdcs]:
+        # keripy's databases are keyed by SAID, so a far node with the presented credential's own
+        # SAID would let a copy delivered there stand in for what was presented. It is not a far
+        # node of the presented credential, and it is not delivered.
+        far = [each for each in acdcs if _said_of(each) != said]
+        for each in [*kels, *registry, *far]:
             _deliver(psr, hby, vry, each)
         # The presented stream is one ACDC and its attachments, taken whole, or it is unreadable:
         # a credential saved from the front of a longer or truncated stream is not what was
