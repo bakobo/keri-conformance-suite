@@ -78,7 +78,17 @@
     "ACDC-0174",
     "ACDC-0175",
     "ACDC-0176",
-    "ACDC-0177"
+    "ACDC-0177",
+    "ACDC-0178",
+    "ACDC-0179",
+    "ACDC-0180",
+    "ACDC-0181",
+    "ACDC-0182",
+    "ACDC-0183",
+    "ACDC-0184",
+    "ACDC-0185",
+    "ACDC-0186",
+    "ACDC-0187"
   ],
   "choices": [
     {
@@ -478,9 +488,39 @@
       "overturn": "A SEDI decision to let holders choose the disclosure form themselves.",
       "reading": "A holder presents exactly the disclosure asked for: the held ACDC's top-level SAID, each block the disclosure names expanded and every other block compacted to its SAID or, in an aggregate, left as its blinded SAID, and nothing the disclosure hides. It refuses, and never presents something else, when a verifier would refuse the ACDC or the ACDC cannot satisfy the disclosure: a path or label that names nothing, names a block held only compact, or is named twice, and an empty choice.",
       "security": true
+    },
+    {
+      "basis": "Without stated maxima a verifier's work on a hostile credential is unbounded, and two verifiers that pick different limits disagree about the same credential (test-plan item 13).",
+      "cases": {
+        "negative": [
+          "ACDC-0179",
+          "ACDC-0181",
+          "ACDC-0183",
+          "ACDC-0185",
+          "ACDC-0187"
+        ],
+        "positive": [
+          "ACDC-0178",
+          "ACDC-0180",
+          "ACDC-0182",
+          "ACDC-0184",
+          "ACDC-0186"
+        ]
+      },
+      "decided": "7qx6tl5p",
+      "id": "bounds",
+      "overturn": "A SEDI credential that legitimately needs more than a maximum, which raises it in a new profile version.",
+      "reading": "A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, and 4096 bytes of UTF-8 in one attribute value. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.",
+      "security": true
     }
   ],
-  "maxima": {},
+  "maxima": {
+    "aggregate_blocks": 32,
+    "attribute_bytes": 4096,
+    "edge_group_depth": 8,
+    "operator_list": 8,
+    "registry_events": 64
+  },
   "name": "sedi-1",
   "normative": false,
   "pins": {

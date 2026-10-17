@@ -18,6 +18,10 @@ A sedi-1 verifier answers `valid`, `invalid` or `incomplete`:
 - `valid` holds only as of the registry head the verifier reports. A later revocation that the bundle does not carry is not reflected in it, which is why registry-evidence refuses a bundle whose issuer's KEL seals an event the bundle lacks.
 - `valid` does not mean unexpired. sedi-1 does not check any expiry an ACDC's attributes carry; that is the relying party's check.
 
+## Maxima
+
+A sedi-1 credential holds at most 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one `o` list, and 4096 bytes of UTF-8 in one attribute value (choice `bounds`, this.i `7qx6tl5p`). A credential past a maximum is never `valid`. A verifier may refuse it as `invalid` or decline to evaluate it as `incomplete`, and its cases accept either, but it must answer rather than hang.
+
 ## For relying parties
 
 - **Source registry state from the issuer's witnesses or a watcher, not from the presenter.** A holder assembles the bundle, and the profile's registry rules (registry-evidence, registry-head) close the ways a holder can make withheld evidence read as good only for what the bundle shows. Registry state the presenter supplies is only as current as the presenter chose.
@@ -240,6 +244,16 @@ Overturned by: None from the specification: this is how SEDI reads a verdict.
 This choice is decided in this.i `8fh68wt6`.
 
 `incomplete` is never an accept, provisional or otherwise. It says the verifier could not decide, and a relying party treats it as a refusal until it has the missing evidence.
+
+#### `bounds`
+
+A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, and 4096 bytes of UTF-8 in one attribute value. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.
+
+Why: Without stated maxima a verifier's work on a hostile credential is unbounded, and two verifiers that pick different limits disagree about the same credential (test-plan item 13).
+
+Overturned by: A SEDI credential that legitimately needs more than a maximum, which raises it in a new profile version.
+
+This choice is decided in this.i `7qx6tl5p`; security-relevant: getting it wrong admits what should be refused.
 
 #### `failure-precedence`
 
