@@ -84,7 +84,11 @@ def _holds(edges: dict, near: dict, by_name: dict) -> bool:
         ops = _operators(label, member.get("o"))
         relation = ops[-1] if ops else ("I2I" if far.get("issuee") else "NI2I")
         results.append(relation == "NI2I" or far.get("issuee") == near["issuer"])
-    return any(results) if edges.get("o") == "OR" else all(results)
+    group = edges.get("o", "AND")
+    if group not in ("AND", "OR"):
+        raise ScenarioError(f"An edge group asks for the operator {group!r}; the issuer decision "
+                            "models only AND and OR groups.")
+    return any(results) if group == "OR" else all(results)
 
 
 def refusal(schemas: dict, request: dict) -> str | None:

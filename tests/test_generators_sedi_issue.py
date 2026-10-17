@@ -102,3 +102,11 @@ def test_a_schema_that_leaves_the_issuers_choices_free_is_decided():
     assert "do not satisfy" in sedi_issue.refusal(closed, request(cred("core", "issuer")))
     anything = {"ES": {**SCHEMA, "properties": {"a": {"oneOf": [True, {"type": "string"}]}}}}
     assert sedi_issue.refusal(anything, request(cred("core", "issuer", "holder"))) is None
+
+
+@pytest.mark.parametrize("group", ["BOGUS", None, ["OR"]])
+def test_a_group_operator_the_decision_does_not_model_is_a_scenario_error(group):
+    edges = {"o": group, "a": {"credential": "core", "o": "NI2I"}}
+    req = request(cred("core", "issuer"), cred("guardian", "holder", edges=edges))
+    with pytest.raises(ScenarioError, match="only AND and OR groups"):
+        sedi_issue.refusal(SCHEMAS, req)
