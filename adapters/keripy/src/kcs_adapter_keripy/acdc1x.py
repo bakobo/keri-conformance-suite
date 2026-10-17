@@ -37,6 +37,7 @@ adapter protocol lets an adapter report only what it evaluated.
 import contextlib
 import json
 import sys
+import urllib.parse
 
 from keri import kering
 from keri.app import habbing
@@ -49,6 +50,7 @@ NEVER = 10 ** 12  # seconds: a Verifier expiry past any stamp a case carries
 REVOKED = ("rev", "brv")
 # Schema keywords that name another schema to load.
 REFERENCES = ("$ref", "$dynamicRef", "$recursiveRef")
+MISSING = object()  # a local reference that resolves to nothing in the schema
 # Keywords whose value is instance data, never a schema.
 DATA_KEYWORDS = ("const", "enum", "default", "examples")
 # Keywords whose value maps names to subschemas: its keys are names, not keywords.
@@ -79,16 +81,42 @@ def _schemas(request) -> list[tuple[str, bytes]]:
     return out
 
 
+def _pointer(root, ref: str):
+    """What a local reference points at in the schema (RFC 6901), or MISSING. Only the root, "#",
+    and JSON pointers, "#/...", are resolved; a plain-name fragment needs an $anchor search this
+    does not make, so it is MISSING too."""
+    if ref == "#":
+        return root
+    if not ref.startswith("#/"):
+        return MISSING
+    node = root
+    for part in ref[2:].split("/"):
+        part = urllib.parse.unquote(part).replace("~1", "/").replace("~0", "~")
+        if isinstance(node, dict) and part in node:
+            node = node[part]
+        elif isinstance(node, list) and part.isdigit() and int(part) < len(node):
+            node = node[int(part)]
+        else:
+            return MISSING
+    return node
+
+
 def _reaches_out(schema) -> bool:
     """Whether a schema refers to anything outside itself. keripy's schema validator follows a
     reference wherever it points, and the bundle is the whole world (adapter protocol,
     acdc.verify), so such a schema is one the bundle does not have. The walk goes by schema
     position: a value under a data keyword (const, enum, default, examples) is data, and the keys
-    of a map of subschemas (properties and the like) are names, so neither is ever read as a
-    reference. Any other keyword's value is walked as a schema, which errs towards finding one."""
-    stack = [schema]
+    of a map of subschemas (properties and the like) are names, so neither is read as a reference
+    where it stands. But a local reference makes whatever it points at a schema, data included, so
+    each one is resolved and its target walked as a schema; a reference that does not resolve
+    within the schema reaches out. Any other keyword's value is walked as a schema, which errs
+    towards finding a reference."""
+    stack, seen = [schema], set()
     while stack:
         node = stack.pop()
+        if id(node) in seen:
+            continue
+        seen.add(id(node))
         if isinstance(node, list):
             stack.extend(node)
             continue
@@ -96,8 +124,10 @@ def _reaches_out(schema) -> bool:
             continue
         for key, value in node.items():
             if key in REFERENCES:
-                if not (isinstance(value, str) and value.startswith("#")):
+                target = _pointer(schema, value) if isinstance(value, str) else MISSING
+                if target is MISSING:
                     return True
+                stack.append(target)
             elif key in SCHEMA_MAPS and isinstance(value, dict):
                 stack.extend(value.values())
             elif key not in DATA_KEYWORDS:

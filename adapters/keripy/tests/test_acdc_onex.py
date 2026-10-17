@@ -208,9 +208,11 @@ def test_a_refused_presentation_is_unreadable_even_when_the_credential_was_saved
 def test_a_schema_that_refers_outside_itself_is_one_the_bundle_does_not_have(ref):
     from kcs_adapter_keripy import acdc1x
 
-    schema = {"$id": "x", "properties": {"a": {"allOf": [{"$ref": ref}]}}}
+    schema = {"$id": "x", "$defs": {"a": {"type": "string"}},
+              "properties": {"a": {"allOf": [{"$ref": ref}]}}}
     assert acdc1x._reaches_out(schema) is (ref != "#/$defs/a")
-    assert acdc1x._reaches_out([{"$dynamicRef": "#meta"}]) is False
+    # A plain-name fragment needs an $anchor search, which is not made, so it fails closed.
+    assert acdc1x._reaches_out([{"$dynamicRef": "#meta"}]) is True
 
 
 def test_a_reference_shaped_value_in_data_or_a_property_name_is_no_reference():
@@ -220,7 +222,7 @@ def test_a_reference_shaped_value_in_data_or_a_property_name_is_no_reference():
     for data in ("const", "enum", "default", "examples"):
         assert acdc1x._reaches_out({"properties": {"a": {data: away}}}) is False
     assert acdc1x._reaches_out({"properties": {"$ref": {"type": "string"}}}) is False
-    assert acdc1x._reaches_out({"$defs": {"$ref": {"$ref": "#/x"}}}) is False
+    assert acdc1x._reaches_out({"$defs": {"$ref": {"$ref": "#"}}}) is False
     assert acdc1x._reaches_out({"$defs": {"a": away}}) is True
     assert acdc1x._reaches_out({"not": away}) is True  # an unlisted keyword is walked as a schema
     assert acdc1x._reaches_out({"properties": "not a map", "type": "object"}) is False
@@ -234,3 +236,29 @@ def test_a_credential_whose_schema_reaches_out_is_held_for_its_schema():
     from kcs_adapter_keripy import acdc1x
     assert acdc1x._schemas({"schemas": [json.dumps(reached).encode().hex()]}) == []
 
+
+
+def test_a_local_reference_into_data_makes_that_data_a_schema():
+    from kcs_adapter_keripy import acdc1x
+
+    away = {"$ref": "https://example.com/x.json"}
+    smuggled = {"properties": {"a": {"const": away}, "b": {"$ref": "#/properties/a/const"}}}
+    assert acdc1x._reaches_out(smuggled) is True
+    escaped = {"$defs": {"a/b~": {"enum": [away]}}, "$ref": "#/$defs/a~1b~0/enum/0"}
+    assert acdc1x._reaches_out(escaped) is True
+    quoted = {"$defs": {"a b": {"type": "string"}}, "$ref": "#/$defs/a%20b"}
+    assert acdc1x._reaches_out(quoted) is False
+
+
+@pytest.mark.parametrize("ref", ["#nowhere", "#/$defs/missing", "#/items/5", "#/items/x", 7])
+def test_a_local_reference_that_resolves_to_nothing_reaches_out(ref):
+    from kcs_adapter_keripy import acdc1x
+
+    assert acdc1x._reaches_out({"items": [{"type": "string"}], "$ref": ref}) is True
+
+
+def test_a_reference_cycle_ends():
+    from kcs_adapter_keripy import acdc1x
+
+    assert acdc1x._reaches_out({"$defs": {"a": {"$ref": "#"}}, "$ref": "#/$defs/a"}) is False
+    assert acdc1x._reaches_out({"items": [{"$ref": "#/items/0"}]}) is False
