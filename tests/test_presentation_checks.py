@@ -151,6 +151,12 @@ def test_a_presentation_longer_than_a_stream_may_be_fails():
     assert evaluate(presented(), huge).outcome == "fail"
 
 
+def test_a_secret_anywhere_in_the_response_is_found_lists_and_numbers_included():
+    result = {"refused": {"reason": "no", "detail": [1, None, {SECRET: True}]}}
+    assert evaluate(secrets(SECRET), result).outcome == "fail"
+    assert evaluate(secrets(SECRET), {"refused": {"detail": [1, None]}}).outcome == "pass"
+
+
 def test_a_secret_in_the_response_outside_the_stream_fails():
     result = {**stream(), "extra": SECRET}
     assert evaluate(secrets(SECRET), result).outcome == "fail"
