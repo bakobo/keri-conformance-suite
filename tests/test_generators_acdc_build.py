@@ -584,7 +584,7 @@ def test_an_acdc_sealed_in_its_own_issuers_inception_is_refused():
 
 
 def test_a_schema_outside_the_subset_is_refused_unless_its_reference_leaves_the_schema():
-    bad = {**S1, "additionalProperties": False}
+    bad = {**S1, "not": {}}
     with pytest.raises(GeneratorError) as e:
         ab.build_bundle(T, direct(schemas=[{"name": "S1", "schema": bad}]))
     assert e.value.code == js.E_KEYWORD

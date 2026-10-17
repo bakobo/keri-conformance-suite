@@ -276,25 +276,14 @@ def test_the_received_schema_reading_needs_the_bytes():
 def test_the_accreditation_example_acdc_does_not_satisfy_its_own_example_schema():
     """A spec-example finding, not a generator rule: the schema at line 3725 requires "score" in
     the attribute section (line 3760) and names no "score" property, while the ACDC it describes
-    (line 3679) has "level" and no "score". The schema also uses additionalProperties, which is
-    outside the declared subset, so the generator would refuse it as a scenario schema."""
+    (line 3679) has "level" and no "score". The schema is inside the declared subset, so the
+    generator reads it, and no ACDC satisfies it: its attribute section also forbids every
+    property it does not name (additionalProperties), so adding "score" fails as well."""
     schema, acdc = _json_at(3725), _json_at(3679)
     _says(3760, "\"score\", \"name\"")
-    with pytest.raises(GeneratorError) as e:
-        js.check(schema)
-    assert e.value.code == js.E_KEYWORD
-
-    def strip(node):
-        if isinstance(node, dict):
-            return {k: strip(v) for k, v in node.items()
-                    if k not in ("additionalProperties", "credentialType")}
-        if isinstance(node, list):
-            return [strip(v) for v in node]
-        return node
-
-    reduced = strip(schema)
-    assert not js.validate(reduced, acdc)
-    assert js.validate(reduced, {**acdc, "a": {**acdc["a"], "score": 1}})
+    js.check(schema)
+    assert not js.validate(schema, acdc)
+    assert not js.validate(schema, {**acdc, "a": {**acdc["a"], "score": 1}})
 
 
 # -- the aggregate --------------------------------------------------------------------------------
