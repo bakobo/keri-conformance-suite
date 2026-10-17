@@ -3,7 +3,9 @@ baseline, and an unchanged run passes. The baseline records the verdict, every c
 and failure kind, and every assertion's outcome."""
 
 import json
+import os
 import runpy
+import subprocess
 import sys
 
 import pytest
@@ -140,6 +142,16 @@ def test_an_aborted_run_is_a_regression_even_against_an_aborted_baseline():
 
 # -- the command line
 
+@pytest.fixture(autouse=True)
+def no_embargo_list(monkeypatch, tmp_path):
+    """No test reads the maintainer's own list: no variable, no global or system git config, and a
+    working directory outside any checkout."""
+    monkeypatch.delenv(baseline.ENV_PATTERNS, raising=False)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("GIT_CONFIG_GLOBAL", os.devnull)
+    monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "1")
+
+
 @pytest.fixture
 def files(tmp_path):
     base, rep = tmp_path / "baseline.json", tmp_path / "report.json"
@@ -203,3 +215,181 @@ def test_it_runs_as_a_module(monkeypatch):
     with pytest.raises(SystemExit) as info:
         runpy.run_module("kcs_adapter_keripy.baseline", run_name="__main__")
     assert info.value.code == 2
+
+
+# -- the embargo gate (docs/profiles/sedi-test-plan.md, item 12)
+
+def held_report(rep):
+    rep.write_text(json.dumps(base_report()))
+
+
+def test_write_refuses_a_case_on_the_embargo_list(files, tmp_path, monkeypatch, capsys):
+    base, rep = files
+    before = base.read_text()
+    held_report(rep)
+    listed = tmp_path / "list.txt"
+    listed.write_text("# held\n\ncesr-0022\n")
+    monkeypatch.setenv(baseline.ENV_PATTERNS, str(listed))
+    assert run("write", base, rep) == 1
+    err = capsys.readouterr().err
+    assert "e.rule.embargo.f: The cases CESR-0022 are under embargo" in err
+    assert base.read_text() == before
+
+
+def test_write_goes_ahead_when_nothing_is_on_the_list(files, tmp_path, monkeypatch, capsys):
+    base, rep = files
+    held_report(rep)
+    listed = tmp_path / "list.txt"
+    listed.write_text("something else\n")
+    monkeypatch.setenv(baseline.ENV_PATTERNS, str(listed))
+    assert run("write", base, rep) == 0
+    assert "patterns-missing" not in capsys.readouterr().err
+
+
+def test_without_any_list_the_write_goes_ahead_and_says_so(files, capsys):
+    base, rep = files
+    held_report(rep)
+    assert run("write", base, rep) == 0
+    assert "w.rule.embargo.patterns-missing.f" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("value", ["", "   ", "missing.txt", "bad-utf8",
+                                   "~kcs-no-such-user-4c0d/list.txt"])
+def test_a_configured_list_that_cannot_be_read_refuses(files, tmp_path, monkeypatch, capsys,
+                                                       value):
+    base, rep = files
+    held_report(rep)
+    if value == "bad-utf8":
+        (tmp_path / "bad.txt").write_bytes(b"\xff\xfe")
+        value = str(tmp_path / "bad.txt")
+    elif value == "missing.txt":
+        value = str(tmp_path / value)
+    monkeypatch.setenv(baseline.ENV_PATTERNS, value)
+    assert run("write", base, rep) == 2
+    assert "e.input.format.embargo-patterns.f" in capsys.readouterr().err
+
+
+def checkout(tmp_path):
+    repo = tmp_path / "repo"
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    return repo
+
+
+@pytest.mark.parametrize("where", ["default", "relative", "absolute"])
+def test_the_list_is_found_as_the_push_guard_finds_it(tmp_path, capsys, where):
+    repo = checkout(tmp_path)
+    if where == "default":
+        listed = repo / ".git" / "info" / "embargo-patterns.txt"
+        listed.parent.mkdir(exist_ok=True)
+    else:
+        listed = repo / "held.txt"
+        name = "held.txt" if where == "relative" else str(listed)
+        subprocess.run(["git", "-C", str(repo), "config", "kcs.embargoPatterns", name],
+                       check=True)
+    listed.write_text("CESR-0022\n")
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 1
+    assert not base.exists()
+    assert "e.rule.embargo.f" in capsys.readouterr().err
+
+
+def test_a_checkout_with_no_list_goes_ahead(tmp_path):
+    repo = checkout(tmp_path)
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 0
+
+
+def test_without_git_there_is_no_default_list(files, monkeypatch, capsys):
+    def no_git(*args, **kw):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(baseline.subprocess, "run", no_git)
+    base, rep = files
+    held_report(rep)
+    assert run("write", base, rep) == 0
+    assert "patterns-missing" in capsys.readouterr().err
+
+
+def test_a_baseline_written_outside_the_checkout_is_still_checked(tmp_path, monkeypatch, capsys):
+    repo = checkout(tmp_path)
+    listed = repo / ".git" / "info" / "embargo-patterns.txt"
+    listed.parent.mkdir(exist_ok=True)
+    listed.write_text("CESR-0022\n")
+    monkeypatch.chdir(repo)
+    outside = tmp_path / "elsewhere"
+    outside.mkdir()
+    base, rep = outside / "baseline.json", outside / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 1
+    assert not base.exists()
+
+
+def test_a_dangling_default_list_refuses(tmp_path, capsys):
+    repo = checkout(tmp_path)
+    listed = repo / ".git" / "info" / "embargo-patterns.txt"
+    listed.parent.mkdir(exist_ok=True)
+    listed.symlink_to(tmp_path / "gone.txt")
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 2
+    assert "e.input.format.embargo-patterns.f" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("value", ["held.txt ", ""])
+def test_a_configured_name_is_used_exactly_as_written(tmp_path, capsys, value):
+    repo = checkout(tmp_path)
+    (repo / "held.txt").write_text("nothing held\n")
+    (repo / "held.txt ").write_text("CESR-0022\n")
+    subprocess.run(["git", "-C", str(repo), "config", "kcs.embargoPatterns", value], check=True)
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == (1 if value else 2)
+    assert not base.exists()
+
+
+def test_a_git_config_that_cannot_be_read_refuses(tmp_path, monkeypatch, capsys):
+    repo = checkout(tmp_path)
+    real = subprocess.run
+
+    def broken_config(argv, **kw):
+        if "config" in argv:
+            return subprocess.CompletedProcess(argv, 128, b"", b"fatal: bad config")
+        return real(argv, **kw)
+
+    monkeypatch.setattr(baseline.subprocess, "run", broken_config)
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 2
+    assert "could not be read" in capsys.readouterr().err
+
+
+def configure_by_environment(monkeypatch, value: bytes):
+    """Set kcs.embargoPatterns through git's environment, which can carry any bytes."""
+    monkeypatch.setenv("GIT_CONFIG_COUNT", "1")
+    monkeypatch.setenv("GIT_CONFIG_KEY_0", "kcs.embargoPatterns")
+    monkeypatch.setenv("GIT_CONFIG_VALUE_0", os.fsdecode(value))
+
+
+def test_a_carriage_return_in_the_configured_name_is_kept(tmp_path, monkeypatch):
+    repo = checkout(tmp_path)
+    (repo / "held\r.txt").write_text("CESR-0022\n")
+    (repo / "held\n.txt").write_text("nothing held\n")
+    configure_by_environment(monkeypatch, b"held\r.txt")
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 1
+    assert not base.exists()
+
+
+def test_a_configured_name_that_is_not_utf8_is_read_as_a_file_name(tmp_path, monkeypatch,
+                                                                    capsys):
+    repo = checkout(tmp_path)
+    configure_by_environment(monkeypatch, b"\xff")
+    base, rep = repo / "baseline.json", repo / "report.json"
+    held_report(rep)
+    assert run("write", base, rep) == 2  # no file of that name: the coded refusal, not a crash
+    assert "e.input.format.embargo-patterns.f" in capsys.readouterr().err
+    (repo / os.fsdecode(b"\xff")).write_text("CESR-0022\n")
+    assert run("write", base, rep) == 1

@@ -1,0 +1,2316 @@
+{
+  "format": 2,
+  "profile": "sedi-1",
+  "implementation": {
+    "name": "keripy",
+    "version": "2.1.0.dev1",
+    "commit": "9a8b7aa70960f16fe7acffd8cf7901941ac912a1"
+  },
+  "verdict": "not-interoperable",
+  "cases": {
+    "ACDC-0001": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0002": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0003": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0004": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0005": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0006": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0007": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0008": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0009": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0010": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0011": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0012": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0013": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0014": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0015": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0016": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0017": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0018": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0019": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0020": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0021": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0022": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0023": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0024": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0025": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0026": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0027": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0028": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0029": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0030": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0031": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0032": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0033": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0034": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0035": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0036": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0037": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0038": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0039": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0040": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0041": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0042": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0043": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0044": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0045": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0046": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0047": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0048": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0049": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0050": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0051": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0052": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0053": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0054": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0055": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0056": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0057": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0058": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0059": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported",
+        "a4": "not-supported",
+        "a5": "not-supported"
+      }
+    },
+    "ACDC-0060": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0061": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0062": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported",
+        "a4": "not-supported",
+        "a5": "not-supported",
+        "a6": "not-supported",
+        "a7": "not-supported",
+        "a8": "not-supported",
+        "a9": "not-supported"
+      }
+    },
+    "ACDC-0063": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0064": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0065": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0066": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0067": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0068": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0069": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0070": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0071": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0072": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported",
+        "a3": "not-supported"
+      }
+    },
+    "ACDC-0073": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0074": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0075": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0076": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0101": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0102": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0103": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0104": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0105": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0106": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0107": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0108": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0109": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0110": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0111": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0112": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0113": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0114": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0115": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0116": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0117": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0118": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0119": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0120": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0121": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0122": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0123": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0124": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0125": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0126": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0127": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0128": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0129": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0130": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0131": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0132": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0133": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0134": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0135": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0136": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0137": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0138": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0139": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0140": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0141": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0142": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0143": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0144": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0145": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0146": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0147": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0148": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0149": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0150": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0151": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0152": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0153": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0154": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0155": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0156": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0157": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0158": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0159": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0160": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0161": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0162": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0163": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0164": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0165": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0166": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0167": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0168": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0169": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0170": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0171": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0172": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0173": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0174": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0175": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0176": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported",
+        "a2": "not-supported"
+      }
+    },
+    "ACDC-0177": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0178": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0179": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0180": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0181": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0182": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0183": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0184": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0185": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0186": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0187": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0188": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0189": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0190": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0191": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0192": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0193": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0195": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "CESR-0001": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0002": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0003": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0004": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0005": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0006": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0007": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0008": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0009": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0010": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0011": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0012": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0013": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0014": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0015": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0016": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0017": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0018": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0019": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0020": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0021": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0022": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail"
+      }
+    },
+    "CESR-0023": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0024": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0025": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0026": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0027": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0028": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0029": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0030": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0031": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail"
+      }
+    },
+    "CESR-0032": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0033": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0034": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0035": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0037": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0038": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0039": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0040": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0041": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "CESR-0042": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0001": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0002": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0003": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0004": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0005": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0006": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0007": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0008": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0009": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0010": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0011": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0012": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0013": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0014": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0015": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0016": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0018": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0020": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0021": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0022": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0023": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0024": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0025": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0026": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0027": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0028": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0029": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0030": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass"
+      }
+    },
+    "KERI-0031": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0033": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0034": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0035": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a12": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0036": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0037": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0038": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0039": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0040": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0041": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0042": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0044": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass"
+      }
+    },
+    "KERI-0045": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0046": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0047": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0050": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0054": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0055": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass"
+      }
+    },
+    "KERI-0056": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0058": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0059": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass"
+      }
+    },
+    "KERI-0060": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0061": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass"
+      }
+    },
+    "KERI-0062": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0063": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a12": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0064": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0065": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass"
+      }
+    },
+    "KERI-0066": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass"
+      }
+    },
+    "KERI-0067": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass",
+        "a10": "pass",
+        "a11": "pass",
+        "a12": "pass",
+        "a13": "pass",
+        "a2": "pass",
+        "a3": "pass",
+        "a4": "pass",
+        "a5": "pass",
+        "a6": "pass",
+        "a7": "pass",
+        "a8": "pass",
+        "a9": "pass"
+      }
+    },
+    "KERI-0068": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail",
+        "a2": "pass"
+      }
+    },
+    "KERI-0069": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0070": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0071": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0072": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail",
+        "a2": "fail"
+      }
+    },
+    "KERI-0073": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail",
+        "a2": "pass",
+        "a3": "fail"
+      }
+    },
+    "KERI-0074": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail"
+      }
+    },
+    "KERI-0075": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0076": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0077": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0078": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0079": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0080": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0081": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0082": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "KERI-0083": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    }
+  }
+}
