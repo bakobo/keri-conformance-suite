@@ -32,7 +32,10 @@ def test_every_companion_case_gets_keripys_own_verdict(path):
     acdc = json.loads(bytes.fromhex(c["input"]["presented"]["stream"]).split(b"-IAB")[0])
     assert result["registry"]["rd"] == acdc["ri"] and result["registry"]["td"] == acdc["d"]
     assert (result["registry"]["n"], result["registry"]["ts"]) == (0, "issued")
-    assert result["edges"] == []
+    # A saved credential's edges all hold; nothing is said of one keripy did not save.
+    want = [{"near": acdc["d"], "path": f"e.{label}", "n": node["n"], "valid": True}
+            for label, node in acdc.get("e", {}).items() if isinstance(node, dict)]
+    assert result["edges"] == (want if result["verdict"] == "valid" else [])
 
 
 def test_a_bundle_without_the_registry_is_held_for_it():
@@ -201,3 +204,29 @@ def test_a_refused_presentation_is_unreadable_even_when_the_credential_was_saved
     assert (result["verdict"], result["reason"]) == (
         "invalid", "keripy 1.2.14 cannot read the presented stream as a 1.x ACDC")
 
+
+
+@pytest.mark.parametrize("ref", ["https://example.com/a.json", "data:application/json,{}",
+                                 7, "#/$defs/a"])
+def test_a_schema_that_refers_outside_itself_is_one_the_bundle_does_not_have(ref):
+    from kcs_adapter_keripy import acdc1x
+
+    schema = {"$id": "x", "properties": {"a": {"allOf": [{"$ref": ref}]}}}
+    assert acdc1x._reaches_out(schema) is (ref != "#/$defs/a")
+    assert acdc1x._reaches_out([{"$dynamicRef": "#meta"}]) is False
+
+
+def test_a_credential_whose_schema_reaches_out_is_held_for_its_schema():
+    request = case("ACDC-0201")["input"]
+    schema = json.loads(bytes.fromhex(request["schemas"][0]))
+    reached = {**schema, "properties": {**schema.get("properties", {}),
+                                        "x": {"$ref": "https://example.com/x.json"}}}
+    from kcs_adapter_keripy import acdc1x
+    assert acdc1x._schemas({"schemas": [json.dumps(reached).encode().hex()]}) == []
+
+
+def test_a_saved_credential_without_an_edge_section_reports_no_edges():
+    from kcs_adapter_keripy import acdc1x
+
+    creder = type("C", (), {"sad": {"e": "Esaid"}})()
+    assert acdc1x._edges(creder, "E") == []

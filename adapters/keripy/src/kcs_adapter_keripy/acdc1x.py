@@ -27,8 +27,11 @@ last event of the credential's own transaction log, as ``revoked`` or ``issued``
 compares the issuance's ``dt`` with the clock and treats a stale one as missing; its expiry is set
 past any stamp a case carries, which fixes the clock as the adapter protocol requires. keripy
 prints some refusals to stdout, which is the protocol's channel, so everything it prints while
-judging goes to stderr. A schema keripy's resolver will not take (its ``$id`` is not its SAID) is
-one the bundle does not have. keripy reports no edges, so ``edges`` is empty.
+judging goes to stderr. A schema keripy's resolver will not take (its ``$id`` is not its SAID), and
+one that refers outside itself, which keripy's validator would follow, is one the bundle does not
+have. For a credential keripy saved, ``edges`` lists each edge of its edge section as holding,
+since keripy saves one only after walking them all; otherwise keripy says nothing about which it
+reached, and ``edges`` is empty.
 """
 
 import contextlib
@@ -44,6 +47,8 @@ from kcs_adapter_keripy import kel
 
 NEVER = 10 ** 12  # seconds: a Verifier expiry past any stamp a case carries
 REVOKED = ("rev", "brv")
+# Schema keywords that name another schema to load.
+REFERENCES = ("$ref", "$dynamicRef", "$recursiveRef")
 REASONS = {"valid": "keripy 1.2.14's Verifier saved the credential",
            "mre": "keripy 1.2.14's Verifier holds it for a missing registry or issuance",
            "mce": "keripy 1.2.14's Verifier holds it for a missing chained credential",
@@ -61,12 +66,42 @@ def _schemas(request) -> list[tuple[str, bytes]]:
     for value in values:
         raw = kel.hex_stream(value, "schemas")
         try:
-            said = json.loads(raw)["$id"]
+            doc = json.loads(raw)
+            said = doc["$id"]
         except (ValueError, TypeError, KeyError):
             continue  # a schema keripy cannot index is one the bundle does not have
-        if isinstance(said, str):
+        if isinstance(said, str) and not _reaches_out(doc):
             out.append((said, raw))
     return out
+
+
+def _reaches_out(node) -> bool:
+    """Whether a schema refers to anything outside itself. keripy's schema validator follows a
+    reference wherever it points, and the bundle is the whole world (adapter protocol,
+    acdc.verify), so such a schema is one the bundle does not have."""
+    stack = [node]
+    while stack:
+        value = stack.pop()
+        if isinstance(value, dict):
+            for key, item in value.items():
+                if key in REFERENCES and not (isinstance(item, str) and item.startswith("#")):
+                    return True
+                stack.append(item)
+        elif isinstance(value, list):
+            stack.extend(value)
+    return False
+
+
+def _edges(creder, said) -> list[dict]:
+    """The edges of a credential keripy saved, each holding: keripy's Verifier saves one only
+    after walking every label of its edge section but d and o and finding each far node issued.
+    It walks no deeper, so neither does this."""
+    section = creder.sad.get("e")
+    if not isinstance(section, dict):
+        return []
+    return [{"near": said, "path": f"e.{label}", "n": node["n"], "valid": True}
+            for label, node in section.items()
+            if label not in ("d", "o") and isinstance(node, dict) and "n" in node]
 
 
 def _expect_schema(request):
@@ -178,6 +213,7 @@ def verify(request):
             held = [name for name in ("mre", "mce", "mse")
                     if getattr(vry.reger, name).get(keys=said) is not None]
             outcome, why = ("incomplete", held[0]) if held else ("invalid", "invalid")
+    edges = _edges(creder, said) if why == "valid" else []
     if expected is not None and creder.sad.get("s") != expected and outcome == "valid":
-        outcome, why = "invalid", "expected"
-    return {"verdict": outcome, "reason": REASONS[why], "registry": head, "edges": []}
+        outcome, why, edges = "invalid", "expected", []
+    return {"verdict": outcome, "reason": REASONS[why], "registry": head, "edges": edges}
