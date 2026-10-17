@@ -12,7 +12,8 @@ pytestmark = pytest.mark.onex
 def test_keripy_1x_does_not_declare_or_perform_keri_process():
     hello = json.loads(protocol.handle_line(b'{"id":0,"op":"hello","protocol":1}'))["result"]
     assert "keri.process" not in hello["operations"]
-    assert not set(kel.FEATURES) & set(hello["features"])
+    # Only the KEL features its 1.x acdc.verify relies on (acdc1x.py), not keri.process's.
+    assert set(kel.FEATURES) & set(hello["features"]) == {"crypto.ed25519", "kel.basic"}
     request = {"id": 5, "op": "keri.process", "perspective": {"role": "validator"},
                "messages": []}
     response = json.loads(protocol.handle_line(json.dumps(request).encode()))

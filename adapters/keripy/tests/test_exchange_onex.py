@@ -10,10 +10,11 @@ from kcs_adapter_keripy import protocol
 pytestmark = pytest.mark.onex
 
 
-@pytest.mark.parametrize("op", ["acdc.verify", "exn.verify"])
-def test_keripy_1x_does_not_declare_or_perform_the_acdc_operations(op):
+def test_keripy_1x_does_not_declare_or_perform_exn_verify():
     hello = json.loads(protocol.handle_line(b'{"id":0,"op":"hello","protocol":1}'))["result"]
-    assert op not in hello["operations"]
-    assert not [f for f in hello["features"] if f.startswith("acdc.")]
-    response = json.loads(protocol.handle_line(json.dumps({"id": 5, "op": op}).encode()))
+    assert "exn.verify" not in hello["operations"]
+    # Its ACDC features are the 1.x ones acdc.verify serves (test_acdc_onex.py), never 2.x.
+    assert [f for f in hello["features"] if f.startswith("acdc.")] == ["acdc.keripy-1x",
+                                                                       "acdc.ptel-1x"]
+    response = json.loads(protocol.handle_line(b'{"id": 5, "op": "exn.verify"}'))
     assert response["error"]["kind"] == "unsupported"

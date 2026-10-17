@@ -16,6 +16,9 @@ OPERATIONS = ["cesr.parse", "cesr.encode"]
 # keri.process is declared only where keripy validates the KERI bodies the cases carry (2.XX):
 # keripy main. keripy 1.2.14 reads only 1.XX bodies.
 KEL_GENERATIONS = ("main",)
+# What keripy 1.x's acdc.verify (acdc1x.py) promises: the 1.x ACDC field set and SAID, the
+# vcp/iss/rev registry, and the basic Ed25519 KELs their anchors sit in.
+ONEX_ACDC_FEATURES = ("acdc.keripy-1x", "acdc.ptel-1x", "crypto.ed25519", "kel.basic")
 HEX = re.compile(r"(?:[0-9a-f]{2})*")
 
 # The longest request line the adapter reads, in bytes, not counting its newline. A longer line
@@ -60,6 +63,11 @@ def hello(request):
         # it answers every bundle fail-closed and declares no acdc.* feature (README.md).
         operations += ["keri.process", "acdc.verify", "exn.verify"]
         features += [f for f in kel.FEATURES if f not in features]
+    else:
+        # keripy 1.x judges a 1.x ACDC with its own Verifier (acdc1x.py), so it declares the 1.x
+        # ACDC and registry features, and the KEL features that judgement relies on.
+        operations += ["acdc.verify"]
+        features += [f for f in ONEX_ACDC_FEATURES if f not in features]
     return {"protocol": PROTOCOL, "adapter": dict(ADAPTER),
             "implementation": keripy_api.implementation(), "operations": operations,
             "features": features, "composes": []}
@@ -90,7 +98,9 @@ def _process(request):
 
 
 def _acdc_verify(request):
-    _main_only(request)
+    if cesr.api().generation not in KEL_GENERATIONS:
+        from kcs_adapter_keripy import acdc1x  # keripy 1.x only: keri.vdr is its registry
+        return acdc1x.verify(request)
     from kcs_adapter_keripy import acdc  # keripy main only: keri.acdc is not in keripy 1.x
     return acdc.verify(request)
 
