@@ -130,15 +130,14 @@ def test_annotations_and_identifiers_are_allowed_and_ignored():
 
 
 @pytest.mark.parametrize("keyword,value", [
-    ("additionalProperties", False),
-    ("items", {"type": "string"}),
     ("allOf", [True]),
     ("not", {"type": "string"}),
     ("enum", [1]),
     ("minimum", 0),
     ("pattern", "^a"),
     ("if", True),
-    ("credentialType", "x"),  # unknown words are refused too, not ignored
+    ("maxItems", 2),
+    ("credentialKind", "x"),  # unknown words are refused too, not ignored
 ])
 def test_a_keyword_outside_the_subset_is_refused(keyword, value):
     with pytest.raises(GeneratorError) as e:
@@ -147,6 +146,47 @@ def test_a_keyword_outside_the_subset_is_refused(keyword, value):
     assert keyword in str(e.value)
     with pytest.raises(GeneratorError):
         js.validate({"type": "object", keyword: value}, {})
+
+
+@pytest.mark.parametrize("schema,instance,valid", [
+    ({"type": "object", "properties": {"a": {}}, "additionalProperties": False}, {"a": 1}, True),
+    ({"type": "object", "properties": {"a": {}}, "additionalProperties": False}, {"b": 1}, False),
+    ({"additionalProperties": {"type": "string"}}, {"b": "x"}, True),
+    ({"additionalProperties": {"type": "string"}}, {"b": 1}, False),
+    ({"additionalProperties": False}, [1], True),  # applies only to objects
+    ({"items": {"type": "string"}}, ["a", "b"], True),
+    ({"items": {"type": "string"}}, ["a", 1], False),
+    ({"items": {"type": "string"}}, "not an array", True),
+    ({"minItems": 2}, [1], False),
+    ({"minItems": 2}, [1, 2], True),
+    ({"uniqueItems": True}, [1, 1.0], False),  # equal as JSON values
+    ({"uniqueItems": True}, [1, True], True),  # a boolean is not a number
+    ({"uniqueItems": False}, [1, 1], True),
+    ({"credentialType": "SEDI", "type": "string"}, "x", True),
+])
+def test_the_keywords_the_sedi_schemas_use(schema, instance, valid):
+    assert js.validate(schema, instance) is valid
+
+
+@pytest.mark.parametrize("schema", [
+    {"minItems": -1}, {"minItems": 1.5}, {"minItems": True}, {"uniqueItems": "yes"},
+    {"items": 3}, {"additionalProperties": "no"}, {"credentialType": 1},
+])
+def test_the_sedi_keywords_must_have_their_forms(schema):
+    with pytest.raises(GeneratorError) as e:
+        js.check(schema)
+    assert e.value.code == js.E_FORM
+
+
+def test_a_reference_may_step_through_items_and_additional_properties():
+    schema = {"$defs": {"list": {"items": {"type": "string"}}},
+              "additionalProperties": {"type": "integer"},
+              "properties": {"a": {"$ref": "#/$defs/list/items"},
+                             "b": {"$ref": "#/additionalProperties"}}}
+    assert js.validate(schema, {"a": "x", "b": 1})
+    assert not js.validate(schema, {"a": 1, "b": 1})
+    with pytest.raises(GeneratorError):
+        js.check({"properties": {"a": {"$ref": "#/items"}}})
 
 
 def test_a_keyword_outside_the_subset_is_refused_however_deep():

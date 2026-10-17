@@ -13,12 +13,16 @@ against the schema its case names (this.i 2u2ps8mt). It implements these keyword
   without regard to key order;
 - ``$ref`` to a JSON pointer inside the same schema (``#`` or ``#/...``) that lands on the root
   or on a subschema, never inside ``const``, applied together with its sibling keywords, as
-  2020-12 requires.
+  2020-12 requires;
+- ``additionalProperties`` (a schema, or a boolean, for each property of an object that
+  ``properties`` does not name), ``items`` (a schema for every element of an array),
+  ``minItems`` and ``uniqueItems`` (elements distinct as JSON values), which the SEDI schemas
+  use.
 
 Some keywords have no effect on a verdict and are allowed: ``$id`` and ``$schema`` at the root,
-``$defs`` as a home for reference targets, the annotations ``title`` and ``description``, and
+``$defs`` as a home for reference targets, the annotations ``title`` and ``description``,
 ``version``, which the ACDC specification requires of every schema and says is not used in
-validation (line 230). Every other keyword, including words JSON Schema itself would ignore, is
+validation (line 230), and ``credentialType``, the annotation SEDI's schemas carry. Every other keyword, including words JSON Schema itself would ignore, is
 refused with a coded error rather than skipped, because a skipped keyword would yield a verdict
 the full dialect could contradict.
 
@@ -43,8 +47,10 @@ E_DEPTH = "e.input.range.kcs-schema-depth.f"
 
 MAX_REF_DEPTH = 64
 TYPES = ("object", "array", "string", "number", "integer", "boolean", "null")
-ASSERTIONS = ("type", "properties", "required", "oneOf", "anyOf", "const", "$ref")
-ALLOWED = ASSERTIONS + ("$id", "$schema", "$defs", "title", "description", "version")
+ASSERTIONS = ("type", "properties", "required", "oneOf", "anyOf", "const", "$ref",
+              "additionalProperties", "items", "minItems", "uniqueItems")
+ANNOTATIONS = ("title", "description", "version", "credentialType")
+ALLOWED = ASSERTIONS + ("$id", "$schema", "$defs") + ANNOTATIONS
 ROOT_ONLY = ("$id", "$schema")
 NONLOCAL_KEYWORDS = ("$dynamicRef", "$dynamicAnchor", "$recursiveRef", "$recursiveAnchor")
 
@@ -68,6 +74,7 @@ def _is_local(ref) -> bool:
 # schema to another schema; everything else, ``const`` above all, is instance data or a scalar.
 SUBSCHEMA_MAPS = ("properties", "$defs")
 SUBSCHEMA_LISTS = ("oneOf", "anyOf")
+SUBSCHEMA_SINGLE = ("additionalProperties", "items")
 
 
 def _subschemas(node: dict, path: str):
@@ -80,6 +87,9 @@ def _subschemas(node: dict, path: str):
         if isinstance(node.get(key), list):
             for i, sub in enumerate(node[key]):
                 yield sub, f"{path}/{key}/{i}"
+    for key in SUBSCHEMA_SINGLE:
+        if key in node:
+            yield node[key], f"{path}/{key}"
 
 
 def nonlocal_references(schema) -> list[str]:
@@ -146,6 +156,14 @@ def _check_value(key, value, here, refs, allow_nonlocal):
             raise SchemaError(f"{here} must be a non-empty list of schemas.", E_FORM)
         for i, sub in enumerate(value):
             _check_node(sub, f"{here}/{i}", False, refs, allow_nonlocal)
+    elif key in SUBSCHEMA_SINGLE:
+        _check_node(value, here, False, refs, allow_nonlocal)
+    elif key == "minItems":
+        if type(value) is not int or value < 0:
+            raise SchemaError(f"{here} must be a non-negative integer.", E_FORM)
+    elif key == "uniqueItems":
+        if not isinstance(value, bool):
+            raise SchemaError(f"{here} must be a boolean.", E_FORM)
     elif key == "$ref":
         if not isinstance(value, str):
             raise SchemaError(f"{here} must be a string.", E_FORM)
@@ -155,22 +173,30 @@ def _check_value(key, value, here, refs, allow_nonlocal):
             raise SchemaError(f"The reference {value!r} at {here} is not local to the schema, "
                               f"which the subset cannot evaluate.", E_REFERENCE)
     elif key != "const" and not isinstance(value, str):
-        # $id, $schema, title, description and version all take strings.
+        # $id, $schema and the annotations all take strings.
         raise SchemaError(f"{here} must be a string.", E_FORM)
 
 
 def _resolve(root, ref: str):
     """The subschema a local reference points to, by RFC 6901 after percent-decoding. The pointer
-    must step from schema to schema, through ``properties`` or ``$defs`` and a name or ``oneOf``
-    or ``anyOf`` and an index, so that it lands on a schema the subset check has already passed;
-    a location inside ``const``, or a keyword's value that is not itself a schema, is refused."""
+    must step from schema to schema, through ``properties`` or ``$defs`` and a name, ``oneOf``
+    or ``anyOf`` and an index, or ``additionalProperties`` or ``items`` alone, so that it lands
+    on a schema the subset check has already passed; a location inside ``const``, or a
+    keyword's value that is not itself a schema, is refused."""
     node = root
     pointer = urllib.parse.unquote(ref[1:])
     tokens = [t.replace("~1", "/").replace("~0", "~") for t in pointer.split("/")[1:]] \
         if pointer else []
-    for i in range(0, len(tokens), 2):
-        keyword, member = tokens[i], tokens[i + 1] if i + 1 < len(tokens) else None
-        if not isinstance(node, dict) or member is None:
+    i = 0
+    while i < len(tokens) and node is not None:
+        keyword = tokens[i]
+        member = tokens[i + 1] if i + 1 < len(tokens) else None
+        if not isinstance(node, dict):
+            node = None
+        elif keyword in SUBSCHEMA_SINGLE and keyword in node:
+            node, i = node[keyword], i + 1
+            continue
+        elif member is None:
             node = None
         elif keyword in SUBSCHEMA_MAPS and isinstance(node.get(keyword), dict):
             node = node[keyword].get(member)
@@ -179,7 +205,8 @@ def _resolve(root, ref: str):
             node = node[keyword][int(member)]
         else:
             node = None
-        if node is None:
+        i += 2
+    if node is None:
             raise SchemaError(f"The reference {ref!r} does not resolve to a schema in the schema; "
                               f"a reference may point only at the root or at a subschema under "
                               f"{', '.join(SUBSCHEMA_MAPS + SUBSCHEMA_LISTS)}.", E_REFERENCE)
@@ -247,10 +274,24 @@ def _valid(root, node, instance, depth: int) -> bool:
     if isinstance(instance, dict):
         if any(name not in instance for name in node.get("required", [])):
             return False
-        for name, sub in node.get("properties", {}).items():
+        named = node.get("properties", {})
+        for name, sub in named.items():
             # A property's value is a new instance, so references below it start afresh.
             if name in instance and not _valid(root, sub, instance[name], 0):
                 return False
+        if "additionalProperties" in node:
+            extra = node["additionalProperties"]
+            if any(not _valid(root, extra, instance[name], 0)
+                   for name in instance if name not in named):
+                return False
+    if isinstance(instance, list):
+        if len(instance) < node.get("minItems", 0):
+            return False
+        if node.get("uniqueItems") and any(_equal(a, b) for i, a in enumerate(instance)
+                                           for b in instance[i + 1:]):
+            return False
+        if "items" in node and not all(_valid(root, node["items"], x, 0) for x in instance):
+            return False
     if "anyOf" in node and not any(_valid(root, s, instance, depth) for s in node["anyOf"]):
         return False
     return "oneOf" not in node or sum(_valid(root, s, instance, depth) for s in node["oneOf"]) == 1
