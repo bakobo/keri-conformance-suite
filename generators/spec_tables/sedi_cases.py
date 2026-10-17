@@ -34,7 +34,8 @@ PROFILE = "sedi-1"
 BATCH_STATUS = "draft"
 EDGES, BUP, PRESENTATION = "acdc.edges", "acdc.registry.bup", "acdc.presentation"
 CASE_FIELDS = {"id", "key", "title", "description", "base", "replace", "patch", "remove",
-               "append", "expect", "choices", "triage", "pair", "status", "disclosure"}
+               "append", "expect", "choices", "triage", "pair", "status", "disclosure",
+               "beyond_bound"}
 # A holder case's verdict when the holder must refuse; one it must present is valid.
 REFUSED = "refused"
 
@@ -198,7 +199,16 @@ def build_sedi_case(scenario_path: str, case: dict, ev: Evaluation, pairs: dict,
     wire = ["CESR-2.00"] + ([ac.KERI_WIRE] if b.request["kels"] else []) + [ac.WIRE]
     if ev.disclosure is not None:
         return _holder_case(scenario_path, case, ev, description, basis, wire)
-    return {
+    expected, beyond = verdict, case.get("beyond_bound")
+    if beyond is not None:
+        # Past a maximum, refusing (invalid) and declining to evaluate (incomplete) both conform
+        # (choice bounds, this.i 7qx6tl5p), so the case asks only that it is not valid.
+        if beyond not in sm.MAXIMA or verdict == sm.VALID:
+            raise ScenarioError(f"{key}: beyond_bound names {beyond!r}, which is not a maximum "
+                                f"the model refuses past.")
+        expected = "not-valid"
+        note += f" It is past the maximum {beyond}, so any verdict but valid conforms."
+    case_doc = {
         "schema_version": ac.SCHEMA_VERSION,
         "id": case["id"],
         "title": case["title"],
@@ -209,7 +219,7 @@ def build_sedi_case(scenario_path: str, case: dict, ev: Evaluation, pairs: dict,
         "operation": "acdc.verify",
         "input": b.case_input(),
         "assertions": [{"id": "a1", "check": "verdict", "level": "INTEROP", "basis": basis,
-                        "choices": list(case["choices"]), "note": note, "expected": verdict}],
+                        "choices": list(case["choices"]), "note": note, "expected": expected}],
         "provenance": {
             "scenario": f"{scenario_path}#{key}",
             "generator": {"name": GENERATOR_NAME, "version": GENERATOR_VERSION},
@@ -218,3 +228,6 @@ def build_sedi_case(scenario_path: str, case: dict, ev: Evaluation, pairs: dict,
         "dag": b.dag,
         "as_of": b.as_of,
     }
+    if beyond is not None:
+        case_doc["beyond_bound"] = beyond
+    return case_doc

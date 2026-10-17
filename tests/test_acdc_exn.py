@@ -147,6 +147,18 @@ def test_a_presentation_context_requires_the_feature_that_reads_it():
     assert not CASE_SCHEMA.is_valid(case) and case_problem(case)
 
 
+def test_a_case_past_a_maximum_asks_only_that_it_is_not_valid():
+    case = acdc_case("ACDC-0001", [assertion("verdict", level="INTEROP", basis="b",
+                                             expected="not-valid")])
+    case["beyond_bound"] = "operator_list"
+    assert CASE_SCHEMA.is_valid(case) and case_problem(case) is None
+    case["assertions"][0]["expected"] = "invalid"
+    assert "every assertion is a verdict of not-valid" in case_problem(case)
+    other = exn_case("KERI-0101", [assertion("exn_verdict", message=0, expected="rejected")])
+    other["beyond_bound"] = "operator_list"
+    assert 'only an acdc.verify case carries "beyond_bound"' in case_problem(other)
+
+
 def test_an_acdc_case_needs_a_dag_and_an_evaluation_point():
     for field in ("dag", "as_of"):
         case = acdc_case("ACDC-0001", ALL_ACDC_CHECKS)

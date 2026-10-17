@@ -727,3 +727,101 @@ def test_the_builder_knows_only_the_1x_shape(key):
     frag["acdcs"][0][key] = "3.x"
     with pytest.raises(ScenarioError, match="the only one is 1.x"):
         ab.build_bundle(T, frag)
+
+
+# -- bounds (choice bounds, this.i 7qx6tl5p) ------------------------------------------------------
+
+
+def test_the_models_maxima_are_the_profiles():
+    source = (ROOT / "scenarios" / "sedi" / "profile.json").read_text(encoding="utf-8")
+    import json
+    assert json.loads(source)["maxima"] == sm.MAXIMA
+
+
+@pytest.mark.parametrize("body,reason", [
+    ({"a": {"d": "E", "name": "x" * 4096}}, None),
+    ({"a": {"d": "E", "name": "x" * 4097}}, "bound-attribute-bytes"),
+    ({"a": {"d": "E", "list": ["\u00e9" * 2049]}}, "bound-attribute-bytes"),  # bytes, not chars
+    ({"A": ["agid"] + ["E"] * 32}, None),
+    ({"A": ["agid"] + ["E"] * 33}, "bound-aggregate-blocks"),
+    ({"A": ["agid", {"d": "E", "v": "y" * 4097}]}, "bound-attribute-bytes"),
+    ({"a": {"d": "E", "many": ["x" * 3000, "y" * 3000]}}, "bound-attribute-bytes"),  # one value
+    ({"a": {"d": "E", "sub": {"d": "E", "v": "z" * 4097}}}, "bound-attribute-bytes"),
+    # a nested block is one value, measured whole though no field of it is past the maximum
+    ({"a": {"d": "E", "profile": {"d": "E", "x": "p" * 3000, "y": "q" * 3000}}},
+     "bound-attribute-bytes"),
+    ({"a": {"d": "E", "u": {"hidden": "h" * 5000}}}, "bound-salt-chars"),  # not a string
+    ({"a": {"d": "E", "u": "0A" + "A" * 22}}, None),
+    ({"a": {"d": "E", "u": "0B" + "A" * 46}}, "bound-salt-chars"),
+    ({"u": "x" * 45}, "bound-salt-chars"),
+    ({"e": {"d": "E", "o": "OR", "fine": {"d": "E", "n": "EF"},
+            "long": {"d": "E", "n": "EF", "o": ["I2I"] * 9}}}, "bound-operator-list"),
+    ({"e": {"d": "E", "a.b.c.d.e.f.g.h": {"d": "E", "n": "EF"}}}, None),  # a label, not depth
+    ({}, None),
+])
+def test_a_credential_past_a_maximum_is_named(body, reason):
+    assert sm._past_bounds(body) == reason
+
+
+
+def test_groups_nested_past_the_maximum_depth_are_refused_whatever_their_operator():
+    group = {"d": "E", "le": {"d": "E", "n": "EF"}}
+    for _ in range(sm.MAXIMA["edge_group_depth"] - 1):
+        group = {"d": "E", "o": "OR", "g": group}
+    assert sm._past_bounds({"e": group}) is None
+    assert sm._past_bounds({"e": {"d": "E", "o": "OR", "g": group}}) == "bound-edge-group-depth"
+
+
+def test_a_registry_salt_or_blind_past_the_maximum_is_refused():
+    frag = world({"A": cred("I")}, "A")
+    frag["registries"][0]["u"] = {"literal": "0B" + "A" * 46}
+    assert reasons(run(frag)[0]) == ["invalid/bound-salt-chars"]
+
+
+
+def test_a_literal_registry_salt_must_be_a_string():
+    frag = world({"A": cred("I")}, "A")
+    frag["registries"][0]["u"] = {}
+    with pytest.raises(ScenarioError, match="a literal salt"):
+        ab.build_bundle(T, frag)
+
+
+
+def test_a_far_credential_past_a_maximum_behind_an_unused_or_is_not_hidden():
+    big = cred("Q", "I")
+    creds = {"F": cred("Q", "I"), "G": big,
+             "N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "OR", "le1": edge("F"),
+                                                    "le2": edge("G")}})}
+    frag = world(creds, "N")
+    next(a for a in frag["acdcs"] if a["name"] == "G")["a"]["name"] = "x" * 4097
+    result, _ = run(frag)
+    assert result.verdict == sm.INVALID and reasons(result) == ["invalid/bound-attribute-bytes"]
+
+
+
+def test_a_far_registry_past_the_maximum_behind_an_unused_or_is_not_hidden():
+    creds = {"F": cred("Q", "I"), "G": cred("Q", "I", states=("issued",) * 64),
+             "N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "OR", "le1": edge("F"),
+                                                    "le2": edge("G")}})}
+    result, _ = run(world(creds, "N"))
+    assert result.verdict == sm.INVALID and "invalid/bound-registry-events" in reasons(result)
+
+
+def test_a_second_entry_claiming_a_far_nodes_said_is_still_bounded():
+    _, b = run(world(single(), "N"))
+    said = b.saids["F"]
+    oversized = world(single(), "N")
+    far = next(a for a in oversized["acdcs"] if a["name"] == "F")
+    far["a"]["name"] = "x" * 4097
+    far["alter"] = [{"path": "d", "value": said}]  # claims the first far node's SAID
+    _, big = run(oversized)
+    request = {**b.request, "acdcs": b.request["acdcs"] + big.request["acdcs"]}
+    result = sm.evaluate(T, request)
+    assert result.verdict == sm.INVALID and "invalid/bound-attribute-bytes" in reasons(result)
+
+
+
+def test_the_bundle_check_passes_over_a_registry_stream_it_cannot_read():
+    _, b = run(world({"A": cred("I")}, "A"))
+    request = {**b.request, "registry": b.request["registry"] + [{"stream": "00"}]}
+    assert sm.evaluate(T, request).verdict == sm.VALID

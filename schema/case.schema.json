@@ -1431,6 +1431,11 @@
       "type": "string",
       "pattern": "^(CESR|KERI|ACDC|IPEX)-[0-9]{4}$"
     },
+    "beyond_bound": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "The layered profile maximum this case is past (this.i 7qx6tl5p). Only an acdc.verify case carries it, and its every assertion is a verdict of not-valid: past a maximum, refusing and declining to evaluate both conform."
+    },
     "dag": {
       "type": "object",
       "additionalProperties": false,

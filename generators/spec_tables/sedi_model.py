@@ -52,6 +52,7 @@ bundles read ``incomplete`` until they carry every registry's events; an event s
 counts only against the registry its ``i`` names, which is how such an issuer avoids it.
 """
 
+import json
 from dataclasses import dataclass, field
 
 from . import acdc_model as am
@@ -79,6 +80,11 @@ COUPLE_CODES = ("0A", "E")
 BASE64 = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
 WRAPPERS = ("-C", "--C")
 QUADRUPLES = ("-a", "--a")
+
+# What a sedi-1 credential may hold (choice bounds, this.i 7qx6tl5p); scenarios/sedi/profile.json
+# states the same maxima, and a test holds the two together.
+MAXIMA = {"registry_events": 64, "aggregate_blocks": 32, "edge_group_depth": 8,
+          "operator_list": 8, "attribute_bytes": 4096, "salt_chars": 44}
 
 # How acdc_model's step failures grade under sedi-1. A failure not listed here fails a check.
 INCOMPLETE_REASONS = {"schema-absent", "issuer-kel"}
@@ -185,6 +191,76 @@ def _parse(t: Tables, stream: bytes):
         return body, raw, None
 
 
+def _size(value) -> int:
+    """An attribute value's size: a string's UTF-8 bytes, anything else's compact JSON's."""
+    text = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False,
+                                                           separators=(",", ":"))
+    return len(text.encode("utf-8", "surrogatepass"))
+
+
+def _salts(value):
+    """Every value under a key ``u`` anywhere in ``value``."""
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, dict):
+            if "u" in item:
+                yield item["u"]
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+
+
+def _past_salt(value) -> bool:
+    """Whether any u is longer than the longest primitive a u holds, whatever its type."""
+    return any(_size(u) > MAXIMA["salt_chars"] for u in _salts(value))
+
+
+def _attributes_past(block) -> bool:
+    """Whether an attribute block holds a value past the maximum, each field (a nested block
+    included) measured whole."""
+    return isinstance(block, dict) and any(
+        _size(value) > MAXIMA["attribute_bytes"]
+        for key, value in block.items() if key not in ("d", "u"))
+
+
+def _edges_past(section, depth: int = 1) -> str | None:
+    """The bound an edge section breaks, walked by its structure: a group nested past the
+    maximum depth (the section itself at depth 1), or an edge's o list past the maximum."""
+    stack = [(section, depth)]
+    while stack:
+        group, level = stack.pop()
+        if level > MAXIMA["edge_group_depth"]:
+            return "bound-edge-group-depth"
+        for key, member in group.items():
+            if key in BLOCK_FIELDS or not isinstance(member, dict):
+                continue
+            if "n" in member:
+                if isinstance(member.get("o"), list) and len(member["o"]) > MAXIMA[
+                        "operator_list"]:
+                    return "bound-operator-list"
+            else:
+                stack.append((member, level + 1))
+    return None
+
+
+def _past_bounds(body: dict) -> str | None:
+    """The bound a credential breaks, or None (choice bounds). Every maximum is checked on the
+    whole credential before anything is evaluated, so no alternative an OR group did not need
+    can hide one."""
+    aggregate = body.get("A")
+    if isinstance(aggregate, list) and len(aggregate) - 1 > MAXIMA["aggregate_blocks"]:
+        return "bound-aggregate-blocks"
+    blocks = [body.get("a")] + (aggregate[1:] if isinstance(aggregate, list) else [])
+    if any(_attributes_past(b) for b in blocks):
+        return "bound-attribute-bytes"
+    if _past_salt(body):
+        return "bound-salt-chars"
+    if isinstance(body.get("e"), dict):
+        return _edges_past(body["e"])
+    return None
+
+
 def combine(grades: list[str], operator: str = "AND") -> str:
     """The grade of a group: AND needs every member valid, OR one, and a failure outranks
     something unevaluable either way (failure-precedence)."""
@@ -250,6 +326,11 @@ class _SediModel(am._Model):
         if blocks is None:
             node.failures.append(am.Failure(1, "attachments"))
             return node, raw
+        bound = _past_bounds(body)
+        if bound:
+            # Past a maximum it is not a sedi-1 credential, and nothing more is read of it.
+            node.failures.append(am.Failure(1, bound))
+            return node, raw
         node.failures += self._intrinsic(body)
         node.failures += self._schema(body)
         node.failures += self._commitment(node)
@@ -302,6 +383,7 @@ class _SediModel(am._Model):
     def _walk(self, rd, issuer):
         events = [p for p in self.registry_streams if p is not None and isinstance(p[0], dict)
                   and (p[0].get("d") == rd or p[0].get("rd") == rd)]
+        # The registry's maxima are the bundle check's (_bundle_past_bounds), made before this.
         inception = next((p for p in events if p[0].get("d") == rd), None)
         if inception is None:
             return None, [(INCOMPLETE, "registry-absent")]
@@ -517,6 +599,9 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
     if presented.body is None:
         return Result(INVALID, [Finding(INVALID, "presented", f.reason)
                                 for f in presented.failures])
+    past = _bundle_past_bounds(model, request, presented)
+    if past:
+        return Result(INVALID, past)
     state: dict = {}
 
     def verdict_of(node: am.Node) -> tuple[str, list[Finding]]:
@@ -559,6 +644,32 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
         head = model.heads.get((presented.body["rd"], presented.body.get("i")), (None,))[0]
     # A node reached by two paths (a diamond) contributes its findings once.
     return Result(verdict, list(dict.fromkeys(findings)), head)
+
+
+def _bundle_past_bounds(model: _SediModel, request: dict, presented: am.Node) -> list[Finding]:
+    """Every breach of a maximum anywhere in the bundle (choice bounds), read from the request
+    itself rather than from what evaluation reaches: each far-node entry as it is delivered,
+    deduplicated by nothing, and each registry by its events and salts. A breach makes the
+    bundle invalid whichever edges the verdict needs, so an OR alternative it did not need
+    cannot hide one."""
+    found = [Finding(INVALID, presented.said, f.reason)
+             for f in presented.failures if f.reason.startswith("bound-")]
+    for entry in request["acdcs"]:
+        node, _ = model.node(bytes.fromhex(entry["stream"]))
+        found += [Finding(INVALID, node.said or "acdc", f.reason)
+                  for f in node.failures if f.reason.startswith("bound-")]
+    counts: dict = {}
+    for parsed in model.registry_streams:
+        if parsed is None or not isinstance(parsed[0], dict):
+            continue
+        body, _, blocks = parsed
+        rd = str(body.get("rd", body.get("d")))
+        counts[rd] = counts.get(rd, 0) + 1
+        if _past_salt(body) or any(len(b[1]) > MAXIMA["salt_chars"] for b in blocks or ()):
+            found.append(Finding(INVALID, rd, "bound-salt-chars"))
+    found += [Finding(INVALID, rd, "bound-registry-events")
+              for rd, n in counts.items() if n > MAXIMA["registry_events"]]
+    return list(dict.fromkeys(found))
 
 
 def _presentation(t: Tables, request: dict, presented: am.Node) -> list[Finding]:

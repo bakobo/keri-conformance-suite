@@ -36,7 +36,14 @@
       "why": "Bulk issuance (choice bulk-defaults) cites text that exists only on main."
     }
   },
-  "maxima": {},
+  "maxima": {
+    "registry_events": 64,
+    "aggregate_blocks": 32,
+    "edge_group_depth": 8,
+    "operator_list": 8,
+    "attribute_bytes": 4096,
+    "salt_chars": 44
+  },
   "choices": [
     {
       "id": "tel-sequence",
@@ -212,6 +219,14 @@
       "basis": "Graduated and selective disclosure are the holder's side of ACDC's disclosure model, and the profile tests a holder as well as an issuer and a verifier (test-plan item 5); without a rule, a holder could present more than it was asked to, or a credential a verifier refuses.",
       "overturn": "A SEDI decision to let holders choose the disclosure form themselves.",
       "decided": "3lq4zrr3",
+      "security": true
+    },
+    {
+      "id": "bounds",
+      "reading": "A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, 4096 bytes in one attribute value (a string's UTF-8, anything else's compact JSON), and 44 characters in any u, the longest primitive a u holds (a 256-bit blinding factor, code a), measured by its size whatever its type. Every maximum is checked on the whole credential, so no alternative an OR group did not need can hide one. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.",
+      "basis": "Without stated maxima a verifier's work on a hostile credential is unbounded, and two verifiers that pick different limits disagree about the same credential (test-plan item 13).",
+      "overturn": "A SEDI credential that legitimately needs more than a maximum, which raises it in a new profile version.",
+      "decided": "7qx6tl5p",
       "security": true
     }
   ]
