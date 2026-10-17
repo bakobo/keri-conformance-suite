@@ -4,7 +4,7 @@ refused, from the request and its schemas alone."""
 import pytest
 
 from generators.spec_tables import sedi_issue
-from generators.spec_tables.errors import GeneratorError
+from generators.spec_tables.errors import GeneratorError, ScenarioError
 
 ATTRS = {"type": "object", "required": ["d", "u", "name"], "additionalProperties": False,
          "properties": {"d": {"type": "string"}, "u": {"type": "string"},
@@ -55,3 +55,19 @@ def test_a_schema_outside_the_subset_is_a_generator_error():
     with pytest.raises(GeneratorError):
         sedi_issue.refusal({"EX": {"$id": "EX", "not": {}}},
                            request(cred("x", "issuer", schema="EX")))
+
+
+@pytest.mark.parametrize("o", ["DI2I", "E1E", "UNKNOWN", ["I2I", "E1E"]])
+def test_an_operator_the_decision_does_not_model_is_a_scenario_error(o):
+    req = request(cred("core", "issuer"),
+                  cred("guardian", "holder", edges={"core": {"credential": "core", "o": o}}))
+    with pytest.raises(ScenarioError, match="models only I2I and NI2I"):
+        sedi_issue.refusal(SCHEMAS, req)
+
+
+def test_a_schema_that_constrains_what_the_issuer_chooses_is_a_scenario_error():
+    pinned = {**ATTRS, "properties": {**ATTRS["properties"],
+                                      "u": {"const": sedi_issue.PLACEHOLDERS[0]["u"]}}}
+    schemas = {"ES": {**SCHEMA, "properties": {"a": pinned}}}
+    with pytest.raises(ScenarioError, match="constrains the d, u or i"):
+        sedi_issue.refusal(schemas, request(cred("core", "issuer", "holder")))

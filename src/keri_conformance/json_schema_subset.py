@@ -256,6 +256,20 @@ def _equal(a, b) -> bool:
     return a == b
 
 
+def _key(v):
+    """A hashable stand-in for a JSON value, equal for two values exactly when _equal holds, so
+    uniqueItems is one pass over the array, not a comparison of every pair."""
+    if isinstance(v, bool):
+        return ("b", v)
+    if _is_number(v):
+        return ("n", v)
+    if isinstance(v, list):
+        return ("l", tuple(_key(x) for x in v))
+    if isinstance(v, dict):
+        return ("d", frozenset((k, _key(x)) for k, x in v.items()))
+    return ("s" if isinstance(v, str) else "z", v)
+
+
 def _valid(root, node, instance, depth: int) -> bool:
     if isinstance(node, bool):
         return node
@@ -287,8 +301,7 @@ def _valid(root, node, instance, depth: int) -> bool:
     if isinstance(instance, list):
         if len(instance) < node.get("minItems", 0):
             return False
-        if node.get("uniqueItems") and any(_equal(a, b) for i, a in enumerate(instance)
-                                           for b in instance[i + 1:]):
+        if node.get("uniqueItems") and len({_key(x) for x in instance}) < len(instance):
             return False
         if "items" in node and not all(_valid(root, node["items"], x, 0) for x in instance):
             return False

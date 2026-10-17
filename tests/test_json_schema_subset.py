@@ -322,3 +322,14 @@ def test_a_reference_below_a_single_subschema_keyword_is_found():
     schema = {"items": {"$ref": "https://example.com/x"},
               "additionalProperties": {"$ref": "lei.json"}}
     assert js.nonlocal_references(schema) == ["/additionalProperties/$ref", "/items/$ref"]
+
+
+def test_unique_items_is_checked_in_one_pass():
+    import time
+    distinct = [[i, {"k": str(i)}] for i in range(50_000)]
+    start = time.monotonic()
+    assert js.validate({"uniqueItems": True}, distinct)
+    assert not js.validate({"uniqueItems": True}, [*distinct, [7, {"k": "7"}]])
+    assert time.monotonic() - start < 5
+    assert not js.validate({"uniqueItems": True}, [{"a": [1, None]}, {"a": [1.0, None]}])
+    assert js.validate({"uniqueItems": True}, [{"a": "x"}, {"a": ["x"]}, None, "1", 1, False])
