@@ -228,6 +228,14 @@
       "overturn": "A SEDI credential that legitimately needs more than a maximum, which raises it in a new profile version.",
       "decided": "7qx6tl5p",
       "security": true
+    },
+    {
+      "id": "issuer-issues",
+      "reading": "An issuer issues exactly the credentials a request asks for, each under a blindable registry of its own, with its own keys, salts and clock; it refuses, and never issues something else, a request whose attributes a credential's schema does not allow once the issuer has added the block's d, u and i, or whose edges cannot hold as the request's roles issue the credentials.",
+      "basis": "An issuance is the first link of every chain a verifier checks, and an issuer that issues what its schema refuses or an edge that cannot hold puts into circulation a credential no correct verifier accepts (test-plan item 4).",
+      "overturn": "A SEDI decision to let an issuer amend a request it cannot issue as asked.",
+      "decided": "2u2ps8mt",
+      "security": true
     }
   ]
 }

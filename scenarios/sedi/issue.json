@@ -1,0 +1,268 @@
+{
+ "about": "sedi-1's issuer cases (test-plan item 4, choice issuer-issues): each case is an acdc.issue request over a schema of the suite's own, and either the issuance the runner verifies or the refusal an issuer must give. The named SEDI credentials follow once acdc.issue can carry rules and nested attribute blocks.",
+ "profile": "sedi-1",
+ "fixtures": {
+  "plain": {
+   "schemas": {
+    "S": {
+     "$id": "",
+     "$schema": "https://json-schema.org/draft/2020-12/schema",
+     "title": "sedi-1 issuer case",
+     "version": "1.0.0",
+     "type": "object",
+     "required": [
+      "v",
+      "d",
+      "i",
+      "rd",
+      "s",
+      "a"
+     ],
+     "properties": {
+      "a": {
+       "oneOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "object",
+         "required": [
+          "d",
+          "u",
+          "name"
+         ],
+         "additionalProperties": false,
+         "properties": {
+          "d": {
+           "type": "string"
+          },
+          "u": {
+           "type": "string"
+          },
+          "i": {
+           "type": "string"
+          },
+          "name": {
+           "type": "string"
+          }
+         }
+        }
+       ]
+      },
+      "e": {
+       "oneOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "object"
+        }
+       ]
+      }
+     }
+    }
+   }
+  }
+ },
+ "cases": [
+  {
+   "id": "ACDC-0190",
+   "key": "SI-01",
+   "title": "A credential issued to its holder",
+   "description": "The issuer issues one credential to the holder under a blindable registry of its own. A sedi-1 issuer issues it, and the runner verifies every KEL, registry event and the ACDC it returns.",
+   "base": "plain",
+   "choices": [
+    "issuer-issues",
+    "seal-shape",
+    "tel-sequence"
+   ],
+   "triage": "None: an acceptance.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder"
+    ],
+    "schemas": [
+     "S"
+    ],
+    "credentials": [
+     {
+      "name": "core",
+      "issuer": "issuer",
+      "schema": "S",
+      "attributes": {
+       "name": "core"
+      },
+      "issuee": "holder"
+     }
+    ]
+   },
+   "expect": []
+  },
+  {
+   "id": "ACDC-0191",
+   "key": "SI-02",
+   "title": "An untargeted credential",
+   "description": "As SI-01, but the credential names no issuee, so its attribute block carries no i. A sedi-1 issuer issues it.",
+   "base": "plain",
+   "choices": [
+    "issuer-issues",
+    "seal-shape",
+    "tel-sequence"
+   ],
+   "triage": "None: an acceptance.",
+   "issue": {
+    "roles": [
+     "issuer"
+    ],
+    "schemas": [
+     "S"
+    ],
+    "credentials": [
+     {
+      "name": "core",
+      "issuer": "issuer",
+      "schema": "S",
+      "attributes": {
+       "name": "core"
+      }
+     }
+    ]
+   },
+   "expect": []
+  },
+  {
+   "id": "ACDC-0192",
+   "key": "SI-03",
+   "title": "A credential with an I2I edge that holds",
+   "description": "The issuer issues core to the holder, and the holder issues guardian with an I2I edge to core; the edge holds, since core's issuee issues guardian. A sedi-1 issuer issues both.",
+   "base": "plain",
+   "choices": [
+    "issuer-issues",
+    "seal-shape",
+    "tel-sequence"
+   ],
+   "triage": "None: an acceptance.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder"
+    ],
+    "schemas": [
+     "S"
+    ],
+    "credentials": [
+     {
+      "name": "core",
+      "issuer": "issuer",
+      "schema": "S",
+      "attributes": {
+       "name": "core"
+      },
+      "issuee": "holder"
+     },
+     {
+      "name": "guardian",
+      "issuer": "holder",
+      "schema": "S",
+      "attributes": {
+       "name": "guardian"
+      },
+      "edges": {
+       "core": {
+        "credential": "core",
+        "o": "I2I"
+       }
+      }
+     }
+    ]
+   },
+   "expect": []
+  },
+  {
+   "id": "ACDC-0193",
+   "key": "SI-04",
+   "title": "An attribute the schema forbids",
+   "description": "As SI-01, but the request adds an attribute the schema's closed attribute section does not name. A sedi-1 issuer refuses, rather than issue a credential its own schema refuses.",
+   "base": "plain",
+   "choices": [
+    "issuer-issues"
+   ],
+   "triage": "Issuing it puts into circulation a credential no verifier that checks its schema accepts.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder"
+    ],
+    "schemas": [
+     "S"
+    ],
+    "credentials": [
+     {
+      "name": "core",
+      "issuer": "issuer",
+      "schema": "S",
+      "attributes": {
+       "name": "core",
+       "extra": "x"
+      },
+      "issuee": "holder"
+     }
+    ]
+   },
+   "expect": [
+    "request refused/the attributes of core do not satisfy its schema"
+   ],
+   "pair": "SI-01"
+  },
+  {
+   "id": "ACDC-0195",
+   "key": "SI-06",
+   "title": "An NI2I edge to a credential issued elsewhere",
+   "description": "The issuer issues core to a third identifier, other, and the holder issues guardian with an NI2I edge to core. NI2I does not bind the issuers, so the edge holds though core's issuee does not issue guardian. A sedi-1 issuer issues both.",
+   "base": "plain",
+   "choices": [
+    "issuer-issues",
+    "seal-shape",
+    "tel-sequence"
+   ],
+   "triage": "None: an acceptance.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder",
+     "other"
+    ],
+    "schemas": [
+     "S"
+    ],
+    "credentials": [
+     {
+      "name": "core",
+      "issuer": "issuer",
+      "schema": "S",
+      "attributes": {
+       "name": "core"
+      },
+      "issuee": "other"
+     },
+     {
+      "name": "guardian",
+      "issuer": "holder",
+      "schema": "S",
+      "attributes": {
+       "name": "guardian"
+      },
+      "edges": {
+       "core": {
+        "credential": "core",
+        "o": "NI2I"
+       }
+      }
+     }
+    ]
+   },
+   "expect": []
+  }
+ ]
+}

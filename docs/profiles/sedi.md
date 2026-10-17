@@ -221,6 +221,16 @@ This choice is decided in this.i `09snlyre`; security-relevant: getting it wrong
 
 An untargeted credential is a bearer credential: whoever holds it may present it, and no presenter check applies. A SEDI schema that must not be presented by just anyone has to name an issuee.
 
+#### `issuer-issues`
+
+An issuer issues exactly the credentials a request asks for, each under a blindable registry of its own, with its own keys, salts and clock; it refuses, and never issues something else, a request whose attributes a credential's schema does not allow once the issuer has added the block's d, u and i, or whose edges cannot hold as the request's roles issue the credentials.
+
+Why: An issuance is the first link of every chain a verifier checks, and an issuer that issues what its schema refuses or an edge that cannot hold puts into circulation a credential no correct verifier accepts (test-plan item 4).
+
+Overturned by: A SEDI decision to let an issuer amend a request it cannot issue as asked.
+
+This choice is decided in this.i `2u2ps8mt`; security-relevant: getting it wrong admits what should be refused.
+
 #### `holder-presents`
 
 A holder presents exactly the disclosure asked for: the held ACDC's top-level SAID, each block the disclosure names expanded and every other block compacted to its SAID or, in an aggregate, left as its blinded SAID, and nothing the disclosure hides. It refuses, and never presents something else, when a verifier would refuse the ACDC or the ACDC cannot satisfy the disclosure: a path or label that names nothing, names a block held only compact, or is named twice, and an empty choice.

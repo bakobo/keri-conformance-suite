@@ -170,3 +170,8 @@ def test_beyond_bound_names_a_maximum_the_model_refuses_past(beyond, verdict, wo
     with pytest.raises(ScenarioError, match=words):
         sedi_cases.build_sedi_case("s.json", case, ev, {"SV-01": ("ACDC-0901", "valid")},
                                    READINGS)
+
+
+def test_an_issuance_naming_a_schema_its_fixture_lacks_is_refused():
+    with pytest.raises(ScenarioError, match="does not define"):
+        sedi_cases.IssuerEvaluation(T, {"schemas": {}}, {"schemas": ["S"], "credentials": []})
