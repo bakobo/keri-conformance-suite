@@ -316,3 +316,9 @@ def test_the_dialect_is_named():
     assert js.dialect({"$schema": js.DIALECT}) == js.DIALECT
     assert js.dialect({}) is None
     assert js.dialect(True) is None
+
+
+def test_a_reference_below_a_single_subschema_keyword_is_found():
+    schema = {"items": {"$ref": "https://example.com/x"},
+              "additionalProperties": {"$ref": "lei.json"}}
+    assert js.nonlocal_references(schema) == ["/additionalProperties/$ref", "/items/$ref"]
