@@ -89,13 +89,14 @@ def _deliver(psr, hby, vry, data: bytes) -> tuple[int, bool]:
         before = len(ims)
         gen = psr.msgParsator(ims=ims, framed=True, pipeline=False, kvy=hby.kvy, tvy=vry.tvy,
                               vry=vry)
-        try:
+        yielded = False
+        # StopIteration is a message finished; anything else is keripy refusing one, which is
+        # skipped if keripy took it (the check below), as keripy's own parse loop skips it.
+        with contextlib.suppress(Exception):
             next(gen)
+            yielded = True
+        if yielded:
             return taken, False  # keripy yielded for more bytes: end of input
-        except StopIteration:
-            pass
-        except Exception:  # noqa: BLE001 - keripy refuses a message with many kinds
-            pass  # refused after it was taken (the check below), as keripy's parse loop skips it
         if len(ims) >= before:  # keripy took nothing: stop rather than spin
             return taken, False
         taken += 1
