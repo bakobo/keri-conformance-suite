@@ -230,7 +230,7 @@ The features these cases require are `acdc.version-2.x`, which every ACDC case r
 
 ## `acdc.issue`
 
-Issue credentials, as an implementation issues them: with its own keys, salts, registry nonces and clock (this.i 2u2ps8mt). The request asks for an issuance, not for bytes, and the runner grades the result by verifying it. This operation and `acdc.present` are specified ahead of their first cases, and the message schemas and `kcs check-adapter` accept both.
+Issue credentials, as an implementation issues them: with its own keys, salts, registry nonces and clock (this.i 2u2ps8mt). The request asks for an issuance, not for bytes, and the runner grades the result by verifying it. The message schemas and `kcs check-adapter` accept this operation and `acdc.present`; sedi-1's holder cases are the first `acdc.present` cases.
 
 ```json
 {"id": 7, "op": "acdc.issue",
@@ -274,7 +274,7 @@ An implementation that refuses an issuance, because an attribute breaks its sche
 
 ## `acdc.present`
 
-Present one held ACDC in a chosen disclosure form. The runner grades the presentation itself, by its bytes where the form is deterministic and otherwise with its own model of the decision procedure, never by asking the same adapter to verify it.
+Present one held ACDC in a chosen disclosure form. The runner grades the presentation itself, never by asking the same adapter to verify it (this.i 37ehqmh4). The body is fixed by the held ACDC and the disclosure in every form below, so a case's `presented` check compares it byte for byte, which also checks that it carries the held ACDC's top-level SAID and the SAIDs of its disclosed blocks. The attachments after the body are not fixed, since a holder may or may not point to its issuer's commitment, so they need only be nothing or one well-formed attachments group. A `secrets_absent` check lists every string of the held ACDC that the disclosure hides and fails if any appears in the response raw, as hex, Base64, Base64url or JSON-escaped; a `present_refused` check passes on a refusal.
 
 ```json
 {"id": 8, "op": "acdc.present", "perspective": {"role": "holder"},

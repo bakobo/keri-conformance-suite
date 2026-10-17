@@ -258,6 +258,11 @@ def polarity(assertion: dict, where: str) -> str:
         raise CoverageError(f"{where}: a {check} of {expected!r} has no known polarity.", E_CASE)
     if check == "rejected":
         return "negative"
+    # An issuer's or holder's answer: it produced what it must, or refused what it must refuse.
+    if check in ("issued", "presented", "secrets_absent"):
+        return "positive"
+    if check in ("issue_refused", "present_refused"):
+        return "negative"
     if check == "disposition" and isinstance(expected, str) and expected in _DISPOSITIONS:
         return _DISPOSITIONS[expected]
     if check == "trunk" and isinstance(expected, bool):

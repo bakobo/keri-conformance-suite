@@ -5,6 +5,8 @@ still never assume a field is present or well-typed, because a wrong answer must
 never an exception. Equality is type-strict throughout, so `1`, `1.0` and `true` are all different.
 """
 
+import base64
+import json
 import re
 from dataclasses import dataclass
 from fractions import Fraction
@@ -323,12 +325,79 @@ def _issue_refused(assertion, result):
     return _fail(result, "The issuer issued what it must refuse.")
 
 
+def _presented_stream(result) -> bytes:
+    """The presentation's bytes, or Unread if there is none or it is not genus-pinned hex."""
+    stream = bytes.fromhex(result["presented"]["stream"])
+    if not stream.startswith(issued.GENUS):
+        raise issued.Unread("the presentation does not begin with the genus/version code")
+    return stream
+
+
+def _presented(assertion, result):
+    """The body is the one the disclosure asks for, byte for byte, and what follows it is
+    nothing or one well-formed attachments group (this.i 37ehqmh4)."""
+    if "presented" not in result:
+        return _fail(result, "The holder refused to present what it must present.")
+    try:
+        _, raw, rest = issued.frame(_presented_stream(result), b"ACDC")
+        if rest and not rest.startswith((b"-C", b"--C")):
+            raise issued.Unread("what follows the body is not an attachments group")
+        issued.groups(rest)
+    except (issued.Unread, TypeError, ValueError, KeyError, AttributeError,
+            RecursionError) as exc:
+        return _fail(None, f"The presentation cannot be read: {type(exc).__name__}: {exc}.")
+    if raw != bytes.fromhex(assertion["expected"]["body"]):
+        return _fail({"body": raw.hex()}, "The presented body is not the one the disclosure "
+                                          "asks for.")
+    return Evaluation("pass", {"body": raw.hex()})
+
+
+def _encodings(secret: str) -> list[bytes]:
+    """The forms in which a secret may leak: raw, hex, JSON-escaped, and the part of its Base64
+    and Base64url encodings that does not depend on where it starts in a stream."""
+    data = secret.encode("utf-8")
+    forms = [data, data.hex().encode(), json.dumps(secret)[1:-1].encode()]
+    for encode in (base64.b64encode, base64.urlsafe_b64encode):
+        for lead in range(3):
+            text = encode(b"\0" * lead + data)
+            core = text[-(-4 * lead // 3):(8 * (lead + len(data))) // 6]
+            if len(core) >= 4:
+                forms.append(core)
+    return forms
+
+
+def _secrets_absent(assertion, result):
+    """None of the secrets the disclosure hides is in the response, in any form _encodings
+    enumerates."""
+    haystacks = [json.dumps(result).encode("utf-8")]
+    if "presented" in result:
+        try:
+            haystacks.append(bytes.fromhex(result["presented"]["stream"]))
+        except (TypeError, ValueError, KeyError, AttributeError):
+            pass
+    leaked = [n for n, secret in enumerate(assertion["expected"])
+              if any(form in hay for form in _encodings(secret) for hay in haystacks)]
+    if leaked:
+        return _fail({"leaked": leaked}, f"The response carries secret(s) {leaked} that the "
+                                         f"disclosure hides.")
+    return Evaluation("pass", None)
+
+
+def _present_refused(assertion, result):
+    if "refused" in result:
+        return Evaluation("pass", result)
+    return _fail(result, "The holder presented what it must refuse.")
+
+
 # Checks that read the case's own input as well as the result: what was asked for comes only from
 # the case.
 CHECKS_WITH_INPUT = {"issued": _issued}
 
 CHECKS = {
     "issue_refused": _issue_refused,
+    "presented": _presented,
+    "secrets_absent": _secrets_absent,
+    "present_refused": _present_refused,
     "decoded": _decoded,
     "rejected": _rejected,
     "encoded": _encoded,

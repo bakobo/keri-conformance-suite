@@ -78,7 +78,8 @@
         "keri.emit",
         "acdc.verify",
         "exn.verify",
-        "acdc.issue"
+        "acdc.issue",
+        "acdc.present"
       ]
     },
     "input": {
@@ -1070,6 +1071,181 @@
                     "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
                   }
                 }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "$ref": "#/$defs/basis"
+                  },
+                  "choices": {
+                    "$ref": "#/$defs/choices"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "presented"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
+                  },
+                  "expected": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "body"
+                    ],
+                    "properties": {
+                      "body": {
+                        "type": "string",
+                        "pattern": "^([0-9a-f]{2})*$",
+                        "description": "The presentation's body, the framed ACDC without its attachments, as hex (this.i 37ehqmh4)."
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level",
+                  "expected"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "$ref": "#/$defs/basis"
+                  },
+                  "choices": {
+                    "$ref": "#/$defs/choices"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "secrets_absent"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
+                  },
+                  "expected": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 8
+                    },
+                    "description": "Every secret the disclosure hides; none may appear in the response raw, as hex, Base64, Base64url or JSON-escaped."
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "check",
+                  "level"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^a[0-9]+$"
+                  },
+                  "level": {
+                    "enum": [
+                      "MUST",
+                      "SHOULD",
+                      "MAY",
+                      "INTEROP"
+                    ]
+                  },
+                  "clause": {
+                    "$ref": "#/$defs/clause"
+                  },
+                  "basis": {
+                    "$ref": "#/$defs/basis"
+                  },
+                  "choices": {
+                    "$ref": "#/$defs/choices"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "check": {
+                    "const": "present_refused"
+                  },
+                  "spec_conflicts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "$ref": "#/$defs/spec_conflict"
+                    },
+                    "description": "Other text in the specification that states a different rule from the cited clause. Informative: the assertion keeps its clause's level."
+                  },
+                  "inferred_from": {
+                    "$ref": "#/$defs/inference",
+                    "description": "For an assertion graded SHOULD because the consumer obligation it tests is inferred from a producer-side clause, the clause and the inference."
+                  }
+                }
               }
             ]
           },
@@ -1617,6 +1793,178 @@
       "if": {
         "properties": {
           "operation": {
+            "const": "acdc.present"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "input": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "perspective",
+              "kels",
+              "registry",
+              "schemas",
+              "acdcs",
+              "held",
+              "disclosure"
+            ],
+            "properties": {
+              "perspective": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "role"
+                ],
+                "properties": {
+                  "role": {
+                    "const": "holder"
+                  }
+                }
+              },
+              "kels": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "stream",
+                    "source"
+                  ],
+                  "properties": {
+                    "stream": {
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{2})*$"
+                    },
+                    "source": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "registry": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "stream"
+                  ],
+                  "properties": {
+                    "stream": {
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{2})*$"
+                    }
+                  }
+                }
+              },
+              "schemas": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^([0-9a-f]{2})*$"
+                }
+              },
+              "acdcs": {
+                "type": "array",
+                "maxItems": 15,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "stream"
+                  ],
+                  "properties": {
+                    "stream": {
+                      "type": "string",
+                      "pattern": "^([0-9a-f]{2})*$"
+                    }
+                  }
+                },
+                "description": "The far nodes of the presented ACDC's provenance DAG. The DAG holds at most 16 ACDCs, the presented one included."
+              },
+              "held": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "stream"
+                ],
+                "properties": {
+                  "stream": {
+                    "type": "string",
+                    "pattern": "^([0-9a-f]{2})*$"
+                  }
+                }
+              },
+              "disclosure": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "form"
+                    ],
+                    "properties": {
+                      "form": {
+                        "enum": [
+                          "compact",
+                          "expanded"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "form",
+                      "expand"
+                    ],
+                    "properties": {
+                      "form": {
+                        "const": "partial"
+                      },
+                      "expand": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "description": "Label paths from the top level of the blocks to expand, such as a or e.le."
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "form",
+                      "disclose"
+                    ],
+                    "properties": {
+                      "form": {
+                        "const": "selective"
+                      },
+                      "disclose": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "description": "The labels of the aggregate's attribute blocks to disclose."
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
             "const": "exn.verify"
           }
         }
@@ -1983,6 +2331,32 @@
       "if": {
         "properties": {
           "operation": {
+            "const": "acdc.present"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "assertions": {
+            "items": {
+              "properties": {
+                "check": {
+                  "enum": [
+                    "presented",
+                    "secrets_absent",
+                    "present_refused"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
             "const": "acdc.verify"
           }
         }
@@ -2037,6 +2411,22 @@
         "properties": {
           "operation": {
             "const": "acdc.issue"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "pattern": "^ACDC-"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "const": "acdc.present"
           }
         }
       },
