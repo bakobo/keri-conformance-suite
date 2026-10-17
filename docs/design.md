@@ -338,6 +338,10 @@ An adapter is a contract that people outside this repository implement, in sever
 
 The runner also runs the statelessness probe at the start of every session, and can run a profile's cases in a shuffled order and compare the results with the ordered run, which catches state leaking between real cases.
 
+### Cross-role agreement
+
+`kcs agree` runs two or more adapters against each other: what each issues or presents in the suite's `acdc.issue` and `acdc.present` cases becomes `acdc.verify` bundles built only from what it returned, and every adapter judges every bundle. Each cell holds one verifier's verdict on one producer's credential and says whether it is the verdict the case implies (this.i `3ptj8hu9`; [sedi-1](profiles/sedi.md), Cross-role agreement). The matrix is evidence beside a claim and never decides a verdict.
+
 ## Adapters
 
 An adapter is a small standalone program that connects one implementation to the runner. Adapters build against a released or pinned version of their implementation and use only its public API. They never patch the implementation. Where it lacks something a case needs, the adapter composes it on top and declares that it has done so. That way an adapter keeps working whether or not the implementation's maintainers ever choose to host it, and its results stay honest about what was tested.

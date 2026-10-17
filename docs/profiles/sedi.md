@@ -29,6 +29,10 @@ A sedi-1 credential holds at most 64 events in its registry, 32 attribute blocks
 - **A presented credential is bound to its issuee** (presenter-binding): the sender of the grant must be the issuee, or for an aggregate the issuee named at `A[1].i`.
 - **A credential is migrated from 1.x by revoking both forms.** sedi-1 never accepts a 1.x form (no-1x), but a verifier that reads 1.x may still accept a 1.x copy of a credential revoked only in its 2.00 registry, unless that verifier can be expected to see the 2.00 registry.
 
+## Cross-role agreement
+
+Passing the profile shows each implementation against the cases. `kcs agree` shows implementations against each other (this.i `3ptj8hu9`). It sends every `acdc.issue` and `acdc.present` case to each adapter named with `--adapter NAME=CMD`, turns what each one issued or presented into `acdc.verify` bundles built only from what it returned, and has every adapter judge every bundle, the producer included. A cell expects `valid` when the case expects an issuance or presentation and the producer's answer passed the case, and expects not valid when an issuer issued what its case says it must refuse. Every other cell is recorded without an expectation. The command exits 1 when any cell disagrees, and `--report` writes the matrix as JSON for the evidence pack. The matrix is evidence beside a claim, never part of the profile's verdict.
+
 ## What sedi-1 does not add
 
 sedi-1 adds to its prerequisites only what SEDI's ACDC use needs. In KERI and CESR it adds two kinds of case: an issuer key rotation between issuance and verification, and the parse of the attachment group codes SEDI uses (seal-couple-code, blind-state-code). Everything else in KERI and CESR is graded by `keri-v1.0.1` and `cesr-v1.0`. In IPEX it adds the grant that carries a presentation and the presenter check on it; the apply, offer and agree messages are out of scope for version 1, and a grant cannot carry a revocation chain (keri-sow tick `2dxo`).
