@@ -26,7 +26,7 @@ def test_hello_answers_protocol_1_with_identity(keri_dist):
     assert len(commit) == 40
     assert result["operations"][:2] == ["cesr.parse", "cesr.encode"]
     assert result["operations"][2:] == (["keri.process", "acdc.verify", "exn.verify"]
-                                        if GENERATION == "main" else [])
+                                        if GENERATION == "main" else ["acdc.verify"])
     assert result["composes"] == []
 
 
@@ -41,8 +41,10 @@ def test_hello_features_follow_the_keripy_generation():
                                           "cesr.item-extents", "keri.version-2.x",
                                           *kel.FEATURES}
     else:
-        # keripy 1.2.14 cannot itemize -H and -J groups, so it does not promise items.
-        assert set(features) == common | {"cesr.genus-1.00"}
+        # keripy 1.2.14 cannot itemize -H and -J groups, so it does not promise items; its
+        # acdc.verify judges 1.x ACDCs (acdc1x.py).
+        assert set(features) == common | {"cesr.genus-1.00", "acdc.keripy-1x", "acdc.ptel-1x",
+                                          "crypto.ed25519", "kel.basic"}
 
 
 def test_cesr_item_extents_is_declared_only_where_every_gap_is_an_undeclared_feature():
@@ -100,7 +102,7 @@ def test_unknown_op_is_a_harness_error_echoing_the_id():
     assert "e.input.range.unknown-op.f" in response["error"]["message"]
 
 
-@pytest.mark.parametrize("op", ["keri.emit"] + (["keri.process", "acdc.verify", "exn.verify"]
+@pytest.mark.parametrize("op", ["keri.emit"] + (["keri.process", "exn.verify"]
                                                 if GENERATION == "1.x" else []))
 def test_undeclared_protocol_ops_are_unsupported(op):
     response = handle({"id": 2, "op": op})

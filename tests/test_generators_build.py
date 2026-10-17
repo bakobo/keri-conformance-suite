@@ -344,7 +344,7 @@ def test_generate_with_no_scenarios_produces_only_empty_profiles(tmp_path):
     files = regenerate.generate(tmp_path)
     assert sorted(files) == ["profiles/acdc-v1.0.json", "profiles/cesr-strict.json", "profiles/cesr-v1.0.json",
                              "profiles/keri-escrow.json", "profiles/keri-v1.0.1.json",
-                             "profiles/keripy-1x-interop.json"]
+                             "profiles/keripy-1x-interop.json", "profiles/sedi-1x-interop.json"]
 
 
 def test_differences_names_missing_extra_and_differing_files():

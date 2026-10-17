@@ -1,0 +1,61 @@
+{
+  "format": 2,
+  "profile": "sedi-1x-interop",
+  "implementation": {
+    "name": "keripy",
+    "version": "1.2.14",
+    "commit": "bab95c16e949b61398129a3e41a8f68bad84c94f"
+  },
+  "verdict": "no-evidence",
+  "cases": {
+    "ACDC-0201": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "ACDC-0202": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "ACDC-0203": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "ACDC-0204": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "ACDC-0205": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "ACDC-0206": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    },
+    "ACDC-0207": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
+    }
+  }
+}

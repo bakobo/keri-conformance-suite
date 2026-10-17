@@ -219,7 +219,7 @@ def test_the_generator_writes_the_profile_and_owns_its_file():
 def test_without_a_source_there_is_no_layered_profile(tree):
     (tree / "scenarios" / "sedi" / "profile.json").unlink()
     assert regenerate.sedi(tree, {}) is None
-    assert not any(p.startswith("profiles/sedi") for p in regenerate.generate(tree))
+    assert "profiles/sedi-1.json" not in regenerate.generate(tree)
 
 
 def test_a_released_version_keeps_the_suite_version_it_was_released_with(tree):

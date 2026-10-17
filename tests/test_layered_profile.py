@@ -288,3 +288,26 @@ def test_an_aborted_run_never_softens_a_definite_failure(suite, cases_dir, tmp_p
     _code, report = run(suite, cases_dir(*chosen), tmp_path)
     assert report["verdict"] == "aborted"
     assert report["claim"]["verdict"] == "not-interoperable"
+
+
+def test_a_companion_failure_leaves_the_layered_claim_unchanged(suite, cases_dir, tmp_path):
+    """sedi-1x-interop beside sedi-1 (test-plan item 11): a companion that fails is reported on its
+    own and never moves the layered profile's claim."""
+    write(suite, "lay-1x", {"name": "lay-1x", "normative": False, "basis": BASIS,
+                            "cases": ["CESR-0301"]})
+    companion = make_case("CESR-0301", "cesr.parse", {"stream": "00"},
+                          [assertion("rejected", level="INTEROP", basis=BASIS)],
+                          profile="lay-1x")
+    chosen = [*BASE_CASES["conformant"], *OWN_CASES["interoperable"]]
+    manifest(suite, *chosen)
+    _code, alone = run(suite, cases_dir(*chosen), tmp_path)
+    _code, beside = run(suite, cases_dir(*chosen, companion), tmp_path)
+    assert beside["claim"] == alone["claim"] and beside["verdict"] == "interoperable"
+    assert "CESR-0301" not in {c["id"] for c in beside["cases"]}
+    _code, own = run(suite, cases_dir(*chosen, companion), tmp_path, profile="lay-1x")
+    assert own["verdict"] == "not-interoperable" and "claim" not in own
+
+
+def test_the_real_companion_is_no_member_of_sedi_1():
+    assert "sedi-1x-interop" not in load_profile(ROOT, "sedi-1").members
+    assert not load_profile(ROOT, "sedi-1x-interop").layered

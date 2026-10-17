@@ -1,0 +1,1221 @@
+{
+ "about": "The sedi-1x-interop companion (test-plan item 11; this.i 9sgwng6m): keripy 1.x issuances the suite builds, each judged as keripy 1.2.14 judges it. generators/keripy1x_check/check_acdc.py confirms every expected verdict against keripy 1.2.14 itself.",
+ "profile": "sedi-1x-interop",
+ "schemas": {
+  "sedi-core-1x": {
+   "copy_of": "interop/two-wallets/schemas/sedi-core-1x.schema.json",
+   "schema": {
+    "$id": "EP3O5QNAho8Z7B9TTTdHWK7Ge_sPgZciw8Y4tYjpITqY",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "SEDI Core Schema",
+    "description": "SEDI Core Identity JSON Schema for acm ACDC.",
+    "credentialType": "SEDI_Core_ACDC_acm_message",
+    "version": "0.1.0",
+    "type": "object",
+    "required": [
+     "v",
+     "d",
+     "i",
+     "ri",
+     "s",
+     "a"
+    ],
+    "properties": {
+     "v": {
+      "description": "ACDC version string",
+      "type": "string"
+     },
+     "d": {
+      "description": "Message SAID",
+      "type": "string"
+     },
+     "u": {
+      "description": "Message UE",
+      "type": "string"
+     },
+     "i": {
+      "description": "Issuer AID",
+      "type": "string"
+     },
+     "ri": {
+      "description": "Registry SAID",
+      "type": "string"
+     },
+     "s": {
+      "description": "Schema Section",
+      "oneOf": [
+       {
+        "description": "Schema Section SAID",
+        "type": "string"
+       },
+       {
+        "description": "Schema Section Detail",
+        "type": "object"
+       }
+      ]
+     },
+     "a": {
+      "description": "Attribute Section",
+      "oneOf": [
+       {
+        "description": "Attribute Section SAID",
+        "type": "string"
+       },
+       {
+        "description": "Attribute Section Detail",
+        "type": "object",
+        "required": [
+         "d",
+         "u",
+         "i",
+         "primary",
+         "givenName",
+         "middleName",
+         "familyName",
+         "nameSuffix",
+         "birthDate",
+         "facialImageProof",
+         "legalPresenceStatus",
+         "issuedDate",
+         "expirationDate"
+        ],
+        "properties": {
+         "d": {
+          "description": "Attribute Section SAID",
+          "type": "string"
+         },
+         "u": {
+          "description": "Attribute Section UE",
+          "type": "string"
+         },
+         "i": {
+          "description": "Issuee AID",
+          "type": "string"
+         },
+         "rd": {
+          "description": "Issuee Presentation Registry SAID",
+          "type": "string"
+         },
+         "primary": {
+          "description": "Primary True if not bulk issued else False",
+          "type": "boolean"
+         },
+         "givenName": {
+          "description": "Given Name Block",
+          "oneOf": [
+           {
+            "description": "Given Name SAID",
+            "type": "string"
+           },
+           {
+            "description": "Given Name Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Given Name Value",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "middleName": {
+          "description": "Middle Name(s) Block",
+          "oneOf": [
+           {
+            "description": "Middle Name SAID",
+            "type": "string"
+           },
+           {
+            "description": "Middle Name Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Middle Name(s) Value",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "familyName": {
+          "description": "Family Name Block",
+          "oneOf": [
+           {
+            "description": "Family Name SAID",
+            "type": "string"
+           },
+           {
+            "description": "Family Name Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Family Name Value",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "nameSuffix": {
+          "description": "Name Suffix Block",
+          "oneOf": [
+           {
+            "description": "Name Suffix SAID",
+            "type": "string"
+           },
+           {
+            "description": "Name Suffix Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Name Suffix Value",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "birthDate": {
+          "description": "Birth Date Block",
+          "oneOf": [
+           {
+            "description": "Birth Date SAID",
+            "type": "string"
+           },
+           {
+            "description": "Birth Date Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Birth Date Value as RFC-3339/ISO-8601 time MBZ",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "facialImageProof": {
+          "description": "Facial Image Proof Block",
+          "oneOf": [
+           {
+            "description": "Facial Image Proof SAID",
+            "type": "string"
+           },
+           {
+            "description": "Facial Image Proof Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Facial Image Proof Value as SAID of typed media block",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "legalPresenceStatus": {
+          "description": "Legal Presense Status Block",
+          "oneOf": [
+           {
+            "description": "Legal Presense Status SAID",
+            "type": "string"
+           },
+           {
+            "description": "Legal Presense Status Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Legal Presense Status Value i.e. citizen",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "issuedDate": {
+          "description": "Issued Date Block",
+          "oneOf": [
+           {
+            "description": "Issued Date SAID",
+            "type": "string"
+           },
+           {
+            "description": "Issued Date Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Issued Date Value as RFC-3339/ISO-8601 time MBZ",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         },
+         "expirationDate": {
+          "description": "Expiration Date Block",
+          "oneOf": [
+           {
+            "description": "Expiration Date SAID",
+            "type": "string"
+           },
+           {
+            "description": "Expiration Date Detail",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "value"
+            ],
+            "properties": {
+             "d": {
+              "description": "Block SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Bock UE",
+              "type": "string"
+             },
+             "value": {
+              "description": "Expiration Date Value as RFC-3339/ISO-8601 time MBZ",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          ]
+         }
+        },
+        "additionalProperties": false
+       }
+      ]
+     },
+     "e": {
+      "description": "Edge Section",
+      "oneOf": [
+       {
+        "description": "Edge Section SAID",
+        "type": "string"
+       },
+       {
+        "description": "Edge Section Detail",
+        "type": "object",
+        "required": [
+         "d",
+         "u",
+         "utahAgent"
+        ],
+        "properties": {
+         "d": {
+          "description": "Edge Section SAID",
+          "type": "string"
+         },
+         "u": {
+          "description": "Edge Section UE",
+          "type": "string"
+         },
+         "utahAgent": {
+          "description": "Utah Agent Edge Block",
+          "type": "object",
+          "required": [
+           "d",
+           "u",
+           "n",
+           "s",
+           "o"
+          ],
+          "properties": {
+           "d": {
+            "description": "Edge SAID",
+            "type": "string"
+           },
+           "u": {
+            "description": "Edge UE",
+            "type": "string"
+           },
+           "n": {
+            "description": "Far Node SAID",
+            "type": "string"
+           },
+           "s": {
+            "description": "Far Node Schema SAID",
+            "type": "string"
+           },
+           "o": {
+            "description": "Edge Unary Operator",
+            "type": "string"
+           }
+          },
+          "additionalProperties": false
+         },
+         "guardians": {
+          "description": "Guardian Edge Group Block",
+          "type": "object",
+          "required": [
+           "d",
+           "u",
+           "o",
+           "first"
+          ],
+          "properties": {
+           "d": {
+            "description": "Edge Group SAID",
+            "type": "string"
+           },
+           "u": {
+            "description": "Edge Group UE",
+            "type": "string"
+           },
+           "o": {
+            "description": "Edge Group M-ary Operator",
+            "type": "string"
+           },
+           "first": {
+            "description": "First Guardian Edge Block",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "n",
+             "s",
+             "o"
+            ],
+            "properties": {
+             "d": {
+              "description": "Edge SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Edge UE",
+              "type": "string"
+             },
+             "n": {
+              "description": "Far Node SAID",
+              "type": "string"
+             },
+             "s": {
+              "description": "Far Node Schema SAID",
+              "type": "string"
+             },
+             "o": {
+              "description": "Edge Unary Operator",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           },
+           "second": {
+            "description": "Second Guardian Edge Block",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "n",
+             "s",
+             "o"
+            ],
+            "properties": {
+             "d": {
+              "description": "Edge SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Edge UE",
+              "type": "string"
+             },
+             "n": {
+              "description": "Far Node SAID",
+              "type": "string"
+             },
+             "s": {
+              "description": "Far Node Schema SAID",
+              "type": "string"
+             },
+             "o": {
+              "description": "Edge Unary Operator",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           },
+           "third": {
+            "description": "Third Guardian Edge Block",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "n",
+             "s",
+             "o"
+            ],
+            "properties": {
+             "d": {
+              "description": "Edge SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Edge UE",
+              "type": "string"
+             },
+             "n": {
+              "description": "Far Node SAID",
+              "type": "string"
+             },
+             "s": {
+              "description": "Far Node Schema SAID",
+              "type": "string"
+             },
+             "o": {
+              "description": "Edge Unary Operator",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           },
+           "fourth": {
+            "description": "Fourth Guardian Edge Block",
+            "type": "object",
+            "required": [
+             "d",
+             "u",
+             "n",
+             "s",
+             "o"
+            ],
+            "properties": {
+             "d": {
+              "description": "Edge SAID",
+              "type": "string"
+             },
+             "u": {
+              "description": "Edge UE",
+              "type": "string"
+             },
+             "n": {
+              "description": "Far Node SAID",
+              "type": "string"
+             },
+             "s": {
+              "description": "Far Node Schema SAID",
+              "type": "string"
+             },
+             "o": {
+              "description": "Edge Unary Operator",
+              "type": "string"
+             }
+            },
+            "additionalProperties": false
+           }
+          },
+          "additionalProperties": false
+         }
+        },
+        "additionalProperties": false
+       }
+      ]
+     },
+     "r": {
+      "description": "Rule Section",
+      "oneOf": [
+       {
+        "description": "Rule Section SAID",
+        "type": "string"
+       },
+       {
+        "description": "Rule Section Detail",
+        "type": "object",
+        "required": [
+         "d",
+         "l"
+        ],
+        "properties": {
+         "d": {
+          "description": "Rule Section SAID",
+          "type": "string"
+         },
+         "l": {
+          "description": "Legal Language",
+          "type": "string"
+         }
+        },
+        "additionalProperties": false
+       }
+      ]
+     }
+    },
+    "additionalProperties": false
+   }
+  }
+ },
+ "fixtures": {
+  "core": {
+   "issuer": "I",
+   "roles": [
+    "I",
+    "H"
+   ],
+   "schemas": {
+    "core": {
+     "from": "sedi-core-1x"
+    }
+   },
+   "credentials": [
+    {
+     "name": "core",
+     "schema": "core",
+     "issuee": "H",
+     "attributes": {
+      "u": "0AABu5QivarM0s72Z_MaTo4z",
+      "primary": true,
+      "givenName": {
+       "u": "0AAwmv-7j6yOxgic6xwMdW_s",
+       "value": "Alexandra"
+      },
+      "middleName": {
+       "u": "0ADyF3x0S8l-CTfdjX1Xwy5i",
+       "value": "Quinn"
+      },
+      "familyName": {
+       "u": "0ACAN8l9n_wkYl_xSpmmwbZ4",
+       "value": "Holder"
+      },
+      "nameSuffix": {
+       "u": "0ABGlT3doHYeT2wTwSvuKaFu",
+       "value": ""
+      },
+      "birthDate": {
+       "u": "0ABRsOhRibh9P3hFLQZZiJsk",
+       "value": "1990-01-01"
+      },
+      "facialImageProof": {
+       "u": "0AAyYq9_b3xtxTMK5uDZzRJu",
+       "value": "EFacialImageProofPlaceholderDigest0000000000"
+      },
+      "legalPresenceStatus": {
+       "u": "0ACYOPsVzJ7jeOrAFWHItbWI",
+       "value": "citizen"
+      },
+      "issuedDate": {
+       "u": "0AATxSl6xCAglt3s6VT71qYU",
+       "value": "2026-10-01"
+      },
+      "expirationDate": {
+       "u": "0AAZnTVf54pogUQ0HsFUPpy7",
+       "value": "2034-10-01"
+      }
+     }
+    }
+   ]
+  },
+  "core-2x": {
+   "issuer": "I",
+   "roles": [
+    "I",
+    "H"
+   ],
+   "schemas": {
+    "core": {
+     "from": "sedi-core-1x",
+     "shape": "2.x"
+    }
+   },
+   "credentials": [
+    {
+     "name": "core",
+     "schema": "core",
+     "issuee": "H",
+     "attributes": {
+      "u": "0AABu5QivarM0s72Z_MaTo4z",
+      "primary": true,
+      "givenName": {
+       "u": "0AAwmv-7j6yOxgic6xwMdW_s",
+       "value": "Alexandra"
+      },
+      "middleName": {
+       "u": "0ADyF3x0S8l-CTfdjX1Xwy5i",
+       "value": "Quinn"
+      },
+      "familyName": {
+       "u": "0ACAN8l9n_wkYl_xSpmmwbZ4",
+       "value": "Holder"
+      },
+      "nameSuffix": {
+       "u": "0ABGlT3doHYeT2wTwSvuKaFu",
+       "value": ""
+      },
+      "birthDate": {
+       "u": "0ABRsOhRibh9P3hFLQZZiJsk",
+       "value": "1990-01-01"
+      },
+      "facialImageProof": {
+       "u": "0AAyYq9_b3xtxTMK5uDZzRJu",
+       "value": "EFacialImageProofPlaceholderDigest0000000000"
+      },
+      "legalPresenceStatus": {
+       "u": "0ACYOPsVzJ7jeOrAFWHItbWI",
+       "value": "citizen"
+      },
+      "issuedDate": {
+       "u": "0AATxSl6xCAglt3s6VT71qYU",
+       "value": "2026-10-01"
+      },
+      "expirationDate": {
+       "u": "0AAZnTVf54pogUQ0HsFUPpy7",
+       "value": "2034-10-01"
+      }
+     }
+    }
+   ]
+  },
+  "core-dt": {
+   "issuer": "I",
+   "roles": [
+    "I",
+    "H"
+   ],
+   "schemas": {
+    "core": {
+     "from": "sedi-core-1x"
+    }
+   },
+   "credentials": [
+    {
+     "name": "core",
+     "schema": "core",
+     "issuee": "H",
+     "attributes": {
+      "u": "0AABu5QivarM0s72Z_MaTo4z",
+      "primary": true,
+      "givenName": {
+       "u": "0AAwmv-7j6yOxgic6xwMdW_s",
+       "value": "Alexandra"
+      },
+      "middleName": {
+       "u": "0ADyF3x0S8l-CTfdjX1Xwy5i",
+       "value": "Quinn"
+      },
+      "familyName": {
+       "u": "0ACAN8l9n_wkYl_xSpmmwbZ4",
+       "value": "Holder"
+      },
+      "nameSuffix": {
+       "u": "0ABGlT3doHYeT2wTwSvuKaFu",
+       "value": ""
+      },
+      "birthDate": {
+       "u": "0ABRsOhRibh9P3hFLQZZiJsk",
+       "value": "1990-01-01"
+      },
+      "facialImageProof": {
+       "u": "0AAyYq9_b3xtxTMK5uDZzRJu",
+       "value": "EFacialImageProofPlaceholderDigest0000000000"
+      },
+      "legalPresenceStatus": {
+       "u": "0ACYOPsVzJ7jeOrAFWHItbWI",
+       "value": "citizen"
+      },
+      "issuedDate": {
+       "u": "0AATxSl6xCAglt3s6VT71qYU",
+       "value": "2026-10-01"
+      },
+      "expirationDate": {
+       "u": "0AAZnTVf54pogUQ0HsFUPpy7",
+       "value": "2034-10-01"
+      }
+     },
+     "dt": "2026-10-01T00:00:00.000000+00:00"
+    }
+   ]
+  },
+  "core-dt-allowed": {
+   "issuer": "I",
+   "roles": [
+    "I",
+    "H"
+   ],
+   "schemas": {
+    "core": {
+     "from": "sedi-core-1x",
+     "allow_dt": true
+    }
+   },
+   "credentials": [
+    {
+     "name": "core",
+     "schema": "core",
+     "issuee": "H",
+     "attributes": {
+      "u": "0AABu5QivarM0s72Z_MaTo4z",
+      "primary": true,
+      "givenName": {
+       "u": "0AAwmv-7j6yOxgic6xwMdW_s",
+       "value": "Alexandra"
+      },
+      "middleName": {
+       "u": "0ADyF3x0S8l-CTfdjX1Xwy5i",
+       "value": "Quinn"
+      },
+      "familyName": {
+       "u": "0ACAN8l9n_wkYl_xSpmmwbZ4",
+       "value": "Holder"
+      },
+      "nameSuffix": {
+       "u": "0ABGlT3doHYeT2wTwSvuKaFu",
+       "value": ""
+      },
+      "birthDate": {
+       "u": "0ABRsOhRibh9P3hFLQZZiJsk",
+       "value": "1990-01-01"
+      },
+      "facialImageProof": {
+       "u": "0AAyYq9_b3xtxTMK5uDZzRJu",
+       "value": "EFacialImageProofPlaceholderDigest0000000000"
+      },
+      "legalPresenceStatus": {
+       "u": "0ACYOPsVzJ7jeOrAFWHItbWI",
+       "value": "citizen"
+      },
+      "issuedDate": {
+       "u": "0AATxSl6xCAglt3s6VT71qYU",
+       "value": "2026-10-01"
+      },
+      "expirationDate": {
+       "u": "0AAZnTVf54pogUQ0HsFUPpy7",
+       "value": "2034-10-01"
+      }
+     },
+     "dt": "2026-10-01T00:00:00.000000+00:00"
+    }
+   ]
+  },
+  "core-agent": {
+   "issuer": "I",
+   "roles": [
+    "I",
+    "H"
+   ],
+   "schemas": {
+    "core": {
+     "from": "sedi-core-1x",
+     "edge_section_u": false
+    },
+    "agent": {
+     "$schema": "https://json-schema.org/draft/2020-12/schema",
+     "title": "Utah Agent",
+     "type": "object",
+     "required": [
+      "v",
+      "d",
+      "i",
+      "ri",
+      "s",
+      "a"
+     ]
+    }
+   },
+   "credentials": [
+    {
+     "name": "agent",
+     "schema": "agent",
+     "attributes": {
+      "name": "Utah"
+     }
+    },
+    {
+     "name": "core",
+     "schema": "core",
+     "issuee": "H",
+     "attributes": {
+      "u": "0AABu5QivarM0s72Z_MaTo4z",
+      "primary": true,
+      "givenName": {
+       "u": "0AAwmv-7j6yOxgic6xwMdW_s",
+       "value": "Alexandra"
+      },
+      "middleName": {
+       "u": "0ADyF3x0S8l-CTfdjX1Xwy5i",
+       "value": "Quinn"
+      },
+      "familyName": {
+       "u": "0ACAN8l9n_wkYl_xSpmmwbZ4",
+       "value": "Holder"
+      },
+      "nameSuffix": {
+       "u": "0ABGlT3doHYeT2wTwSvuKaFu",
+       "value": ""
+      },
+      "birthDate": {
+       "u": "0ABRsOhRibh9P3hFLQZZiJsk",
+       "value": "1990-01-01"
+      },
+      "facialImageProof": {
+       "u": "0AAyYq9_b3xtxTMK5uDZzRJu",
+       "value": "EFacialImageProofPlaceholderDigest0000000000"
+      },
+      "legalPresenceStatus": {
+       "u": "0ACYOPsVzJ7jeOrAFWHItbWI",
+       "value": "citizen"
+      },
+      "issuedDate": {
+       "u": "0AATxSl6xCAglt3s6VT71qYU",
+       "value": "2026-10-01"
+      },
+      "expirationDate": {
+       "u": "0AAZnTVf54pogUQ0HsFUPpy7",
+       "value": "2034-10-01"
+      }
+     },
+     "edges": {
+      "utahAgent": {
+       "credential": "agent",
+       "u": "0ACx_e-WZ4Z8bWiIUbPmPwY5",
+       "o": "NI2I"
+      }
+     },
+     "edges_u": "0AAY6RX16AwVpCkxIn7LNzSp"
+    }
+   ]
+  },
+  "core-migrated": {
+   "issuer": "I",
+   "roles": [
+    "I",
+    "H"
+   ],
+   "schemas": {
+    "core": {
+     "from": "sedi-core-1x"
+    }
+   },
+   "credentials": [
+    {
+     "name": "core",
+     "schema": "core",
+     "issuee": "H",
+     "attributes": {
+      "u": "0AABu5QivarM0s72Z_MaTo4z",
+      "primary": true,
+      "givenName": {
+       "u": "0AAwmv-7j6yOxgic6xwMdW_s",
+       "value": "Alexandra"
+      },
+      "middleName": {
+       "u": "0ADyF3x0S8l-CTfdjX1Xwy5i",
+       "value": "Quinn"
+      },
+      "familyName": {
+       "u": "0ACAN8l9n_wkYl_xSpmmwbZ4",
+       "value": "Holder"
+      },
+      "nameSuffix": {
+       "u": "0ABGlT3doHYeT2wTwSvuKaFu",
+       "value": ""
+      },
+      "birthDate": {
+       "u": "0ABRsOhRibh9P3hFLQZZiJsk",
+       "value": "1990-01-01"
+      },
+      "facialImageProof": {
+       "u": "0AAyYq9_b3xtxTMK5uDZzRJu",
+       "value": "EFacialImageProofPlaceholderDigest0000000000"
+      },
+      "legalPresenceStatus": {
+       "u": "0ACYOPsVzJ7jeOrAFWHItbWI",
+       "value": "citizen"
+      },
+      "issuedDate": {
+       "u": "0AATxSl6xCAglt3s6VT71qYU",
+       "value": "2026-10-01"
+      },
+      "expirationDate": {
+       "u": "0AAZnTVf54pogUQ0HsFUPpy7",
+       "value": "2034-10-01"
+      }
+     }
+    }
+   ],
+   "registry": "migration-registry"
+  },
+  "core-agent-plain": {
+   "issuer": "I",
+   "roles": [
+    "I",
+    "H"
+   ],
+   "schemas": {
+    "core": {
+     "from": "sedi-core-1x",
+     "edge_section_u": false
+    },
+    "agent": {
+     "$schema": "https://json-schema.org/draft/2020-12/schema",
+     "title": "Utah Agent",
+     "type": "object",
+     "required": [
+      "v",
+      "d",
+      "i",
+      "ri",
+      "s",
+      "a"
+     ]
+    }
+   },
+   "credentials": [
+    {
+     "name": "agent",
+     "schema": "agent",
+     "attributes": {
+      "name": "Utah"
+     }
+    },
+    {
+     "name": "core",
+     "schema": "core",
+     "issuee": "H",
+     "attributes": {
+      "u": "0AABu5QivarM0s72Z_MaTo4z",
+      "primary": true,
+      "givenName": {
+       "u": "0AAwmv-7j6yOxgic6xwMdW_s",
+       "value": "Alexandra"
+      },
+      "middleName": {
+       "u": "0ADyF3x0S8l-CTfdjX1Xwy5i",
+       "value": "Quinn"
+      },
+      "familyName": {
+       "u": "0ACAN8l9n_wkYl_xSpmmwbZ4",
+       "value": "Holder"
+      },
+      "nameSuffix": {
+       "u": "0ABGlT3doHYeT2wTwSvuKaFu",
+       "value": ""
+      },
+      "birthDate": {
+       "u": "0ABRsOhRibh9P3hFLQZZiJsk",
+       "value": "1990-01-01"
+      },
+      "facialImageProof": {
+       "u": "0AAyYq9_b3xtxTMK5uDZzRJu",
+       "value": "EFacialImageProofPlaceholderDigest0000000000"
+      },
+      "legalPresenceStatus": {
+       "u": "0ACYOPsVzJ7jeOrAFWHItbWI",
+       "value": "citizen"
+      },
+      "issuedDate": {
+       "u": "0AATxSl6xCAglt3s6VT71qYU",
+       "value": "2026-10-01"
+      },
+      "expirationDate": {
+       "u": "0AAZnTVf54pogUQ0HsFUPpy7",
+       "value": "2034-10-01"
+      }
+     },
+     "edges": {
+      "utahAgent": {
+       "credential": "agent",
+       "u": "0ACx_e-WZ4Z8bWiIUbPmPwY5",
+       "o": "NI2I"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "cases": [
+  {
+   "id": "ACDC-0201",
+   "key": "SX-01",
+   "title": "A SEDI core credential in the 1.x forms",
+   "description": "SEDI core, issued to the holder in the 1.x forms under the 1.x profile of its schema (interop/two-wallets/schemas/sedi-core-1x.schema.json), with no a.dt, and in a vcp/iss registry anchored in the issuer's KEL. A keripy 1.x verifier finds it valid.",
+   "fixture": "core",
+   "presented": "core",
+   "expected": "valid",
+   "basis": "its Verifier saves the credential: the registry issues it and it validates against the 1.x profile of SEDI core.",
+   "triage": "None: an acceptance."
+  },
+  {
+   "id": "ACDC-0202",
+   "key": "SX-02",
+   "title": "A 1.x credential under SEDI's 2.0 schema shape",
+   "description": "As SX-01, but the schema is SEDI core in the KERI 2.0 shape SEDI publishes, which requires rd, e and r and defines t (G17 incompatibility 7). A 1.x body has ri and none of those, so a 1.x wallet cannot hold a SEDI credential without a 1.x profile of the schema. A keripy 1.x verifier refuses it.",
+   "fixture": "core-2x",
+   "presented": "core",
+   "expected": "invalid",
+   "basis": "its Verifier refuses the credential: it fails the schema, which requires fields a 1.x body does not have.",
+   "triage": "A 1.x verifier that accepts a credential its schema refuses accepts what the issuer never claimed.",
+   "pair": "SX-01"
+  },
+  {
+   "id": "ACDC-0203",
+   "key": "SX-03",
+   "title": "An a.dt the SEDI schema forbids",
+   "description": "As SX-01, but the attribute block carries a.dt, which SEDI core's closed attribute section does not name. signify-ts's issue helper inserts a.dt this way (G17 incompatibility 8). A keripy 1.x verifier refuses it.",
+   "fixture": "core-dt",
+   "presented": "core",
+   "expected": "invalid",
+   "basis": "its Verifier refuses the credential: a.dt is outside the attribute section the schema closes.",
+   "triage": "A verifier that ignores a closed attribute section accepts attributes the schema forbids.",
+   "pair": "SX-01"
+  },
+  {
+   "id": "ACDC-0204",
+   "key": "SX-04",
+   "title": "An a.dt the schema allows",
+   "description": "As SX-03, but the schema names dt, so the credential satisfies it. With SX-01, which has no a.dt at all, it shows a 1.x verifier needs a.dt neither present nor absent: Veridian assumes every ACDC has one (G17 incompatibility 11). A keripy 1.x verifier finds it valid.",
+   "fixture": "core-dt-allowed",
+   "presented": "core",
+   "expected": "valid",
+   "basis": "its Verifier saves the credential: a.dt is named by the schema and nothing requires it.",
+   "triage": "None: an acceptance."
+  },
+  {
+   "id": "ACDC-0205",
+   "key": "SX-05",
+   "title": "SEDI core's edge section, as SEDI's schema requires it",
+   "description": "As SX-07, but the edge section carries its own u, as SEDI core's schema requires of every edge section; both cases use SEDI core's 1.x profile changed only to stop requiring that u, so they differ in nothing else. keripy 1.x reads every label of an edge section except d and o as an edge, so the section's u breaks its edge walk and it never saves the credential. Since SEDI's schema requires the u, a keripy 1.x verifier cannot verify any SEDI credential that carries its edge section.",
+   "fixture": "core-agent",
+   "presented": "core",
+   "expected": "invalid",
+   "basis": "its Verifier's edge walk takes the edge section's u for an edge and fails on it (vdr/verifying.py, processCredential), so it never saves the credential.",
+   "triage": "A refusal, not an acceptance: no credential a 1.x verifier should refuse is accepted.",
+   "pair": "SX-07"
+  },
+  {
+   "id": "ACDC-0206",
+   "key": "SX-06",
+   "title": "The 1.x copy a 2.00 revocation does not reach",
+   "description": "The SX-01 claim's 1.x copy, kept in the 1.x registry it was issued in before migration, issued and not revoked there. The bundle holds only the 1.x forms, which are all a keripy 1.x verifier reads: a revocation of the claim's 2.00 form, as in sedi-1's ACDC-0106, is recorded in a blindable 2.00 registry it never consults, so it finds the 1.x copy valid. Migrating a claim from 1.x to 2.00 therefore needs both forms revoked, unless every 1.x verifier can be expected to see the 2.00 registry (docs/profiles/sedi.md).",
+   "fixture": "core-migrated",
+   "presented": "core",
+   "expected": "valid",
+   "basis": "its Verifier saves the credential: nothing in the 1.x registry revokes it.",
+   "triage": "A revocation recorded only in the 2.00 registry is invisible to a 1.x verifier, which keeps accepting the claim."
+  },
+  {
+   "id": "ACDC-0207",
+   "key": "SX-07",
+   "title": "An agent edge with no section u",
+   "description": "As SX-01, but with SEDI core's optional edge section: a utahAgent edge, NI2I, to an agent credential the same issuer issued, with the u and d SEDI's schema requires of the edge, and no u of the section's own, under SEDI core's 1.x profile changed only to stop requiring one. With SX-01, which omits the edge section, it shows the edge is optional (G17 incompatibility 10: Veridian treats every edge definition as mandatory). A keripy 1.x verifier finds it valid.",
+   "fixture": "core-agent-plain",
+   "presented": "core",
+   "expected": "valid",
+   "basis": "its Verifier saves the credential once the far agent credential is saved and the NI2I edge to it holds.",
+   "triage": "None: an acceptance."
+  }
+ ]
+}
