@@ -686,3 +686,44 @@ def test_a_couple_pointing_at_another_event_is_only_a_pointer():
     (docs/design.md, ACDC step 4), so one naming another event changes nothing."""
     frag = with_update(source_seal={"event": "ixn-rip-A"})
     assert run(frag)[0].verdict == sm.VALID
+
+
+# -- keripy 1.x shapes (no-1x) -----------------------------------------------------------------
+
+
+def test_a_1x_version_string_or_field_set_is_never_valid():
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0]["version"] = "1.x"
+    result, b = run(frag)
+    assert reasons(result) == ["invalid/unframeable"]
+    assert bytes.fromhex(b.request["presented"]["stream"])[8:24] == b'{"v":"ACDC10JSON'
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0]["fields"] = "1.x"
+    result, b = run(frag)
+    # Its SAID is recomputed over the 1.x field set, so only the field set fails.
+    assert reasons(result) == ["invalid/field-order", "invalid/no-registry"]
+    assert set(b.forms["A"]) >= {"ri"} and not {"rd", "t"} & set(b.forms["A"])
+    assert b.dag["root"] == b.forms["A"]["d"] == b.saids["A"]
+    # The field set precedes the SAID, so the registry's td, which names the ACDC's SAID,
+    # names the body presented, and so does an edge to it.
+    assert b.expanded["A"]["d"] == b.saids["A"]
+    chain = world(single(), "N")
+    chain["acdcs"] = [{**a, "fields": "1.x"} if a["name"] == "F" else a for a in chain["acdcs"]]
+    _, b = run(chain)
+    assert b.dag["edges"][0]["n"] == b.forms["F"]["d"]
+
+
+@pytest.mark.parametrize("tamper", [{"protocol": "KERI"}, {"declared_size": "compact"}])
+def test_a_1x_shape_does_not_combine_with_another_version_tamper(tamper):
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0].update(fields="1.x", **tamper)
+    with pytest.raises(ScenarioError, match="combines a 1.x shape"):
+        ab.build_bundle(T, frag)
+
+
+@pytest.mark.parametrize("key", ["version", "fields"])
+def test_the_builder_knows_only_the_1x_shape(key):
+    frag = world({"A": cred("I")}, "A")
+    frag["acdcs"][0][key] = "3.x"
+    with pytest.raises(ScenarioError, match="the only one is 1.x"):
+        ab.build_bundle(T, frag)

@@ -57,7 +57,10 @@
     "ACDC-0153",
     "ACDC-0154",
     "ACDC-0155",
-    "ACDC-0156"
+    "ACDC-0156",
+    "ACDC-0157",
+    "ACDC-0158",
+    "ACDC-0159"
   ],
   "choices": [
     {
@@ -345,7 +348,8 @@
           "ACDC-0124"
         ],
         "positive": [
-          "ACDC-0101"
+          "ACDC-0101",
+          "ACDC-0157"
         ]
       },
       "decided": "8fh68wt6",
@@ -396,8 +400,13 @@
     {
       "basis": "Otherwise a credential revoked in its 2.00 registry could be re-presented in its 1.x form.",
       "cases": {
-        "negative": [],
-        "positive": []
+        "negative": [
+          "ACDC-0158",
+          "ACDC-0159"
+        ],
+        "positive": [
+          "ACDC-0157"
+        ]
       },
       "decided": "3g4le6js",
       "id": "no-1x",

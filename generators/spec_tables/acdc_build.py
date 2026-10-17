@@ -337,6 +337,10 @@ class _Builder:
         if "A" in values:
             values["A"] = sa.aggregate(self.t, values["A"], self.readings)[:1] + values["A"]
         acdc = {k: values[k] for k in ACDC_FIELDS if k in values and values[k] is not None}
+        if spec.get("fields") == "1.x":
+            # keripy 1.x's field set, before the SAID is computed, so that everything naming
+            # this ACDC (its registry, an edge to it) names the body it is presented with.
+            acdc = {("ri" if k == "rd" else k): v for k, v in acdc.items() if k != "t"}
         acdc = self._ordered(name, acdc)
         acdc["d"] = self._top_said(name, sa.sized({**acdc, "d": sa.DUMMY}, self.readings))
         self.expanded[name] = self._protocol(name, sa.sized(acdc, self.readings))
@@ -424,7 +428,27 @@ class _Builder:
         """The ACDC as it is presented, after any alteration the scenario asks for."""
         out = self._protocol(name, self._form(name))
         out = self._alter(out, self.acdcs[name].get("alter", []), f"ACDC {name!r}")
-        return self._declared(name, out)
+        return self._keripy1x(name, self._declared(name, out))
+
+    def _keripy1x(self, name: str, out: dict) -> dict:
+        """The presented form with a 1.x version string where the scenario names ``version``
+        ``1.x``: ``ACDC10JSON<size in six hex digits>_`` sized to the body, over the 2.00 body's
+        SAID. ``fields`` ``1.x``, keripy 1.x's field set (``ri`` for ``rd``, and no ``t``), is
+        applied before the SAID is computed (``acdc_said``). Neither combines with another
+        version-string tamper, which the 1.x version string would overwrite."""
+        spec = self.acdcs[name]
+        for key in ("fields", "version"):
+            if spec.get(key, "1.x") != "1.x":
+                raise ScenarioError(f"ACDC {name!r} names {key} {spec[key]!r}; the only one is "
+                                    f"1.x.")
+        if ("fields" in spec or "version" in spec) and (
+                "protocol" in spec or "declared_size" in spec):
+            raise ScenarioError(f"ACDC {name!r} combines a 1.x shape with another version-string "
+                                f"tamper, which the 1.x shape would overwrite.")
+        if spec.get("version") == "1.x":
+            out = {**out, "v": "ACDC10JSON000000_"}
+            out["v"] = f"ACDC10JSON{len(sa.serialize(out, self.readings)):06x}_"
+        return out
 
     def _declared(self, name: str, out: dict) -> dict:
         """The presented form with its version string declaring another form's size, if the
