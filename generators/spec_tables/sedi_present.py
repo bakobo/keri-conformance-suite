@@ -3,7 +3,7 @@
 
 A disclosure is read against the held ACDC as the bundle gives it:
 
-- ``compact`` and ``expanded`` need nothing more;
+- ``compact`` needs nothing more, and ``expanded`` needs every block held expanded;
 - ``partial`` names label paths from the top level (``a``, ``e``, ``e.le``); each names a SAIDed
   block of the held ACDC, and is expanded with the blocks that contain it, while every other
   block is compacted to its SAID. A path that names nothing or a block held only compact, a path
@@ -42,11 +42,17 @@ def _labels(block) -> list[str]:
     return [k for k in block if k not in BLOCK_FIELDS] if isinstance(block, dict) else []
 
 
-def form(held: dict, disclosure: dict) -> tuple[object, str | None]:
+def form(held: dict, expanded: dict, disclosure: dict) -> tuple[object, str | None]:
     """The acdc_build form that presents ``held`` as ``disclosure`` asks, or None and why a
-    holder refuses."""
+    holder refuses; ``expanded`` is the ACDC with every block expanded, which a holder can
+    present only if it holds every block so."""
     kind = disclosure["form"]
-    if kind in ("compact", "expanded"):
+    if kind == "compact":
+        return kind, None
+    if kind == "expanded":
+        if {k: v for k, v in held.items() if k != "v"} != {
+                k: v for k, v in expanded.items() if k != "v"}:
+            return None, "the expanded form of an ACDC with a block held only compact"
         return kind, None
     if kind == "partial":
         named = disclosure["expand"]

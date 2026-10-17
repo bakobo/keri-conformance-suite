@@ -10,6 +10,22 @@
       "id": "a1",
       "level": "INTEROP",
       "note": "The holder must refuse: incomplete (issuer-kel)."
+    },
+    {
+      "basis": "sedi-1 holder-presents: A holder presents exactly the disclosure asked for: the held ACDC's top-level SAID, each block the disclosure names expanded and every other block compacted to its SAID or, in an aggregate, left as its blinded SAID, and nothing the disclosure hides. It refuses, and never presents something else, when a verifier would refuse the ACDC or the ACDC cannot satisfy the disclosure: a path or label that names nothing, names a block held only compact, or is named twice, and an empty choice. sedi-1 unresolved-grading: A verdict is graded three ways: invalid when a check failed, incomplete when something the verdict needs is absent or cannot be evaluated, and never valid in either case.",
+      "check": "secrets_absent",
+      "choices": [
+        "holder-presents",
+        "unresolved-grading"
+      ],
+      "expected": [
+        "0AD2ZBKkVD1pX1UVYB6T-0vJ",
+        "Alexandra Q. Holder",
+        "EDJDMiELe_eTdTe2R6pVZg5AtGROp0iTqMiISYZeeyJT"
+      ],
+      "id": "a2",
+      "level": "INTEROP",
+      "note": "Every string of the held ACDC that its compact form hides, which a refusal must not carry."
     }
   ],
   "description": "As SH-01, but the bundle carries none of the issuer's key events, so the credential's commitment cannot be established. A verifier could not find it valid, so a sedi-1 holder refuses to present it. Its positive pair is SH-01 (ACDC-0160), which differs from it only in the defect.",

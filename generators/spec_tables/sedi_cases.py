@@ -58,16 +58,25 @@ class HolderEvaluation(Evaluation):
         held = self.bundle.forms[name]
         if self.result.verdict != sm.VALID:
             self.result = sm.Result(REFUSED, self.result.findings)
+            why = None
+        else:
+            shown, why = sedi_present.form(held, self.bundle.expanded[name], disclosure)
+        if self.result.verdict == REFUSED or why:
+            if why:
+                self.result = sm.Result(REFUSED, [sm.Finding(REFUSED, self.bundle.saids[name],
+                                                             why)])
+            # A refusal presents nothing, so it may carry nothing the compact form hides.
+            self.secrets = sedi_present.secrets(held, self._present(t, frag, name, "compact"))
             return
-        shown, why = sedi_present.form(held, disclosure)
-        if why:
-            self.result = sm.Result(REFUSED, [sm.Finding(REFUSED, self.bundle.saids[name], why)])
-            return
-        presented = copy.deepcopy(frag)
-        next(a for a in presented["acdcs"] if a["name"] == name)["form"] = shown
-        body = acdc_build.build_bundle(t, presented).forms[name]
+        body = self._present(t, frag, name, shown)
         self.body = sa.serialize(body)
         self.secrets = sedi_present.secrets(held, body)
+
+    @staticmethod
+    def _present(t, frag: dict, name: str, shown) -> dict:
+        presented = copy.deepcopy(frag)
+        next(a for a in presented["acdcs"] if a["name"] == name)["form"] = shown
+        return acdc_build.build_bundle(t, presented).forms[name]
 
 
 def found(result: sm.Result, names: dict[str, str]) -> list[str]:
@@ -110,15 +119,16 @@ def _holder_case(scenario_path: str, case: dict, ev: HolderEvaluation, descripti
         why = "; ".join(f"{f.grade} ({f.reason})" for f in ev.result.findings)
         assertions = [{"id": "a1", "check": "present_refused", **common,
                        "note": f"The holder must refuse: {why}."}]
+        hidden = "Every string of the held ACDC that its compact form hides, which a refusal "
     else:
         assertions = [{"id": "a1", "check": "presented", **common,
                        "note": "The body the disclosure asks for, byte for byte; the "
                                "attachments only need to be well formed.",
                        "expected": {"body": ev.body.hex()}}]
-        if ev.secrets:
-            assertions.append({"id": "a2", "check": "secrets_absent", **common,
-                               "note": "Every string of the held ACDC the disclosure hides.",
-                               "expected": ev.secrets})
+        hidden = "Every string of the held ACDC that the disclosure hides, which the response "
+    if ev.secrets:
+        assertions.append({"id": "a2", "check": "secrets_absent", **common,
+                           "note": hidden + "must not carry.", "expected": ev.secrets})
     request = ev.bundle.request
     return {
         "schema_version": ac.SCHEMA_VERSION,

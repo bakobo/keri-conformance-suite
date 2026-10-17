@@ -27,7 +27,7 @@
       ],
       "id": "a2",
       "level": "INTEROP",
-      "note": "Every string of the held ACDC the disclosure hides."
+      "note": "Every string of the held ACDC that the disclosure hides, which the response must not carry."
     }
   ],
   "description": "H holds an aggregate credential issued to it by I whose blinded attribute blocks name the issuee, a name and a city, and is asked to disclose the name only. A sedi-1 holder presents the aggregate with the name block disclosed and the others as their blinded SAIDs, carrying neither the city nor the hidden blocks' salts.",

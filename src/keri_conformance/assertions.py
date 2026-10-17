@@ -325,6 +325,11 @@ def _issue_refused(assertion, result):
     return _fail(result, "The issuer issued what it must refuse.")
 
 
+# The CESR text domain, and the shape of a count code: a dash, or two, and a letter.
+TEXT_DOMAIN = frozenset(b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
+COUNT_CODE = re.compile(r"--?[A-Za-z]")
+
+
 def _presented_stream(result) -> bytes:
     """The presentation's bytes, or Unread if there is none or it is not genus-pinned hex."""
     stream = bytes.fromhex(result["presented"]["stream"])
@@ -342,7 +347,10 @@ def _presented(assertion, result):
         _, raw, rest = issued.frame(_presented_stream(result), b"ACDC")
         if rest and not rest.startswith((b"-C", b"--C")):
             raise issued.Unread("what follows the body is not an attachments group")
-        issued.groups(rest)
+        if not set(rest) <= TEXT_DOMAIN:
+            raise issued.Unread("the attachments are not in the CESR text domain")
+        if any(not COUNT_CODE.fullmatch(code) for code, _ in issued.groups(rest)):
+            raise issued.Unread("an attachment group's code is not a count code")
     except (issued.Unread, TypeError, ValueError, KeyError, AttributeError,
             RecursionError) as exc:
         return _fail(None, f"The presentation cannot be read: {type(exc).__name__}: {exc}.")
@@ -356,7 +364,8 @@ def _encodings(secret: str) -> list[bytes]:
     """The forms in which a secret may leak: raw, hex, JSON-escaped, and the part of its Base64
     and Base64url encodings that does not depend on where it starts in a stream."""
     data = secret.encode("utf-8")
-    forms = [data, data.hex().encode(), json.dumps(secret)[1:-1].encode()]
+    forms = [data, data.hex().encode(), data.hex().upper().encode(),
+             json.dumps(secret)[1:-1].encode()]
     for encode in (base64.b64encode, base64.urlsafe_b64encode):
         for lead in range(3):
             text = encode(b"\0" * lead + data)

@@ -10,6 +10,22 @@
       "id": "a1",
       "level": "INTEROP",
       "note": "The holder must refuse: invalid (bup-anchor)."
+    },
+    {
+      "basis": "sedi-1 holder-presents: A holder presents exactly the disclosure asked for: the held ACDC's top-level SAID, each block the disclosure names expanded and every other block compacted to its SAID or, in an aggregate, left as its blinded SAID, and nothing the disclosure hides. It refuses, and never presents something else, when a verifier would refuse the ACDC or the ACDC cannot satisfy the disclosure: a path or label that names nothing, names a block held only compact, or is named twice, and an empty choice. sedi-1 seal-shape: A seal anchoring a registry event is the couple {s, d}, or the event seal {i, s, d} whose i is the registry's SAID; an i naming anything else, an extra field and a bare digest are refused.",
+      "check": "secrets_absent",
+      "choices": [
+        "holder-presents",
+        "seal-shape"
+      ],
+      "expected": [
+        "0AD2ZBKkVD1pX1UVYB6T-0vJ",
+        "Alexandra Q. Holder",
+        "EDJDMiELe_eTdTe2R6pVZg5AtGROp0iTqMiISYZeeyJT"
+      ],
+      "id": "a2",
+      "level": "INTEROP",
+      "note": "Every string of the held ACDC that its compact form hides, which a refusal must not carry."
     }
   ],
   "description": "As SH-01, but the registry update that issues the credential is anchored only by a bare digest, which sedi-1 refuses. A verifier would refuse the credential, so a sedi-1 holder refuses to present it. Its positive pair is SH-01 (ACDC-0160), which differs from it only in the defect.",

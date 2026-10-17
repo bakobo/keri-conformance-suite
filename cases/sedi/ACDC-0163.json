@@ -26,7 +26,7 @@
       ],
       "id": "a2",
       "level": "INTEROP",
-      "note": "Every string of the held ACDC the disclosure hides."
+      "note": "Every string of the held ACDC that the disclosure hides, which the response must not carry."
     }
   ],
   "description": "N, issued by I to H with an I2I edge le to F, is held by H, which is asked to expand e.le and nothing else. The edge section e is expanded because it contains le, and the attribute block stays compact. A sedi-1 holder presents exactly that body.",

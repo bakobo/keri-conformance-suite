@@ -25,7 +25,7 @@
       ],
       "id": "a2",
       "level": "INTEROP",
-      "note": "Every string of the held ACDC the disclosure hides."
+      "note": "Every string of the held ACDC that the disclosure hides, which the response must not carry."
     }
   ],
   "description": "As SH-05, but H is asked to disclose the issuee block and the name. A sedi-1 holder presents exactly that.",

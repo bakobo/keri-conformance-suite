@@ -26,7 +26,7 @@
       ],
       "id": "a2",
       "level": "INTEROP",
-      "note": "Every string of the held ACDC the disclosure hides."
+      "note": "Every string of the held ACDC that the disclosure hides, which the response must not carry."
     }
   ],
   "description": "H holds a credential issued to it by I, with a salted attribute block, and is asked for the compact form: every block compacted to its SAID. A sedi-1 holder presents exactly that body, carrying none of the attribute block's contents.",

@@ -48,6 +48,9 @@ def test_the_body_must_match_byte_for_byte():
     (b"-CAB-SAA", "pass"),
     (b"--CAAAAB-SAA", "pass"),
     (b"-CAC-SAA", "fail"),  # the count measures more than follows
+    (b"-CAB-!AA", "fail"),  # not in the text domain
+    (b"-CAB-\xc3\xa9A", "fail"),
+    (b"-CAB-0AA", "fail"),  # not a count code
     (b"junk", "fail"),
 ])
 def test_attachments_need_only_be_well_formed(attachments, outcome):
@@ -71,6 +74,7 @@ SECRET = "Salt Lake City"
 @pytest.mark.parametrize("leak", [
     SECRET.encode(),
     SECRET.encode().hex().encode(),
+    SECRET.encode().hex().upper().encode(),
     json.dumps(SECRET)[1:-1].encode(),
     base64.b64encode(b"x" + SECRET.encode()),
     base64.urlsafe_b64encode(b"xy" + SECRET.encode()),

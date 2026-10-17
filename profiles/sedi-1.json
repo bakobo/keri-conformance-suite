@@ -77,7 +77,8 @@
     "ACDC-0173",
     "ACDC-0174",
     "ACDC-0175",
-    "ACDC-0176"
+    "ACDC-0176",
+    "ACDC-0177"
   ],
   "choices": [
     {
@@ -460,7 +461,8 @@
           "ACDC-0173",
           "ACDC-0174",
           "ACDC-0175",
-          "ACDC-0176"
+          "ACDC-0176",
+          "ACDC-0177"
         ],
         "positive": [
           "ACDC-0160",
