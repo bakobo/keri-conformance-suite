@@ -360,7 +360,10 @@ def _presented(assertion, result):
             raise issued.Unread("what follows the body is not an attachments group")
         if not set(rest) <= TEXT_DOMAIN:
             raise issued.Unread("the attachments are not in the CESR text domain")
-        for code, contents in issued.groups(rest):
+        found = issued.groups(rest) if rest else []
+        if rest and len(found) != 1:
+            raise issued.Unread("an attachments group holds other than one group of couples")
+        for code, contents in found:
             if code != "-S" or not COUPLES.fullmatch(contents):
                 raise issued.Unread(f"an attachment group {code} is not seal source couples")
             for i in range(0, len(contents), COUPLE_SIZE):

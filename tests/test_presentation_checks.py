@@ -47,8 +47,10 @@ COUPLE = b"0A" + b"A" * 22 + b"E" + b"B" * 43  # 68 characters, 17 quadlets
 
 @pytest.mark.parametrize("attachments,outcome", [
     (b"", "pass"),
-    (b"-CAA", "pass"),
+    (b"-CAA", "fail"),  # an empty attachments group
+    (b"-CAk" + (b"-SAR" + COUPLE) * 2, "fail"),  # two couple groups
     (b"-CAS-SAR" + COUPLE, "pass"),
+    (b"-CAj-SAi" + COUPLE * 2, "pass"),  # one group of two couples
     (b"--CAAAAS-SAR" + COUPLE, "pass"),
     (b"-CAB-SAA", "fail"),  # an empty couple group
     (b"-CAT-SAR" + COUPLE, "fail"),  # the count measures more than follows
