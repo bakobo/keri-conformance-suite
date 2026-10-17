@@ -7,14 +7,17 @@ import importlib.metadata
 import json
 import sys
 
-from kcs_adapter_heti import issue, process, verify
+from kcs_adapter_heti import issue, present, process, verify
 
 PROTOCOL = 1
 ADAPTER = {"name": "kcs-adapter-heti", "version": "0.1.0"}
-OPERATIONS = ["acdc.verify", "acdc.issue", "keri.process"]
+OPERATIONS = ["acdc.verify", "acdc.issue", "acdc.present", "keri.process"]
 # What heti does itself inside acdc.verify and keri.process (README.md, "Declared features").
-# heti refuses upd registries by name, so acdc.registry.upd is not declared.
-FEATURES = sorted({"acdc.edges", "acdc.registry.bup", "acdc.version-2.x", *process.FEATURES})
+# heti refuses upd registries by name, so acdc.registry.upd is not declared. acdc.presentation is
+# judged with heti's parts (presentation.py), so it is also declared composed.
+FEATURES = sorted({"acdc.edges", "acdc.registry.bup", "acdc.version-2.x", "acdc.presentation",
+                   *process.FEATURES})
+COMPOSES = ["acdc.presentation"]
 
 # The longest request line the adapter reads, in bytes, not counting its newline. A longer line
 # is answered with an error whose id is null and is skipped without being held in memory.
@@ -28,7 +31,7 @@ E_UNDECLARED_OP = "e.feature.unsupported.undeclared-op.f"
 E_VERSION = "e.feature.unsupported.protocol-version.f"
 E_INTERNAL = "e.self.unknown.f"
 # Operations of protocol version 1 this adapter does not implement.
-UNDECLARED = ("cesr.parse", "cesr.encode", "keri.emit", "exn.verify", "acdc.present")
+UNDECLARED = ("cesr.parse", "cesr.encode", "keri.emit", "exn.verify")
 
 
 class Unsupported(Exception):
@@ -55,11 +58,11 @@ def hello(request):
         raise Unsupported(f"{E_VERSION}: This adapter implements adapter protocol version "
                           f"{PROTOCOL} only, and the runner offered {supported}.")
     return {"protocol": PROTOCOL, "adapter": dict(ADAPTER), "implementation": implementation(),
-            "operations": list(OPERATIONS), "features": list(FEATURES), "composes": []}
+            "operations": list(OPERATIONS), "features": list(FEATURES), "composes": list(COMPOSES)}
 
 
 OPS = {"hello": hello, "acdc.verify": verify.verify, "acdc.issue": issue.issue,
-       "keri.process": process.process}
+       "acdc.present": present.present, "keri.process": process.process}
 
 
 def handle(request):

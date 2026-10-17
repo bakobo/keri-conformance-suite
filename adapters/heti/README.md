@@ -1,6 +1,6 @@
 # heti adapter
 
-Connects [heti](https://github.com/bakobo/heti) to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `acdc.verify` through heti's public verifier, `Lockbox.verify_acdc`, `acdc.issue` through its public issuer, `OwnFacet.issue`, and `keri.process` through its public key-state resolver, `heti.anchored.consume.resolve_key_state`, and uses heti's public API only, never patching it (this.i 93t4d880). It composes nothing: `composes` is empty, and every verdict is heti's.
+Connects [heti](https://github.com/bakobo/heti) to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `acdc.verify` through heti's public verifier, `Lockbox.verify_acdc`, `acdc.issue` through its public issuer, `OwnFacet.issue`, `acdc.present` through its public `disclose`, and `keri.process` through its public key-state resolver, `heti.anchored.consume.resolve_key_state`, and uses heti's public API only, never patching it (this.i 93t4d880). It composes one thing, `acdc.presentation`: heti judges a grant only inside `admit`, which needs the verifier's keys, so the adapter judges `acdc.verify`'s presentation context with heti's parts (this.i 9fg9ufsm). Every other verdict is heti's.
 
 The adapter does not read, reuse or import anything from `generators/`, so it never tests the suite's own model against itself.
 
@@ -43,6 +43,20 @@ heti's API takes no expected schema, so the request's optional `expect_schema` i
 
 For each request the adapter builds a fresh lockbox, learns the request's schemas, mints one facet per role with no witnesses, and issues each credential with `OwnFacet.issue`, far nodes first, so an edge names its far credential by SAID and schema. heti issues with its own keys, salts, registry nonces and clock, which is why the runner grades an issuance by verifying it rather than by its bytes (this.i 2u2ps8mt). The result is each facet's KEL and each credential's ACDC, registry chain and head disclosure, as heti returns them. heti refuses an issuance by raising a coded error, which the adapter answers as `refused`.
 
+## acdc.present
+
+The held ACDC is first judged by heti's verifier, through this adapter's `acdc.verify` with the held ACDC as the one presented, and whatever heti does not find valid is refused. The form then goes to heti's public `disclose` (`heti.anchored.produce.disclosing`):
+
+- `compact` and `partial` conceal the top-level blocks the form hides. heti conceals only the attribute section, so a form that would compact `e` or `r` is refused with that reason rather than compacted by the adapter.
+- `selective` reveals the aggregate's blocks by their indices in `A`, each label mapped to the block that carries it. heti always reveals the issuee block as well (its tick 4gnp), which the cases grade as heti's.
+- `expanded`, and a `partial` form that hides nothing, answer the held body unchanged, the one answer the adapter makes without a heti call, since the held ACDC is already fully expanded. A block held only as its SAID cannot be expanded, so an expanded form of one is refused.
+
+The protocol's own rules about the disclosure are applied before heti is asked: a partial path or selective label that names no block, one named twice, and an empty list are refused. A presentation carries no attachments, which the protocol allows.
+
+## The presentation context
+
+heti judges a grant only inside `OwnFacet.admit`, which needs the verifier's own keys, and its grant is its own dialect, so, as this.i 7krs5hfz foresaw, the adapter judges `acdc.verify`'s `presentation` with heti's parts and declares `acdc.presentation` in `composes`. After heti verifies the ACDC, the adapter reads the last message and requires that it is an `exn` on `/ipex/grant`, that its `a.o` names exactly the presented ACDC, and that its `ri` is the verifier. heti's public `heti.anchored.consume.verify` checks the grant's signatures against the sender's key state replayed from the bundle's KELs. The presenter rule is heti's own, from `admit`: the sender must be the issuee, as keripy's `iseaid` reads it, or the issuer. So what a presentation case tests is heti's verifier and signature check, plus the adapter's reading of the grant, not heti's `admit`. Where heti's rule is looser than sedi-1's (the issuer may present; heti tick 6kvm), the cases show it.
+
 ## keri.process
 
 heti has no per-message KEL processor in its public API (this.i 8uucj49z). Its public KEL verification surface is `resolve_key_state(aid, evidence, as_of)`, a pure function: it replays the evidence into a scratch keripy database with `lax=False`, drives keripy's escrows until a pass accepts nothing more, refuses an identifier with a fork anywhere in its delegation chain, and answers a key state or raises a coded error. For each request the adapter makes each message one unattributed segment, in delivery order, and asks heti about the message's own event by the SAID in its `d` field (`as_of=d`): with the messages delivered so far for the initial reading, and with all of them for the final one. Every call is a fresh replay, so nothing carries over between readings or requests.
@@ -68,7 +82,7 @@ Where heti adds nothing over keripy. The checks on each event (signatures and th
 
 ## Declared features
 
-`acdc.version-2.x`, `acdc.edges`, `acdc.registry.bup`, `cesr.genus-2.00`, `cesr.serialization.json`, `crypto.ed25519`, `kel.basic`, `kel.delegation` and `keri.version-2.x`: what heti does itself inside `acdc.verify`. heti refuses `upd` registries by name, so `acdc.registry.upd` is not declared. For `keri.process` also `kel.multisig.numeric`, `kel.multisig.weighted`, `kel.partial-rotation`, `kel.witness` and `keri.escrow`, which heti's resolver does through keripy; "keri.process" above says what is not declared and why.
+`acdc.version-2.x`, `acdc.edges`, `acdc.registry.bup`, `cesr.genus-2.00`, `cesr.serialization.json`, `crypto.ed25519`, `kel.basic`, `kel.delegation` and `keri.version-2.x`: what heti does itself inside `acdc.verify`. `acdc.presentation`, composed as "The presentation context" says. heti refuses `upd` registries by name, so `acdc.registry.upd` is not declared. For `keri.process` also `kel.multisig.numeric`, `kel.multisig.weighted`, `kel.partial-rotation`, `kel.witness` and `keri.escrow`, which heti's resolver does through keripy; "keri.process" above says what is not declared and why.
 
 ## Tests
 
@@ -76,4 +90,4 @@ Where heti adds nothing over keripy. The checks on each event (signatures and th
 cd adapters/heti && uv run pytest --cov=kcs_adapter_heti --cov-branch
 ```
 
-The tests drive heti itself, over bundles in `tests/fixtures/bundles.json` and message sequences in `tests/fixtures/kels.json`, which are data the suite's generator once produced; the adapter imports nothing from `generators/`. Branch coverage is 100%.
+The tests drive heti itself, over bundles in `tests/fixtures/bundles.json`, message sequences in `tests/fixtures/kels.json` and the inputs of the sedi-1 holder and presenter cases in `tests/fixtures/present.json`, which are data the suite's generator once produced; the adapter imports nothing from `generators/`. Branch coverage is 100%.

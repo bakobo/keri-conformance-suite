@@ -14,10 +14,14 @@ def answer(request) -> dict:
 
 def test_hello_names_heti_and_declares_its_operations():
     result = answer({"id": 0, "op": "hello", "protocol": 1, "supported": [1]})["result"]
-    assert result["protocol"] == 1 and result["operations"] == ["acdc.verify", "acdc.issue", "keri.process"]
+    assert result["protocol"] == 1 and result["operations"] == [
+        "acdc.verify", "acdc.issue", "acdc.present", "keri.process"]
     assert result["implementation"]["name"] == "heti"
     assert len(result["implementation"]["commit"]) == 40
-    assert "acdc.registry.upd" not in result["features"] and result["composes"] == []
+    assert "acdc.registry.upd" not in result["features"]
+    # Only the presentation context is judged with heti's parts (this.i 9fg9ufsm).
+    assert "acdc.presentation" in result["features"]
+    assert result["composes"] == ["acdc.presentation"]
     assert answer({"id": 0, "op": "hello", "protocol": 1})["result"]["protocol"] == 1
 
 

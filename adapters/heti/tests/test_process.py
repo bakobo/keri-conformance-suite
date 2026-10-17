@@ -202,7 +202,8 @@ def test_a_perspective_other_than_a_validator_is_unsupported():
 
 def test_keri_process_is_declared_with_what_heti_does_itself():
     result = protocol.hello({"supported": [1]})
-    assert "keri.process" in result["operations"] and result["composes"] == []
+    assert "keri.process" in result["operations"]
+    assert not set(process.FEATURES) & set(result["composes"])  # keri.process composes nothing
     for feature in process.FEATURES:
         assert feature in result["features"]
     for absent in ("keri.routing", "kel.recovery", "kel.nontransferable", "keri.duplicity",

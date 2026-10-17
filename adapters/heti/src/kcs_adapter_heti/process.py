@@ -97,10 +97,7 @@ def _validator(request):
 def event(stream: bytes) -> tuple[str, str, str, bytes] | None:
     """The message's type, identifier, SAID and body: what to ask heti about. None when its body
     does not frame or does not name an identifier and a SAID."""
-    try:
-        parts = verify.split(stream)
-    except RecursionError:  # a body nested too deeply to read names nothing
-        parts = None
+    parts = verify.split(stream)  # None for a body nested too deeply to read, too
     sad, body = (parts[0], parts[1]) if parts else ({}, b"")
     t, i, d = sad.get("t"), sad.get("i"), sad.get("d")
     return (t, i, d, body) if isinstance(i, str) and isinstance(d, str) else None
