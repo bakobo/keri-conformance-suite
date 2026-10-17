@@ -8,9 +8,10 @@ KELs, registry events, far ACDCs, then the presented ACDC, after which it proces
 once more. Each stream is delivered one message at a time through ``msgParsator``, as cesr.parse
 delivers it: when keripy asks for more bytes the stream is complete (adapter protocol, "End of
 input") and the rest of it is not delivered, so a truncated stream never makes the adapter wait,
-while a message keripy takes and then refuses is skipped and the next one delivered, as keripy's
-own parse loop does. The presented stream must be one ACDC with its attachments, taken whole;
-anything else is unreadable, and ``invalid``. The adapter
+and otherwise each stream follows the rules of keripy's own parse loop: a message keripy takes and
+then refuses is skipped, and an extraction error discards the rest of the stream. The presented
+stream must be one ACDC with its attachments, taken whole and refused nowhere; anything else is
+unreadable, and ``invalid``, whatever keripy saved from elsewhere in the bundle. The adapter
 then reads keripy's conclusion from keripy's own databases:
 
 - ``valid`` when the Verifier saved the credential;
@@ -78,29 +79,37 @@ def _expect_schema(request):
     return value
 
 
-def _deliver(psr, hby, vry, data: bytes) -> tuple[int, bool]:
-    """Deliver one stream a message at a time, as keripy's own parse loop does: a message keripy
-    refuses after taking it is skipped and the next one delivered. Delivery stops where keripy asks
-    for more bytes (the stream is complete, so it is truncated) or takes nothing. Returns how many
-    messages keripy took and whether it took the whole stream."""
+def _deliver(psr, hby, vry, data: bytes) -> tuple[int, bool, bool]:
+    """Deliver one stream a message at a time with the rules of keripy 1.2.14's own parse loop
+    (Parser.allParsator): after an error inside a sized group, which keripy has already flushed,
+    and after any other error once the message is taken, delivery resumes with the next message;
+    after a cold-start or extraction error the rest of the stream is discarded. Delivery also stops
+    where keripy asks for more bytes (the stream is complete, so it is truncated) or takes nothing.
+    Returns how many messages keripy took, whether it took the whole stream, and whether any of
+    its bytes could not be extracted. An error keripy raises after taking a message is a judgement
+    (an escrow, a refusal), not an extraction failure: verify reads it from keripy's databases."""
     ims = bytearray(data)
-    taken = 0
+    taken, refused = 0, False
     while ims:
         before = len(ims)
         gen = psr.msgParsator(ims=ims, framed=True, pipeline=False, kvy=hby.kvy, tvy=vry.tvy,
                               vry=vry)
-        yielded = False
-        # StopIteration is a message finished; anything else is keripy refusing one, which is
-        # skipped if keripy took it (the check below), as keripy's own parse loop skips it.
-        with contextlib.suppress(Exception):
+        try:
             next(gen)
-            yielded = True
-        if yielded:
-            return taken, False  # keripy yielded for more bytes: end of input
+        except StopIteration:
+            pass  # the message is finished
+        except kering.SizedGroupError:
+            refused = True  # bytes keripy could not extract, though it flushed only the group
+        except (kering.ColdStartError, kering.ExtractionError):
+            return taken, False, True  # keripy discards the rest of the stream
+        except Exception:  # noqa: BLE001, S110 - a judgement keripy reached after taking the
+            pass  # message (an escrow, a refusal), which its databases record and verify reads
+        else:
+            return taken, False, refused  # keripy yielded for more bytes: end of input
         if len(ims) >= before:  # keripy took nothing: stop rather than spin
-            return taken, False
+            return taken, False, refused
         taken += 1
-    return taken, True
+    return taken, True, refused
 
 
 def _registry(vry, ri, said):
@@ -144,7 +153,7 @@ def verify(request):
         # The presented stream is one ACDC and its attachments, taken whole, or it is unreadable:
         # a credential saved from the front of a longer or truncated stream is not what was
         # presented.
-        whole = _deliver(psr, hby, vry, stream) == (1, True)
+        whole = _deliver(psr, hby, vry, stream) == (1, True, False)
         hby.kvy.processEscrows()
         vry.tvy.processEscrows()
         vry.processEscrows()

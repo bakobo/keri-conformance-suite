@@ -148,19 +148,44 @@ def test_a_presented_stream_must_be_one_acdc_taken_whole():
             "invalid", "keripy 1.2.14 cannot read the presented stream as a 1.x ACDC")
 
 
-def test_a_message_keripy_takes_and_refuses_does_not_end_its_stream(monkeypatch):
+def refusing(error):
+    """A parser that takes one byte per message and refuses the second message with error."""
+    def one_byte(self, ims, **kwargs):
+        del ims[:1]
+        if len(ims) == 2:
+            raise error
+        return
+        yield
+    return one_byte
+
+
+@pytest.mark.parametrize("error,result", [
+    (ValueError("a judgement"), (4, True, False)),  # skipped, as keripy's loop skips it
+    ("sized", (4, True, True)),  # keripy flushed the group itself and resumes
+    ("extraction", (1, False, True)),  # keripy discards the rest of the stream
+    ("cold", (1, False, True)),
+])
+def test_delivery_follows_keripys_own_parse_loop(monkeypatch, error, result):
+    from keri import kering
     from keri.core import parsing
 
     from kcs_adapter_keripy import acdc1x
 
-    def one_byte(self, ims, **kwargs):
-        del ims[:1]
-        if len(ims) == 2:
-            raise ValueError("keripy refuses this message")
-        return
-        yield
-
-    monkeypatch.setattr(parsing.Parser, "msgParsator", one_byte)
+    error = {"sized": kering.SizedGroupError("group"),
+             "extraction": kering.ExtractionError("extraction"),
+             "cold": kering.ColdStartError("cold")}.get(error, error)
+    monkeypatch.setattr(parsing.Parser, "msgParsator", refusing(error))
     hby, vry = type("H", (), {"kvy": None})(), type("V", (), {"tvy": None})()
-    assert acdc1x._deliver(parsing.Parser(), hby, vry, b"abcd") == (4, True)
+    assert acdc1x._deliver(parsing.Parser(), hby, vry, b"abcd") == result
+
+
+def test_a_refused_presentation_is_unreadable_even_when_the_credential_was_saved_elsewhere():
+    request = case("ACDC-0201")["input"]
+    stream = request["presented"]["stream"]
+    body = bytes.fromhex(stream).split(b"-IAB")[0]
+    refused = (body + b"-KAA").hex()  # an attachment counter keripy refuses after taking it
+    result = verify({**request, "acdcs": [{"stream": stream}],
+                     "presented": {"stream": refused}})
+    assert (result["verdict"], result["reason"]) == (
+        "invalid", "keripy 1.2.14 cannot read the presented stream as a 1.x ACDC")
 
