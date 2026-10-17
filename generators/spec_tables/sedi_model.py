@@ -383,12 +383,7 @@ class _SediModel(am._Model):
     def _walk(self, rd, issuer):
         events = [p for p in self.registry_streams if p is not None and isinstance(p[0], dict)
                   and (p[0].get("d") == rd or p[0].get("rd") == rd)]
-        if len(events) > MAXIMA["registry_events"]:
-            return None, [(INVALID, "bound-registry-events")]
-        if any(_past_salt(p[0]) or any(len(block[1]) > MAXIMA["salt_chars"]
-                                       for block in p[2] or ()) for p in events):
-            # A registry salt, or the blind (u) of a disclosed state, past the maximum.
-            return None, [(INVALID, "bound-salt-chars")]
+        # The registry's maxima are the bundle check's (_bundle_past_bounds), made before this.
         inception = next((p for p in events if p[0].get("d") == rd), None)
         if inception is None:
             return None, [(INCOMPLETE, "registry-absent")]
@@ -668,11 +663,10 @@ def _bundle_past_bounds(model: _SediModel, request: dict, presented: am.Node) ->
         if parsed is None or not isinstance(parsed[0], dict):
             continue
         body, _, blocks = parsed
-        rd = body.get("rd", body.get("d"))
-        if isinstance(rd, str):
-            counts[rd] = counts.get(rd, 0) + 1
+        rd = str(body.get("rd", body.get("d")))
+        counts[rd] = counts.get(rd, 0) + 1
         if _past_salt(body) or any(len(b[1]) > MAXIMA["salt_chars"] for b in blocks or ()):
-            found.append(Finding(INVALID, str(rd), "bound-salt-chars"))
+            found.append(Finding(INVALID, rd, "bound-salt-chars"))
     found += [Finding(INVALID, rd, "bound-registry-events")
               for rd, n in counts.items() if n > MAXIMA["registry_events"]]
     return list(dict.fromkeys(found))

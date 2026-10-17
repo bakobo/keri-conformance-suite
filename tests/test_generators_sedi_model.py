@@ -818,3 +818,10 @@ def test_a_second_entry_claiming_a_far_nodes_said_is_still_bounded():
     request = {**b.request, "acdcs": b.request["acdcs"] + big.request["acdcs"]}
     result = sm.evaluate(T, request)
     assert result.verdict == sm.INVALID and "invalid/bound-attribute-bytes" in reasons(result)
+
+
+
+def test_the_bundle_check_passes_over_a_registry_stream_it_cannot_read():
+    _, b = run(world({"A": cred("I")}, "A"))
+    request = {**b.request, "registry": b.request["registry"] + [{"stream": "00"}]}
+    assert sm.evaluate(T, request).verdict == sm.VALID
