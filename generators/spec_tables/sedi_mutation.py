@@ -119,7 +119,7 @@ MUTANTS = {
     "bounds": ("holds to no maxima",
                lambda: _dropping("bound-registry-events", "bound-aggregate-blocks",
                                  "bound-edge-group-depth", "bound-operator-list",
-                                 "bound-attribute-bytes")),
+                                 "bound-attribute-bytes", "bound-salt-chars")),
     "no-1x": ("accepts the 1.x forms",
               lambda: _dropping("unframeable", "field-order", "no-registry")),
 }

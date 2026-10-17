@@ -88,7 +88,9 @@
     "ACDC-0184",
     "ACDC-0185",
     "ACDC-0186",
-    "ACDC-0187"
+    "ACDC-0187",
+    "ACDC-0188",
+    "ACDC-0189"
   ],
   "choices": [
     {
@@ -497,20 +499,22 @@
           "ACDC-0181",
           "ACDC-0183",
           "ACDC-0185",
-          "ACDC-0187"
+          "ACDC-0187",
+          "ACDC-0189"
         ],
         "positive": [
           "ACDC-0178",
           "ACDC-0180",
           "ACDC-0182",
           "ACDC-0184",
-          "ACDC-0186"
+          "ACDC-0186",
+          "ACDC-0188"
         ]
       },
       "decided": "7qx6tl5p",
       "id": "bounds",
       "overturn": "A SEDI credential that legitimately needs more than a maximum, which raises it in a new profile version.",
-      "reading": "A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, and 4096 bytes of UTF-8 in one attribute value. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.",
+      "reading": "A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, 4096 bytes in one attribute value (a string's UTF-8, anything else's compact JSON), and 44 characters in any salt u, a 256-bit salt in qb64. Every maximum is checked on the whole credential, so no alternative an OR group did not need can hide one. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.",
       "security": true
     }
   ],
@@ -519,7 +523,8 @@
     "attribute_bytes": 4096,
     "edge_group_depth": 8,
     "operator_list": 8,
-    "registry_events": 64
+    "registry_events": 64,
+    "salt_chars": 44
   },
   "name": "sedi-1",
   "normative": false,

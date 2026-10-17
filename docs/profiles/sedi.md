@@ -20,7 +20,7 @@ A sedi-1 verifier answers `valid`, `invalid` or `incomplete`:
 
 ## Maxima
 
-A sedi-1 credential holds at most 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one `o` list, and 4096 bytes of UTF-8 in one attribute value (choice `bounds`, this.i `7qx6tl5p`). A credential past a maximum is never `valid`. A verifier may refuse it as `invalid` or decline to evaluate it as `incomplete`, and its cases accept either, but it must answer rather than hang.
+A sedi-1 credential holds at most 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one `o` list, 4096 bytes in one attribute value, and 44 characters in any salt `u` (choice `bounds`, this.i `7qx6tl5p`). Every maximum is checked on the whole credential, so no OR alternative can hide a breach. A credential past a maximum is never `valid`. A verifier may refuse it as `invalid` or decline to evaluate it as `incomplete`, and its cases accept either, but it must answer rather than hang.
 
 ## For relying parties
 
@@ -247,7 +247,7 @@ This choice is decided in this.i `8fh68wt6`.
 
 #### `bounds`
 
-A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, and 4096 bytes of UTF-8 in one attribute value. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.
+A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, 4096 bytes in one attribute value (a string's UTF-8, anything else's compact JSON), and 44 characters in any salt u, a 256-bit salt in qb64. Every maximum is checked on the whole credential, so no alternative an OR group did not need can hide one. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.
 
 Why: Without stated maxima a verifier's work on a hostile credential is unbounded, and two verifiers that pick different limits disagree about the same credential (test-plan item 13).
 

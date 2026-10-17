@@ -52,6 +52,7 @@ bundles read ``incomplete`` until they carry every registry's events; an event s
 counts only against the registry its ``i`` names, which is how such an issuer avoids it.
 """
 
+import json
 from dataclasses import dataclass, field
 
 from . import acdc_model as am
@@ -83,7 +84,7 @@ QUADRUPLES = ("-a", "--a")
 # What a sedi-1 credential may hold (choice bounds, this.i 7qx6tl5p); scenarios/sedi/profile.json
 # states the same maxima, and a test holds the two together.
 MAXIMA = {"registry_events": 64, "aggregate_blocks": 32, "edge_group_depth": 8,
-          "operator_list": 8, "attribute_bytes": 4096}
+          "operator_list": 8, "attribute_bytes": 4096, "salt_chars": 44}
 
 # How acdc_model's step failures grade under sedi-1. A failure not listed here fails a check.
 INCOMPLETE_REASONS = {"schema-absent", "issuer-kel"}
@@ -190,22 +191,81 @@ def _parse(t: Tables, stream: bytes):
         return body, raw, None
 
 
+def _size(value) -> int:
+    """An attribute value's size: a string's UTF-8 bytes, anything else's compact JSON's."""
+    text = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False,
+                                                           separators=(",", ":"))
+    return len(text.encode("utf-8", "surrogatepass"))
+
+
+def _salts(value):
+    """Every value under a key ``u`` anywhere in ``value``."""
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, dict):
+            if "u" in item:
+                yield item["u"]
+            stack.extend(item.values())
+        elif isinstance(item, list):
+            stack.extend(item)
+
+
+def _past_salt(value) -> bool:
+    return any(isinstance(u, str) and len(u) > MAXIMA["salt_chars"] for u in _salts(value))
+
+
+def _attributes_past(block) -> bool:
+    """Whether an attribute block, or a block nested in it, holds a value past the maximum."""
+    stack = [block]
+    while stack:
+        item = stack.pop()
+        if not isinstance(item, dict):
+            continue
+        for key, value in item.items():
+            if key in ("d", "u"):
+                continue
+            if isinstance(value, dict) and isinstance(value.get("d"), str):
+                stack.append(value)
+            elif _size(value) > MAXIMA["attribute_bytes"]:
+                return True
+    return False
+
+
+def _edges_past(section, depth: int = 1) -> str | None:
+    """The bound an edge section breaks, walked by its structure: a group nested past the
+    maximum depth (the section itself at depth 1), or an edge's o list past the maximum."""
+    stack = [(section, depth)]
+    while stack:
+        group, level = stack.pop()
+        if level > MAXIMA["edge_group_depth"]:
+            return "bound-edge-group-depth"
+        for key, member in group.items():
+            if key in BLOCK_FIELDS or not isinstance(member, dict):
+                continue
+            if "n" in member:
+                if isinstance(member.get("o"), list) and len(member["o"]) > MAXIMA[
+                        "operator_list"]:
+                    return "bound-operator-list"
+            else:
+                stack.append((member, level + 1))
+    return None
+
+
 def _past_bounds(body: dict) -> str | None:
-    """The reason a credential is past a maximum it may hold, or None: more aggregate blocks
-    than MAXIMA allows, or an attribute value longer than it allows, in UTF-8."""
+    """The bound a credential breaks, or None (choice bounds). Every maximum is checked on the
+    whole credential before anything is evaluated, so no alternative an OR group did not need
+    can hide one."""
     aggregate = body.get("A")
     if isinstance(aggregate, list) and len(aggregate) - 1 > MAXIMA["aggregate_blocks"]:
         return "bound-aggregate-blocks"
-    stack = [v for v in (body.get("a"), aggregate) if v is not None]
-    while stack:
-        value = stack.pop()
-        if isinstance(value, dict):
-            stack.extend(value.values())
-        elif isinstance(value, list):
-            stack.extend(value)
-        elif isinstance(value, str) and len(value.encode("utf-8", "surrogatepass")) > MAXIMA[
-                "attribute_bytes"]:
-            return "bound-attribute-bytes"
+    blocks = [body.get("a")] + (aggregate[1:] if isinstance(aggregate, list) else [])
+    if any(_attributes_past(b) for b in blocks):
+        return "bound-attribute-bytes"
+    if _past_salt(body):
+        return "bound-salt-chars"
+    if isinstance(body.get("e"), dict):
+        return _edges_past(body["e"])
     return None
 
 
@@ -333,6 +393,10 @@ class _SediModel(am._Model):
                   and (p[0].get("d") == rd or p[0].get("rd") == rd)]
         if len(events) > MAXIMA["registry_events"]:
             return None, [(INVALID, "bound-registry-events")]
+        if any(_past_salt(p[0]) or any(len(block[1]) > MAXIMA["salt_chars"]
+                                       for block in p[2] or ()) for p in events):
+            # A registry salt, or the blind (u) of a disclosed state, past the maximum.
+            return None, [(INVALID, "bound-salt-chars")]
         inception = next((p for p in events if p[0].get("d") == rd), None)
         if inception is None:
             return None, [(INCOMPLETE, "registry-absent")]
@@ -439,9 +503,6 @@ class _SediModel(am._Model):
 
     def group(self, near: dict, block, path: str, verdict_of) -> tuple[str, list[Finding]]:
         """The grade of an edge-group (the edge section is one) and why."""
-        if path.count(".") > MAXIMA["edge_group_depth"]:
-            # The edge section is at depth 1 ("<SAID>.e"), each nested group one deeper.
-            return INVALID, [Finding(INVALID, path, "bound-edge-group-depth")]
         o = block.get("o", "AND")
         members = [(k, v) for k, v in block.items() if k not in BLOCK_FIELDS]
         if not members:
@@ -476,8 +537,6 @@ class _SediModel(am._Model):
         (failure-precedence)."""
         if not isinstance(block.get("d"), str):
             return INVALID, [Finding(INVALID, path, "edge-said")]
-        if isinstance(block.get("o"), list) and len(block["o"]) > MAXIMA["operator_list"]:
-            return INVALID, [Finding(INVALID, path, "bound-operator-list")]
         found = []
         ops, bad = operators(block.get("o"))
         if bad:

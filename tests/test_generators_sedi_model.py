@@ -745,7 +745,30 @@ def test_the_models_maxima_are_the_profiles():
     ({"A": ["agid"] + ["E"] * 32}, None),
     ({"A": ["agid"] + ["E"] * 33}, "bound-aggregate-blocks"),
     ({"A": ["agid", {"d": "E", "v": "y" * 4097}]}, "bound-attribute-bytes"),
+    ({"a": {"d": "E", "many": ["x" * 3000, "y" * 3000]}}, "bound-attribute-bytes"),  # one value
+    ({"a": {"d": "E", "sub": {"d": "E", "v": "z" * 4097}}}, "bound-attribute-bytes"),
+    ({"a": {"d": "E", "u": "0A" + "A" * 22}}, None),
+    ({"a": {"d": "E", "u": "0B" + "A" * 46}}, "bound-salt-chars"),
+    ({"u": "x" * 45}, "bound-salt-chars"),
+    ({"e": {"d": "E", "o": "OR", "fine": {"d": "E", "n": "EF"},
+            "long": {"d": "E", "n": "EF", "o": ["I2I"] * 9}}}, "bound-operator-list"),
+    ({"e": {"d": "E", "a.b.c.d.e.f.g.h": {"d": "E", "n": "EF"}}}, None),  # a label, not depth
     ({}, None),
 ])
 def test_a_credential_past_a_maximum_is_named(body, reason):
     assert sm._past_bounds(body) == reason
+
+
+
+def test_groups_nested_past_the_maximum_depth_are_refused_whatever_their_operator():
+    group = {"d": "E", "le": {"d": "E", "n": "EF"}}
+    for _ in range(sm.MAXIMA["edge_group_depth"] - 1):
+        group = {"d": "E", "o": "OR", "g": group}
+    assert sm._past_bounds({"e": group}) is None
+    assert sm._past_bounds({"e": {"d": "E", "o": "OR", "g": group}}) == "bound-edge-group-depth"
+
+
+def test_a_registry_salt_or_blind_past_the_maximum_is_refused():
+    frag = world({"A": cred("I")}, "A")
+    frag["registries"][0]["u"] = {"literal": "0B" + "A" * 46}
+    assert reasons(run(frag)[0]) == ["invalid/bound-salt-chars"]

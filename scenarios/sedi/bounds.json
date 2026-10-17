@@ -6658,6 +6658,430 @@
     }
    ],
    "presented": "A"
+  },
+  "SB-11": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I",
+     "u": {
+      "literal": "0BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     }
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SB-12": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I",
+     "u": {
+      "literal": "0BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+     }
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
   }
  },
  "cases": [
@@ -6740,7 +7164,7 @@
    ],
    "triage": "Accepting it means a verifier's work on a credential has no bound the profile states, and two verifiers that pick different limits disagree about the same credential.",
    "expect": [
-    "N:e.g.g.g.g.g.g.g.g invalid/bound-edge-group-depth"
+    "N invalid/bound-edge-group-depth"
    ],
    "pair": "SB-05",
    "beyond_bound": "edge_group_depth"
@@ -6768,7 +7192,7 @@
    ],
    "triage": "Accepting it means a verifier's work on a credential has no bound the profile states, and two verifiers that pick different limits disagree about the same credential.",
    "expect": [
-    "N:e.le invalid/bound-operator-list"
+    "N invalid/bound-operator-list"
    ],
    "pair": "SB-07",
    "beyond_bound": "operator_list"
@@ -6800,6 +7224,34 @@
    ],
    "pair": "SB-09",
    "beyond_bound": "attribute_bytes"
+  },
+  {
+   "id": "ACDC-0188",
+   "key": "SB-11",
+   "title": "Registry salt at the maximum of 44 characters",
+   "description": "A credential whose registry inception carries a salt of 44 characters, a 256-bit salt in its qb64 form, the most sedi-1 allows. A sedi-1 verifier should find it valid.",
+   "base": "SB-11",
+   "choices": [
+    "bounds"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0189",
+   "key": "SB-12",
+   "title": "Registry salt past the maximum of 44 characters",
+   "description": "As SB-11, but the registry's salt is 48 characters. A sedi-1 verifier should not find it valid.",
+   "base": "SB-12",
+   "choices": [
+    "bounds"
+   ],
+   "triage": "Accepting it means a verifier's work on a credential has no bound the profile states, and two verifiers that pick different limits disagree about the same credential.",
+   "expect": [
+    "A invalid/bound-salt-chars"
+   ],
+   "pair": "SB-11",
+   "beyond_bound": "salt_chars"
   }
  ]
 }

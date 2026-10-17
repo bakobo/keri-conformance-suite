@@ -269,7 +269,10 @@ class _Builder:
         dt = spec.get("dt", DEFAULT_DT)
         block = ""
         if spec["t"] == "rip":
-            body = rip(self.t, self.eb.prefix(spec["issuer"]), nonce(self.t, spec.get("u", name)),
+            salt = spec.get("u", name)
+            # A literal salt, for a case that bounds its size; otherwise one derived from a label.
+            salt = salt["literal"] if isinstance(salt, dict) else nonce(self.t, salt)
+            body = rip(self.t, self.eb.prefix(spec["issuer"]), salt,
                        dt, self.readings)
         elif spec["t"] == "bup":
             rd = self.registry_inception(spec["registry"])
