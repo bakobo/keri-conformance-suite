@@ -18,6 +18,7 @@ from unittest import mock
 from . import acdc_build, sedi_cases, sedi_present
 from . import acdc_cases as ac
 from . import sedi_model as sm
+from .errors import E_CASE_ID, GeneratorError, ScenarioError
 from .regenerate import SEDI_RELEASED, SEDI_SOURCE
 
 DOC = "docs/profiles/sedi-mutation.md"
@@ -152,7 +153,8 @@ def run(t, root: pathlib.Path, only: set[str] | None = None) -> dict:
         if case["id"] in baseline:
             # Outcomes are kept by case id, so two cases sharing one would be compared with each
             # other's; the generator refuses such scenarios too.
-            raise ValueError(f"the case id {case['id']} is used twice in the sedi scenarios")
+            raise ScenarioError(f"The case id {case['id']} is used twice in the sedi "
+                                f"scenarios.", E_CASE_ID)
         baseline[case["id"]], bundles[case["id"]] = _outcome(t, fixtures, case)
     source = json.loads((root / SEDI_SOURCE).read_text(encoding="utf-8"))
     out = {}
@@ -191,7 +193,9 @@ def render(matrix: dict) -> str:
 
 
 def main(argv=None) -> int:
-    """Write docs/profiles/sedi-mutation.md, or with --check say whether it is current."""
+    """Write docs/profiles/sedi-mutation.md, or with --check say whether it is current. Exits 0
+    when written or current, 1 when not current, and 3 with the coded error when the scenarios
+    cannot be read, as scripts/regenerate does."""
     import argparse
     import sys
 
@@ -201,7 +205,11 @@ def main(argv=None) -> int:
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
     root = pathlib.Path(__file__).resolve().parents[2]
-    text = render(run(tables.load(spec_source.load_spec()), root))
+    try:
+        text = render(run(tables.load(spec_source.load_spec()), root))
+    except GeneratorError as e:
+        print(str(e), file=sys.stderr)
+        return 3
     path = root / DOC
     if args.check:
         current = path.read_text(encoding="utf-8") if path.exists() else ""
