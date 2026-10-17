@@ -796,3 +796,25 @@ def test_a_far_credential_past_a_maximum_behind_an_unused_or_is_not_hidden():
     next(a for a in frag["acdcs"] if a["name"] == "G")["a"]["name"] = "x" * 4097
     result, _ = run(frag)
     assert result.verdict == sm.INVALID and reasons(result) == ["invalid/bound-attribute-bytes"]
+
+
+
+def test_a_far_registry_past_the_maximum_behind_an_unused_or_is_not_hidden():
+    creds = {"F": cred("Q", "I"), "G": cred("Q", "I", states=("issued",) * 64),
+             "N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "OR", "le1": edge("F"),
+                                                    "le2": edge("G")}})}
+    result, _ = run(world(creds, "N"))
+    assert result.verdict == sm.INVALID and "invalid/bound-registry-events" in reasons(result)
+
+
+def test_a_second_entry_claiming_a_far_nodes_said_is_still_bounded():
+    _, b = run(world(single(), "N"))
+    said = b.saids["F"]
+    oversized = world(single(), "N")
+    far = next(a for a in oversized["acdcs"] if a["name"] == "F")
+    far["a"]["name"] = "x" * 4097
+    far["alter"] = [{"path": "d", "value": said}]  # claims the first far node's SAID
+    _, big = run(oversized)
+    request = {**b.request, "acdcs": b.request["acdcs"] + big.request["acdcs"]}
+    result = sm.evaluate(T, request)
+    assert result.verdict == sm.INVALID and "invalid/bound-attribute-bytes" in reasons(result)

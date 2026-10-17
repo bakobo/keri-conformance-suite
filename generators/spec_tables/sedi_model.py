@@ -604,11 +604,7 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
     if presented.body is None:
         return Result(INVALID, [Finding(INVALID, "presented", f.reason)
                                 for f in presented.failures])
-    # A credential past a maximum anywhere in the bundle makes it invalid, whichever edges the
-    # verdict needs, so an OR alternative it did not need cannot hide the breach (choice bounds).
-    past = [Finding(INVALID, node.said, f.reason)
-            for node in [presented] + [n for n, _ in model.far.values()]
-            for f in node.failures if f.reason.startswith("bound-")]
+    past = _bundle_past_bounds(model, request, presented)
     if past:
         return Result(INVALID, past)
     state: dict = {}
@@ -653,6 +649,33 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
         head = model.heads.get((presented.body["rd"], presented.body.get("i")), (None,))[0]
     # A node reached by two paths (a diamond) contributes its findings once.
     return Result(verdict, list(dict.fromkeys(findings)), head)
+
+
+def _bundle_past_bounds(model: _SediModel, request: dict, presented: am.Node) -> list[Finding]:
+    """Every breach of a maximum anywhere in the bundle (choice bounds), read from the request
+    itself rather than from what evaluation reaches: each far-node entry as it is delivered,
+    deduplicated by nothing, and each registry by its events and salts. A breach makes the
+    bundle invalid whichever edges the verdict needs, so an OR alternative it did not need
+    cannot hide one."""
+    found = [Finding(INVALID, presented.said, f.reason)
+             for f in presented.failures if f.reason.startswith("bound-")]
+    for entry in request["acdcs"]:
+        node, _ = model.node(bytes.fromhex(entry["stream"]))
+        found += [Finding(INVALID, node.said or "acdc", f.reason)
+                  for f in node.failures if f.reason.startswith("bound-")]
+    counts: dict = {}
+    for parsed in model.registry_streams:
+        if parsed is None or not isinstance(parsed[0], dict):
+            continue
+        body, _, blocks = parsed
+        rd = body.get("rd", body.get("d"))
+        if isinstance(rd, str):
+            counts[rd] = counts.get(rd, 0) + 1
+        if _past_salt(body) or any(len(b[1]) > MAXIMA["salt_chars"] for b in blocks or ()):
+            found.append(Finding(INVALID, str(rd), "bound-salt-chars"))
+    found += [Finding(INVALID, rd, "bound-registry-events")
+              for rd, n in counts.items() if n > MAXIMA["registry_events"]]
+    return list(dict.fromkeys(found))
 
 
 def _presentation(t: Tables, request: dict, presented: am.Node) -> list[Finding]:
