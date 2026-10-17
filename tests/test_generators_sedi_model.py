@@ -727,3 +727,25 @@ def test_the_builder_knows_only_the_1x_shape(key):
     frag["acdcs"][0][key] = "3.x"
     with pytest.raises(ScenarioError, match="the only one is 1.x"):
         ab.build_bundle(T, frag)
+
+
+# -- bounds (choice bounds, this.i 7qx6tl5p) ------------------------------------------------------
+
+
+def test_the_models_maxima_are_the_profiles():
+    source = (ROOT / "scenarios" / "sedi" / "profile.json").read_text(encoding="utf-8")
+    import json
+    assert json.loads(source)["maxima"] == sm.MAXIMA
+
+
+@pytest.mark.parametrize("body,reason", [
+    ({"a": {"d": "E", "name": "x" * 4096}}, None),
+    ({"a": {"d": "E", "name": "x" * 4097}}, "bound-attribute-bytes"),
+    ({"a": {"d": "E", "list": ["\u00e9" * 2049]}}, "bound-attribute-bytes"),  # bytes, not chars
+    ({"A": ["agid"] + ["E"] * 32}, None),
+    ({"A": ["agid"] + ["E"] * 33}, "bound-aggregate-blocks"),
+    ({"A": ["agid", {"d": "E", "v": "y" * 4097}]}, "bound-attribute-bytes"),
+    ({}, None),
+])
+def test_a_credential_past_a_maximum_is_named(body, reason):
+    assert sm._past_bounds(body) == reason

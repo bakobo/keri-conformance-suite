@@ -80,6 +80,11 @@ BASE64 = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 WRAPPERS = ("-C", "--C")
 QUADRUPLES = ("-a", "--a")
 
+# What a sedi-1 credential may hold (choice bounds, this.i 7qx6tl5p); scenarios/sedi/profile.json
+# states the same maxima, and a test holds the two together.
+MAXIMA = {"registry_events": 64, "aggregate_blocks": 32, "edge_group_depth": 8,
+          "operator_list": 8, "attribute_bytes": 4096}
+
 # How acdc_model's step failures grade under sedi-1. A failure not listed here fails a check.
 INCOMPLETE_REASONS = {"schema-absent", "issuer-kel"}
 
@@ -185,6 +190,25 @@ def _parse(t: Tables, stream: bytes):
         return body, raw, None
 
 
+def _past_bounds(body: dict) -> str | None:
+    """The reason a credential is past a maximum it may hold, or None: more aggregate blocks
+    than MAXIMA allows, or an attribute value longer than it allows, in UTF-8."""
+    aggregate = body.get("A")
+    if isinstance(aggregate, list) and len(aggregate) - 1 > MAXIMA["aggregate_blocks"]:
+        return "bound-aggregate-blocks"
+    stack = [v for v in (body.get("a"), aggregate) if v is not None]
+    while stack:
+        value = stack.pop()
+        if isinstance(value, dict):
+            stack.extend(value.values())
+        elif isinstance(value, list):
+            stack.extend(value)
+        elif isinstance(value, str) and len(value.encode("utf-8", "surrogatepass")) > MAXIMA[
+                "attribute_bytes"]:
+            return "bound-attribute-bytes"
+    return None
+
+
 def combine(grades: list[str], operator: str = "AND") -> str:
     """The grade of a group: AND needs every member valid, OR one, and a failure outranks
     something unevaluable either way (failure-precedence)."""
@@ -250,6 +274,11 @@ class _SediModel(am._Model):
         if blocks is None:
             node.failures.append(am.Failure(1, "attachments"))
             return node, raw
+        bound = _past_bounds(body)
+        if bound:
+            # Past a maximum it is not a sedi-1 credential, and nothing more is read of it.
+            node.failures.append(am.Failure(1, bound))
+            return node, raw
         node.failures += self._intrinsic(body)
         node.failures += self._schema(body)
         node.failures += self._commitment(node)
@@ -302,6 +331,8 @@ class _SediModel(am._Model):
     def _walk(self, rd, issuer):
         events = [p for p in self.registry_streams if p is not None and isinstance(p[0], dict)
                   and (p[0].get("d") == rd or p[0].get("rd") == rd)]
+        if len(events) > MAXIMA["registry_events"]:
+            return None, [(INVALID, "bound-registry-events")]
         inception = next((p for p in events if p[0].get("d") == rd), None)
         if inception is None:
             return None, [(INCOMPLETE, "registry-absent")]
@@ -408,6 +439,9 @@ class _SediModel(am._Model):
 
     def group(self, near: dict, block, path: str, verdict_of) -> tuple[str, list[Finding]]:
         """The grade of an edge-group (the edge section is one) and why."""
+        if path.count(".") > MAXIMA["edge_group_depth"]:
+            # The edge section is at depth 1 ("<SAID>.e"), each nested group one deeper.
+            return INVALID, [Finding(INVALID, path, "bound-edge-group-depth")]
         o = block.get("o", "AND")
         members = [(k, v) for k, v in block.items() if k not in BLOCK_FIELDS]
         if not members:
@@ -442,6 +476,8 @@ class _SediModel(am._Model):
         (failure-precedence)."""
         if not isinstance(block.get("d"), str):
             return INVALID, [Finding(INVALID, path, "edge-said")]
+        if isinstance(block.get("o"), list) and len(block["o"]) > MAXIMA["operator_list"]:
+            return INVALID, [Finding(INVALID, path, "bound-operator-list")]
         found = []
         ops, bad = operators(block.get("o"))
         if bad:

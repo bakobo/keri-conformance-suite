@@ -150,3 +150,23 @@ def test_an_edge_section_without_an_edge_still_needs_edge_support():
     made = sedi_cases.build_sedi_case("s.json", case, ev, {"SV-02": ("ACDC-0902", "valid")},
                                       READINGS)
     assert "acdc.edges" in made["targets"]["features"]
+
+
+
+@pytest.mark.parametrize("beyond,verdict,words", [
+    ("no_such_maximum", "invalid", "not a maximum"),
+    ("operator_list", "valid", "not a maximum"),
+])
+def test_beyond_bound_names_a_maximum_the_model_refuses_past(beyond, verdict, words):
+    ev = sedi_cases.build(T, {"issued": world({"A": cred("I")}, "A")},
+                          {"id": "ACDC-0901", "key": "SV-01", "title": "t", "description": "d",
+                           "base": "issued", "choices": ["bounds"], "triage": "t",
+                           "expect": []})
+    ev.result = sedi_cases.sm.Result(verdict, ev.result.findings, ev.result.head)
+    case = {"id": "ACDC-0902", "key": "SV-02", "title": "t", "description": "d",
+            "choices": ["bounds"], "triage": "t", "beyond_bound": beyond}
+    if verdict != "valid":
+        case["pair"] = "SV-01"
+    with pytest.raises(ScenarioError, match=words):
+        sedi_cases.build_sedi_case("s.json", case, ev, {"SV-01": ("ACDC-0901", "valid")},
+                                   READINGS)

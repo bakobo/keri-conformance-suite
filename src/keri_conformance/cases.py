@@ -222,6 +222,9 @@ CASE = obj(
         "superseded_by": string(CASE_ID),
         "dag": DAG,
         "as_of": AS_OF,
+        # A layered profile's case past one of its maxima (this.i 7qx6tl5p): its verdicts ask
+        # only that it is not valid.
+        "beyond_bound": string("^[a-z][a-z0-9_]*$"),
     },
 )
 
@@ -249,6 +252,13 @@ def _cross_field_problem(case: dict) -> str | None:
         # An adapter ignores a field it does not know, so only one declaring the feature may be
         # sent a presentation context (docs/adapter-protocol.md, acdc.verify).
         return 'an acdc.verify case with a "presentation" requires the feature acdc.presentation'
+    if "beyond_bound" in case:
+        if not acdc:
+            return 'only an acdc.verify case carries "beyond_bound"'
+        if any(a["check"] != "verdict" or a["expected"] != "not-valid"
+               for a in case["assertions"]):
+            return ('a case past a maximum ("beyond_bound") asks only that it is not valid: '
+                    'every assertion is a verdict of not-valid')
     checks = OPERATION_CHECKS[case["operation"]]
     for n, assertion in enumerate(case["assertions"]):
         if assertion["check"] not in checks:

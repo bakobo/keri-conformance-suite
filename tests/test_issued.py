@@ -4,6 +4,7 @@ returned is checked for what it must be, and each thing that can be wrong is rep
 import copy
 import json
 import pathlib
+import time
 
 import issued_world as w
 import pytest
@@ -648,3 +649,21 @@ def test_a_stamp_must_name_a_moment_that_exists():
     assert not iss._is_stamp("2026-01-01T00:00:00.000000+00:60")
     assert not iss._is_stamp("2026-01-01T00:00:00.000000+24:00")
     assert iss._is_stamp("2026-01-01T00:00:00.000000-23:59")
+
+
+def test_a_maximum_size_kel_stuffed_with_signature_groups_fails_fast():
+    """Test-plan item 13: an issuer's returned KEL at the stream bound, its first event carrying
+    signature groups to the brim, is failed before any of those signatures is verified, within a
+    stated time."""
+    request, result, _ = w.issuance()
+    _, raw, _ = iss.frame(bytes.fromhex(result["kels"]["issuer"]), b"KERI")
+    group = w.sig_group(raw, [(i, "k0") for i in range(iss.MAX_SIGNATURES)])
+    budget = iss.MAX_STREAM - len(iss.GENUS) - len(raw) - 8
+    groups = group * (budget // len(group))
+    stuffed = iss.GENUS + raw + ("--C" + iss.int_b64(len(groups) // 4, 5) + groups).encode()
+    assert len(stuffed) <= iss.MAX_STREAM and groups.count("-K") > 500
+    result["kels"]["issuer"] = stuffed.hex()
+    start = time.monotonic()
+    problems = iss.grade(request, result)
+    assert time.monotonic() - start < 5
+    assert any("more than 16 signatures" in p for p in problems)
