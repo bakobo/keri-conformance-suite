@@ -784,3 +784,15 @@ def test_a_literal_registry_salt_must_be_a_string():
     frag["registries"][0]["u"] = {}
     with pytest.raises(ScenarioError, match="a literal salt"):
         ab.build_bundle(T, frag)
+
+
+
+def test_a_far_credential_past_a_maximum_behind_an_unused_or_is_not_hidden():
+    big = cred("Q", "I")
+    creds = {"F": cred("Q", "I"), "G": big,
+             "N": cred("I", "H", e={"d": "", "g": {"d": "", "o": "OR", "le1": edge("F"),
+                                                    "le2": edge("G")}})}
+    frag = world(creds, "N")
+    next(a for a in frag["acdcs"] if a["name"] == "G")["a"]["name"] = "x" * 4097
+    result, _ = run(frag)
+    assert result.verdict == sm.INVALID and reasons(result) == ["invalid/bound-attribute-bytes"]

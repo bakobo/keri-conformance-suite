@@ -604,6 +604,13 @@ def evaluate(t: Tables, request: dict, trunks: am._Kels | None = None) -> Result
     if presented.body is None:
         return Result(INVALID, [Finding(INVALID, "presented", f.reason)
                                 for f in presented.failures])
+    # A credential past a maximum anywhere in the bundle makes it invalid, whichever edges the
+    # verdict needs, so an OR alternative it did not need cannot hide the breach (choice bounds).
+    past = [Finding(INVALID, node.said, f.reason)
+            for node in [presented] + [n for n, _ in model.far.values()]
+            for f in node.failures if f.reason.startswith("bound-")]
+    if past:
+        return Result(INVALID, past)
     state: dict = {}
 
     def verdict_of(node: am.Node) -> tuple[str, list[Finding]]:
