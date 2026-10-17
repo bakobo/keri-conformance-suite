@@ -138,3 +138,29 @@ def test_nothing_keripy_prints_reaches_the_protocol_channel(capsys):
     verify(case("ACDC-0203")["input"])  # keripy prints its schema refusal
     assert capsys.readouterr().out == ""
 
+
+def test_a_presented_stream_must_be_one_acdc_taken_whole():
+    request = case("ACDC-0201")["input"]
+    stream = request["presented"]["stream"]
+    for tail in (stream[:80], stream):  # a truncated second ACDC, or a whole second one
+        result = verify({**request, "presented": {"stream": stream + tail}})
+        assert (result["verdict"], result["reason"]) == (
+            "invalid", "keripy 1.2.14 cannot read the presented stream as a 1.x ACDC")
+
+
+def test_a_message_keripy_takes_and_refuses_does_not_end_its_stream(monkeypatch):
+    from keri.core import parsing
+
+    from kcs_adapter_keripy import acdc1x
+
+    def one_byte(self, ims, **kwargs):
+        del ims[:1]
+        if len(ims) == 2:
+            raise ValueError("keripy refuses this message")
+        return
+        yield
+
+    monkeypatch.setattr(parsing.Parser, "msgParsator", one_byte)
+    hby, vry = type("H", (), {"kvy": None})(), type("V", (), {"tvy": None})()
+    assert acdc1x._deliver(parsing.Parser(), hby, vry, b"abcd") == (4, True)
+

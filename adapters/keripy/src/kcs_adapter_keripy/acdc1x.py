@@ -8,7 +8,9 @@ KELs, registry events, far ACDCs, then the presented ACDC, after which it proces
 once more. Each stream is delivered one message at a time through ``msgParsator``, as cesr.parse
 delivers it: when keripy asks for more bytes the stream is complete (adapter protocol, "End of
 input") and the rest of it is not delivered, so a truncated stream never makes the adapter wait,
-and when keripy refuses a message the rest of that stream is not delivered either. The adapter
+while a message keripy takes and then refuses is skipped and the next one delivered, as keripy's
+own parse loop does. The presented stream must be one ACDC with its attachments, taken whole;
+anything else is unreadable, and ``invalid``. The adapter
 then reads keripy's conclusion from keripy's own databases:
 
 - ``valid`` when the Verifier saved the credential;
@@ -76,23 +78,28 @@ def _expect_schema(request):
     return value
 
 
-def _deliver(psr, hby, vry, data: bytes) -> None:
-    """Deliver one stream a message at a time, stopping where keripy asks for more bytes (the
-    stream is complete, so it is truncated) or refuses a message."""
+def _deliver(psr, hby, vry, data: bytes) -> tuple[int, bool]:
+    """Deliver one stream a message at a time, as keripy's own parse loop does: a message keripy
+    refuses after taking it is skipped and the next one delivered. Delivery stops where keripy asks
+    for more bytes (the stream is complete, so it is truncated) or takes nothing. Returns how many
+    messages keripy took and whether it took the whole stream."""
     ims = bytearray(data)
+    taken = 0
     while ims:
         before = len(ims)
         gen = psr.msgParsator(ims=ims, framed=True, pipeline=False, kvy=hby.kvy, tvy=vry.tvy,
                               vry=vry)
         try:
             next(gen)
-            return  # keripy yielded for more bytes: end of input
+            return taken, False  # keripy yielded for more bytes: end of input
         except StopIteration:
             pass
         except Exception:  # noqa: BLE001 - keripy refuses a message with many kinds
-            return
-        if len(ims) >= before:  # a message keripy finished without taking a byte: stop, never spin
-            return
+            pass  # refused after it was taken (the check below), as keripy's parse loop skips it
+        if len(ims) >= before:  # keripy took nothing: stop rather than spin
+            return taken, False
+        taken += 1
+    return taken, True
 
 
 def _registry(vry, ri, said):
@@ -131,13 +138,19 @@ def verify(request):
                 vry.resolver.add(key, raw)
             except kering.KeriError:
                 continue  # a schema keripy will not take is one the bundle does not have
-        for each in [*kels, *registry, *acdcs, stream]:
+        for each in [*kels, *registry, *acdcs]:
             _deliver(psr, hby, vry, each)
+        # The presented stream is one ACDC and its attachments, taken whole, or it is unreadable:
+        # a credential saved from the front of a longer or truncated stream is not what was
+        # presented.
+        whole = _deliver(psr, hby, vry, stream) == (1, True)
         hby.kvy.processEscrows()
         vry.tvy.processEscrows()
         vry.processEscrows()
         head = _registry(vry, ri, said)
-        if vry.reger.saved.get(keys=said) is not None:
+        if not whole:
+            outcome, why = "invalid", "unreadable"
+        elif vry.reger.saved.get(keys=said) is not None:
             outcome, why = "valid", "valid"
         else:
             held = [name for name in ("mre", "mce", "mse")
