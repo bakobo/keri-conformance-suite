@@ -33,6 +33,7 @@ nav = [
   { "Adapter protocol" = "adapter-protocol.md" },
   { "SEDI profile" = [
     { "sedi-1" = "profiles/sedi.md" },
+    { "Mutation acceptance" = "profiles/sedi-mutation.md" },
     { "Test plan" = "profiles/sedi-test-plan.md" },
   ] },
   { "Clause coverage" = [
