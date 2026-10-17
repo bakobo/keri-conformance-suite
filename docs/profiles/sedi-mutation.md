@@ -4,13 +4,13 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 
 | Choice | Wrong variant | Cases resting on it | Caught by |
 | --- | --- | --- | --- |
-| `tel-sequence` | accepts an update whose n skips its prior's plus one | ACDC-0107, ACDC-0122, ACDC-0123 | ACDC-0123 |
+| `tel-sequence` | accepts an update whose n skips its prior's plus one | ACDC-0107, ACDC-0122, ACDC-0123, ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0195 | ACDC-0123 |
 | `registry-head` | accepts two anchored updates at one n | ACDC-0101, ACDC-0109, ACDC-0131 | ACDC-0109 |
 | `blind-derivation` | none yet | none yet |  |
 | `bulk-defaults` | none yet | none yet |  |
 | `seal-couple-code` | reads attachments it should refuse | ACDC-0151, ACDC-0152, ACDC-0153, ACDC-0154 | ACDC-0152, ACDC-0154 |
 | `blind-state-code` | reads attachments it should refuse | ACDC-0155, ACDC-0156 | ACDC-0156 |
-| `seal-shape` | accepts any seal shape naming the update | ACDC-0101, ACDC-0102, ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0136, ACDC-0168 | ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0168 |
+| `seal-shape` | accepts any seal shape naming the update | ACDC-0101, ACDC-0102, ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0136, ACDC-0168, ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0195 | ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0168 |
 | `edge-said` | does not require an edge's own SAID | ACDC-0110, ACDC-0117, ACDC-0137, ACDC-0138 | ACDC-0117, ACDC-0137, ACDC-0138 |
 | `unknown-operator` | evaluates past an operator it does not know | ACDC-0113, ACDC-0125, ACDC-0139, ACDC-0140, ACDC-0141 | ACDC-0113, ACDC-0139 |
 | `default-operator` | never applies the default operator | ACDC-0111, ACDC-0112 | ACDC-0112 |
@@ -27,3 +27,4 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 | `failure-precedence` | none yet | none yet |  |
 | `holder-presents` | presents the compact form instead of refusing | ACDC-0160, ACDC-0161, ACDC-0162, ACDC-0163, ACDC-0164, ACDC-0165, ACDC-0166, ACDC-0167, ACDC-0168, ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 | ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 |
 | `bounds` | holds to no maxima | ACDC-0178, ACDC-0179, ACDC-0180, ACDC-0181, ACDC-0182, ACDC-0183, ACDC-0184, ACDC-0185, ACDC-0186, ACDC-0187, ACDC-0188, ACDC-0189 | ACDC-0179, ACDC-0181, ACDC-0183, ACDC-0185, ACDC-0187, ACDC-0189 |
+| `issuer-issues` | issues whatever it is asked | ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0193, ACDC-0195 | ACDC-0193 |

@@ -90,7 +90,12 @@
     "ACDC-0186",
     "ACDC-0187",
     "ACDC-0188",
-    "ACDC-0189"
+    "ACDC-0189",
+    "ACDC-0190",
+    "ACDC-0191",
+    "ACDC-0192",
+    "ACDC-0193",
+    "ACDC-0195"
   ],
   "choices": [
     {
@@ -101,7 +106,11 @@
           "ACDC-0123"
         ],
         "positive": [
-          "ACDC-0122"
+          "ACDC-0122",
+          "ACDC-0190",
+          "ACDC-0191",
+          "ACDC-0192",
+          "ACDC-0195"
         ]
       },
       "decided": "8g9vtxvc",
@@ -198,7 +207,11 @@
         ],
         "positive": [
           "ACDC-0101",
-          "ACDC-0102"
+          "ACDC-0102",
+          "ACDC-0190",
+          "ACDC-0191",
+          "ACDC-0192",
+          "ACDC-0195"
         ]
       },
       "decided": "2082s6k4",
@@ -515,6 +528,25 @@
       "id": "bounds",
       "overturn": "A SEDI credential that legitimately needs more than a maximum, which raises it in a new profile version.",
       "reading": "A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, 4096 bytes in one attribute value (a string's UTF-8, anything else's compact JSON), and 44 characters in any u, the longest primitive a u holds (a 256-bit blinding factor, code a), measured by its size whatever its type. Every maximum is checked on the whole credential, so no alternative an OR group did not need can hide one. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.",
+      "security": true
+    },
+    {
+      "basis": "An issuance is the first link of every chain a verifier checks, and an issuer that issues what its schema refuses or an edge that cannot hold puts into circulation a credential no correct verifier accepts (test-plan item 4).",
+      "cases": {
+        "negative": [
+          "ACDC-0193"
+        ],
+        "positive": [
+          "ACDC-0190",
+          "ACDC-0191",
+          "ACDC-0192",
+          "ACDC-0195"
+        ]
+      },
+      "decided": "2u2ps8mt",
+      "id": "issuer-issues",
+      "overturn": "A SEDI decision to let an issuer amend a request it cannot issue as asked.",
+      "reading": "An issuer issues exactly the credentials a request asks for, each under a blindable registry of its own, with its own keys, salts and clock; it refuses, and never issues something else, a request whose attributes a credential's schema does not allow once the issuer has added the block's d, u and i, or whose edges cannot hold as the request's roles issue the credentials.",
       "security": true
     }
   ],
