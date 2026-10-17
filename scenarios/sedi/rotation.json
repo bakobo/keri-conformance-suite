@@ -1,0 +1,494 @@
+{
+ "about": "sedi-1's KERI addition (test-plan item 6): an issuer key rotation between issuance and verification, both ways; the verdict uses the key state at the anchoring event.",
+ "profile": "sedi-1",
+ "fixtures": {
+  "SR-01": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "Irot1",
+     "aid": "I",
+     "t": "rot",
+     "keys": [
+      "I1"
+     ],
+     "next": [
+      "I2"
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Irot1",
+     "sigs": [
+      "I1"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SR-02": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "Irot1",
+     "aid": "I",
+     "t": "rot",
+     "keys": [
+      "I1"
+     ],
+     "next": [
+      "I2"
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Irot1",
+     "sigs": [
+      "I1"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      {
+       "key": "I0",
+       "index": 0
+      }
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  }
+ },
+ "cases": [
+  {
+   "id": "ACDC-0196",
+   "key": "SR-01",
+   "title": "Issuer rotation after the anchor",
+   "description": "As SV-01, but after anchoring the registry update that issues the credential, the issuer rotates its keys. The anchor was signed under the key state at its own event, so the rotation does not undo it. A sedi-1 verifier should find it valid.",
+   "base": "SR-01",
+   "choices": [
+    "seal-shape",
+    "registry-head",
+    "valid-is-interop"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0197",
+   "key": "SR-02",
+   "title": "Anchor signed with a rotated-out key",
+   "description": "As SR-01, but the issuer rotates before the interaction that anchors the update, and signs that interaction with the key the rotation retired. That interaction is not in the issuer's verified KEL, so the update has no anchor the verifier can confirm, and a sedi-1 verifier should find it incomplete.",
+   "base": "SR-02",
+   "choices": [
+    "seal-shape",
+    "registry-evidence",
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it accepts an issuance anchored with a key the issuer has rotated away from, which is what pre-rotation exists to stop.",
+   "expect": [
+    "A incomplete/bup-anchor"
+   ],
+   "pair": "SR-01"
+  }
+ ]
+}
