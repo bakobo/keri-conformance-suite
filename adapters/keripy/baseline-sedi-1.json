@@ -1243,6 +1243,20 @@
         "a1": "not-supported"
       }
     },
+    "ACDC-0196": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0197": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
     "CESR-0001": {
       "outcome": "pass",
       "failure": null,
