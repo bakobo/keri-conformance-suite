@@ -747,6 +747,10 @@ def test_the_models_maxima_are_the_profiles():
     ({"A": ["agid", {"d": "E", "v": "y" * 4097}]}, "bound-attribute-bytes"),
     ({"a": {"d": "E", "many": ["x" * 3000, "y" * 3000]}}, "bound-attribute-bytes"),  # one value
     ({"a": {"d": "E", "sub": {"d": "E", "v": "z" * 4097}}}, "bound-attribute-bytes"),
+    # a nested block is one value, measured whole though no field of it is past the maximum
+    ({"a": {"d": "E", "profile": {"d": "E", "x": "p" * 3000, "y": "q" * 3000}}},
+     "bound-attribute-bytes"),
+    ({"a": {"d": "E", "u": {"hidden": "h" * 5000}}}, "bound-salt-chars"),  # not a string
     ({"a": {"d": "E", "u": "0A" + "A" * 22}}, None),
     ({"a": {"d": "E", "u": "0B" + "A" * 46}}, "bound-salt-chars"),
     ({"u": "x" * 45}, "bound-salt-chars"),
@@ -772,3 +776,11 @@ def test_a_registry_salt_or_blind_past_the_maximum_is_refused():
     frag = world({"A": cred("I")}, "A")
     frag["registries"][0]["u"] = {"literal": "0B" + "A" * 46}
     assert reasons(run(frag)[0]) == ["invalid/bound-salt-chars"]
+
+
+
+def test_a_literal_registry_salt_must_be_a_string():
+    frag = world({"A": cred("I")}, "A")
+    frag["registries"][0]["u"] = {}
+    with pytest.raises(ScenarioError, match="a literal salt"):
+        ab.build_bundle(T, frag)

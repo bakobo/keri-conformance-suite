@@ -6836,7 +6836,7 @@
      "t": "rip",
      "issuer": "I",
      "u": {
-      "literal": "0BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "literal": "aAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8g"
      }
     },
     {
@@ -7048,7 +7048,7 @@
      "t": "rip",
      "issuer": "I",
      "u": {
-      "literal": "0BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "literal": "1AABAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAh"
      }
     },
     {
@@ -7229,7 +7229,7 @@
    "id": "ACDC-0188",
    "key": "SB-11",
    "title": "Registry salt at the maximum of 44 characters",
-   "description": "A credential whose registry inception carries a salt of 44 characters, a 256-bit salt in its qb64 form, the most sedi-1 allows. A sedi-1 verifier should find it valid.",
+   "description": "A credential whose registry inception carries as its salt a 256-bit blinding factor (code a), 44 characters in qb64, the longest primitive sedi-1 lets a u hold. A sedi-1 verifier should find it valid.",
    "base": "SB-11",
    "choices": [
     "bounds"
@@ -7241,7 +7241,7 @@
    "id": "ACDC-0189",
    "key": "SB-12",
    "title": "Registry salt past the maximum of 44 characters",
-   "description": "As SB-11, but the registry's salt is 48 characters. A sedi-1 verifier should not find it valid.",
+   "description": "As SB-11, but the registry's salt is a well-formed 48-character primitive. A sedi-1 verifier should not find it valid.",
    "base": "SB-12",
    "choices": [
     "bounds"

@@ -271,7 +271,13 @@ class _Builder:
         if spec["t"] == "rip":
             salt = spec.get("u", name)
             # A literal salt, for a case that bounds its size; otherwise one derived from a label.
-            salt = salt["literal"] if isinstance(salt, dict) else nonce(self.t, salt)
+            if isinstance(salt, dict):
+                if set(salt) != {"literal"} or not isinstance(salt["literal"], str):
+                    raise ScenarioError(f"Registry {name!r} has the salt {salt!r}; a literal salt "
+                                        f"is {{'literal': <string>}}.")
+                salt = salt["literal"]
+            else:
+                salt = nonce(self.t, salt)
             body = rip(self.t, self.eb.prefix(spec["issuer"]), salt,
                        dt, self.readings)
         elif spec["t"] == "bup":

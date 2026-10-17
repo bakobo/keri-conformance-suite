@@ -212,24 +212,16 @@ def _salts(value):
 
 
 def _past_salt(value) -> bool:
-    return any(isinstance(u, str) and len(u) > MAXIMA["salt_chars"] for u in _salts(value))
+    """Whether any u is longer than the longest primitive a u holds, whatever its type."""
+    return any(_size(u) > MAXIMA["salt_chars"] for u in _salts(value))
 
 
 def _attributes_past(block) -> bool:
-    """Whether an attribute block, or a block nested in it, holds a value past the maximum."""
-    stack = [block]
-    while stack:
-        item = stack.pop()
-        if not isinstance(item, dict):
-            continue
-        for key, value in item.items():
-            if key in ("d", "u"):
-                continue
-            if isinstance(value, dict) and isinstance(value.get("d"), str):
-                stack.append(value)
-            elif _size(value) > MAXIMA["attribute_bytes"]:
-                return True
-    return False
+    """Whether an attribute block holds a value past the maximum, each field (a nested block
+    included) measured whole."""
+    return isinstance(block, dict) and any(
+        _size(value) > MAXIMA["attribute_bytes"]
+        for key, value in block.items() if key not in ("d", "u"))
 
 
 def _edges_past(section, depth: int = 1) -> str | None:

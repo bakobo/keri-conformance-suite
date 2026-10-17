@@ -8,7 +8,7 @@
   },
   "assertions": [
     {
-      "basis": "sedi-1 bounds: A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, 4096 bytes in one attribute value (a string's UTF-8, anything else's compact JSON), and 44 characters in any salt u, a 256-bit salt in qb64. Every maximum is checked on the whole credential, so no alternative an OR group did not need can hide one. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.",
+      "basis": "sedi-1 bounds: A credential holds at most the profile's maxima: 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one o list, 4096 bytes in one attribute value (a string's UTF-8, anything else's compact JSON), and 44 characters in any u, the longest primitive a u holds (a 256-bit blinding factor, code a), measured by its size whatever its type. Every maximum is checked on the whole credential, so no alternative an OR group did not need can hide one. A credential past a maximum is not a sedi-1 credential and is never valid; a verifier may refuse it as invalid or decline to evaluate it as incomplete, and must not hang on it.",
       "check": "verdict",
       "choices": [
         "bounds"
