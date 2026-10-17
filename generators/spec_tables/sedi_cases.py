@@ -46,31 +46,32 @@ class Evaluation:
         self.disclosure = None
 
 
-class HolderEvaluation(Evaluation):
-    """A holder case (choice holder-presents): the held bundle, the verifier's reading of it,
-    and either what the holder must present for the disclosure or why it must refuse."""
+class HolderEvaluation:
+    """A holder case (choice holder-presents): the held bundle, and either the body the holder
+    must present for the disclosure or why it must refuse (the verifier's findings when a
+    verifier would refuse the held ACDC), with the secrets the answer must not carry."""
 
     def __init__(self, t, frag: dict, disclosure: dict):
-        super().__init__(t, acdc_build.build_bundle(t, frag))
+        self.bundle = acdc_build.build_bundle(t, frag)
         self.disclosure = disclosure
-        self.body, self.secrets = None, []
         name = frag["presented"]
         held = self.bundle.forms[name]
-        if self.result.verdict != sm.VALID:
-            self.result = sm.Result(REFUSED, self.result.findings)
-            why = None
-        else:
+        verified = sm.evaluate(t, self.bundle.request)
+        shown, why = None, None
+        if verified.verdict == sm.VALID:
             shown, why = sedi_present.form(held, self.bundle.expanded[name], disclosure)
-        if self.result.verdict == REFUSED or why:
-            if why:
-                self.result = sm.Result(REFUSED, [sm.Finding(REFUSED, self.bundle.saids[name],
-                                                             why)])
+        if shown is None:
+            findings = (verified.findings if why is None
+                        else [sm.Finding(REFUSED, self.bundle.saids[name], why)])
+            self.result = sm.Result(REFUSED, findings)
+            self.body = None
             # A refusal presents nothing, so it may carry nothing the compact form hides.
             self.secrets = sedi_present.secrets(held, self._present(t, frag, name, "compact"))
-            return
-        body = self._present(t, frag, name, shown)
-        self.body = sa.serialize(body)
-        self.secrets = sedi_present.secrets(held, body)
+        else:
+            self.result = verified
+            body = self._present(t, frag, name, shown)
+            self.body = sa.serialize(body)
+            self.secrets = sedi_present.secrets(held, body)
 
     @staticmethod
     def _present(t, frag: dict, name: str, shown) -> dict:

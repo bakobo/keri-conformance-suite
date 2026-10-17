@@ -445,6 +445,8 @@ def _secrets_absent(assertion, result):
         try:
             texts.append(bytes.fromhex(result["presented"]["stream"]))
         except (TypeError, ValueError, KeyError, AttributeError):
+            # A stream that is not hex carries no bytes beyond its own text, which _strings
+            # already holds, and the presented check fails it.
             pass
     # Each text as it stands and with its JSON escapes decoded, each also in lower case so that
     # hex in any case matches the lowercase hex form.
