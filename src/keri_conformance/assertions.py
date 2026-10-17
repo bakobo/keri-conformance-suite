@@ -325,14 +325,23 @@ def _issue_refused(assertion, result):
     return _fail(result, "The issuer issued what it must refuse.")
 
 
-# The CESR text domain, and the shape of a count code: a dash, or two, and a letter.
+# The CESR text domain.
 TEXT_DOMAIN = frozenset(b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
-COUNT_CODE = re.compile(r"--?[A-Za-z]")
+# What a presentation may attach: seal source couples pointing to its issuer's commitment, each
+# a sequence number (0A) and a Blake3-256 digest (E), at -S (seal-couple-code).
+COUPLES = re.compile(r"(0A[A-Za-z0-9_-]{22}E[A-Za-z0-9_-]{43})+")
+# A \uXXXX escape, after any run of backslashes (serializing JSON doubles one), which hides a
+# character from a plain search in JSON text.
+UNICODE_ESCAPE = re.compile(rb"\\+u([0-9a-fA-F]{4})")
 
 
 def _presented_stream(result) -> bytes:
-    """The presentation's bytes, or Unread if there is none or it is not genus-pinned hex."""
-    stream = bytes.fromhex(result["presented"]["stream"])
+    """The presentation's bytes, or Unread if there is none, it is longer than a stream may be,
+    or it is not genus-pinned hex."""
+    text = result["presented"]["stream"]
+    if len(text) > 2 * issued.MAX_STREAM:
+        raise issued.Unread(f"the presentation is longer than {issued.MAX_STREAM} bytes")
+    stream = bytes.fromhex(text)
     if not stream.startswith(issued.GENUS):
         raise issued.Unread("the presentation does not begin with the genus/version code")
     return stream
@@ -340,7 +349,7 @@ def _presented_stream(result) -> bytes:
 
 def _presented(assertion, result):
     """The body is the one the disclosure asks for, byte for byte, and what follows it is
-    nothing or one well-formed attachments group (this.i 37ehqmh4)."""
+    nothing or an attachments group of seal source couples (this.i 37ehqmh4)."""
     if "presented" not in result:
         return _fail(result, "The holder refused to present what it must present.")
     try:
@@ -349,8 +358,9 @@ def _presented(assertion, result):
             raise issued.Unread("what follows the body is not an attachments group")
         if not set(rest) <= TEXT_DOMAIN:
             raise issued.Unread("the attachments are not in the CESR text domain")
-        if any(not COUNT_CODE.fullmatch(code) for code, _ in issued.groups(rest)):
-            raise issued.Unread("an attachment group's code is not a count code")
+        for code, contents in issued.groups(rest):
+            if code != "-S" or not COUPLES.fullmatch(contents):
+                raise issued.Unread(f"an attachment group {code} is not seal source couples")
     except (issued.Unread, TypeError, ValueError, KeyError, AttributeError,
             RecursionError) as exc:
         return _fail(None, f"The presentation cannot be read: {type(exc).__name__}: {exc}.")
@@ -364,8 +374,7 @@ def _encodings(secret: str) -> list[bytes]:
     """The forms in which a secret may leak: raw, hex, JSON-escaped, and the part of its Base64
     and Base64url encodings that does not depend on where it starts in a stream."""
     data = secret.encode("utf-8")
-    forms = [data, data.hex().encode(), data.hex().upper().encode(),
-             json.dumps(secret)[1:-1].encode()]
+    forms = [data, data.hex().encode(), json.dumps(secret)[1:-1].encode()]
     for encode in (base64.b64encode, base64.urlsafe_b64encode):
         for lead in range(3):
             text = encode(b"\0" * lead + data)
@@ -378,12 +387,19 @@ def _encodings(secret: str) -> list[bytes]:
 def _secrets_absent(assertion, result):
     """None of the secrets the disclosure hides is in the response, in any form _encodings
     enumerates."""
-    haystacks = [json.dumps(result).encode("utf-8")]
+    texts = [json.dumps(result, ensure_ascii=False).encode("utf-8")]
     if "presented" in result:
         try:
-            haystacks.append(bytes.fromhex(result["presented"]["stream"]))
+            texts.append(bytes.fromhex(result["presented"]["stream"]))
         except (TypeError, ValueError, KeyError, AttributeError):
             pass
+    # Each text as it stands, with its \uXXXX escapes decoded, and in lower case so that hex in
+    # any case matches the lowercase hex form.
+    haystacks = []
+    for text in texts:
+        unescaped = UNICODE_ESCAPE.sub(
+            lambda m: chr(int(m.group(1), 16)).encode("utf-8", "surrogatepass"), text)
+        haystacks += [text, unescaped, text.lower()]
     leaked = [n for n, secret in enumerate(assertion["expected"])
               if any(form in hay for form in _encodings(secret) for hay in haystacks)]
     if leaked:

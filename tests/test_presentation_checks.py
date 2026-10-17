@@ -42,15 +42,20 @@ def test_the_body_must_match_byte_for_byte():
     assert evaluate(presented(), stream(other)).outcome == "fail"
 
 
+COUPLE = b"0A" + b"A" * 22 + b"E" + b"B" * 43  # 68 characters, 17 quadlets
+
+
 @pytest.mark.parametrize("attachments,outcome", [
     (b"", "pass"),
     (b"-CAA", "pass"),
-    (b"-CAB-SAA", "pass"),
-    (b"--CAAAAB-SAA", "pass"),
-    (b"-CAC-SAA", "fail"),  # the count measures more than follows
+    (b"-CAS-SAR" + COUPLE, "pass"),
+    (b"--CAAAAS-SAR" + COUPLE, "pass"),
+    (b"-CAB-SAA", "fail"),  # an empty couple group
+    (b"-CAT-SAR" + COUPLE, "fail"),  # the count measures more than follows
     (b"-CAB-!AA", "fail"),  # not in the text domain
     (b"-CAB-\xc3\xa9A", "fail"),
-    (b"-CAB-0AA", "fail"),  # not a count code
+    (b"-CAC-KABAAAA", "fail"),  # a group a presentation does not carry
+    (b"-CAS-SAR" + COUPLE[:-1] + b"!", "fail"),
     (b"junk", "fail"),
 ])
 def test_attachments_need_only_be_well_formed(attachments, outcome):
@@ -75,6 +80,8 @@ SECRET = "Salt Lake City"
     SECRET.encode(),
     SECRET.encode().hex().encode(),
     SECRET.encode().hex().upper().encode(),
+    "".join(c.upper() if i % 2 else c for i, c in enumerate(SECRET.encode().hex())).encode(),
+    "".join(f"\\u{ord(c):04x}" for c in SECRET).encode(),
     json.dumps(SECRET)[1:-1].encode(),
     base64.b64encode(b"x" + SECRET.encode()),
     base64.urlsafe_b64encode(b"xy" + SECRET.encode()),
@@ -87,6 +94,16 @@ def test_a_secret_leaked_in_any_encoding_fails(leak):
 def test_a_short_secret_has_no_empty_base64_form_that_would_match_anything():
     from keri_conformance.assertions import _encodings
     assert b"" not in _encodings("ab") and all(len(form) >= 2 for form in _encodings("ab"))
+
+
+def test_a_secret_escaped_in_a_refusal_reason_fails():
+    reason = {"refused": {"reason": "".join(f"\\u{ord(c):04X}" for c in SECRET)}}
+    assert evaluate(secrets(SECRET), reason).outcome == "fail"
+
+
+def test_a_presentation_longer_than_a_stream_may_be_fails():
+    huge = {"presented": {"stream": "00" * (1024 * 1024 + 1)}}
+    assert evaluate(presented(), huge).outcome == "fail"
 
 
 def test_a_secret_in_the_response_outside_the_stream_fails():
