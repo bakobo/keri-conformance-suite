@@ -252,3 +252,15 @@ def test_a_signature_counter_must_count_the_signatures_it_heads():
         contents = head[:112] + counter + sigs
         assert presentation._signatures(wrapped(b"-C", wrapped(b"-X", contents)),
                                         _sad["i"]) is None
+
+
+def test_partial_paths_are_matched_in_one_pass_per_level():
+    import time
+
+    blocks = {f"b{n}": {"d": "E", "x": {"d": "E"}, "y": {"d": "E"}} for n in range(20_000)}
+    sad = {"a": {"d": "Ea", **blocks}}
+    expand = [f"a.b{n}.x" for n in range(20_000)]
+    start = time.monotonic()
+    hidden, why = present._hidden(sad, {"form": "partial", "expand": expand})
+    assert time.monotonic() - start < 5 and why is None
+    assert len(hidden) == 20_000 and hidden[0] == "a.b0.y"

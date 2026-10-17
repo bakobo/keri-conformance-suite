@@ -69,17 +69,24 @@ def _sections(sad: dict) -> list[str]:
 def _hide_beneath(node: dict, prefix: str, expand: list[str]) -> list[str]:
     """Every sub-block of ``node`` (at ``prefix``) a partial form hides: one no expand path names
     is hidden whole, one a path names exactly stays whole, and one only deeper paths name is
-    descended into, so a sibling is hidden at every level."""
+    descended into, so a sibling is hidden at every level. The paths are grouped by the child they
+    run through once per level, so each is read once at each depth however many blocks there are."""
+    depth = prefix.count(".") + 1
+    through: dict[str, list[str]] = {}
+    exact = set()
+    for path in expand:
+        parts = path.split(".")
+        through.setdefault(parts[depth], []).append(path)
+        if len(parts) == depth + 1:
+            exact.add(parts[depth])
     hidden = []
     for label, block in node.items():
         if label in FIELDS or not isinstance(block, dict):
             continue
-        path = f"{prefix}.{label}"
-        named = [p for p in expand if p == path or p.startswith(path + ".")]
-        if not named:
-            hidden.append(path)
-        elif path not in named:
-            hidden += _hide_beneath(block, path, named)
+        if label not in through:
+            hidden.append(f"{prefix}.{label}")
+        elif label not in exact:
+            hidden += _hide_beneath(block, f"{prefix}.{label}", through[label])
     return hidden
 
 
