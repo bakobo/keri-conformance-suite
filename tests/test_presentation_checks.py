@@ -56,6 +56,7 @@ COUPLE = b"0A" + b"A" * 22 + b"E" + b"B" * 43  # 68 characters, 17 quadlets
     (b"-CAB-\xc3\xa9A", "fail"),
     (b"-CAC-KABAAAA", "fail"),  # a group a presentation does not carry
     (b"-CAS-SAR" + COUPLE[:-1] + b"!", "fail"),
+    (b"-CAS-SAR" + b"0A" + b"A" * 22 + b"E" + b"_" * 43, "fail"),  # not canonical
     (b"junk", "fail"),
 ])
 def test_attachments_need_only_be_well_formed(attachments, outcome):
@@ -99,6 +100,23 @@ def test_a_short_secret_has_no_empty_base64_form_that_would_match_anything():
 def test_a_secret_escaped_in_a_refusal_reason_fails():
     reason = {"refused": {"reason": "".join(f"\\u{ord(c):04X}" for c in SECRET)}}
     assert evaluate(secrets(SECRET), reason).outcome == "fail"
+
+
+def test_a_character_beyond_the_bmp_escaped_as_a_surrogate_pair_fails():
+    hidden = "Grinning \U0001F600 holder"
+    units = hidden.encode("utf-16-be")
+    escaped = "".join(f"\\u{int.from_bytes(units[i:i + 2], 'big'):04x}"
+                      for i in range(0, len(units), 2))
+    assert evaluate(secrets(hidden), {"refused": {"reason": escaped}}).outcome == "fail"
+
+
+def test_escaped_uppercase_hex_fails():
+    escaped = "".join(f"\\u{ord(c):04x}" for c in SECRET.encode().hex().upper())
+    assert evaluate(secrets(SECRET), {"refused": {"reason": escaped}}).outcome == "fail"
+
+
+def test_an_unpaired_surrogate_in_a_reason_is_read_not_raised():
+    assert evaluate(secrets(SECRET), {"refused": {"reason": "\ud800"}}).outcome == "pass"
 
 
 def test_a_presentation_longer_than_a_stream_may_be_fails():

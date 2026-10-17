@@ -330,9 +330,10 @@ TEXT_DOMAIN = frozenset(b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
 # What a presentation may attach: seal source couples pointing to its issuer's commitment, each
 # a sequence number (0A) and a Blake3-256 digest (E), at -S (seal-couple-code).
 COUPLES = re.compile(r"(0A[A-Za-z0-9_-]{22}E[A-Za-z0-9_-]{43})+")
+COUPLE_SIZE = 68
 # A \uXXXX escape, after any run of backslashes (serializing JSON doubles one), which hides a
 # character from a plain search in JSON text.
-UNICODE_ESCAPE = re.compile(rb"\\+u([0-9a-fA-F]{4})")
+UNICODE_ESCAPE = re.compile(rb"(?:\\+u[0-9a-fA-F]{4})+")
 
 
 def _presented_stream(result) -> bytes:
@@ -361,6 +362,10 @@ def _presented(assertion, result):
         for code, contents in issued.groups(rest):
             if code != "-S" or not COUPLES.fullmatch(contents):
                 raise issued.Unread(f"an attachment group {code} is not seal source couples")
+            for i in range(0, len(contents), COUPLE_SIZE):
+                # raw_of refuses a primitive that is not canonically encoded.
+                issued.raw_of(contents[i:i + 24], "0A", 16)
+                issued.raw_of(contents[i + 24:i + COUPLE_SIZE], "E", 32)
     except (issued.Unread, TypeError, ValueError, KeyError, AttributeError,
             RecursionError) as exc:
         return _fail(None, f"The presentation cannot be read: {type(exc).__name__}: {exc}.")
@@ -384,10 +389,19 @@ def _encodings(secret: str) -> list[bytes]:
     return forms
 
 
+def _unescape(match) -> bytes:
+    """A run of \\uXXXX escapes as the UTF-8 text it stands for, a surrogate pair joined into
+    its one character and an unpaired surrogate kept as itself."""
+    units = re.findall(rb"u([0-9a-fA-F]{4})", match.group(0))
+    text = "".join(chr(int(u, 16)) for u in units)
+    return text.encode("utf-16-le", "surrogatepass").decode("utf-16-le", "surrogatepass").encode(
+        "utf-8", "surrogatepass")
+
+
 def _secrets_absent(assertion, result):
     """None of the secrets the disclosure hides is in the response, in any form _encodings
     enumerates."""
-    texts = [json.dumps(result, ensure_ascii=False).encode("utf-8")]
+    texts = [json.dumps(result, ensure_ascii=False).encode("utf-8", "surrogatepass")]
     if "presented" in result:
         try:
             texts.append(bytes.fromhex(result["presented"]["stream"]))
@@ -397,9 +411,8 @@ def _secrets_absent(assertion, result):
     # any case matches the lowercase hex form.
     haystacks = []
     for text in texts:
-        unescaped = UNICODE_ESCAPE.sub(
-            lambda m: chr(int(m.group(1), 16)).encode("utf-8", "surrogatepass"), text)
-        haystacks += [text, unescaped, text.lower()]
+        unescaped = UNICODE_ESCAPE.sub(_unescape, text)
+        haystacks += [text, unescaped, text.lower(), unescaped.lower()]
     leaked = [n for n, secret in enumerate(assertion["expected"])
               if any(form in hay for form in _encodings(secret) for hay in haystacks)]
     if leaked:
