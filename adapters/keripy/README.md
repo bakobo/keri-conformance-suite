@@ -165,6 +165,10 @@ adapters/keripy/.venv/bin/python -m kcs_adapter_keripy.baseline compare adapters
 
 **Results.** On keripy main `9a8b7aa70960f16fe7acffd8cf7901941ac912a1`, all 76 `acdc-v1.0` cases are not-supported, because every one requires `acdc.version-2.x`, which this adapter does not declare; the verdict is `no-evidence`. The cases are draft, so none would decide a verdict yet. The baseline is `baseline-acdc-v1.0.json`, written with the baseline tool from a fresh run, and the `keripy-adapter` job in `.github/workflows/ci.yml` compares it against a fresh run.
 
+`sedi-1` runs its prerequisites' cases with its own, so its baseline, `baseline-sedi-1.json`, holds the `cesr-v1.0`, `keri-v1.0.1` and `acdc-v1.0` results above plus every sedi-1 case, all not-supported for the same reason; the verdict is `not-interoperable`, since the adapter declares neither `acdc.issue`, `acdc.present` nor sedi-1's required features. It is not yet compared in CI.
+
+`baseline write` refuses to record a case on the maintainers' private embargo list (`docs/profiles/sedi-test-plan.md`, item 12), found as `tools/embargo_guard.py` finds it: `KCS_EMBARGO_PATTERNS`, then `git config kcs.embargoPatterns`, then `info/embargo-patterns.txt` in git's common directory. A configured list that cannot be read refuses the write, and a contributor holding no list is told so and the write goes ahead.
+
 What keripy main has, at the pinned commit:
 
 - **A 2.00 ACDC verifier, but only inside IPEX.** keripy verifies ACDC 2.00 nodes in `keri.acdc.ipexing.IpexHandler`, and only when an `/ipex/grant` exchange message carries the disclosed DAG as nested streams. It walks the DAG, evaluates edge operators and edge schema pins, and checks each node's issuer commitment through its registry, a source seal, or a signature by the issuer's current keys. That path needs a grant signed by a sender, IPEX workflow state and a local registry store, none of which a bundle has, and its edge results are one boolean per edge block, not per edge. The adapter does not build a grant to reach it: that would be the adapter composing an IPEX exchange, and no `acdc.*` feature is composable.

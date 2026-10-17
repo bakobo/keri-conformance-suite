@@ -15,11 +15,20 @@ improvement, because an improvement must be recorded by updating the baseline in
 - Improvements: a verdict that became conformant or interoperable; a new pass; a failure kind
   that went away; a new case or assertion; a different keripy commit.
 
-write records REPORT as the new baseline. Standard library only.
+write records REPORT as the new baseline, and refuses to record a case on the private embargo list
+(docs/profiles/sedi-test-plan.md, item 12): no baseline line is written until the embargo gate has
+cleared its case. The list is the one tools/embargo_guard.py reads, found the same way: the
+environment variable KCS_EMBARGO_PATTERNS, then git config kcs.embargoPatterns (a relative path
+from the main checkout), then info/embargo-patterns.txt in git's common directory. A list that is
+configured and cannot be read refuses the write; a contributor who holds no list at all is told
+so, and the write goes ahead. Matches are named by case id, never by what on the list matched.
+Standard library only.
 """
 
 import errno
 import json
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -34,6 +43,11 @@ E_WRITE = "e.env.filesystem.write.f"
 E_FILE_SIZE = "e.input.range.file-size.f"
 E_REPORT_FORMAT = "e.input.format.report.f"
 E_BASELINE_FORMAT = "e.input.format.baseline.f"
+E_EMBARGO = "e.rule.embargo.f"
+E_PATTERNS = "e.input.format.embargo-patterns.f"
+W_NO_PATTERNS = "w.rule.embargo.patterns-missing.f"
+ENV_PATTERNS = "KCS_EMBARGO_PATTERNS"
+CONFIG_PATTERNS = "kcs.embargoPatterns"
 
 
 # Write failures that may clear on their own; retrying the write could succeed.
@@ -253,6 +267,48 @@ def _baseline(path):
     return base
 
 
+def _git(where: Path, *args) -> str | None:
+    """git's answer in ``where``, or None when git has none (not a checkout, or a key unset)."""
+    try:
+        out = subprocess.run(["git", "-C", str(where), *args], capture_output=True, text=True)
+    except OSError:
+        return None
+    return out.stdout.strip() if out.returncode == 0 else None
+
+
+def embargo_patterns(where: Path, environ) -> list[str] | None:
+    """The embargo list's entries, or None when no list is configured and none is at the default.
+    A configured list that cannot be read raises InputError, so a mistyped setting cannot switch
+    the check off."""
+    configured = environ.get(ENV_PATTERNS)
+    if configured is not None and not configured.strip():
+        raise InputError(f"{E_PATTERNS}: {ENV_PATTERNS} is set but empty, so the embargo list "
+                         "cannot be found; unset it or name the list.")
+    common = _git(where, "rev-parse", "--path-format=absolute", "--git-common-dir")
+    if configured is None:
+        configured = _git(where, "config", "--get", CONFIG_PATTERNS)
+        if configured and not Path(configured).is_absolute() and common:
+            configured = str(Path(common).parent / configured)
+    if configured is None:
+        default = Path(common) / "info" / "embargo-patterns.txt" if common else None
+        if default is None or not default.exists():
+            return None
+        configured = str(default)
+    try:
+        lines = Path(configured).expanduser().read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        raise InputError(f"{E_PATTERNS}: The embargo list could not be read ({type(exc).__name__}"
+                         "), so the baseline is not written.") from exc
+    return [line.strip().lower() for line in lines
+            if line.strip() and not line.lstrip().startswith("#")]
+
+
+def embargoed(summary: dict, patterns: list[str]) -> list[str]:
+    """The cases in a baseline whose id or entry mentions anything on the list."""
+    return [cid for cid, entry in summary["cases"].items()
+            if any(p in json.dumps({cid: entry}).lower() for p in patterns)]
+
+
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     if len(argv) != 3 or argv[0] not in ("compare", "write"):
@@ -272,8 +328,22 @@ def main(argv=None) -> int:
                   "a baseline; rerun to completion and write the baseline from that report.",
                   file=sys.stderr)
             return 1
+        summary = summarize(report)
         try:
-            Path(base_path).write_text(json.dumps(summarize(report), indent=2) + "\n",
+            patterns = embargo_patterns(Path(base_path).resolve().parent, os.environ)
+        except InputError as exc:
+            print(exc, file=sys.stderr)
+            return 2
+        if patterns is None:
+            print(f"{W_NO_PATTERNS}: No embargo list was found, so the baseline was not checked "
+                  "against one.", file=sys.stderr)
+        held = embargoed(summary, patterns or [])
+        if held:
+            print(f"{E_EMBARGO}: The cases {', '.join(held)} are under embargo, so no baseline "
+                  "is written until the embargo gate has cleared them.", file=sys.stderr)
+            return 1
+        try:
+            Path(base_path).write_text(json.dumps(summary, indent=2) + "\n",
                                        encoding="utf-8")
         except OSError as exc:
             transient = exc.errno in TRANSIENT_ERRNOS
