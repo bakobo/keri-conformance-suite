@@ -5,12 +5,12 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 | Choice | Wrong variant | Cases resting on it | Caught by |
 | --- | --- | --- | --- |
 | `tel-sequence` | accepts an update whose n skips its prior's plus one | ACDC-0107, ACDC-0122, ACDC-0123, ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0195 | ACDC-0123 |
-| `registry-head` | accepts two anchored updates at one n | ACDC-0101, ACDC-0109, ACDC-0131 | ACDC-0109 |
+| `registry-head` | accepts two anchored updates at one n | ACDC-0101, ACDC-0109, ACDC-0131, ACDC-0196 | ACDC-0109 |
 | `blind-derivation` | none yet | none yet |  |
 | `bulk-defaults` | none yet | none yet |  |
 | `seal-couple-code` | reads attachments it should refuse | ACDC-0151, ACDC-0152, ACDC-0153, ACDC-0154 | ACDC-0152, ACDC-0154 |
 | `blind-state-code` | reads attachments it should refuse | ACDC-0155, ACDC-0156 | ACDC-0156 |
-| `seal-shape` | accepts any seal shape naming the update | ACDC-0101, ACDC-0102, ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0136, ACDC-0168, ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0195 | ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0168 |
+| `seal-shape` | accepts any seal shape naming the update | ACDC-0101, ACDC-0102, ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0136, ACDC-0168, ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0195, ACDC-0196, ACDC-0197 | ACDC-0103, ACDC-0104, ACDC-0105, ACDC-0168, ACDC-0197 |
 | `edge-said` | does not require an edge's own SAID | ACDC-0110, ACDC-0117, ACDC-0137, ACDC-0138 | ACDC-0117, ACDC-0137, ACDC-0138 |
 | `unknown-operator` | evaluates past an operator it does not know | ACDC-0113, ACDC-0125, ACDC-0139, ACDC-0140, ACDC-0141 | ACDC-0113, ACDC-0139 |
 | `default-operator` | never applies the default operator | ACDC-0111, ACDC-0112 | ACDC-0112 |
@@ -19,10 +19,10 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 | `presenter-binding` | does not check the presenter | ACDC-0118, ACDC-0119, ACDC-0120, ACDC-0128, ACDC-0130 | ACDC-0119, ACDC-0120, ACDC-0130 |
 | `aggregate-issuee` | reads an aggregate's issuee at A[0] | ACDC-0128, ACDC-0129, ACDC-0130 | ACDC-0128, ACDC-0130 |
 | `bearer-untargeted` | treats an untargeted credential as unbound | ACDC-0121 | ACDC-0121 |
-| `unresolved-grading` | accepts what it cannot evaluate | ACDC-0122, ACDC-0124, ACDC-0167 | ACDC-0167 |
-| `valid-is-interop` | refuses everything | ACDC-0101, ACDC-0124, ACDC-0157 | ACDC-0101, ACDC-0157 |
+| `unresolved-grading` | accepts what it cannot evaluate | ACDC-0122, ACDC-0124, ACDC-0167, ACDC-0197 | ACDC-0167, ACDC-0197 |
+| `valid-is-interop` | refuses everything | ACDC-0101, ACDC-0124, ACDC-0157, ACDC-0196 | ACDC-0101, ACDC-0157, ACDC-0196 |
 | `revoked` | accepts a revoked credential | ACDC-0106, ACDC-0122, ACDC-0134, ACDC-0135, ACDC-0149, ACDC-0150, ACDC-0166 | ACDC-0106, ACDC-0135, ACDC-0150, ACDC-0166 |
-| `registry-evidence` | ignores registry evidence it cannot account for | ACDC-0107, ACDC-0108, ACDC-0122, ACDC-0131, ACDC-0132, ACDC-0133 | ACDC-0107, ACDC-0108, ACDC-0132 |
+| `registry-evidence` | ignores registry evidence it cannot account for | ACDC-0107, ACDC-0108, ACDC-0122, ACDC-0131, ACDC-0132, ACDC-0133, ACDC-0197 | ACDC-0107, ACDC-0108, ACDC-0132 |
 | `no-1x` | accepts the 1.x forms | ACDC-0157, ACDC-0158, ACDC-0159 | ACDC-0158, ACDC-0159 |
 | `failure-precedence` | none yet | none yet |  |
 | `holder-presents` | presents the compact form instead of refusing | ACDC-0160, ACDC-0161, ACDC-0162, ACDC-0163, ACDC-0164, ACDC-0165, ACDC-0166, ACDC-0167, ACDC-0168, ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 | ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 |
