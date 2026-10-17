@@ -270,7 +270,8 @@ def _baseline(path):
 def _git(where: Path, *args) -> str | None:
     """git's answer in ``where``, or None when git has none (not a checkout, or a key unset)."""
     try:
-        out = subprocess.run(["git", "-C", str(where), *args], capture_output=True, text=True)
+        out = subprocess.run(["git", "-C", str(where), *args], capture_output=True, text=True,
+                             check=False)
     except OSError:
         return None
     return out.stdout.strip() if out.returncode == 0 else None
