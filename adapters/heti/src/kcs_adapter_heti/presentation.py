@@ -59,7 +59,11 @@ def _signatures(attachments: bytes, sender: str) -> tuple[str, list[str]] | None
     if prefix != sender or not rest.startswith("-K"):
         return None
     sigs = rest[4:]
-    if not sigs or len(sigs) % SIGNATURE:
+    try:
+        declared = v._count(rest[2:4].encode("ascii")) * 4
+    except ValueError:  # a count that is not base 64
+        return None
+    if not sigs or len(sigs) % SIGNATURE or declared != len(sigs):
         return None
     return said, [sigs[n:n + SIGNATURE] for n in range(0, len(sigs), SIGNATURE)]
 

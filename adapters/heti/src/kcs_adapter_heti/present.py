@@ -5,16 +5,18 @@ the held ACDC as the one presented, and whatever heti does not find valid is ref
 refuses to present what a verifier would refuse (adapter protocol, acdc.present). The form then
 goes to heti's ``disclose``:
 
-- **compact** and **partial** conceal the top-level blocks the form hides. heti conceals only the
-  attribute section (``conceal=("a",)``), so a form that would compact an edge or rules section is
-  refused with that reason rather than compacted by the adapter.
+- **compact** and **partial** hide what the form hides: the attribute section or its sub-blocks
+  (``conceal=("a",)`` or ``("a/<label>",)``), and an aggregate by revealing none of its blocks
+  (heti still reveals the issuee block). heti cannot compact an edge or rules section or any block
+  inside one, so a form that would is refused with that reason rather than compacted by the
+  adapter; naming one edge of a section whose other edges must stay hidden is such a form.
 - **selective** reveals the aggregate's blocks by their indices in ``A``, each label mapped to the
   block that carries it. heti always reveals the issuee block (index 1) as well (its tick 4gnp),
   and an ACDC with no aggregate is refused by heti.
 - **expanded**, and a partial form that hides nothing, answer the held body unchanged: the held
   ACDC is already fully expanded, and heti's disclose refuses a reduction that reduces nothing.
-  A block held only as its SAID cannot be expanded by its holder, so an expanded form of an ACDC
-  holding one is refused.
+  A block held only as its SAID (a section, an aggregate block or an edge) cannot be expanded by
+  its holder, so an expanded form of an ACDC holding one is refused.
 
 The protocol's own rules about the disclosure are applied before heti is asked: a partial path or
 selective label that names no block, one named twice, and an empty selective list are refused. A
@@ -27,9 +29,8 @@ from heti.anchored.produce.disclosing import disclose
 from kcs_adapter_heti import verify as v
 
 FORMS = ("compact", "expanded", "partial", "selective")
-BLOCKS = ("a", "e", "r")  # the top-level blocks a form compacts or expands
-HETI_CONCEALS = ("a",)  # what heti's disclose can compact
-
+SECTIONS = ("a", "A", "e", "r")  # the top-level sections a form compacts or expands
+FIELDS = ("d", "u", "o")  # a block's own fields, never a sub-block
 
 def _disclosure(request) -> dict:
     given = request.get("disclosure")
@@ -56,24 +57,55 @@ def _refused(reason: str) -> dict:
     return {"refused": {"reason": reason}}
 
 
+def _sections(sad: dict) -> list[str]:
+    return [b for b in SECTIONS if isinstance(sad.get(b), (dict, list))]
+
+
 def _hidden(sad: dict, given: dict) -> tuple[list[str], str | None]:
-    """The top-level blocks a compact or partial form compacts, or a refusal."""
-    present = [b for b in BLOCKS if isinstance(sad.get(b), dict)]
+    """Every block a compact or partial form hides, by its path (``a``, ``a.name``, ``A``,
+    ``e``, ``e.le``), or a refusal. A section a partial form names whole stays whole; one it
+    names only some sub-blocks of has every other sub-block hidden."""
+    sections = _sections(sad)
     if given["form"] == "compact":
-        return present, None
+        return sections, None
     expand = given.get("expand", [])
     if not expand:
         return [], "a partial form must name at least one block to expand"
     if len(set(expand)) != len(expand):
         return [], "a partial form names a block twice"
     for path in expand:
-        node, parts = sad, path.split(".")
-        for part in parts:
+        node = sad
+        for part in path.split("."):
             node = node.get(part) if isinstance(node, dict) else None
         if not isinstance(node, dict):
             return [], f"{path} names no block"
-    kept = {path.split(".")[0] for path in expand}
-    return [b for b in present if b not in kept], None
+    hidden = []
+    for section in sections:
+        named = [p for p in expand if p == section or p.startswith(section + ".")]
+        if not named:
+            hidden.append(section)
+        elif section not in named and isinstance(sad[section], dict):
+            kept = {p.split(".")[1] for p in named}
+            hidden += [f"{section}.{label}" for label, block in sad[section].items()
+                       if label not in FIELDS and isinstance(block, dict) and label not in kept]
+    return hidden, None
+
+
+def _compact_inside(sad: dict) -> str | None:
+    """The first block a holder holds only as its SAID, which it cannot expand: a whole section,
+    an aggregate block, or an edge block."""
+    for section in SECTIONS:
+        if isinstance(sad.get(section), str):
+            return section
+    blocks = sad.get("A")
+    if isinstance(blocks, list) and any(isinstance(b, str) for b in blocks[1:]):
+        return "A"
+    edges = sad.get("e")
+    if isinstance(edges, dict):
+        for label, block in edges.items():
+            if label not in FIELDS and isinstance(block, str):
+                return f"e.{label}"
+    return None
 
 
 def _selected(sad: dict, given: dict) -> tuple[list[int], str | None]:
@@ -107,9 +139,9 @@ def present(request) -> dict:
     sad, raw, _attachments = v.split(held)
     body = v.GENUS + raw
     if given["form"] == "expanded":
-        compact = [b for b in BLOCKS if isinstance(sad.get(b), str)]
+        compact = _compact_inside(sad)
         if compact:  # a block held only as its SAID cannot be expanded by its holder
-            return _refused(f"{compact[0]} is held only compact")
+            return _refused(f"{compact} is held only compact")
         return {"presented": {"stream": body.hex()}}
     if given["form"] == "selective":
         reveal, why = _selected(sad, given)
@@ -117,14 +149,17 @@ def present(request) -> dict:
             return _refused(why)
         conceal = []
     else:
-        conceal, why = _hidden(sad, given)
+        hidden, why = _hidden(sad, given)
         if why:
             return _refused(why)
-        beyond = [b for b in conceal if b not in HETI_CONCEALS]
+        # heti conceals the attribute section or its sub-blocks, and reduces an aggregate by
+        # revealing nothing (it still reveals the issuee block); it cannot compact e or r.
+        beyond = [h for h in hidden if h != "A" and h != "a" and not h.startswith("a.")]
         if beyond:
             return _refused(f"heti's disclose cannot compact {beyond[0]}")
-        if not conceal:
+        if not hidden:
             return {"presented": {"stream": body.hex()}}
+        conceal = [h.replace(".", "/", 1) for h in hidden if h != "A"]
         reveal = []
     try:
         out = disclose(acdc=body, reveal=reveal, conceal=conceal)

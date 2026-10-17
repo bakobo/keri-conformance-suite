@@ -196,3 +196,47 @@ def test_without_a_context_nothing_is_composed():
 def test_a_block_held_only_as_its_said_carries_no_label():
     sad = {"A": ["Eagid", "Eblinded", {"d": "Eb", "u": "0A", "name": "Zoe"}]}
     assert present._selected(sad, {"disclose": ["name"]}) == ([2], None)
+
+
+def test_compact_reduces_an_aggregate_by_revealing_none_of_its_blocks():
+    sad = body(present.present(given("ACDC-0164", disclosure={"form": "compact"})))
+    disclosed = [b for b in sad["A"][2:] if isinstance(b, dict)]
+    assert disclosed == []  # heti still reveals the issuee block, A[1], by its own rule
+
+
+def test_a_partial_form_hides_every_sub_block_it_does_not_name():
+    sad = {"a": {"d": "Ea", "x": {"d": "Ex", "v": 1}, "y": {"d": "Ey", "v": 2}},
+           "e": {"d": "Ee", "le": {"n": "E1"}, "private": {"n": "E2"}, "o": "AND"}}
+    assert present._hidden(sad, {"form": "partial", "expand": ["a.x", "e.le"]}) == (
+        ["a.y", "e.private"], None)
+    assert present._hidden(sad, {"form": "partial", "expand": ["a", "e"]}) == ([], None)
+    assert present._hidden(sad, {"form": "compact"}) == (["a", "e"], None)
+
+
+def test_a_sub_block_of_the_edges_heti_must_hide_is_refused():
+    request = given("ACDC-0163")
+    assert present.present(request)["presented"]  # e has only le, so naming it hides nothing
+    sad = verify.split(bytes.fromhex(request["held"]["stream"]))[0]
+    hidden, _ = present._hidden({**sad, "e": {**sad["e"], "extra": {"n": "E"}}},
+                                request["disclosure"])
+    assert "e.extra" in hidden
+
+
+@pytest.mark.parametrize("sad,found", [
+    ({"a": "Ea"}, "a"),
+    ({"A": ["Eagid", {"d": "E1"}, "Eblinded"]}, "A"),
+    ({"e": {"d": "Ee", "o": "AND", "le": "Ecompact"}}, "e.le"),
+    ({"a": {"d": "Ea"}, "e": {"d": "Ee", "le": {"n": "E"}}}, None),
+])
+def test_a_block_held_only_compact_is_found(sad, found):
+    assert present._compact_inside(sad) == found
+
+
+def test_a_signature_counter_must_count_the_signatures_it_heads():
+    _sad, _raw, attachments = verify.split(grant("ACDC-0118"))
+    group = next(b for c, b in verify.groups(attachments) if c == b"-X")
+    head, sigs = group[:116], group[116:]
+    for counter in (b"-KAA", b"-K!!"):
+        contents = head[:112] + counter + sigs
+        assert presentation._signatures(wrapped(b"-C", wrapped(b"-X", contents)),
+                                        _sad["i"]) is None
