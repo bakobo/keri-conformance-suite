@@ -8,7 +8,7 @@ import pathlib
 
 import pytest
 
-from generators.spec_tables import sedi_mutation, spec_source, tables
+from generators.spec_tables import regenerate, sedi_mutation, spec_source, tables
 from generators.spec_tables.errors import E_SCENARIO, ScenarioError
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -65,6 +65,20 @@ def test_the_script_writes_the_matrix_and_checks_it(tmp_path, monkeypatch, capsy
     assert sedi_mutation.main(["--check"]) == 0
 
 
+def test_a_choice_with_cases_and_no_mutant_is_left_uncaught(monkeypatch):
+    monkeypatch.delitem(sedi_mutation.MUTANTS, "revoked")
+    row = sedi_mutation.run(T, ROOT, only={"revoked"})["revoked"]
+    assert row["mutant"] is None and row["cases"] and row["caught_by"] == []
+
+
+def test_a_scenario_larger_than_the_generator_reads_is_refused(tmp_path):
+    scenarios = tmp_path / "scenarios" / "sedi"
+    scenarios.mkdir(parents=True)
+    (scenarios / "huge.json").write_bytes(b" " * (regenerate.MAX_SCENARIO_BYTES + 1))
+    with pytest.raises(ScenarioError, match="larger than"):
+        list(sedi_mutation._scenarios(tmp_path))
+
+
 def test_a_case_id_used_twice_is_refused(monkeypatch):
     real = sedi_mutation._scenarios
 
@@ -79,7 +93,8 @@ def test_a_case_id_used_twice_is_refused(monkeypatch):
 
 
 @pytest.mark.parametrize("error", [ScenarioError("broken"), ValueError("not JSON"),
-                                   KeyError("id"), TypeError("unhashable")])
+                                   KeyError("id"), TypeError("unhashable"),
+                                   PermissionError("denied")])
 def test_the_script_reports_a_coded_error(monkeypatch, capsys, error):
     def broken(t, root):
         raise error

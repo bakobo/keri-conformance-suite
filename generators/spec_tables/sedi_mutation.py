@@ -11,7 +11,6 @@ yet (a draft's open side) has no mutant run against it and is listed as such.
 """
 
 import copy
-import json
 import pathlib
 from unittest import mock
 
@@ -19,7 +18,7 @@ from . import acdc_build, sedi_cases, sedi_present
 from . import acdc_cases as ac
 from . import sedi_model as sm
 from .errors import E_SCENARIO, GeneratorError, ScenarioError
-from .regenerate import SEDI_RELEASED, SEDI_SOURCE
+from .regenerate import SEDI_RELEASED, SEDI_SOURCE, _load_json
 
 DOC = "docs/profiles/sedi-mutation.md"
 
@@ -127,7 +126,7 @@ def _scenarios(root: pathlib.Path):
     for path in sorted((root / "scenarios" / "sedi").glob("*.json")):
         if path.name in skip:
             continue
-        doc = json.loads(path.read_text(encoding="utf-8"))
+        doc = _load_json(path)  # read with the generator's size bound
         for case in doc["cases"]:
             yield doc.get("fixtures", {}), case
 
@@ -156,13 +155,14 @@ def run(t, root: pathlib.Path, only: set[str] | None = None) -> dict:
             raise ScenarioError(f"The case id {case['id']} is used twice in the sedi "
                                 f"scenarios.")
         baseline[case["id"]], bundles[case["id"]] = _outcome(t, fixtures, case)
-    source = json.loads((root / SEDI_SOURCE).read_text(encoding="utf-8"))
+    source = _load_json(root / SEDI_SOURCE)
     out = {}
     for choice in (c["id"] for c in source["choices"] if only is None or c["id"] in only):
         resting = [(f, c) for f, c in cases if choice in c["choices"]]
         if choice not in MUTANTS or not resting:
-            out[choice] = {"mutant": MUTANTS.get(choice, (None,))[0], "cases": [],
-                           "caught_by": []}
+            # A choice with cases but no mutant keeps its cases, so the gate sees it uncaught.
+            out[choice] = {"mutant": MUTANTS.get(choice, (None,))[0],
+                           "cases": sorted(c["id"] for _, c in resting), "caught_by": []}
             continue
         what, make = MUTANTS[choice]
         caught = []
@@ -210,7 +210,7 @@ def main(argv=None) -> int:
     except GeneratorError as e:
         print(str(e), file=sys.stderr)
         return 3
-    except (ValueError, KeyError, TypeError, LookupError, AttributeError) as e:
+    except (ValueError, KeyError, TypeError, LookupError, AttributeError, OSError) as e:
         # A scenario that is not JSON or not shaped as one; scripts/regenerate refuses it too.
         print(f"{E_SCENARIO}: the sedi scenarios cannot be read: {type(e).__name__}: {e}",
               file=sys.stderr)
