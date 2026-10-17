@@ -262,3 +262,28 @@ def test_a_reference_cycle_ends():
 
     assert acdc1x._reaches_out({"$defs": {"a": {"$ref": "#"}}, "$ref": "#/$defs/a"}) is False
     assert acdc1x._reaches_out({"items": [{"$ref": "#/items/0"}]}) is False
+
+
+@pytest.mark.parametrize("keyword", ["$id", "id"])
+def test_a_nested_base_uri_reaches_out(keyword):
+    from kcs_adapter_keripy import acdc1x
+
+    nested = {"$id": "root", "properties": {"a": {keyword: "https://example.com/",
+                                                  "$ref": "#/x"}}}
+    assert acdc1x._reaches_out(nested) is True
+    assert acdc1x._reaches_out({"$id": "root", "type": "object"}) is False
+
+
+def test_no_network_connection_can_be_made_while_judging():
+    import socket
+
+    from kcs_adapter_keripy import acdc1x
+
+    before = socket.create_connection
+    with acdc1x._offline():
+        for attempt in (lambda: socket.create_connection(("192.0.2.1", 80)),
+                        lambda: socket.socket().connect(("192.0.2.1", 80)),
+                        lambda: socket.socket().connect_ex(("192.0.2.1", 80))):
+            with pytest.raises(acdc1x.Offline):
+                attempt()
+    assert socket.create_connection is before

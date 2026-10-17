@@ -28,14 +28,16 @@ compares the issuance's ``dt`` with the clock and treats a stale one as missing;
 past any stamp a case carries, which fixes the clock as the adapter protocol requires. keripy
 prints some refusals to stdout, which is the protocol's channel, so everything it prints while
 judging goes to stderr. A schema keripy's resolver will not take (its ``$id`` is not its SAID), and
-one that refers outside itself, which keripy's validator would follow, is one the bundle does not
-have. keripy's Verifier reports no result for any single edge (and its chain check never reads an
+one that refers outside itself or sets a nested base URI, which keripy's validator would follow,
+is one the bundle does not have; and no network connection can be made while keripy judges, so
+nothing outside the bundle is reached whatever a schema says. keripy's Verifier reports no result for any single edge (and its chain check never reads an
 edge's ``s``), so the adapter cannot say which edges held and ``edges`` is always empty: the
 adapter protocol lets an adapter report only what it evaluated.
 """
 
 import contextlib
 import json
+import socket
 import sys
 import urllib.parse
 
@@ -122,6 +124,8 @@ def _reaches_out(schema) -> bool:
             continue
         if not isinstance(node, dict):
             continue
+        if node is not schema and ("$id" in node or "id" in node):
+            return True  # a nested base URI: local references beneath it may resolve outside
         for key, value in node.items():
             if key in REFERENCES:
                 target = _pointer(schema, value) if isinstance(value, str) else MISSING
@@ -133,6 +137,28 @@ def _reaches_out(schema) -> bool:
             elif key not in DATA_KEYWORDS:
                 stack.append(value)
     return False
+
+
+class Offline(OSError):
+    """A network connection attempted while judging a bundle."""
+
+
+@contextlib.contextmanager
+def _offline():
+    """No network connection can be made while keripy judges a bundle: the bundle is the whole
+    world (adapter protocol, acdc.verify), and keripy's schema validator would otherwise follow a
+    remote reference. This holds whatever shape of reference gets past _reaches_out."""
+    def refuse(*args, **kwargs):
+        raise Offline("the adapter makes no network connection while judging a bundle")
+
+    saved = socket.create_connection, socket.socket.connect, socket.socket.connect_ex
+    socket.create_connection = refuse
+    socket.socket.connect = refuse
+    socket.socket.connect_ex = refuse
+    try:
+        yield
+    finally:
+        socket.create_connection, socket.socket.connect, socket.socket.connect_ex = saved
 
 
 def _expect_schema(request):
@@ -213,7 +239,7 @@ def verify(request):
                 "edges": []}
     creder = serdering.SerderACDC(raw=bytearray(stream))
     ri = creder.sad.get("ri")
-    with contextlib.redirect_stdout(sys.stderr), \
+    with contextlib.redirect_stdout(sys.stderr), _offline(), \
             habbing.openHby(name="kcs-acdc-1x", temp=True) as hby:
         vry = verifying.Verifier(hby=hby, expiry=NEVER)
         psr = parsing.Parser(framed=True, kvy=hby.kvy, tvy=vry.tvy, vry=vry)
