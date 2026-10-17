@@ -267,41 +267,61 @@ def _baseline(path):
     return base
 
 
-def _git(where: Path, *args) -> str | None:
-    """git's answer in ``where``, or None when git has none (not a checkout, or a key unset)."""
+def _git(where: Path, *args) -> tuple[int | None, str]:
+    """git's exit status in ``where`` and its output with only the final newline removed, so a
+    configured path keeps any whitespace it was written with; the status is None without git."""
     try:
         out = subprocess.run(["git", "-C", str(where), *args], capture_output=True, text=True,
                              check=False)
     except OSError:
-        return None
-    return out.stdout.strip() if out.returncode == 0 else None
+        return None, ""
+    return out.returncode, out.stdout.removesuffix("\n")
 
 
-def embargo_patterns(where: Path, environ) -> list[str] | None:
-    """The embargo list's entries, or None when no list is configured and none is at the default.
-    A configured list that cannot be read raises InputError, so a mistyped setting cannot switch
-    the check off."""
+def _unreadable(why: str) -> InputError:
+    return InputError(f"{E_PATTERNS}: {why}, so the baseline is not written.")
+
+
+def _list_at(where: Path, environ) -> list[str] | None:
+    """The list as seen from one directory, or None when none is configured and none is at the
+    default. A configured list that cannot be read, and a default entry that is present but
+    unreadable (a dangling link included), raise InputError, as the push guard refuses them."""
     configured = environ.get(ENV_PATTERNS)
     if configured is not None and not configured.strip():
-        raise InputError(f"{E_PATTERNS}: {ENV_PATTERNS} is set but empty, so the embargo list "
-                         "cannot be found; unset it or name the list.")
-    common = _git(where, "rev-parse", "--path-format=absolute", "--git-common-dir")
+        raise _unreadable(f"{ENV_PATTERNS} is set but empty")
+    status, common = _git(where, "rev-parse", "--path-format=absolute", "--git-common-dir")
+    in_checkout = status == 0 and bool(common)
+    if configured is None and in_checkout:
+        status, value = _git(where, "config", "--get", CONFIG_PATTERNS)
+        if status == 0:
+            if not value.strip():
+                raise _unreadable(f"git config {CONFIG_PATTERNS} is set but empty")
+            path = Path(value)
+            configured = str(path if path.is_absolute() else Path(common).parent / path)
+        elif status != 1:  # 1 is an unset key; anything else is a config git could not read
+            raise _unreadable(f"git config {CONFIG_PATTERNS} could not be read")
     if configured is None:
-        configured = _git(where, "config", "--get", CONFIG_PATTERNS)
-        if configured and not Path(configured).is_absolute() and common:
-            configured = str(Path(common).parent / configured)
-    if configured is None:
-        default = Path(common) / "info" / "embargo-patterns.txt" if common else None
-        if default is None or not default.exists():
+        if not in_checkout:
+            return None
+        default = Path(common) / "info" / "embargo-patterns.txt"
+        if not os.path.lexists(default):
             return None
         configured = str(default)
     try:
         lines = Path(configured).expanduser().read_text(encoding="utf-8").splitlines()
-    except (OSError, UnicodeDecodeError) as exc:
-        raise InputError(f"{E_PATTERNS}: The embargo list could not be read ({type(exc).__name__}"
-                         "), so the baseline is not written.") from exc
+    except (OSError, UnicodeDecodeError, RuntimeError) as exc:  # RuntimeError: ~user unknown
+        raise _unreadable(f"The embargo list could not be read ({type(exc).__name__})") from exc
     return [line.strip().lower() for line in lines
             if line.strip() and not line.lstrip().startswith("#")]
+
+
+def embargo_patterns(places, environ) -> list[str] | None:
+    """Every entry of every list seen from ``places`` (the working directory and the baseline's
+    own directory), or None when none of them sees one. Looking from both means a baseline
+    written outside the checkout is still checked against the checkout's list."""
+    found = [_list_at(where, environ) for where in dict.fromkeys(places)]
+    lists = [entries for entries in found if entries is not None]
+    return [p for entries in lists for p in entries] if lists else None
 
 
 def embargoed(summary: dict, patterns: list[str]) -> list[str]:
@@ -331,7 +351,8 @@ def main(argv=None) -> int:
             return 1
         summary = summarize(report)
         try:
-            patterns = embargo_patterns(Path(base_path).resolve().parent, os.environ)
+            patterns = embargo_patterns([Path.cwd(), Path(base_path).resolve().parent],
+                                        os.environ)
         except InputError as exc:
             print(exc, file=sys.stderr)
             return 2
