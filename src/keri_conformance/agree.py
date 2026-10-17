@@ -22,6 +22,7 @@ from contextlib import ExitStack
 
 from keri_conformance import issued
 from keri_conformance.assertions import evaluate
+from keri_conformance.errors import E_ADAPTER_HELLO_CHANGED, HelloRefused
 from keri_conformance.session import Failure
 
 PRODUCERS = ("acdc.issue", "acdc.present")
@@ -213,6 +214,12 @@ def run_agreement(open_session, adapters: dict[str, str], cases: list[dict],
                 session = stack.enter_context(open_session(command))
                 session.open()
                 held[name] = session
+            if verifying[name].hello != sessions[name].hello:
+                # Both processes must be the one implementation the report names.
+                raise HelloRefused(E_ADAPTER_HELLO_CHANGED,
+                                   f"The adapter {name} answered hello differently in its second "
+                                   "process, so its verdicts could not be credited to the "
+                                   "implementation that produced.", ["The hello changed."])
         cells = matrix(sessions, verifying, cases)
         implementations = {n: s.hello["implementation"] for n, s in sessions.items()}
     judged = [c for c in cells if c["agrees"] is not None]

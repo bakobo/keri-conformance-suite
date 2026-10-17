@@ -10,7 +10,7 @@ import sys
 
 import pytest
 
-from keri_conformance import agree, cli, issued
+from keri_conformance import agree, cli, errors, issued
 from keri_conformance.session import Failure, Reply
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -267,3 +267,18 @@ def test_kcs_agree_refuses_a_bad_adapter_list(tmp_path, capsys):
     assert "share a name" in capsys.readouterr().err
     assert cli.main(["agree", "--adapter", "nocommand"]) == 2
     assert cli.main(["agree", "--adapter", "x= "]) == 2
+
+
+def test_an_adapter_whose_second_process_is_another_implementation_is_refused():
+    opened = []
+
+    def start(command):
+        opened.append(Fake({"acdc.issue": ISSUED, "acdc.verify": VALID}))
+        opened[-1].hello["implementation"] = {"name": f"impl{len(opened)}", "version": "0",
+                                              "commit": "0"}
+        return opened[-1]
+
+    with pytest.raises(errors.HelloRefused) as e:
+        agree.run_agreement(start, {"a": "x"}, [issue_case()], "2026.10")
+    assert e.value.code == errors.E_ADAPTER_HELLO_CHANGED
+    assert all(f.closed for f in opened)
