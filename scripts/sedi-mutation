@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Write sedi-1's mutation acceptance matrix, docs/profiles/sedi-mutation.md, or with --check say
+whether it is current. The logic, usage and exit statuses are in
+generators/spec_tables/sedi_mutation.py, where the tests measure them."""
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
+from generators.spec_tables.sedi_mutation import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())
