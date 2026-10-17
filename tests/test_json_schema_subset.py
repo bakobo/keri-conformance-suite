@@ -333,3 +333,13 @@ def test_unique_items_is_checked_in_one_pass():
     assert time.monotonic() - start < 5
     assert not js.validate({"uniqueItems": True}, [{"a": [1, None]}, {"a": [1.0, None]}])
     assert js.validate({"uniqueItems": True}, [{"a": "x"}, {"a": ["x"]}, None, "1", 1, False])
+
+
+def test_unique_items_reads_any_nesting_depth():
+    deep = []
+    for _ in range(5_000):
+        deep = [deep]
+    assert js.validate({"uniqueItems": True}, [deep])
+    assert not js.validate({"uniqueItems": True}, [deep, deep])
+    assert js.validate({"uniqueItems": True}, [{"a": 1.5}, {"a": 2.0}, {"a": 2.5}, {}, []])
+    assert not js.validate({"uniqueItems": True}, [{"b": 1, "a": [2.0]}, {"a": [2], "b": 1.0}])

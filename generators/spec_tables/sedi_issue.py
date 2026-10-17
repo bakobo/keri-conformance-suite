@@ -18,12 +18,13 @@ from . import acdc_saids as sa
 from . import json_schema_subset as js
 from .errors import ScenarioError
 
-# Two sets of placeholders of the right shape for what the issuer adds to an attribute block. The
-# issuer chooses these values, so a schema whose verdict differs between the two constrains them,
-# and the decision cannot say which way the case goes.
-PLACEHOLDERS = ({"d": "E" + "A" * 43, "u": "0A" + "A" * 22, "i": "E" + "B" * 43},
-                {"d": "E" + "C" * 43, "u": "0A" + "D" * 22, "i": "E" + "F" * 43})
+# Placeholders of the right shape for what the issuer adds to an attribute block. The issuer
+# chooses these values, so the decision first requires the schema to leave them free (_free), and
+# then which placeholder stands in for them cannot change the verdict.
+PLACEHOLDERS = {"d": "E" + "A" * 43, "u": "0A" + "A" * 22, "i": "E" + "B" * 43}
 OPERATORS = ("I2I", "NI2I")
+# What a schema may say of a value the issuer chooses and still leave it free.
+FREE_KEYWORDS = {"type", "title", "description"}
 
 
 def schema_doc(t, schema: dict) -> dict:
@@ -38,6 +39,36 @@ def _attributes(asked: dict, placeholders: dict) -> dict:
     return {**block, **asked["attributes"]}
 
 
+def _free(node, names) -> bool:
+    """Whether a schema node leaves every one of ``names`` unconstrained but for being a string,
+    on every branch an attribute block can be validated under. Anything it cannot prove free is
+    not: a const, a reference, an additionalProperties schema that would apply to an unnamed one."""
+    if isinstance(node, bool):
+        return True
+    if "const" in node or "$ref" in node:
+        return False
+    if not all(_free(sub, names) for key in ("oneOf", "anyOf") for sub in node.get(key, [])):
+        return False
+    props = node.get("properties", {})
+    for name in names:
+        sub = props.get(name, node.get("additionalProperties", True))
+        if isinstance(sub, bool):
+            continue  # a value either always allowed or always refused, whatever it is
+        if set(sub) - FREE_KEYWORDS or sub.get("type", "string") != "string":
+            return False
+    return True
+
+
+def _operators(label: str, o) -> list[str]:
+    if o is None:
+        return []
+    ops = [o] if isinstance(o, str) else o
+    if not isinstance(ops, list) or any(op not in OPERATORS for op in ops):
+        raise ScenarioError(f"The edge {label!r} asks for the operators {o!r}; the issuer "
+                            "decision models only I2I and NI2I, as a string or a list.")
+    return ops
+
+
 def _holds(edges: dict, near: dict, by_name: dict) -> bool:
     """Whether an edge section (or group) asked for can hold."""
     results = []
@@ -48,15 +79,10 @@ def _holds(edges: dict, near: dict, by_name: dict) -> bool:
             results.append(_holds(member, near, by_name))
             continue
         far = by_name[member["credential"]]
-        ops = member.get("o", [])
-        ops = [ops] if isinstance(ops, str) else list(ops)
-        beyond = [op for op in ops if op not in OPERATORS]
-        if beyond:
-            raise ScenarioError(f"The edge {label!r} asks for the operators {beyond}; the issuer "
-                                "decision models only I2I and NI2I.")
-        relation = next((op for op in reversed(ops) if op in OPERATORS), None)
-        if relation is None:
-            relation = "I2I" if far.get("issuee") else "NI2I"
+        if "o" in member and member["o"] is None:
+            raise ScenarioError(f"The edge {label!r} has an o of null.")
+        ops = _operators(label, member.get("o"))
+        relation = ops[-1] if ops else ("I2I" if far.get("issuee") else "NI2I")
         results.append(relation == "NI2I" or far.get("issuee") == near["issuer"])
     return any(results) if edges.get("o") == "OR" else all(results)
 
@@ -65,19 +91,21 @@ def refusal(schemas: dict, request: dict) -> str | None:
     """Why the request must be refused, or None when it must be issued. ``schemas`` maps each
     schema's SAID to the schema."""
     by_name = {c["name"]: c for c in request["credentials"]}
+    reasons = []
+    # Every credential is checked before any reason is returned, so a refusal found early never
+    # hides a request the decision does not model.
     for asked in request["credentials"]:
         schema = schemas[asked["schema"]]
         js.check(schema)  # a schema outside the subset is a scenario error, coded
         section = schema.get("properties", {}).get("a")
         if section is not None:
-            fits = {runner_js._valid(schema, section, _attributes(asked, p), 0)
-                    for p in PLACEHOLDERS}
-            if len(fits) > 1:
+            chosen = ["d", "u", "i"] if asked.get("issuee") else ["d", "u"]
+            if not _free(section, chosen):
                 raise ScenarioError(f"The schema of {asked['name']} constrains the d, u or i an "
                                     "issuer chooses, so whether it must refuse is not decided by "
                                     "the request.")
-            if fits == {False}:
-                return f"the attributes of {asked['name']} do not satisfy its schema"
+            if not runner_js._valid(schema, section, _attributes(asked, PLACEHOLDERS), 0):
+                reasons.append(f"the attributes of {asked['name']} do not satisfy its schema")
         if "edges" in asked and not _holds(asked["edges"], asked, by_name):
-            return f"the edges of {asked['name']} cannot hold as the request issues them"
-    return None
+            reasons.append(f"the edges of {asked['name']} cannot hold as the request issues them")
+    return reasons[0] if reasons else None

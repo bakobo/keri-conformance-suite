@@ -32,6 +32,7 @@ fragment, ``$dynamicRef``, or an ``$id`` below the root) is refused by ``check``
 one (ACDC lines 194, 206 and 220) can be recognized and decided without evaluating the schema.
 """
 
+import json
 import urllib.parse
 
 DIALECT = "https://json-schema.org/draft/2020-12/schema"
@@ -256,18 +257,44 @@ def _equal(a, b) -> bool:
     return a == b
 
 
-def _key(v):
-    """A hashable stand-in for a JSON value, equal for two values exactly when _equal holds, so
-    uniqueItems is one pass over the array, not a comparison of every pair."""
+def _scalar(v) -> str:
     if isinstance(v, bool):
-        return ("b", v)
+        return "true" if v else "false"
     if _is_number(v):
-        return ("n", v)
-    if isinstance(v, list):
-        return ("l", tuple(_key(x) for x in v))
-    if isinstance(v, dict):
-        return ("d", frozenset((k, _key(x)) for k, x in v.items()))
-    return ("s" if isinstance(v, str) else "z", v)
+        # An integral float is the integer it equals, exactly; any other float is its repr.
+        return str(int(v)) if isinstance(v, float) and v.is_integer() else repr(v)
+    return "null" if v is None else json.dumps(v)
+
+
+def _key(value) -> str:
+    """A flat canonical text for a JSON value, equal for two values exactly when _equal holds, so
+    uniqueItems is one pass over the array, not a comparison of every pair. It is built without
+    recursion, so no nesting depth can exhaust the interpreter's stack."""
+    out: list[str] = []
+    stack = [(value, False)]
+    while stack:
+        v, done = stack.pop()
+        if isinstance(v, list):
+            if not done:
+                stack.append((v, True))
+                stack.extend((x, False) for x in reversed(v))
+            else:
+                parts = out[len(out) - len(v):] if v else []
+                del out[len(out) - len(parts):]
+                out.append("[" + ",".join(parts) + "]")
+        elif isinstance(v, dict):
+            keys = sorted(v)
+            if not done:
+                stack.append((v, True))
+                stack.extend((v[k], False) for k in reversed(keys))
+            else:
+                parts = out[len(out) - len(keys):] if keys else []
+                del out[len(out) - len(parts):]
+                out.append("{" + ",".join(f"{json.dumps(k)}:{p}" for k, p in zip(keys, parts))
+                           + "}")
+        else:
+            out.append(_scalar(v))
+    return out[0]
 
 
 def _valid(root, node, instance, depth: int) -> bool:
@@ -301,7 +328,8 @@ def _valid(root, node, instance, depth: int) -> bool:
     if isinstance(instance, list):
         if len(instance) < node.get("minItems", 0):
             return False
-        if node.get("uniqueItems") and len({_key(x) for x in instance}) < len(instance):
+        if (node.get("uniqueItems") and len(instance) > 1
+                and len({_key(x) for x in instance}) < len(instance)):
             return False
         if "items" in node and not all(_valid(root, node["items"], x, 0) for x in instance):
             return False
