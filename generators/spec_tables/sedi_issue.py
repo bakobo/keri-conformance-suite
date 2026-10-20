@@ -67,9 +67,10 @@ def _top_level(schema: dict, asked: dict) -> list[str]:
     """The top-level fields an issuer writes as strings of its own choosing for this request:
     v, d, i and s, and rd when it is given a registry. A schema that constrains one of them
     beyond being a string decides nothing about the request. A top-level u is the issuer's to
-    write or omit, so it is not among them: the candidates are tried with and without one."""
+    write or omit, so it is among them only when the schema requires one; otherwise the
+    candidates are tried with and without one."""
     chosen = ["v", "d", "i", "s"] + (["rd"] if asked.get("registry", "bup") != "none" else [])
-    if not _free(schema, chosen):
+    if not _free(schema, chosen + (["u"] if "u" in schema.get("required", []) else [])):
         raise ScenarioError(f"The schema of {asked['name']} constrains a top-level field an "
                             "issuer chooses, so whether it must refuse is not decided by the "
                             "request.")

@@ -150,8 +150,16 @@ def test_a_top_level_u_may_be_written_or_not():
                                   request(asked)) is None
 
 
-def test_a_schema_constraining_a_top_level_field_the_issuer_chooses_decides_nothing():
-    schema = {**CLOSED, "$id": "EX", "properties": {**CLOSED["properties"], "s": {"const": "x"}}}
+@pytest.mark.parametrize("field,sub,required", [
+    ("s", {"const": "x"}, []),
+    # A required u is the issuer's to choose, so constraining it decides nothing either.
+    ("u", {"const": "0A" + "B" * 22}, ["u"]),
+    ("u", {"$ref": "#/properties/u"}, ["u"]),
+])
+def test_a_schema_constraining_a_top_level_field_the_issuer_chooses_decides_nothing(
+        field, sub, required):
+    schema = {**CLOSED, "$id": "EX", "required": required,
+              "properties": {**CLOSED["properties"], field: sub}}
     asked = cred("receipt", "issuer", "holder", schema="EX", registry="none")
     with pytest.raises(ScenarioError, match="constrains a top-level field"):
         sedi_issue.refusal({"EX": schema}, request(asked))
