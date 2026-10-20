@@ -96,12 +96,17 @@ def judged(case_id, **over):
     ("ACDC-0121", "valid"),  # untargeted
     ("ACDC-0128", "valid"),  # an aggregate presented by its issuee
     ("ACDC-0130", "invalid"),  # an aggregate presented by a stranger
+    # heti's bound_issuee refuses an issuee the presentation withholds (heti 127d75c)
+    ("ACDC-0129", "incomplete"),  # an aggregate whose issuee block is undisclosed
+    ("ACDC-0215", "incomplete"),  # a targeted credential with its attributes compacted
 ])
 def test_the_presenter_is_bound_by_hetis_own_rule(case_id, verdict):
     result = judged(case_id)
     assert result["verdict"] == verdict
     if verdict == "invalid":
         assert result["reason"].startswith(presentation.E_PRESENTER)
+    if verdict == "incomplete":
+        assert result["reason"].startswith("e.input.missing.issuee")
 
 
 def grant(case_id):

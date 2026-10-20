@@ -11,17 +11,22 @@ the last exchange message of the context and requires, in order:
 - that one transferable signature group signs it for its sender, which heti's public
   ``heti.anchored.consume.verify`` checks against the sender's key state replayed from the
   bundle's KELs, at the establishment event the group names;
-- and heti's own presenter rule, from ``admit`` (``ipex.py``): the sender is the issuee, as
-  keripy's ``iseaid`` reads it (which finds an aggregate's issuee too), or the issuer.
+- and heti's own presenter rule, from ``admit``: the sender is the issuee heti's public
+  ``heti.anchored.produce.ipex.bound_issuee`` names, or the issuer. ``bound_issuee`` refuses a
+  credential whose attribute section, aggregate or aggregate issuee block is concealed, since
+  it cannot tell such a credential from an affidavit, and answers None for an affidavit, which
+  anyone may present.
 
-Each failure is ``invalid``, except that heti's refusal of the signature is graded as acdc.verify
-grades heti's errors, so a key state heti cannot establish from the bundle is ``incomplete``. The
+Each failure is ``invalid``, except that heti's refusals (of the signature, or of an issuee it
+cannot read) are graded as acdc.verify grades heti's errors, so a key state heti cannot
+establish from the bundle, or a withheld issuee, is ``incomplete``. The
 reading of the grant and the presenter rule are composed by the adapter, which declares
 ``acdc.presentation`` in ``composes``; the signature and the ACDC's verdict are heti's.
 """
 
 from heti.anchored.consume import Evidence, Segment
 from heti.anchored.consume import verify as verify_signature
+from heti.anchored.produce.ipex import bound_issuee
 from keri.core.serdering import SerderACDC
 
 from kcs_adapter_heti import verify as v
@@ -91,12 +96,12 @@ def judge(given, presented: bytes, kel_streams: list[bytes]) -> tuple[str, str] 
     evidence = Evidence(parts=tuple(Segment(stream=s, source=None) for s in kel_streams))
     try:
         verify_signature(aid=sender, data=raw, signature=sigs, evidence=evidence, as_of=said)
+        issuee = bound_issuee(acdc)
     except Exception as exc:  # heti refuses with a coded error of many kinds
         code = getattr(exc, "code", None)
         if code is None:
             raise
         return v.grade(exc), f"{code}: {exc}"
-    issuee = acdc.iseaid
     if issuee is not None and sender not in (issuee, acdc.sad.get("i")):
         return "invalid", f"{E_PRESENTER}: the grant's sender is neither the issuee nor the issuer"
     return None
