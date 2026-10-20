@@ -108,7 +108,7 @@ def direct(seal=None, schema=CLOSED):
 
 
 def test_a_credential_whose_schema_forbids_rd_is_committed_by_its_digest_seal():
-    result, b = run(direct({"acdc": "A"}))
+    result, _ = run(direct({"acdc": "A"}))
     assert result.verdict == sm.VALID and result.findings == [] and result.head is None
     assert reasons(run(direct())[0]) == ["incomplete/direct-anchor"]
     assert reasons(run(direct({"acdc": "A", "extra": {"s": "0"}}))[0]) == ["invalid/direct-seal"]
