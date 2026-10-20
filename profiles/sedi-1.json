@@ -95,6 +95,7 @@
     "ACDC-0191",
     "ACDC-0192",
     "ACDC-0193",
+    "ACDC-0194",
     "ACDC-0195",
     "ACDC-0196",
     "ACDC-0197"
@@ -542,7 +543,8 @@
       "basis": "An issuance is the first link of every chain a verifier checks, and an issuer that issues what its schema refuses or an edge that cannot hold puts into circulation a credential no correct verifier accepts (test-plan item 4).",
       "cases": {
         "negative": [
-          "ACDC-0193"
+          "ACDC-0193",
+          "ACDC-0194"
         ],
         "positive": [
           "ACDC-0190",

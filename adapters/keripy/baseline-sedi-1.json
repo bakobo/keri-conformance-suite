@@ -1236,6 +1236,13 @@
         "a1": "not-supported"
       }
     },
+    "ACDC-0194": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
     "ACDC-0195": {
       "outcome": "not-supported",
       "failure": null,

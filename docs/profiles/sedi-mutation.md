@@ -27,4 +27,4 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 | `failure-precedence` | none yet | none yet |  |
 | `holder-presents` | presents the compact form instead of refusing | ACDC-0160, ACDC-0161, ACDC-0162, ACDC-0163, ACDC-0164, ACDC-0165, ACDC-0166, ACDC-0167, ACDC-0168, ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 | ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 |
 | `bounds` | holds to no maxima | ACDC-0178, ACDC-0179, ACDC-0180, ACDC-0181, ACDC-0182, ACDC-0183, ACDC-0184, ACDC-0185, ACDC-0186, ACDC-0187, ACDC-0188, ACDC-0189 | ACDC-0179, ACDC-0181, ACDC-0183, ACDC-0185, ACDC-0187, ACDC-0189 |
-| `issuer-issues` | issues whatever it is asked | ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0193, ACDC-0195 | ACDC-0193 |
+| `issuer-issues` | issues whatever it is asked | ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0193, ACDC-0194, ACDC-0195 | ACDC-0193, ACDC-0194 |

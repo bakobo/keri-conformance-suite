@@ -1,0 +1,83 @@
+{
+  "assertions": [
+    {
+      "basis": "sedi-1 issuer-issues: An issuer issues exactly the credentials a request asks for, each under a blindable registry of its own, with its own keys, salts and clock; it refuses, and never issues something else, a request whose attributes a credential's schema does not allow once the issuer has added the block's d, u and i, or whose edges cannot hold as the request's roles issue the credentials.",
+      "check": "issue_refused",
+      "choices": [
+        "issuer-issues"
+      ],
+      "id": "a1",
+      "level": "INTEROP",
+      "note": "The issuer must refuse: the edges of guardian cannot hold as the request issues them."
+    }
+  ],
+  "description": "As SI-03, but core is issued to a third identifier, other, so an I2I edge from guardian, which the holder issues, cannot hold. A sedi-1 issuer refuses. Its positive pair is SI-03 (ACDC-0192), which differs from it only in the defect.",
+  "id": "ACDC-0194",
+  "input": {
+    "credentials": [
+      {
+        "attributes": {
+          "name": "core"
+        },
+        "issuee": "other",
+        "issuer": "issuer",
+        "name": "core",
+        "registry": "bup",
+        "schema": "EGm_8qmlYGOUecycFx5b5TjOomr8S5qTrckYWM6BRfZx"
+      },
+      {
+        "attributes": {
+          "name": "guardian"
+        },
+        "edges": {
+          "core": {
+            "credential": "core",
+            "o": "I2I"
+          }
+        },
+        "issuer": "holder",
+        "name": "guardian",
+        "registry": "bup",
+        "schema": "EGm_8qmlYGOUecycFx5b5TjOomr8S5qTrckYWM6BRfZx"
+      }
+    ],
+    "roles": [
+      "issuer",
+      "holder",
+      "other"
+    ],
+    "schemas": [
+      "7b22246964223a2245476d5f38716d6c59474f55656379634678356235546a4f6f6d72385335715472636b59574d364252665a78222c2224736368656d61223a2268747470733a2f2f6a736f6e2d736368656d612e6f72672f64726166742f323032302d31322f736368656d61222c227469746c65223a22736564692d31206973737565722063617365222c2276657273696f6e223a22312e302e30222c2274797065223a226f626a656374222c227265717569726564223a5b2276222c2264222c2269222c227264222c2273222c2261225d2c2270726f70657274696573223a7b2261223a7b226f6e654f66223a5b7b2274797065223a22737472696e67227d2c7b2274797065223a226f626a656374222c227265717569726564223a5b2264222c2275222c226e616d65225d2c226164646974696f6e616c50726f70657274696573223a66616c73652c2270726f70657274696573223a7b2264223a7b2274797065223a22737472696e67227d2c2275223a7b2274797065223a22737472696e67227d2c2269223a7b2274797065223a22737472696e67227d2c226e616d65223a7b2274797065223a22737472696e67227d7d7d5d7d2c2265223a7b226f6e654f66223a5b7b2274797065223a22737472696e67227d2c7b2274797065223a226f626a656374227d5d7d7d7d"
+    ]
+  },
+  "operation": "acdc.issue",
+  "profile": "sedi-1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-sedi",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/sedi/issue.json#SI-05"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "acdc.edges",
+      "acdc.registry.bup",
+      "acdc.version-2.x",
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON",
+      "ACDCCAACAAJSON"
+    ]
+  },
+  "title": "An I2I edge that cannot hold"
+}
