@@ -1248,7 +1248,7 @@
      {
       "name": "grant",
       "t": "exn",
-      "sender": "R",
+      "sender": "H",
       "receiver": "V",
       "x": "",
       "p": "",
@@ -1268,9 +1268,9 @@
       "exchange": "grant",
       "sigs": [
        {
-        "aid": "R",
+        "aid": "H",
         "keys": [
-         "R0"
+         "H0"
         ]
        }
       ]
@@ -1337,8 +1337,8 @@
   {
    "id": "ACDC-0215",
    "key": "SP-05",
-   "title": "Presented by a stranger, issuee hidden",
-   "description": "As SP-02, but the credential is presented with its attribute section compacted, so the presentation does not show who its issuee is, and R, who is neither its issuer nor its issuee, sends the grant. The verifier cannot bind the presenter to an issuee it cannot read, and a credential whose issuee is hidden is not an untargeted one. A sedi-1 verifier should find it incomplete.",
+   "title": "Issuee hidden from the verifier",
+   "description": "As SP-01, but the credential is presented with its attribute section compacted, so the presentation does not show who its issuee is. The grant's sender cannot be bound to an issuee the verifier cannot read, and a stranger sending the same bytes would look the same; a credential whose issuee is hidden is not an untargeted one. A sedi-1 verifier should find it incomplete.",
    "base": "SP-05",
    "choices": [
     "presenter-binding",
