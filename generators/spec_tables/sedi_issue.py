@@ -77,7 +77,8 @@ def _top_level_problem(schema: dict, asked: dict) -> str | None:
             return f"refuses the {name} an issuer must write"
         if isinstance(sub, dict) and not _free({"properties": {name: sub}}, [name]):
             return f"constrains the {name} an issuer chooses"
-    carried = {*written, "u", "a", *(["e"] if "edges" in asked else [])}
+    # Whether rd may or must be there is the registry kind's question, answered before this.
+    carried = {*written, "rd", "u", "a", *(["e"] if "edges" in asked else [])}
     beyond = sorted(set(schema.get("required", [])) - carried)
     if beyond:
         return f"requires {beyond[0]}, which the issuance does not carry"

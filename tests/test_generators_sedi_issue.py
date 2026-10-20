@@ -134,7 +134,6 @@ def test_the_registry_kind_must_fit_the_schema(schema, kind, words):
     ({**CLOSED, "properties": {**CLOSED["properties"], "s": {"const": "x"}}},
      "none", "constrains the s an issuer chooses"),
     ({**CLOSED, "required": ["v", "e"]}, "none", "requires e, which the issuance"),
-    ({**CLOSED, "required": ["rd"]}, "none", "requires rd, which the issuance"),
     ({"$id": "EX", "type": "object", "properties": {"rd": False}}, "bup",
      "refuses the rd an issuer must write"),
 ])
