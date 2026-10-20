@@ -674,3 +674,19 @@ def test_help_documents_the_interop_verdicts(capsys):
         cli.main(["run", "--help"])
     out = capsys.readouterr().out
     assert "interoperable" in out and "not-interoperable" in out
+
+
+def test_every_case_request_names_its_cases_profile(cases_dir, tmp_path, monkeypatch):
+    # this.i 9d1qrqge: an adapter may set its implementation's option for the case's profile.
+    from keri_conformance import session as session_module
+
+    sent = []
+    real_request = session_module.AdapterSession.request
+
+    def recording_request(self, op, fields):
+        sent.append((op, fields))
+        return real_request(self, op, fields)
+
+    monkeypatch.setattr(session_module.AdapterSession, "request", recording_request)
+    run(good(), cases_dir(PASSING[0]), tmp_path)
+    assert sent == [("cesr.parse", {"stream": "2d4b", "profile": "core-1.0"})]

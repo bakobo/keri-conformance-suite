@@ -55,6 +55,11 @@
             "stream": {
               "type": "string",
               "pattern": "^([0-9a-f]{2})*$"
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         },
@@ -88,6 +93,11 @@
                 "text",
                 "binary"
               ]
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         },
@@ -137,6 +147,11 @@
                   }
                 }
               }
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         },
@@ -165,6 +180,11 @@
                 "type": "string",
                 "pattern": "^([0-9a-f]{2})*$"
               }
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         },
@@ -306,6 +326,11 @@
                   "minLength": 1
                 }
               }
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         },
@@ -391,6 +416,11 @@
                   }
                 }
               }
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         },
@@ -553,6 +583,11 @@
                   }
                 }
               ]
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         },
@@ -622,6 +657,11 @@
                   }
                 }
               }
+            },
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The profile the case this request was sent for belongs to; an adapter may use it only to set its implementation's option for that profile's choices (this.i 9d1qrqge)."
             }
           }
         }

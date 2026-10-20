@@ -35,7 +35,7 @@ from keri_conformance.errors import (
 )
 from keri_conformance.profiles import Profile, claim_verdict, manifest_problem
 from keri_conformance.protocol import PROTOCOL_VERSION, SUPPORTED_PROTOCOLS
-from keri_conformance.session import AdapterSession, Failure, Reply
+from keri_conformance.session import AdapterSession, Failure, Reply, for_case
 
 # The most adapter output, in response-line bytes, one run will read and keep in its report.
 MAX_RETAINED_BYTES = 512 * 1024 * 1024
@@ -87,7 +87,7 @@ def run_case(session: AdapterSession, case: dict) -> dict:
         entry["assertions"] = [_record(a, entry["outcome"]) for a in case["assertions"]]
         return entry
 
-    outcome = session.request(case["operation"], case["input"])
+    outcome = session.request(case["operation"], for_case(case))
     if (isinstance(outcome, Reply) and "accepted" in outcome.result
             and any(a["check"] == "decoded" for a in case["assertions"])):
         session.kill()  # out of protocol, so restart it as for any other malformed answer
