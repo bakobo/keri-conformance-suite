@@ -65,9 +65,10 @@ def _free(node, names) -> bool:
 
 def _top_level(schema: dict, asked: dict) -> list[str]:
     """The top-level fields an issuer writes as strings of its own choosing for this request:
-    v, d, i, s and u, and rd when it is given a registry. A schema that constrains one of them
-    beyond being a string decides nothing about the request."""
-    chosen = ["v", "d", "i", "s", "u"] + (["rd"] if asked.get("registry", "bup") != "none" else [])
+    v, d, i and s, and rd when it is given a registry. A schema that constrains one of them
+    beyond being a string decides nothing about the request. A top-level u is the issuer's to
+    write or omit, so it is not among them: the candidates are tried with and without one."""
+    chosen = ["v", "d", "i", "s"] + (["rd"] if asked.get("registry", "bup") != "none" else [])
     if not _free(schema, chosen):
         raise ScenarioError(f"The schema of {asked['name']} constrains a top-level field an "
                             "issuer chooses, so whether it must refuse is not decided by the "
@@ -80,7 +81,7 @@ def _satisfiable(schema: dict, asked: dict) -> bool:
     (and rd, given a registry) as strings it chooses, t as acm, the attribute block as asked, and
     a top-level u or none. A request with edges is not asked, since what an edge section holds
     is the issuer's to fill in; its edges are decided by the edge rule alone."""
-    body = {name: PLACEHOLDERS["d"] for name in _top_level(schema, asked) if name != "u"}
+    body = {name: PLACEHOLDERS["d"] for name in _top_level(schema, asked)}
     body["t"] = "acm"
     body["a"] = _attributes(asked, PLACEHOLDERS)
     return any(runner_js._valid(schema, schema, candidate, 0)

@@ -143,7 +143,7 @@ def test_a_schema_no_issued_acdc_can_satisfy_is_refused(schema, kind):
 
 
 def test_a_top_level_u_may_be_written_or_not():
-    for u in (False, {"type": "string"}):
+    for u in (False, {"type": "string"}, {"const": "x"}):
         props = {**CLOSED["properties"], "u": u}
         asked = cred("receipt", "issuer", "holder", schema="EX", registry="none")
         assert sedi_issue.refusal({"EX": {**CLOSED, "$id": "EX", "properties": props}},
