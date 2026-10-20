@@ -1,0 +1,744 @@
+{
+ "about": "sedi-1's direct issuance (choice direct-issuance, this.i 947dh20t): a credential whose schema forbids rd, such as SEDI's identity assurance receipt, is committed by the digest seal of its SAID in its issuer's KEL and has no registry.",
+ "profile": "sedi-1",
+ "fixtures": {
+  "SD-01": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "acdc": "A"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-A",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "t",
+       "d",
+       "i",
+       "s",
+       "a"
+      ],
+      "properties": {
+       "v": {
+        "type": "string"
+       },
+       "t": {
+        "type": "string"
+       },
+       "d": {
+        "type": "string"
+       },
+       "u": {
+        "type": "string"
+       },
+       "i": {
+        "type": "string"
+       },
+       "s": {
+        "type": "string"
+       },
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       }
+      },
+      "title": "sedi-1 identity assurance receipt",
+      "additionalProperties": false
+     }
+    }
+   ],
+   "registries": [],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SD-02": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "t",
+       "d",
+       "i",
+       "s",
+       "a"
+      ],
+      "properties": {
+       "v": {
+        "type": "string"
+       },
+       "t": {
+        "type": "string"
+       },
+       "d": {
+        "type": "string"
+       },
+       "u": {
+        "type": "string"
+       },
+       "i": {
+        "type": "string"
+       },
+       "s": {
+        "type": "string"
+       },
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       }
+      },
+      "title": "sedi-1 identity assurance receipt",
+      "additionalProperties": false
+     }
+    }
+   ],
+   "registries": [],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SD-03": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "acdc": "A",
+       "extra": {
+        "s": "0"
+       }
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-A",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "t",
+       "d",
+       "i",
+       "s",
+       "a"
+      ],
+      "properties": {
+       "v": {
+        "type": "string"
+       },
+       "t": {
+        "type": "string"
+       },
+       "d": {
+        "type": "string"
+       },
+       "u": {
+        "type": "string"
+       },
+       "i": {
+        "type": "string"
+       },
+       "s": {
+        "type": "string"
+       },
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       }
+      },
+      "title": "sedi-1 identity assurance receipt",
+      "additionalProperties": false
+     }
+    }
+   ],
+   "registries": [],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  },
+  "SD-04": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "acdc": "A"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-A",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A"
+  }
+ },
+ "cases": [
+  {
+   "id": "ACDC-0208",
+   "key": "SD-01",
+   "title": "Issued directly under a schema that forbids rd",
+   "description": "A credential whose schema closes its top level without an rd, as SEDI's identity assurance receipt does, issued with no registry: the issuer anchors the digest seal {d} of its SAID in its KEL (ACDC line 1667). A sedi-1 verifier should find it valid.",
+   "base": "SD-01",
+   "choices": [
+    "direct-issuance",
+    "valid-is-interop"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0209",
+   "key": "SD-02",
+   "title": "Directly issued, with no seal",
+   "description": "As SD-01, but the issuer's KEL carries no seal of the credential, so nothing the verifier holds commits the issuer to it. A sedi-1 verifier should find it incomplete.",
+   "base": "SD-02",
+   "choices": [
+    "direct-issuance",
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it accepts a credential its issuer never anchored, which a holder of the issuer's compromised keys could have made.",
+   "expect": [
+    "A incomplete/direct-anchor"
+   ],
+   "pair": "SD-01"
+  },
+  {
+   "id": "ACDC-0210",
+   "key": "SD-03",
+   "title": "Directly issued under a seal of another shape",
+   "description": "As SD-01, but the seal naming the credential's SAID carries an s as well, the shape of a registry event's seal, which is not the digest seal direct issuance uses. A sedi-1 verifier should find it invalid.",
+   "base": "SD-03",
+   "choices": [
+    "direct-issuance"
+   ],
+   "triage": "Accepting it lets a seal written for one purpose stand for another.",
+   "expect": [
+    "A invalid/direct-seal"
+   ],
+   "pair": "SD-01"
+  },
+  {
+   "id": "ACDC-0211",
+   "key": "SD-04",
+   "title": "No rd under a schema that admits one",
+   "description": "As SD-01, but under a schema whose top level is open, so the credential could have named a registry and did not. Only a schema that forbids rd is issued directly, so the digest seal does not commit it, and a sedi-1 verifier should find it invalid.",
+   "base": "SD-04",
+   "choices": [
+    "direct-issuance"
+   ],
+   "triage": "Accepting it lets an issuer put a revocable credential beyond revocation by leaving out its rd.",
+   "expect": [
+    "A invalid/no-registry"
+   ],
+   "pair": "SD-01"
+  }
+ ]
+}

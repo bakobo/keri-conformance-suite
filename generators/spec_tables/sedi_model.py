@@ -11,6 +11,11 @@ replaces what it does:
 - **Commitment.** A SEDI credential is committed through its registry: the head of the registry
   its ``rd`` names must carry the credential's SAID as ``td``, in state ``issued`` (revoked). A
   digest seal of the ACDC does not commit it, since a bare digest is no seal under seal-shape.
+  The exception is a credential whose schema forbids ``rd`` (direct-issuance, this.i 947dh20t),
+  which is committed by the digest seal ``{d}`` of its SAID in the issuer's KEL trunk (ACDC line
+  1667) and cannot be revoked: a seal naming its SAID in another shape fails a check, and none
+  leaves it incomplete. Without its schema the verifier cannot tell which rule applies, so a
+  credential without ``rd`` whose schema is absent is left to the schema's own finding.
 - **The registry** (tel-sequence, registry-head, registry-evidence). Events are walked by ``n``,
   not by delivery order. The head is the highest event that chain-verifies from the inception and
   is anchored. Evidence the walk cannot account for keeps the verdict from ``valid``: a gap or an
@@ -58,6 +63,7 @@ from dataclasses import dataclass, field
 from . import acdc_model as am
 from . import acdc_saids as sa
 from . import b64, encoding, exn_build
+from . import json_schema_subset as js
 from .tables import Tables
 
 VALID, INVALID, INCOMPLETE = "valid", "invalid", "incomplete"
@@ -87,7 +93,9 @@ MAXIMA = {"registry_events": 64, "aggregate_blocks": 32, "edge_group_depth": 8,
           "operator_list": 8, "attribute_bytes": 4096, "salt_chars": 44}
 
 # How acdc_model's step failures grade under sedi-1. A failure not listed here fails a check.
-INCOMPLETE_REASONS = {"schema-absent", "issuer-kel"}
+INCOMPLETE_REASONS = {"schema-absent", "issuer-kel", "direct-anchor"}
+# A registry SAID, to ask whether a schema's top level admits an rd.
+SAID_PROBE = "E" + "A" * 43
 
 
 @dataclass(frozen=True)
@@ -291,6 +299,25 @@ def issuee(body: dict | None):
     return None
 
 
+def forbids_rd(schema: dict) -> bool:
+    """Whether a schema's top level forbids ``rd`` (direct-issuance): it lists no ``rd`` and
+    closes, with ``additionalProperties`` false or a schema a registry SAID does not satisfy. A
+    schema that merely does not list ``rd`` leaves its top level open, and admits one."""
+    properties = schema.get("properties")
+    if isinstance(properties, dict) and "rd" in properties:
+        return False
+    extra = schema.get("additionalProperties", True)
+    if extra is False:
+        return True
+    if not isinstance(extra, dict):
+        return False
+    try:
+        return not js.validate(extra, SAID_PROBE)
+    except js.SchemaError:
+        # A closing schema the subset cannot evaluate says nothing the verifier can rely on.
+        return False
+
+
 def operators(o) -> tuple[list[str] | None, str | None]:
     """An edge's ``o`` as its list of operators, or None and the grade of a shape that cannot be
     read: an object, or a member that is not a string, cannot be evaluated (unknown-operator); a
@@ -341,14 +368,17 @@ class _SediModel(am._Model):
     def _seals(self, issuer) -> list:
         return [seal for body in self.kels.trunks.get(issuer, []) for seal in body.get("a") or []]
 
-    def anchor(self, issuer, rd, n: str, said) -> str | None:
+    def anchor(self, issuer, rd, n: str | None, said) -> str | None:
         """None when the issuer's trunk anchors the event in an accepted shape; else the grade:
-        invalid when a seal names its SAID in another shape, incomplete when none names it."""
+        invalid when a seal names its SAID in another shape, incomplete when none names it. A
+        directly issued credential (``n`` None) is anchored only by the digest seal ``{d}``."""
         named = False
+        accepted = ([{"d": said}] if n is None
+                    else [{"s": n, "d": said}, {"i": rd, "s": n, "d": said}])
         for seal in self._seals(issuer):
             if not isinstance(seal, dict) or seal.get("d") != said:
                 continue
-            if seal in ({"s": n, "d": said}, {"i": rd, "s": n, "d": said}):
+            if seal in accepted:
                 return None
             named = True
         return INVALID if named else INCOMPLETE
@@ -359,9 +389,19 @@ class _SediModel(am._Model):
         body = node.body
         if not self.kels.seen(body.get("i")):
             return [am.Failure(3, "issuer-kel")]
-        if "rd" not in body:
+        if "rd" in body:
+            return []
+        schema, _ = self.schema(body.get("s"))
+        if schema is None:
+            # Which rule commits it turns on a schema the bundle does not carry or verify, and
+            # the schema's own finding already says so.
+            return []
+        if not forbids_rd(schema):
             return [am.Failure(4, "no-registry")]
-        return []
+        grade = self.anchor(body.get("i"), None, None, body.get("d"))
+        if grade is None:
+            return []
+        return [am.Failure(4, "direct-anchor" if grade == INCOMPLETE else "direct-seal")]
 
     # -- the registry -------------------------------------------------------------------------------
 

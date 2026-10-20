@@ -19,7 +19,7 @@ docs/design.md fixes, through ``acdc_saids``:
   deferred, as the design says.
 - **Seals** in the issuer's KEL are written into the scenario's key events: ``{"acdc": name}``
   becomes the digest seal ``{d}`` of the ACDC's most compact SAID (line 1663, direct issuance),
-  and ``{"registry": name}`` the transaction event seal ``{s, d}`` (line 1922). A registry seal
+  with any ``extra`` fields added, and ``{"registry": name}`` the transaction event seal ``{s, d}`` (line 1922). A registry seal
   may name another ``shape``: ``isd``, the event seal ``{i, s, d}`` whose ``i`` is the registry's
   SAID unless the seal names another, or ``d``, the bare digest; and ``extra`` fields to add.
   sedi-1 accepts ``isd`` (this.i 2082s6k4), and its cases use the others as defects.
@@ -173,8 +173,8 @@ class _Builder:
     # -- references ----------------------------------------------------------------------------
 
     def _seal(self, seal: dict) -> dict:
-        if set(seal) == {"acdc"}:
-            return {"d": self.acdc_said(seal["acdc"])}
+        if "acdc" in seal and set(seal) <= {"acdc", "extra"}:
+            return {**seal.get("extra", {}), "d": self.acdc_said(seal["acdc"])}
         if "registry" in seal and set(seal) <= {"registry", "shape", "i", "extra"}:
             body = self.registry_event(seal["registry"])
             shape = seal.get("shape", "sd")

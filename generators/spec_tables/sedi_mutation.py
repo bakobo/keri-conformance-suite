@@ -91,6 +91,8 @@ MUTANTS = {
                       lambda: _dropping("registry-duplicity")),
     "registry-evidence": ("ignores registry evidence it cannot account for",
                           lambda: _dropping("registry-unseen", "registry-gap", "registry-state")),
+    "direct-issuance": ("takes a digest seal as committing a credential whatever its schema",
+                        lambda: mock.patch.object(sm, "forbids_rd", lambda schema: True)),
     "revoked": ("accepts a revoked credential", lambda: _dropping("revoked")),
     "seal-shape": ("accepts any seal shape naming the update",
                    lambda: _dropping("bup-anchor", "rip-anchor")),

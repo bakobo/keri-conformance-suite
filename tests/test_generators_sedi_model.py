@@ -84,6 +84,71 @@ def test_the_issuer_kel_and_the_commitment():
     assert reasons(run(frag)[0]) == ["invalid/no-registry"]
 
 
+
+# -- direct issuance (direct-issuance, this.i 947dh20t) --------------------------------------------
+
+CLOSED = {"additionalProperties": False,
+          "properties": {**{f: {"type": "string"} for f in ("v", "t", "d", "u", "i", "s")},
+                         "a": S1["properties"]["a"]}}
+
+
+def direct(seal=None, schema=CLOSED):
+    """A's credential issued with no registry, under ``schema`` laid over S1, anchored by
+    ``seal`` (an {"acdc": "A"} seal spec) in an interaction event of I's KEL, or by nothing."""
+    frag = world({"A": cred("I")}, "A")
+    del frag["acdcs"][0]["registry"]
+    frag["registries"] = []
+    frag["events"] = [e for e in frag["events"] if e["t"] == "icp"]
+    frag["kels"] = [k for k in frag["kels"] if k["event"].endswith("icp")]
+    frag["schemas"][0]["schema"].update(copy.deepcopy(schema))
+    if seal is not None:
+        frag["events"].append({"name": "ixn-A", "aid": "I", "t": "ixn", "a": [seal]})
+        frag["kels"].append({"event": "ixn-A", "sigs": ["I0"]})
+    return frag
+
+
+def test_a_credential_whose_schema_forbids_rd_is_committed_by_its_digest_seal():
+    result, b = run(direct({"acdc": "A"}))
+    assert result.verdict == sm.VALID and result.findings == [] and result.head is None
+    assert reasons(run(direct())[0]) == ["incomplete/direct-anchor"]
+    assert reasons(run(direct({"acdc": "A", "extra": {"s": "0"}}))[0]) == ["invalid/direct-seal"]
+
+
+def test_a_seal_of_another_shape_beside_the_digest_seal_does_not_spoil_it():
+    frag = direct({"acdc": "A", "extra": {"s": "0"}})
+    frag["events"][-1]["a"].append({"acdc": "A"})
+    assert run(frag)[0].verdict == sm.VALID
+
+
+def test_no_rd_under_a_schema_that_admits_one_is_uncommitted():
+    # S1 lists no rd but leaves its top level open, so it admits one.
+    assert reasons(run(direct({"acdc": "A"}, schema={}))[0]) == ["invalid/no-registry"]
+    listed = {"properties": {**CLOSED["properties"], "rd": {"type": "string"}},
+              "additionalProperties": False}
+    assert reasons(run(direct({"acdc": "A"}, schema=listed))[0]) == ["invalid/no-registry"]
+
+
+def test_without_its_schema_a_credential_without_rd_is_left_to_the_schema_finding():
+    frag = direct({"acdc": "A"})
+    frag["omit"] = ["S1"]
+    assert reasons(run(frag)[0]) == ["incomplete/schema-absent"]
+
+
+@pytest.mark.parametrize("schema,forbids", [
+    ({}, False),
+    ({"additionalProperties": True}, False),
+    ({"additionalProperties": False}, True),
+    ({"additionalProperties": False, "properties": {"rd": {"type": "string"}}}, False),
+    ({"additionalProperties": {"type": "integer"}}, True),
+    ({"additionalProperties": {"type": "string"}}, False),
+    # A closing schema the subset refuses to evaluate is not relied on.
+    ({"additionalProperties": {"pattern": "^x"}}, False),
+    ({"additionalProperties": "no"}, False),
+])
+def test_which_schemas_forbid_rd(schema, forbids):
+    assert sm.forbids_rd(schema) is forbids
+
+
 def test_the_registry_inception():
     frag = world({"A": cred("I")}, "A", )
     frag["registries"][0]["alter"] = [{"path": "dt", "value": "2026-07-04T17:50:00.000000+00:00"}]

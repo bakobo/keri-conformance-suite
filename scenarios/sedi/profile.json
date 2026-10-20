@@ -182,6 +182,14 @@
       "decided": "8fh68wt6"
     },
     {
+      "id": "direct-issuance",
+      "reading": "A credential without rd whose schema forbids one (its top level lists no rd and closes) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.",
+      "basis": "ACDC line 1667 describes direct issuance with no registry, by a digest seal of the ACDC's SAID. sedi-1 otherwise commits a credential only through its registry, but SEDI's identity assurance receipt schema closes its top level without an rd, so it can only be issued directly (this.i 947dh20t).",
+      "overturn": "A SEDI schema change that gives the identity assurance receipt an rd, or specification text that limits direct issuance.",
+      "decided": "947dh20t",
+      "security": true
+    },
+    {
       "id": "revoked",
       "reading": "A credential whose registry head records it revoked is invalid.",
       "basis": "The specification has no revoked verdict and names issued and revoked only as example states; SEDI needs one.",

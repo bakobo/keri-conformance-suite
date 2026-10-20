@@ -87,6 +87,18 @@ Overturned by: Specification text defining what a revoked state means for a verd
 
 This choice is decided in this.i `8fh68wt6`; security-relevant: getting it wrong admits what should be refused.
 
+#### `direct-issuance`
+
+A credential without rd whose schema forbids one (its top level lists no rd and closes) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.
+
+Why: ACDC line 1667 describes direct issuance with no registry, by a digest seal of the ACDC's SAID. sedi-1 otherwise commits a credential only through its registry, but SEDI's identity assurance receipt schema closes its top level without an rd, so it can only be issued directly (this.i 947dh20t).
+
+Overturned by: A SEDI schema change that gives the identity assurance receipt an rd, or specification text that limits direct issuance.
+
+This choice is decided in this.i `947dh20t`; security-relevant: getting it wrong admits what should be refused.
+
+A schema that merely does not list `rd` leaves its top level open and admits one, so a credential under it that leaves out its `rd` is not committed: otherwise an issuer could put a revocable credential beyond revocation by dropping a field. A directly issued credential has one state, so it stays valid until its issuer's keys are compromised; whether SEDI's identity assurance receipt should be revocable is a question for SEDI, not for this profile.
+
 #### `blind-derivation`
 
 A blinded state's u is keripy's Blinder derivation: Argon2id with the event's sequence number in lowercase hex without leading zeros as the password and the 128-bit shared salt as the salt, at opslimit 2 and memlimit 64 MiB, giving 32 bytes encoded with the 256-bit salt code. A salt shorter than 128 bits is refused.

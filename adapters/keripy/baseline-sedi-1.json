@@ -1264,6 +1264,34 @@
         "a1": "not-supported"
       }
     },
+    "ACDC-0208": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0209": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0210": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0211": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
     "CESR-0001": {
       "outcome": "pass",
       "failure": null,

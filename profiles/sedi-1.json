@@ -98,7 +98,11 @@
     "ACDC-0194",
     "ACDC-0195",
     "ACDC-0196",
-    "ACDC-0197"
+    "ACDC-0197",
+    "ACDC-0208",
+    "ACDC-0209",
+    "ACDC-0210",
+    "ACDC-0211"
   ],
   "choices": [
     {
@@ -382,7 +386,8 @@
         "negative": [
           "ACDC-0124",
           "ACDC-0167",
-          "ACDC-0197"
+          "ACDC-0197",
+          "ACDC-0209"
         ],
         "positive": [
           "ACDC-0122"
@@ -402,13 +407,32 @@
         "positive": [
           "ACDC-0101",
           "ACDC-0157",
-          "ACDC-0196"
+          "ACDC-0196",
+          "ACDC-0208"
         ]
       },
       "decided": "8fh68wt6",
       "id": "valid-is-interop",
       "overturn": "None from the specification.",
       "reading": "Accepting a valid ACDC is graded at INTEROP, so an implementation that refuses everything fails the profile."
+    },
+    {
+      "basis": "ACDC line 1667 describes direct issuance with no registry, by a digest seal of the ACDC's SAID. sedi-1 otherwise commits a credential only through its registry, but SEDI's identity assurance receipt schema closes its top level without an rd, so it can only be issued directly (this.i 947dh20t).",
+      "cases": {
+        "negative": [
+          "ACDC-0209",
+          "ACDC-0210",
+          "ACDC-0211"
+        ],
+        "positive": [
+          "ACDC-0208"
+        ]
+      },
+      "decided": "947dh20t",
+      "id": "direct-issuance",
+      "overturn": "A SEDI schema change that gives the identity assurance receipt an rd, or specification text that limits direct issuance.",
+      "reading": "A credential without rd whose schema forbids one (its top level lists no rd and closes) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.",
+      "security": true
     },
     {
       "basis": "The specification has no revoked verdict and names issued and revoked only as example states; SEDI needs one.",
