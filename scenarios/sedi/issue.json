@@ -216,6 +216,56 @@
    "pair": "SI-01"
   },
   {
+   "id": "ACDC-0194",
+   "key": "SI-05",
+   "title": "An I2I edge that cannot hold",
+   "description": "As SI-03, but core is issued to a third identifier, other, so an I2I edge from guardian, which the holder issues, cannot hold. A sedi-1 issuer refuses.",
+   "base": "plain",
+   "choices": [
+    "issuer-issues"
+   ],
+   "triage": "Issuing it asserts a chain of authority its own edge says does not hold.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder",
+     "other"
+    ],
+    "schemas": [
+     "S"
+    ],
+    "credentials": [
+     {
+      "name": "core",
+      "issuer": "issuer",
+      "schema": "S",
+      "attributes": {
+       "name": "core"
+      },
+      "issuee": "other"
+     },
+     {
+      "name": "guardian",
+      "issuer": "holder",
+      "schema": "S",
+      "attributes": {
+       "name": "guardian"
+      },
+      "edges": {
+       "core": {
+        "credential": "core",
+        "o": "I2I"
+       }
+      }
+     }
+    ]
+   },
+   "expect": [
+    "request refused/the edges of guardian cannot hold as the request issues them"
+   ],
+   "pair": "SI-03"
+  },
+  {
    "id": "ACDC-0195",
    "key": "SI-06",
    "title": "An NI2I edge to a credential issued elsewhere",

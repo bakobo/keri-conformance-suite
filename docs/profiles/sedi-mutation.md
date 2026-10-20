@@ -19,12 +19,13 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 | `presenter-binding` | does not check the presenter | ACDC-0118, ACDC-0119, ACDC-0120, ACDC-0128, ACDC-0130 | ACDC-0119, ACDC-0120, ACDC-0130 |
 | `aggregate-issuee` | reads an aggregate's issuee at A[0] | ACDC-0128, ACDC-0129, ACDC-0130 | ACDC-0128, ACDC-0130 |
 | `bearer-untargeted` | treats an untargeted credential as unbound | ACDC-0121 | ACDC-0121 |
-| `unresolved-grading` | accepts what it cannot evaluate | ACDC-0122, ACDC-0124, ACDC-0167, ACDC-0197 | ACDC-0167, ACDC-0197 |
-| `valid-is-interop` | refuses everything | ACDC-0101, ACDC-0124, ACDC-0157, ACDC-0196 | ACDC-0101, ACDC-0157, ACDC-0196 |
+| `unresolved-grading` | accepts what it cannot evaluate | ACDC-0122, ACDC-0124, ACDC-0167, ACDC-0197, ACDC-0209 | ACDC-0167, ACDC-0197, ACDC-0209 |
+| `valid-is-interop` | refuses everything | ACDC-0101, ACDC-0124, ACDC-0157, ACDC-0196, ACDC-0208 | ACDC-0101, ACDC-0157, ACDC-0196, ACDC-0208 |
+| `direct-issuance` | takes a digest seal as committing a credential whatever its schema | ACDC-0208, ACDC-0209, ACDC-0210, ACDC-0211 | ACDC-0211 |
 | `revoked` | accepts a revoked credential | ACDC-0106, ACDC-0122, ACDC-0134, ACDC-0135, ACDC-0149, ACDC-0150, ACDC-0166 | ACDC-0106, ACDC-0135, ACDC-0150, ACDC-0166 |
 | `registry-evidence` | ignores registry evidence it cannot account for | ACDC-0107, ACDC-0108, ACDC-0122, ACDC-0131, ACDC-0132, ACDC-0133, ACDC-0197 | ACDC-0107, ACDC-0108, ACDC-0132 |
 | `no-1x` | accepts the 1.x forms | ACDC-0157, ACDC-0158, ACDC-0159 | ACDC-0158, ACDC-0159 |
 | `failure-precedence` | none yet | none yet |  |
 | `holder-presents` | presents the compact form instead of refusing | ACDC-0160, ACDC-0161, ACDC-0162, ACDC-0163, ACDC-0164, ACDC-0165, ACDC-0166, ACDC-0167, ACDC-0168, ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 | ACDC-0169, ACDC-0170, ACDC-0171, ACDC-0172, ACDC-0173, ACDC-0174, ACDC-0175, ACDC-0176, ACDC-0177 |
 | `bounds` | holds to no maxima | ACDC-0178, ACDC-0179, ACDC-0180, ACDC-0181, ACDC-0182, ACDC-0183, ACDC-0184, ACDC-0185, ACDC-0186, ACDC-0187, ACDC-0188, ACDC-0189 | ACDC-0179, ACDC-0181, ACDC-0183, ACDC-0185, ACDC-0187, ACDC-0189 |
-| `issuer-issues` | issues whatever it is asked | ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0193, ACDC-0195 | ACDC-0193 |
+| `issuer-issues` | issues whatever it is asked | ACDC-0190, ACDC-0191, ACDC-0192, ACDC-0193, ACDC-0194, ACDC-0195 | ACDC-0193, ACDC-0194 |

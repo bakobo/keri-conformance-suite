@@ -35,7 +35,7 @@ Passing the profile shows each implementation against the cases. `kcs agree` sho
 
 ## The 1.x companion
 
-`sedi-1x-interop` grades SEDI's credentials in keripy 1.x's forms: the 1.x field set, its SAID over the expanded form, and its `vcp`/`iss`/`rev` registry (this.i `9sgwng6m`). No specification defines those forms, so the profile is non-normative, every assertion is INTEROP, and its expected verdicts are keripy 1.2.14's. The suite builds every 1.x issuance itself, and `generators/keripy1x_check/check_acdc.py` confirms each verdict against keripy 1.2.14. It is sedi-1's companion, not part of it: a 1.x result never enters a sedi-1 claim.
+`sedi-1x-interop` grades SEDI's credentials in keripy 1.x's forms: the 1.x field set, its SAID over the expanded form, and its `vcp`/`iss`/`rev` registry (this.i `9sgwng6m`). No specification defines those forms, so the profile is non-normative, every assertion is INTEROP, and its expected verdicts are keripy 1.2.14's. The suite builds every 1.x issuance itself, and `generators/keripy1x_check/check_acdc.py` confirms each verdict against keripy 1.2.14. It is sedi-1's companion, not part of it: a 1.x result never enters a sedi-1 claim. It runs against keripy 1.2.14's adapter only: signify-ts has no ACDC verifier of its own (it leaves validation to KERIA), so running the companion against it needs a KERIA-backed adapter, which is separate work.
 
 Its cases turn the incompatibilities SEDI met moving a credential between 1.x wallets (`interop/two-wallets/RESULT.md`) into pairs: a 1.x credential under SEDI's published 2.0 schema shape, an `a.dt` that SEDI core's closed attribute section forbids, an `a.dt` a schema allows beside one with none, and the optional agent edge. One more is not in that list: keripy 1.x reads every label of an edge section except `d` and `o` as an edge, so the section's own `u`, which SEDI's schema requires, stops it verifying any SEDI credential that carries an edge section (ACDC-0205, and its pair ACDC-0207, which differs only in lacking that `u`). The cross-version case, ACDC-0206, is the 1.x copy of a claim whose 2.00 form is revoked: a 1.x verifier still finds it valid.
 
@@ -87,6 +87,18 @@ Overturned by: Specification text defining what a revoked state means for a verd
 
 This choice is decided in this.i `8fh68wt6`; security-relevant: getting it wrong admits what should be refused.
 
+#### `direct-issuance`
+
+A credential without rd whose schema forbids one (its top level lists no rd and closes with additionalProperties false) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.
+
+Why: ACDC line 1667 describes direct issuance with no registry, by a digest seal of the ACDC's SAID. sedi-1 otherwise commits a credential only through its registry, but SEDI's identity assurance receipt schema closes its top level without an rd, so it can only be issued directly (this.i 947dh20t).
+
+Overturned by: A SEDI schema change that gives the identity assurance receipt an rd, or specification text that limits direct issuance.
+
+This choice is decided in this.i `947dh20t`; security-relevant: getting it wrong admits what should be refused.
+
+A schema that merely does not list `rd` leaves its top level open and admits one, so a credential under it that leaves out its `rd` is not committed: otherwise an issuer could put a revocable credential beyond revocation by dropping a field. A directly issued credential has one state, so it stays valid until its issuer's keys are compromised; whether SEDI's identity assurance receipt should be revocable is a question for SEDI, not for this profile.
+
 #### `blind-derivation`
 
 A blinded state's u is keripy's Blinder derivation: Argon2id with the event's sequence number in lowercase hex without leading zeros as the password and the 128-bit shared salt as the salt, at opslimit 2 and memlimit 64 MiB, giving 32 bytes encoded with the 256-bit salt code. A salt shorter than 128 bits is refused.
@@ -96,6 +108,8 @@ Why: The text says only that the blind is derived from a shared salt and the eve
 Overturned by: Specification text naming another derivation, path encoding or cost, or allowing a salt below 128 bits.
 
 This choice is decided in this.i `8g9vtxvc`; tracked as keri-sow tick `3b5o`; security-relevant: getting it wrong admits what should be refused.
+
+No case exercises it yet (this.i `2c8nsmr7`). Its cases wait for the answer to the spec question 3b5o tracks, and checking a blind needs Argon2id at 64 MiB, so the derivation will be checked by the generator and an optional evidence tool, never by the runner. Until then sedi-1 stays draft.
 
 #### `blind-state-code`
 
@@ -116,6 +130,8 @@ Why: Section 15.4 at the tag contradicts itself on the v_k path and leaves H and
 Overturned by: A tagged specification whose bulk issuance text differs.
 
 This choice is decided in this.i `43rj9wfc`; tracked as keri-sow tick `4xwz`.
+
+No case exercises it yet (this.i `2c8nsmr7`): its cases wait for a tagged specification that carries the bulk issuance text.
 
 ### Seals and attachments
 
