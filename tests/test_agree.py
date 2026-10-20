@@ -296,3 +296,10 @@ def test_a_credential_issued_with_no_registry_brings_none_into_its_bundle():
     request = {"roles": [], "schemas": [], "credentials": [{"name": "a"}]}
     result = {"kels": {}, "credentials": {"a": {"acdc": b"a".hex()}}}
     assert agree.issue_bundles(request, result)["a"]["registry"] == []
+
+
+def test_producer_and_verifier_requests_name_the_cases_profile():
+    issuer = Fake({"acdc.issue": ISSUED, "acdc.verify": VALID})
+    agree.matrix({"a": issuer}, {"a": issuer}, [issue_case()])
+    assert [(op, fields["profile"]) for op, fields in issuer.sent] == [
+        ("acdc.issue", "sedi-1"), ("acdc.verify", "sedi-1")]

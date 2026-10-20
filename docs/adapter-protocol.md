@@ -19,7 +19,7 @@ Two things check an adapter without running a single case: message schemas in `s
 
 ## Messages
 
-Every request has an `op` naming the operation and an `id` the response must echo. If a request cannot be read at all — it is not valid JSON, or has no usable `id` — the adapter answers with an error response whose `id` is `null`, and keeps running. Every response is either a result or an error:
+Every request has an `op` naming the operation and an `id` the response must echo. A request the runner sends for a case also carries `profile`, the name of the profile that case belongs to (its own, so a layered run of `sedi-1` sends its `acdc-v1.0` prerequisite cases with `"profile": "acdc-v1.0"`); `hello` and the probes of `kcs check-adapter` carry none. A profile may make a choice the specifications leave open, more strictly than the text, so an implementation may offer an option for it: an adapter may use `profile` to set such an option, and nothing else, and with no `profile`, or one it does not know, the implementation's default applies (this.i 9d1qrqge). An adapter never computes any part of a verdict from `profile`. If a request cannot be read at all — it is not valid JSON, or has no usable `id` — the adapter answers with an error response whose `id` is `null`, and keeps running. Every response is either a result or an error:
 
 ```json
 {"id": 7, "result": { ... }}

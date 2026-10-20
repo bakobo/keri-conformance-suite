@@ -23,7 +23,7 @@ from contextlib import ExitStack
 from keri_conformance import issued
 from keri_conformance.assertions import evaluate
 from keri_conformance.errors import E_ADAPTER_HELLO_CHANGED, HelloRefused
-from keri_conformance.session import Failure
+from keri_conformance.session import Failure, for_case
 
 PRODUCERS = ("acdc.issue", "acdc.present")
 REFUSALS = {"acdc.issue": "issue_refused", "acdc.present": "present_refused"}
@@ -113,7 +113,7 @@ def present_bundle(request: dict, result: dict) -> dict:
 def _produce(session, case: dict) -> tuple[str, dict | None, str | None, bool]:
     """What one producer made of a case: produced (issued, presented, refused or error), its
     result, a detail, and whether it passed every assertion of the case."""
-    reply = session.request(case["operation"], case["input"])
+    reply = session.request(case["operation"], for_case(case))
     session.take_stderr()
     if isinstance(reply, Failure):
         return "error", None, f"{reply.kind}: {reply.detail}", False
@@ -199,7 +199,7 @@ def matrix(sessions: dict, verifying: dict, cases: list[dict]) -> list[dict]:
                         cell["detail"] = "the verifier does not declare the case's features"
                         cells.append(cell)
                         continue
-                    reply = vsession.request("acdc.verify", bundle)
+                    reply = vsession.request("acdc.verify", for_case(case, bundle))
                     vsession.take_stderr()
                     if isinstance(reply, Failure):
                         cell["detail"] = f"{reply.kind}: {reply.detail}"

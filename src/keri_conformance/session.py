@@ -323,6 +323,13 @@ def parse_response(line: bytes, request_id: int, op: str) -> Reply | Failure:
                                 '"result" or "error", and nothing else.')
 
 
+def for_case(case: dict, fields: dict | None = None) -> dict:
+    """The fields of a request made for ``case``: its input, or ``fields`` when the request
+    carries something else (kcs agree's bundles), and the profile the case belongs to, which an
+    adapter may use to set its implementation's option for that profile (this.i 9d1qrqge)."""
+    return {**(case["input"] if fields is None else fields), "profile": case["profile"]}
+
+
 class AdapterSession:
     """One adapter, restarted with a fresh hello after any failure."""
 
