@@ -21,7 +21,7 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 | `bearer-untargeted` | treats an untargeted credential as unbound | ACDC-0121 | ACDC-0121 |
 | `unresolved-grading` | accepts what it cannot evaluate | ACDC-0122, ACDC-0124, ACDC-0167, ACDC-0197, ACDC-0209 | ACDC-0167, ACDC-0197, ACDC-0209 |
 | `valid-is-interop` | refuses everything | ACDC-0101, ACDC-0124, ACDC-0157, ACDC-0196, ACDC-0208 | ACDC-0101, ACDC-0157, ACDC-0196, ACDC-0208 |
-| `direct-issuance` | takes a digest seal as committing a credential whatever its schema | ACDC-0208, ACDC-0209, ACDC-0210, ACDC-0211, ACDC-0212, ACDC-0213, ACDC-0214 | ACDC-0211, ACDC-0213 |
+| `direct-issuance` | takes a digest seal as committing a credential whatever its schema | ACDC-0208, ACDC-0209, ACDC-0210, ACDC-0211, ACDC-0212, ACDC-0213, ACDC-0214 | ACDC-0211 |
 | `revoked` | accepts a revoked credential | ACDC-0106, ACDC-0122, ACDC-0134, ACDC-0135, ACDC-0149, ACDC-0150, ACDC-0166 | ACDC-0106, ACDC-0135, ACDC-0150, ACDC-0166 |
 | `registry-evidence` | ignores registry evidence it cannot account for | ACDC-0107, ACDC-0108, ACDC-0122, ACDC-0131, ACDC-0132, ACDC-0133, ACDC-0197 | ACDC-0107, ACDC-0108, ACDC-0132 |
 | `no-1x` | accepts the 1.x forms | ACDC-0157, ACDC-0158, ACDC-0159 | ACDC-0158, ACDC-0159 |

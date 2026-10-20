@@ -128,16 +128,30 @@ def test_the_registry_kind_must_fit_the_schema(schema, kind, words):
     assert why is None if words is None else words in why
 
 
-@pytest.mark.parametrize("schema,kind,words", [
+@pytest.mark.parametrize("schema,kind", [
     ({**CLOSED, "properties": {k: v for k, v in CLOSED["properties"].items() if k != "t"}},
-     "none", "refuses the t an issuer must write"),
-    ({**CLOSED, "properties": {**CLOSED["properties"], "s": {"const": "x"}}},
-     "none", "constrains the s an issuer chooses"),
-    ({**CLOSED, "required": ["v", "e"]}, "none", "requires e, which the issuance"),
-    ({"$id": "EX", "type": "object", "properties": {"rd": False}}, "bup",
-     "refuses the rd an issuer must write"),
+     "none"),
+    ({**CLOSED, "type": "array"}, "none"),
+    ({**CLOSED, "required": ["rd"]}, "none"),
+    ({**CLOSED, "required": ["v", "e"]}, "none"),
+    ({"$id": "EX", "type": "object", "properties": {"rd": False}}, "bup"),
 ])
-def test_a_schema_no_issued_acdc_can_satisfy_decides_nothing(schema, kind, words):
+def test_a_schema_no_issued_acdc_can_satisfy_is_refused(schema, kind):
     asked = cred("receipt", "issuer", "holder", schema="EX", registry=kind)
-    with pytest.raises(ScenarioError, match=words):
-        sedi_issue.refusal({**SCHEMAS, "EX": {**schema, "$id": "EX"}}, request(asked))
+    why = sedi_issue.refusal({**SCHEMAS, "EX": {**schema, "$id": "EX"}}, request(asked))
+    assert why == "no ACDC issued as receipt is asked could satisfy its schema"
+
+
+def test_a_top_level_u_may_be_written_or_not():
+    for u in (False, {"type": "string"}):
+        props = {**CLOSED["properties"], "u": u}
+        asked = cred("receipt", "issuer", "holder", schema="EX", registry="none")
+        assert sedi_issue.refusal({"EX": {**CLOSED, "$id": "EX", "properties": props}},
+                                  request(asked)) is None
+
+
+def test_a_schema_constraining_a_top_level_field_the_issuer_chooses_decides_nothing():
+    schema = {**CLOSED, "$id": "EX", "properties": {**CLOSED["properties"], "s": {"const": "x"}}}
+    asked = cred("receipt", "issuer", "holder", schema="EX", registry="none")
+    with pytest.raises(ScenarioError, match="constrains a top-level field"):
+        sedi_issue.refusal({"EX": schema}, request(asked))

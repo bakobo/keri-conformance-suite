@@ -9,7 +9,8 @@ the credentials as the request's roles issue them (an I2I edge needs the far cre
 the near one's issuer; NI2I always holds; an OR group needs one member, AND every one), or when
 the registry kind asked for does not fit the schema (direct-issuance, this.i 92zkyy59): none
 under a schema that admits rd leaves the credential uncommitted, and bup under one that forbids
-rd leaves the ACDC unable to name its registry. Every other request must be issued. A request outside what this decides (an operator other than
+rd leaves the ACDC unable to name its registry; or when no ACDC an issuer could write as asked
+satisfies the schema as a whole. Every other request must be issued. A request outside what this decides (an operator other than
 I2I or NI2I, or a schema that constrains the d, u or i the issuer chooses) is a scenario error,
 never a guessed direction.
 """
@@ -62,27 +63,28 @@ def _free(node, names) -> bool:
     return True
 
 
-def _top_level_problem(schema: dict, asked: dict) -> str | None:
-    """Why no ACDC an issuer could write satisfies the schema's top level, whatever the issuer
-    does, or None. Asked only of a request whose registry kind fits its schema. The issuer
-    writes v, t, d, i and s as strings it chooses, and rd when it is given a registry; a schema
-    that refuses one of them, constrains it, or requires a field the issuance never carries
-    decides nothing about the request."""
-    kind = asked.get("registry", "bup")
-    written = ["v", "t", "d", "i", "s"] + (["rd"] if kind != "none" else [])
-    properties = schema.get("properties", {})
-    for name in written:
-        sub = properties.get(name, schema.get("additionalProperties", True))
-        if sub is False:
-            return f"refuses the {name} an issuer must write"
-        if isinstance(sub, dict) and not _free({"properties": {name: sub}}, [name]):
-            return f"constrains the {name} an issuer chooses"
-    # Whether rd may or must be there is the registry kind's question, answered before this.
-    carried = {*written, "rd", "u", "a", *(["e"] if "edges" in asked else [])}
-    beyond = sorted(set(schema.get("required", [])) - carried)
-    if beyond:
-        return f"requires {beyond[0]}, which the issuance does not carry"
-    return None
+def _top_level(schema: dict, asked: dict) -> list[str]:
+    """The top-level fields an issuer writes as strings of its own choosing for this request:
+    v, d, i, s and u, and rd when it is given a registry. A schema that constrains one of them
+    beyond being a string decides nothing about the request."""
+    chosen = ["v", "d", "i", "s", "u"] + (["rd"] if asked.get("registry", "bup") != "none" else [])
+    if not _free(schema, chosen):
+        raise ScenarioError(f"The schema of {asked['name']} constrains a top-level field an "
+                            "issuer chooses, so whether it must refuse is not decided by the "
+                            "request.")
+    return chosen
+
+
+def _satisfiable(schema: dict, asked: dict) -> bool:
+    """Whether some ACDC an issuer could write as asked satisfies the whole schema: v, d, i and s
+    (and rd, given a registry) as strings it chooses, t as acm, the attribute block as asked, and
+    a top-level u or none. A request with edges is not asked, since what an edge section holds
+    is the issuer's to fill in; its edges are decided by the edge rule alone."""
+    body = {name: PLACEHOLDERS["d"] for name in _top_level(schema, asked) if name != "u"}
+    body["t"] = "acm"
+    body["a"] = _attributes(asked, PLACEHOLDERS)
+    return any(runner_js._valid(schema, schema, candidate, 0)
+               for candidate in (body, {**body, "u": PLACEHOLDERS["u"]}))
 
 
 def _operators(label: str, o) -> list[str]:
@@ -134,11 +136,6 @@ def refusal(schemas: dict, request: dict) -> str | None:
         elif asked.get("registry") == "bup" and direct:
             reasons.append(f"the schema of {asked['name']} forbids rd, so it cannot name a "
                            "registry")
-        else:
-            problem = _top_level_problem(schema, asked)
-            if problem:
-                raise ScenarioError(f"The schema of {asked['name']} {problem}, so whether it "
-                                    "must be refused is not decided by the request.")
         section = schema.get("properties", {}).get("a")
         if section is not None:
             chosen = ["d", "u", "i"] if asked.get("issuee") else ["d", "u"]
@@ -148,6 +145,8 @@ def refusal(schemas: dict, request: dict) -> str | None:
                                     "the request.")
             if not runner_js._valid(schema, section, _attributes(asked, PLACEHOLDERS), 0):
                 reasons.append(f"the attributes of {asked['name']} do not satisfy its schema")
+        if "edges" not in asked and not _satisfiable(schema, asked):
+            reasons.append(f"no ACDC issued as {asked['name']} is asked could satisfy its schema")
         if "edges" in asked and not _holds(asked["edges"], asked, by_name):
             reasons.append(f"the edges of {asked['name']} cannot hold as the request issues them")
     return reasons[0] if reasons else None
