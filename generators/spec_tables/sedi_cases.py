@@ -96,9 +96,13 @@ class IssuerEvaluation:
                                     f"does not define.")
         credentials = []
         for asked in issue["credentials"]:
+            kind = asked.get("registry", "bup")
+            if kind not in ("bup", "none"):
+                raise ScenarioError(f"The credential {asked['name']!r} asks for the registry kind "
+                                    f"{kind!r}; acdc.issue asks for bup or none.")
             entry = {"name": asked["name"], "issuer": asked["issuer"],
                      "schema": named[asked["schema"]]["$id"],
-                     "attributes": asked["attributes"], "registry": "bup"}
+                     "attributes": asked["attributes"], "registry": kind}
             for key in ("issuee", "edges"):
                 if key in asked:
                     entry[key] = asked[key]

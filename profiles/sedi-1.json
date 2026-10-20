@@ -102,7 +102,10 @@
     "ACDC-0208",
     "ACDC-0209",
     "ACDC-0210",
-    "ACDC-0211"
+    "ACDC-0211",
+    "ACDC-0212",
+    "ACDC-0213",
+    "ACDC-0214"
   ],
   "choices": [
     {
@@ -422,10 +425,13 @@
         "negative": [
           "ACDC-0209",
           "ACDC-0210",
-          "ACDC-0211"
+          "ACDC-0211",
+          "ACDC-0213",
+          "ACDC-0214"
         ],
         "positive": [
-          "ACDC-0208"
+          "ACDC-0208",
+          "ACDC-0212"
         ]
       },
       "decided": "947dh20t",
@@ -568,13 +574,16 @@
       "cases": {
         "negative": [
           "ACDC-0193",
-          "ACDC-0194"
+          "ACDC-0194",
+          "ACDC-0213",
+          "ACDC-0214"
         ],
         "positive": [
           "ACDC-0190",
           "ACDC-0191",
           "ACDC-0192",
-          "ACDC-0195"
+          "ACDC-0195",
+          "ACDC-0212"
         ]
       },
       "decided": "2u2ps8mt",

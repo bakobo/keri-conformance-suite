@@ -110,3 +110,19 @@ def test_a_group_operator_the_decision_does_not_model_is_a_scenario_error(group)
     req = request(cred("core", "issuer"), cred("guardian", "holder", edges=edges))
     with pytest.raises(ScenarioError, match="only AND and OR groups"):
         sedi_issue.refusal(SCHEMAS, req)
+
+
+CLOSED = {"$id": "EC", "type": "object", "additionalProperties": False,
+          "properties": {"v": {}, "t": {}, "d": {}, "u": {}, "i": {}, "s": {}, "a": ATTRS}}
+
+
+@pytest.mark.parametrize("schema,kind,words", [
+    ("EC", "none", None),
+    ("ES", "bup", None),
+    ("ES", "none", "admits a registry, so it cannot be issued without one"),
+    ("EC", "bup", "forbids rd, so it cannot name a registry"),
+])
+def test_the_registry_kind_must_fit_the_schema(schema, kind, words):
+    asked = cred("receipt", "issuer", "holder", schema=schema, registry=kind)
+    why = sedi_issue.refusal({**SCHEMAS, "EC": CLOSED}, request(asked))
+    assert why is None if words is None else words in why

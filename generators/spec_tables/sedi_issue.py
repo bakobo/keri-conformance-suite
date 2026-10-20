@@ -6,8 +6,10 @@ verifying it. What a scenario decides here is only which way the case goes: a re
 refused when a credential's attributes cannot satisfy its schema's attribute section once the
 issuer has added the block's ``d``, ``u`` and ``i``, or when an edge asked for cannot hold between
 the credentials as the request's roles issue them (an I2I edge needs the far credential issued to
-the near one's issuer; NI2I always holds; an OR group needs one member, AND every one). Every
-other request must be issued. A request outside what this decides (an operator other than
+the near one's issuer; NI2I always holds; an OR group needs one member, AND every one), or when
+the registry kind asked for does not fit the schema (direct-issuance, this.i 92zkyy59): none
+under a schema that admits rd leaves the credential uncommitted, and bup under one that forbids
+rd leaves the ACDC unable to name its registry. Every other request must be issued. A request outside what this decides (an operator other than
 I2I or NI2I, or a schema that constrains the d, u or i the issuer chooses) is a scenario error,
 never a guessed direction.
 """
@@ -16,6 +18,7 @@ from keri_conformance import json_schema_subset as runner_js
 
 from . import acdc_saids as sa
 from . import json_schema_subset as js
+from . import sedi_model as sm
 from .errors import ScenarioError
 
 # Placeholders of the right shape for what the issuer adds to an attribute block. The issuer
@@ -110,6 +113,13 @@ def refusal(schemas: dict, request: dict) -> str | None:
                                     "the request.")
             if not runner_js._valid(schema, section, _attributes(asked, PLACEHOLDERS), 0):
                 reasons.append(f"the attributes of {asked['name']} do not satisfy its schema")
+        direct = sm.forbids_rd(schema)
+        if asked.get("registry") == "none" and not direct:
+            reasons.append(f"the schema of {asked['name']} admits a registry, so it cannot be "
+                           "issued without one")
+        if asked.get("registry") == "bup" and direct:
+            reasons.append(f"the schema of {asked['name']} forbids rd, so it cannot name a "
+                           "registry")
         if "edges" in asked and not _holds(asked["edges"], asked, by_name):
             reasons.append(f"the edges of {asked['name']} cannot hold as the request issues them")
     return reasons[0] if reasons else None

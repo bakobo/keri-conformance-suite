@@ -175,3 +175,10 @@ def test_beyond_bound_names_a_maximum_the_model_refuses_past(beyond, verdict, wo
 def test_an_issuance_naming_a_schema_its_fixture_lacks_is_refused():
     with pytest.raises(ScenarioError, match="does not define"):
         sedi_cases.IssuerEvaluation(T, {"schemas": {}}, {"schemas": ["S"], "credentials": []})
+
+
+def test_an_issuance_asking_for_an_unknown_registry_kind_is_refused():
+    issue = {"schemas": ["S"], "credentials": [{"name": "c", "issuer": "i", "schema": "S",
+                                                 "attributes": {}, "registry": "upd"}]}
+    with pytest.raises(ScenarioError, match="registry kind 'upd'"):
+        sedi_cases.IssuerEvaluation(T, {"schemas": {"S": {}}}, issue)
