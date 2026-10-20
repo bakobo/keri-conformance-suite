@@ -125,11 +125,24 @@ def _produce(session, case: dict) -> tuple[str, dict | None, str | None, bool]:
         passed
 
 
-def _expected(case: dict, passed: bool) -> str | None:
+def _as_asked(request: dict, result: dict) -> bool:
+    """Whether every credential came back with the registry kind asked for: one asked for with
+    none has no registry, and any other has one (this.i 92zkyy59)."""
+    credentials = result.get("credentials") or {}
+    return all(isinstance(credentials.get(c["name"]), dict)
+               and ("registry" in credentials[c["name"]]) == (c.get("registry") != "none")
+               for c in request.get("credentials", []))
+
+
+def _expected(case: dict, passed: bool, result: dict) -> str | None:
     refusal = any(a["check"] == REFUSALS[case["operation"]] for a in case["assertions"])
     if not refusal:
         return VALID if passed else None
-    return NOT_VALID if case["operation"] == "acdc.issue" else None
+    if case["operation"] != "acdc.issue":
+        return None
+    # An issuer that issued another kind than it was asked for may have issued something valid;
+    # the fault is in the answer, which kcs run grades, not in bytes a verifier can see.
+    return NOT_VALID if _as_asked(case["input"], result) else None
 
 
 def _agrees(expected: str | None, verdict: str | None) -> bool | None:
@@ -168,7 +181,7 @@ def matrix(sessions: dict, verifying: dict, cases: list[dict]) -> list[dict]:
                 cells.append(_cell(case, producer, produced=produced, producer_passed=passed,
                                    detail=detail))
                 continue
-            expected = _expected(case, passed)
+            expected = _expected(case, passed, result)
             try:
                 bundles = (issue_bundles(case["input"], result) if produced == "issued"
                            else {"presented": present_bundle(case["input"], result)})

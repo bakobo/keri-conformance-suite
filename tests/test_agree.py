@@ -157,6 +157,14 @@ def test_an_issuer_negative_issued_anyway_must_be_refused_by_every_verifier():
     assert (cell["verdict"], cell["agrees"], cell["detail"]) == (None, False, "harness: boom")
 
 
+def test_an_issuer_negative_issued_as_another_registry_kind_carries_no_expectation():
+    case = issue_case("issue_refused")
+    case["input"]["credentials"][0]["registry"] = "none"
+    issuer = Fake({"acdc.issue": ISSUED, "acdc.verify": VALID})
+    [cell] = agree.matrix({"a": issuer}, {"a": issuer}, [case])
+    assert (cell["expected"], cell["verdict"], cell["agrees"]) == (None, "valid", None)
+
+
 def test_a_refusal_or_an_error_is_one_cell_with_no_verifier():
     refused = Fake({"acdc.issue": Reply({"refused": {"reason": "no"}})})
     broken = Fake({"acdc.issue": Failure("crash", "it died")})

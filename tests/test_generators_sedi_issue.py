@@ -126,3 +126,19 @@ def test_the_registry_kind_must_fit_the_schema(schema, kind, words):
     asked = cred("receipt", "issuer", "holder", schema=schema, registry=kind)
     why = sedi_issue.refusal({**SCHEMAS, "EC": CLOSED}, request(asked))
     assert why is None if words is None else words in why
+
+
+@pytest.mark.parametrize("schema,kind,words", [
+    ({**CLOSED, "properties": {k: v for k, v in CLOSED["properties"].items() if k != "t"}},
+     "none", "refuses the t an issuer must write"),
+    ({**CLOSED, "properties": {**CLOSED["properties"], "s": {"const": "x"}}},
+     "none", "constrains the s an issuer chooses"),
+    ({**CLOSED, "required": ["v", "e"]}, "none", "requires e, which the issuance"),
+    ({**CLOSED, "required": ["rd"]}, "none", "requires rd, which the issuance"),
+    ({"$id": "EX", "type": "object", "properties": {"rd": False}}, "bup",
+     "refuses the rd an issuer must write"),
+])
+def test_a_schema_no_issued_acdc_can_satisfy_decides_nothing(schema, kind, words):
+    asked = cred("receipt", "issuer", "holder", schema="EX", registry=kind)
+    with pytest.raises(ScenarioError, match=words):
+        sedi_issue.refusal({**SCHEMAS, "EX": {**schema, "$id": "EX"}}, request(asked))

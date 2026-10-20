@@ -62,6 +62,28 @@ def _free(node, names) -> bool:
     return True
 
 
+def _top_level_problem(schema: dict, asked: dict) -> str | None:
+    """Why no ACDC an issuer could write satisfies the schema's top level, whatever the issuer
+    does, or None. Asked only of a request whose registry kind fits its schema. The issuer
+    writes v, t, d, i and s as strings it chooses, and rd when it is given a registry; a schema
+    that refuses one of them, constrains it, or requires a field the issuance never carries
+    decides nothing about the request."""
+    kind = asked.get("registry", "bup")
+    written = ["v", "t", "d", "i", "s"] + (["rd"] if kind != "none" else [])
+    properties = schema.get("properties", {})
+    for name in written:
+        sub = properties.get(name, schema.get("additionalProperties", True))
+        if sub is False:
+            return f"refuses the {name} an issuer must write"
+        if isinstance(sub, dict) and not _free({"properties": {name: sub}}, [name]):
+            return f"constrains the {name} an issuer chooses"
+    carried = {*written, "u", "a", *(["e"] if "edges" in asked else [])}
+    beyond = sorted(set(schema.get("required", [])) - carried)
+    if beyond:
+        return f"requires {beyond[0]}, which the issuance does not carry"
+    return None
+
+
 def _operators(label: str, o) -> list[str]:
     if o is None:
         return []
@@ -104,6 +126,18 @@ def refusal(schemas: dict, request: dict) -> str | None:
     for asked in request["credentials"]:
         schema = schemas[asked["schema"]]
         js.check(schema)  # a schema outside the subset is a scenario error, coded
+        direct = sm.forbids_rd(schema)
+        if asked.get("registry") == "none" and not direct:
+            reasons.append(f"the schema of {asked['name']} admits a registry, so it cannot be "
+                           "issued without one")
+        elif asked.get("registry") == "bup" and direct:
+            reasons.append(f"the schema of {asked['name']} forbids rd, so it cannot name a "
+                           "registry")
+        else:
+            problem = _top_level_problem(schema, asked)
+            if problem:
+                raise ScenarioError(f"The schema of {asked['name']} {problem}, so whether it "
+                                    "must be refused is not decided by the request.")
         section = schema.get("properties", {}).get("a")
         if section is not None:
             chosen = ["d", "u", "i"] if asked.get("issuee") else ["d", "u"]
@@ -113,13 +147,6 @@ def refusal(schemas: dict, request: dict) -> str | None:
                                     "the request.")
             if not runner_js._valid(schema, section, _attributes(asked, PLACEHOLDERS), 0):
                 reasons.append(f"the attributes of {asked['name']} do not satisfy its schema")
-        direct = sm.forbids_rd(schema)
-        if asked.get("registry") == "none" and not direct:
-            reasons.append(f"the schema of {asked['name']} admits a registry, so it cannot be "
-                           "issued without one")
-        if asked.get("registry") == "bup" and direct:
-            reasons.append(f"the schema of {asked['name']} forbids rd, so it cannot name a "
-                           "registry")
         if "edges" in asked and not _holds(asked["edges"], asked, by_name):
             reasons.append(f"the edges of {asked['name']} cannot hold as the request issues them")
     return reasons[0] if reasons else None
