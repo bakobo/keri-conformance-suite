@@ -110,3 +110,56 @@ def test_a_group_operator_the_decision_does_not_model_is_a_scenario_error(group)
     req = request(cred("core", "issuer"), cred("guardian", "holder", edges=edges))
     with pytest.raises(ScenarioError, match="only AND and OR groups"):
         sedi_issue.refusal(SCHEMAS, req)
+
+
+CLOSED = {"$id": "EC", "type": "object", "additionalProperties": False,
+          "properties": {"v": {}, "t": {}, "d": {}, "u": {}, "i": {}, "s": {}, "a": ATTRS}}
+
+
+@pytest.mark.parametrize("schema,kind,words", [
+    ("EC", "none", None),
+    ("ES", "bup", None),
+    ("ES", "none", "admits a registry, so it cannot be issued without one"),
+    ("EC", "bup", "forbids rd, so it cannot name a registry"),
+])
+def test_the_registry_kind_must_fit_the_schema(schema, kind, words):
+    asked = cred("receipt", "issuer", "holder", schema=schema, registry=kind)
+    why = sedi_issue.refusal({**SCHEMAS, "EC": CLOSED}, request(asked))
+    assert why is None if words is None else words in why
+
+
+@pytest.mark.parametrize("schema,kind", [
+    ({**CLOSED, "properties": {k: v for k, v in CLOSED["properties"].items() if k != "t"}},
+     "none"),
+    ({**CLOSED, "type": "array"}, "none"),
+    ({**CLOSED, "required": ["rd"]}, "none"),
+    ({**CLOSED, "required": ["v", "e"]}, "none"),
+    ({"$id": "EX", "type": "object", "properties": {"rd": False}}, "bup"),
+])
+def test_a_schema_no_issued_acdc_can_satisfy_is_refused(schema, kind):
+    asked = cred("receipt", "issuer", "holder", schema="EX", registry=kind)
+    why = sedi_issue.refusal({**SCHEMAS, "EX": {**schema, "$id": "EX"}}, request(asked))
+    assert why == "no ACDC issued as receipt is asked could satisfy its schema"
+
+
+def test_a_top_level_u_may_be_written_or_not():
+    for u in (False, {"type": "string"}, {"const": "x"}):
+        props = {**CLOSED["properties"], "u": u}
+        asked = cred("receipt", "issuer", "holder", schema="EX", registry="none")
+        assert sedi_issue.refusal({"EX": {**CLOSED, "$id": "EX", "properties": props}},
+                                  request(asked)) is None
+
+
+@pytest.mark.parametrize("field,sub,required", [
+    ("s", {"const": "x"}, []),
+    # A required u is the issuer's to choose, so constraining it decides nothing either.
+    ("u", {"const": "0A" + "B" * 22}, ["u"]),
+    ("u", {"$ref": "#/properties/u"}, ["u"]),
+])
+def test_a_schema_constraining_a_top_level_field_the_issuer_chooses_decides_nothing(
+        field, sub, required):
+    schema = {**CLOSED, "$id": "EX", "required": required,
+              "properties": {**CLOSED["properties"], field: sub}}
+    asked = cred("receipt", "issuer", "holder", schema="EX", registry="none")
+    with pytest.raises(ScenarioError, match="constrains a top-level field"):
+        sedi_issue.refusal({"EX": schema}, request(asked))

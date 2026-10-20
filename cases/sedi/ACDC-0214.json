@@ -1,0 +1,67 @@
+{
+  "assertions": [
+    {
+      "basis": "sedi-1 direct-issuance: A credential without rd whose schema forbids one (its top level lists no rd and closes with additionalProperties false) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed. sedi-1 issuer-issues: An issuer issues exactly the credentials a request asks for, each under a blindable registry of its own, with its own keys, salts and clock; it refuses, and never issues something else, a request whose attributes a credential's schema does not allow once the issuer has added the block's d, u and i, or whose edges cannot hold as the request's roles issue the credentials.",
+      "check": "issue_refused",
+      "choices": [
+        "direct-issuance",
+        "issuer-issues"
+      ],
+      "id": "a1",
+      "level": "INTEROP",
+      "note": "The issuer must refuse: the schema of receipt forbids rd, so it cannot name a registry."
+    }
+  ],
+  "description": "As SI-07, but the request asks for a blindable registry. The schema forbids rd, so the credential could not name its registry and still satisfy its schema, and a sedi-1 issuer refuses. Its positive pair is SI-07 (ACDC-0212), which differs from it only in the defect.",
+  "id": "ACDC-0214",
+  "input": {
+    "credentials": [
+      {
+        "attributes": {
+          "name": "receipt"
+        },
+        "issuee": "holder",
+        "issuer": "issuer",
+        "name": "receipt",
+        "registry": "bup",
+        "schema": "EEqKvp1hxD8GwdS3bRaQrtWrHfCooh19qM9SFoG_ZXOL"
+      }
+    ],
+    "roles": [
+      "issuer",
+      "holder"
+    ],
+    "schemas": [
+      "7b22246964223a224545714b76703168784438477764533362526151727457724866436f6f683139714d3953466f475f5a584f4c222c2224736368656d61223a2268747470733a2f2f6a736f6e2d736368656d612e6f72672f64726166742f323032302d31322f736368656d61222c227469746c65223a22736564692d31206964656e74697479206173737572616e63652072656365697074222c2276657273696f6e223a22312e302e30222c2274797065223a226f626a656374222c227265717569726564223a5b2276222c2264222c2269222c2273222c2261225d2c2270726f70657274696573223a7b2276223a7b2274797065223a22737472696e67227d2c2274223a7b2274797065223a22737472696e67227d2c2264223a7b2274797065223a22737472696e67227d2c2275223a7b2274797065223a22737472696e67227d2c2269223a7b2274797065223a22737472696e67227d2c2273223a7b2274797065223a22737472696e67227d2c2261223a7b226f6e654f66223a5b7b2274797065223a22737472696e67227d2c7b2274797065223a226f626a656374222c227265717569726564223a5b2264222c2275222c226e616d65225d2c226164646974696f6e616c50726f70657274696573223a66616c73652c2270726f70657274696573223a7b2264223a7b2274797065223a22737472696e67227d2c2275223a7b2274797065223a22737472696e67227d2c2269223a7b2274797065223a22737472696e67227d2c226e616d65223a7b2274797065223a22737472696e67227d7d7d5d7d7d2c226164646974696f6e616c50726f70657274696573223a66616c73657d"
+    ]
+  },
+  "operation": "acdc.issue",
+  "profile": "sedi-1",
+  "provenance": {
+    "generator": {
+      "name": "kcs-gen-sedi",
+      "version": "0.1.0"
+    },
+    "reference": null,
+    "scenario": "scenarios/sedi/issue.json#SI-09"
+  },
+  "schema_version": 1,
+  "status": "draft",
+  "targets": {
+    "features": [
+      "acdc.registry.bup",
+      "acdc.version-2.x",
+      "cesr.genus-2.00",
+      "cesr.serialization.json",
+      "crypto.ed25519",
+      "kel.basic",
+      "keri.version-2.x"
+    ],
+    "wire": [
+      "CESR-2.00",
+      "KERICAACAAJSON",
+      "ACDCCAACAAJSON"
+    ]
+  },
+  "title": "A registry under a schema that forbids rd"
+}

@@ -157,6 +157,14 @@ def test_an_issuer_negative_issued_anyway_must_be_refused_by_every_verifier():
     assert (cell["verdict"], cell["agrees"], cell["detail"]) == (None, False, "harness: boom")
 
 
+def test_an_issuer_negative_issued_as_another_registry_kind_carries_no_expectation():
+    case = issue_case("issue_refused")
+    case["input"]["credentials"][0]["registry"] = "none"
+    issuer = Fake({"acdc.issue": ISSUED, "acdc.verify": VALID})
+    [cell] = agree.matrix({"a": issuer}, {"a": issuer}, [case])
+    assert (cell["expected"], cell["verdict"], cell["agrees"]) == (None, "valid", None)
+
+
 def test_a_refusal_or_an_error_is_one_cell_with_no_verifier():
     refused = Fake({"acdc.issue": Reply({"refused": {"reason": "no"}})})
     broken = Fake({"acdc.issue": Failure("crash", "it died")})
@@ -282,3 +290,9 @@ def test_an_adapter_whose_second_process_is_another_implementation_is_refused():
         agree.run_agreement(start, {"a": "x"}, [issue_case()], "2026.10")
     assert e.value.code == errors.E_ADAPTER_HELLO_CHANGED
     assert all(f.closed for f in opened)
+
+
+def test_a_credential_issued_with_no_registry_brings_none_into_its_bundle():
+    request = {"roles": [], "schemas": [], "credentials": [{"name": "a"}]}
+    result = {"kels": {}, "credentials": {"a": {"acdc": b"a".hex()}}}
+    assert agree.issue_bundles(request, result)["a"]["registry"] == []

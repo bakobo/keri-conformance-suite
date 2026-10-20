@@ -60,6 +60,71 @@
        ]
       }
      }
+    },
+    "IAR": {
+     "$id": "",
+     "$schema": "https://json-schema.org/draft/2020-12/schema",
+     "title": "sedi-1 identity assurance receipt",
+     "version": "1.0.0",
+     "type": "object",
+     "required": [
+      "v",
+      "d",
+      "i",
+      "s",
+      "a"
+     ],
+     "properties": {
+      "v": {
+       "type": "string"
+      },
+      "t": {
+       "type": "string"
+      },
+      "d": {
+       "type": "string"
+      },
+      "u": {
+       "type": "string"
+      },
+      "i": {
+       "type": "string"
+      },
+      "s": {
+       "type": "string"
+      },
+      "a": {
+       "oneOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "object",
+         "required": [
+          "d",
+          "u",
+          "name"
+         ],
+         "additionalProperties": false,
+         "properties": {
+          "d": {
+           "type": "string"
+          },
+          "u": {
+           "type": "string"
+          },
+          "i": {
+           "type": "string"
+          },
+          "name": {
+           "type": "string"
+          }
+         }
+        }
+       ]
+      }
+     },
+     "additionalProperties": false
     }
    }
   }
@@ -313,6 +378,114 @@
     ]
    },
    "expect": []
+  },
+  {
+   "id": "ACDC-0212",
+   "key": "SI-07",
+   "title": "An identity assurance receipt, issued directly",
+   "description": "The issuer issues a credential to the holder under a schema that closes its top level without an rd, as SEDI's identity assurance receipt schema does, and asks for no registry. A sedi-1 issuer issues it with no rd and anchors the digest seal of its SAID in its KEL.",
+   "base": "plain",
+   "choices": [
+    "direct-issuance",
+    "issuer-issues"
+   ],
+   "triage": "None: an acceptance.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder"
+    ],
+    "schemas": [
+     "IAR"
+    ],
+    "credentials": [
+     {
+      "name": "receipt",
+      "issuer": "issuer",
+      "schema": "IAR",
+      "attributes": {
+       "name": "receipt"
+      },
+      "issuee": "holder",
+      "registry": "none"
+     }
+    ]
+   },
+   "expect": []
+  },
+  {
+   "id": "ACDC-0213",
+   "key": "SI-08",
+   "title": "No registry under a schema that admits one",
+   "description": "As SI-07, but under a schema whose top level admits an rd. Only a credential whose schema forbids rd is issued directly, so a sedi-1 issuer refuses.",
+   "base": "plain",
+   "choices": [
+    "direct-issuance",
+    "issuer-issues"
+   ],
+   "triage": "Issuing it puts into circulation a credential no verifier can find committed, and one its issuer can never revoke.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder"
+    ],
+    "schemas": [
+     "S"
+    ],
+    "credentials": [
+     {
+      "name": "receipt",
+      "issuer": "issuer",
+      "schema": "S",
+      "attributes": {
+       "name": "receipt"
+      },
+      "issuee": "holder",
+      "registry": "none"
+     }
+    ]
+   },
+   "expect": [
+    "request refused/the schema of receipt admits a registry, so it cannot be issued without one"
+   ],
+   "pair": "SI-07"
+  },
+  {
+   "id": "ACDC-0214",
+   "key": "SI-09",
+   "title": "A registry under a schema that forbids rd",
+   "description": "As SI-07, but the request asks for a blindable registry. The schema forbids rd, so the credential could not name its registry and still satisfy its schema, and a sedi-1 issuer refuses.",
+   "base": "plain",
+   "choices": [
+    "direct-issuance",
+    "issuer-issues"
+   ],
+   "triage": "Issuing it gives a credential that fails its own schema, or a registry the credential never names.",
+   "issue": {
+    "roles": [
+     "issuer",
+     "holder"
+    ],
+    "schemas": [
+     "IAR"
+    ],
+    "credentials": [
+     {
+      "name": "receipt",
+      "issuer": "issuer",
+      "schema": "IAR",
+      "attributes": {
+       "name": "receipt"
+      },
+      "issuee": "holder",
+      "registry": "bup"
+     }
+    ]
+   },
+   "expect": [
+    "request refused/the schema of receipt forbids rd, so it cannot name a registry"
+   ],
+   "pair": "SI-07"
   }
  ]
 }

@@ -13,7 +13,9 @@ the runner's own BLAKE3 and Ed25519:
 - **Each credential's registry**: the blindable registry's inception and updates, their SAIDs,
   sequence numbers and priors, each anchored on the issuer's verified KEL by a seal the profile
   accepts ({s, d}, or {i, s, d} whose i is the registry's SAID), and the head update's disclosed blinded
-  state block, whose BLID is the update's b and which names the credential as issued.
+  state block, whose BLID is the update's b and which names the credential as issued. A
+  credential asked for with registry kind none has no registry: the ACDC names none, and the
+  digest seal {d} of its SAID must be on the issuer's verified KEL instead (this.i 92zkyy59).
 - **Each ACDC**: its version string sized to its body, its fields in the order of ACDC line 32,
   its most compact SAID, its issuer and schema, its attribute block (a SAIDed block with a salt,
   the issuee, and exactly the attributes asked for, with their values), its registry, and each
@@ -354,16 +356,18 @@ def _is_digest(text) -> bool:
     return True
 
 
-def sealed(trunk: list[dict], rd: str, n: str, d: str) -> str | None:
+def sealed(trunk: list[dict], rd: str | None, n: str | None, d: str) -> str | None:
     """None when the issuer's verified KEL anchors the event in a shape the profile accepts;
-    else why not."""
+    else why not. A directly issued ACDC (``n`` None) is anchored only by the digest seal
+    ``{d}``."""
     named = False
+    accepted = [{"d": d}] if n is None else [{"s": n, "d": d}, {"i": rd, "s": n, "d": d}]
     for body in trunk:
         seals = body.get("a")
         for seal in seals if isinstance(seals, list) else []:
             if not isinstance(seal, dict) or seal.get("d") != d:
                 continue
-            if seal in ({"s": n, "d": d}, {"i": rd, "s": n, "d": d}):
+            if seal in accepted:
                 return None
             named = True
     return ("is anchored by a seal of a shape the profile refuses" if named
@@ -747,12 +751,29 @@ def grade(request: dict, result: dict) -> list[str]:
             continue
         problems += [f"{name}: {p}" for p in _fits(body, schemas.get(asked["schema"]))]
         bodies[name] = body
+        if asked.get("registry") == "none":
+            problems += [f"{name}: {p}" for p in _direct(out, body, d,
+                                                          trunks.get(asked["issuer"], []))]
+            continue
         chain = bytes.fromhex(out["registry"]) if isinstance(out.get("registry"), str) else b""
         rd, failed = check_registry(chain, out.get("disclosure"), issuer,
                                     trunks.get(asked["issuer"], []), d)
         problems += [f"{name}: {p}" for p in failed]
         if rd is not None and body.get("rd") != rd:
             problems.append(f"{name}: the ACDC does not name its registry in rd")
+    return problems
+
+
+def _direct(out: dict, body: dict, d: str, trunk: list[dict]) -> list[str]:
+    """What fails in a credential asked for with no registry (this.i 92zkyy59)."""
+    problems = []
+    if "registry" in out or "disclosure" in out:
+        problems.append("a registry was returned for a credential asked for with none")
+    if "rd" in body:
+        problems.append("the ACDC names a registry, and none was asked for")
+    why = sealed(trunk, None, None, d)
+    if why:
+        problems.append(f"the ACDC {why}")
     return problems
 
 

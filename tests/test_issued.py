@@ -24,6 +24,25 @@ def test_a_valid_issuance_verifies_targeted_or_not():
         assert iss.grade(request, result) == []
 
 
+def test_a_credential_asked_for_with_no_registry_is_anchored_by_its_digest_seal():
+    request, result = w.direct_issuance()
+    assert iss.grade(request, result) == []
+    request, result = w.direct_issuance(seal=None)
+    assert iss.grade(request, result) == ["c: the ACDC is not anchored on the issuer's verified KEL"]
+    request, result = w.direct_issuance(seal=lambda d: {"s": "0", "d": d})
+    assert iss.grade(request, result) == [
+        "c: the ACDC is anchored by a seal of a shape the profile refuses"]
+
+
+def test_a_credential_asked_for_with_no_registry_names_and_returns_none():
+    request, result = w.direct_issuance(rd="E" + "R" * 43)
+    assert iss.grade(request, result) == ["c: the ACDC names a registry, and none was asked for"]
+    request, result = w.direct_issuance()
+    result["credentials"]["c"]["registry"] = w.chain(w.rip("E" + "I" * 43))
+    assert iss.grade(request, result) == [
+        "c: a registry was returned for a credential asked for with none"]
+
+
 # -- primitives -------------------------------------------------------------------------------
 
 def test_primitives():
