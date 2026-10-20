@@ -1018,6 +1018,265 @@
      }
     ]
    }
+  },
+  "SP-05": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-A",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-A",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-A-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-A-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "Vicp",
+     "aid": "V",
+     "t": "icp",
+     "keys": [
+      "V0"
+     ],
+     "next": [
+      "V1"
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-A",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-A-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-A",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-A-1",
+     "t": "bup",
+     "registry": "rip-A",
+     "disclose": true,
+     "state": {
+      "u": "s-A-0",
+      "td": {
+       "acdc": "A"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "A",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-A",
+     "form": {
+      "compact": [
+       "a"
+      ]
+     },
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "A"
+     }
+    }
+   ],
+   "presented": "A",
+   "presentation": {
+    "verifier": "V",
+    "exchanges": [
+     {
+      "name": "grant",
+      "t": "exn",
+      "sender": "H",
+      "receiver": "V",
+      "x": "",
+      "p": "",
+      "r": "/ipex/grant",
+      "q": {},
+      "a": {
+       "o": [
+        {
+         "acdc": "A"
+        }
+       ]
+      }
+     }
+    ],
+    "messages": [
+     {
+      "exchange": "grant",
+      "sigs": [
+       {
+        "aid": "H",
+        "keys": [
+         "H0"
+        ]
+       }
+      ]
+     }
+    ]
+   }
   }
  },
  "cases": [
@@ -1074,6 +1333,22 @@
    ],
    "triage": "None: an acceptance.",
    "expect": []
+  },
+  {
+   "id": "ACDC-0215",
+   "key": "SP-05",
+   "title": "Issuee hidden from the verifier",
+   "description": "As SP-01, but the credential is presented with its attribute section compacted, so the presentation does not show who its issuee is. The grant's sender cannot be bound to an issuee the verifier cannot read, and a stranger sending the same bytes would look the same; a credential whose issuee is hidden is not an untargeted one. A sedi-1 verifier should find it incomplete.",
+   "base": "SP-05",
+   "choices": [
+    "presenter-binding",
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it lets anyone who has seen a credential present it as theirs by hiding its attribute section.",
+   "expect": [
+    "A incomplete/presenter-undisclosed"
+   ],
+   "pair": "SP-01"
   }
  ]
 }

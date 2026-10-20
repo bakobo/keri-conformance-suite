@@ -330,8 +330,8 @@ wheels = [
 
 [[package]]
 name = "fiki"
-version = "0.8.0"
-source = { git = "https://github.com/bakobo/fiki?subdirectory=py&rev=e3173da115bad1e3f45e08096c5991c89ccd0c7b#e3173da115bad1e3f45e08096c5991c89ccd0c7b" }
+version = "0.10.0"
+source = { git = "https://github.com/bakobo/fiki?subdirectory=py&rev=597645739be46b9fbd57172fca37bf4691ddea8c#597645739be46b9fbd57172fca37bf4691ddea8c" }
 dependencies = [
     { name = "cryptography" },
     { name = "http-sfv" },
@@ -358,7 +358,7 @@ wheels = [
 [[package]]
 name = "heti"
 version = "0.0.0"
-source = { git = "ssh://git@github.com/bakobo/heti?rev=f347b4f5ebffc026ec637696e44fe7eb3c6522a9#f347b4f5ebffc026ec637696e44fe7eb3c6522a9" }
+source = { git = "ssh://git@github.com/bakobo/heti?rev=127d75ce9285c4761422d26add2b58aa5dad4804#127d75ce9285c4761422d26add2b58aa5dad4804" }
 dependencies = [
     { name = "bakobo-errors" },
     { name = "fiki" },
@@ -526,7 +526,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "heti", git = "ssh://git@github.com/bakobo/heti?rev=f347b4f5ebffc026ec637696e44fe7eb3c6522a9" }]
+requires-dist = [{ name = "heti", git = "ssh://git@github.com/bakobo/heti?rev=127d75ce9285c4761422d26add2b58aa5dad4804" }]
 
 [package.metadata.requires-dev]
 dev = [

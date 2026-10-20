@@ -16,10 +16,10 @@ For each sedi-1 choice, a deliberately wrong variant of the reference model and 
 | `default-operator` | never applies the default operator | ACDC-0111, ACDC-0112 | ACDC-0112 |
 | `operator-list` | reads o only as a string | ACDC-0110, ACDC-0126, ACDC-0127, ACDC-0134, ACDC-0149 | ACDC-0126 |
 | `operator-shape` | lets the earliest of conflicting operators win | ACDC-0114, ACDC-0115, ACDC-0116, ACDC-0139, ACDC-0140, ACDC-0141, ACDC-0142, ACDC-0143, ACDC-0144, ACDC-0145, ACDC-0146, ACDC-0147, ACDC-0148 | ACDC-0115 |
-| `presenter-binding` | does not check the presenter | ACDC-0118, ACDC-0119, ACDC-0120, ACDC-0128, ACDC-0130 | ACDC-0119, ACDC-0120, ACDC-0130 |
+| `presenter-binding` | does not check the presenter | ACDC-0118, ACDC-0119, ACDC-0120, ACDC-0128, ACDC-0130, ACDC-0215 | ACDC-0119, ACDC-0120, ACDC-0130 |
 | `aggregate-issuee` | reads an aggregate's issuee at A[0] | ACDC-0128, ACDC-0129, ACDC-0130 | ACDC-0128, ACDC-0130 |
 | `bearer-untargeted` | treats an untargeted credential as unbound | ACDC-0121 | ACDC-0121 |
-| `unresolved-grading` | accepts what it cannot evaluate | ACDC-0122, ACDC-0124, ACDC-0167, ACDC-0197, ACDC-0209 | ACDC-0167, ACDC-0197, ACDC-0209 |
+| `unresolved-grading` | accepts what it cannot evaluate | ACDC-0122, ACDC-0124, ACDC-0167, ACDC-0197, ACDC-0209, ACDC-0215 | ACDC-0167, ACDC-0197, ACDC-0209, ACDC-0215 |
 | `valid-is-interop` | refuses everything | ACDC-0101, ACDC-0124, ACDC-0157, ACDC-0196, ACDC-0208 | ACDC-0101, ACDC-0157, ACDC-0196, ACDC-0208 |
 | `direct-issuance` | takes a digest seal as committing a credential whatever its schema | ACDC-0208, ACDC-0209, ACDC-0210, ACDC-0211, ACDC-0212, ACDC-0213, ACDC-0214 | ACDC-0211 |
 | `revoked` | accepts a revoked credential | ACDC-0106, ACDC-0122, ACDC-0134, ACDC-0135, ACDC-0149, ACDC-0150, ACDC-0166 | ACDC-0106, ACDC-0135, ACDC-0150, ACDC-0166 |
