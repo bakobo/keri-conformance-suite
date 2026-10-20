@@ -63,7 +63,6 @@ from dataclasses import dataclass, field
 from . import acdc_model as am
 from . import acdc_saids as sa
 from . import b64, encoding, exn_build
-from . import json_schema_subset as js
 from .tables import Tables
 
 VALID, INVALID, INCOMPLETE = "valid", "invalid", "incomplete"
@@ -94,8 +93,6 @@ MAXIMA = {"registry_events": 64, "aggregate_blocks": 32, "edge_group_depth": 8,
 
 # How acdc_model's step failures grade under sedi-1. A failure not listed here fails a check.
 INCOMPLETE_REASONS = {"schema-absent", "issuer-kel", "direct-anchor"}
-# A registry SAID, to ask whether a schema's top level admits an rd.
-SAID_PROBE = "E" + "A" * 43
 
 
 @dataclass(frozen=True)
@@ -301,21 +298,13 @@ def issuee(body: dict | None):
 
 def forbids_rd(schema: dict) -> bool:
     """Whether a schema's top level forbids ``rd`` (direct-issuance): it lists no ``rd`` and
-    closes, with ``additionalProperties`` false or a schema a registry SAID does not satisfy. A
-    schema that merely does not list ``rd`` leaves its top level open, and admits one."""
+    closes with ``additionalProperties`` false. A schema that merely does not list ``rd`` leaves
+    its top level open, and one that closes with a subschema may still admit some registry SAID,
+    which no finite probe can rule out, so both admit one."""
     properties = schema.get("properties")
     if isinstance(properties, dict) and "rd" in properties:
         return False
-    extra = schema.get("additionalProperties", True)
-    if extra is False:
-        return True
-    if not isinstance(extra, dict):
-        return False
-    try:
-        return not js.validate(extra, SAID_PROBE)
-    except js.SchemaError:
-        # A closing schema the subset cannot evaluate says nothing the verifier can rely on.
-        return False
+    return schema.get("additionalProperties", True) is False
 
 
 def operators(o) -> tuple[list[str] | None, str | None]:

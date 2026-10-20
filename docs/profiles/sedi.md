@@ -89,7 +89,7 @@ This choice is decided in this.i `8fh68wt6`; security-relevant: getting it wrong
 
 #### `direct-issuance`
 
-A credential without rd whose schema forbids one (its top level lists no rd and closes) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.
+A credential without rd whose schema forbids one (its top level lists no rd and closes with additionalProperties false) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.
 
 Why: ACDC line 1667 describes direct issuance with no registry, by a digest seal of the ACDC's SAID. sedi-1 otherwise commits a credential only through its registry, but SEDI's identity assurance receipt schema closes its top level without an rd, so it can only be issued directly (this.i 947dh20t).
 

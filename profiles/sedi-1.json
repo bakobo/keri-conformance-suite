@@ -431,7 +431,7 @@
       "decided": "947dh20t",
       "id": "direct-issuance",
       "overturn": "A SEDI schema change that gives the identity assurance receipt an rd, or specification text that limits direct issuance.",
-      "reading": "A credential without rd whose schema forbids one (its top level lists no rd and closes) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.",
+      "reading": "A credential without rd whose schema forbids one (its top level lists no rd and closes with additionalProperties false) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.",
       "security": true
     },
     {

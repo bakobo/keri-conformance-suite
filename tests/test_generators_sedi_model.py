@@ -139,10 +139,9 @@ def test_without_its_schema_a_credential_without_rd_is_left_to_the_schema_findin
     ({"additionalProperties": True}, False),
     ({"additionalProperties": False}, True),
     ({"additionalProperties": False, "properties": {"rd": {"type": "string"}}}, False),
-    ({"additionalProperties": {"type": "integer"}}, True),
-    ({"additionalProperties": {"type": "string"}}, False),
-    # A closing schema the subset refuses to evaluate is not relied on.
-    ({"additionalProperties": {"pattern": "^x"}}, False),
+    # A closing subschema may admit some registry SAID, whichever SAIDs it refuses.
+    ({"additionalProperties": {"type": "integer"}}, False),
+    ({"additionalProperties": {"const": "EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}}, False),
     ({"additionalProperties": "no"}, False),
 ])
 def test_which_schemas_forbid_rd(schema, forbids):

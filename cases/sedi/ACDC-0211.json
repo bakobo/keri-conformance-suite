@@ -7,7 +7,7 @@
   },
   "assertions": [
     {
-      "basis": "sedi-1 direct-issuance: A credential without rd whose schema forbids one (its top level lists no rd and closes) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.",
+      "basis": "sedi-1 direct-issuance: A credential without rd whose schema forbids one (its top level lists no rd and closes with additionalProperties false) is committed by the digest seal {d} of its SAID in the issuer's KEL, and cannot be revoked; a seal naming its SAID in another shape is refused, and no seal leaves it unresolved. A credential without rd whose schema would admit one is not committed.",
       "check": "verdict",
       "choices": [
         "direct-issuance"
