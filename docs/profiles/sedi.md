@@ -35,7 +35,7 @@ Passing the profile shows each implementation against the cases. `kcs agree` sho
 
 ## The 1.x companion
 
-`sedi-1x-interop` grades SEDI's credentials in keripy 1.x's forms: the 1.x field set, its SAID over the expanded form, and its `vcp`/`iss`/`rev` registry (this.i `9sgwng6m`). No specification defines those forms, so the profile is non-normative, every assertion is INTEROP, and its expected verdicts are keripy 1.2.14's. The suite builds every 1.x issuance itself, and `generators/keripy1x_check/check_acdc.py` confirms each verdict against keripy 1.2.14. It is sedi-1's companion, not part of it: a 1.x result never enters a sedi-1 claim.
+`sedi-1x-interop` grades SEDI's credentials in keripy 1.x's forms: the 1.x field set, its SAID over the expanded form, and its `vcp`/`iss`/`rev` registry (this.i `9sgwng6m`). No specification defines those forms, so the profile is non-normative, every assertion is INTEROP, and its expected verdicts are keripy 1.2.14's. The suite builds every 1.x issuance itself, and `generators/keripy1x_check/check_acdc.py` confirms each verdict against keripy 1.2.14. It is sedi-1's companion, not part of it: a 1.x result never enters a sedi-1 claim. It runs against keripy 1.2.14's adapter only: signify-ts has no ACDC verifier of its own (it leaves validation to KERIA), so running the companion against it needs a KERIA-backed adapter, which is separate work.
 
 Its cases turn the incompatibilities SEDI met moving a credential between 1.x wallets (`interop/two-wallets/RESULT.md`) into pairs: a 1.x credential under SEDI's published 2.0 schema shape, an `a.dt` that SEDI core's closed attribute section forbids, an `a.dt` a schema allows beside one with none, and the optional agent edge. One more is not in that list: keripy 1.x reads every label of an edge section except `d` and `o` as an edge, so the section's own `u`, which SEDI's schema requires, stops it verifying any SEDI credential that carries an edge section (ACDC-0205, and its pair ACDC-0207, which differs only in lacking that `u`). The cross-version case, ACDC-0206, is the 1.x copy of a claim whose 2.00 form is revoked: a 1.x verifier still finds it valid.
 
@@ -109,6 +109,8 @@ Overturned by: Specification text naming another derivation, path encoding or co
 
 This choice is decided in this.i `8g9vtxvc`; tracked as keri-sow tick `3b5o`; security-relevant: getting it wrong admits what should be refused.
 
+No case exercises it yet (this.i `2c8nsmr7`). Its cases wait for the answer to the spec question 3b5o tracks, and checking a blind needs Argon2id at 64 MiB, so the derivation will be checked by the generator and an optional evidence tool, never by the runner. Until then sedi-1 stays draft.
+
 #### `blind-state-code`
 
 The count code of a big blinded-state group is the 8-character code, keeping quadlet alignment.
@@ -128,6 +130,8 @@ Why: Section 15.4 at the tag contradicts itself on the v_k path and leaves H and
 Overturned by: A tagged specification whose bulk issuance text differs.
 
 This choice is decided in this.i `43rj9wfc`; tracked as keri-sow tick `4xwz`.
+
+No case exercises it yet (this.i `2c8nsmr7`): its cases wait for a tagged specification that carries the bulk issuance text.
 
 ### Seals and attachments
 
