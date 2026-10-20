@@ -163,7 +163,6 @@ BAD_RESULTS = [
     ("acdc.issue", _without(ISSUED, "credentials")),
     ("acdc.issue", _with(ISSUED, "XYZ", "kels", "issuer")),
     ("acdc.issue", _without(ISSUED, "credentials", "core", "acdc")),
-    ("acdc.issue", _without(ISSUED, "credentials", "core", "registry")),
     ("acdc.issue", _with(ISSUED, "EAcd", "credentials", "core", "acdc")),
     ("acdc.issue", _with(ISSUED, 7, "credentials", "core", "disclosure")),
     ("acdc.issue", _with(ISSUED, {"acdc": "7b", "registry": "7b", "x": 1}, "credentials",
@@ -185,6 +184,11 @@ def test_off_shape_new_results_are_malformed(op, result):
     assert check_result_shape(op, result) is not None
 
 
+
+def test_a_credential_issued_with_no_registry_returns_none():
+    # registry kind none (this.i 92zkyy59)
+    assert check_result_shape("acdc.issue", _without(ISSUED, "credentials", "core",
+                                                     "registry")) is None
 def test_the_runner_knows_the_new_operations():
     assert {"acdc.issue", "acdc.present"} <= set(OPERATIONS)
 

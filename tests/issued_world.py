@@ -106,9 +106,11 @@ def block(td: str, ts: str = "issued", u_code: str = "a") -> str:
     return iss.blid(u, td, ts) + u + (td or iss.EMPTY) + iss._state(ts)
 
 
-def acdc(issuer: str, schema_said: str, rd: str, a: dict, e: dict | None = None) -> dict:
+def acdc(issuer: str, schema_said: str, rd: str | None, a: dict, e: dict | None = None) -> dict:
     body = {"v": "", "t": "acm", "d": "", "u": salt("acdc"), "i": issuer, "rd": rd,
             "s": schema_said, "a": a}
+    if rd is None:
+        del body["rd"]
     if e is not None:
         body["e"] = e
     return iss.sized({**body, "d": iss.acdc_said(body)}, "ACDC")
@@ -142,6 +144,26 @@ def issuance(attributes=None, issuee=True):
                                     "disclosure": disclosure}}}
     return request, result, {"issuer": issuer, "holder": holder, "rip": r, "bup": update,
                              "acdc": credential, "schema": said}
+
+
+def direct_issuance(seal=lambda d: {"d": d}, rd=None):
+    """A valid request and result for a credential asked for with no registry (this.i
+    92zkyy59): the ACDC names none, and ``seal`` of its SAID is anchored on the issuer's KEL
+    (nothing when ``seal`` is None)."""
+    issuer, holder = Kel("issuer"), Kel("holder")
+    said, raw_schema = schema()
+    a = {"d": "", "u": salt("attrs"), "i": holder.prefix, "name": "Zoe"}
+    a["d"] = iss.block_said(a)
+    credential = acdc(issuer.prefix, said, rd, a)
+    if seal is not None:
+        issuer.ixn([seal(credential["d"])])
+    request = {"roles": ["issuer", "holder"], "schemas": [raw_schema],
+               "credentials": [{"name": "c", "issuer": "issuer", "schema": said,
+                                "attributes": {"name": "Zoe"}, "registry": "none",
+                                "issuee": "holder"}]}
+    result = {"kels": {"issuer": issuer.stream().hex(), "holder": holder.stream().hex()},
+              "credentials": {"c": {"acdc": (iss.GENUS + iss.serialize(credential)).hex()}}}
+    return request, result
 
 
 def as_json(value) -> str:

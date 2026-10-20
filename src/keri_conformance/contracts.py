@@ -81,8 +81,9 @@ EXN_VERDICT = obj({"on_delivery": enum(*EXN_READINGS), "verdict": enum(*EXN_READ
 # An issuer or holder declining to issue or present: a result, so a case can require it.
 REFUSED = obj({"refused": obj({}, {"reason": string()})})
 ISSUED = obj({"kels": mapping(HEX_STRING),
-              "credentials": mapping(obj({"acdc": HEX_STRING, "registry": HEX_STRING},
-                                         {"disclosure": string()}))})
+              # A credential asked for with registry kind none comes back with no registry.
+              "credentials": mapping(obj({"acdc": HEX_STRING},
+                                         {"registry": HEX_STRING, "disclosure": string()}))})
 PRESENTED = obj({"presented": obj({"stream": HEX_STRING})})
 
 ERROR = obj({"kind": enum("harness", "unsupported"), "message": string()})

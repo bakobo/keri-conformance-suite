@@ -384,8 +384,10 @@
                   },
                   "registry": {
                     "enum": [
-                      "bup"
-                    ]
+                      "bup",
+                      "none"
+                    ],
+                    "description": "bup, a blindable registry of its own, or none, a direct issuance with no registry (this.i 92zkyy59)."
                   }
                 }
               }
@@ -1416,7 +1418,7 @@
         "kels",
         "credentials"
       ],
-      "description": "An acdc.issue result: each role's KEL, and each requested credential's ACDC, its registry's events and the disclosure of its head's blinded state.",
+      "description": "An acdc.issue result: each role's KEL, and each requested credential's ACDC, its registry's events and the disclosure of its head's blinded state; a credential asked for with registry kind none has neither.",
       "properties": {
         "kels": {
           "type": "object",
@@ -1431,8 +1433,7 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "acdc",
-              "registry"
+              "acdc"
             ],
             "properties": {
               "acdc": {

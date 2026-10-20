@@ -282,3 +282,9 @@ def test_an_adapter_whose_second_process_is_another_implementation_is_refused():
         agree.run_agreement(start, {"a": "x"}, [issue_case()], "2026.10")
     assert e.value.code == errors.E_ADAPTER_HELLO_CHANGED
     assert all(f.closed for f in opened)
+
+
+def test_a_credential_issued_with_no_registry_brings_none_into_its_bundle():
+    request = {"roles": [], "schemas": [], "credentials": [{"name": "a"}]}
+    result = {"kels": {}, "credentials": {"a": {"acdc": b"a".hex()}}}
+    assert agree.issue_bundles(request, result)["a"]["registry"] == []

@@ -82,7 +82,8 @@ def issue_bundles(request: dict, result: dict) -> dict[str, dict]:
         kels += [{"stream": s.hex(), "source": role} for s in _streams(stream, b"KERI")]
     registries = {}
     for name, out in result["credentials"].items():
-        events = _streams(bytes.fromhex(out["registry"]), b"ACDC")
+        # A directly issued credential has no registry; its seal is in the issuer's KEL.
+        events = _streams(bytes.fromhex(out["registry"]), b"ACDC") if "registry" in out else []
         if events and isinstance(out.get("disclosure"), str):
             events[-1] += disclosure_group(out["disclosure"]).encode()
         registries[name] = [{"stream": e.hex()} for e in events]
