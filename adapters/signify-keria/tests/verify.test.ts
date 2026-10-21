@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { Agent } from '../src/agent.ts';
-import { REASONS, type Backend, presentedSaid, verify } from '../src/verify.ts';
+import { REASONS, type Backend, canonical, presentedSaid, verify } from '../src/verify.ts';
 
 /** An ACDC 1.x body with a correct version string, and whatever follows it. */
 function acdc1(d: string, extra: Record<string, unknown> = {}, after = ''): string {
@@ -77,7 +77,23 @@ describe('presentedSaid', () => {
     });
 });
 
+describe('canonical', () => {
+    it('compares by content, whatever the key order', () => {
+        expect(canonical({ b: [1, { y: 2, x: null }], a: 'z' })).toBe('{"a":"z","b":[1,{"x":null,"y":2}]}');
+        expect(canonical(JSON.parse('{"2":"x","1":"y"}'))).toBe(canonical({ 1: 'y', 2: 'x' }));
+        expect(canonical(undefined)).toBe('undefined');
+    });
+});
+
 describe('verify', () => {
+    it('is valid when the saved sad holds integer-like keys JavaScript reorders', async () => {
+        const stream = acdc1('EPresented', { a: { 2: 'x', b: 'y' } }, '-IAB');
+        const text = Buffer.from(stream, 'hex').toString('utf8');
+        const sad = JSON.parse(text.slice(0, text.lastIndexOf('}') + 1));
+        const { b } = backend({ credential: { sad, status } });
+        expect(((await verify(request({ presented: { stream } }), b)) as { verdict: string }).verdict).toBe('valid');
+    });
+
     it('is valid when KERIA saved the credential, and reports its registry', async () => {
         const { b, log } = backend({ credential: saved() });
         const result = await verify(request({ expect_schema: 'ESchema' }), b);

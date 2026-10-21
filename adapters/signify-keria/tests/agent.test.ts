@@ -112,6 +112,7 @@ describe('bootAgent', () => {
         const agent = await bootAgent(keria, d);
         await agent.deliver(new Uint8Array([1, 2, 3]));
         expect(seen[0].method).toBe('PUT');
+        expect(seen[0].signal).toBeInstanceOf(AbortSignal);
         expect((seen[0].headers as Record<string, string>)['CESR-DESTINATION']).toBe('EAgent');
         expect([...(seen[0].body as Buffer)]).toEqual([1, 2, 3]);
     });

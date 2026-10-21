@@ -78,6 +78,18 @@ function presentedBody(stream: Uint8Array, whole: boolean): { said: string; body
     }
 }
 
+/** JSON text of a value with every object's keys sorted, so two values compare by content alone. */
+export function canonical(value: unknown): string {
+    if (Array.isArray(value)) {
+        return `[${value.map(canonical).join(',')}]`;
+    }
+    if (typeof value === 'object' && value !== null) {
+        const entries = Object.keys(value).sort().map((k) => `${JSON.stringify(k)}:${canonical((value as Record<string, unknown>)[k])}`);
+        return `{${entries.join(',')}}`;
+    }
+    return JSON.stringify(value) ?? 'undefined';
+}
+
 function registry(said: string, status: unknown): unknown {
     if (typeof status !== 'object' || status === null) {
         return null;
@@ -140,8 +152,10 @@ export async function verify(request: Request, backend: Backend): Promise<unknow
     // not take whole, which is not what was presented.
     let why: keyof typeof REASONS = !settled ? 'stalled' : credential !== undefined ? 'valid' : 'invalid';
     // The bundle's other streams can carry an ACDC claiming the same d, and KERIA keys what it saves
-    // by d, so a saved credential is the presented one only if it serializes to the presented body.
-    if (why === 'valid' && JSON.stringify(credential?.sad) !== presentedAcdc.body) {
+    // by d, so a saved credential is the presented one only if it holds the presented body's content.
+    // Key order is not compared: JavaScript reorders integer-like keys, and KERIA verified the saved
+    // one's SAID, so content equal to the presented body is the presented body.
+    if (why === 'valid' && canonical(credential?.sad) !== canonical(JSON.parse(presentedAcdc.body))) {
         why = 'other';
     }
     if (why === 'valid' && expected !== undefined && (credential?.sad as Request | undefined)?.s !== expected) {

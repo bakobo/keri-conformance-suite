@@ -111,7 +111,10 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
     async function deliver(bytes: Uint8Array): Promise<void> {
         let response: Response;
         try {
+            // The one call the adapter makes itself, so the one it can cancel; signify-ts's client
+            // takes no signal for its own requests, which within only stops waiting for.
             response = await within(deps.fetch(`${keria.http}/`, {
+                signal: AbortSignal.timeout(deps.limit),
                 method: 'PUT',
                 headers: { 'CESR-DESTINATION': pre as string, 'Content-Type': 'application/cesr' },
                 body: Buffer.from(bytes),
