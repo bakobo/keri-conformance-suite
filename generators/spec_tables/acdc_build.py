@@ -327,7 +327,7 @@ class _Builder:
 
     def registry_inception(self, name: str) -> str:
         spec = self._registry_spec(name)
-        if spec["t"] != "rip":
+        if spec.get("t") != "rip":
             raise ScenarioError(f"{name!r} is not a registry inception (rip) event.")
         return self.registry_event(name)["d"]
 

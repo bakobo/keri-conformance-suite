@@ -577,6 +577,10 @@ def test_scenario_refusals():
     f["registries"][0]["type"] = "vcp"
     _refused(f, "'rip1'", "has t None")
     f = registry()
+    f["registries"].reverse()
+    del f["registries"][1]["t"]
+    _refused(f, "'rip1'", "not a registry inception")
+    f = registry()
     f["registries"][1]["t"] = "rip"
     f["registries"][1]["issuer"] = "I"
     f["registries"][1]["name"] = "rip1"
