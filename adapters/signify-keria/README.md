@@ -29,7 +29,7 @@ uv run kcs check-adapter "$PWD/adapters/signify-keria/bin/kcs-adapter-signify-ke
 uv run kcs run --adapter "$PWD/adapters/signify-keria/bin/kcs-adapter-signify-keria" --profile sedi-1x-interop
 ```
 
-The unit tests replace Docker, KERIA and signify-ts's client with fakes, so `npm run coverage` needs neither Docker nor a network. `bin/kcs-adapter-signify-keria` starts Node with `--disable-wasm-trap-handler`, for the reason the signify-ts adapter's README gives: libsodium's WebAssembly cannot reserve memory under the runner's 4 GiB address-space limit otherwise.
+The unit tests replace Docker, KERIA and signify-ts's client with fakes, so `npm run coverage` needs neither Docker nor a network. `bin/kcs-adapter-signify-keria` starts Node with `--disable-wasm-trap-handler`, for the reason the signify-ts adapter's README gives: libsodium's WebAssembly cannot reserve memory under the runner's 4 GiB address-space limit otherwise. It also sets `MALLOC_ARENA_MAX=2` and `--v8-pool-size=2`. Under that limit Node, V8 and libsodium reserve most of the 4 GiB before the first request; without these two settings fewer than 50 MiB were left, and on a CI runner V8 failed to commit its young generation ("Committing semi space failed") partway through a run, which killed the adapter before it could remove KERIA's container. With them about 350 MiB are left, and a session grows by about 1 MiB per request.
 
 ## KERIA's container
 
