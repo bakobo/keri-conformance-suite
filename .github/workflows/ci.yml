@@ -338,3 +338,53 @@ jobs:
           set -e
           PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
             adapters/signify-ts/baseline-keripy-1x-interop.json "$RUNNER_TEMP/signify-ts-interop.json"
+
+  # Level 2 for the signify-ts and KERIA adapter (adapters/signify-keria/README.md). The adapter
+  # starts the pinned KERIA image itself, so hello can name the KERIA it runs; a service container
+  # would be a second KERIA nothing identifies. The job pulls that image first, so the pull is not
+  # counted against hello's timeout, installs signify-ts from the 0.4.1 tag package-lock.json pins,
+  # typechecks and runs the tests with the 100% branch gate and the live Docker test, probes the
+  # adapter, and compares a sedi-1x-interop run with its committed baseline.
+  signify-keria-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: adapters/signify-keria/.node-version
+      - name: Sync the runner
+        run: uv sync --locked
+      - name: Pull the pinned KERIA image
+        run: docker pull "$(sed -n "s/^export const KERIA_IMAGE = '\(.*\)';$/\1/p" adapters/signify-keria/src/keria.ts)"
+      - name: Install the signify-keria adapter at its pin
+        working-directory: adapters/signify-keria
+        run: npm ci --no-audit --no-fund
+      - name: Adapter typecheck and tests (100% branch gate, and the live KERIA test)
+        working-directory: adapters/signify-keria
+        env:
+          KCS_KERIA_LIVE: "1"
+        run: |
+          npm run typecheck
+          npm run coverage
+      - name: Probe the adapter
+        run: uv run kcs check-adapter "$PWD/adapters/signify-keria/bin/kcs-adapter-signify-keria"
+      - name: Run sedi-1x-interop and compare with its baseline
+        run: |
+          set +e
+          uv run kcs run --adapter "$PWD/adapters/signify-keria/bin/kcs-adapter-signify-keria" \
+            --profile sedi-1x-interop --report "$RUNNER_TEMP/signify-keria-sedi-1x.json"
+          echo "kcs run exited $?"
+          set -e
+          PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
+            adapters/signify-keria/baseline-sedi-1x-interop.json "$RUNNER_TEMP/signify-keria-sedi-1x.json"
+      - name: No KERIA container is left behind
+        if: always()
+        run: test -z "$(docker ps -aq --filter label=kcs.adapter=signify-keria)"
