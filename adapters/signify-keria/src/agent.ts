@@ -29,6 +29,8 @@ export interface Agent {
     settle(): Promise<boolean>;
     /** The credential KERIA's verifier saved under this SAID, or undefined if it saved none. */
     credential(said: string): Promise<Record<string, unknown> | undefined>;
+    /** KERIA's CESR export of the credential it saved under this SAID, or undefined if it saved none. */
+    exported(said: string): Promise<string | undefined>;
 }
 
 /** How long one OOBI resolution or one settle may take, in milliseconds. */
@@ -43,7 +45,7 @@ export interface Client {
     oobis(): { resolve(url: string): Promise<{ name: string }> };
     operations(): { wait(op: { name: string }, options: { signal: AbortSignal }): Promise<unknown> };
     keyStates(): { get(pre: string): Promise<unknown> };
-    credentials(): { get(said: string): Promise<unknown> };
+    credentials(): { get(said: string, includeCESR: boolean): Promise<unknown> };
 }
 
 export interface AgentDeps {
@@ -127,6 +129,17 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
         }
     }
 
+    async function read(said: string, cesr: boolean): Promise<unknown> {
+        try {
+            return await within(client.credentials().get(said, cesr), deps.limit);
+        } catch (err) {
+            if (notFound(err)) {
+                return undefined;
+            }
+            throw failed('read a credential', err);
+        }
+    }
+
     return {
         async resolveSchema(url) {
             try {
@@ -165,14 +178,10 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
             }
         },
         async credential(said) {
-            try {
-                return (await within(client.credentials().get(said), deps.limit)) as Record<string, unknown>;
-            } catch (err) {
-                if (notFound(err)) {
-                    return undefined;
-                }
-                throw failed('read a credential', err);
-            }
+            return (await read(said, false)) as Record<string, unknown> | undefined;
+        },
+        async exported(said) {
+            return (await read(said, true)) as string | undefined;
         },
     };
 }

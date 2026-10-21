@@ -12,6 +12,9 @@ const VERSION_1 = /^\{"v":"ACDC10JSON([0-9a-f]{6})_"/;
 // What may follow the body: CESR text-domain attachments, which are base64url characters and
 // count codes. Another JSON body, or anything else, is not one ACDC with its attachments.
 const ATTACHMENTS = /^[A-Za-z0-9_-]*$/;
+// What may precede a top-level message in a text stream: a message's closing brace or an
+// attachment character.
+const BOUNDARY = /^[A-Za-z0-9_}-]$/;
 
 export const REASONS = {
     valid: "KERIA's verifier saved the credential",
@@ -78,16 +81,27 @@ function presentedBody(stream: Uint8Array, whole: boolean): { said: string; body
     }
 }
 
-/** JSON text of a value with every object's keys sorted, so two values compare by content alone. */
-export function canonical(value: unknown): string {
-    if (Array.isArray(value)) {
-        return `[${value.map(canonical).join(',')}]`;
+/**
+ * Whether a CESR text stream holds this ACDC 1.x body as one of its top-level messages, byte for
+ * byte. A top-level message begins the stream, or follows a message's closing brace or an
+ * attachment's base64url or count-code character; JSON puts none of those before a nested object,
+ * so a copy nested inside another message is never taken for one. The size a version string gives
+ * counts bytes, so the comparison is made on bytes.
+ */
+export function holdsBody(cesr: string, body: string): boolean {
+    const stream = Buffer.from(cesr, 'utf8');
+    const wanted = Buffer.from(body, 'utf8');
+    const start = Buffer.from('{"v":"ACDC10JSON');
+    for (let at = stream.indexOf(start); at !== -1; at = stream.indexOf(start, at + 1)) {
+        if (at > 0 && !BOUNDARY.test(String.fromCharCode(stream[at - 1]))) {
+            continue;
+        }
+        const match = VERSION_1.exec(stream.subarray(at, at + 24).toString('latin1'));
+        if (match !== null && stream.subarray(at, at + parseInt(match[1], 16)).equals(wanted)) {
+            return true;
+        }
     }
-    if (typeof value === 'object' && value !== null) {
-        const entries = Object.keys(value).sort().map((k) => `${JSON.stringify(k)}:${canonical((value as Record<string, unknown>)[k])}`);
-        return `{${entries.join(',')}}`;
-    }
-    return JSON.stringify(value) ?? 'undefined';
+    return false;
 }
 
 function registry(said: string, status: unknown): unknown {
@@ -152,10 +166,9 @@ export async function verify(request: Request, backend: Backend): Promise<unknow
     // not take whole, which is not what was presented.
     let why: keyof typeof REASONS = !settled ? 'stalled' : credential !== undefined ? 'valid' : 'invalid';
     // The bundle's other streams can carry an ACDC claiming the same d, and KERIA keys what it saves
-    // by d, so a saved credential is the presented one only if it holds the presented body's content.
-    // Key order is not compared: JavaScript reorders integer-like keys, and KERIA verified the saved
-    // one's SAID, so content equal to the presented body is the presented body.
-    if (why === 'valid' && canonical(credential?.sad) !== canonical(JSON.parse(presentedAcdc.body))) {
+    // by d, so a saved credential is the presented one only if KERIA's own export of it carries the
+    // presented body byte for byte.
+    if (why === 'valid' && !holdsBody((await agent.exported(said)) ?? '', presentedAcdc.body)) {
         why = 'other';
     }
     if (why === 'valid' && expected !== undefined && (credential?.sad as Request | undefined)?.s !== expected) {

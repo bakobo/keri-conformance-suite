@@ -41,6 +41,7 @@ pairs=(
   "adapters/keriox/target/debug/kcs-adapter-keriox cesr-v1.0 keripy-1x-interop"
   "adapters/affinidi/target/debug/kcs-adapter-affinidi cesr-v1.0 keripy-1x-interop"
   "adapters/signify-ts/bin/kcs-adapter-signify-ts cesr-v1.0 keripy-1x-interop"
+  "adapters/signify-keria/bin/kcs-adapter-signify-keria sedi-1x-interop"
 )
 
 status=0 n=0

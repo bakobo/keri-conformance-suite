@@ -2,9 +2,17 @@
 # Starts the signify-ts and KERIA adapter. Node runs the TypeScript sources directly (type
 # stripping). The adapter starts the pinned KERIA image in Docker itself; README.md says how.
 #
+# The runner caps the adapter's address space at 4 GiB, and Node, V8 and libsodium reserve most of
+# that before the first request, so these settings keep reservations down and leave room to work:
+#
 # --disable-wasm-trap-handler: libsodium runs as WebAssembly, and V8's default trap handler
-# reserves guard regions far larger than the runner's 4 GiB address-space limit, so
-# instantiation fails with "Out of memory: Cannot allocate Wasm memory". With the handler off,
-# V8 bounds-checks Wasm memory accesses explicitly and reserves only what it uses.
+# reserves guard regions far larger than the limit, so instantiation fails with "Out of memory:
+# Cannot allocate Wasm memory". With the handler off, V8 bounds-checks Wasm memory accesses
+# explicitly and reserves only what it uses.
+#
+# MALLOC_ARENA_MAX=2 and --v8-pool-size=2: glibc gives each thread up to a 64 MiB malloc arena
+# and V8 starts a worker thread per core. Without these the adapter starts with only tens of MiB
+# of the 4 GiB unreserved, and on a CI runner V8 then failed to commit its young generation
+# ("Committing semi space failed") partway through a run.
 here=$(dirname "$0")
-exec node --disable-wasm-trap-handler "$here/../src/main.ts" "$@"
+MALLOC_ARENA_MAX=2 exec node --disable-wasm-trap-handler --v8-pool-size=2 "$here/../src/main.ts" "$@"

@@ -18,7 +18,7 @@ const verify = (id: number) => ({ id, op: 'acdc.verify', kels: [], registry: [],
 const requests: [string, string, Parameters<typeof fakeDeps>[0]][] = [
     ['hello', JSON.stringify({ id: 0, op: 'hello', protocol: 1, supported: [1] }), {}],
     ['refused hello', JSON.stringify({ id: 1, op: 'hello', supported: [2] }), {}],
-    ['valid verdict', JSON.stringify(verify(2)), { credential: { status: { ri: 'E', s: '0', d: 'E', et: 'iss' } } }],
+    ['valid verdict', JSON.stringify(verify(2)), { credential: { status: { ri: 'E', s: '0', d: 'E', et: 'iss' } }, exported: Buffer.from(acdc, 'hex').toString('utf8') }],
     ['invalid verdict', JSON.stringify(verify(3)), {}],
     ['malformed verify', JSON.stringify({ id: 4, op: 'acdc.verify' }), {}],
     ['KERIA failure', JSON.stringify({ id: 5, op: 'hello', supported: [1] }), { startFails: true }],

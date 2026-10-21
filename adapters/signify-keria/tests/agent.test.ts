@@ -25,7 +25,7 @@ interface Fake {
     resolve?: () => Promise<{ name: string }>;
     wait?: () => Promise<unknown>;
     states?: (() => Promise<unknown>)[];
-    credential?: () => Promise<unknown>;
+    credential?: (said: string, cesr: boolean) => Promise<unknown>;
 }
 
 function client(fake: Fake): Client {
@@ -37,7 +37,7 @@ function client(fake: Fake): Client {
         oobis: () => ({ resolve: fake.resolve ?? (async () => ({ name: 'oobi.1' })) }),
         operations: () => ({ wait: fake.wait ?? (async () => ({ done: true })) }),
         keyStates: () => ({ get: async () => (states.length > 0 ? (states.shift() as () => Promise<unknown>)() : [{}]) }),
-        credentials: () => ({ get: fake.credential ?? (async () => ({ sad: { d: 'E' } })) }),
+        credentials: () => ({ get: fake.credential ?? (async (_said: string, cesr: boolean) => (cesr ? '{"v":"ACDC10JSON"}' : { sad: { d: 'E' } })) }),
     };
 }
 
@@ -157,6 +157,7 @@ describe('bootAgent', () => {
 
     it('reads a saved credential, none for a 404, and fails otherwise', async () => {
         expect(await (await bootAgent(keria, deps({}).d)).credential('E')).toEqual({ sad: { d: 'E' } });
+        expect(await (await bootAgent(keria, deps({}).d)).exported('E')).toBe('{"v":"ACDC10JSON"}');
         const missing = deps({ credential: async () => Promise.reject(new Error('HTTP GET /credentials/E - 404 Not Found - x')) });
         expect(await (await bootAgent(keria, missing.d)).credential('E')).toBeUndefined();
         const broken = deps({ credential: async () => Promise.reject(new Error('HTTP GET /credentials/E - 500 Error - x')) });

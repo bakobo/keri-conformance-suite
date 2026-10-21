@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { Agent } from '../src/agent.ts';
-import { REASONS, type Backend, canonical, presentedSaid, verify } from '../src/verify.ts';
+import { REASONS, type Backend, holdsBody, presentedSaid, verify } from '../src/verify.ts';
 
 /** An ACDC 1.x body with a correct version string, and whatever follows it. */
 function acdc1(d: string, extra: Record<string, unknown> = {}, after = ''): string {
@@ -16,7 +16,8 @@ interface Log {
     served: Map<string, string>[];
 }
 
-function backend(options: { credential?: Record<string, unknown>; settles?: boolean[]; resolves?: boolean } = {}) {
+/** By default KERIA's export carries the last stream delivered (the presented one) unchanged, after a KEL message. */
+function backend(options: { credential?: Record<string, unknown>; settles?: boolean[]; resolves?: boolean; exported?: string } = {}) {
     const log: Log = { delivered: [], resolved: [], served: [] };
     const settles = [...(options.settles ?? [])];
     const agent: Agent = {
@@ -32,6 +33,11 @@ function backend(options: { credential?: Record<string, unknown>; settles?: bool
         },
         async credential() {
             return options.credential;
+        },
+        async exported() {
+            if (options.credential === undefined) return undefined;
+            const last = Buffer.from(log.delivered.at(-1) ?? '', 'hex').toString('utf8');
+            return 'exported' in options ? options.exported : `{"v":"KERI10JSON000010_"}-AAB${last}`;
         },
     };
     const b: Backend = {
@@ -77,16 +83,33 @@ describe('presentedSaid', () => {
     });
 });
 
-describe('canonical', () => {
-    it('compares by content, whatever the key order', () => {
-        expect(canonical({ b: [1, { y: 2, x: null }], a: 'z' })).toBe('{"a":"z","b":[1,{"x":null,"y":2}]}');
-        expect(canonical(JSON.parse('{"2":"x","1":"y"}'))).toBe(canonical({ 1: 'y', 2: 'x' }));
-        expect(canonical(undefined)).toBe('undefined');
+describe('holdsBody', () => {
+    const body = Buffer.from(acdc1('EPresented'), 'hex').toString('utf8');
+    it('finds the body as a whole message, byte for byte', () => {
+        expect(holdsBody(`{"v":"KERI10JSON000010_"}-AAB${body}-IAB`, body)).toBe(true);
+        expect(holdsBody(`{"v":"KERI10JSON000010_"}${body}`, body)).toBe(true);
+        expect(holdsBody(body, body)).toBe(true);
+    });
+
+    it('counts the version string\'s size in bytes, so a non-ASCII body is found', () => {
+        const draft = (size: number) => JSON.stringify({ v: `ACDC10JSON${size.toString(16).padStart(6, '0')}_`, d: 'E', n: 'é' });
+        const accented = draft(Buffer.byteLength(draft(0)));
+        expect(holdsBody(`${accented}-IABEFyF`, accented)).toBe(true);
+    });
+    it.each([
+        ['nothing', ''],
+        ['the same content in another key order', Buffer.from(acdc1('EPresented', {}, ''), 'hex').toString('utf8').replace('"v"', '"v" ')],
+        ['the body inside a longer message', `${body.slice(0, -1)},"x":1}`],
+        ['a version string it cannot read', '{"v":"ACDC10JSONzzzzzz_"}'],
+        ['a copy nested inside another message', `{"v":"KERI10JSON000010_","a":[${body}]}`],
+        ['a copy after a space', ` ${body}`],
+    ])('does not find it in %s', (_name, cesr) => {
+        expect(holdsBody(cesr, body)).toBe(false);
     });
 });
 
 describe('verify', () => {
-    it('is valid when the saved sad holds integer-like keys JavaScript reorders', async () => {
+    it('is valid when KERIA exports the presented body unchanged, integer-like keys and all', async () => {
         const stream = acdc1('EPresented', { a: { 2: 'x', b: 'y' } }, '-IAB');
         const text = Buffer.from(stream, 'hex').toString('utf8');
         const sad = JSON.parse(text.slice(0, text.lastIndexOf('}') + 1));
@@ -170,8 +193,9 @@ describe('verify', () => {
     });
 
     it('is invalid when KERIA holds another credential under the presented d, and reports no registry', async () => {
-        for (const sad of [undefined, { ...presentedSad(), a: 'EAnother' }]) {
-            const { b } = backend({ credential: { sad, status } });
+        const other = Buffer.from(acdc1('EPresented', { a: 'EAnother' }), 'hex').toString('utf8');
+        for (const exported of [other, '', undefined]) {
+            const { b } = backend({ credential: saved(), exported });
             expect(await verify(request(), b)).toEqual({ verdict: 'invalid', reason: REASONS.other, registry: null, edges: [] });
         }
     });

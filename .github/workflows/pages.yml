@@ -66,6 +66,11 @@ jobs:
       - name: Install the signify-ts adapter at its pin
         working-directory: adapters/signify-ts
         run: npm ci --no-audit --no-fund
+      - name: Install the signify-keria adapter at its pin, and pull its KERIA image
+        working-directory: adapters/signify-keria
+        run: |
+          npm ci --no-audit --no-fund
+          docker pull "$(sed -n "s/^export const KERIA_IMAGE = '\(.*\)';$/\1/p" src/keria.ts)"
       # --require-all fails the build if any adapter is missing, rather than publishing a site that
       # silently leaves an implementation out.
       - name: Reproduce the results
