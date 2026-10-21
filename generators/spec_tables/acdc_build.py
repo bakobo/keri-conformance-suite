@@ -16,7 +16,9 @@ docs/design.md fixes, through ``acdc_saids``:
 - **Registry events** are the blindable registry's ``rip`` ``[v, t, d, u, i, n, dt]`` and ``bup``
   ``[v, t, d, rd, n, p, dt, b]`` (lines 1985 and 1989), ``n`` in hex without leading zeros, and
   ``b`` the BLID of the blinded state block ``[d, u, td, ts]``. Non-blindable ``upd`` events are
-  deferred, as the design says.
+  deferred, as the design says. A registry event may name another message ``type`` (three
+  lowercase letters) for a case about a registry of a kind it does not read; the event keeps its
+  field set and its SAID is computed over the type it names.
 - **Seals** in the issuer's KEL are written into the scenario's key events: ``{"acdc": name}``
   becomes the digest seal ``{d}`` of the ACDC's most compact SAID (line 1663, direct issuance),
   with any ``extra`` fields added, and ``{"registry": name}`` the transaction event seal ``{s, d}`` (line 1922). A registry seal
@@ -32,8 +34,9 @@ docs/design.md fixes, through ``acdc_saids``:
   nodes of the presented ACDC's provenance DAG, leaves first, each once, and nothing else: a
   fragment naming an ACDC that no edge path from the presented one reaches is refused. An edge is
   a map with an ``n`` field in an ACDC's ``e`` section, and ``n`` names its far node by reference
-  or by literal SAID; an ``{"acdc": N}`` anywhere else is a SAID, not an edge. The DAG
-  is bounded at 16 ACDCs and a longest path of 8 edges. An omitted ACDC leaves ``acdcs``, and
+  or by literal SAID; an ``{"acdc": N}`` anywhere else is a SAID, not an edge. An edge whose ``n``
+  names a registry event instead, a far node that is not a credential, puts that event's stream
+  in ``acdcs`` where the far node would stand. The DAG is bounded at 16 ACDCs and a longest path of 8 edges. An omitted ACDC leaves ``acdcs``, and
   so does every ACDC that only it reaches, because a validator cannot see the omitted node's
   edges; the ``dag`` lists only the edges of nodes the bundle carries.
 - **The presentation context**, when the fragment has a ``presentation``, is the request's
@@ -67,6 +70,7 @@ ACDC_FIELDS = ("v", "t", "d", "u", "i", "rd", "s", "a", "A", "e", "r")
 SECTIONS = ("a", "A", "e", "r")
 REFS = ("aid", "acdc", "schema", "registry", "nonce", "nothing")
 PROTOCOL = re.compile(r"[A-Z]{4}")
+ILK = re.compile(r"[a-z]{3}")
 DEFAULT_DT = "2025-07-04T17:50:00.000000+00:00"
 MAX_ACDCS = 16
 MAX_DEPTH = 8
@@ -95,14 +99,14 @@ def blind(t: Tables, label: str) -> str:
 
 
 def rip(t: Tables, issuer: str, u: str, dt: str = DEFAULT_DT,
-        readings: sa.Readings = sa.DEFAULT) -> dict:
-    fields = {"v": "", "t": "rip", "d": "", "u": u, "i": issuer, "n": "0", "dt": dt}
+        readings: sa.Readings = sa.DEFAULT, ilk: str = "rip") -> dict:
+    fields = {"v": "", "t": ilk, "d": "", "u": u, "i": issuer, "n": "0", "dt": dt}
     return sa.saidify(t, fields, readings=readings)
 
 
 def bup(t: Tables, rd: str, n: int, prior: str, b: str, dt: str = DEFAULT_DT,
-        readings: sa.Readings = sa.DEFAULT) -> dict:
-    fields = {"v": "", "t": "bup", "d": "", "rd": rd, "n": f"{n:x}", "p": prior, "dt": dt, "b": b}
+        readings: sa.Readings = sa.DEFAULT, ilk: str = "bup") -> dict:
+    fields = {"v": "", "t": ilk, "d": "", "rd": rd, "n": f"{n:x}", "p": prior, "dt": dt, "b": b}
     return sa.saidify(t, fields, readings=readings)
 
 
@@ -169,6 +173,8 @@ class _Builder:
         self.schema_bodies: dict[str, dict] = {}
         self._building: set[str] = set()
         self._building_events: set[str] = set()
+        # (near ACDC, registry event) for each edge whose far node is a registry event
+        self.foreign: list[tuple[str, str]] = []
 
     # -- references ----------------------------------------------------------------------------
 
@@ -266,7 +272,15 @@ class _Builder:
             raise ScenarioError(f"Registry event {name!r} depends on itself through its prior "
                                 f"events or its state, which no SAID can satisfy.")
         self._building_events.add(name)
+        if spec.get("t") not in ("rip", "bup"):
+            raise ScenarioError(f"Registry event {name!r} has t {spec.get('t')!r}; only rip and "
+                                f"bup are built (upd is deferred), and type names another "
+                                f"message type for either.")
         dt = spec.get("dt", DEFAULT_DT)
+        ilk = spec.get("type", spec["t"])
+        if not isinstance(ilk, str) or not ILK.fullmatch(ilk):
+            raise ScenarioError(f"Registry event {name!r} names the type {ilk!r}; a message type "
+                                f"is three lowercase letters.")
         block = ""
         if spec["t"] == "rip":
             salt = spec.get("u", name)
@@ -279,19 +293,16 @@ class _Builder:
             else:
                 salt = nonce(self.t, salt)
             body = rip(self.t, self.eb.prefix(spec["issuer"]), salt,
-                       dt, self.readings)
-        elif spec["t"] == "bup":
+                       dt, self.readings, ilk)
+        else:
             rd = self.registry_inception(spec["registry"])
             prior = self.registry_event(self._prior(name, spec))
             n = spec.get("n", int(prior["n"], 16) + 1)
             state = spec["state"]
             u, td, ts = blind(self.t, state["u"]), self._resolve(state["td"]), state["ts"]
             b = sa.blid(self.t, u, td, ts, self.readings)
-            body = bup(self.t, rd, n, prior["d"], b, dt, self.readings)
+            body = bup(self.t, rd, n, prior["d"], b, dt, self.readings, ilk)
             block = self._disclosed(name, spec.get("disclose"), u, td, ts, b)
-        else:
-            raise ScenarioError(f"Registry event {name!r} has type {spec['t']!r}; only rip and "
-                                f"bup are built (upd is deferred).")
         body = self._alter(body, spec.get("alter", []), f"registry event {name!r}")
         self.events[name] = (body, block)
         self.saids[name] = body["d"]
@@ -316,7 +327,7 @@ class _Builder:
 
     def registry_inception(self, name: str) -> str:
         spec = self._registry_spec(name)
-        if spec["t"] != "rip":
+        if spec.get("t") != "rip":
             raise ScenarioError(f"{name!r} is not a registry inception (rip) event.")
         return self.registry_event(name)["d"]
 
@@ -526,11 +537,17 @@ class _Builder:
                                     f"have one SAID; a bundle carries each ACDC once. Make them "
                                     f"differ or define one.")
             by_said[self.saids[name]] = name
+        events = {self.events[name][0]["d"]: name for name in self.registries}
         graph: dict[str, list[str]] = {}
         edges: list[tuple[str, str, str]] = []
         for name in self.acdcs:
             graph[name] = []
             for path, far in edge_paths(self.expanded[name].get("e", {})):
+                if far in events:
+                    # A far node that is not a credential: acdcs carries the event in its place.
+                    edges.append((name, path, far))
+                    self.foreign.append((name, events[far]))
+                    continue
                 if far not in by_said:
                     raise ScenarioError(f"ACDC {name!r} has an edge at {path} to {far!r}, which "
                                         f"is the SAID of no ACDC in the fragment. To leave a far "
@@ -666,6 +683,12 @@ class _Builder:
         # leaves the bundle with it: acdcs and the dag hold the same nodes, less the omitted.
         kept = self._reachable(graph, omit)
         far = [n for n in far if n in kept]
+        # A registry event stands in acdcs only while a node the bundle carries names it.
+        foreign = list(dict.fromkeys(e for near, e in self.foreign if near in kept))
+        for name in foreign:
+            if name in omit:
+                raise ScenarioError(f"The registry event {name!r} is an edge's far node, so it "
+                                    f"cannot be omitted; omit the edge's near node instead.")
         forms = {name: self.form(name) for name in self.acdcs}
         kels, as_of = [], {}
         for delivery in self.frag.get("kels", []):
@@ -687,15 +710,17 @@ class _Builder:
             att = self.attachments(self.acdcs[name].get("source_seal"))
             return {"stream": self.stream(forms[name], att)}
 
+        def event_entry(name):
+            return {"stream": self.stream(self.events[name][0], self.attachments(
+                self.registries[name].get("source_seal"), self.events[name][1],
+                self.registries[name].get("block_code", "-a")))}
+
         request = {
             "kels": kels,
-            "registry": [{"stream": self.stream(self.events[n][0], self.attachments(
-                self.registries[n].get("source_seal"), self.events[n][1],
-                self.registries[n].get("block_code", "-a")))}
-                for n in self.registries if n not in omit],
+            "registry": [event_entry(n) for n in self.registries if n not in omit],
             "schemas": [sa.serialize(self.schema_bodies[n], self.readings).hex()
                         for n in self.schemas if n not in omit],
-            "acdcs": [acdc_entry(n) for n in far],
+            "acdcs": [event_entry(n) for n in foreign] + [acdc_entry(n) for n in far],
             "presented": acdc_entry(presented),
         }
         if "presentation" in self.frag:

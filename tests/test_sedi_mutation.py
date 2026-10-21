@@ -55,6 +55,15 @@ def test_the_aggregate_mutant_reads_a_plain_credential_as_the_model_does():
     assert sedi_mutation._issuee_at_first_block({"A": ["agid", {"i": "x"}]}, sm.issuee) is ...
 
 
+def test_the_precedence_mutant_changes_only_which_of_two_refusals_wins():
+    from generators.spec_tables import sedi_model as sm
+    wrong = sedi_mutation._unresolved_first
+    assert wrong([sm.INVALID, sm.INCOMPLETE]) == sm.INCOMPLETE != sm.combine([sm.INVALID,
+                                                                             sm.INCOMPLETE])
+    assert wrong([sm.INCOMPLETE, sm.VALID], "OR") == sm.VALID
+    assert wrong([sm.INVALID]) == sm.INVALID and wrong([sm.VALID]) == sm.VALID
+
+
 def test_the_script_writes_the_matrix_and_checks_it(tmp_path, monkeypatch, capsys):
     assert sedi_mutation.main(["--check"]) == 0
     monkeypatch.setattr(sedi_mutation, "DOC", str(tmp_path / "matrix.md"))

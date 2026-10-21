@@ -255,6 +255,26 @@ def test_registry_overrides_and_an_undisclosed_block():
     assert bup2["b"] == sa.blid(T, ab.blind(T, "s2"), "", "")
 
 
+def test_a_registry_event_may_be_built_as_another_type_with_its_said_over_that_type():
+    frag = registry()
+    frag["registries"][0]["type"] = "vcp"
+    frag["registries"][1]["type"] = "upd"
+    b = ab.build_bundle(T, frag)
+    rip, _ = body(b.request["registry"][0])
+    bup, _ = body(b.request["registry"][1])
+    assert (rip["t"], bup["t"]) == ("vcp", "upd")
+    assert rip["d"] == sa.said(T, rip) and bup["d"] == sa.said(T, bup)
+    assert body(b.request["presented"])[0]["rd"] == rip["d"] == bup["rd"]
+    assert rip["d"] != ab.build_bundle(T, registry()).saids["rip1"]
+
+
+@pytest.mark.parametrize("kind", ["", "VCP", "vc", "vcpx", 3])
+def test_a_registry_event_type_is_three_lowercase_letters(kind):
+    frag = registry()
+    frag["registries"][0]["type"] = kind
+    _refused(frag, "'rip1'", "three lowercase letters")
+
+
 def test_an_omitted_registry_event_leaves_the_bundle_and_the_evaluation_point():
     b = ab.build_bundle(T, registry(omit=["bup1"]))
     assert [body(e)[0]["t"] for e in b.request["registry"]] == ["rip"]
@@ -350,6 +370,35 @@ def test_an_edge_whose_literal_said_names_no_acdc_in_the_fragment_is_refused():
     frag["acdcs"][0]["e"]["far"] = {"d": "", "n": "E" + "A" * 43}
     err = _refused(frag, "'N'", "e.far", "E" + "A" * 43)
     assert err.code == ab.E_DAG_UNREACHABLE
+
+
+def test_an_edge_may_name_a_registry_event_which_acdcs_then_carries_as_its_far_node():
+    """A holder that hands over something other than a credential for an edge's far node: the
+    registry event stands in acdcs where the far node would, and the dag lists the edge."""
+    frag = registry()
+    frag["acdcs"][0]["e"] = {"d": "", "x": {"d": "", "n": {"registry": "rip1"}},
+                             "y": {"d": "", "n": {"registry": "rip1"}}}
+    b = ab.build_bundle(T, frag)
+    rip = b.saids["rip1"]
+    assert [body(e)[0] for e in b.request["acdcs"]] == [body(b.request["registry"][0])[0]]
+    assert b.graph["A1"] == []
+    assert [e["n"] for e in b.dag["edges"]] == [rip, rip]
+    frag["omit"] = ["rip1"]
+    _refused(frag, "'rip1'", "omit")
+
+
+def test_a_registry_event_far_node_leaves_acdcs_with_the_only_node_naming_it():
+    frag = chain(["N", "F"])
+    frag["events"].append(ixn("ixn2", "I", [{"registry": "rip1"}]))
+    frag["registries"] = [{"name": "rip1", "t": "rip", "issuer": "I"}]
+    frag["acdcs"][1]["e"] = {"d": "", "x": {"d": "", "n": {"registry": "rip1"}}}
+    b = ab.build_bundle(T, frag)
+    assert [body(e)[0]["t"] for e in b.request["acdcs"]] == ["rip", "acm"]
+    frag["omit"] = ["F"]
+    b = ab.build_bundle(T, frag)
+    assert b.request["acdcs"] == [] and b.dag["edges"][0]["n"] == b.saids["F"]
+    frag["omit"] = ["F", "rip1"]
+    assert ab.build_bundle(T, frag).request["registry"] == []
 
 
 def test_acdcs_and_the_dag_hold_the_same_nodes_on_a_diamond():
@@ -523,6 +572,14 @@ def test_scenario_refusals():
     f = registry()
     f["registries"][0]["t"] = "upd"
     _refused(f, "upd")
+    f = registry()
+    del f["registries"][0]["t"]
+    f["registries"][0]["type"] = "vcp"
+    _refused(f, "'rip1'", "has t None")
+    f = registry()
+    f["registries"].reverse()
+    del f["registries"][1]["t"]
+    _refused(f, "'rip1'", "not a registry inception")
     f = registry()
     f["registries"][1]["t"] = "rip"
     f["registries"][1]["issuer"] = "I"

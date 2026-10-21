@@ -18,6 +18,26 @@ A sedi-1 verifier answers `valid`, `invalid` or `incomplete`:
 - `valid` holds only as of the registry head the verifier reports. A later revocation that the bundle does not carry is not reflected in it, which is why registry-evidence refuses a bundle whose issuer's KEL seals an event the bundle lacks.
 - `valid` does not mean unexpired. sedi-1 does not check any expiry an ACDC's attributes carry; that is the relying party's check.
 
+### The verdict cases
+
+[`scenarios/sedi/verdicts.json`](https://github.com/bakobo/keri-conformance-suite/blob/utah/next/scenarios/sedi/verdicts.json) holds the cases that show the three verdicts apart (Utah's KERI-012; the test plan's item 8). Its first bundle, ACDC-0216, is a credential with two edges under `AND`, and is `valid`. Each cause of an unresolved verdict is then put on its first edge's side twice: once with the item absent or not evaluable (`incomplete`), and once with it present and failing a check (`invalid`). Each `incomplete` bundle is also combined with a broken SAID, a revocation and a failed `I2I`, and each of those is `invalid`. A missing id is a case not yet published:
+
+| Cause | `incomplete` | `invalid` | With a definite failure |
+|---|---|---|---|
+| The far issuer's KEL | ACDC-0217 | ACDC-0218 | ACDC-0219, ACDC-0220 |
+| A registry event | ACDC-0222 | ACDC-0223 | ACDC-0224 to ACDC-0226 |
+| The far node | ACDC-0227 | ACDC-0228 | ACDC-0229 to ACDC-0231 |
+| The far node's schema | ACDC-0232 | ACDC-0233 | ACDC-0234 to ACDC-0236 |
+| An unknown operator | ACDC-0237 | ACDC-0238 | ACDC-0239 to ACDC-0241 |
+| An unsupported registry kind | ACDC-0242 | ACDC-0243 | ACDC-0244 to ACDC-0246 |
+| An undecidable edge | ACDC-0247 | ACDC-0248 | ACDC-0249 to ACDC-0251 |
+
+A KEL event whose signature fails is not part of the KEL, so a forged KEL reads as an absent one and is `incomplete`. The KEL's `invalid` case therefore corrupts what a correctly signed KEL says: its seal for the far node's registry update names the issuer instead of the registry. The KEL's other states are a gap before the anchors (ACDC-0252) and a KEL cut before an anchor (ACDC-0253), both `incomplete`. ACDC-0217 is the absent KEL.
+
+The nested-edge cases, ACDC-0254 to ACDC-0279, each pair a defect with its positive twin: a SAID mismatch, a schema mismatch and a missing far node at depth 2; a far node that is a registry event rather than a credential; a diamond with one revoked branch under `AND` and under `OR`; an `OR` whose first alternative is unresolved; a cycle among claimed SAIDs; each of `I2I`, `NI2I`, `DI2I` and `E1E` in a nested edge-group; an aggregate far node whose issuee block is undisclosed; and an edge at depth 2 under the default operator. Edge-groups nested past the maximum depth are ACDC-0183, with ACDC-0182 at the maximum. A provenance chain longer than 8 edges cannot be a case, because the case format bounds every bundle's DAG.
+
+The always-X self-test, `tests/test_verdict_self_test.py`, runs a verifier that answers `valid` to everything, one that answers `invalid` and one that answers `incomplete` over every ACDC verifier case, read as if active. Each fails sedi-1, and acdc-v1.0 finds the last two conformant at MUST.
+
 ## Maxima
 
 A sedi-1 credential holds at most 64 events in its registry, 32 attribute blocks in an aggregate, edge groups nested 8 deep counting the edge section, 8 operators in one `o` list, 4096 bytes in one attribute value, and 44 characters in any `u`, the longest primitive one holds (choice `bounds`, this.i `7qx6tl5p`). Every maximum is checked on the whole credential, so no OR alternative can hide a breach. A credential past a maximum is never `valid`. A verifier may refuse it as `invalid` or decline to evaluate it as `incomplete`, and its cases accept either, but it must answer rather than hang.
@@ -210,6 +230,18 @@ Overturned by: Specification text that gives an empty edge-group or a nested ope
 This choice is decided in this.i `599d5f5f`; tracked as keri-sow tick `6ljr`.
 
 A list of contradictory unary operators relaxes to its latest member: `[I2I, NI2I]` reads as `NI2I`, so an issuer who lists both gets the weaker rule. sedi-1 takes that reading from the specification's own wording rather than refusing the list (this.i 599d5f5f), and a verifier must not apply the stricter operator instead.
+
+#### `chain-strict`
+
+A far node satisfies an edge only when its own sedi-1 verdict is valid, so a failed check or an unresolved item anywhere in the provenance DAG reaches the presented ACDC through every edge-group that needs it; an OR group needs one valid alternative.
+
+Why: ACDC lines 1114 and 1116 make a far node's invalidity a MAY for its edge and leave the logic to the ecosystem governance framework (line 1112); SEDI reads its edges as provenance chains, so a credential is no better than what it chains to.
+
+Overturned by: A SEDI governance framework rule under which an edge holds to a far node that is not valid.
+
+This choice is decided in this.i `43rj9wfc`; security-relevant: getting it wrong admits what should be refused.
+
+Every operator applies on top of it: `NI2I` drops the issuer relation, never the far node's own verdict, so an `NI2I` edge to a revoked credential is not valid.
 
 ### Presentation
 

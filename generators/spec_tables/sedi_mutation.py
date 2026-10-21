@@ -46,6 +46,31 @@ def _grading(change):
     return mock.patch.object(sm, "evaluate", wrong)
 
 
+def _near_only():
+    """A verifier that judges the presented ACDC and its own edges' checks, but never lets a far
+    node's own verdict reach it: the opposite of chain-strict."""
+    evaluate = sm.evaluate
+
+    def wrong(t, request, trunks=None):
+        result = evaluate(t, request, trunks)
+        parsed = sm._parse(t, bytes.fromhex(request["presented"]["stream"]))
+        said = parsed[0].get("d") if parsed and isinstance(parsed[0], dict) else None
+        kept = [f for f in result.findings if f.where.split(".")[0] in (said, "presented")]
+        return sm.Result(sm.combine([f.grade for f in kept]), kept, result.head)
+
+    return mock.patch.object(sm, "evaluate", wrong)
+
+
+def _unresolved_first(grades, operator="AND"):
+    """combine with something unevaluable outranking a failure."""
+    if operator == "OR" and sm.VALID in grades:
+        return sm.VALID
+    for grade in (sm.INCOMPLETE, sm.INVALID):
+        if grade in grades:
+            return grade
+    return sm.VALID
+
+
 def _operators(change):
     operators = sm.operators
     return mock.patch.object(sm, "operators", lambda o: change(o, operators))
@@ -108,6 +133,8 @@ MUTANTS = {
     "operator-list": ("reads o only as a string", lambda: _operators(_scalar_only)),
     "operator-shape": ("lets the earliest of conflicting operators win",
                        lambda: _operators(_earliest_wins)),
+    "chain-strict": ("ignores a far node's own verdict",
+                     lambda: _near_only()),
     "presenter-binding": ("does not check the presenter", lambda: _dropping("presenter")),
     "aggregate-issuee": ("reads an aggregate's issuee at A[0]",
                          lambda: _issuee(_issuee_at_first_block)),
@@ -121,6 +148,8 @@ MUTANTS = {
     "unresolved-grading": ("accepts what it cannot evaluate",
                            lambda: _grading(lambda v: sm.VALID if v == sm.INCOMPLETE else v)),
     "valid-is-interop": ("refuses everything", lambda: _grading(lambda v: sm.INVALID)),
+    "failure-precedence": ("lets something it cannot evaluate outrank a failure",
+                           lambda: mock.patch.object(sm, "combine", _unresolved_first)),
     "bounds": ("holds to no maxima",
                lambda: _dropping("bound-registry-events", "bound-aggregate-blocks",
                                  "bound-edge-group-depth", "bound-operator-list",
