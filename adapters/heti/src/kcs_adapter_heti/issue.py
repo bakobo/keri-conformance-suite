@@ -32,7 +32,7 @@ def _request(request) -> tuple[list[str], list[bytes], list[dict]]:
     if not isinstance(credentials, list) or not credentials or not all(
             isinstance(c, dict) and isinstance(c.get("name"), str) and c.get("issuer") in roles
             and c.get("issuee", roles[0]) in roles and isinstance(c.get("schema"), str)
-            and isinstance(c.get("attributes"), dict) and c.get("registry") == "bup"
+            and isinstance(c.get("attributes"), dict) and c.get("registry") in ("bup", "none")
             and isinstance(c.get("edges", {}), dict) for c in credentials):
         raise verify.Malformed(f'{E_MALFORMED}: "credentials" must be a non-empty list of '
                                "credentials, each naming roles the request creates.")
@@ -99,7 +99,7 @@ def edges(asked: dict, issued: dict, schemas: dict[str, str]) -> dict:
     return out
 
 
-async def _issue(home: pathlib.Path, roles, schemas, credentials) -> dict:
+async def _issue(home: pathlib.Path, roles, schemas, credentials, strict=True) -> dict:
     box = Lockbox.create(path=home, passcode=verify.PASSCODE, recovery=new_recovery_code())
     try:
         for raw in schemas:
@@ -113,20 +113,31 @@ async def _issue(home: pathlib.Path, roles, schemas, credentials) -> dict:
                       "issuee": issuee}
             if credential.get("edges"):
                 kwargs["edge"] = edges(credential["edges"], issued, schema_of)
-            issued[name] = await facets[credential["issuer"]].issue(**kwargs)
+            facet = facets[credential["issuer"]]
+            if credential["registry"] == "none":
+                # Direct issuance, with no registry (this.i 92zkyy59), under the rule the case's
+                # profile reads it by (verify.strict_direct).
+                issued[name] = await facet.issue_direct(**kwargs, strict_direct=strict)
+            else:
+                issued[name] = await facet.issue(**kwargs)
             schema_of[name] = credential["schema"]
         return {"kels": {role: bytes(facet.kel()).hex() for role, facet in facets.items()},
-                "credentials": {name: {"acdc": bytes(i.acdc).hex(),
-                                       "registry": bytes(i.chain).hex(),
-                                       "disclosure": i.blinder}
-                                for name, i in issued.items()}}
+                "credentials": {name: _credential(i) for name, i in issued.items()}}
     finally:
         box.close()
 
 
-async def _answer(home, roles, schemas, credentials) -> dict:
+def _credential(issued) -> dict:
+    """One credential as acdc.issue returns it: a direct issuance has no registry."""
+    if issued.chain is None:
+        return {"acdc": bytes(issued.acdc).hex()}
+    return {"acdc": bytes(issued.acdc).hex(), "registry": bytes(issued.chain).hex(),
+            "disclosure": issued.blinder}
+
+
+async def _answer(home, roles, schemas, credentials, strict=True) -> dict:
     try:
-        return await _issue(home, roles, schemas, credentials)
+        return await _issue(home, roles, schemas, credentials, strict)
     except Exception as exc:  # heti refuses by raising a coded error
         code = getattr(exc, "code", None)
         if code is None:
@@ -137,4 +148,5 @@ async def _answer(home, roles, schemas, credentials) -> dict:
 def issue(request) -> dict:
     roles, schemas, credentials = _request(request)
     with tempfile.TemporaryDirectory(prefix="kcs-adapter-heti-") as home:
-        return asyncio.run(_answer(pathlib.Path(home) / "lockbox", roles, schemas, credentials))
+        return asyncio.run(_answer(pathlib.Path(home) / "lockbox", roles, schemas, credentials,
+                                   verify.strict_direct(request)))

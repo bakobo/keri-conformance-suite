@@ -131,3 +131,21 @@ def test_a_malformed_issue_request_is_refused(change):
     change(r)
     with pytest.raises(verify.Malformed):
         issue.issue(r)
+
+
+def direct_bundle(result, name, **over):
+    """An acdc.verify request for one directly issued credential: it has no registry."""
+    return {"perspective": {"role": "validator"},
+            "kels": [{"stream": k} for k in result["kels"].values()], "registry": [],
+            "schemas": [SCHEMA["schema"]], "acdcs": [],
+            "presented": {"stream": result["credentials"][name]["acdc"]}, **over}
+
+
+def test_heti_issues_directly_under_the_rule_of_the_cases_profile():
+    # The fixture's schema admits rd: ACDC v1.0 issues directly under it, sedi-1 refuses.
+    asked = credential("receipt", registry="none")
+    result = issue.issue({**request(asked), "profile": "acdc-v1.0"})
+    assert set(result["credentials"]["receipt"]) == {"acdc"}
+    assert verify.verify(direct_bundle(result, "receipt", profile="acdc-v1.0"))["verdict"] == "valid"
+    assert verify.verify(direct_bundle(result, "receipt"))["verdict"] == "invalid"
+    assert "refused" in issue.issue({**request(asked), "profile": "sedi-1"})

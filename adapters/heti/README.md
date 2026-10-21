@@ -39,9 +39,11 @@ heti's API takes no expected schema, so the request's optional `expect_schema` i
 
 `registry` reports heti's judged head for a verified ACDC. `edges` is empty, because heti reports which far nodes it walked, not a result per edge.
 
+heti reads a credential issued with no registry by sedi-1's direct-issuance choice by default: only a schema that forbids `rd` qualifies, and only the digest seal `{d}` commits it. ACDC v1.0 line 1667 allows direct issuance under any schema and seal, so for a request whose `profile` is `acdc-v1.0` the adapter passes heti's own option `strict_direct=False`, and leaves heti's default for every other request (this.i 9d1qrqge). That is the only use the adapter makes of `profile`.
+
 ## acdc.issue
 
-For each request the adapter builds a fresh lockbox, learns the request's schemas, mints one facet per role with no witnesses, and issues each credential with `OwnFacet.issue`, far nodes first, so an edge names its far credential by SAID and schema. heti issues with its own keys, salts, registry nonces and clock, which is why the runner grades an issuance by verifying it rather than by its bytes (this.i 2u2ps8mt). The result is each facet's KEL and each credential's ACDC, registry chain and head disclosure, as heti returns them. heti refuses an issuance by raising a coded error, which the adapter answers as `refused`.
+For each request the adapter builds a fresh lockbox, learns the request's schemas, mints one facet per role with no witnesses, and issues each credential with `OwnFacet.issue`, far nodes first, so an edge names its far credential by SAID and schema. heti issues with its own keys, salts, registry nonces and clock, which is why the runner grades an issuance by verifying it rather than by its bytes (this.i 2u2ps8mt). The result is each facet's KEL and each credential's ACDC, registry chain and head disclosure, as heti returns them. A credential asked for with registry kind `none` is issued with `OwnFacet.issue_direct`, under the same `strict_direct` the request's profile sets for `acdc.verify`, and comes back with its ACDC alone. heti refuses an issuance by raising a coded error, which the adapter answers as `refused`.
 
 ## acdc.present
 
