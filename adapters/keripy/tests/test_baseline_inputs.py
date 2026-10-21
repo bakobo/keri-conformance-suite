@@ -169,3 +169,22 @@ def test_a_transient_write_failure_is_a_retryable_coded_error(files, capsys, mon
     monkeypatch.setattr(Path, "write_text", fail)
     assert run("write", base, rep) == 2
     assert "e.env.filesystem.write.r" in capsys.readouterr().err
+
+
+def test_the_outcomes_read_are_those_the_result_schema_allows():
+    schema = json.loads((Path(__file__).resolve().parents[3] / "schema" / "result.schema.json")
+                        .read_text(encoding="utf-8"))
+    enums = [node["enum"] for node in _walk(schema)
+             if "enum" in node and all(isinstance(v, str) for v in node["enum"])]
+    assert sorted(baseline.ASSERTION_OUTCOMES) in [sorted(e) for e in enums]
+    assert sorted(baseline.CASE_OUTCOMES) in [sorted(e) for e in enums]
+
+
+def _walk(node):
+    if isinstance(node, dict):
+        yield node
+        for value in node.values():
+            yield from _walk(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _walk(value)

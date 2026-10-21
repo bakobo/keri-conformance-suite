@@ -39,9 +39,11 @@ heti's API takes no expected schema, so the request's optional `expect_schema` i
 
 `registry` reports heti's judged head for a verified ACDC. `edges` is empty, because heti reports which far nodes it walked, not a result per edge.
 
+heti reads a credential issued with no registry by sedi-1's direct-issuance choice by default: only a schema that forbids `rd` qualifies, and only the digest seal `{d}` commits it. ACDC v1.0 line 1667 allows direct issuance under any schema and seal, so for a request whose `profile` is `acdc-v1.0` the adapter passes heti's own option `strict_direct=False`, and leaves heti's default for every other request (this.i 9d1qrqge). That is the only use the adapter makes of `profile`.
+
 ## acdc.issue
 
-For each request the adapter builds a fresh lockbox, learns the request's schemas, mints one facet per role with no witnesses, and issues each credential with `OwnFacet.issue`, far nodes first, so an edge names its far credential by SAID and schema. heti issues with its own keys, salts, registry nonces and clock, which is why the runner grades an issuance by verifying it rather than by its bytes (this.i 2u2ps8mt). The result is each facet's KEL and each credential's ACDC, registry chain and head disclosure, as heti returns them. heti refuses an issuance by raising a coded error, which the adapter answers as `refused`.
+For each request the adapter builds a fresh lockbox, learns the request's schemas, mints one facet per role with no witnesses, and issues each credential with `OwnFacet.issue`, far nodes first, so an edge names its far credential by SAID and schema. heti issues with its own keys, salts, registry nonces and clock, which is why the runner grades an issuance by verifying it rather than by its bytes (this.i 2u2ps8mt). The result is each facet's KEL and each credential's ACDC, registry chain and head disclosure, as heti returns them. A credential asked for with registry kind `none` is issued with `OwnFacet.issue_direct`, under the same `strict_direct` the request's profile sets for `acdc.verify`, and comes back with its ACDC alone. heti refuses an issuance by raising a coded error, which the adapter answers as `refused`.
 
 ## acdc.present
 
@@ -84,6 +86,16 @@ Where heti adds nothing over keripy. The checks on each event (signatures and th
 ## Declared features
 
 `acdc.version-2.x`, `acdc.edges`, `acdc.registry.bup`, `cesr.genus-2.00`, `cesr.serialization.json`, `crypto.ed25519`, `kel.basic`, `kel.delegation` and `keri.version-2.x`: what heti does itself inside `acdc.verify`. `acdc.presentation`, composed as "The presentation context" says. heti refuses `upd` registries by name, so `acdc.registry.upd` is not declared. For `keri.process` also `kel.multisig.numeric`, `kel.multisig.weighted`, `kel.partial-rotation`, `kel.witness` and `keri.escrow`, which heti's resolver does through keripy; "keri.process" above says what is not declared and why.
+
+## Results and the baseline
+
+`baseline-sedi-1.json` is heti `753a152df82e0ae600d6f5e46747d89580f2677b` under `kcs run --profile sedi-1`, which runs sedi-1's cases with those of its prerequisites, written with the baseline tool (`python -m kcs_adapter_keripy.baseline write`, from the keripy adapter) from a fresh run. Its verdict is `not-interoperable`, because the adapter does not declare `cesr.parse` or `exn.verify`, which sedi-1 requires of a claimant. Twenty of sedi-1's own cases fail, in three groups:
+
+- heti accepts what sedi-1 refuses: an edge with no SAID of its own (ACDC-0117), a credential presented by its issuer (ACDC-0120, heti tick 6kvm), the six beyond-bound cases (ACDC-0179 to ACDC-0189), and an I2I edge that cannot hold, which heti issues where a sedi-1 issuer refuses (ACDC-0194);
+- heti grades differently from sedi-1 without accepting anything sedi-1 refuses: registries anchored by the seal couple or a seal of another shape (ACDC-0102 to ACDC-0105; heti requires the event seal naming its registry), withheld or undisclosed registry updates (ACDC-0107, ACDC-0108), and operator shapes (ACDC-0116, ACDC-0141, ACDC-0143, ACDC-0144);
+- heti's disclose always reveals an aggregate's issuee block, so the adapter refuses a selective disclosure that leaves it out (ACDC-0164).
+
+The comparison is `python -m kcs_adapter_keripy.baseline compare adapters/heti/baseline-sedi-1.json <report>`. It is not run in CI, since heti is private and CI cannot resolve its pin.
 
 ## Tests
 

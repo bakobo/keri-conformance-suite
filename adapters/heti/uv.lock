@@ -358,7 +358,7 @@ wheels = [
 [[package]]
 name = "heti"
 version = "0.0.0"
-source = { git = "ssh://git@github.com/bakobo/heti?rev=127d75ce9285c4761422d26add2b58aa5dad4804#127d75ce9285c4761422d26add2b58aa5dad4804" }
+source = { git = "ssh://git@github.com/bakobo/heti?rev=753a152df82e0ae600d6f5e46747d89580f2677b#753a152df82e0ae600d6f5e46747d89580f2677b" }
 dependencies = [
     { name = "bakobo-errors" },
     { name = "fiki" },
@@ -526,7 +526,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "heti", git = "ssh://git@github.com/bakobo/heti?rev=127d75ce9285c4761422d26add2b58aa5dad4804" }]
+requires-dist = [{ name = "heti", git = "ssh://git@github.com/bakobo/heti?rev=753a152df82e0ae600d6f5e46747d89580f2677b" }]
 
 [package.metadata.requires-dev]
 dev = [

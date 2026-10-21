@@ -35,8 +35,18 @@ def test_heti_walks_a_chain_it_is_handed():
 
 
 def test_a_directly_sealed_credential_with_attachments_is_valid():
-    result = verify.verify(request("direct"))
+    # An acdc-v1.0 bundle: its schema admits rd, which ACDC v1.0 line 1667 allows and sedi-1's
+    # direct-issuance choice, heti's default, refuses (this.i 9d1qrqge).
+    result = verify.verify(request("direct", profile="acdc-v1.0"))
     assert result["verdict"] == "valid" and result["registry"] is None
+    assert verify.verify(request("direct"))["verdict"] == "invalid"
+    assert verify.verify(request("direct", profile="sedi-1"))["verdict"] == "invalid"
+
+
+@pytest.mark.parametrize("profile,strict", [
+    (None, True), ("sedi-1", True), ("acdc-v1.0", False), ("keri-v1.0.1", True)])
+def test_heti_reads_direct_issuance_strictly_except_for_the_text_profiles(profile, strict):
+    assert verify.strict_direct({} if profile is None else {"profile": profile}) is strict
 
 
 def test_a_missing_far_node_is_incomplete():

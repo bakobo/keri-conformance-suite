@@ -49,6 +49,16 @@ PASSCODE = "kcs-adapter-heti-ephemeral-lockbox"
 # Ten years in seconds: far past any request, so heti's recency bound never applies.
 RECENCY = 10 * 365 * 24 * 3600
 INCOMPLETE_PREFIXES = ("e.input.missing", "e.feature.unsupported")
+# The profiles whose cases read direct issuance as ACDC v1.0 line 1667 does (any schema, any
+# seal whose digest is the SAID), not as sedi-1's direct-issuance choice; for their requests the
+# adapter turns heti's strict_direct off, and leaves heti's default on for every other request
+# (this.i 9d1qrqge).
+TEXT_DIRECT = ("acdc-v1.0",)
+
+
+def strict_direct(request) -> bool:
+    """heti's strict_direct for a request, from the profile its case belongs to."""
+    return request.get("profile") not in TEXT_DIRECT
 
 
 class Malformed(Exception):
@@ -306,7 +316,7 @@ def grade(error) -> str:
 
 
 async def _judge(home: pathlib.Path, served, schemas, regs, far, presented, given=None,
-                 kel_streams=()) -> dict:
+                 kel_streams=(), strict=True) -> dict:
     server = _server(served)
     box = Lockbox.create(path=home, passcode=PASSCODE, recovery=new_recovery_code())
     try:
@@ -327,7 +337,8 @@ async def _judge(home: pathlib.Path, served, schemas, regs, far, presented, give
         blinders = rest[1] if len(rest) > 1 else None
         try:
             verdict = await box.verify_acdc(acdc=acdc, tel=tel, recency=RECENCY,
-                                            blinders=blinders, far=far or None)
+                                            blinders=blinders, far=far or None,
+                                            strict_direct=strict)
         except Exception as exc:
             code = getattr(exc, "code", None)
             if code is None:
@@ -367,4 +378,5 @@ def verify(request) -> dict:
     far = [evidence(s, regs) for s in acdc_streams]
     with tempfile.TemporaryDirectory(prefix="kcs-adapter-heti-") as home:
         return asyncio.run(_judge(pathlib.Path(home) / "lockbox", kels(kel_streams), schemas,
-                                  regs, far, presented, given, kel_streams))
+                                  regs, far, presented, given, kel_streams,
+                                  strict_direct(request)))
