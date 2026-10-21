@@ -143,6 +143,14 @@
       "decided": "599d5f5f"
     },
     {
+      "id": "chain-strict",
+      "reading": "A far node satisfies an edge only when its own sedi-1 verdict is valid, so a failed check or an unresolved item anywhere in the provenance DAG reaches the presented ACDC through every edge-group that needs it; an OR group needs one valid alternative.",
+      "basis": "ACDC lines 1114 and 1116 make a far node's invalidity a MAY for its edge and leave the logic to the ecosystem governance framework (line 1112); SEDI reads its edges as provenance chains, so a credential is no better than what it chains to.",
+      "overturn": "A SEDI governance framework rule under which an edge holds to a far node that is not valid.",
+      "decided": "43rj9wfc",
+      "security": true
+    },
+    {
       "id": "presenter-binding",
       "reading": "A presented ACDC is valid only when its presenter, the sender of the presentation's last exchange message, is its issuee a.i, or for an aggregate the issuee at A[1].i.",
       "basis": "Lines 312 and 344 make presentation by the issuee a capability, and no clause obliges a validator to check it; without the check, anyone who has seen a credential can present it as theirs.",

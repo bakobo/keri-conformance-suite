@@ -1,0 +1,5626 @@
+{
+ "about": "sedi-1's verdict cases (test-plan item 8, Utah's KERI-012): for each cause of an unresolved verdict, the complete bundle, the bundle with the item absent and the bundle with it corrupted; each unresolved cause combined with a definite failure; the state of a KEL; and nested-edge defects, each with its positive twin. Every verdict is the sedi-1 model's (generators/spec_tables/sedi_cases.py).",
+ "profile": "sedi-1",
+ "fixtures": {
+  "VC-P": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "name": "S2",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      },
+      "title": "far"
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S2",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "f": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      },
+      "g": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "VC-2": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-T",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-T",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-T-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-T-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-T",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-T-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "name": "S3",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      },
+      "title": "deep"
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-T",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-T-1",
+     "t": "bup",
+     "registry": "rip-T",
+     "disclose": true,
+     "state": {
+      "u": "s-T-0",
+      "td": {
+       "acdc": "T"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "T",
+     "issuer": "R",
+     "schema": "S3",
+     "registry": "rip-T",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "T"
+     }
+    },
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "T"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "VC-DA": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-T",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-T",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-T-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-T-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-T",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-T-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-T",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-T-1",
+     "t": "bup",
+     "registry": "rip-T",
+     "disclose": true,
+     "state": {
+      "u": "s-T-0",
+      "td": {
+       "acdc": "T"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "T",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-T",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "T"
+     }
+    },
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "T"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "G"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "T"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "o": "AND",
+      "f": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      },
+      "g": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "VC-DO": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-T",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-T",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-T-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-T-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-T",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-T-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-T",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-T-1",
+     "t": "bup",
+     "registry": "rip-T",
+     "disclose": true,
+     "state": {
+      "u": "s-T-0",
+      "td": {
+       "acdc": "T"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "T",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-T",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "T"
+     }
+    },
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "T"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "G"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "T"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "o": "OR",
+      "f": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      },
+      "g": {
+       "d": "",
+       "n": {
+        "acdc": "G"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "VC-OR": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-G",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-G",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-G-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-G-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-G",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-G-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-G",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-G-1",
+     "t": "bup",
+     "registry": "rip-G",
+     "disclose": true,
+     "state": {
+      "u": "s-G-0",
+      "td": {
+       "acdc": "G"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "G",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-G",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "G"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "grp": {
+       "d": "",
+       "o": "OR",
+       "f": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "I2I"
+       },
+       "g": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "VC-U": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "Rixn",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "event": "Dicp"
+      }
+     ]
+    },
+    {
+     "name": "Dicp",
+     "aid": "D",
+     "t": "dip",
+     "keys": [
+      "D0"
+     ],
+     "next": [
+      "D1"
+     ],
+     "delegator": "R"
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "D",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "D",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "Rixn",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "Dicp",
+     "sigs": [
+      "D0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "D0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "D0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "D"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "R"
+      },
+      "name": "F"
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "D",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "grp": {
+       "d": "",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "VC-C": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-X",
+     "aid": "H",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-X",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-X-1",
+     "aid": "H",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-X-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-T",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-T",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-T-1",
+     "aid": "R",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-T-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-X",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "ixn-bup-X-1",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "ixn-rip-T",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-bup-T-1",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-X",
+     "t": "rip",
+     "issuer": "H"
+    },
+    {
+     "name": "bup-X-1",
+     "t": "bup",
+     "registry": "rip-X",
+     "disclose": true,
+     "state": {
+      "u": "s-X-0",
+      "td": {
+       "acdc": "X"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-T",
+     "t": "rip",
+     "issuer": "R"
+    },
+    {
+     "name": "bup-T-1",
+     "t": "bup",
+     "registry": "rip-T",
+     "disclose": true,
+     "state": {
+      "u": "s-T-0",
+      "td": {
+       "acdc": "T"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "X",
+     "issuer": "H",
+     "schema": "S1",
+     "registry": "rip-X",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "R"
+      },
+      "name": "X"
+     }
+    },
+    {
+     "name": "T",
+     "issuer": "R",
+     "schema": "S1",
+     "registry": "rip-T",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "Q"
+      },
+      "name": "T"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "X"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "I"
+      },
+      "name": "F"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "T"
+       },
+       "o": "I2I"
+      }
+     }
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  },
+  "VC-AG": {
+   "events": [
+    {
+     "name": "Iicp",
+     "aid": "I",
+     "t": "icp",
+     "keys": [
+      "I0"
+     ],
+     "next": [
+      "I1"
+     ]
+    },
+    {
+     "name": "Hicp",
+     "aid": "H",
+     "t": "icp",
+     "keys": [
+      "H0"
+     ],
+     "next": [
+      "H1"
+     ]
+    },
+    {
+     "name": "Qicp",
+     "aid": "Q",
+     "t": "icp",
+     "keys": [
+      "Q0"
+     ],
+     "next": [
+      "Q1"
+     ]
+    },
+    {
+     "name": "Ricp",
+     "aid": "R",
+     "t": "icp",
+     "keys": [
+      "R0"
+     ],
+     "next": [
+      "R1"
+     ]
+    },
+    {
+     "name": "ixn-rip-F",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-F",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-F-1",
+     "aid": "Q",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-F-1",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-rip-N",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "rip-N",
+       "shape": "isd"
+      }
+     ]
+    },
+    {
+     "name": "ixn-bup-N-1",
+     "aid": "I",
+     "t": "ixn",
+     "a": [
+      {
+       "registry": "bup-N-1",
+       "shape": "isd"
+      }
+     ]
+    }
+   ],
+   "kels": [
+    {
+     "event": "Iicp",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "Hicp",
+     "sigs": [
+      "H0"
+     ]
+    },
+    {
+     "event": "Qicp",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "Ricp",
+     "sigs": [
+      "R0"
+     ]
+    },
+    {
+     "event": "ixn-rip-F",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-bup-F-1",
+     "sigs": [
+      "Q0"
+     ]
+    },
+    {
+     "event": "ixn-rip-N",
+     "sigs": [
+      "I0"
+     ]
+    },
+    {
+     "event": "ixn-bup-N-1",
+     "sigs": [
+      "I0"
+     ]
+    }
+   ],
+   "schemas": [
+    {
+     "name": "S1",
+     "schema": {
+      "$id": "",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "version": "1.0.0",
+      "type": "object",
+      "required": [
+       "v",
+       "d",
+       "i",
+       "s"
+      ],
+      "properties": {
+       "a": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object",
+          "required": [
+           "d",
+           "name"
+          ],
+          "properties": {
+           "d": {
+            "type": "string"
+           },
+           "i": {
+            "type": "string"
+           },
+           "name": {
+            "type": "string"
+           }
+          }
+         }
+        ]
+       },
+       "A": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "array"
+         }
+        ]
+       },
+       "e": {
+        "oneOf": [
+         {
+          "type": "string"
+         },
+         {
+          "type": "object"
+         }
+        ]
+       }
+      }
+     }
+    }
+   ],
+   "registries": [
+    {
+     "name": "rip-F",
+     "t": "rip",
+     "issuer": "Q"
+    },
+    {
+     "name": "bup-F-1",
+     "t": "bup",
+     "registry": "rip-F",
+     "disclose": true,
+     "state": {
+      "u": "s-F-0",
+      "td": {
+       "acdc": "F"
+      },
+      "ts": "issued"
+     }
+    },
+    {
+     "name": "rip-N",
+     "t": "rip",
+     "issuer": "I"
+    },
+    {
+     "name": "bup-N-1",
+     "t": "bup",
+     "registry": "rip-N",
+     "disclose": true,
+     "state": {
+      "u": "s-N-0",
+      "td": {
+       "acdc": "N"
+      },
+      "ts": "issued"
+     }
+    }
+   ],
+   "acdcs": [
+    {
+     "name": "F",
+     "issuer": "Q",
+     "schema": "S1",
+     "registry": "rip-F",
+     "form": {
+      "disclose": [
+       0,
+       1
+      ]
+     },
+     "A": [
+      {
+       "d": "",
+       "u": {
+        "nonce": "f-issuee"
+       },
+       "i": {
+        "aid": "I"
+       }
+      },
+      {
+       "d": "",
+       "u": {
+        "nonce": "f-claim"
+       },
+       "name": "F"
+      }
+     ]
+    },
+    {
+     "name": "N",
+     "issuer": "I",
+     "schema": "S1",
+     "registry": "rip-N",
+     "form": "expanded",
+     "a": {
+      "d": "",
+      "i": {
+       "aid": "H"
+      },
+      "name": "N"
+     },
+     "e": {
+      "d": "",
+      "le": {
+       "d": "",
+       "n": {
+        "acdc": "F"
+       },
+       "o": "I2I"
+      }
+     }
+    }
+   ],
+   "presented": "N"
+  }
+ },
+ "cases": [
+  {
+   "id": "ACDC-0216",
+   "key": "VC-01",
+   "title": "Two edges under AND, every item present",
+   "description": "N, issued by I to H, has two edges under the default AND: f to F, issued by Q to I under a schema of its own, and g to G, issued by R to I. Every KEL, registry event, schema and far node is in the bundle. A sedi-1 verifier should find it valid.",
+   "base": "VC-P",
+   "choices": [
+    "valid-is-interop",
+    "unresolved-grading",
+    "failure-precedence",
+    "chain-strict"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0217",
+   "key": "VC-10a",
+   "title": "Unresolved: F's issuer Q's KEL is absent from the bundle",
+   "description": "As VC-01, but F's issuer Q's KEL is absent from the bundle. A sedi-1 verifier should find it incomplete: something the verdict needs is absent or cannot be evaluated, and nothing it can evaluate fails.",
+   "base": "VC-P",
+   "remove": {
+    "kels": [
+     "Qicp",
+     "ixn-rip-F",
+     "ixn-bup-F-1"
+    ]
+   },
+   "choices": [
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it accepts a credential part of whose evidence the verifier never evaluated.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/issuer-kel"
+   ]
+  },
+  {
+   "id": "ACDC-0218",
+   "key": "VC-10b",
+   "title": "Corrupted: Q's KEL anchors F's registry update with an event seal whose i names Q, not the registry",
+   "description": "As VC-01, but Q's KEL anchors F's registry update with an event seal whose i names Q, not the registry. A sedi-1 verifier should find it invalid: the item is present and fails a check.",
+   "base": "VC-P",
+   "patch": {
+    "events": {
+     "ixn-bup-F-1": {
+      "a": [
+       {
+        "registry": "bup-F-1",
+        "shape": "isd",
+        "i": {
+         "aid": "Q"
+        }
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "seal-shape"
+   ],
+   "triage": "Accepting it accepts a credential whose evidence fails a check.",
+   "pair": "VC-01",
+   "expect": [
+    "F invalid/bup-anchor"
+   ]
+  },
+  {
+   "id": "ACDC-0219",
+   "key": "VC-300",
+   "title": "Precedence: F's issuer Q's KEL is absent from the bundle, and N's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but F's issuer Q's KEL is absent from the bundle, and N's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "remove": {
+    "kels": [
+     "Qicp",
+     "ixn-rip-F",
+     "ixn-bup-F-1"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "N": {
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/issuer-kel",
+    "N invalid/said"
+   ]
+  },
+  {
+   "id": "ACDC-0220",
+   "key": "VC-301",
+   "title": "Precedence: F's issuer Q's KEL is absent from the bundle, and N's registry records it revoked",
+   "description": "As VC-01, but F's issuer Q's KEL is absent from the bundle, and N's registry records it revoked. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "remove": {
+    "kels": [
+     "Qicp",
+     "ixn-rip-F",
+     "ixn-bup-F-1"
+    ]
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-N-2",
+      "t": "bup",
+      "registry": "rip-N",
+      "disclose": true,
+      "state": {
+       "u": "s-N-1",
+       "td": {
+        "acdc": "N"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-N-2",
+      "aid": "I",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-N-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-N-2",
+      "sigs": [
+       "I0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "revoked"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/issuer-kel",
+    "N invalid/revoked"
+   ]
+  },
+  {
+   "id": "ACDC-0222",
+   "key": "VC-11a",
+   "title": "Unresolved: F's registry update, which Q's KEL anchors, is absent from the bundle",
+   "description": "As VC-01, but F's registry update, which Q's KEL anchors, is absent from the bundle. A sedi-1 verifier should find it incomplete: something the verdict needs is absent or cannot be evaluated, and nothing it can evaluate fails.",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "bup-F-1"
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "registry-evidence"
+   ],
+   "triage": "Accepting it accepts a credential part of whose evidence the verifier never evaluated.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-unseen"
+   ]
+  },
+  {
+   "id": "ACDC-0223",
+   "key": "VC-11b",
+   "title": "Corrupted: F's registry update has its dt changed after its SAID was computed",
+   "description": "As VC-01, but F's registry update has its dt changed after its SAID was computed. A sedi-1 verifier should find it invalid: the item is present and fails a check.",
+   "base": "VC-P",
+   "patch": {
+    "registries": {
+     "bup-F-1": {
+      "alter": [
+       {
+        "path": "dt",
+        "value": "2025-07-04T17:50:01.000000+00:00"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "registry-evidence"
+   ],
+   "triage": "Accepting it accepts a credential whose evidence fails a check.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-unseen",
+    "F invalid/bup-said"
+   ]
+  },
+  {
+   "id": "ACDC-0224",
+   "key": "VC-310",
+   "title": "Precedence: F's registry update, which Q's KEL anchors, is absent from the bundle, and N's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but F's registry update, which Q's KEL anchors, is absent from the bundle, and N's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "bup-F-1"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "N": {
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-unseen",
+    "N invalid/said"
+   ]
+  },
+  {
+   "id": "ACDC-0225",
+   "key": "VC-311",
+   "title": "Precedence: F's registry update, which Q's KEL anchors, is absent from the bundle, and N's registry records it revoked",
+   "description": "As VC-01, but F's registry update, which Q's KEL anchors, is absent from the bundle, and N's registry records it revoked. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "bup-F-1"
+    ]
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-N-2",
+      "t": "bup",
+      "registry": "rip-N",
+      "disclose": true,
+      "state": {
+       "u": "s-N-1",
+       "td": {
+        "acdc": "N"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-N-2",
+      "aid": "I",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-N-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-N-2",
+      "sigs": [
+       "I0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "revoked"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-unseen",
+    "N invalid/revoked"
+   ]
+  },
+  {
+   "id": "ACDC-0226",
+   "key": "VC-312",
+   "title": "Precedence: F's registry update, which Q's KEL anchors, is absent from the bundle, and G is issued to H, so the edge g's I2I fails",
+   "description": "As VC-01, but F's registry update, which Q's KEL anchors, is absent from the bundle, and G is issued to H, so the edge g's I2I fails. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "bup-F-1"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-unseen",
+    "N:e.g invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0227",
+   "key": "VC-12a",
+   "title": "Unresolved: the far node F is absent from the bundle",
+   "description": "As VC-01, but the far node F is absent from the bundle. A sedi-1 verifier should find it incomplete: something the verdict needs is absent or cannot be evaluated, and nothing it can evaluate fails.",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "F"
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "chain-strict"
+   ],
+   "triage": "Accepting it accepts a credential part of whose evidence the verifier never evaluated.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f incomplete/far-absent"
+   ]
+  },
+  {
+   "id": "ACDC-0228",
+   "key": "VC-12b",
+   "title": "Corrupted: F's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but F's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: the item is present and fails a check.",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "F": {
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "chain-strict"
+   ],
+   "triage": "Accepting it accepts a credential whose evidence fails a check.",
+   "pair": "VC-01",
+   "expect": [
+    "F invalid/said"
+   ]
+  },
+  {
+   "id": "ACDC-0229",
+   "key": "VC-320",
+   "title": "Precedence: the far node F is absent from the bundle, and N's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but the far node F is absent from the bundle, and N's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "F"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "N": {
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N invalid/said",
+    "N:e.f incomplete/far-absent"
+   ]
+  },
+  {
+   "id": "ACDC-0230",
+   "key": "VC-321",
+   "title": "Precedence: the far node F is absent from the bundle, and N's registry records it revoked",
+   "description": "As VC-01, but the far node F is absent from the bundle, and N's registry records it revoked. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "F"
+    ]
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-N-2",
+      "t": "bup",
+      "registry": "rip-N",
+      "disclose": true,
+      "state": {
+       "u": "s-N-1",
+       "td": {
+        "acdc": "N"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-N-2",
+      "aid": "I",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-N-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-N-2",
+      "sigs": [
+       "I0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "revoked"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N invalid/revoked",
+    "N:e.f incomplete/far-absent"
+   ]
+  },
+  {
+   "id": "ACDC-0231",
+   "key": "VC-322",
+   "title": "Precedence: the far node F is absent from the bundle, and G is issued to H, so the edge g's I2I fails",
+   "description": "As VC-01, but the far node F is absent from the bundle, and G is issued to H, so the edge g's I2I fails. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "F"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f incomplete/far-absent",
+    "N:e.g invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0232",
+   "key": "VC-13a",
+   "title": "Unresolved: F's schema S2 is absent from the bundle",
+   "description": "As VC-01, but F's schema S2 is absent from the bundle. A sedi-1 verifier should find it incomplete: something the verdict needs is absent or cannot be evaluated, and nothing it can evaluate fails.",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "S2"
+    ]
+   },
+   "choices": [
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it accepts a credential part of whose evidence the verifier never evaluated.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/schema-absent"
+   ]
+  },
+  {
+   "id": "ACDC-0233",
+   "key": "VC-13b",
+   "title": "Corrupted: F's schema S2 has its title changed after its SAID was computed",
+   "description": "As VC-01, but F's schema S2 has its title changed after its SAID was computed. A sedi-1 verifier should find it invalid: the item is present and fails a check.",
+   "base": "VC-P",
+   "patch": {
+    "schemas": {
+     "S2": {
+      "alter": [
+       {
+        "path": "title",
+        "value": "raf"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it accepts a credential whose evidence fails a check.",
+   "pair": "VC-01",
+   "expect": [
+    "F invalid/schema-said"
+   ]
+  },
+  {
+   "id": "ACDC-0234",
+   "key": "VC-330",
+   "title": "Precedence: F's schema S2 is absent from the bundle, and N's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but F's schema S2 is absent from the bundle, and N's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "S2"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "N": {
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/schema-absent",
+    "N invalid/said"
+   ]
+  },
+  {
+   "id": "ACDC-0235",
+   "key": "VC-331",
+   "title": "Precedence: F's schema S2 is absent from the bundle, and N's registry records it revoked",
+   "description": "As VC-01, but F's schema S2 is absent from the bundle, and N's registry records it revoked. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "S2"
+    ]
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-N-2",
+      "t": "bup",
+      "registry": "rip-N",
+      "disclose": true,
+      "state": {
+       "u": "s-N-1",
+       "td": {
+        "acdc": "N"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-N-2",
+      "aid": "I",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-N-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-N-2",
+      "sigs": [
+       "I0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "revoked"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/schema-absent",
+    "N invalid/revoked"
+   ]
+  },
+  {
+   "id": "ACDC-0236",
+   "key": "VC-332",
+   "title": "Precedence: F's schema S2 is absent from the bundle, and G is issued to H, so the edge g's I2I fails",
+   "description": "As VC-01, but F's schema S2 is absent from the bundle, and G is issued to H, so the edge g's I2I fails. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "replace": {
+    "omit": [
+     "S2"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/schema-absent",
+    "N:e.g invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0237",
+   "key": "VC-14a",
+   "title": "Unresolved: the edge f names the operator XYZ, which sedi-1 does not know",
+   "description": "As VC-01, but the edge f names the operator XYZ, which sedi-1 does not know. A sedi-1 verifier should find it incomplete: something the verdict needs is absent or cannot be evaluated, and nothing it can evaluate fails.",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "f": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "XYZ"
+       },
+       "g": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "unknown-operator"
+   ],
+   "triage": "Accepting it accepts a credential part of whose evidence the verifier never evaluated.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f incomplete/operator-unknown"
+   ]
+  },
+  {
+   "id": "ACDC-0238",
+   "key": "VC-14b",
+   "title": "Corrupted: the edge f's operator is the nested list [[I2I]]",
+   "description": "As VC-01, but the edge f's operator is the nested list [[I2I]]. A sedi-1 verifier should find it invalid: the item is present and fails a check.",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "f": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": [
+         [
+          "I2I"
+         ]
+        ]
+       },
+       "g": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "operator-shape"
+   ],
+   "triage": "Accepting it accepts a credential whose evidence fails a check.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f invalid/operator-shape"
+   ]
+  },
+  {
+   "id": "ACDC-0239",
+   "key": "VC-340",
+   "title": "Precedence: the edge f names the operator XYZ, which sedi-1 does not know, and N's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but the edge f names the operator XYZ, which sedi-1 does not know, and N's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "f": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "XYZ"
+       },
+       "g": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      },
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N invalid/said",
+    "N:e.f incomplete/operator-unknown"
+   ]
+  },
+  {
+   "id": "ACDC-0240",
+   "key": "VC-341",
+   "title": "Precedence: the edge f names the operator XYZ, which sedi-1 does not know, and N's registry records it revoked",
+   "description": "As VC-01, but the edge f names the operator XYZ, which sedi-1 does not know, and N's registry records it revoked. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "f": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "XYZ"
+       },
+       "g": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     }
+    }
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-N-2",
+      "t": "bup",
+      "registry": "rip-N",
+      "disclose": true,
+      "state": {
+       "u": "s-N-1",
+       "td": {
+        "acdc": "N"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-N-2",
+      "aid": "I",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-N-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-N-2",
+      "sigs": [
+       "I0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "revoked"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N invalid/revoked",
+    "N:e.f incomplete/operator-unknown"
+   ]
+  },
+  {
+   "id": "ACDC-0241",
+   "key": "VC-342",
+   "title": "Precedence: the edge f names the operator XYZ, which sedi-1 does not know, and G is issued to H, so the edge g's I2I fails",
+   "description": "As VC-01, but the edge f names the operator XYZ, which sedi-1 does not know, and G is issued to H, so the edge g's I2I fails. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "f": {
+        "d": "",
+        "n": {
+         "acdc": "F"
+        },
+        "o": "XYZ"
+       },
+       "g": {
+        "d": "",
+        "n": {
+         "acdc": "G"
+        },
+        "o": "I2I"
+       }
+      }
+     },
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f incomplete/operator-unknown",
+    "N:e.g invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0242",
+   "key": "VC-15a",
+   "title": "Unresolved: F's registry inception is of type vcp, a kind sedi-1 does not read",
+   "description": "As VC-01, but F's registry inception is of type vcp, a kind sedi-1 does not read. A sedi-1 verifier should find it incomplete: something the verdict needs is absent or cannot be evaluated, and nothing it can evaluate fails.",
+   "base": "VC-P",
+   "patch": {
+    "registries": {
+     "rip-F": {
+      "type": "vcp"
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it accepts a credential part of whose evidence the verifier never evaluated.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-kind"
+   ]
+  },
+  {
+   "id": "ACDC-0243",
+   "key": "VC-15b",
+   "title": "Corrupted: F's blindable registry carries an update of type upd",
+   "description": "As VC-01, but F's blindable registry carries an update of type upd. A sedi-1 verifier should find it invalid: the item is present and fails a check.",
+   "base": "VC-P",
+   "patch": {
+    "registries": {
+     "bup-F-1": {
+      "type": "upd"
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "registry-evidence"
+   ],
+   "triage": "Accepting it accepts a credential whose evidence fails a check.",
+   "pair": "VC-01",
+   "expect": [
+    "F invalid/registry-kind-mixed"
+   ]
+  },
+  {
+   "id": "ACDC-0244",
+   "key": "VC-350",
+   "title": "Precedence: F's registry inception is of type vcp, a kind sedi-1 does not read, and N's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but F's registry inception is of type vcp, a kind sedi-1 does not read, and N's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "registries": {
+     "rip-F": {
+      "type": "vcp"
+     }
+    },
+    "acdcs": {
+     "N": {
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-kind",
+    "N invalid/said"
+   ]
+  },
+  {
+   "id": "ACDC-0245",
+   "key": "VC-351",
+   "title": "Precedence: F's registry inception is of type vcp, a kind sedi-1 does not read, and N's registry records it revoked",
+   "description": "As VC-01, but F's registry inception is of type vcp, a kind sedi-1 does not read, and N's registry records it revoked. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "registries": {
+     "rip-F": {
+      "type": "vcp"
+     }
+    }
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-N-2",
+      "t": "bup",
+      "registry": "rip-N",
+      "disclose": true,
+      "state": {
+       "u": "s-N-1",
+       "td": {
+        "acdc": "N"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-N-2",
+      "aid": "I",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-N-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-N-2",
+      "sigs": [
+       "I0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "revoked"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-kind",
+    "N invalid/revoked"
+   ]
+  },
+  {
+   "id": "ACDC-0246",
+   "key": "VC-352",
+   "title": "Precedence: F's registry inception is of type vcp, a kind sedi-1 does not read, and G is issued to H, so the edge g's I2I fails",
+   "description": "As VC-01, but F's registry inception is of type vcp, a kind sedi-1 does not read, and G is issued to H, so the edge g's I2I fails. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "registries": {
+     "rip-F": {
+      "type": "vcp"
+     }
+    },
+    "acdcs": {
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/registry-kind",
+    "N:e.g invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0247",
+   "key": "VC-16a",
+   "title": "Unresolved: N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated",
+   "description": "As VC-01, but N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated. A sedi-1 verifier should find it incomplete: something the verdict needs is absent or cannot be evaluated, and nothing it can evaluate fails.",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "form": {
+       "compact": [
+        "e.f"
+       ]
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "operator-list"
+   ],
+   "triage": "Accepting it accepts a credential part of whose evidence the verifier never evaluated.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f incomplete/edge-compact"
+   ]
+  },
+  {
+   "id": "ACDC-0248",
+   "key": "VC-16b",
+   "title": "Corrupted: F's issuee is H, so the edge f's I2I fails",
+   "description": "As VC-01, but F's issuee is H, so the edge f's I2I fails. A sedi-1 verifier should find it invalid: the item is present and fails a check.",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "operator-list"
+   ],
+   "triage": "Accepting it accepts a credential whose evidence fails a check.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0249",
+   "key": "VC-360",
+   "title": "Precedence: N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated, and N's attribute value is changed after its SAIDs were computed",
+   "description": "As VC-01, but N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated, and N's attribute value is changed after its SAIDs were computed. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "form": {
+       "compact": [
+        "e.f"
+       ]
+      },
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N invalid/said",
+    "N:e.f incomplete/edge-compact"
+   ]
+  },
+  {
+   "id": "ACDC-0250",
+   "key": "VC-361",
+   "title": "Precedence: N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated, and N's registry records it revoked",
+   "description": "As VC-01, but N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated, and N's registry records it revoked. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "form": {
+       "compact": [
+        "e.f"
+       ]
+      }
+     }
+    }
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-N-2",
+      "t": "bup",
+      "registry": "rip-N",
+      "disclose": true,
+      "state": {
+       "u": "s-N-1",
+       "td": {
+        "acdc": "N"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-N-2",
+      "aid": "I",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-N-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-N-2",
+      "sigs": [
+       "I0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "revoked"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N invalid/revoked",
+    "N:e.f incomplete/edge-compact"
+   ]
+  },
+  {
+   "id": "ACDC-0251",
+   "key": "VC-362",
+   "title": "Precedence: N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated, and G is issued to H, so the edge g's I2I fails",
+   "description": "As VC-01, but N is presented with its edge f compacted to its SAID, so the edge cannot be evaluated, and G is issued to H, so the edge g's I2I fails. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "form": {
+       "compact": [
+        "e.f"
+       ]
+      }
+     },
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "N:e.f incomplete/edge-compact",
+    "N:e.g invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0252",
+   "key": "VC-40",
+   "title": "KEL with a gap before the anchors",
+   "description": "As VC-01, but Q's KEL is delivered without its first interaction event, which anchors F's registry inception, so the event anchoring F's update follows a gap. A sedi-1 verifier should find it incomplete: an event after a gap is not in the KEL, so neither anchor is seen.",
+   "base": "VC-P",
+   "remove": {
+    "kels": [
+     "ixn-rip-F"
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "registry-evidence"
+   ],
+   "triage": "Accepting it accepts a credential whose anchor in its issuer's KEL the verifier never saw.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/rip-anchor"
+   ]
+  },
+  {
+   "id": "ACDC-0253",
+   "key": "VC-41",
+   "title": "Stale KEL: the evaluation point is before the anchor",
+   "description": "As VC-01, but Q's KEL is cut before the interaction event that anchors F's registry update, though the bundle carries the update. A sedi-1 verifier should find it incomplete: the update is not yet anchored at the bundle's evaluation point.",
+   "base": "VC-P",
+   "remove": {
+    "kels": [
+     "ixn-bup-F-1"
+    ]
+   },
+   "choices": [
+    "unresolved-grading",
+    "registry-evidence"
+   ],
+   "triage": "Accepting it accepts a credential whose anchor in its issuer's KEL the verifier never saw.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/bup-anchor"
+   ]
+  },
+  {
+   "id": "ACDC-0254",
+   "key": "VC-50",
+   "title": "Two-hop chain",
+   "description": "N, issued by I to H, has an edge to F, issued by Q to I, which has an edge to T, issued by R to Q under a schema of its own; T is at depth 2. A sedi-1 verifier should find it valid.",
+   "base": "VC-2",
+   "choices": [
+    "valid-is-interop",
+    "chain-strict",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0255",
+   "key": "VC-51",
+   "title": "Far-node SAID mismatch at depth 2",
+   "description": "As VC-50, but T's attribute value is changed after its SAIDs were computed, so T's SAID does not verify. A sedi-1 verifier should find it invalid: chain-strict carries T's failure to N.",
+   "base": "VC-2",
+   "patch": {
+    "acdcs": {
+     "T": {
+      "alter": [
+       {
+        "path": "a.name",
+        "value": "X"
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "chain-strict"
+   ],
+   "triage": "Accepting it accepts a credential chained to a forged one.",
+   "pair": "VC-50",
+   "expect": [
+    "T invalid/said"
+   ]
+  },
+  {
+   "id": "ACDC-0256",
+   "key": "VC-52",
+   "title": "Edge schema at depth 2 that the far node satisfies",
+   "description": "As VC-50, but F's edge to T names T's schema S3 in s, which T satisfies, and the bundle also carries a schema S4. A sedi-1 verifier should find it valid.",
+   "base": "VC-2",
+   "append": {
+    "schemas": [
+     {
+      "name": "S4",
+      "schema": {
+       "$id": "",
+       "$schema": "https://json-schema.org/draft/2020-12/schema",
+       "version": "1.0.0",
+       "type": "object",
+       "required": [
+        "v",
+        "d",
+        "i",
+        "s",
+        "zz"
+       ],
+       "properties": {
+        "a": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "object",
+           "required": [
+            "d",
+            "name"
+           ],
+           "properties": {
+            "d": {
+             "type": "string"
+            },
+            "i": {
+             "type": "string"
+            },
+            "name": {
+             "type": "string"
+            }
+           }
+          }
+         ]
+        },
+        "A": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "array"
+          }
+         ]
+        },
+        "e": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "object"
+          }
+         ]
+        }
+       },
+       "title": "other"
+      }
+     }
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "F": {
+      "e": {
+       "d": "",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "T"
+        },
+        "o": "I2I",
+        "s": {
+         "schema": "S3"
+        }
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "valid-is-interop",
+    "chain-strict"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0257",
+   "key": "VC-53",
+   "title": "Schema mismatch at depth 2",
+   "description": "As VC-52, but F's edge to T names S4 in s, which requires a field T lacks. A sedi-1 verifier should find it invalid.",
+   "base": "VC-2",
+   "append": {
+    "schemas": [
+     {
+      "name": "S4",
+      "schema": {
+       "$id": "",
+       "$schema": "https://json-schema.org/draft/2020-12/schema",
+       "version": "1.0.0",
+       "type": "object",
+       "required": [
+        "v",
+        "d",
+        "i",
+        "s",
+        "zz"
+       ],
+       "properties": {
+        "a": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "object",
+           "required": [
+            "d",
+            "name"
+           ],
+           "properties": {
+            "d": {
+             "type": "string"
+            },
+            "i": {
+             "type": "string"
+            },
+            "name": {
+             "type": "string"
+            }
+           }
+          }
+         ]
+        },
+        "A": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "array"
+          }
+         ]
+        },
+        "e": {
+         "oneOf": [
+          {
+           "type": "string"
+          },
+          {
+           "type": "object"
+          }
+         ]
+        }
+       },
+       "title": "other"
+      }
+     }
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "F": {
+      "e": {
+       "d": "",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "T"
+        },
+        "o": "I2I",
+        "s": {
+         "schema": "S4"
+        }
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "chain-strict"
+   ],
+   "triage": "Accepting it accepts a chain whose far node is not the kind of credential the edge asks for.",
+   "pair": "VC-52",
+   "expect": [
+    "F:e.le invalid/edge-schema"
+   ]
+  },
+  {
+   "id": "ACDC-0258",
+   "key": "VC-54",
+   "title": "Missing far node at depth 2",
+   "description": "As VC-50, but T is absent from the bundle. A sedi-1 verifier should find it incomplete: chain-strict needs T's verdict, and the verifier cannot reach one.",
+   "base": "VC-2",
+   "replace": {
+    "omit": [
+     "T"
+    ]
+   },
+   "choices": [
+    "chain-strict",
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it accepts a chain whose root the verifier never saw.",
+   "pair": "VC-50",
+   "expect": [
+    "F:e.le incomplete/far-absent"
+   ]
+  },
+  {
+   "id": "ACDC-0259",
+   "key": "VC-55",
+   "title": "Far node at depth 2 that is a registry event, not a credential",
+   "description": "As VC-50, but F has a second edge, x, whose n names T's registry inception, and the bundle carries that event where a far node would stand. A sedi-1 verifier should find it invalid: the far node an edge names must be an ACDC (line 1174), and a registry event is not one.",
+   "base": "VC-2",
+   "patch": {
+    "acdcs": {
+     "F": {
+      "e": {
+       "d": "",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "T"
+        },
+        "o": "I2I"
+       },
+       "x": {
+        "d": "",
+        "n": {
+         "registry": "rip-T"
+        }
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "chain-strict",
+    "edge-said"
+   ],
+   "triage": "Accepting it accepts an edge to something that is not a credential, so the issuer relation and the chain it asserts were never checked.",
+   "pair": "VC-50",
+   "expect": [
+    "rip-T incomplete/schema-absent",
+    "rip-T invalid/field-order",
+    "rip-T invalid/required-field"
+   ]
+  },
+  {
+   "id": "ACDC-0260",
+   "key": "VC-56",
+   "title": "Diamond under AND",
+   "description": "N, issued by I to H, has edges f to F and g to G, both issued by Q to I, and each has an edge to T, issued by R to Q: a diamond. N's edges are under AND. A sedi-1 verifier should find it valid; T contributes its verdict once.",
+   "base": "VC-DA",
+   "choices": [
+    "valid-is-interop",
+    "chain-strict"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0261",
+   "key": "VC-57",
+   "title": "Diamond under AND with one branch revoked",
+   "description": "As VC-56, but G is revoked. A sedi-1 verifier should find it invalid: AND needs both branches.",
+   "base": "VC-DA",
+   "append": {
+    "registries": [
+     {
+      "name": "bup-G-2",
+      "t": "bup",
+      "registry": "rip-G",
+      "disclose": true,
+      "state": {
+       "u": "s-G-1",
+       "td": {
+        "acdc": "G"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-G-2",
+      "aid": "Q",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-G-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-G-2",
+      "sigs": [
+       "Q0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "chain-strict",
+    "revoked"
+   ],
+   "triage": "Accepting it accepts a credential that rests on a revoked one.",
+   "pair": "VC-56",
+   "expect": [
+    "G invalid/revoked"
+   ]
+  },
+  {
+   "id": "ACDC-0262",
+   "key": "VC-58",
+   "title": "Diamond under OR with one branch revoked",
+   "description": "N, issued by I to H, has edges f to F and g to G, both issued by Q to I, and each has an edge to T, issued by R to Q: a diamond. N's edges are under OR, and G is revoked. A sedi-1 verifier should find it valid: OR needs one valid branch, and F's is.",
+   "base": "VC-DO",
+   "append": {
+    "registries": [
+     {
+      "name": "bup-G-2",
+      "t": "bup",
+      "registry": "rip-G",
+      "disclose": true,
+      "state": {
+       "u": "s-G-1",
+       "td": {
+        "acdc": "G"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-G-2",
+      "aid": "Q",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-G-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-G-2",
+      "sigs": [
+       "Q0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "valid-is-interop",
+    "chain-strict",
+    "revoked"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0263",
+   "key": "VC-59",
+   "title": "Diamond under OR with both branches revoked",
+   "description": "As VC-58, but F is revoked too. A sedi-1 verifier should find it invalid: no branch is valid.",
+   "base": "VC-DO",
+   "append": {
+    "registries": [
+     {
+      "name": "bup-G-2",
+      "t": "bup",
+      "registry": "rip-G",
+      "disclose": true,
+      "state": {
+       "u": "s-G-1",
+       "td": {
+        "acdc": "G"
+       },
+       "ts": "revoked"
+      }
+     },
+     {
+      "name": "bup-F-2",
+      "t": "bup",
+      "registry": "rip-F",
+      "disclose": true,
+      "state": {
+       "u": "s-F-1",
+       "td": {
+        "acdc": "F"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-G-2",
+      "aid": "Q",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-G-2",
+        "shape": "isd"
+       }
+      ]
+     },
+     {
+      "name": "ixn-bup-F-2",
+      "aid": "Q",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-F-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-G-2",
+      "sigs": [
+       "Q0"
+      ]
+     },
+     {
+      "event": "ixn-bup-F-2",
+      "sigs": [
+       "Q0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "chain-strict",
+    "revoked"
+   ],
+   "triage": "Accepting it accepts a credential every support of which is revoked.",
+   "pair": "VC-58",
+   "expect": [
+    "F invalid/revoked",
+    "G invalid/revoked"
+   ]
+  },
+  {
+   "id": "ACDC-0264",
+   "key": "VC-60",
+   "title": "Nested OR: first alternative unresolved, second valid",
+   "description": "N, issued by I to H, has a nested OR group whose first alternative f is an edge to F, issued by Q to I, and whose second, g, is an edge to G, issued by R to I. f names the operator XYZ, which sedi-1 does not know. A sedi-1 verifier should find it valid: OR needs one valid alternative, and g is one.",
+   "base": "VC-OR",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "o": "OR",
+        "f": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "XYZ"
+        },
+        "g": {
+         "d": "",
+         "n": {
+          "acdc": "G"
+         },
+         "o": "I2I"
+        }
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "valid-is-interop",
+    "unknown-operator",
+    "chain-strict"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0266",
+   "key": "VC-62",
+   "title": "Nested OR: both alternatives unresolved",
+   "description": "As VC-60, but g names the operator XYZ too. A sedi-1 verifier should find it incomplete: no alternative is valid and none fails.",
+   "base": "VC-OR",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "o": "OR",
+        "f": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "XYZ"
+        },
+        "g": {
+         "d": "",
+         "n": {
+          "acdc": "G"
+         },
+         "o": "XYZ"
+        }
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "unknown-operator"
+   ],
+   "triage": "Accepting it applies a rule the issuer did not write.",
+   "pair": "VC-60",
+   "expect": [
+    "N:e.grp.f incomplete/operator-unknown",
+    "N:e.grp.g incomplete/operator-unknown"
+   ]
+  },
+  {
+   "id": "ACDC-0267",
+   "key": "VC-63",
+   "title": "Three-edge chain",
+   "description": "N, issued by I to H, has an edge to F (Q to I), F to T (R to Q), and T to X (H to R). A sedi-1 verifier should find it valid.",
+   "base": "VC-C",
+   "choices": [
+    "valid-is-interop",
+    "chain-strict"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0268",
+   "key": "VC-64",
+   "title": "A cycle by claimed SAIDs",
+   "description": "As VC-63, but T's edge is rewritten after its SAIDs were computed to name F, with T's top-level SAID left as F's edge names it, so read by claimed SAIDs F and T form a cycle. A sedi-1 verifier should find it invalid, and must answer: T's SAID does not verify, so the cycle is never real.",
+   "base": "VC-C",
+   "patch": {
+    "acdcs": {
+     "T": {
+      "alter": [
+       {
+        "path": "e.le.n",
+        "value": {
+         "acdc": "F"
+        }
+       }
+      ]
+     }
+    }
+   },
+   "choices": [
+    "chain-strict",
+    "edge-said"
+   ],
+   "triage": "A verifier that follows claimed SAIDs before recomputing them may never answer.",
+   "pair": "VC-63",
+   "expect": [
+    "F invalid/cycle",
+    "T invalid/said",
+    "T:e.le invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0269",
+   "key": "VC-70",
+   "title": "Nested I2I that holds",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to D, under I2I. A sedi-1 verifier should find it valid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "I2I"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "D"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "valid-is-interop",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0270",
+   "key": "VC-71",
+   "title": "Nested I2I to a credential issued to the near issuer's delegator",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to R, D's delegator, under I2I. I2I needs F's issuee to be D itself. A sedi-1 verifier should find it invalid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "I2I"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "R"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "operator-list"
+   ],
+   "triage": "Accepting it lets a delegate chain to its delegator's credential under an operator that does not allow it.",
+   "pair": "VC-70",
+   "expect": [
+    "N:e.grp.le invalid/i2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0271",
+   "key": "VC-72",
+   "title": "Nested NI2I to a credential issued to anyone",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to H, N's own issuee, under NI2I. A sedi-1 verifier should find it valid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "NI2I"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "valid-is-interop",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0272",
+   "key": "VC-73",
+   "title": "Nested NI2I to a revoked credential",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to H, N's own issuee, under NI2I. F is revoked; NI2I drops the issuer relation, not F's verdict. A sedi-1 verifier should find it invalid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "NI2I"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "append": {
+    "registries": [
+     {
+      "name": "bup-F-2",
+      "t": "bup",
+      "registry": "rip-F",
+      "disclose": true,
+      "state": {
+       "u": "s-F-1",
+       "td": {
+        "acdc": "F"
+       },
+       "ts": "revoked"
+      }
+     }
+    ],
+    "events": [
+     {
+      "name": "ixn-bup-F-2",
+      "aid": "Q",
+      "t": "ixn",
+      "a": [
+       {
+        "registry": "bup-F-2",
+        "shape": "isd"
+       }
+      ]
+     }
+    ],
+    "kels": [
+     {
+      "event": "ixn-bup-F-2",
+      "sigs": [
+       "Q0"
+      ]
+     }
+    ]
+   },
+   "choices": [
+    "chain-strict",
+    "revoked"
+   ],
+   "triage": "Accepting it accepts a chain to a revoked credential.",
+   "pair": "VC-72",
+   "expect": [
+    "F invalid/revoked"
+   ]
+  },
+  {
+   "id": "ACDC-0273",
+   "key": "VC-74",
+   "title": "Nested DI2I to a credential issued to the near issuer's delegator",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to R, D's delegator, under DI2I. A sedi-1 verifier should find it valid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "DI2I"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "R"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "valid-is-interop",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0274",
+   "key": "VC-75",
+   "title": "Nested DI2I to a credential issued to someone else",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to H, N's own issuee, under DI2I. H neither is D nor delegated D. A sedi-1 verifier should find it invalid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "DI2I"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "operator-list"
+   ],
+   "triage": "Accepting it lets anyone chain to a credential issued to a third party.",
+   "pair": "VC-74",
+   "expect": [
+    "N:e.grp.le invalid/di2i-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0275",
+   "key": "VC-76",
+   "title": "Nested E1E between credentials with one issuee",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to H, N's own issuee, under E1E. A sedi-1 verifier should find it valid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "E1E"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "valid-is-interop",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0276",
+   "key": "VC-77",
+   "title": "Nested E1E between credentials with different issuees",
+   "description": "N, issued by D, a delegate of R, to H, has a nested group holding one edge, to F, issued by Q to R, D's delegator, under E1E. E1E needs F's issuee to be N's, H. A sedi-1 verifier should find it invalid.",
+   "base": "VC-U",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "le": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "E1E"
+        }
+       }
+      }
+     },
+     "F": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "R"
+       },
+       "name": "F"
+      }
+     }
+    }
+   },
+   "choices": [
+    "operator-list"
+   ],
+   "triage": "Accepting it binds two credentials held by different parties.",
+   "pair": "VC-76",
+   "expect": [
+    "N:e.grp.le invalid/e1e-issuee"
+   ]
+  },
+  {
+   "id": "ACDC-0277",
+   "key": "VC-80",
+   "title": "Aggregate far node with its issuee disclosed",
+   "description": "N, issued by I to H, has an edge under I2I to F, issued by Q, an aggregate whose issuee block A[1] names I, presented with every block disclosed. A sedi-1 verifier should find it valid.",
+   "base": "VC-AG",
+   "choices": [
+    "valid-is-interop",
+    "aggregate-issuee",
+    "operator-list"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  },
+  {
+   "id": "ACDC-0278",
+   "key": "VC-81",
+   "title": "Aggregate far node with its issuee blinded",
+   "description": "N, issued by I to H, has an edge under I2I to F, issued by Q, an aggregate whose issuee block A[1] names I, presented with the issuee block undisclosed. A sedi-1 verifier should find it incomplete: I2I cannot be decided without F's issuee.",
+   "base": "VC-AG",
+   "patch": {
+    "acdcs": {
+     "F": {
+      "form": {
+       "disclose": [
+        1
+       ]
+      }
+     }
+    }
+   },
+   "choices": [
+    "aggregate-issuee",
+    "unresolved-grading"
+   ],
+   "triage": "Accepting it skips the issuer relation the edge asks for.",
+   "pair": "VC-80",
+   "expect": [
+    "N:e.le incomplete/i2i-hidden"
+   ]
+  },
+  {
+   "id": "ACDC-0279",
+   "key": "VC-82",
+   "title": "Default operator at depth 2",
+   "description": "As VC-50, but F's edge to T names no operator, so it gets I2I by default (line 1199). A sedi-1 verifier should find it valid.",
+   "base": "VC-2",
+   "patch": {
+    "acdcs": {
+     "F": {
+      "e": {
+       "d": "",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "T"
+        }
+       }
+      }
+     }
+    }
+   },
+   "choices": [
+    "valid-is-interop",
+    "default-operator",
+    "chain-strict"
+   ],
+   "triage": "None: an acceptance.",
+   "expect": []
+  }
+ ]
+}

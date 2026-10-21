@@ -106,7 +106,69 @@
     "ACDC-0212",
     "ACDC-0213",
     "ACDC-0214",
-    "ACDC-0215"
+    "ACDC-0215",
+    "ACDC-0216",
+    "ACDC-0217",
+    "ACDC-0218",
+    "ACDC-0219",
+    "ACDC-0220",
+    "ACDC-0222",
+    "ACDC-0223",
+    "ACDC-0224",
+    "ACDC-0225",
+    "ACDC-0226",
+    "ACDC-0227",
+    "ACDC-0228",
+    "ACDC-0229",
+    "ACDC-0230",
+    "ACDC-0231",
+    "ACDC-0232",
+    "ACDC-0233",
+    "ACDC-0234",
+    "ACDC-0235",
+    "ACDC-0236",
+    "ACDC-0237",
+    "ACDC-0238",
+    "ACDC-0239",
+    "ACDC-0240",
+    "ACDC-0241",
+    "ACDC-0242",
+    "ACDC-0243",
+    "ACDC-0244",
+    "ACDC-0245",
+    "ACDC-0246",
+    "ACDC-0247",
+    "ACDC-0248",
+    "ACDC-0249",
+    "ACDC-0250",
+    "ACDC-0251",
+    "ACDC-0252",
+    "ACDC-0253",
+    "ACDC-0254",
+    "ACDC-0255",
+    "ACDC-0256",
+    "ACDC-0257",
+    "ACDC-0258",
+    "ACDC-0259",
+    "ACDC-0260",
+    "ACDC-0261",
+    "ACDC-0262",
+    "ACDC-0263",
+    "ACDC-0264",
+    "ACDC-0266",
+    "ACDC-0267",
+    "ACDC-0268",
+    "ACDC-0269",
+    "ACDC-0270",
+    "ACDC-0271",
+    "ACDC-0272",
+    "ACDC-0273",
+    "ACDC-0274",
+    "ACDC-0275",
+    "ACDC-0276",
+    "ACDC-0277",
+    "ACDC-0278",
+    "ACDC-0279"
   ],
   "choices": [
     {
@@ -216,7 +278,8 @@
           "ACDC-0105",
           "ACDC-0136",
           "ACDC-0168",
-          "ACDC-0197"
+          "ACDC-0197",
+          "ACDC-0218"
         ],
         "positive": [
           "ACDC-0101",
@@ -240,7 +303,9 @@
         "negative": [
           "ACDC-0117",
           "ACDC-0137",
-          "ACDC-0138"
+          "ACDC-0138",
+          "ACDC-0259",
+          "ACDC-0268"
         ],
         "positive": [
           "ACDC-0110"
@@ -259,10 +324,13 @@
           "ACDC-0113",
           "ACDC-0139",
           "ACDC-0140",
-          "ACDC-0141"
+          "ACDC-0141",
+          "ACDC-0237",
+          "ACDC-0266"
         ],
         "positive": [
-          "ACDC-0125"
+          "ACDC-0125",
+          "ACDC-0264"
         ]
       },
       "decided": "8g9vtxvc",
@@ -278,7 +346,8 @@
           "ACDC-0112"
         ],
         "positive": [
-          "ACDC-0111"
+          "ACDC-0111",
+          "ACDC-0279"
         ]
       },
       "decided": "8g9vtxvc",
@@ -291,13 +360,30 @@
       "basis": "Lines 1186, 1199 and 1201 treat o as an effective list; keripy's verifier reads only a string.",
       "cases": {
         "negative": [
-          "ACDC-0127"
+          "ACDC-0127",
+          "ACDC-0226",
+          "ACDC-0231",
+          "ACDC-0236",
+          "ACDC-0241",
+          "ACDC-0246",
+          "ACDC-0247",
+          "ACDC-0248",
+          "ACDC-0251",
+          "ACDC-0270",
+          "ACDC-0274",
+          "ACDC-0276"
         ],
         "positive": [
           "ACDC-0110",
           "ACDC-0126",
           "ACDC-0134",
-          "ACDC-0149"
+          "ACDC-0149",
+          "ACDC-0254",
+          "ACDC-0269",
+          "ACDC-0271",
+          "ACDC-0273",
+          "ACDC-0275",
+          "ACDC-0277"
         ]
       },
       "decided": "8g9vtxvc",
@@ -317,7 +403,8 @@
           "ACDC-0143",
           "ACDC-0144",
           "ACDC-0146",
-          "ACDC-0148"
+          "ACDC-0148",
+          "ACDC-0238"
         ],
         "positive": [
           "ACDC-0114",
@@ -332,6 +419,38 @@
       "overturn": "Specification text that gives an empty edge-group or a nested operator list a meaning.",
       "reading": "An empty o reads as an absent one and gets the default operator; among conflicting unary operators the latest wins, so [I2I, NI2I] is NI2I. An empty AND or OR edge-group and a nested list such as [[I2I]] are invalid.",
       "tick": "6ljr"
+    },
+    {
+      "basis": "ACDC lines 1114 and 1116 make a far node's invalidity a MAY for its edge and leave the logic to the ecosystem governance framework (line 1112); SEDI reads its edges as provenance chains, so a credential is no better than what it chains to.",
+      "cases": {
+        "negative": [
+          "ACDC-0227",
+          "ACDC-0228",
+          "ACDC-0255",
+          "ACDC-0257",
+          "ACDC-0258",
+          "ACDC-0259",
+          "ACDC-0261",
+          "ACDC-0263",
+          "ACDC-0268",
+          "ACDC-0272"
+        ],
+        "positive": [
+          "ACDC-0216",
+          "ACDC-0254",
+          "ACDC-0256",
+          "ACDC-0260",
+          "ACDC-0262",
+          "ACDC-0264",
+          "ACDC-0267",
+          "ACDC-0279"
+        ]
+      },
+      "decided": "43rj9wfc",
+      "id": "chain-strict",
+      "overturn": "A SEDI governance framework rule under which an edge holds to a far node that is not valid.",
+      "reading": "A far node satisfies an edge only when its own sedi-1 verdict is valid, so a failed check or an unresolved item anywhere in the provenance DAG reaches the presented ACDC through every edge-group that needs it; an OR group needs one valid alternative.",
+      "security": true
     },
     {
       "basis": "Lines 312 and 344 make presentation by the issuee a capability, and no clause obliges a validator to check it; without the check, anyone who has seen a credential can present it as theirs.",
@@ -359,10 +478,12 @@
       "cases": {
         "negative": [
           "ACDC-0129",
-          "ACDC-0130"
+          "ACDC-0130",
+          "ACDC-0278"
         ],
         "positive": [
-          "ACDC-0128"
+          "ACDC-0128",
+          "ACDC-0277"
         ]
       },
       "decided": "09snlyre",
@@ -393,10 +514,50 @@
           "ACDC-0167",
           "ACDC-0197",
           "ACDC-0209",
-          "ACDC-0215"
+          "ACDC-0215",
+          "ACDC-0217",
+          "ACDC-0218",
+          "ACDC-0219",
+          "ACDC-0220",
+          "ACDC-0222",
+          "ACDC-0223",
+          "ACDC-0224",
+          "ACDC-0225",
+          "ACDC-0226",
+          "ACDC-0227",
+          "ACDC-0228",
+          "ACDC-0229",
+          "ACDC-0230",
+          "ACDC-0231",
+          "ACDC-0232",
+          "ACDC-0233",
+          "ACDC-0234",
+          "ACDC-0235",
+          "ACDC-0236",
+          "ACDC-0237",
+          "ACDC-0238",
+          "ACDC-0239",
+          "ACDC-0240",
+          "ACDC-0241",
+          "ACDC-0242",
+          "ACDC-0243",
+          "ACDC-0244",
+          "ACDC-0245",
+          "ACDC-0246",
+          "ACDC-0247",
+          "ACDC-0248",
+          "ACDC-0249",
+          "ACDC-0250",
+          "ACDC-0251",
+          "ACDC-0252",
+          "ACDC-0253",
+          "ACDC-0258",
+          "ACDC-0266",
+          "ACDC-0278"
         ],
         "positive": [
-          "ACDC-0122"
+          "ACDC-0122",
+          "ACDC-0216"
         ]
       },
       "decided": "8fh68wt6",
@@ -414,7 +575,20 @@
           "ACDC-0101",
           "ACDC-0157",
           "ACDC-0196",
-          "ACDC-0208"
+          "ACDC-0208",
+          "ACDC-0216",
+          "ACDC-0254",
+          "ACDC-0256",
+          "ACDC-0260",
+          "ACDC-0262",
+          "ACDC-0264",
+          "ACDC-0267",
+          "ACDC-0269",
+          "ACDC-0271",
+          "ACDC-0273",
+          "ACDC-0275",
+          "ACDC-0277",
+          "ACDC-0279"
         ]
       },
       "decided": "8fh68wt6",
@@ -450,12 +624,23 @@
           "ACDC-0106",
           "ACDC-0135",
           "ACDC-0150",
-          "ACDC-0166"
+          "ACDC-0166",
+          "ACDC-0220",
+          "ACDC-0225",
+          "ACDC-0230",
+          "ACDC-0235",
+          "ACDC-0240",
+          "ACDC-0245",
+          "ACDC-0250",
+          "ACDC-0261",
+          "ACDC-0263",
+          "ACDC-0272"
         ],
         "positive": [
           "ACDC-0122",
           "ACDC-0134",
-          "ACDC-0149"
+          "ACDC-0149",
+          "ACDC-0262"
         ]
       },
       "decided": "8fh68wt6",
@@ -472,7 +657,12 @@
           "ACDC-0108",
           "ACDC-0132",
           "ACDC-0133",
-          "ACDC-0197"
+          "ACDC-0197",
+          "ACDC-0222",
+          "ACDC-0223",
+          "ACDC-0243",
+          "ACDC-0252",
+          "ACDC-0253"
         ],
         "positive": [
           "ACDC-0122",
@@ -505,8 +695,31 @@
     {
       "basis": "Otherwise adding an unknown operator to a forged credential would turn a reject into a retry.",
       "cases": {
-        "negative": [],
-        "positive": []
+        "negative": [
+          "ACDC-0219",
+          "ACDC-0220",
+          "ACDC-0224",
+          "ACDC-0225",
+          "ACDC-0226",
+          "ACDC-0229",
+          "ACDC-0230",
+          "ACDC-0231",
+          "ACDC-0234",
+          "ACDC-0235",
+          "ACDC-0236",
+          "ACDC-0239",
+          "ACDC-0240",
+          "ACDC-0241",
+          "ACDC-0244",
+          "ACDC-0245",
+          "ACDC-0246",
+          "ACDC-0249",
+          "ACDC-0250",
+          "ACDC-0251"
+        ],
+        "positive": [
+          "ACDC-0216"
+        ]
       },
       "decided": "3g4le6js",
       "id": "failure-precedence",
