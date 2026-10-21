@@ -173,7 +173,8 @@ class _Builder:
         self.schema_bodies: dict[str, dict] = {}
         self._building: set[str] = set()
         self._building_events: set[str] = set()
-        self.foreign: list[str] = []  # registry events that edges name as their far nodes
+        # (near ACDC, registry event) for each edge whose far node is a registry event
+        self.foreign: list[tuple[str, str]] = []
 
     # -- references ----------------------------------------------------------------------------
 
@@ -544,8 +545,7 @@ class _Builder:
                 if far in events:
                     # A far node that is not a credential: acdcs carries the event in its place.
                     edges.append((name, path, far))
-                    if events[far] not in self.foreign:
-                        self.foreign.append(events[far])
+                    self.foreign.append((name, events[far]))
                     continue
                 if far not in by_said:
                     raise ScenarioError(f"ACDC {name!r} has an edge at {path} to {far!r}, which "
@@ -678,7 +678,7 @@ class _Builder:
             self.acdc_said(name)
         graph, edges = self.dag()
         far = self.far_nodes(graph)
-        for name in self.foreign:
+        for _, name in self.foreign:
             if name in omit:
                 raise ScenarioError(f"The registry event {name!r} is an edge's far node, so it "
                                     f"cannot be omitted; omit the edge's near node instead.")
@@ -686,6 +686,8 @@ class _Builder:
         # leaves the bundle with it: acdcs and the dag hold the same nodes, less the omitted.
         kept = self._reachable(graph, omit)
         far = [n for n in far if n in kept]
+        # A registry event stands in acdcs only while a node the bundle carries names it.
+        foreign = list(dict.fromkeys(e for near, e in self.foreign if near in kept))
         forms = {name: self.form(name) for name in self.acdcs}
         kels, as_of = [], {}
         for delivery in self.frag.get("kels", []):
@@ -717,7 +719,7 @@ class _Builder:
             "registry": [event_entry(n) for n in self.registries if n not in omit],
             "schemas": [sa.serialize(self.schema_bodies[n], self.readings).hex()
                         for n in self.schemas if n not in omit],
-            "acdcs": [event_entry(n) for n in self.foreign] + [acdc_entry(n) for n in far],
+            "acdcs": [event_entry(n) for n in foreign] + [acdc_entry(n) for n in far],
             "presented": acdc_entry(presented),
         }
         if "presentation" in self.frag:

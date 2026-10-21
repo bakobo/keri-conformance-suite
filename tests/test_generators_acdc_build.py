@@ -387,6 +387,18 @@ def test_an_edge_may_name_a_registry_event_which_acdcs_then_carries_as_its_far_n
     _refused(frag, "'rip1'", "omit")
 
 
+def test_a_registry_event_far_node_leaves_acdcs_with_the_only_node_naming_it():
+    frag = chain(["N", "F"])
+    frag["events"].append(ixn("ixn2", "I", [{"registry": "rip1"}]))
+    frag["registries"] = [{"name": "rip1", "t": "rip", "issuer": "I"}]
+    frag["acdcs"][1]["e"] = {"d": "", "x": {"d": "", "n": {"registry": "rip1"}}}
+    b = ab.build_bundle(T, frag)
+    assert [body(e)[0]["t"] for e in b.request["acdcs"]] == ["rip", "acm"]
+    frag["omit"] = ["F"]
+    b = ab.build_bundle(T, frag)
+    assert b.request["acdcs"] == [] and b.dag["edges"][0]["n"] == b.saids["F"]
+
+
 def test_acdcs_and_the_dag_hold_the_same_nodes_on_a_diamond():
     frag = chain(["N", "F1", "G"])
     frag["acdcs"].insert(2, {"name": "F2", "issuer": "I", "schema": "S1",
