@@ -87,6 +87,16 @@ Where heti adds nothing over keripy. The checks on each event (signatures and th
 
 `acdc.version-2.x`, `acdc.edges`, `acdc.registry.bup`, `cesr.genus-2.00`, `cesr.serialization.json`, `crypto.ed25519`, `kel.basic`, `kel.delegation` and `keri.version-2.x`: what heti does itself inside `acdc.verify`. `acdc.presentation`, composed as "The presentation context" says. heti refuses `upd` registries by name, so `acdc.registry.upd` is not declared. For `keri.process` also `kel.multisig.numeric`, `kel.multisig.weighted`, `kel.partial-rotation`, `kel.witness` and `keri.escrow`, which heti's resolver does through keripy; "keri.process" above says what is not declared and why.
 
+## Results and the baseline
+
+`baseline-sedi-1.json` is heti `753a152df82e0ae600d6f5e46747d89580f2677b` under `kcs run --profile sedi-1`, which runs sedi-1's cases with those of its prerequisites, written with the baseline tool (`python -m kcs_adapter_keripy.baseline write`, from the keripy adapter) from a fresh run. Its verdict is `not-interoperable`, because the adapter does not declare `cesr.parse` or `exn.verify`, which sedi-1 requires of a claimant. Twenty of sedi-1's own cases fail, in three groups:
+
+- heti accepts what sedi-1 refuses: an edge with no SAID of its own (ACDC-0117), a credential presented by its issuer (ACDC-0120, heti tick 6kvm), the six beyond-bound cases (ACDC-0179 to ACDC-0189), and an I2I edge that cannot hold, which heti issues where a sedi-1 issuer refuses (ACDC-0194);
+- heti grades differently from sedi-1 without accepting anything sedi-1 refuses: registries anchored by the seal couple or a seal of another shape (ACDC-0102 to ACDC-0105; heti requires the event seal naming its registry), withheld or undisclosed registry updates (ACDC-0107, ACDC-0108), and operator shapes (ACDC-0116, ACDC-0141, ACDC-0143, ACDC-0144);
+- heti's disclose always reveals an aggregate's issuee block, so the adapter refuses a selective disclosure that leaves it out (ACDC-0164).
+
+The comparison is `python -m kcs_adapter_keripy.baseline compare adapters/heti/baseline-sedi-1.json <report>`. It is not run in CI, since heti is private and CI cannot resolve its pin.
+
 ## Tests
 
 ```sh
