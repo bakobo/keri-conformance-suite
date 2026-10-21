@@ -678,16 +678,16 @@ class _Builder:
             self.acdc_said(name)
         graph, edges = self.dag()
         far = self.far_nodes(graph)
-        for _, name in self.foreign:
-            if name in omit:
-                raise ScenarioError(f"The registry event {name!r} is an edge's far node, so it "
-                                    f"cannot be omitted; omit the edge's near node instead.")
         # An omitted node's edges are invisible to a validator, so a node that only it reaches
         # leaves the bundle with it: acdcs and the dag hold the same nodes, less the omitted.
         kept = self._reachable(graph, omit)
         far = [n for n in far if n in kept]
         # A registry event stands in acdcs only while a node the bundle carries names it.
         foreign = list(dict.fromkeys(e for near, e in self.foreign if near in kept))
+        for name in foreign:
+            if name in omit:
+                raise ScenarioError(f"The registry event {name!r} is an edge's far node, so it "
+                                    f"cannot be omitted; omit the edge's near node instead.")
         forms = {name: self.form(name) for name in self.acdcs}
         kels, as_of = [], {}
         for delivery in self.frag.get("kels", []):

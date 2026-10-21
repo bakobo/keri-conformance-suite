@@ -397,6 +397,8 @@ def test_a_registry_event_far_node_leaves_acdcs_with_the_only_node_naming_it():
     frag["omit"] = ["F"]
     b = ab.build_bundle(T, frag)
     assert b.request["acdcs"] == [] and b.dag["edges"][0]["n"] == b.saids["F"]
+    frag["omit"] = ["F", "rip1"]
+    assert ab.build_bundle(T, frag).request["registry"] == []
 
 
 def test_acdcs_and_the_dag_hold_the_same_nodes_on_a_diamond():
