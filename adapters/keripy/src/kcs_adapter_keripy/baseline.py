@@ -66,7 +66,9 @@ VERDICTS = frozenset({"conformant", "not-conformant", "aborted", "incomplete", "
 # The verdicts a run can improve to: conformance, or interoperability for a non-normative profile.
 HELD = frozenset({"conformant", "interoperable"})
 CASE_OUTCOMES = frozenset({"pass", "fail", "incomplete", "not-supported", "skipped"})
-ASSERTION_OUTCOMES = frozenset({"pass", "fail", "not-implemented", "not-supported", "skipped"})
+# As schema/result.schema.json lists them.
+ASSERTION_OUTCOMES = frozenset({"pass", "fail", "not-applicable", "not-implemented", "not-supported",
+                                "skipped"})
 FAILURE_KINDS = frozenset({"timeout", "oversize", "exited", "malformed", "error-harness",
                            "error-unsupported"})
 
