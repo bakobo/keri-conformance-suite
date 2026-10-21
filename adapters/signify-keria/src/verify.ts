@@ -16,7 +16,7 @@ const ATTACHMENTS = /^[A-Za-z0-9_-]*$/;
 export const REASONS = {
     valid: "KERIA's verifier saved the credential",
     invalid: "KERIA's verifier did not save the credential; KERIA's API does not say whether it refused it or holds it in escrow",
-    stalled: "KERIA's parser did not reach the end of the bundle, and its verifier did not save the credential",
+    stalled: "KERIA's parser did not reach the end of the bundle, so the presented stream was not taken whole",
     unreadable: 'the presented stream is not one ACDC 1.x body, whose d the adapter can read, followed only by text-domain attachments',
     expected: "the credential's schema is not the one the validator expects",
 } as const;
@@ -128,7 +128,9 @@ export async function verify(request: Request, backend: Backend): Promise<unknow
     settled = settled && (await agent.settle());
     const credential = await agent.credential(said);
     const head = credential === undefined ? null : registry(said, credential.status);
-    let why: keyof typeof REASONS = credential !== undefined ? 'valid' : settled ? 'invalid' : 'stalled';
+    // A credential saved while KERIA's parser stalled was saved from a presented stream KERIA did
+    // not take whole, which is not what was presented.
+    let why: keyof typeof REASONS = !settled ? 'stalled' : credential !== undefined ? 'valid' : 'invalid';
     if (why === 'valid' && expected !== undefined && (credential?.sad as Request | undefined)?.s !== expected) {
         why = 'expected';
     }

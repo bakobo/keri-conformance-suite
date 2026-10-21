@@ -109,6 +109,8 @@ describe('bootAgent', () => {
         const refused = deps({ wait: async () => Promise.reject(new Error("Operation 'oobi.1' failed [Code 500]: resolving OOBI 1 failed")) });
         expect(await (await bootAgent(keria, refused.d)).resolveSchema('u')).toBe(false);
         const late = deps({ wait: async () => Promise.reject(new Error('The operation was aborted due to timeout')) });
+        const other = deps({ wait: async () => Promise.reject(new Error("Operation 'oobi.1' failed [Code 500]: database closed")) });
+        await expect((await bootAgent(keria, other.d)).resolveSchema('u')).rejects.toMatchObject({ message: expect.stringMatching(/database closed/) });
         await expect((await bootAgent(keria, late.d)).resolveSchema('u')).rejects.toMatchObject({ message: expect.stringMatching(/resolved a schema: The operation was aborted/) });
         const thrown = deps({ resolve: async () => Promise.reject(new Error('HTTP POST /oobis - 500')) });
         await expect((await bootAgent(keria, thrown.d)).resolveSchema('u')).rejects.toMatchObject({ message: expect.stringMatching(/^e\.env\.dependency\.keria\.t: /) });

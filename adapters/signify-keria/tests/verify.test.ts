@@ -120,6 +120,12 @@ describe('verify', () => {
         expect(await verify(request(), b)).toEqual({ verdict: 'invalid', reason: REASONS.invalid, registry: null, edges: [] });
     });
 
+    it('is invalid when KERIA stalled, even if it saved the credential from the front of the stream', async () => {
+        const { b } = backend({ credential: { status }, settles: [true, true, true, false] });
+        const result = (await verify(request(), b)) as { verdict: string; reason: string };
+        expect(result).toMatchObject({ verdict: 'invalid', reason: REASONS.stalled });
+    });
+
     it('stops waiting once KERIA stalls, and says so', async () => {
         const { b, log } = backend({ settles: [true, false] });
         const result = (await verify(request(), b)) as { reason: string };

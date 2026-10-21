@@ -76,7 +76,9 @@ const failed = (what: string, err: unknown): OpError =>
     new OpError('harness', `${E_KERIA}: KERIA failed while the adapter ${what}: ${describe(err)}`);
 
 /** signify-ts reports an operation KERIA finished with an error this way (Operations.wait). */
-const refusedOperation = (err: unknown): boolean => /^Operation '[^']*' failed \[Code \d+\]/.test(describe(err));
+// KERIA writes exactly this when its OOBI resolver marks the OOBI failed, which for a data OOBI
+// is a schema whose $id is not its SAID; any other failure reads differently.
+const refusedOperation = (err: unknown): boolean => /^Operation '[^']*' failed \[Code 500\]: resolving OOBI \S+ failed$/.test(describe(err));
 
 /** signify-ts reports a refused request as an Error whose message carries the HTTP status. */
 const notFound = (err: unknown): boolean => / - 404 /.test(describe(err));
