@@ -272,6 +272,10 @@ class _Builder:
             raise ScenarioError(f"Registry event {name!r} depends on itself through its prior "
                                 f"events or its state, which no SAID can satisfy.")
         self._building_events.add(name)
+        if spec.get("t") not in ("rip", "bup"):
+            raise ScenarioError(f"Registry event {name!r} has t {spec.get('t')!r}; only rip and "
+                                f"bup are built (upd is deferred), and type names another "
+                                f"message type for either.")
         dt = spec.get("dt", DEFAULT_DT)
         ilk = spec.get("type", spec["t"])
         if not isinstance(ilk, str) or not ILK.fullmatch(ilk):
@@ -290,7 +294,7 @@ class _Builder:
                 salt = nonce(self.t, salt)
             body = rip(self.t, self.eb.prefix(spec["issuer"]), salt,
                        dt, self.readings, ilk)
-        elif spec["t"] == "bup":
+        else:
             rd = self.registry_inception(spec["registry"])
             prior = self.registry_event(self._prior(name, spec))
             n = spec.get("n", int(prior["n"], 16) + 1)
@@ -299,9 +303,6 @@ class _Builder:
             b = sa.blid(self.t, u, td, ts, self.readings)
             body = bup(self.t, rd, n, prior["d"], b, dt, self.readings, ilk)
             block = self._disclosed(name, spec.get("disclose"), u, td, ts, b)
-        else:
-            raise ScenarioError(f"Registry event {name!r} has type {spec['t']!r}; only rip and "
-                                f"bup are built (upd is deferred).")
         body = self._alter(body, spec.get("alter", []), f"registry event {name!r}")
         self.events[name] = (body, block)
         self.saids[name] = body["d"]
