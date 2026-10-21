@@ -48,12 +48,15 @@ export interface Client {
 
 export interface AgentDeps {
     client: (keria: Keria) => Client;
+    /** How long any one call to KERIA may take, in milliseconds. */
+    limit: number;
     fetch: typeof fetch;
     sleep: (ms: number) => Promise<void>;
     now: () => number;
 }
 
 export const DEFAULT_AGENT: AgentDeps = {
+    limit: WAIT,
     client: (keria) => new SignifyClient(keria.admin, randomPasscode(), Tier.low, keria.boot) as unknown as Client,
     fetch: (...args) => fetch(...args),
     sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
@@ -72,6 +75,15 @@ export function sentinel(): { pre: string; message: Uint8Array } {
     return { pre: serder.pre, message: messagize(serder, [siger]) };
 }
 
+/** The promise's outcome, or a failure once ms pass: a peer that never answers cannot hold a request. */
+export function within<T>(promise: Promise<T>, ms: number): Promise<T> {
+    let timer: NodeJS.Timeout | undefined;
+    const late = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`KERIA did not answer within ${ms} ms`)), ms);
+    });
+    return Promise.race([promise, late]).finally(() => clearTimeout(timer));
+}
+
 const failed = (what: string, err: unknown): OpError =>
     new OpError('harness', `${E_KERIA}: KERIA failed while the adapter ${what}: ${describe(err)}`);
 
@@ -86,8 +98,8 @@ const notFound = (err: unknown): boolean => / - 404 /.test(describe(err));
 export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): Promise<Agent> {
     const client = deps.client(keria);
     try {
-        await client.boot();
-        await client.connect();
+        await within(client.boot(), deps.limit);
+        await within(client.connect(), deps.limit);
     } catch (err) {
         throw failed('booted an agent', err);
     }
@@ -99,11 +111,11 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
     async function deliver(bytes: Uint8Array): Promise<void> {
         let response: Response;
         try {
-            response = await deps.fetch(`${keria.http}/`, {
+            response = await within(deps.fetch(`${keria.http}/`, {
                 method: 'PUT',
                 headers: { 'CESR-DESTINATION': pre as string, 'Content-Type': 'application/cesr' },
                 body: Buffer.from(bytes),
-            });
+            }), deps.limit);
         } catch (err) {
             throw failed('delivered a stream', err);
         }
@@ -115,8 +127,8 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
     return {
         async resolveSchema(url) {
             try {
-                const op = await client.oobis().resolve(url);
-                await client.operations().wait(op, { signal: AbortSignal.timeout(WAIT) });
+                const op = await within(client.oobis().resolve(url), deps.limit);
+                await within(client.operations().wait(op, { signal: AbortSignal.timeout(deps.limit) }), deps.limit);
                 return true;
             } catch (err) {
                 // KERIA marks the operation failed when it will not take the schema (its $id is not
@@ -136,7 +148,7 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
             for (;;) {
                 let states: unknown;
                 try {
-                    states = await client.keyStates().get(marker);
+                    states = await within(client.keyStates().get(marker), deps.limit);
                 } catch (err) {
                     throw failed('read a key state', err);
                 }
@@ -151,7 +163,7 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
         },
         async credential(said) {
             try {
-                return (await client.credentials().get(said)) as Record<string, unknown>;
+                return (await within(client.credentials().get(said), deps.limit)) as Record<string, unknown>;
             } catch (err) {
                 if (notFound(err)) {
                     return undefined;

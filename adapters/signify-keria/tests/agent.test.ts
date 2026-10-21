@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { ready } from 'signify-ts';
 
-import { type AgentDeps, type Client, DEFAULT_AGENT, WAIT, bootAgent, sentinel } from '../src/agent.ts';
+import { type AgentDeps, type Client, DEFAULT_AGENT, WAIT, bootAgent, sentinel, within } from '../src/agent.ts';
 import type { Keria } from '../src/keria.ts';
 
 beforeAll(async () => {
@@ -45,6 +45,7 @@ function deps(fake: Fake, put: (init: RequestInit) => Promise<Response> = async 
     const seen: RequestInit[] = [];
     let clock = 0;
     const d: AgentDeps = {
+        limit: 50,
         client: () => client(fake),
         fetch: async (_url, init) => {
             seen.push(init as RequestInit);
@@ -69,7 +70,26 @@ describe('sentinel', () => {
     });
 });
 
+const never = <T>(): Promise<T> => new Promise<T>(() => {});
+
+describe('within', () => {
+    it('passes an answer through and fails a call that never answers', async () => {
+        expect(await within(Promise.resolve(3), 50)).toBe(3);
+        await expect(within(Promise.reject(new Error('no')), 50)).rejects.toThrow('no');
+        await expect(within(never(), 20)).rejects.toThrow('KERIA did not answer within 20 ms');
+    });
+});
+
 describe('bootAgent', () => {
+    it('fails rather than waits when KERIA never answers', async () => {
+        await expect(bootAgent(keria, deps({ boot: never }).d)).rejects.toMatchObject({ message: expect.stringMatching(/booted an agent: KERIA did not answer/) });
+        const silent = await bootAgent(keria, deps({}, never).d);
+        await expect(silent.deliver(new Uint8Array())).rejects.toMatchObject({ message: expect.stringMatching(/did not answer/) });
+        await expect((await bootAgent(keria, deps({ states: [never] }).d)).settle()).rejects.toMatchObject({ message: expect.stringMatching(/read a key state: KERIA did not answer/) });
+        await expect((await bootAgent(keria, deps({ credential: never }).d)).credential('E')).rejects.toMatchObject({ message: expect.stringMatching(/read a credential: KERIA did not answer/) });
+        await expect((await bootAgent(keria, deps({ wait: never }).d)).resolveSchema('u')).rejects.toMatchObject({ message: expect.stringMatching(/resolved a schema: KERIA did not answer/) });
+    });
+
     it('makes a real signify-ts client by default, and sleeps, tells the time and fetches', async () => {
         expect(DEFAULT_AGENT.client(keria).constructor.name).toBe('SignifyClient');
         await DEFAULT_AGENT.sleep(1);

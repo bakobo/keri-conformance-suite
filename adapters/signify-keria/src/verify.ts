@@ -19,6 +19,7 @@ export const REASONS = {
     stalled: "KERIA's parser did not reach the end of the bundle, so the presented stream was not taken whole",
     unreadable: 'the presented stream is not one ACDC 1.x body, whose d the adapter can read, followed only by text-domain attachments',
     expected: "the credential's schema is not the one the validator expects",
+    other: 'the credential KERIA saved under the presented d is not the presented ACDC',
 } as const;
 
 type Request = Record<string, unknown>;
@@ -54,6 +55,11 @@ function streams(request: Request, field: string): Uint8Array[] {
 
 /** The d of the ACDC 1.x body the stream begins with, read through its version string, or undefined. */
 export function presentedSaid(stream: Uint8Array, whole = false): string | undefined {
+    return presentedBody(stream, whole)?.said;
+}
+
+/** The ACDC 1.x body the stream begins with, as text, and its d, or undefined. */
+function presentedBody(stream: Uint8Array, whole: boolean): { said: string; body: string } | undefined {
     const text = Buffer.from(stream).toString('latin1');
     const match = VERSION_1.exec(text);
     if (match === null) {
@@ -64,8 +70,9 @@ export function presentedSaid(stream: Uint8Array, whole = false): string | undef
         return undefined;
     }
     try {
-        const body = JSON.parse(Buffer.from(stream.subarray(0, size)).toString('utf8'));
-        return typeof body.d === 'string' ? body.d : undefined;
+        const text = Buffer.from(stream.subarray(0, size)).toString('utf8');
+        const body = JSON.parse(text);
+        return typeof body.d === 'string' ? { said: body.d, body: text } : undefined;
     } catch {
         return undefined;
     }
@@ -76,7 +83,8 @@ function registry(said: string, status: unknown): unknown {
         return null;
     }
     const { ri, s, d, et } = status as Record<string, unknown>;
-    if (typeof ri !== 'string' || typeof s !== 'string' || !/^[0-9a-f]+$/.test(s) || typeof d !== 'string' || typeof et !== 'string' || !Object.hasOwn(STATES, et)) {
+    // A sequence number past 2^53 cannot be reported exactly as a JSON number, so it is not reported.
+    if (typeof ri !== 'string' || typeof s !== 'string' || !/^[0-9a-f]+$/.test(s) || !Number.isSafeInteger(parseInt(s, 16)) || typeof d !== 'string' || typeof et !== 'string' || !Object.hasOwn(STATES, et)) {
         return null;
     }
     return { rd: ri, n: parseInt(s, 16), d, td: said, ts: STATES[et] };
@@ -103,8 +111,8 @@ export async function verify(request: Request, backend: Backend): Promise<unknow
 
     // The presented stream must be one ACDC and its attachments; KERIA would save a credential from
     // the front of a longer stream, which is not what was presented.
-    const said = presentedSaid(stream, true);
-    if (said === undefined) {
+    const presentedAcdc = presentedBody(stream, true);
+    if (presentedAcdc === undefined) {
         return { verdict: 'invalid', reason: REASONS.unreadable, registry: null, edges: [] };
     }
     const urls = await backend.serveSchemas(offered(schemas as string[]));
@@ -115,6 +123,7 @@ export async function verify(request: Request, backend: Backend): Promise<unknow
     // keripy's databases are keyed by SAID, so a far node with the presented credential's own SAID
     // would let a copy delivered there stand in for what was presented. It is not a far node of the
     // presented credential, and it is not delivered (as in the keripy adapter).
+    const said = presentedAcdc.said;
     const far = acdcs.filter((each) => presentedSaid(each) !== said);
     let settled = true;
     for (const each of [...kels, ...registries, ...far, stream]) {
@@ -127,12 +136,18 @@ export async function verify(request: Request, backend: Backend): Promise<unknow
     // at least once after everything delivered when the second marker is seen.
     settled = settled && (await agent.settle());
     const credential = await agent.credential(said);
-    const head = credential === undefined ? null : registry(said, credential.status);
     // A credential saved while KERIA's parser stalled was saved from a presented stream KERIA did
     // not take whole, which is not what was presented.
     let why: keyof typeof REASONS = !settled ? 'stalled' : credential !== undefined ? 'valid' : 'invalid';
+    // The bundle's other streams can carry an ACDC claiming the same d, and KERIA keys what it saves
+    // by d, so a saved credential is the presented one only if it serializes to the presented body.
+    if (why === 'valid' && JSON.stringify(credential?.sad) !== presentedAcdc.body) {
+        why = 'other';
+    }
     if (why === 'valid' && expected !== undefined && (credential?.sad as Request | undefined)?.s !== expected) {
         why = 'expected';
     }
+    // The registry reported is the presented credential's, so none is reported for another one.
+    const head = credential === undefined || why === 'other' ? null : registry(said, credential.status);
     return { verdict: why === 'valid' ? 'valid' : 'invalid', reason: REASONS[why], registry: head, edges: [] };
 }

@@ -55,6 +55,12 @@ const request = (overrides: Record<string, unknown> = {}) => ({
 });
 
 const status = { ri: 'ERegistry', s: '1', d: 'EEvent', et: 'rev' };
+/** The presented ACDC's body as KERIA returns it in a saved credential's sad. */
+const presentedSad = () => {
+    const text = Buffer.from(request().presented.stream, 'hex').toString('utf8');
+    return JSON.parse(text.slice(0, text.lastIndexOf('}') + 1));
+};
+const saved = (extra: Record<string, unknown> = {}) => ({ sad: presentedSad(), status, ...extra });
 
 describe('presentedSaid', () => {
     it('reads d through the 1.x version string', () => {
@@ -73,7 +79,7 @@ describe('presentedSaid', () => {
 
 describe('verify', () => {
     it('is valid when KERIA saved the credential, and reports its registry', async () => {
-        const { b, log } = backend({ credential: { sad: { s: 'ESchema' }, status } });
+        const { b, log } = backend({ credential: saved() });
         const result = await verify(request({ expect_schema: 'ESchema' }), b);
         expect(result).toEqual({
             verdict: 'valid',
@@ -87,7 +93,7 @@ describe('verify', () => {
     });
 
     it.each([['iss', 'issued'], ['bis', 'issued'], ['brv', 'revoked']])('reports %s as %s', async (et, ts) => {
-        const { b } = backend({ credential: { status: { ...status, s: 'a', et } } });
+        const { b } = backend({ credential: saved({ status: { ...status, s: 'a', et } }) });
         const result = (await verify(request(), b)) as { registry: unknown };
         expect(result.registry).toEqual({ rd: 'ERegistry', n: 10, d: 'EEvent', td: 'EPresented', ts });
     });
@@ -110,8 +116,9 @@ describe('verify', () => {
         ['a missing event SAID', { ri: 'E', s: '0', et: 'iss' }],
         ['an event type that is neither an issuance nor a revocation', { ...status, et: 'vcp' }],
         ['an event type named like an object property', { ...status, et: 'toString' }],
+        ['a sequence number past 2^53', { ...status, s: '20000000000000' }],
     ])('reports no registry for %s', async (_name, value) => {
-        const { b } = backend({ credential: { status: value } });
+        const { b } = backend({ credential: saved({ status: value }) });
         expect(((await verify(request(), b)) as { registry: unknown }).registry).toBeNull();
     });
 
@@ -139,16 +146,18 @@ describe('verify', () => {
     });
 
     it('is invalid when the credential has a schema other than the one expected', async () => {
-        const { b } = backend({ credential: { sad: { s: 'EOther' }, status } });
-        const result = (await verify(request({ expect_schema: 'ESchema' }), b)) as { verdict: string; reason: string; registry: unknown };
+        const { b } = backend({ credential: saved() });
+        const result = (await verify(request({ expect_schema: 'EOther' }), b)) as { verdict: string; reason: string; registry: unknown };
         expect(result.verdict).toBe('invalid');
         expect(result.reason).toBe(REASONS.expected);
         expect(result.registry).not.toBeNull();
     });
 
-    it('is invalid when there is no sad to compare with the expected schema', async () => {
-        const { b } = backend({ credential: { status } });
-        expect(((await verify(request({ expect_schema: 'ESchema' }), b)) as { verdict: string }).verdict).toBe('invalid');
+    it('is invalid when KERIA holds another credential under the presented d, and reports no registry', async () => {
+        for (const sad of [undefined, { ...presentedSad(), a: 'EAnother' }]) {
+            const { b } = backend({ credential: { sad, status } });
+            expect(await verify(request(), b)).toEqual({ verdict: 'invalid', reason: REASONS.other, registry: null, edges: [] });
+        }
     });
 
     it('is invalid, delivering nothing, when the presented stream cannot be read', async () => {
