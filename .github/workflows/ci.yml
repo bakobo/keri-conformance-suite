@@ -385,6 +385,16 @@ jobs:
           set -e
           PYTHONPATH=adapters/keripy/src uv run python -m kcs_adapter_keripy.baseline compare \
             adapters/signify-keria/baseline-sedi-1x-interop.json "$RUNNER_TEMP/signify-keria-sedi-1x.json"
+      - name: Show what the adapter wrote, if anything failed
+        if: failure()
+        run: |
+          python3 -c 'import json, sys; r = json.load(open(sys.argv[1])); print(r.get("session_stderr")); [print(json.dumps(c)[:4000]) for c in r["cases"] if c.get("outcome") != "pass"]' \
+            "$RUNNER_TEMP/signify-keria-sedi-1x.json" || true
+          for c in $(docker ps -aq --filter label=kcs.adapter=signify-keria); do docker inspect --format '{{.State.Status}} {{.State.ExitCode}}' "$c"; docker logs --tail 60 "$c" 2>&1; done
       - name: No KERIA container is left behind
         if: always()
-        run: test -z "$(docker ps -aq --filter label=kcs.adapter=signify-keria)"
+        run: |
+          left=$(docker ps -aq --filter label=kcs.adapter=signify-keria)
+          [ -z "$left" ] && exit 0
+          docker rm -f $left
+          exit 1
