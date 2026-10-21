@@ -343,5 +343,6 @@ The adapters in this repository are working examples, each a small program in it
 - [`adapters/keriox`](../adapters/keriox), in Rust, for keriox.
 - [`adapters/affinidi`](../adapters/affinidi), in Rust, for Affinidi's keri-core and cesr crates.
 - [`adapters/signify-ts`](../adapters/signify-ts), in TypeScript, for signify-ts.
+- [`adapters/signify-keria`](../adapters/signify-keria), in TypeScript, for released signify-ts and the KERIA agent it drives, which the adapter starts in Docker.
 
 Report what the implementation did, not what the case expects. An adapter must never read a case's expected value; the runner never sends it one.
