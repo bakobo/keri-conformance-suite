@@ -23,6 +23,7 @@ export function acdcHex(d: string): string {
 
 export interface FakeOptions {
     credential?: Record<string, unknown>;
+    exported?: string;
     startFails?: boolean;
     served?: Map<string, string>[];
     starts?: { count: number };
@@ -34,6 +35,7 @@ export function fakeDeps(options: FakeOptions = {}, onStart?: (keria: Keria) => 
         deliver: async () => {},
         settle: async () => true,
         credential: async () => options.credential,
+        exported: async () => options.exported,
     };
     return session(onStart, {
         async start() {
