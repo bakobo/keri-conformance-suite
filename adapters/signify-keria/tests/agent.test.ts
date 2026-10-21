@@ -23,7 +23,7 @@ interface Fake {
     agentPre?: unknown;
     boot?: () => Promise<Response>;
     resolve?: () => Promise<{ name: string }>;
-    wait?: () => Promise<{ done?: boolean; error?: unknown }>;
+    wait?: () => Promise<unknown>;
     states?: (() => Promise<unknown>)[];
     credential?: () => Promise<unknown>;
 }
@@ -103,15 +103,15 @@ describe('bootAgent', () => {
         await expect(gone.deliver(new Uint8Array())).rejects.toMatchObject({ message: expect.stringMatching(/reset/) });
     });
 
-    it('resolves a schema only when KERIA finished without an error', async () => {
+    it('resolves a schema KERIA took, refuses one KERIA failed, and fails when KERIA does not answer', async () => {
         const ok = await bootAgent(keria, deps({}).d);
         expect(await ok.resolveSchema('u')).toBe(true);
-        const erred = await bootAgent(keria, deps({ wait: async () => ({ done: true, error: 'no' }) }).d);
-        expect(await erred.resolveSchema('u')).toBe(false);
-        const unfinished = await bootAgent(keria, deps({ wait: async () => ({ done: false }) }).d);
-        expect(await unfinished.resolveSchema('u')).toBe(false);
-        const thrown = await bootAgent(keria, deps({ resolve: async () => Promise.reject(new Error('x')) }).d);
-        expect(await thrown.resolveSchema('u')).toBe(false);
+        const refused = deps({ wait: async () => Promise.reject(new Error("Operation 'oobi.1' failed [Code 500]: resolving OOBI 1 failed")) });
+        expect(await (await bootAgent(keria, refused.d)).resolveSchema('u')).toBe(false);
+        const late = deps({ wait: async () => Promise.reject(new Error('The operation was aborted due to timeout')) });
+        await expect((await bootAgent(keria, late.d)).resolveSchema('u')).rejects.toMatchObject({ message: expect.stringMatching(/resolved a schema: The operation was aborted/) });
+        const thrown = deps({ resolve: async () => Promise.reject(new Error('HTTP POST /oobis - 500')) });
+        await expect((await bootAgent(keria, thrown.d)).resolveSchema('u')).rejects.toMatchObject({ message: expect.stringMatching(/^e\.env\.dependency\.keria\.t: /) });
     });
 
     it('settles once KERIA holds the marker\'s key state', async () => {

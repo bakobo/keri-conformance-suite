@@ -86,10 +86,19 @@ describe('verify', () => {
         expect(log.delivered).toEqual(['aa', 'bb', request().acdcs[0].stream, request().presented.stream]);
     });
 
-    it('reports an issued registry state', async () => {
-        const { b } = backend({ credential: { status: { ...status, s: 'a', et: 'iss' } } });
+    it.each([['iss', 'issued'], ['bis', 'issued'], ['brv', 'revoked']])('reports %s as %s', async (et, ts) => {
+        const { b } = backend({ credential: { status: { ...status, s: 'a', et } } });
         const result = (await verify(request(), b)) as { registry: unknown };
-        expect(result.registry).toEqual({ rd: 'ERegistry', n: 10, d: 'EEvent', td: 'EPresented', ts: 'issued' });
+        expect(result.registry).toEqual({ rd: 'ERegistry', n: 10, d: 'EEvent', td: 'EPresented', ts });
+    });
+
+    it.each([
+        ['a second ACDC', acdc1('EPresented', {}, '') + acdc1('EOther')],
+        ['bytes that are not text-domain attachments', acdc1('EPresented', {}, '-IAB\n')],
+    ])('is invalid, delivering nothing, when the presented stream carries %s after its body', async (_name, stream) => {
+        const { b, log } = backend({ credential: { status } });
+        expect(((await verify(request({ presented: { stream } }), b)) as { reason: string }).reason).toBe(REASONS.unreadable);
+        expect(log.delivered).toEqual([]);
     });
 
     it.each([
@@ -99,6 +108,8 @@ describe('verify', () => {
         ['a missing field', { ri: 'E', s: '0', d: 'E' }],
         ['a missing registry', { s: '0', d: 'E', et: 'iss' }],
         ['a missing event SAID', { ri: 'E', s: '0', et: 'iss' }],
+        ['an event type that is neither an issuance nor a revocation', { ...status, et: 'vcp' }],
+        ['an event type named like an object property', { ...status, et: 'toString' }],
     ])('reports no registry for %s', async (_name, value) => {
         const { b } = backend({ credential: { status: value } });
         expect(((await verify(request(), b)) as { registry: unknown }).registry).toBeNull();

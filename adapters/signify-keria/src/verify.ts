@@ -5,15 +5,19 @@ import type { Agent } from './agent.ts';
 import { E_MALFORMED, OpError } from './errors.ts';
 import { offered } from './schemas.ts';
 
-const REVOKED = new Set(['rev', 'brv']);
+// keripy 1.x's issuance and revocation events, with and without backers.
+const STATES: Record<string, string> = { iss: 'issued', bis: 'issued', rev: 'revoked', brv: 'revoked' };
 // A 1.x version string: protocol, major and minor, kind, then the serialized size in hex.
 const VERSION_1 = /^\{"v":"ACDC10JSON([0-9a-f]{6})_"/;
+// What may follow the body: CESR text-domain attachments, which are base64url characters and
+// count codes. Another JSON body, or anything else, is not one ACDC with its attachments.
+const ATTACHMENTS = /^[A-Za-z0-9_-]*$/;
 
 export const REASONS = {
     valid: "KERIA's verifier saved the credential",
     invalid: "KERIA's verifier did not save the credential; KERIA's API does not say whether it refused it or holds it in escrow",
     stalled: "KERIA's parser did not reach the end of the bundle, and its verifier did not save the credential",
-    unreadable: 'the presented stream does not begin with an ACDC 1.x body whose d the adapter can read',
+    unreadable: 'the presented stream is not one ACDC 1.x body, whose d the adapter can read, followed only by text-domain attachments',
     expected: "the credential's schema is not the one the validator expects",
 } as const;
 
@@ -49,14 +53,14 @@ function streams(request: Request, field: string): Uint8Array[] {
 }
 
 /** The d of the ACDC 1.x body the stream begins with, read through its version string, or undefined. */
-export function presentedSaid(stream: Uint8Array): string | undefined {
+export function presentedSaid(stream: Uint8Array, whole = false): string | undefined {
     const text = Buffer.from(stream).toString('latin1');
     const match = VERSION_1.exec(text);
     if (match === null) {
         return undefined;
     }
     const size = parseInt(match[1], 16);
-    if (size > stream.length) {
+    if (size > stream.length || (whole && !ATTACHMENTS.test(text.slice(size)))) {
         return undefined;
     }
     try {
@@ -72,10 +76,10 @@ function registry(said: string, status: unknown): unknown {
         return null;
     }
     const { ri, s, d, et } = status as Record<string, unknown>;
-    if (typeof ri !== 'string' || typeof s !== 'string' || !/^[0-9a-f]+$/.test(s) || typeof d !== 'string' || typeof et !== 'string') {
+    if (typeof ri !== 'string' || typeof s !== 'string' || !/^[0-9a-f]+$/.test(s) || typeof d !== 'string' || typeof et !== 'string' || !Object.hasOwn(STATES, et)) {
         return null;
     }
-    return { rd: ri, n: parseInt(s, 16), d, td: said, ts: REVOKED.has(et) ? 'revoked' : 'issued' };
+    return { rd: ri, n: parseInt(s, 16), d, td: said, ts: STATES[et] };
 }
 
 export async function verify(request: Request, backend: Backend): Promise<unknown> {
@@ -97,7 +101,9 @@ export async function verify(request: Request, backend: Backend): Promise<unknow
         throw malformed('"expect_schema", when present, must be a non-empty string.');
     }
 
-    const said = presentedSaid(stream);
+    // The presented stream must be one ACDC and its attachments; KERIA would save a credential from
+    // the front of a longer stream, which is not what was presented.
+    const said = presentedSaid(stream, true);
     if (said === undefined) {
         return { verdict: 'invalid', reason: REASONS.unreadable, registry: null, edges: [] };
     }

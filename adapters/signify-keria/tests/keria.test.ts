@@ -22,7 +22,8 @@ function fake(options: { port?: string; fail?: string; answers?: boolean[] } = {
             if (args.includes('-d')) return '';
             return '0.4.1 1.2.14\n';
         },
-        async fetch() {
+        async fetch(_url, init) {
+            expect(init?.signal).toBeInstanceOf(AbortSignal);
             const next = answers.length > 0 ? answers.shift() : true;
             if (next === undefined) throw new Error('refused');
             return new Response(null, { status: next ? 200 : 503 });

@@ -17,7 +17,7 @@ import { E_KERIA, OpError, describe } from './errors.ts';
 import type { Keria } from './keria.ts';
 
 export interface Agent {
-    /** Have KERIA resolve a data OOBI; resolves whether KERIA finished resolving it. */
+    /** Have KERIA resolve a data OOBI; resolves whether KERIA took the schema, and fails if KERIA did not answer. */
     resolveSchema(url: string): Promise<boolean>;
     /** Put bytes, unchanged, onto the end of the agent's own parser's input. */
     deliver(bytes: Uint8Array): Promise<void>;
@@ -41,7 +41,7 @@ export interface Client {
     boot(): Promise<Response>;
     connect(): Promise<void>;
     oobis(): { resolve(url: string): Promise<{ name: string }> };
-    operations(): { wait(op: { name: string }, options: { signal: AbortSignal }): Promise<{ done?: boolean; error?: unknown }> };
+    operations(): { wait(op: { name: string }, options: { signal: AbortSignal }): Promise<unknown> };
     keyStates(): { get(pre: string): Promise<unknown> };
     credentials(): { get(said: string): Promise<unknown> };
 }
@@ -74,6 +74,9 @@ export function sentinel(): { pre: string; message: Uint8Array } {
 
 const failed = (what: string, err: unknown): OpError =>
     new OpError('harness', `${E_KERIA}: KERIA failed while the adapter ${what}: ${describe(err)}`);
+
+/** signify-ts reports an operation KERIA finished with an error this way (Operations.wait). */
+const refusedOperation = (err: unknown): boolean => /^Operation '[^']*' failed \[Code \d+\]/.test(describe(err));
 
 /** signify-ts reports a refused request as an Error whose message carries the HTTP status. */
 const notFound = (err: unknown): boolean => / - 404 /.test(describe(err));
@@ -111,10 +114,16 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
         async resolveSchema(url) {
             try {
                 const op = await client.oobis().resolve(url);
-                const done = await client.operations().wait(op, { signal: AbortSignal.timeout(WAIT) });
-                return done.done === true && done.error === undefined;
-            } catch {
-                return false; // a schema KERIA would not take is one the bundle does not have
+                await client.operations().wait(op, { signal: AbortSignal.timeout(WAIT) });
+                return true;
+            } catch (err) {
+                // KERIA marks the operation failed when it will not take the schema (its $id is not
+                // its SAID), which is a schema the bundle does not have. Anything else, a refused
+                // request or no answer in time, is KERIA failing, not a judgement.
+                if (refusedOperation(err)) {
+                    return false;
+                }
+                throw failed('resolved a schema', err);
             }
         },
         deliver,

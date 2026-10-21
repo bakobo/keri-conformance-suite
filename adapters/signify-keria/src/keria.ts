@@ -28,6 +28,8 @@ const LABEL = 'kcs.adapter=signify-keria';
 /** How long KERIA and the schema server get to start answering, in milliseconds. */
 export const START_DEADLINE = 45_000;
 const POLL = 200;
+/** How long one health request may take, in milliseconds. */
+export const POLL_TIMEOUT = 2_000;
 
 export const SCHEMA_SERVER = `
 import http.server, json
@@ -114,9 +116,10 @@ async function published(deps: StartDeps, container: string, port: number): Prom
     return `http://${line}`;
 }
 
-async function answers(deps: StartDeps, url: string, init?: RequestInit): Promise<boolean> {
+async function answers(deps: StartDeps, url: string, init: RequestInit = {}): Promise<boolean> {
     try {
-        return (await deps.fetch(url, init)).ok;
+        // Bounded, so a server that accepts the connection and never answers cannot outlast the deadline.
+        return (await deps.fetch(url, { ...init, signal: AbortSignal.timeout(POLL_TIMEOUT) })).ok;
     } catch {
         return false;
     }
