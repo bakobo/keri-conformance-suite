@@ -87,12 +87,22 @@ describe('holdsBody', () => {
     const body = Buffer.from(acdc1('EPresented'), 'hex').toString('utf8');
     it('finds the body as a whole message, byte for byte', () => {
         expect(holdsBody(`{"v":"KERI10JSON000010_"}-AAB${body}-IAB`, body)).toBe(true);
+        expect(holdsBody(`{"v":"KERI10JSON000010_"}${body}`, body)).toBe(true);
+        expect(holdsBody(body, body)).toBe(true);
+    });
+
+    it('counts the version string\'s size in bytes, so a non-ASCII body is found', () => {
+        const draft = (size: number) => JSON.stringify({ v: `ACDC10JSON${size.toString(16).padStart(6, '0')}_`, d: 'E', n: 'é' });
+        const accented = draft(Buffer.byteLength(draft(0)));
+        expect(holdsBody(`${accented}-IABEFyF`, accented)).toBe(true);
     });
     it.each([
         ['nothing', ''],
         ['the same content in another key order', Buffer.from(acdc1('EPresented', {}, ''), 'hex').toString('utf8').replace('"v"', '"v" ')],
         ['the body inside a longer message', `${body.slice(0, -1)},"x":1}`],
         ['a version string it cannot read', '{"v":"ACDC10JSONzzzzzz_"}'],
+        ['a copy nested inside another message', `{"v":"KERI10JSON000010_","a":[${body}]}`],
+        ['a copy after a space', ` ${body}`],
     ])('does not find it in %s', (_name, cesr) => {
         expect(holdsBody(cesr, body)).toBe(false);
     });

@@ -12,6 +12,9 @@ const VERSION_1 = /^\{"v":"ACDC10JSON([0-9a-f]{6})_"/;
 // What may follow the body: CESR text-domain attachments, which are base64url characters and
 // count codes. Another JSON body, or anything else, is not one ACDC with its attachments.
 const ATTACHMENTS = /^[A-Za-z0-9_-]*$/;
+// What may precede a top-level message in a text stream: a message's closing brace or an
+// attachment character.
+const BOUNDARY = /^[A-Za-z0-9_}-]$/;
 
 export const REASONS = {
     valid: "KERIA's verifier saved the credential",
@@ -79,14 +82,22 @@ function presentedBody(stream: Uint8Array, whole: boolean): { said: string; body
 }
 
 /**
- * Whether a CESR stream holds this ACDC 1.x body as one of its messages, byte for byte. Each
- * candidate is read at a 1.x version string and taken at the size that string gives, so a body is
- * never found inside another message's text.
+ * Whether a CESR text stream holds this ACDC 1.x body as one of its top-level messages, byte for
+ * byte. A top-level message begins the stream, or follows a message's closing brace or an
+ * attachment's base64url or count-code character; JSON puts none of those before a nested object,
+ * so a copy nested inside another message is never taken for one. The size a version string gives
+ * counts bytes, so the comparison is made on bytes.
  */
 export function holdsBody(cesr: string, body: string): boolean {
-    for (let at = cesr.indexOf('{"v":"ACDC10JSON'); at !== -1; at = cesr.indexOf('{"v":"ACDC10JSON', at + 1)) {
-        const match = VERSION_1.exec(cesr.slice(at, at + 24));
-        if (match !== null && cesr.slice(at, at + parseInt(match[1], 16)) === body) {
+    const stream = Buffer.from(cesr, 'utf8');
+    const wanted = Buffer.from(body, 'utf8');
+    const start = Buffer.from('{"v":"ACDC10JSON');
+    for (let at = stream.indexOf(start); at !== -1; at = stream.indexOf(start, at + 1)) {
+        if (at > 0 && !BOUNDARY.test(String.fromCharCode(stream[at - 1]))) {
+            continue;
+        }
+        const match = VERSION_1.exec(stream.subarray(at, at + 24).toString('latin1'));
+        if (match !== null && stream.subarray(at, at + parseInt(match[1], 16)).equals(wanted)) {
             return true;
         }
     }
