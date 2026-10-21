@@ -1,0 +1,33 @@
+{
+  "name": "kcs-adapter-signify-keria",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Adapter connecting released signify-ts and the KERIA agent it drives to the KERI conformance suite runner (adapter protocol v1).",
+  "license": "Apache-2.0",
+  "author": "Bakobo LLC",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "kcs-adapter-signify-keria": "bin/kcs-adapter-signify-keria"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "signify-ts": "git+https://github.com/WebOfTrust/signify-ts.git#5a174b5456c2d256493f9991ac4ae73857ff4fce"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.6",
+    "@vitest/coverage-v8": "5.0.1",
+    "ajv": "8.20.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.1"
+  },
+  "allowScripts": {
+    "github:WebOfTrust/signify-ts#5a174b5456c2d256493f9991ac4ae73857ff4fce": true
+  }
+}
