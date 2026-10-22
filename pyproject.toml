@@ -24,7 +24,7 @@ dev = [
 # The documentation site's generator, kept out of the runner's dependencies (it has none) and out
 # of dev. Zensical is pre-1.0, so it is pinned exactly; see zensical.toml.
 site = [
-    "zensical==0.0.69",
+    "zensical==0.0.71",
 ]
 
 [build-system]
