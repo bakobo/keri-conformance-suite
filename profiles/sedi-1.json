@@ -112,6 +112,7 @@
     "ACDC-0218",
     "ACDC-0219",
     "ACDC-0220",
+    "ACDC-0221",
     "ACDC-0222",
     "ACDC-0223",
     "ACDC-0224",
@@ -155,6 +156,7 @@
     "ACDC-0262",
     "ACDC-0263",
     "ACDC-0264",
+    "ACDC-0265",
     "ACDC-0266",
     "ACDC-0267",
     "ACDC-0268",
@@ -168,7 +170,9 @@
     "ACDC-0276",
     "ACDC-0277",
     "ACDC-0278",
-    "ACDC-0279"
+    "ACDC-0279",
+    "ACDC-0280",
+    "ACDC-0281"
   ],
   "choices": [
     {
@@ -326,6 +330,7 @@
           "ACDC-0140",
           "ACDC-0141",
           "ACDC-0237",
+          "ACDC-0265",
           "ACDC-0266"
         ],
         "positive": [
@@ -343,7 +348,9 @@
       "basis": "ACDC v1.1 (branch v1.1, spec-body.md line 1209) states this rule with E1E among the operators that suppress the default; the tag's line 1197 lists only I2I, NI2I and DI2I, and keripy's two verifiers disagree.",
       "cases": {
         "negative": [
-          "ACDC-0112"
+          "ACDC-0112",
+          "ACDC-0280",
+          "ACDC-0281"
         ],
         "positive": [
           "ACDC-0111",
@@ -361,6 +368,7 @@
       "cases": {
         "negative": [
           "ACDC-0127",
+          "ACDC-0221",
           "ACDC-0226",
           "ACDC-0231",
           "ACDC-0236",
@@ -369,6 +377,7 @@
           "ACDC-0247",
           "ACDC-0248",
           "ACDC-0251",
+          "ACDC-0265",
           "ACDC-0270",
           "ACDC-0274",
           "ACDC-0276"
@@ -519,6 +528,7 @@
           "ACDC-0218",
           "ACDC-0219",
           "ACDC-0220",
+          "ACDC-0221",
           "ACDC-0222",
           "ACDC-0223",
           "ACDC-0224",
@@ -553,7 +563,9 @@
           "ACDC-0253",
           "ACDC-0258",
           "ACDC-0266",
-          "ACDC-0278"
+          "ACDC-0278",
+          "ACDC-0280",
+          "ACDC-0281"
         ],
         "positive": [
           "ACDC-0122",
@@ -698,6 +710,7 @@
         "negative": [
           "ACDC-0219",
           "ACDC-0220",
+          "ACDC-0221",
           "ACDC-0224",
           "ACDC-0225",
           "ACDC-0226",
@@ -715,7 +728,8 @@
           "ACDC-0246",
           "ACDC-0249",
           "ACDC-0250",
-          "ACDC-0251"
+          "ACDC-0251",
+          "ACDC-0265"
         ],
         "positive": [
           "ACDC-0216"

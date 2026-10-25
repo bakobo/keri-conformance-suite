@@ -20,11 +20,11 @@ A sedi-1 verifier answers `valid`, `invalid` or `incomplete`:
 
 ### The verdict cases
 
-[`scenarios/sedi/verdicts.json`](https://github.com/bakobo/keri-conformance-suite/blob/utah/next/scenarios/sedi/verdicts.json) holds the cases that show the three verdicts apart (Utah's KERI-012; the test plan's item 8). Its first bundle, ACDC-0216, is a credential with two edges under `AND`, and is `valid`. Each cause of an unresolved verdict is then put on its first edge's side twice: once with the item absent or not evaluable (`incomplete`), and once with it present and failing a check (`invalid`). Each `incomplete` bundle is also combined with a broken SAID, a revocation and a failed `I2I`, and each of those is `invalid`. A missing id is a case not yet published:
+[`scenarios/sedi/verdicts.json`](https://github.com/bakobo/keri-conformance-suite/blob/utah/next/scenarios/sedi/verdicts.json) holds the cases that show the three verdicts apart (Utah's KERI-012; the test plan's item 8). Its first bundle, ACDC-0216, is a credential with two edges under `AND`, and is `valid`. Each cause of an unresolved verdict is then put on its first edge's side twice: once with the item absent or not evaluable (`incomplete`), and once with it present and failing a check (`invalid`). Each `incomplete` bundle is also combined with a broken SAID, a revocation and a failed `I2I`, and each of those is `invalid`:
 
 | Cause | `incomplete` | `invalid` | With a definite failure |
 |---|---|---|---|
-| The far issuer's KEL | ACDC-0217 | ACDC-0218 | ACDC-0219, ACDC-0220 |
+| The far issuer's KEL | ACDC-0217 | ACDC-0218 | ACDC-0219 to ACDC-0221 |
 | A registry event | ACDC-0222 | ACDC-0223 | ACDC-0224 to ACDC-0226 |
 | The far node | ACDC-0227 | ACDC-0228 | ACDC-0229 to ACDC-0231 |
 | The far node's schema | ACDC-0232 | ACDC-0233 | ACDC-0234 to ACDC-0236 |
@@ -34,7 +34,7 @@ A sedi-1 verifier answers `valid`, `invalid` or `incomplete`:
 
 A KEL event whose signature fails is not part of the KEL, so a forged KEL reads as an absent one and is `incomplete`. The KEL's `invalid` case therefore corrupts what a correctly signed KEL says: its seal for the far node's registry update names the issuer instead of the registry. The KEL's other states are a gap before the anchors (ACDC-0252) and a KEL cut before an anchor (ACDC-0253), both `incomplete`. ACDC-0217 is the absent KEL.
 
-The nested-edge cases, ACDC-0254 to ACDC-0279, each pair a defect with its positive twin: a SAID mismatch, a schema mismatch and a missing far node at depth 2; a far node that is a registry event rather than a credential; a diamond with one revoked branch under `AND` and under `OR`; an `OR` whose first alternative is unresolved; a cycle among claimed SAIDs; each of `I2I`, `NI2I`, `DI2I` and `E1E` in a nested edge-group; an aggregate far node whose issuee block is undisclosed; and an edge at depth 2 under the default operator. Edge-groups nested past the maximum depth are ACDC-0183, with ACDC-0182 at the maximum. A provenance chain longer than 8 edges cannot be a case, because the case format bounds every bundle's DAG.
+The nested-edge cases, ACDC-0254 to ACDC-0281, each pair a defect with its positive twin: a SAID mismatch, a schema mismatch and a missing far node at depth 2; a far node that is a registry event rather than a credential; a diamond with one revoked branch under `AND` and under `OR`; an `OR` whose first alternative is unresolved; a cycle among claimed SAIDs; each of `I2I`, `NI2I`, `DI2I` and `E1E` in a nested edge-group; an aggregate far node whose issuee block is undisclosed; an edge at depth 2 under the default operator; and the same edge to a far node whose attribute block is presented compact, which hides whether it has an issuee and so which operator the default appends. Edge-groups nested past the maximum depth are ACDC-0183, with ACDC-0182 at the maximum. A provenance chain longer than 8 edges cannot be a case, because the case format bounds every bundle's DAG.
 
 The always-X self-test, `tests/test_verdict_self_test.py`, runs a verifier that answers `valid` to everything, one that answers `invalid` and one that answers `incomplete` over every ACDC verifier case, read as if active. Each fails sedi-1, and acdc-v1.0 finds the last two conformant at MUST.
 
