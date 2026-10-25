@@ -3329,6 +3329,44 @@
    ]
   },
   {
+   "id": "ACDC-0221",
+   "key": "VC-302",
+   "title": "Precedence: F's issuer Q's KEL is absent from the bundle, and G is issued to H, so the edge g's I2I fails",
+   "description": "As VC-01, but F's issuer Q's KEL is absent from the bundle, and G is issued to H, so the edge g's I2I fails. A sedi-1 verifier should find it invalid: a definite failure outranks something not evaluable (failure-precedence).",
+   "base": "VC-P",
+   "remove": {
+    "kels": [
+     "Qicp",
+     "ixn-rip-F",
+     "ixn-bup-F-1"
+    ]
+   },
+   "patch": {
+    "acdcs": {
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "unresolved-grading",
+    "failure-precedence",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete turns a reject into a retry, so a forger can make a refused credential look merely unresolved by withholding one item; accepting it is worse.",
+   "pair": "VC-01",
+   "expect": [
+    "F incomplete/issuer-kel",
+    "N:e.g invalid/i2i-issuee"
+   ]
+  },
+  {
    "id": "ACDC-0222",
    "key": "VC-11a",
    "title": "Unresolved: F's registry update, which Q's KEL anchors, is absent from the bundle",
@@ -5089,6 +5127,60 @@
    "expect": []
   },
   {
+   "id": "ACDC-0265",
+   "key": "VC-61",
+   "title": "Nested OR: first alternative unresolved, second invalid",
+   "description": "As VC-60, but G is issued to H, so g's I2I fails. A sedi-1 verifier should find it invalid: neither alternative is valid, and a failure outranks something not evaluable.",
+   "base": "VC-OR",
+   "patch": {
+    "acdcs": {
+     "N": {
+      "e": {
+       "d": "",
+       "grp": {
+        "d": "",
+        "o": "OR",
+        "f": {
+         "d": "",
+         "n": {
+          "acdc": "F"
+         },
+         "o": "XYZ"
+        },
+        "g": {
+         "d": "",
+         "n": {
+          "acdc": "G"
+         },
+         "o": "I2I"
+        }
+       }
+      }
+     },
+     "G": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "G"
+      }
+     }
+    }
+   },
+   "choices": [
+    "failure-precedence",
+    "unknown-operator",
+    "operator-list"
+   ],
+   "triage": "Answering incomplete lets a forger turn a reject into a retry; accepting it is worse.",
+   "pair": "VC-60",
+   "expect": [
+    "N:e.grp.f incomplete/operator-unknown",
+    "N:e.grp.g invalid/i2i-issuee"
+   ]
+  },
+  {
    "id": "ACDC-0266",
    "key": "VC-62",
    "title": "Nested OR: both alternatives unresolved",
@@ -5621,6 +5713,83 @@
    ],
    "triage": "None: an acceptance.",
    "expect": []
+  },
+  {
+   "id": "ACDC-0280",
+   "key": "VC-83",
+   "title": "Default operator at depth 2, far attribute block compact",
+   "description": "As VC-82, but T is presented with its attribute block compacted, so whether T has an issuee, and so which operator the default appends, cannot be decided. A sedi-1 verifier should find it incomplete.",
+   "base": "VC-2",
+   "patch": {
+    "acdcs": {
+     "F": {
+      "e": {
+       "d": "",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "T"
+        }
+       }
+      }
+     },
+     "T": {
+      "form": {
+       "compact": [
+        "a"
+       ]
+      }
+     }
+    }
+   },
+   "choices": [
+    "default-operator",
+    "unresolved-grading"
+   ],
+   "triage": "Reading a compact attribute block as untargeted appends NI2I and skips the issuer relation.",
+   "pair": "VC-82",
+   "expect": [
+    "F:e.le incomplete/i2i-hidden"
+   ]
+  },
+  {
+   "id": "ACDC-0281",
+   "key": "VC-84",
+   "title": "Default operator at depth 2, far node issued to someone else",
+   "description": "As VC-82, but T is issued to H, not to F's issuer Q. F's edge to T names no operator, so it gets I2I by default, and I2I needs T's issuee to be Q. A sedi-1 verifier should find it invalid.",
+   "base": "VC-2",
+   "patch": {
+    "acdcs": {
+     "F": {
+      "e": {
+       "d": "",
+       "le": {
+        "d": "",
+        "n": {
+         "acdc": "T"
+        }
+       }
+      }
+     },
+     "T": {
+      "a": {
+       "d": "",
+       "i": {
+        "aid": "H"
+       },
+       "name": "T"
+      }
+     }
+    }
+   },
+   "choices": [
+    "default-operator"
+   ],
+   "triage": "Accepting it accepts a chain to a credential issued to someone else, because the edge named no operator.",
+   "pair": "VC-82",
+   "expect": [
+    "F:e.le invalid/i2i-issuee"
+   ]
   }
  ]
 }
