@@ -86,6 +86,7 @@ def _open_schema():
     lambda r: r["credentials"][0].update(attributes=[]),
     lambda r: r.update(credentials=r["credentials"] * 2),
     lambda r: r["credentials"][0].update(schema="E" + "X" * 43),
+    lambda r: r["credentials"][0]["attributes"].update(u="0AAA"),
 ])
 def test_a_request_the_adapter_cannot_read_is_a_harness_error(change):
     request = copy.deepcopy(case("ACDC-0283")["input"])

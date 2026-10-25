@@ -52,6 +52,10 @@ def _request(request) -> tuple[list[str], dict[str, bytes], list[dict]]:
     names = [c["name"] for c in credentials]
     if len(set(names)) != len(names):
         raise kel.Malformed(f"{kel.E_MALFORMED}: a credential name appears twice.")
+    # The issuer adds the attribute section's d, u and i; a request does not choose them.
+    if any(label in c["attributes"] for c in credentials for label in ("d", "u", "i")):
+        raise kel.Malformed(f"{kel.E_MALFORMED}: an attribute is labelled d, u or i, which the "
+                            "issuer adds.")
     for credential in credentials:
         if credential["registry"] != ONE_X:
             raise Unsupported(f"{E_UNSUPPORTED_ISSUE}: keripy 1.2.14 issues only into a 1.x "

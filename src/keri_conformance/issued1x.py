@@ -111,7 +111,9 @@ def signatures(attachments: bytes) -> list[tuple[int, bytes]]:
         body, i = text[i:i + count * ITEMS[code]], i + count * ITEMS[code]
         if len(body) != count * ITEMS[code]:
             raise Unread("an attachment group is cut short")
-        if code != "-A":
+        if code == "-E":
+            for at in range(0, len(body), ITEMS["-E"]):
+                _first_seen(body[at:at + ITEMS["-E"]])
             continue
         for at in range(0, len(body), 88):
             item = body[at:at + 88]
@@ -125,6 +127,13 @@ def signatures(attachments: bytes) -> list[tuple[int, bytes]]:
             out.append((issued.B64.index(item[1]),
                         base64.urlsafe_b64decode("AA" + item[2:])[2:]))
     return out
+
+
+def _first_seen(item: str) -> None:
+    """A first-seen replay couple: a 0A sequence number and a 1AAG datetime, each canonical."""
+    issued.raw_of(item[:24], "0A", 16)
+    if not item[24:28] == "1AAG" or any(c not in issued.B64 for c in item[28:]):
+        raise Unread("a first-seen replay couple's datetime is not a 1AAG primitive")
 
 
 V1 = issued.Form(frames, sized, signatures)
@@ -186,8 +195,10 @@ def check_registry(chain: bytes, issuer: str, trunk: list[dict], acdc_said: str
         problems.append("the registry inception's SAID does not verify")
     if vcp.get("ii") != issuer or vcp.get("s") != "0":
         problems.append("the registry inception is not the issuer's at sequence number 0")
-    if vcp.get("bt") != "0" or vcp.get("b") != [] or not isinstance(vcp.get("c"), list):
-        problems.append("the registry has backers, which the runner does not verify")
+    if vcp.get("bt") != "0" or vcp.get("b") != [] or not isinstance(vcp.get("c"), list) \
+            or "NB" not in vcp["c"]:
+        problems.append("the registry is not one with no backers (bt 0, no b, and the NB trait in "
+                        "c), the only kind the runner verifies")
     if not _is_nonce(vcp.get("n")):
         problems.append("the registry inception's nonce is not a 128-bit salt or a 256-bit seed")
     why = anchored(trunk, regk, "0", vcp["d"])
@@ -260,6 +271,8 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
         problems.append("an edge section asked of a 1.x issuance is beyond what the runner grades")
     elif body.get("e"):
         problems.append("the ACDC has edges, and none was asked for")
+    if "r" in body:
+        problems.append("the ACDC has a rules section, and none was asked for")
     return body.get("d"), body, problems
 
 

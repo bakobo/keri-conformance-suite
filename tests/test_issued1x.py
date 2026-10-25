@@ -53,7 +53,12 @@ def test_an_issuer_that_adds_a_dt_it_was_not_asked_for_fails():
                                     "256-bit seed")),
     ({"vcp_over": {"ii": "E" + "X" * 43}}, ("the registry inception is not the issuer's at "
                                             "sequence number 0")),
-    ({"vcp_over": {"bt": "1"}}, "the registry has backers, which the runner does not verify"),
+    ({"vcp_over": {"bt": "1"}}, ("the registry is not one with no backers (bt 0, no b, and the NB "
+                                 "trait in c), the only kind the runner verifies")),
+    ({"vcp_over": {"c": []}}, ("the registry is not one with no backers (bt 0, no b, and the NB "
+                               "trait in c), the only kind the runner verifies")),
+    ({"acdc_over": {"r": {"d": "E" + "X" * 43}}}, ("the ACDC has a rules section, and none "
+                                                   "was asked for")),
     ({"iss_over": {"dt": "yesterday"}}, "the issuance's stamp is not of the form it must be"),
     ({"iss_over": {"s": "1"}}, ("the issuance is not the credential's, at sequence number 0 of "
                                 "its registry")),
@@ -227,6 +232,9 @@ def test_1x_signatures_are_read_from_their_groups(text, count):
     ("-AAC" + SIG, "cut short"),
     ("-AAB" + "0B" + "B" * 86, "not an Ed25519 indexed signature"),
     ("-AAB" + "AA" + "#" * 86, "not Base64"),
+    ("-EAB" + "!" * 60, "not a 0A primitive"),
+    ("-EAB" + FIRST_SEEN[:24] + "1AAH" + FIRST_SEEN[28:], "datetime is not a 1AAG primitive"),
+    ("-EAB" + FIRST_SEEN[:28] + "!" + FIRST_SEEN[29:], "datetime is not a 1AAG primitive"),
     ("-AAR" + SIG * 17, "more than 16 signatures"),
 ])
 def test_1x_attachments_the_runner_cannot_read_are_unread(text, why):

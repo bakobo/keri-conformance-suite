@@ -52,6 +52,10 @@ function read(request: Request): { roles: string[]; schemas: string[]; credentia
         throw malformed('"credentials" must be a non-empty list of credentials, each naming roles the request creates.');
     }
     const asked = credentials as Asked[];
+    // The issuer adds the attribute section's d, u and i; a request does not choose them.
+    if (asked.some((c) => ['d', 'u', 'i'].some((label) => Object.hasOwn(c.attributes, label)))) {
+        throw malformed('an attribute is labelled d, u or i, which the issuer adds.');
+    }
     if (new Set(asked.map((c) => c.name)).size !== asked.length) {
         throw malformed('a credential name appears twice.');
     }

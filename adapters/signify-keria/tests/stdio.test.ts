@@ -1,7 +1,8 @@
 // Runs the real launcher as a child process, the way the runner does: a scrubbed environment and
 // the runner's 4 GiB address-space limit when prlimit is available to impose it. Without
 // KCS_KERIA_LIVE=1 it sends nothing that starts KERIA; with it, a hello starts the pinned image in
-// Docker and the container must be gone once the launcher exits.
+// Docker and the container must be gone once the launcher exits. Starting Node and libsodium can
+// pass vitest's 5-second default on a loaded machine, so each spawn is allowed 30 seconds.
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -26,13 +27,13 @@ describe('the launcher', () => {
         expect(run.stderr).toBe('');
         expect(run.status).toBe(0);
         expect(run.stdout.trim().split('\n').map((l) => JSON.parse(l).id)).toEqual([0, 1]);
-    });
+    }, 30_000);
 
     it.runIf(hasPrlimit)('starts libsodium under the runner\'s 4 GiB address-space limit', () => {
         const run = session(lines({ id: 0, op: 'nope' }), true);
         expect(run.status).toBe(0);
         expect(run.stdout.trim().split('\n')).toHaveLength(1);
-    });
+    }, 30_000);
 
     it.runIf(live && hasPrlimit)('starts KERIA under that limit and removes it on exit', () => {
         const run = session(lines({ id: 0, op: 'hello', supported: [1] }), true);
