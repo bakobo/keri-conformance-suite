@@ -10,7 +10,7 @@ authors = [{ name = "Bakobo LLC" }]
 # heti, pinned by full commit. heti is private until it is published, so resolving this pin needs
 # read access to bakobo/heti (README.md, "Building it").
 dependencies = [
-    "heti @ git+ssh://git@github.com/bakobo/heti@753a152df82e0ae600d6f5e46747d89580f2677b",
+    "heti @ git+ssh://git@github.com/bakobo/heti@2832abadb7ed74265129f7ff3f9a7ddbe8442071",
 ]
 
 [project.scripts]

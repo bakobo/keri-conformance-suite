@@ -1355,6 +1355,13 @@
         "a1": "not-supported"
       }
     },
+    "ACDC-0221": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
     "ACDC-0222": {
       "outcome": "not-supported",
       "failure": null,
@@ -1656,6 +1663,13 @@
         "a1": "not-supported"
       }
     },
+    "ACDC-0265": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
     "ACDC-0266": {
       "outcome": "not-supported",
       "failure": null,
@@ -1748,6 +1762,20 @@
       }
     },
     "ACDC-0279": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0280": {
+      "outcome": "not-supported",
+      "failure": null,
+      "assertions": {
+        "a1": "not-supported"
+      }
+    },
+    "ACDC-0281": {
       "outcome": "not-supported",
       "failure": null,
       "assertions": {
