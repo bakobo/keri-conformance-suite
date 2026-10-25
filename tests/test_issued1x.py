@@ -236,6 +236,8 @@ def test_1x_signatures_are_read_from_their_groups(text, count):
     ("-EAB" + "!" * 60, "not a 0A primitive"),
     ("-EAB" + FIRST_SEEN[:24] + "1AAH" + FIRST_SEEN[28:], "datetime is not a 1AAG datetime"),
     ("-EAB" + FIRST_SEEN[:28] + "A" * 32, "datetime is not a 1AAG datetime"),
+    ("-EAB" + FIRST_SEEN[:28] + "2026-10-01T00:00:00.000000+00:00",
+     "datetime is not a 1AAG datetime"),
     ("-EAB" + FIRST_SEEN[:28] + "2026-13-01T00c00c00d000000p00c00",
      "datetime is not a 1AAG datetime"),
     ("-AAR" + SIG * 17, "more than 16 signatures"),

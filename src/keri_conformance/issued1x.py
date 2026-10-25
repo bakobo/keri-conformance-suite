@@ -134,7 +134,8 @@ def _first_seen(item: str) -> None:
     Base64 with c for ':', d for '.' and p for '+' (keripy 1.2.14's Dater)."""
     issued.raw_of(item[:24], "0A", 16)
     stamp = item[28:].translate(str.maketrans("cdp", ":.+"))
-    if item[24:28] != "1AAG" or not issued._is_stamp(stamp):
+    if item[24:28] != "1AAG" or any(c not in issued.B64 for c in item[28:]) or \
+            not issued._is_stamp(stamp):
         raise Unread("a first-seen replay couple's datetime is not a 1AAG datetime")
 
 
