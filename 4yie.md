@@ -2,4 +2,5 @@
 kind: debt
 tags: review-deferred
 created: 2026-10-25T04:48Z
+closed: 2026-10-25T05:05Z
 
