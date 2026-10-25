@@ -71,8 +71,17 @@ describe('requests', () => {
     });
 
     it('answers an undeclared operation as unsupported and an unknown one as a harness error', async () => {
-        expect((await ask({ id: 9, op: 'acdc.issue' })).error.message).toMatch(/^e\.feature\.unsupported\.undeclared-op\.f: /);
+        expect((await ask({ id: 9, op: 'acdc.present' })).error.message).toMatch(/^e\.feature\.unsupported\.undeclared-op\.f: /);
         expect((await ask({ id: 10, op: 'nope' })).error).toMatchObject({ kind: 'harness', message: expect.stringMatching(/^e\.input\.range\.unknown-op\.f: /) });
+    });
+
+    it("issues through the session's KERIA, and answers a malformed issue with a harness error", async () => {
+        const schema = Buffer.from(JSON.stringify({ $id: 'ESchema' })).toString('hex');
+        const credentials = [{ name: 'c', issuer: 'I', issuee: 'H', schema: 'ESchema', attributes: { name: 'Zoe' }, registry: 'ptel-1x' }];
+        const response = await ask({ id: 14, op: 'acdc.issue', roles: ['I', 'H'], schemas: [schema], credentials });
+        expect(Object.keys(response.result.kels)).toEqual(['I', 'H']);
+        expect(Object.keys(response.result.credentials)).toEqual(['c']);
+        expect((await ask({ id: 15, op: 'acdc.issue', roles: [], schemas: [], credentials: [] })).error.kind).toBe('harness');
     });
 
     it('answers a request with no string op', async () => {

@@ -15,6 +15,7 @@ import {
     describe,
 } from './errors.ts';
 import { implementation } from './identity.ts';
+import { issue } from './issue.ts';
 import { type Keria, SCHEMA_PORT, serveSchemas, startKeria } from './keria.ts';
 import { type Backend, verify } from './verify.ts';
 
@@ -23,7 +24,7 @@ export const ADAPTER_NAME = 'kcs-adapter-signify-keria';
 export const ADAPTER_VERSION: string = JSON.parse(
     readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
 ).version;
-export const OPERATIONS = ['acdc.verify'] as const;
+export const OPERATIONS = ['acdc.verify', 'acdc.issue'] as const;
 /** Drawn from profiles/features.json; README.md says why each is declared. */
 export const FEATURES = [
     'acdc.keripy-1x',
@@ -34,7 +35,7 @@ export const FEATURES = [
     'kel.basic',
     'keri.version-1.x',
 ] as const;
-const UNDECLARED = new Set(['cesr.parse', 'cesr.encode', 'keri.process', 'keri.emit', 'exn.verify', 'acdc.issue', 'acdc.present']);
+const UNDECLARED = new Set(['cesr.parse', 'cesr.encode', 'keri.process', 'keri.emit', 'exn.verify', 'acdc.present']);
 
 /** The longest request line the adapter reads, in bytes, not counting its newline. */
 export const MAX_REQUEST_LINE = 64 * 1024 * 1024;
@@ -103,6 +104,8 @@ async function perform(op: string, request: Request, deps: Deps): Promise<unknow
             return hello(request, deps);
         case 'acdc.verify':
             return verify(request, deps.backend(await deps.keria()));
+        case 'acdc.issue':
+            return issue(request, deps.backend(await deps.keria()));
     }
     if (UNDECLARED.has(op)) {
         throw new OpError('unsupported', `${E_UNDECLARED_OP}: This adapter does not implement ${op} and did not declare it in hello.`);

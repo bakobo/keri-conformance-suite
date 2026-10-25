@@ -26,6 +26,9 @@ interface Fake {
     wait?: () => Promise<unknown>;
     states?: (() => Promise<unknown>)[];
     credential?: (said: string, cesr: boolean) => Promise<unknown>;
+    issue?: () => Promise<{ acdc: { raw: string }; iss: { raw: string }; op: { name: string } }>;
+    events?: () => Promise<unknown>;
+    create?: () => Promise<{ op(): Promise<{ name: string }> }>;
 }
 
 function client(fake: Fake): Client {
@@ -37,7 +40,16 @@ function client(fake: Fake): Client {
         oobis: () => ({ resolve: fake.resolve ?? (async () => ({ name: 'oobi.1' })) }),
         operations: () => ({ wait: fake.wait ?? (async () => ({ done: true })) }),
         keyStates: () => ({ get: async () => (states.length > 0 ? (states.shift() as () => Promise<unknown>)() : [{}]) }),
-        credentials: () => ({ get: fake.credential ?? (async (_said: string, cesr: boolean) => (cesr ? '{"v":"ACDC10JSON"}' : { sad: { d: 'E' } })) }),
+        keyEvents: () => ({ get: fake.events ?? (async () => [{ ked: { v: 'KERI10JSON', t: 'icp' }, atc: '-VAA' }, { ked: { t: 'ixn' }, atc: '' }]) }),
+        credentials: () => ({
+            get: fake.credential ?? (async (_said: string, cesr: boolean) => (cesr ? '{"v":"ACDC10JSON"}' : { sad: { d: 'E' } })),
+            issue: fake.issue ?? (async () => ({ acdc: { raw: '{"v":"ACDC"}' }, iss: { raw: '{"t":"iss"}' }, op: { name: 'credential.1' } })),
+        }),
+        identifiers: () => ({
+            create: fake.create ?? (async () => ({ op: async () => ({ name: 'witness.1' }) })),
+            get: async (name: string) => ({ prefix: `E${name}` }),
+        }),
+        registries: () => ({ create: async () => ({ regser: { pre: 'EReg', raw: '{"t":"vcp"}' }, op: async () => ({ name: 'registry.1' }) }) }),
     };
 }
 
@@ -162,5 +174,34 @@ describe('bootAgent', () => {
         expect(await (await bootAgent(keria, missing.d)).credential('E')).toBeUndefined();
         const broken = deps({ credential: async () => Promise.reject(new Error('HTTP GET /credentials/E - 500 Error - x')) });
         await expect((await bootAgent(keria, broken.d)).credential('E')).rejects.toMatchObject({ message: expect.stringMatching(/read a credential/) });
+    });
+});
+
+describe('the issuer half', () => {
+    it('makes identifiers and registries, issues, and reads a KEL as its events with their attachments', async () => {
+        const agent = await bootAgent(keria, deps({}).d);
+        expect(await agent.identify('role-0')).toBe('Erole-0');
+        expect(await agent.registry('role-0', 'registry-0')).toEqual({ regk: 'EReg', vcp: '{"t":"vcp"}' });
+        expect(await agent.issue('role-0', { ri: 'EReg', s: 'ES', a: {} })).toEqual({ acdc: '{"v":"ACDC"}', iss: '{"t":"iss"}' });
+        expect(await agent.kel('E')).toBe('{"v":"KERI10JSON","t":"icp"}-VAA{"t":"ixn"}');
+    });
+
+    it("answers KERIA's schema refusal as a refusal, and fails on anything else", async () => {
+        const why = 'Credential schema validation failed for ES: Additional properties are not allowed\n\nmore';
+        const refusing = deps({ issue: async () => Promise.reject(new Error(`HTTP POST /identifiers/role-0/credentials - 400 Bad Request - ${why}`)) });
+        expect(await (await bootAgent(keria, refusing.d)).issue('role-0', { ri: 'E', s: 'E', a: {} })).toEqual({ refused: why });
+        const other = deps({ issue: async () => Promise.reject(new Error('HTTP POST /identifiers/role-0/credentials - 400 Bad Request - registry not found')) });
+        await expect((await bootAgent(keria, other.d)).issue('role-0', { ri: 'E', s: 'E', a: {} })).rejects.toMatchObject({ message: expect.stringMatching(/issued a credential: .*registry not found/) });
+        const late = deps({ wait: never });
+        await expect((await bootAgent(keria, late.d)).issue('role-0', { ri: 'E', s: 'E', a: {} })).rejects.toMatchObject({ message: expect.stringMatching(/issued a credential: KERIA did not answer/) });
+        const failing = deps({ create: async () => Promise.reject(new Error('name taken')) });
+        await expect((await bootAgent(keria, failing.d)).identify('role-0')).rejects.toMatchObject({ message: expect.stringMatching(/made an identifier: name taken/) });
+    });
+
+    it('fails on a KEL that is not a list of events and attachments', async () => {
+        for (const events of [{}, [{ ked: null, atc: '' }], [{ ked: {}, atc: 1 }], [null]]) {
+            const agent = await bootAgent(keria, deps({ events: async () => events }).d);
+            await expect(agent.kel('E')).rejects.toMatchObject({ message: expect.stringMatching(/read a KEL: KERIA answered with something other/) });
+        }
     });
 });

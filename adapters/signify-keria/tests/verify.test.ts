@@ -10,6 +10,10 @@ function acdc1(d: string, extra: Record<string, unknown> = {}, after = ''): stri
     return Buffer.from(body + after).toString('hex');
 }
 
+const unused = async (): Promise<never> => {
+    throw new Error('verify does not issue');
+};
+
 interface Log {
     delivered: string[];
     resolved: string[];
@@ -39,6 +43,10 @@ function backend(options: { credential?: Record<string, unknown>; settles?: bool
             const last = Buffer.from(log.delivered.at(-1) ?? '', 'hex').toString('utf8');
             return 'exported' in options ? options.exported : `{"v":"KERI10JSON000010_"}-AAB${last}`;
         },
+        identify: unused,
+        registry: unused,
+        issue: unused,
+        kel: unused,
     };
     const b: Backend = {
         agent: async () => agent,

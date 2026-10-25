@@ -36,6 +36,10 @@ export function fakeDeps(options: FakeOptions = {}, onStart?: (keria: Keria) => 
         settle: async () => true,
         credential: async () => options.credential,
         exported: async () => options.exported,
+        identify: async (name) => `E${name}`,
+        registry: async () => ({ regk: 'ERegistry', vcp: '{"v":"KERI10JSON"}' }),
+        issue: async () => ({ acdc: '{"v":"ACDC10JSON"}', iss: '{"v":"KERI10JSON"}' }),
+        kel: async (pre) => `{"i":"${pre}"}`,
     };
     return session(onStart, {
         async start() {
