@@ -5755,8 +5755,8 @@
   {
    "id": "ACDC-0281",
    "key": "VC-84",
-   "title": "Default operator at depth 2, far node issued to someone else and compact",
-   "description": "As VC-83, but T is issued to H, not to F's issuer Q. A sedi-1 verifier should find it incomplete: the compact attribute block still hides T's issuee, and a verifier that reads it as untargeted appends NI2I and finds it valid.",
+   "title": "Default operator at depth 2, far node issued to someone else",
+   "description": "As VC-82, but T is issued to H, not to F's issuer Q. F's edge to T names no operator, so it gets I2I by default, and I2I needs T's issuee to be Q. A sedi-1 verifier should find it invalid.",
    "base": "VC-2",
    "patch": {
     "acdcs": {
@@ -5772,11 +5772,6 @@
       }
      },
      "T": {
-      "form": {
-       "compact": [
-        "a"
-       ]
-      },
       "a": {
        "d": "",
        "i": {
@@ -5788,13 +5783,12 @@
     }
    },
    "choices": [
-    "default-operator",
-    "unresolved-grading"
+    "default-operator"
    ],
-   "triage": "Accepting it accepts a chain to a credential issued to someone else, because the holder compacted its attribute block.",
+   "triage": "Accepting it accepts a chain to a credential issued to someone else, because the edge named no operator.",
    "pair": "VC-82",
    "expect": [
-    "F:e.le incomplete/i2i-hidden"
+    "F:e.le invalid/i2i-issuee"
    ]
   }
  ]
