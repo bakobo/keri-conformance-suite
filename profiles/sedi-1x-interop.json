@@ -12,7 +12,9 @@
     "ACDC-0204",
     "ACDC-0205",
     "ACDC-0206",
-    "ACDC-0207"
+    "ACDC-0207",
+    "ACDC-0282",
+    "ACDC-0283"
   ],
   "name": "sedi-1x-interop",
   "normative": false

@@ -56,6 +56,20 @@
       "assertions": {
         "a1": "pass"
       }
+    },
+    "ACDC-0282": {
+      "outcome": "fail",
+      "failure": null,
+      "assertions": {
+        "a1": "fail"
+      }
+    },
+    "ACDC-0283": {
+      "outcome": "pass",
+      "failure": null,
+      "assertions": {
+        "a1": "pass"
+      }
     }
   }
 }

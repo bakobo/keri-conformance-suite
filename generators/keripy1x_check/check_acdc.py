@@ -14,6 +14,12 @@ in its missing-registry, missing-chain or missing-schema escrow is ``incomplete`
 else is ``invalid``. The verifier's expiry is set past any stamp, so no verdict depends on the
 clock (adapter protocol, acdc.verify). A case whose expected verdict keripy does not reach is a
 disagreement, printed and counted in the exit status.
+
+An acdc.issue case is the companion's one exception (Q-YWFX; docs/profiles/sedi.md, The 1.x
+companion): its expected outcome is what SEDI's schema allows, not what keripy does. For it, keripy
+1.2.14's own outcome is printed beside the expected one, as ``note``, and never counted: keripy's
+``vc.proving.credential`` builds each credential and keripy's ``Schemer`` checks it, as
+``Credentialer.validate`` does before an issuance.
 """
 
 import argparse
@@ -22,8 +28,10 @@ import json
 import pathlib
 import sys
 
+from keri import kering
 from keri.app import habbing
-from keri.core import parsing, serdering
+from keri.core import parsing, scheming, serdering
+from keri.vc import proving
 from keri.vdr import verifying
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -60,6 +68,23 @@ def verdict(request: dict) -> str:
         return "invalid"
 
 
+def issuance(request: dict) -> str:
+    """keripy 1.2.14's own outcome for one acdc.issue request: issued, or refused when a credential
+    its issuer builds fails the credential's schema."""
+    schemas = {json.loads(bytes.fromhex(raw))["$id"]: bytes.fromhex(raw)
+               for raw in request["schemas"]}
+    for asked in request["credentials"]:
+        creder = proving.credential(schema=asked["schema"], issuer="E" + "I" * 43,
+                                    data=dict(asked["attributes"]),
+                                    recipient="E" + "H" * 43 if "issuee" in asked else None,
+                                    private=True, status="E" + "R" * 43)
+        try:
+            scheming.Schemer(raw=schemas[asked["schema"]]).verify(creder.raw)
+        except kering.ValidationError:
+            return "refused"
+    return "issued"
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("cases", nargs="*", type=pathlib.Path)
@@ -69,6 +94,11 @@ def main(argv=None) -> int:
     for path in paths:
         case = json.loads(path.read_text())
         request = case.get("input", case)
+        if case.get("operation") == "acdc.issue":
+            expected = "refused" if case["assertions"][0]["check"] == "issue_refused" else "issued"
+            print(f"note {case['id']}: keripy 1.2.14 {issuance(request)}; the case expects "
+                  f"{expected}, by SEDI's schema rather than keripy's behaviour")
+            continue
         got = verdict(request)
         expected = next((a["expected"] for a in case.get("assertions", [])
                          if a["check"] == "verdict"), None)

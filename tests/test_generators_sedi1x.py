@@ -235,3 +235,55 @@ def test_the_committed_companion_is_what_its_scenario_generates():
         assert (ROOT / path).read_bytes() == data
     profile = json.loads((ROOT / "profiles/sedi-1x-interop.json").read_text())
     assert profile["cases"] == members["sedi-1x-interop"] and not profile["normative"]
+
+
+ISSUE = {"id": "ACDC-0902", "key": "SX-08", "operation": "acdc.issue", "title": "t",
+         "description": "d.", "fixture": "f", "expected": "issued", "basis": "it issues.",
+         "triage": "None."}
+
+
+def test_an_issue_case_asks_for_its_fixtures_credentials_in_1x_registries():
+    """The one exception to the companion's basis (Q-YWFX): what the SEDI schema allows."""
+    nested = {"name": "c", "schema": "S", "issuee": "H", "dt": k1.STAMP,
+              "attributes": {"u": "0AAA", "flat": 1, "block": {"u": "0AAB", "value": "x"}}}
+    out = sedi1x_cases.build_case(T, "scenarios/sedi1x/x.json", {"f": spec(nested)}, ISSUE, {})
+    assert out["operation"] == "acdc.issue" and "dag" not in out and "as_of" not in out
+    [a] = out["assertions"]
+    assert (a["check"], a["level"]) == ("issued", "INTEROP")
+    assert a["basis"].startswith("SEDI core's 1.x schema, not keripy 1.2.14's behaviour")
+    assert out["provenance"]["reference"] is None
+    [asked] = out["input"]["credentials"]
+    assert (asked["issuer"], asked["issuee"], asked["registry"]) == ("I", "H", "ptel-1x")
+    # The section's own salt is the issuer's; a nested block is asked for whole, with its SAID.
+    attributes = asked["attributes"]
+    assert list(attributes) == ["dt", "flat", "block"]
+    assert attributes["block"]["d"].startswith("E") and attributes["block"]["value"] == "x"
+    assert out["input"]["roles"] == ["I", "H"]
+    refused = sedi1x_cases.build_case(T, "x", {"f": spec(nested)},
+                                      {**ISSUE, "expected": "refused", "pair": "SX-00"},
+                                      {"SX-00": "ACDC-0900"})
+    assert refused["assertions"][0]["check"] == "issue_refused"
+    assert "Its positive pair is SX-00" in refused["description"]
+    plain = sedi1x_cases.build_case(T, "x", {"f": spec({"name": "c", "schema": "S"})}, ISSUE, {})
+    assert "issuee" not in plain["input"]["credentials"][0]
+
+
+@pytest.mark.parametrize("change,words", [
+    (lambda c: c.pop("basis"), "needs"),
+    (lambda c: c.update(presented="c"), "unknown fields"),
+    (lambda c: c.update(expected="valid"), "not an issuance outcome"),
+    (lambda c: c.update(fixture="nope"), "not defined"),
+])
+def test_a_malformed_issue_case_is_refused(change, words):
+    case = dict(ISSUE)
+    change(case)
+    with pytest.raises(ScenarioError, match=words):
+        sedi1x_cases.build_case(T, "x", {"f": spec()}, case, {})
+
+
+def test_an_issue_case_does_not_ask_for_edges_or_a_revocation():
+    far = {"name": "far", "schema": "S"}
+    for credentials in ([far, {"name": "c", "schema": "S", "edges": {"a": {"credential": "far"}}}],
+                        [{"name": "c", "schema": "S", "revoked": True}]):
+        with pytest.raises(ScenarioError, match="edges or a revocation"):
+            sedi1x_cases.build_case(T, "x", {"f": spec(*credentials)}, ISSUE, {})

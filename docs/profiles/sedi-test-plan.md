@@ -174,6 +174,7 @@ For each issue vector, the evidence pack verifies adapter A's `acdc.issue` outpu
 ## 11. The 1x companion (`sedi-1x-interop`)
 
 - Each G17 incompatibility recorded in `interop/two-wallets/RESULT.md` (7, 8, 10 and 11) becomes a case with a positive twin, at INTEROP, with basis sedi-1x. The companion runs against the keripy 1.x and signify-ts adapters.
+- Incompatibility 8 is also exercised on the issuing side: an `acdc.issue` case asks a 1.x issuer for SEDI core with nothing added (ACDC-0282, SX-08) and its twin asks for an allowed `a.dt` (ACDC-0283, SX-09). Their basis is SEDI core's 1.x schema, not keripy 1.2.14 (Q-YWFX; this.i `s6amsapq`), and they run against the keripy 1.2.14 and signify-keria adapters.
 - A cross-version revocation case covers one claim issued in both forms and revoked only in 2.00. `docs/profiles/sedi.md` states that migration requires revoking both forms, unless a 1x verifier can be expected to see the 2.00 registry.
 - A runner test asserts that a `sedi-1x-interop` failure leaves the sedi-1 verdict unchanged.
 
