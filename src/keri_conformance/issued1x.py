@@ -130,10 +130,12 @@ def signatures(attachments: bytes) -> list[tuple[int, bytes]]:
 
 
 def _first_seen(item: str) -> None:
-    """A first-seen replay couple: a 0A sequence number and a 1AAG datetime, each canonical."""
+    """A first-seen replay couple: a 0A sequence number and a 1AAG datetime, a stamp written in
+    Base64 with c for ':', d for '.' and p for '+' (keripy 1.2.14's Dater)."""
     issued.raw_of(item[:24], "0A", 16)
-    if not item[24:28] == "1AAG" or any(c not in issued.B64 for c in item[28:]):
-        raise Unread("a first-seen replay couple's datetime is not a 1AAG primitive")
+    stamp = item[28:].translate(str.maketrans("cdp", ":.+"))
+    if item[24:28] != "1AAG" or not issued._is_stamp(stamp):
+        raise Unread("a first-seen replay couple's datetime is not a 1AAG datetime")
 
 
 V1 = issued.Form(frames, sized, signatures)
@@ -269,7 +271,7 @@ def check_acdc(raw: bytes, asked: dict, issuer: str, issuee: str | None, schema:
             problems.append("the attribute section's salt is not a 128-bit salt")
     if "edges" in asked:
         problems.append("an edge section asked of a 1.x issuance is beyond what the runner grades")
-    elif body.get("e"):
+    elif "e" in body:
         problems.append("the ACDC has edges, and none was asked for")
     if "r" in body:
         problems.append("the ACDC has a rules section, and none was asked for")

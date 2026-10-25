@@ -48,6 +48,7 @@ def test_an_issuer_that_adds_a_dt_it_was_not_asked_for_fails():
     ({"acdc_over": {"s": "E" + "X" * 43}}, "the ACDC's schema is not the one asked for"),
     ({"acdc_over": {"ri": "E" + "X" * 43}}, "the ACDC does not name its registry in ri"),
     ({"acdc_over": {"e": {"d": "E"}}}, "the ACDC has edges, and none was asked for"),
+    ({"acdc_over": {"e": {}}}, "the ACDC has edges, and none was asked for"),
     ({"acdc_over": {"t": "acm"}}, "the ACDC's fields are not keripy 1.x's in its order"),
     ({"vcp_over": {"n": "short"}}, ("the registry inception's nonce is not a 128-bit salt or a "
                                     "256-bit seed")),
@@ -233,8 +234,10 @@ def test_1x_signatures_are_read_from_their_groups(text, count):
     ("-AAB" + "0B" + "B" * 86, "not an Ed25519 indexed signature"),
     ("-AAB" + "AA" + "#" * 86, "not Base64"),
     ("-EAB" + "!" * 60, "not a 0A primitive"),
-    ("-EAB" + FIRST_SEEN[:24] + "1AAH" + FIRST_SEEN[28:], "datetime is not a 1AAG primitive"),
-    ("-EAB" + FIRST_SEEN[:28] + "!" + FIRST_SEEN[29:], "datetime is not a 1AAG primitive"),
+    ("-EAB" + FIRST_SEEN[:24] + "1AAH" + FIRST_SEEN[28:], "datetime is not a 1AAG datetime"),
+    ("-EAB" + FIRST_SEEN[:28] + "A" * 32, "datetime is not a 1AAG datetime"),
+    ("-EAB" + FIRST_SEEN[:28] + "2026-13-01T00c00c00d000000p00c00",
+     "datetime is not a 1AAG datetime"),
     ("-AAR" + SIG * 17, "more than 16 signatures"),
 ])
 def test_1x_attachments_the_runner_cannot_read_are_unread(text, why):
