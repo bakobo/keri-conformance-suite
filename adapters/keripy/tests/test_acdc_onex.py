@@ -23,7 +23,11 @@ def verify(request):
     return response.get("result", response)
 
 
-@pytest.mark.parametrize("path", sorted(CASES.glob("*.json")), ids=lambda p: p.stem)
+VERIFY_CASES = [p for p in sorted(CASES.glob("*.json"))
+                if json.loads(p.read_text())["operation"] == "acdc.verify"]
+
+
+@pytest.mark.parametrize("path", VERIFY_CASES, ids=lambda p: p.stem)
 def test_every_companion_case_gets_keripys_own_verdict(path):
     c = json.loads(path.read_text())
     result = verify(c["input"])

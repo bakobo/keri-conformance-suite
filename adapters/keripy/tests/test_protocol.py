@@ -26,7 +26,8 @@ def test_hello_answers_protocol_1_with_identity(keri_dist):
     assert len(commit) == 40
     assert result["operations"][:2] == ["cesr.parse", "cesr.encode"]
     assert result["operations"][2:] == (["keri.process", "acdc.verify", "exn.verify"]
-                                        if GENERATION == "main" else ["acdc.verify"])
+                                        if GENERATION == "main" else ["acdc.verify",
+                                                                      "acdc.issue"])
     assert result["composes"] == []
 
 
@@ -103,7 +104,7 @@ def test_unknown_op_is_a_harness_error_echoing_the_id():
 
 
 @pytest.mark.parametrize("op", ["keri.emit"] + (["keri.process", "exn.verify"]
-                                                if GENERATION == "1.x" else []))
+                                                if GENERATION == "1.x" else ["acdc.issue"]))
 def test_undeclared_protocol_ops_are_unsupported(op):
     response = handle({"id": 2, "op": op})
     assert response["error"]["kind"] == "unsupported"
