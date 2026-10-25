@@ -1,8 +1,8 @@
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { OpError } from '../src/errors.ts';
 import { IMPLEMENTATION_NAME, implementation } from '../src/identity.ts';
@@ -32,8 +32,14 @@ describe('implementation identity', () => {
         expect(resolved.endsWith(`#${implementation(keria).commit}`)).toBe(true);
     });
 
+    const made: string[] = [];
+    afterEach(() => {
+        for (const dir of made.splice(0)) rmSync(dir, { recursive: true, force: true });
+    });
+
     function fixture(lock: unknown, pkg: unknown = { version: '9.9.9' }) {
         const dir = mkdtempSync(join(tmpdir(), 'kcs-signify-keria-'));
+        made.push(dir);
         const lockPath = join(dir, 'lock.json');
         const pkgPath = join(dir, 'package.json');
         writeFileSync(lockPath, JSON.stringify(lock));
