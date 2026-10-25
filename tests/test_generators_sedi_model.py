@@ -338,6 +338,23 @@ def test_hidden_issuees_cannot_be_evaluated():
     assert run(frag)[0].verdict == sm.VALID
 
 
+@pytest.mark.parametrize("o", ["I2I", None])
+@pytest.mark.parametrize("far_issuee", ["I", "R"])
+def test_a_far_attribute_block_presented_compact_hides_the_issuee(o, far_issuee):
+    """A compact a may or may not hold an issuee, so neither I2I nor the default operator can be
+    decided, whoever the far node was issued to; read as untargeted, the default would append
+    NI2I and pass an edge to a credential issued to someone else."""
+    creds = single(o=o)
+    creds["F"] = cred("Q", far_issuee)
+    frag = world(creds, "N")
+    next(a for a in frag["acdcs"] if a["name"] == "F")["form"] = {"compact": ["a"]}
+    assert reasons(run(frag)[0]) == ["incomplete/i2i-hidden"]
+    creds["N"]["e"]["le"]["o"] = "E1E"
+    frag = world(creds, "N")
+    next(a for a in frag["acdcs"] if a["name"] == "F")["form"] = {"compact": ["a"]}
+    assert reasons(run(frag)[0]) == ["incomplete/e1e-hidden"]
+
+
 def test_edge_blocks_carry_their_own_said():
     frag = world(single(d=None), "N")
     assert reasons(run(frag)[0]) == ["invalid/edge-said"]
@@ -441,7 +458,7 @@ def test_helpers():
     assert sm.combine([sm.INCOMPLETE, sm.VALID], "OR") == sm.VALID
     assert sm.combine([sm.INCOMPLETE, sm.INVALID], "OR") == sm.INVALID
     assert sm.combine([sm.INCOMPLETE], "OR") == sm.INCOMPLETE
-    assert sm.issuee(None) is None and sm.issuee({"a": "Ecompact"}) is None
+    assert sm.issuee(None) is None and sm.issuee({"a": "Ecompact"}) is ...
     assert sm.issuee({"A": ["agid"]}) is None and sm.issuee({"A": ["agid", "Eblock"]}) is ...
     assert [sm._sn(x) for x in ("1", "a", "0", "01", "", "A", "zz", 5)] == [
         1, 10, 0, None, None, None, None, None]

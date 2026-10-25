@@ -280,13 +280,15 @@ def combine(grades: list[str], operator: str = "AND") -> str:
 
 def issuee(body: dict | None):
     """The issuee an ACDC discloses: ``a.i``, or for an aggregate ``A[1].i`` (aggregate-issuee).
-    None when it has none or does not disclose it; ``...`` (Ellipsis) when the aggregate's
-    issuee block is undisclosed, which is unknown rather than absent."""
+    None when it has none; ``...`` (Ellipsis) when its attribute block is compact or the
+    aggregate's issuee block is undisclosed, which is unknown rather than absent."""
     if not isinstance(body, dict):
         return None
     attributes = body.get("a")
     if isinstance(attributes, dict):
         return attributes.get("i")
+    if isinstance(attributes, str):
+        return ...
     aggregate = body.get("A")
     if isinstance(aggregate, list) and len(aggregate) > 1:
         block = aggregate[1]
