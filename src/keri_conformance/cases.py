@@ -149,7 +149,7 @@ DISCLOSURE = tagged("form", {"compact": obj({"form": enum("compact")}),
                              "selective": obj({"form": enum("selective"), "disclose": LABELS})})
 ISSUE_CREDENTIAL = obj({"name": string(min_length=1), "issuer": string(min_length=1),
                         "schema": string(min_length=1), "attributes": anything_object,
-                        "registry": enum("bup", "none")},
+                        "registry": enum("bup", "none", "ptel-1x")},
                        {"issuee": string(min_length=1), "edges": anything_object})
 SOURCED = obj({"stream": HEX_STRING, "source": string()})
 STREAM = obj({"stream": HEX_STRING})

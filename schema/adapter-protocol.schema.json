@@ -410,9 +410,10 @@
                   "registry": {
                     "enum": [
                       "bup",
-                      "none"
+                      "none",
+                      "ptel-1x"
                     ],
-                    "description": "bup, a blindable registry of its own, or none, a direct issuance with no registry (this.i 92zkyy59)."
+                    "description": "bup, a blindable registry of its own; none, a direct issuance with no registry (this.i 92zkyy59); or ptel-1x, a keripy 1.x vcp/iss registry of its own, which makes the whole issuance keripy 1.x's (docs/adapter-protocol.md, acdc.issue)."
                   }
                 }
               }
@@ -1458,7 +1459,7 @@
         "kels",
         "credentials"
       ],
-      "description": "An acdc.issue result: each role's KEL, and each requested credential's ACDC, its registry's events and the disclosure of its head's blinded state; a credential asked for with registry kind none has neither.",
+      "description": "An acdc.issue result: each role's KEL, and each requested credential's ACDC, its registry's events and the disclosure of its head's blinded state; a credential asked for with registry kind none has neither, and one asked for with ptel-1x has no disclosure.",
       "properties": {
         "kels": {
           "type": "object",

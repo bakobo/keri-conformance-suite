@@ -303,3 +303,32 @@ def test_producer_and_verifier_requests_name_the_cases_profile():
     agree.matrix({"a": issuer}, {"a": issuer}, [issue_case()])
     assert [(op, fields["profile"]) for op, fields in issuer.sent] == [
         ("acdc.issue", "sedi-1"), ("acdc.verify", "sedi-1")]
+
+
+ONE_X = json.loads((pathlib.Path(__file__).parent / "fixtures" / "keripy1x-issuance.json")
+                   .read_text())
+
+
+def test_a_1x_issuance_becomes_bundles_as_keripy_1x_delivers_a_credential():
+    """Each registry event carries the seal source couple of the issuer's event that anchors it,
+    and the ACDC carries its iss as a seal source triple."""
+    from keri_conformance import issued1x
+    bundle = agree.issue_bundles(ONE_X["request"], ONE_X["result"])["core"]
+    kel = issued1x.frames(bytes.fromhex(ONE_X["result"]["kels"]["I"]), b"KERI")
+    vcp, iss_ = (issued1x.frame(bytes.fromhex(r["stream"]), b"KERI") for r in bundle["registry"])
+    assert vcp[2] == ("-GAB" + issued.qb64("0A", (1).to_bytes(16, "big")) + kel[1][0]["d"]).encode()
+    assert iss_[2] == ("-GAB" + issued.qb64("0A", (2).to_bytes(16, "big")) + kel[2][0]["d"]).encode()
+    acdc, _, triple = issued1x.frame(bytes.fromhex(bundle["presented"]["stream"]), b"ACDC")
+    assert triple.decode() == ("-IAB" + acdc["d"] + issued.qb64("0A", bytes(16))
+                               + iss_[0]["d"])
+    assert [k["source"] for k in bundle["kels"]].count("I") == len(kel)
+    assert bundle["acdcs"] == [] and bundle["perspective"] == {"role": "validator"}
+
+
+def test_a_1x_registry_event_nothing_anchors_cannot_become_a_bundle():
+    result = copy.deepcopy(ONE_X["result"])
+    stream = bytes.fromhex(result["kels"]["I"])
+    result["kels"]["I"] = stream[:stream.index(b'{"v":"KERI10JSON', 1)].hex()
+    with pytest.raises(issued.Unread, match="no event of the issuer's KEL anchors"):
+        agree.issue_bundles(ONE_X["request"], result)
+

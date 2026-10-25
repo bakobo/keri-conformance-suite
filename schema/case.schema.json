@@ -2114,7 +2114,9 @@
                     },
                     "registry": {
                       "enum": [
-                        "bup"
+                        "bup",
+                        "none",
+                        "ptel-1x"
                       ]
                     }
                   },

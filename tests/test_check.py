@@ -346,3 +346,13 @@ def test_an_issuance_with_entries_not_asked_for_fails_the_probe(vocabulary, writ
                            issuance=False), vocabulary)
     assert result["issue-repeatable"].status == "fail"
     assert "does not answer the request" in result["issue-repeatable"].reason
+
+
+def test_an_adapter_that_issues_only_into_1x_registries_is_probed_with_a_1x_issuance():
+    from keri_conformance import check
+    assert check._issue_probe({"features": ["acdc.ptel-1x"]}) is check.ISSUE_PROBE_1X
+    assert check._issue_probe({"features": ["acdc.ptel-1x", "acdc.registry.bup"]}) is ISSUE_PROBE
+    assert check._issue_probe({"features": []}) is ISSUE_PROBE
+    asked = check.ISSUE_PROBE_1X["credentials"][0]
+    # Every 1.x issuer adds a.dt, so the probe asks for one and grades an issuance that has it.
+    assert asked["registry"] == "ptel-1x" and "dt" in asked["attributes"]
