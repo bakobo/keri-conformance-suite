@@ -325,6 +325,14 @@ def test_a_1x_issuance_becomes_bundles_as_keripy_1x_delivers_a_credential():
     assert bundle["acdcs"] == [] and bundle["perspective"] == {"role": "validator"}
 
 
+def test_each_credential_of_a_1x_issuance_becomes_a_bundle():
+    request, result = copy.deepcopy(ONE_X["request"]), copy.deepcopy(ONE_X["result"])
+    request["credentials"].append({**request["credentials"][0], "name": "again"})
+    result["credentials"]["again"] = result["credentials"]["core"]
+    bundles = agree.issue_bundles(request, result)
+    assert set(bundles) == {"core", "again"} and bundles["again"] == bundles["core"]
+
+
 def test_an_empty_1x_registry_or_an_oversize_sequence_number_cannot_become_a_bundle():
     result = copy.deepcopy(ONE_X["result"])
     result["credentials"]["core"]["registry"] = ""
