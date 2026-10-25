@@ -43,7 +43,8 @@ def _request(request) -> tuple[list[str], dict[str, bytes], list[dict]]:
     schemas = dict(acdc1x._schemas(request))
     credentials = request.get("credentials")
     if not isinstance(credentials, list) or not credentials or not all(
-            isinstance(c, dict) and isinstance(c.get("name"), str) and c.get("issuer") in roles
+            isinstance(c, dict) and isinstance(c.get("name"), str) and c["name"] != ""
+            and c.get("issuer") in roles
             and c.get("issuee", roles[0]) in roles and isinstance(c.get("schema"), str)
             and isinstance(c.get("attributes"), dict) and isinstance(c.get("registry"), str)
             for c in credentials):

@@ -42,6 +42,7 @@ function read(request: Request): { roles: string[]; schemas: string[]; credentia
             (c) =>
                 isObject(c) &&
                 typeof c.name === 'string' &&
+                c.name !== '' &&
                 roles.includes(c.issuer) &&
                 (c.issuee === undefined || roles.includes(c.issuee)) &&
                 typeof c.schema === 'string' &&

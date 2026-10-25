@@ -98,6 +98,7 @@ describe('issue', () => {
         ['an issuee the request does not create', { credentials: [credential({ issuee: 'X' })] }],
         ['attributes that are not a map', { credentials: [credential({ attributes: [] })] }],
         ['a name used twice', { credentials: [credential(), credential()] }],
+        ['an empty name', { credentials: [credential({ name: '' })] }],
         ['an attribute the issuer adds', { credentials: [credential({ attributes: { u: '0AAA' } })] }],
     ])('answers %s with a harness error', async (_name, overrides) => {
         await expect(issue(request(overrides), backend().b)).rejects.toMatchObject({ kind: 'harness', message: expect.stringMatching(/^e\.input\.format\.request\.f: /) });

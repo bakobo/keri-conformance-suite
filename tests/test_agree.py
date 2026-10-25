@@ -325,6 +325,15 @@ def test_a_1x_issuance_becomes_bundles_as_keripy_1x_delivers_a_credential():
     assert bundle["acdcs"] == [] and bundle["perspective"] == {"role": "validator"}
 
 
+def test_an_empty_1x_registry_or_an_oversize_sequence_number_cannot_become_a_bundle():
+    result = copy.deepcopy(ONE_X["result"])
+    result["credentials"]["core"]["registry"] = ""
+    with pytest.raises(issued.Unread, match="holds no events"):
+        agree.issue_bundles(ONE_X["request"], result)
+    with pytest.raises(issued.Unread, match="does not fit a 0A seqner"):
+        agree._seqner(2 ** 128)
+
+
 def test_a_1x_registry_event_nothing_anchors_cannot_become_a_bundle():
     result = copy.deepcopy(ONE_X["result"])
     stream = bytes.fromhex(result["kels"]["I"])

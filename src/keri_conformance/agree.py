@@ -74,6 +74,8 @@ def _dag(name: str, by_name: dict[str, dict]) -> list[str]:
 
 
 def _seqner(sn: int) -> str:
+    if not 0 <= sn < 2 ** 128:
+        raise issued.Unread("a sequence number does not fit a 0A seqner")
     return issued.qb64("0A", sn.to_bytes(16, "big"))
 
 
@@ -101,7 +103,10 @@ def issue_bundles_1x(request: dict, result: dict) -> dict[str, dict]:
     for name, out in result["credentials"].items():
         issuer = events[by_name[name]["issuer"]]
         registry = []
-        for body, raw, _ in issued1x.frames(bytes.fromhex(out["registry"]), b"KERI"):
+        events = issued1x.frames(bytes.fromhex(out["registry"]), b"KERI")
+        if not events:
+            raise issued.Unread("a 1.x registry holds no events")
+        for body, raw, _ in events:
             seal = {"i": body.get("i"), "s": body.get("s"), "d": body.get("d")}
             registry.append({"stream": (raw + _source(issuer, seal).encode()).hex()})
             last = body
