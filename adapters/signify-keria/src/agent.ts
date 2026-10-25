@@ -1,9 +1,10 @@
-// One KERIA agent, booted and driven by signify-ts for one acdc.verify request, so that nothing a
-// request delivers is seen by another. What verify.ts needs from it is the Agent interface; this
-// module is the only place that touches signify-ts's client.
+// One KERIA agent, booted and driven by signify-ts for one acdc.verify or acdc.issue request, so
+// that nothing one request delivers or makes is seen by another. What verify.ts and issue.ts need
+// from it is the Agent interface; this module is the only place that touches signify-ts's client.
 import {
     Diger,
     MtrDex,
+    Salter,
     Siger,
     SignifyClient,
     Signer,
@@ -31,7 +32,21 @@ export interface Agent {
     credential(said: string): Promise<Record<string, unknown> | undefined>;
     /** KERIA's CESR export of the credential it saved under this SAID, or undefined if it saved none. */
     exported(said: string): Promise<string | undefined>;
+    /** Make a transferable identifier with no witnesses under this name; resolves its prefix. */
+    identify(name: string): Promise<string>;
+    /** Make a registry with no backers for the named identifier, as signify-ts makes one; resolves its vcp. */
+    registry(name: string, registryName: string): Promise<{ regk: string; vcp: string }>;
+    /**
+     * Issue as signify-ts's credentials().issue issues, and wait until KERIA has taken it. Resolves
+     * the ACDC and iss bodies, or KERIA's reason when it refuses the credential against its schema.
+     */
+    issue(name: string, data: { ri: string; s: string; a: Record<string, unknown> }): Promise<{ acdc: string; iss: string } | { refused: string }>;
+    /** The identifier's KEL as KERIA holds it, every event with its attachments. */
+    kel(pre: string): Promise<string>;
 }
+
+/** A fresh 128-bit salt from signify-ts, which its issue helper leaves its caller to supply. */
+export const salt = (): string => new Salter({}).qb64;
 
 /** How long one OOBI resolution or one settle may take, in milliseconds. */
 export const WAIT = 10_000;
@@ -45,7 +60,18 @@ export interface Client {
     oobis(): { resolve(url: string): Promise<{ name: string }> };
     operations(): { wait(op: { name: string }, options: { signal: AbortSignal }): Promise<unknown> };
     keyStates(): { get(pre: string): Promise<unknown> };
-    credentials(): { get(said: string, includeCESR: boolean): Promise<unknown> };
+    keyEvents(): { get(pre: string): Promise<unknown> };
+    credentials(): {
+        get(said: string, includeCESR: boolean): Promise<unknown>;
+        issue(name: string, args: { ri: string; s: string; a: Record<string, unknown> }): Promise<{ acdc: { raw: string }; iss: { raw: string }; op: { name: string } }>;
+    };
+    identifiers(): {
+        create(name: string, args: { toad: number; wits: string[] }): Promise<{ op(): Promise<{ name: string }> }>;
+        get(name: string): Promise<{ prefix: string }>;
+    };
+    registries(): {
+        create(args: { name: string; registryName: string }): Promise<{ regser: { pre: string; raw: string }; op(): Promise<{ name: string }> }>;
+    };
 }
 
 export interface AgentDeps {
@@ -97,6 +123,13 @@ const refusedOperation = (err: unknown): boolean => /^Operation '[^']*' failed \
 /** signify-ts reports a refused request as an Error whose message carries the HTTP status. */
 const notFound = (err: unknown): boolean => / - 404 /.test(describe(err));
 
+/**
+ * KERIA's answer when the credential signify-ts built fails its schema: HTTP 400 and this
+ * message, from keripy's Credentialer.validate. Any other failure is KERIA failing, not a refusal.
+ */
+const schemaRefusal = (err: unknown): string | undefined =>
+    /^HTTP POST \S+ - 400 Bad Request - (Credential schema validation failed for .*)$/s.exec(describe(err))?.[1];
+
 export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): Promise<Agent> {
     const client = deps.client(keria);
     try {
@@ -137,6 +170,22 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
                 return undefined;
             }
             throw failed('read a credential', err);
+        }
+    }
+
+    async function finished(op: { name: string }, what: string): Promise<void> {
+        try {
+            await within(client.operations().wait(op, { signal: AbortSignal.timeout(deps.limit) }), deps.limit);
+        } catch (err) {
+            throw failed(what, err);
+        }
+    }
+
+    async function call<T>(promise: () => Promise<T>, what: string): Promise<T> {
+        try {
+            return await within(promise(), deps.limit);
+        } catch (err) {
+            throw failed(what, err);
         }
     }
 
@@ -182,6 +231,38 @@ export async function bootAgent(keria: Keria, deps: AgentDeps = DEFAULT_AGENT): 
         },
         async exported(said) {
             return (await read(said, true)) as string | undefined;
+        },
+        async identify(name) {
+            const made = await call(() => client.identifiers().create(name, { toad: 0, wits: [] }), 'made an identifier');
+            await finished(await call(() => made.op(), 'made an identifier'), 'made an identifier');
+            return (await call(() => client.identifiers().get(name), 'read an identifier')).prefix;
+        },
+        async registry(name, registryName) {
+            const made = await call(() => client.registries().create({ name, registryName }), 'made a registry');
+            await finished(await call(() => made.op(), 'made a registry'), 'made a registry');
+            return { regk: made.regser.pre, vcp: made.regser.raw };
+        },
+        async issue(name, data) {
+            let made;
+            try {
+                made = await within(client.credentials().issue(name, data), deps.limit);
+            } catch (err) {
+                const why = schemaRefusal(err);
+                if (why !== undefined) {
+                    return { refused: why };
+                }
+                throw failed('issued a credential', err);
+            }
+            await finished(made.op, 'issued a credential');
+            return { acdc: made.acdc.raw, iss: made.iss.raw };
+        },
+        async kel(pre) {
+            const events = await call(() => client.keyEvents().get(pre), 'read a KEL');
+            if (!Array.isArray(events) || !events.every((e) => typeof e?.ked === 'object' && e.ked !== null && typeof e.atc === 'string')) {
+                throw failed('read a KEL', 'KERIA answered with something other than a list of events and attachments');
+            }
+            // KERIA sends each event as its parsed body, whose compact JSON is the event as signed.
+            return events.map((e) => JSON.stringify(e.ked) + e.atc).join('');
         },
     };
 }

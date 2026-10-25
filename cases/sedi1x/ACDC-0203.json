@@ -18,7 +18,7 @@
     "edges": [],
     "root": "EMQX_PwZzJba3At4UBC4iOa8zNue-BbBubFjBKqitgHB"
   },
-  "description": "As SX-01, but the attribute block carries a.dt, which SEDI core's closed attribute section does not name. signify-ts's issue helper inserts a.dt this way (G17 incompatibility 8). A keripy 1.x verifier refuses it. Its positive pair is SX-01 (ACDC-0201), which differs from it only in the defect.",
+  "description": "As SX-01, but the attribute block carries a.dt, which SEDI core's closed attribute section does not name. keripy 1.x's issuer, and signify-ts's issue helper after it, insert a.dt this way (G17 incompatibility 8). A keripy 1.x verifier refuses it. Its positive pair is SX-01 (ACDC-0201), which differs from it only in the defect.",
   "id": "ACDC-0203",
   "input": {
     "acdcs": [],

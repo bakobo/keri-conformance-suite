@@ -1,5 +1,5 @@
 {
- "about": "The sedi-1x-interop companion (test-plan item 11; this.i 9sgwng6m): keripy 1.x issuances the suite builds, each judged as keripy 1.2.14 judges it. generators/keripy1x_check/check_acdc.py confirms every expected verdict against keripy 1.2.14 itself.",
+ "about": "The sedi-1x-interop companion (test-plan item 11; this.i 9sgwng6m): keripy 1.x issuances the suite builds, each judged as keripy 1.2.14 judges it, and issuances asked of a 1.x issuer, each graded on what SEDI's schema allows (the one exception, Q-YWFX). generators/keripy1x_check/check_acdc.py confirms every expected verdict against keripy 1.2.14 itself, and prints keripy's own outcome beside each issuance case.",
  "profile": "sedi-1x-interop",
  "schemas": {
   "sedi-core-1x": {
@@ -1164,7 +1164,7 @@
    "id": "ACDC-0203",
    "key": "SX-03",
    "title": "An a.dt the SEDI schema forbids",
-   "description": "As SX-01, but the attribute block carries a.dt, which SEDI core's closed attribute section does not name. signify-ts's issue helper inserts a.dt this way (G17 incompatibility 8). A keripy 1.x verifier refuses it.",
+   "description": "As SX-01, but the attribute block carries a.dt, which SEDI core's closed attribute section does not name. keripy 1.x's issuer, and signify-ts's issue helper after it, insert a.dt this way (G17 incompatibility 8). A keripy 1.x verifier refuses it.",
    "fixture": "core-dt",
    "presented": "core",
    "expected": "invalid",
@@ -1216,6 +1216,28 @@
    "expected": "valid",
    "basis": "its Verifier saves the credential once the far agent credential is saved and the NI2I edge to it holds.",
    "triage": "None: an acceptance."
+  },
+  {
+   "id": "ACDC-0282",
+   "key": "SX-08",
+   "operation": "acdc.issue",
+   "title": "SEDI core issued in the 1.x forms, with nothing added",
+   "description": "An issuer is asked for SEDI core under its 1.x schema, with its attributes and nothing else, in a 1.x registry of its own. SEDI core's attribute section is closed, so an issuance that adds a.dt does not satisfy the schema. keripy 1.x's issuer adds a.dt to every credential it makes, and signify-ts's issue helper inherits that (G17 incompatibility 8), so this case records the defect where it lives, on the issuer. SX-09 is the same issuance with a.dt asked for and allowed.",
+   "fixture": "core",
+   "expected": "issued",
+   "basis": "an issuer issues the attributes asked for, adding only the attribute section's d, u and i; SEDI core's closed attribute section names no dt.",
+   "triage": "An issuer that adds an attribute it was not asked for issues a credential its schema forbids, or refuses one it could have issued."
+  },
+  {
+   "id": "ACDC-0283",
+   "key": "SX-09",
+   "operation": "acdc.issue",
+   "title": "SEDI core with an a.dt asked for and allowed",
+   "description": "As SX-08, but the schema names dt and the request asks for a.dt, so an issuer that always adds a.dt issues exactly what was asked. With SX-08 it shows whether an issuer's failure there is a.dt alone.",
+   "fixture": "core-dt-allowed",
+   "expected": "issued",
+   "basis": "an issuer issues the attributes asked for, a.dt among them, which this schema names.",
+   "triage": "None: an issuance."
   }
  ]
 }

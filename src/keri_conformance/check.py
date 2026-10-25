@@ -64,6 +64,12 @@ ISSUE_PROBE = {"roles": ["issuer", "holder"],
                "credentials": [{"name": "c", "issuer": "issuer", "issuee": "holder",
                                 "schema": _PROBE_SCHEMA["$id"], "attributes": {"name": "Zoe"},
                                 "registry": "bup"}]}
+# The same issuance in keripy 1.x's forms, for an adapter that issues only into a 1.x registry. It
+# asks for a.dt, since every 1.x issuer adds one whether asked or not (interop/two-wallets/
+# INCOMPATIBILITIES.md entry 8), and the probe asks for an issuance it must make.
+ISSUE_PROBE_1X = {**ISSUE_PROBE, "credentials": [
+    {**ISSUE_PROBE["credentials"][0], "registry": issued.ONE_X,
+     "attributes": {"dt": "2026-10-01T00:00:00.000000+00:00", "name": "Zoe"}}]}
 ECHO_ID = 7919
 UNKNOWN_OP = "kcs.probe.no-such-op"
 NOT_YET = ("This probe needs real KERI event streams from the keripy generator, which does not "
@@ -168,19 +174,29 @@ def _probe_malformed_op(session: AdapterSession, op: str) -> tuple[bool, str]:
     return True, f"The adapter answered every malformed {op} request with an error response."
 
 
+def _issue_probe(hello: dict) -> dict:
+    """The probe's issuance: in keripy 1.x's forms for an adapter that declares the 1.x registry
+    and not the blindable one, and KERI 2.0's otherwise."""
+    features = hello["features"]
+    if "acdc.ptel-1x" in features and "acdc.registry.bup" not in features:
+        return ISSUE_PROBE_1X
+    return ISSUE_PROBE
+
+
 def _probe_issue_repeatable(session: AdapterSession) -> tuple[bool, str]:
     """Two identical issuance requests each return an issuance that verifies: an issuer's output
     varies, so what repeats is that it verifies, not its bytes (this.i 2u2ps8mt)."""
+    probe = _issue_probe(session.hello)
     for n in (1, 2):
-        outcome = _ask(session, "acdc.issue", ISSUE_PROBE)
+        outcome = _ask(session, "acdc.issue", probe)
         if isinstance(outcome, Failure):
             return False, f"The adapter did not answer issuance {n} with a result: {outcome.detail}"
         if "refused" in outcome.result:
             return False, f"The adapter refused issuance {n}, a plain issuance it must make."
-        shape = beyond_schema("acdc.issue", ISSUE_PROBE, outcome.result)
+        shape = beyond_schema("acdc.issue", probe, outcome.result)
         if shape:
             return False, f"Issuance {n} does not answer the request: {shape}"
-        problems = issued.grade(ISSUE_PROBE, outcome.result)
+        problems = issued.grade(probe, outcome.result)
         if problems:
             return False, f"Issuance {n} does not verify: {problems[0]}."
     return True, "Two identical acdc.issue requests each returned an issuance that verifies."

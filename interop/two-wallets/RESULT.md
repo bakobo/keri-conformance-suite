@@ -32,7 +32,7 @@ These are the deliverable. Each one is filed where its owner tracks work. Entrie
 | # | What | Owner | Filed |
 |---|---|---|---|
 | 7 | Every published SEDI schema is a KERI 2.0 shape (`t`, required `rd`, `e`, `r`), so a 1.x wallet cannot hold a SEDI credential without a 1.x profile of the schema | SEDI schema publication | this writeup; schema profile in `schemas/` |
-| 8 | signify-ts `credentials().issue` always inserts `a.dt`, which a SEDI attribute section forbids, so KERIA refuses the issuance. The helper also leaves nested disclosable blocks unsaidified | signify-ts (upstream) | draft for Daniel, not posted |
+| 8 | keripy 1.x's issuer always inserts `a.dt`, which a SEDI attribute section forbids, and signify-ts `credentials().issue` inherits the convention, so KERIA refuses the issuance. Both leave nested disclosable blocks unsaidified | keripy 1.x's issuer, inherited by signify-ts | `sedi-1x-interop` case ACDC-0282 (SX-08); a draft for Daniel addressed to signify-ts alone, not posted, which names the wrong owner |
 | 10 | Veridian resolves every optional edge definition as a mandatory child schema, which SEDI's optional and group edges cannot satisfy | Veridian | bakobo/veridian-wallet tick `2pgd` |
 | 11 | Veridian assumes every ACDC has `a.dt` and fails on admit without it | Veridian | tick `6dat` |
 | 13 | Veridian's apply and agree handling looks for an indexer OOBI and fails when the counterparty has none | Veridian | tick `7g2n` |

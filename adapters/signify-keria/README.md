@@ -1,6 +1,6 @@
 # signify-ts and KERIA adapter
 
-Connects released signify-ts, and the KERIA agent it drives, to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `acdc.verify` for ACDC 1.x credentials in keripy 1.x's forms, the `sedi-1x-interop` companion profile, and declares only that operation. It composes nothing: `composes` is empty, and every verdict is KERIA's. The decision and its tradeoffs are in `this.i`, "The signify-ts-keria adapter judges a 1.x bundle with the KERIA agent signify-ts drives".
+Connects released signify-ts, and the KERIA agent it drives, to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `acdc.verify` for ACDC 1.x credentials in keripy 1.x's forms, the `sedi-1x-interop` companion profile, and `acdc.issue` of such credentials, and declares only those two operations. It composes nothing: `composes` is empty, every verdict is KERIA's, and every credential is the one signify-ts builds. The decision and its tradeoffs are in `this.i`, "The signify-ts-keria adapter judges a 1.x bundle with the KERIA agent signify-ts drives".
 
 ## What it tests, pinned
 
@@ -52,6 +52,16 @@ For each `acdc.verify` request:
 
 The bundle never reaches the network through the adapter, and the adapter consults no clock. KERIA's verifier compares a registry event's `dt` with the current time, but treats an issuance as stale only after 36,000,000,000 seconds, so no stamp a case carries is affected; its escrows time out by arrival time, not by any stamp.
 
+## How a credential is issued
+
+For each `acdc.issue` request, which must ask for registry kind `ptel-1x` for every credential and for no edge section (anything else is answered `unsupported`, `e.feature.unsupported.issue-1x.f`), signify-ts boots a fresh agent as for a verification, and KERIA learns the request's schemas the same way. Then, through signify-ts's own client:
+
+1. Each role gets a transferable identifier with no witnesses, `identifiers().create`, named `role-<n>` in KERIA, since KERIA puts names in its URLs.
+2. Each credential gets a registry of its own, `registries().create` with signify-ts's defaults: no backers, and signify-ts's random nonce. signify-ts signs the interaction that anchors its `vcp`.
+3. signify-ts's `credentials().issue` builds and signs the credential, its `iss` and the interaction that anchors it, and KERIA takes them. signify-ts adds the attribute section's `d`, and `a.dt` unless it was asked for (`interop/two-wallets/INCOMPATIBILITIES.md` entry 8). It leaves the section's salt and issuee to its caller, so the adapter gives a fresh salt from signify-ts's `Salter` as `u` and the issuee's prefix as `i`, and passes every attribute as asked. A request with an attribute labelled `d`, `u` or `i` is malformed, since those are the issuer's.
+
+KERIA checks each credential against its schema before it takes it. When the check fails, KERIA answers HTTP 400 with `Credential schema validation failed for …`, which signify-ts raises; the adapter answers that, and only that, as `refused`, with the first line of KERIA's reason. Any other failure is a harness error. The result is each identifier's KEL as KERIA's `/events` holds it, every event's body with its attachments, and each credential's ACDC body and its `vcp` and `iss` bodies, as signify-ts built them.
+
 ## Where each value comes from
 
 | Reported value | Source |
@@ -67,15 +77,15 @@ The verdict is never `incomplete`. KERIA's API reports a credential only once it
 
 Declared: `acdc.keripy-1x`, `acdc.ptel-1x`, `cesr.genus-1.00`, `cesr.serialization.json`, `crypto.ed25519`, `kel.basic` and `keri.version-1.x`, the features the `sedi-1x-interop` cases require. KERIA reads KERI 1.x and ACDC 1.x JSON with CESR 1.00 attachments and Ed25519 signatures.
 
-Not declared: any ACDC 2.00 feature, because KERIA 0.4.1 issues and holds 1.x credentials only; `cesr.parse`, `keri.process` and `exn.verify`, which this adapter was not built for (the signify-ts adapter tests signify-ts's parser); and `acdc.issue`, which is not built yet.
+Not declared: any ACDC 2.00 feature, because KERIA 0.4.1 issues and holds 1.x credentials only; and `cesr.parse`, `keri.process`, `exn.verify` and `acdc.present`, which this adapter was not built for (the signify-ts adapter tests signify-ts's parser).
 
 ## Errors
 
-`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when the number 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB; a longer one gets an error whose `id` is null (`e.input.range.request-size.f`). A line that is blank, not UTF-8, not a JSON object, or has no usable `id` gets an error whose `id` is null (`e.input.format.request.f`), and so does a malformed `acdc.verify` field, with the request's `id`. Operations the adapter does not declare get an `unsupported` error (`e.feature.unsupported.undeclared-op.f`). A failure inside KERIA or the schema server while judging a request is a harness error, `e.env.dependency.keria.t`, never a verdict, and so is any call to KERIA that has not answered within 10 seconds. Any other exception becomes a harness error (`e.self.unknown.exception.f`). `tests/schema.test.ts` checks every kind of response against `schema/adapter-protocol.schema.json`.
+`hello` negotiates from the request's `supported` list (or `[protocol]` when the list is absent) and answers with protocol 1, or with an `unsupported` error when the number 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB; a longer one gets an error whose `id` is null (`e.input.range.request-size.f`). A line that is blank, not UTF-8, not a JSON object, or has no usable `id` gets an error whose `id` is null (`e.input.format.request.f`), and so does a malformed `acdc.verify` or `acdc.issue` field, with the request's `id`. Operations the adapter does not declare get an `unsupported` error (`e.feature.unsupported.undeclared-op.f`). A failure inside KERIA or the schema server while judging or issuing is a harness error, `e.env.dependency.keria.t`, never a verdict, and so is any call to KERIA that has not answered within 10 seconds. Any other exception becomes a harness error (`e.self.unknown.exception.f`). `tests/schema.test.ts` checks every kind of response against `schema/adapter-protocol.schema.json`.
 
 ## The baseline
 
-`baseline-sedi-1x-interop.json` is the committed result of `sedi-1x-interop`, written with the keripy adapter's standard-library comparison tool. All seven cases, ACDC-0201 to ACDC-0207, pass: KERIA saves the credentials keripy 1.2.14 finds valid and refuses ACDC-0202 (a 1.x credential under SEDI's published 2.0 schema shape), ACDC-0203 (an `a.dt` that SEDI core's closed attribute section forbids) and ACDC-0205 (an edge section with its own `u`).
+`baseline-sedi-1x-interop.json` is the committed result of `sedi-1x-interop`, written with the keripy adapter's standard-library comparison tool. All seven verification cases, ACDC-0201 to ACDC-0207, pass: KERIA saves the credentials keripy 1.2.14 finds valid and refuses ACDC-0202 (a 1.x credential under SEDI's published 2.0 schema shape), ACDC-0203 (an `a.dt` that SEDI core's closed attribute section forbids) and ACDC-0205 (an edge section with its own `u`). Of the two issuance cases, ACDC-0283 (SX-09) passes, and ACDC-0282 (SX-08) fails, as the case intends: signify-ts adds `a.dt` to SEDI core, whose schema forbids it, and KERIA refuses the credential signify-ts built (docs/profiles/sedi.md, The 1.x companion).
 
 ```sh
 uv run kcs run --adapter "$PWD/adapters/signify-keria/bin/kcs-adapter-signify-keria" --profile sedi-1x-interop --report /tmp/s.json

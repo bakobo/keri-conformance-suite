@@ -7,7 +7,7 @@
       "composable": false
     },
     "acdc.keripy-1x": {
-      "description": "Reads the ACDC 1.x field set and computes the top-level SAID over the expanded form, as keripy 1.x does. No specification defines either; cases using it belong to the acdc-keripy-1x-interop and sedi-1x-interop profiles.",
+      "description": "Reads the ACDC 1.x field set and computes the top-level SAID over the expanded form, as keripy 1.x does, and, with acdc.issue, writes them. No specification defines either; cases using it belong to the acdc-keripy-1x-interop and sedi-1x-interop profiles.",
       "composable": false
     },
     "acdc.presentation": {
@@ -15,7 +15,7 @@
       "composable": true
     },
     "acdc.ptel-1x": {
-      "description": "Verifies keripy 1.x's issuance and revocation registry (vcp, iss, rev). No specification defines it; cases using it belong to the acdc-keripy-1x-interop and sedi-1x-interop profiles.",
+      "description": "Verifies keripy 1.x's issuance and revocation registry (vcp, iss, rev), and, with acdc.issue, issues into one (registry kind ptel-1x). No specification defines it; cases using it belong to the acdc-keripy-1x-interop and sedi-1x-interop profiles.",
       "composable": false
     },
     "acdc.registry.bup": {

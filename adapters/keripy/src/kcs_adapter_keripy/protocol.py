@@ -64,9 +64,10 @@ def hello(request):
         operations += ["keri.process", "acdc.verify", "exn.verify"]
         features += [f for f in kel.FEATURES if f not in features]
     else:
-        # keripy 1.x judges a 1.x ACDC with its own Verifier (acdc1x.py), so it declares the 1.x
-        # ACDC and registry features, and the KEL features that judgement relies on.
-        operations += ["acdc.verify"]
+        # keripy 1.x judges a 1.x ACDC with its own Verifier (acdc1x.py) and issues one with its
+        # own issuer functions (issue1x.py), so it declares the 1.x ACDC and registry features,
+        # and the KEL features both rely on.
+        operations += ["acdc.verify", "acdc.issue"]
         features += [f for f in ONEX_ACDC_FEATURES if f not in features]
     return {"protocol": PROTOCOL, "adapter": dict(ADAPTER),
             "implementation": keripy_api.implementation(), "operations": operations,
@@ -105,6 +106,13 @@ def _acdc_verify(request):
     return acdc.verify(request)
 
 
+def _acdc_issue(request):
+    if cesr.api().generation in KEL_GENERATIONS:
+        raise Undeclared(request.get("op"))
+    from kcs_adapter_keripy import issue1x  # keripy 1.x only: keri.vdr and keri.vc.proving
+    return issue1x.issue(request)
+
+
 def _exn_verify(request):
     _main_only(request)
     from kcs_adapter_keripy import exchange  # keripy main only: KERI 2.x exchange messages
@@ -116,7 +124,7 @@ class Undeclared(Exception):
 
 
 OPS = {"hello": hello, "cesr.parse": _parse, "cesr.encode": _encode, "keri.process": _process,
-       "acdc.verify": _acdc_verify, "exn.verify": _exn_verify}
+       "acdc.verify": _acdc_verify, "acdc.issue": _acdc_issue, "exn.verify": _exn_verify}
 
 
 def handle(request):

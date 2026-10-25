@@ -73,9 +73,56 @@ def _dag(name: str, by_name: dict[str, dict]) -> list[str]:
     return out
 
 
+def _seqner(sn: int) -> str:
+    if not 0 <= sn < 2 ** 128:
+        raise issued.Unread("a sequence number does not fit a 0A seqner")
+    return issued.qb64("0A", sn.to_bytes(16, "big"))
+
+
+def _source(events: list[tuple[dict, bytes, bytes]], seal: dict) -> str:
+    """The 1.00 seal source couple (-G) of the issuer's event that anchors ``seal``."""
+    for body, _, _ in events:
+        if seal in (body.get("a") if isinstance(body.get("a"), list) else []):
+            return "-GAB" + _seqner(int(body["s"], 16)) + body["d"]
+    raise issued.Unread("no event of the issuer's KEL anchors a registry event")
+
+
+def issue_bundles_1x(request: dict, result: dict) -> dict[str, dict]:
+    """The acdc.verify bundles of a keripy 1.x issuance (registry kind ptel-1x): each message as
+    the issuer returned it, a registry event with the seal source couple of the issuer's event
+    that anchors it, and the ACDC with its iss as a seal source triple (-I), as keripy 1.x
+    delivers a credential."""
+    from keri_conformance import issued1x
+    kels, events = [], {}
+    for role in request["roles"]:
+        events[role] = issued1x.frames(bytes.fromhex(result["kels"][role]), b"KERI")
+        kels += [{"stream": (raw + attachments).hex(), "source": role}
+                 for _, raw, attachments in events[role]]
+    by_name = {c["name"]: c for c in request["credentials"]}
+    bundles = {}
+    for name, out in result["credentials"].items():
+        issuer = events[by_name[name]["issuer"]]
+        registry = []
+        events = issued1x.frames(bytes.fromhex(out["registry"]), b"KERI")
+        if not events:
+            raise issued.Unread("a 1.x registry holds no events")
+        for body, raw, _ in events:
+            seal = {"i": body.get("i"), "s": body.get("s"), "d": body.get("d")}
+            registry.append({"stream": (raw + _source(issuer, seal).encode()).hex()})
+            last = body
+        acdc = bytes.fromhex(out["acdc"])
+        triple = "-IAB" + last["i"] + _seqner(int(last["s"], 16)) + last["d"]
+        bundles[name] = {"perspective": {"role": "validator"}, "kels": kels,
+                         "registry": registry, "schemas": list(request["schemas"]), "acdcs": [],
+                         "presented": {"stream": (acdc + triple.encode()).hex()}}
+    return bundles
+
+
 def issue_bundles(request: dict, result: dict) -> dict[str, dict]:
     """An acdc.verify bundle per credential an issuer returned, by request name. Raises
     issued.Unread when a returned stream cannot be split into its messages."""
+    if any(c.get("registry") == issued.ONE_X for c in request["credentials"]):
+        return issue_bundles_1x(request, result)
     kels = []
     for role in request["roles"]:
         stream = bytes.fromhex(result["kels"][role])

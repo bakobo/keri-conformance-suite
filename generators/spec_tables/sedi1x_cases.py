@@ -12,11 +12,21 @@ SEDI publishes, derived from the 1.x profile by that entry's own mapping run bac
 names ``dt`` in the attribute section, which the SEDI profile closes without it, and
 ``"edge_section_u": false`` stops requiring the edge section's own ``u``, which keripy 1.x reads
 as an edge.
+
+A case with ``"operation": "acdc.issue"`` asks an issuer for its fixture's credentials, each in a
+1.x registry of its own (registry kind ptel-1x), instead of presenting what the suite built, and
+expects ``issued`` or ``refused``. Its expected value is the one exception to the rule above (Q-YWFX,
+2026-10-25; docs/profiles/sedi.md, The 1.x companion): it is what the credential's SEDI schema
+allows, not what keripy 1.2.14 does, because keripy 1.x's issuer adds ``a.dt`` to every credential
+(interop/two-wallets/INCOMPATIBILITIES.md entry 8), and a case that took keripy's behaviour as its
+answer would grade that defect as correct. Each attribute is asked for as the fixture gives it,
+a nested block with its SAID, since no 1.x issuer makes nested blocks; the attribute section's own
+salt is left to the issuer, and ``a.dt`` is asked for only when the fixture gives one.
 """
 
 import copy
 
-from . import keripy1x
+from . import keripy1x, keripy1x_issue
 from .errors import ScenarioError
 from .keripy1x_issue import Issuance
 
@@ -26,9 +36,15 @@ FEATURES = sorted(["acdc.keripy-1x", "acdc.ptel-1x", "cesr.genus-1.00", "cesr.se
                    "crypto.ed25519", "kel.basic", "keri.version-1.x"])
 WIRE = ["CESR-1.00", "KERI10JSON", "ACDC10JSON"]
 VERDICTS = ("valid", "invalid", "incomplete")
+ISSUE_OUTCOMES = {"issued": "issued", "refused": "issue_refused"}
 CASE_FIELDS = {"id", "key", "title", "description", "fixture", "presented", "expected", "basis",
                "triage", "pair"}
 REQUIRED = CASE_FIELDS - {"pair"}
+ISSUE_FIELDS = CASE_FIELDS - {"presented"} | {"operation"}
+ISSUE_REQUIRED = ISSUE_FIELDS - {"pair"}
+ONE_X = "ptel-1x"
+SCHEMA_BASIS = ("SEDI core's 1.x schema, not keripy 1.2.14's behaviour (the companion's one "
+                "exception; docs/profiles/sedi.md, The 1.x companion)")
 
 
 def two_x(schema: dict) -> dict:
@@ -65,9 +81,75 @@ def _schemas(library: dict, schemas: dict) -> dict:
     return out
 
 
+def _described(case: dict, pairs: dict) -> str:
+    description = case["description"]
+    if "pair" in case:
+        if case["pair"] not in pairs:
+            raise ScenarioError(f"{case['id']}: its pair {case['pair']!r} is not a case here.")
+        description += (f" Its positive pair is {case['pair']} ({pairs[case['pair']]}), which "
+                        "differs from it only in the defect.")
+    return description
+
+
+def _issue_request(issuance: Issuance, spec: dict) -> dict:
+    """The acdc.issue request for a fixture's credentials, each in a 1.x registry of its own."""
+    credentials = []
+    for asked in spec["credentials"]:
+        if "edges" in asked or asked.get("revoked"):
+            raise ScenarioError(f"The credential {asked['name']!r} has edges or a revocation, "
+                                "which a 1.x issuance case does not ask for.")
+        attributes = {label: issuance._block(value) if isinstance(value, dict) else value
+                      for label, value in asked.get("attributes", {}).items() if label != "u"}
+        if "dt" in asked:
+            attributes = {"dt": asked["dt"], **attributes}
+        credential = {"name": asked["name"], "issuer": spec["issuer"],
+                      "schema": issuance.schemas[asked["schema"]]["$id"],
+                      "attributes": attributes, "registry": ONE_X}
+        if "issuee" in asked:
+            credential["issuee"] = asked["issuee"]
+        credentials.append(credential)
+    return {"roles": spec.get("roles", [spec["issuer"]]),
+            "schemas": [keripy1x_issue._json(s).hex() for s in issuance.schemas.values()],
+            "credentials": credentials}
+
+
+def build_issue_case(t, rel: str, fixtures: dict, case: dict, pairs: dict,
+                     library: dict | None = None) -> dict:
+    """One acdc.issue case, graded on what its SEDI schema allows (Q-YWFX)."""
+    missing = ISSUE_REQUIRED - set(case)
+    if missing:
+        raise ScenarioError(f"{case.get('id')}: needs {sorted(missing)}.")
+    if set(case) - ISSUE_FIELDS:
+        raise ScenarioError(f"{case['id']}: unknown fields {sorted(set(case) - ISSUE_FIELDS)}.")
+    if case["expected"] not in ISSUE_OUTCOMES:
+        raise ScenarioError(f"{case['id']}: {case['expected']!r} is not an issuance outcome.")
+    if case["fixture"] not in fixtures:
+        raise ScenarioError(f"{case['id']}: the fixture {case['fixture']!r} is not defined.")
+    spec = dict(fixtures[case["fixture"]])
+    spec["schemas"] = _schemas(library or {}, spec["schemas"])
+    issuance = Issuance(t, spec)
+    return {
+        "schema_version": 1,
+        "id": case["id"],
+        "title": case["title"],
+        "description": _described(case, pairs),
+        "status": "draft",
+        "profile": PROFILE,
+        "targets": {"wire": WIRE, "features": FEATURES},
+        "operation": "acdc.issue",
+        "input": _issue_request(issuance, spec),
+        "assertions": [{"id": "a1", "check": ISSUE_OUTCOMES[case["expected"]],
+                        "level": "INTEROP", "basis": f"{SCHEMA_BASIS}: {case['basis']}"}],
+        "provenance": {"scenario": f"{rel}#{case['key']}", "generator": GENERATOR,
+                       "reference": None},
+    }
+
+
 def build_case(t, rel: str, fixtures: dict, case: dict, pairs: dict,
                library: dict | None = None) -> dict:
     """One case, from its scenario entry and the fixture it names."""
+    if case.get("operation") == "acdc.issue":
+        return build_issue_case(t, rel, fixtures, case, pairs, library)
     missing = REQUIRED - set(case)
     if missing:
         raise ScenarioError(f"{case.get('id')}: needs {sorted(missing)}.")
@@ -81,12 +163,7 @@ def build_case(t, rel: str, fixtures: dict, case: dict, pairs: dict,
     spec["schemas"] = _schemas(library or {}, spec["schemas"])
     issuance = Issuance(t, spec)
     request = issuance.request(case["presented"])
-    description = case["description"]
-    if "pair" in case:
-        if case["pair"] not in pairs:
-            raise ScenarioError(f"{case['id']}: its pair {case['pair']!r} is not a case here.")
-        description += (f" Its positive pair is {case['pair']} ({pairs[case['pair']]}), which "
-                        "differs from it only in the defect.")
+    description = _described(case, pairs)
     basis = (f"keripy {keripy1x.KERIPY_1X_VERSION} (commit {keripy1x.KERIPY_1X_COMMIT}): "
              f"{case['basis']}")
     return {

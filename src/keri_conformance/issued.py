@@ -33,6 +33,8 @@ import base64
 import datetime
 import json
 import re
+from collections.abc import Callable
+from dataclasses import dataclass
 
 from keri_conformance import blake3, ed25519
 from keri_conformance import json_schema_subset as js
@@ -47,6 +49,7 @@ BUP_FIELDS = ("v", "t", "d", "rd", "n", "p", "dt", "b")
 # Tag codes by the number of characters they carry (CESR master table).
 TAGS = {2: "0K", 3: "X", 4: "1AAF", 6: "0M", 7: "Y", 8: "1AAN", 10: "0O", 11: "Z"}
 UNARY = ("I2I", "NI2I", "DI2I", "E1E")
+ONE_X = "ptel-1x"  # the registry kind of a keripy 1.x issuance (issued1x)
 
 # Bounds on a result, checked before any hashing or signature check.
 MAX_STREAM = 1024 * 1024  # bytes in one KEL, one ACDC or one registry
@@ -234,6 +237,22 @@ def signatures(attachments: bytes) -> list[tuple[int, bytes]]:
     return out
 
 
+@dataclass(frozen=True)
+class Form:
+    """How one version of KERI frames, sizes and signs its messages: KERI 2.0's here, and keripy
+    1.x's in issued1x."""
+    frames: Callable[[bytes, bytes], list]
+    sized: Callable[[dict, str], dict]
+    signatures: Callable[[bytes], list]
+
+    def said(self, sad: dict, protocol: str, labels=("d",)) -> str:
+        return digest(serialize(self.sized({**sad, **{label: DUMMY for label in labels}},
+                                           protocol)))
+
+
+V2 = Form(frames, sized, signatures)
+
+
 # -- KELs -------------------------------------------------------------------------------------
 
 
@@ -254,13 +273,13 @@ def _signed(raw: bytes, keys: list[str], sigs: list[tuple[int, bytes]]) -> set[i
     return good
 
 
-def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
+def verify_kel(stream: bytes, form: Form = V2) -> tuple[str, list[dict], list[str]]:
     """The prefix, the verified events' bodies in order, and what failed. The KEL stops at the
     first event that fails."""
     if len(stream) > MAX_STREAM:
         return "", [], [f"the KEL is longer than {MAX_STREAM} bytes"]
     try:
-        events = frames(stream, b"KERI")
+        events = form.frames(stream, b"KERI")
     except Unread as exc:
         return "", [], [f"the KEL cannot be read: {exc}"]
     if not events:
@@ -280,9 +299,10 @@ def verify_kel(stream: bytes) -> tuple[str, list[dict], list[str]]:
                 return prefix, trunk, [(f"{where} is a {ilk}, and a KEL begins with its only "
                                        "inception")]
             labels = ("d", "i") if ilk == "icp" else ("d",)
-            if serialize(sized(body, "KERI")) != raw or said(body, "KERI", labels) != body["d"]:
+            if serialize(form.sized(body, "KERI")) != raw or \
+                    form.said(body, "KERI", labels) != body["d"]:
                 return prefix, trunk, [f"{where}'s SAID does not verify"]
-            sigs = signatures(attachments)
+            sigs = form.signatures(attachments)
             if ilk == "icp":
                 prefix = body.get("i")
                 if prefix != body["d"]:
@@ -711,7 +731,15 @@ def _fits(body: dict, schema) -> list[str]:
 
 
 def grade(request: dict, result: dict) -> list[str]:
-    """Every check the result fails; empty when what was issued verifies and is what was asked."""
+    """Every check the result fails; empty when what was issued verifies and is what was asked.
+    A request for keripy 1.x registries is graded as keripy 1.x issues (issued1x)."""
+    kinds = {c.get("registry") for c in request.get("credentials", [])}
+    if ONE_X in kinds:
+        if kinds != {ONE_X}:
+            return [(f"the request mixes {ONE_X} registries with KERI 2.0 ones, which no one "
+                     "issuance can hold")]
+        from keri_conformance import issued1x
+        return issued1x.grade(request, result)
     problems: list[str] = []
     prefixes, trunks = {}, {}
     kels = result.get("kels") or {}
