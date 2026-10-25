@@ -1164,7 +1164,7 @@
    "id": "ACDC-0203",
    "key": "SX-03",
    "title": "An a.dt the SEDI schema forbids",
-   "description": "As SX-01, but the attribute block carries a.dt, which SEDI core's closed attribute section does not name. signify-ts's issue helper inserts a.dt this way (G17 incompatibility 8). A keripy 1.x verifier refuses it.",
+   "description": "As SX-01, but the attribute block carries a.dt, which SEDI core's closed attribute section does not name. keripy 1.x's issuer, and signify-ts's issue helper after it, insert a.dt this way (G17 incompatibility 8). A keripy 1.x verifier refuses it.",
    "fixture": "core-dt",
    "presented": "core",
    "expected": "invalid",
