@@ -93,15 +93,15 @@ def issue_bundles_1x(request: dict, result: dict) -> dict[str, dict]:
     that anchors it, and the ACDC with its iss as a seal source triple (-I), as keripy 1.x
     delivers a credential."""
     from keri_conformance import issued1x
-    kels, events = [], {}
+    kels, logs = [], {}
     for role in request["roles"]:
-        events[role] = issued1x.frames(bytes.fromhex(result["kels"][role]), b"KERI")
+        logs[role] = issued1x.frames(bytes.fromhex(result["kels"][role]), b"KERI")
         kels += [{"stream": (raw + attachments).hex(), "source": role}
-                 for _, raw, attachments in events[role]]
+                 for _, raw, attachments in logs[role]]
     by_name = {c["name"]: c for c in request["credentials"]}
     bundles = {}
     for name, out in result["credentials"].items():
-        issuer = events[by_name[name]["issuer"]]
+        issuer = logs[by_name[name]["issuer"]]
         registry = []
         events = issued1x.frames(bytes.fromhex(out["registry"]), b"KERI")
         if not events:
