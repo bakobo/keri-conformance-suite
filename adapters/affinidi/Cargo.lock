@@ -14,12 +14,12 @@ dependencies = [
 
 [[package]]
 name = "affinidi-keri-core"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f732b50bffd7f4dda1346f8e0925018a42de4808c8534ab56d257292c31740a0"
+checksum = "f44114f2dd34555182b83331291ac10d8a727f515b0622037a8e4e1c87429be2"
 dependencies = [
  "affinidi-cesr",
- "affinidi-keri-crypto",
+ "affinidi-keri-crypto 0.5.1",
  "chrono",
  "ciborium",
  "indexmap",
@@ -35,6 +35,27 @@ name = "affinidi-keri-crypto"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d4006c2656635a74cb331507f3f33fb4d2faaa5bc3a2daf264ba18b2b1ffbeb"
+dependencies = [
+ "affinidi-cesr",
+ "argon2",
+ "blake2",
+ "blake3",
+ "ed25519-dalek",
+ "k256",
+ "p256",
+ "rand",
+ "sha2",
+ "sha3",
+ "subtle",
+ "thiserror",
+ "zeroize",
+]
+
+[[package]]
+name = "affinidi-keri-crypto"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9cabd0b03dbbea760b2bb238fd8b93ed6b2a924af747708f69bded67b7d236c6"
 dependencies = [
  "affinidi-cesr",
  "argon2",
@@ -629,7 +650,7 @@ version = "0.1.0"
 dependencies = [
  "affinidi-cesr",
  "affinidi-keri-core",
- "affinidi-keri-crypto",
+ "affinidi-keri-crypto 0.4.0",
  "serde_json",
 ]
 
@@ -899,7 +920,6 @@ version = "1.0.151"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
 dependencies = [
- "indexmap",
  "itoa",
  "memchr",
  "serde",
