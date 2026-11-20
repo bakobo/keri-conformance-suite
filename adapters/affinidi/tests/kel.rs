@@ -541,6 +541,41 @@ fn a_delegation_under_a_do_not_delegate_delegator_is_rejected() {
 }
 
 #[test]
+fn a_seal_in_a_displaced_delegator_event_does_not_authorize_a_delegation() {
+    // The delegating seal must lie on the delegator's trunk: the model the expected readings come
+    // from (generators/spec_tables/keri_model.py) looks for it there. A superseding rotation displaces
+    // the interaction that carried the seal, so the delegated inception that cites it afterwards
+    // is not seen, although the displaced interaction itself stays seen.
+    let (d0, d1, e0, e1) = delegator_and_delegate();
+    let d2 = signer(3);
+    let dicp = Icp::single(&[&d0], &[&d1]).icp();
+    let dpre = said(&dicp);
+    let dip = Icp::single(&[&e0], &[&e1]).dip(&dpre);
+    let epre = said(&dip);
+    let anchor = ixn(
+        &dpre,
+        1,
+        &dpre,
+        sad!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
+    );
+    let recovery = rot(&dpre, 1, &dpre, &[&d1], &[&d2], false);
+    let result = process(&[
+        stream(&dicp, &[sigs(&dicp, &[(&d0, 0)])]),
+        stream(&anchor, &[sigs(&anchor, &[(&d0, 0)])]),
+        stream(&recovery, &[sigs(&recovery, &[(&d1, 0)])]),
+        stream(
+            &dip,
+            &[sigs(&dip, &[(&e0, 0)]), seal_source(1, &said(&anchor))],
+        ),
+    ]);
+    let displaced = ("seen".to_string(), "seen".to_string(), false);
+    let readings = readings(&result);
+    assert_eq!(readings[..3], [seen(), displaced, seen()]);
+    assert_eq!(readings[3].1, "rejected", "{readings:?}");
+    assert!(result["key_states"].get(&epre).is_none());
+}
+
+#[test]
 fn a_superseding_rotation_leaves_the_interaction_it_displaces_seen_but_off_the_trunk() {
     let (k0, k1, k2) = (signer(1), signer(2), signer(3));
     let icp = Icp::single(&[&k0], &[&k1]).icp();

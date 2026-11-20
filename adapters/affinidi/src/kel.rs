@@ -50,6 +50,11 @@ impl DelegatorAnchors for Validator {
         sn: u64,
         said: &str,
     ) -> Result<Option<Vec<SadValue>>, CoreError> {
+        // Only an event on the delegator's trunk can authorize a delegation: a superseding
+        // rotation displaces the seals the events it supersedes carried.
+        if !self.trunk_of(delegator).contains(said) {
+            return Ok(None);
+        }
         Ok(self
             .anchors
             .get(&(delegator.to_string(), sn, said.to_string()))
@@ -81,20 +86,33 @@ impl Validator {
     /// through each accepted event's prior-event link to the inception.
     fn trunk(&self) -> HashSet<Vec<u8>> {
         let mut trunk = HashSet::new();
-        for (prefix, kever) in &self.kevers {
-            let mut at = Some(kever.state().last_event_digest.clone());
-            // Each step moves to a distinct accepted event, so the walk ends within their number.
-            for _ in 0..=self.events.len() {
-                let Some((body, prior)) =
-                    at.and_then(|said| self.events.get(&(prefix.clone(), said)))
-                else {
-                    break;
-                };
-                trunk.insert(body.clone());
-                at = prior.clone();
+        for prefix in self.kevers.keys() {
+            for said in self.trunk_of(prefix) {
+                trunk.insert(self.events[&(prefix.clone(), said)].0.clone());
             }
         }
         trunk
+    }
+
+    /// The SAIDs of the events on one prefix's trunk, followed back through each accepted
+    /// event's prior-event link from the last event its Kever holds. Empty for a prefix
+    /// Affinidi holds no Kever for.
+    fn trunk_of(&self, prefix: &str) -> HashSet<String> {
+        let mut saids = HashSet::new();
+        let mut at = self
+            .kevers
+            .get(prefix)
+            .map(|kever| kever.state().last_event_digest.clone());
+        // Each step moves to a distinct accepted event, so the walk ends within their number.
+        for _ in 0..=self.events.len() {
+            let Some(said) = at else { break };
+            let Some((_, prior)) = self.events.get(&(prefix.to_string(), said.clone())) else {
+                break;
+            };
+            saids.insert(said);
+            at = prior.clone();
+        }
+        saids
     }
 
     /// Deliver one stream. Returns the body of the key event it carries, if Affinidi could parse

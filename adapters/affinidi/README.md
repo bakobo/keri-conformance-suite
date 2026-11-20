@@ -102,7 +102,7 @@ The adapter does not use Affinidi's higher-level validator, `affinidi_keri::dire
 | `kt`, `nt` | `KeyState` `threshold` and `next_threshold`. A numeric threshold is the number Affinidi holds, written in hex as KERI writes it, so a `kt` of `"10"`, which Affinidi reads as ten, is reported as `"a"`. A weighted threshold is `Threshold::to_json_value`, always nested |
 | `bt` | `KeyState::backer_threshold`, in hex |
 
-The readings use only `seen` and `rejected`. Affinidi has no escrow, so nothing is `pending`, and it records no duplicity, so nothing is `duplicitous`. A displaced event keeps its anchors in the record the `DelegatorAnchors` lookup answers from, since Affinidi verified it.
+The readings use only `seen` and `rejected`. Affinidi has no escrow, so nothing is `pending`, and it records no duplicity, so nothing is `duplicitous`. The `DelegatorAnchors` lookup answers only from events on the delegator's trunk, as above, so a seal in an event a superseding rotation displaced authorizes no delegation, as in the model the expected readings come from (`generators/spec_tables/keri_model.py`, which looks for the seal on the delegator's trunk).
 
 ## Errors
 
