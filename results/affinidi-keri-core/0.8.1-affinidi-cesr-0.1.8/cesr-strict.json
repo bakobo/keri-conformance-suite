@@ -3,8 +3,8 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "819ecdd4f8d246330b12cd86faefc6627559c177",
-    "date": "2026-10-16"
+    "commit": "86a8013794fc5bd393d19b48e69bf4aa90f6fd9a",
+    "date": "2026-11-20"
   },
   "report": {
     "report_version": 1,
@@ -16,48 +16,58 @@
     ],
     "negotiated_protocol": 1,
     "hello": {
-      "protocol": 1,
       "adapter": {
         "name": "kcs-adapter-affinidi",
         "version": "0.1.0"
       },
-      "implementation": {
-        "name": "affinidi-keri-core",
-        "version": "0.4.0 (affinidi-cesr 0.1.3)",
-        "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c (affinidi-cesr b970cb01bdd1acd0530137b67460579e4624ab47)"
-      },
-      "operations": [
-        "cesr.parse",
-        "cesr.encode",
-        "keri.process"
+      "composes": [
+        "keri.routing"
       ],
       "features": [
         "cesr.genus-1.00",
+        "cesr.genus-2.00",
         "cesr.serialization.json",
         "crypto.ed25519",
         "kel.basic",
         "kel.delegation",
         "kel.multisig.numeric",
         "kel.multisig.weighted",
+        "kel.nontransferable",
+        "kel.partial-rotation",
+        "kel.recovery",
         "kel.witness",
         "keri.routing",
-        "keri.version-1.x"
+        "keri.version-1.x",
+        "keri.version-2.x"
       ],
-      "composes": [
-        "keri.routing"
-      ]
+      "implementation": {
+        "commit": "4a1433fb82a90cbff48aedf7716eb75e286198f4 (affinidi-cesr 10ee3f21fa8546849b5706af9f280d1de7258928)",
+        "name": "affinidi-keri-core",
+        "version": "0.8.1 (affinidi-cesr 0.1.8)"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode",
+        "keri.process"
+      ],
+      "protocol": 1
     },
     "declared_features": [
       "cesr.genus-1.00",
+      "cesr.genus-2.00",
       "cesr.serialization.json",
       "crypto.ed25519",
       "kel.basic",
       "kel.delegation",
       "kel.multisig.numeric",
       "kel.multisig.weighted",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "kel.recovery",
       "kel.witness",
       "keri.routing",
-      "keri.version-1.x"
+      "keri.version-1.x",
+      "keri.version-2.x"
     ],
     "composes": [
       "keri.routing"
@@ -67,7 +77,7 @@
       "cases_dir": "cases"
     },
     "session_stderr": "",
-    "verdict": "no-evidence",
+    "verdict": "interoperable",
     "aborted": null,
     "probes": {
       "statelessness": "not-yet-available"
@@ -76,21 +86,18 @@
       "counts": {
         "active": {
           "INTEROP": {
-            "not-supported": 2
+            "pass": 2
           }
         }
       },
       "should": {},
       "should_failed": 0,
       "interop": {
-        "not-supported": 2
+        "pass": 2
       },
-      "interop_verdict": "no-evidence",
+      "interop_verdict": "interoperable",
       "should_warning": null,
-      "not_supported_active": [
-        "CESR-0043",
-        "CESR-0044"
-      ],
+      "not_supported_active": [],
       "self_agreement_passes": 0
     },
     "cases": [
@@ -100,24 +107,24 @@
         "profile": "cesr-strict",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: unrecognised attachment counter code \"-d\" for V2; refusing to guess its length\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0044",
@@ -125,24 +132,24 @@
         "profile": "cesr-strict",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: unknown matter code: 4Z for prefix\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       }
     ]
   }

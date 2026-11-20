@@ -114,11 +114,11 @@ The readings use only `seen` and `rejected`. Affinidi has no escrow, so nothing 
 
 | Implementation | Profile | Verdict | Active MUST pass / fail | Active SHOULD pass / fail | Active INTEROP pass / fail | Active cases not supported | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `cesr-strict` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 2 | [2026-10-16, suite 819ecdd4](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/cesr-strict.json) |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `cesr-v1.0` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 42 | [2026-10-16, suite 819ecdd4](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/cesr-v1.0.json) |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-16, suite 819ecdd4](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keri-escrow.json) |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 114 | [2026-10-16, suite 819ecdd4](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keri-v1.0.1.json) |
-| affinidi-keri-core 0.4.0 (affinidi-cesr 0.1.3) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 87 / 25 | 12 | [2026-10-16, suite 819ecdd4](../../results/affinidi-keri-core/0.4.0-affinidi-cesr-0.1.3/keripy-1x-interop.json) |
+| affinidi-keri-core 0.8.1 (affinidi-cesr 0.1.8) | `cesr-strict` | interoperable | 0 / 0 | 0 / 0 | 2 / 0 | 0 | [2026-11-20, suite 86a80137](../../results/affinidi-keri-core/0.8.1-affinidi-cesr-0.1.8/cesr-strict.json) |
+| affinidi-keri-core 0.8.1 (affinidi-cesr 0.1.8) | `cesr-v1.0` | conformant | 7 / 0 | 10 / 2 | 0 / 0 | 23 | [2026-11-20, suite 86a80137](../../results/affinidi-keri-core/0.8.1-affinidi-cesr-0.1.8/cesr-v1.0.json) |
+| affinidi-keri-core 0.8.1 (affinidi-cesr 0.1.8) | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-11-20, suite 86a80137](../../results/affinidi-keri-core/0.8.1-affinidi-cesr-0.1.8/keri-escrow.json) |
+| affinidi-keri-core 0.8.1 (affinidi-cesr 0.1.8) | `keri-v1.0.1` | conformant | 191 / 0 | 288 / 45 | 0 / 0 | 17 | [2026-11-20, suite 86a80137](../../results/affinidi-keri-core/0.8.1-affinidi-cesr-0.1.8/keri-v1.0.1.json) |
+| affinidi-keri-core 0.8.1 (affinidi-cesr 0.1.8) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 123 / 11 | 9 | [2026-11-20, suite 86a80137](../../results/affinidi-keri-core/0.8.1-affinidi-cesr-0.1.8/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 

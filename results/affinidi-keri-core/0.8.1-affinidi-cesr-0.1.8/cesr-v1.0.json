@@ -3,8 +3,8 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "819ecdd4f8d246330b12cd86faefc6627559c177",
-    "date": "2026-10-16"
+    "commit": "86a8013794fc5bd393d19b48e69bf4aa90f6fd9a",
+    "date": "2026-11-20"
   },
   "report": {
     "report_version": 1,
@@ -16,48 +16,58 @@
     ],
     "negotiated_protocol": 1,
     "hello": {
-      "protocol": 1,
       "adapter": {
         "name": "kcs-adapter-affinidi",
         "version": "0.1.0"
       },
-      "implementation": {
-        "name": "affinidi-keri-core",
-        "version": "0.4.0 (affinidi-cesr 0.1.3)",
-        "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c (affinidi-cesr b970cb01bdd1acd0530137b67460579e4624ab47)"
-      },
-      "operations": [
-        "cesr.parse",
-        "cesr.encode",
-        "keri.process"
+      "composes": [
+        "keri.routing"
       ],
       "features": [
         "cesr.genus-1.00",
+        "cesr.genus-2.00",
         "cesr.serialization.json",
         "crypto.ed25519",
         "kel.basic",
         "kel.delegation",
         "kel.multisig.numeric",
         "kel.multisig.weighted",
+        "kel.nontransferable",
+        "kel.partial-rotation",
+        "kel.recovery",
         "kel.witness",
         "keri.routing",
-        "keri.version-1.x"
+        "keri.version-1.x",
+        "keri.version-2.x"
       ],
-      "composes": [
-        "keri.routing"
-      ]
+      "implementation": {
+        "commit": "4a1433fb82a90cbff48aedf7716eb75e286198f4 (affinidi-cesr 10ee3f21fa8546849b5706af9f280d1de7258928)",
+        "name": "affinidi-keri-core",
+        "version": "0.8.1 (affinidi-cesr 0.1.8)"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode",
+        "keri.process"
+      ],
+      "protocol": 1
     },
     "declared_features": [
       "cesr.genus-1.00",
+      "cesr.genus-2.00",
       "cesr.serialization.json",
       "crypto.ed25519",
       "kel.basic",
       "kel.delegation",
       "kel.multisig.numeric",
       "kel.multisig.weighted",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "kel.recovery",
       "kel.witness",
       "keri.routing",
-      "keri.version-1.x"
+      "keri.version-1.x",
+      "keri.version-2.x"
     ],
     "composes": [
       "keri.routing"
@@ -67,7 +77,7 @@
       "cases_dir": "cases"
     },
     "session_stderr": "",
-    "verdict": "no-evidence",
+    "verdict": "conformant",
     "aborted": null,
     "probes": {
       "statelessness": "not-yet-available"
@@ -76,10 +86,13 @@
       "counts": {
         "active": {
           "MUST": {
-            "not-supported": 29
+            "pass": 7,
+            "not-supported": 22
           },
           "SHOULD": {
-            "not-supported": 13
+            "pass": 10,
+            "fail": 2,
+            "not-supported": 1
           }
         },
         "disputed": {
@@ -94,23 +107,18 @@
         }
       },
       "should": {
-        "not-supported": 13
+        "pass": 10,
+        "fail": 2,
+        "not-supported": 1
       },
-      "should_failed": 0,
+      "should_failed": 2,
       "interop": {},
       "interop_verdict": null,
-      "should_warning": null,
+      "should_warning": "2 active SHOULD assertions failed. A conformance claim from this run must state its SHOULD results beside the verdict.",
       "not_supported_active": [
-        "CESR-0001",
         "CESR-0002",
-        "CESR-0003",
-        "CESR-0004",
         "CESR-0005",
-        "CESR-0006",
-        "CESR-0007",
         "CESR-0008",
-        "CESR-0009",
-        "CESR-0010",
         "CESR-0011",
         "CESR-0012",
         "CESR-0013",
@@ -130,19 +138,7 @@
         "CESR-0028",
         "CESR-0029",
         "CESR-0030",
-        "CESR-0032",
-        "CESR-0033",
-        "CESR-0034",
-        "CESR-0035",
-        "CESR-0037",
-        "CESR-0038",
-        "CESR-0039",
-        "CESR-0040",
-        "CESR-0041",
-        "CESR-0042",
-        "CESR-0062",
-        "CESR-0063",
-        "CESR-0066"
+        "CESR-0040"
       ],
       "self_agreement_passes": 0
     },
@@ -154,22 +150,19 @@
         "operation": "cesr.encode",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "encoded",
             "level": "MUST",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "44504c4f5f483162383361546c325632754b794d3243367a724b4930615a5f584d6f71574e474f686e6c5831",
-            "actual": null,
+            "actual": "44504c4f5f483162383361546c325632754b794d3243367a724b4930615a5f584d6f71574e474f686e6c5831",
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0002",
@@ -180,8 +173,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.domain.binary",
-          "cesr.genus-2.00"
+          "cesr.domain.binary"
         ],
         "assertions": [
           {
@@ -203,22 +195,19 @@
         "operation": "cesr.encode",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "encoded",
             "level": "MUST",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "4544774b6b496d537a4c3951565978354c474f746150694249547933344c4f6c66626233365934496551634a",
-            "actual": null,
+            "actual": "4544774b6b496d537a4c3951565978354c474f746150694249547933344c4f6c66626233365934496551634a",
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0004",
@@ -227,22 +216,19 @@
         "operation": "cesr.encode",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "encoded",
             "level": "MUST",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "3042415476594c4d7a50694539626c7a7350537368457262424356773057617144544852386b4952356874326a543876355631515368364d6262574c49367241424f30354c5f617666755f796d6e594957336b71452d5574",
-            "actual": null,
+            "actual": "3042415476594c4d7a50694539626c7a7350537368457262424356773057617144544852386b4952356874326a543876355631515368364d6262574c49367241424f30354c5f617666755f796d6e594957336b71452d5574",
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0005",
@@ -253,8 +239,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.domain.binary",
-          "cesr.genus-2.00"
+          "cesr.domain.binary"
         ],
         "assertions": [
           {
@@ -276,22 +261,19 @@
         "operation": "cesr.encode",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "encoded",
             "level": "MUST",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "3041425a444d4f342d373276423251654336503079566a5a",
-            "actual": null,
+            "actual": "3041425a444d4f342d373276423251654336503079566a5a",
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0007",
@@ -300,22 +282,19 @@
         "operation": "cesr.encode",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "encoded",
             "level": "MUST",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "31414142425a644172627a31736e585336567142486e626663514b3150316452494d36755538576c4d6b413153594538",
-            "actual": null,
+            "actual": "31414142425a644172627a31736e585336567142486e626663514b3150316452494d36755538576c4d6b413153594538",
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0008",
@@ -326,8 +305,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.domain.binary",
-          "cesr.genus-2.00"
+          "cesr.domain.binary"
         ],
         "assertions": [
           {
@@ -349,22 +327,19 @@
         "operation": "cesr.encode",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "encoded",
             "level": "MUST",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "314141447a6f76423361586d36614b6242637352426174467075377a71596c2d4436336745686c4655374e66684f646e364346355630394f4e7374756976453346384d6467394e627a4158617a7a4f77",
-            "actual": null,
+            "actual": "314141447a6f76423361586d36614b6242637352426174467075377a71596c2d4436336745686c4655374e66684f646e364346355630394f4e7374756976453346384d6467394e627a4158617a7a4f77",
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0010",
@@ -373,22 +348,19 @@
         "operation": "cesr.encode",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "encoded",
             "level": "MUST",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "4d414142",
-            "actual": null,
+            "actual": "4d414142",
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0011",
@@ -399,8 +371,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.domain.binary",
-          "cesr.genus-2.00"
+          "cesr.domain.binary"
         ],
         "assertions": [
           {
@@ -424,9 +395,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -500,7 +469,6 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
           "cesr.item-extents"
         ],
         "assertions": [
@@ -567,9 +535,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -668,9 +634,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -772,9 +736,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -862,9 +824,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -931,9 +891,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1007,9 +965,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1099,9 +1055,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1168,9 +1122,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1237,9 +1189,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1306,9 +1256,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1376,9 +1324,7 @@
         "outcome": "not-supported",
         "missing_features": [
           "cesr.domain.binary",
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1452,9 +1398,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1585,9 +1529,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1691,9 +1633,7 @@
         "outcome": "not-supported",
         "missing_features": [
           "cesr.domain.binary",
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1824,9 +1764,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1892,9 +1830,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -1969,9 +1905,7 @@
         "outcome": "not-supported",
         "missing_features": [
           "cesr.domain.binary",
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -2070,9 +2004,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -2152,24 +2084,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: attachment group of 92 bytes extends past the stream (90 bytes available)\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0033",
@@ -2177,24 +2109,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: truncated indexed sig: need 88, have 84\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0034",
@@ -2202,24 +2134,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: truncated counter: need 4 characters, have 3\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0035",
@@ -2227,24 +2159,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: truncated counter: need 8 characters, have 6\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0037",
@@ -2252,24 +2184,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: unrecognised attachment counter code \"-0A\" for V2; refusing to guess its length\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0038",
@@ -2277,24 +2209,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: failed to parse indexer: non-canonical encoding: pad bits after code A are not zero\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0039",
@@ -2303,23 +2235,23 @@
         "operation": "cesr.parse",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "fail",
             "expected": null,
-            "actual": null,
-            "detail": null,
+            "actual": {
+              "accepted": {
+                "consumed": 589
+              }
+            },
+            "detail": "The implementation accepted the stream, consuming 589 bytes of it, where it must have rejected it.",
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "fail"
       },
       {
         "id": "CESR-0040",
@@ -2330,9 +2262,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.domain.binary",
-          "cesr.genus-2.00",
-          "keri.version-2.x"
+          "cesr.domain.binary"
         ],
         "assertions": [
           {
@@ -2353,24 +2283,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: unrecognized stream start byte: 0x44\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0042",
@@ -2378,24 +2308,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: raw data too short: 296 bytes but version says 301\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0058",
@@ -2406,9 +2336,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -2473,9 +2401,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -2540,9 +2466,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -2608,9 +2532,7 @@
         "outcome": "not-supported",
         "missing_features": [
           "cesr.domain.binary",
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -2686,24 +2608,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: unknown hardage for char '-' in indexed sig\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0063",
@@ -2711,24 +2633,24 @@
         "profile": "cesr-v1.0",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
+        "stderr": "affinidi rejected the stream: parse error: unknown matter code: -_ for transferable sig group prefix\n",
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": null,
-            "actual": null,
+            "actual": {
+              "reject": {
+                "class": "CoreError::ParseError"
+              }
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "CESR-0066",
@@ -2737,23 +2659,23 @@
         "operation": "cesr.parse",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "cesr.genus-2.00",
-          "keri.version-2.x"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "rejected",
             "level": "SHOULD",
-            "outcome": "not-supported",
+            "outcome": "fail",
             "expected": null,
-            "actual": null,
-            "detail": null,
+            "actual": {
+              "accepted": {
+                "consumed": 589
+              }
+            },
+            "detail": "The implementation accepted the stream, consuming 589 bytes of it, where it must have rejected it.",
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "fail"
       }
     ]
   }

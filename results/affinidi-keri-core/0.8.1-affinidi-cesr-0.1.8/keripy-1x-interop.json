@@ -3,8 +3,8 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "819ecdd4f8d246330b12cd86faefc6627559c177",
-    "date": "2026-10-16"
+    "commit": "86a8013794fc5bd393d19b48e69bf4aa90f6fd9a",
+    "date": "2026-11-20"
   },
   "report": {
     "report_version": 1,
@@ -16,48 +16,58 @@
     ],
     "negotiated_protocol": 1,
     "hello": {
-      "protocol": 1,
       "adapter": {
         "name": "kcs-adapter-affinidi",
         "version": "0.1.0"
       },
-      "implementation": {
-        "name": "affinidi-keri-core",
-        "version": "0.4.0 (affinidi-cesr 0.1.3)",
-        "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c (affinidi-cesr b970cb01bdd1acd0530137b67460579e4624ab47)"
-      },
-      "operations": [
-        "cesr.parse",
-        "cesr.encode",
-        "keri.process"
+      "composes": [
+        "keri.routing"
       ],
       "features": [
         "cesr.genus-1.00",
+        "cesr.genus-2.00",
         "cesr.serialization.json",
         "crypto.ed25519",
         "kel.basic",
         "kel.delegation",
         "kel.multisig.numeric",
         "kel.multisig.weighted",
+        "kel.nontransferable",
+        "kel.partial-rotation",
+        "kel.recovery",
         "kel.witness",
         "keri.routing",
-        "keri.version-1.x"
+        "keri.version-1.x",
+        "keri.version-2.x"
       ],
-      "composes": [
-        "keri.routing"
-      ]
+      "implementation": {
+        "commit": "4a1433fb82a90cbff48aedf7716eb75e286198f4 (affinidi-cesr 10ee3f21fa8546849b5706af9f280d1de7258928)",
+        "name": "affinidi-keri-core",
+        "version": "0.8.1 (affinidi-cesr 0.1.8)"
+      },
+      "operations": [
+        "cesr.parse",
+        "cesr.encode",
+        "keri.process"
+      ],
+      "protocol": 1
     },
     "declared_features": [
       "cesr.genus-1.00",
+      "cesr.genus-2.00",
       "cesr.serialization.json",
       "crypto.ed25519",
       "kel.basic",
       "kel.delegation",
       "kel.multisig.numeric",
       "kel.multisig.weighted",
+      "kel.nontransferable",
+      "kel.partial-rotation",
+      "kel.recovery",
       "kel.witness",
       "keri.routing",
-      "keri.version-1.x"
+      "keri.version-1.x",
+      "keri.version-2.x"
     ],
     "composes": [
       "keri.routing"
@@ -76,20 +86,20 @@
       "counts": {
         "active": {
           "INTEROP": {
-            "not-supported": 51,
-            "pass": 87,
-            "fail": 25,
-            "not-applicable": 12
+            "not-supported": 34,
+            "pass": 123,
+            "fail": 11,
+            "not-applicable": 7
           }
         }
       },
       "should": {},
       "should_failed": 0,
       "interop": {
-        "not-supported": 51,
-        "pass": 87,
-        "fail": 25,
-        "not-applicable": 12
+        "not-supported": 34,
+        "pass": 123,
+        "fail": 11,
+        "not-applicable": 7
       },
       "interop_verdict": "not-interoperable",
       "should_warning": null,
@@ -101,11 +111,8 @@
         "KERI-0147",
         "KERI-0155",
         "KERI-0157",
-        "KERI-0160",
-        "KERI-0161",
         "KERI-0164",
-        "KERI-0170",
-        "KERI-0176"
+        "KERI-0170"
       ],
       "self_agreement_passes": 0
     },
@@ -307,9 +314,7 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-2.00",
-          "cesr.item-extents",
-          "keri.version-2.x"
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -438,7 +443,7 @@
         "profile": "keripy-1x-interop",
         "operation": "cesr.parse",
         "failure": null,
-        "stderr": "affinidi rejected the stream: parse error: failed to parse counter: unexpected end of input\n",
+        "stderr": "affinidi rejected the stream: parse error: truncated counter: need 4 characters, have 3\n",
         "assertions": [
           {
             "id": "a1",
@@ -581,8 +586,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
               ],
@@ -591,9 +596,9 @@
                 "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -653,47 +658,47 @@
             "id": "a5",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": "rejected",
-            "detail": "Message 2's initial reading is rejected, not seen.",
+            "actual": "seen",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a6",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": true,
-            "actual": false,
-            "detail": "Message 2 is off the trunk at the end, where it should be on the trunk.",
+            "actual": true,
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a7",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": "rejected",
-            "detail": "Message 3's initial reading is rejected, not seen.",
+            "actual": "seen",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a8",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": true,
-            "actual": false,
-            "detail": "Message 3 is off the trunk at the end, where it should be on the trunk.",
+            "actual": true,
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a9",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-applicable",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": null,
@@ -709,12 +714,26 @@
               "sn": 3,
               "wits": []
             },
-            "actual": "rejected",
-            "detail": "The assertion applies only if message 3 was seen, and its readings are rejected and rejected.",
+            "actual": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+              ],
+              "nt": "1",
+              "said": "EGijK0d8zyUh0ktrf6Zkmj55JBngUequUcH-Pyfs1LM2",
+              "sn": 3,
+              "wits": []
+            },
+            "detail": null,
             "self_agreement": false
           }
         ],
-        "outcome": "fail"
+        "outcome": "pass"
       },
       {
         "id": "KERI-0145",
@@ -769,8 +788,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "EPKym3myFgqlWWYbeiFV1zkvbjQ75rEIBjPQGo0RkpQM",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
                 "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
@@ -783,9 +802,9 @@
                 "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
               ],
               "nt": "2",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "EPKym3myFgqlWWYbeiFV1zkvbjQ75rEIBjPQGo0RkpQM",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -1021,20 +1040,20 @@
             "id": "a1",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": "rejected",
-            "detail": "Message 0's initial reading is rejected, not seen.",
+            "actual": "seen",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a2",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": true,
-            "actual": false,
-            "detail": "Message 0 is off the trunk at the end, where it should be on the trunk.",
+            "actual": true,
+            "detail": null,
             "self_agreement": false
           },
           {
@@ -1071,7 +1090,7 @@
             "id": "a6",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-applicable",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": null,
@@ -1099,8 +1118,38 @@
               "sn": 0,
               "wits": []
             },
-            "actual": "rejected",
-            "detail": "The assertion applies only if message 0 was seen, and its readings are rejected and rejected.",
+            "actual": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
+                "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
+                "DBTo3WdgBSxcWOotGGO1O8uLd-CS_aLJowjJePl-aCn_"
+              ],
+              "kt": [
+                [
+                  "1/2",
+                  "1/2",
+                  "1/2"
+                ]
+              ],
+              "ndigs": [
+                "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud",
+                "EJbwSypZ46TNKJZz-fa0tOUepkLwIth_2LUPfG_gQBsy",
+                "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
+              ],
+              "nt": [
+                [
+                  "1/2",
+                  "1/2",
+                  "1/2"
+                ]
+              ],
+              "said": "EEmG0GNCGMmrQJolEyWKPJRMn5ARlTSaBpdGWE-imA9X",
+              "sn": 0,
+              "wits": []
+            },
+            "detail": null,
             "self_agreement": false
           }
         ],
@@ -1209,8 +1258,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "EBU-M_jITfst6S49txp_GzbwbRKvTzhvju9lBF6KYBtF",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4",
                 "DOxtSjAhHF8urgHpUdy9AnCfHWk9e6Z5RZxkLiwU_Tsq",
@@ -1243,9 +1292,9 @@
                   "1"
                 ]
               ],
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "EBU-M_jITfst6S49txp_GzbwbRKvTzhvju9lBF6KYBtF",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -1322,8 +1371,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
               ],
@@ -1332,9 +1381,9 @@
                 "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -1411,8 +1460,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
               ],
@@ -1421,9 +1470,9 @@
                 "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -1778,8 +1827,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
               ],
@@ -1788,9 +1837,9 @@
                 "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "ELSBuNdRDD_aW4BhpMFx0-edS4Y-OrHsmclJ6nqzuS15",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -1805,18 +1854,14 @@
         "operation": "keri.process",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "kel.partial-rotation"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": null,
+            "actual": "seen",
             "detail": null,
             "self_agreement": false
           },
@@ -1824,9 +1869,9 @@
             "id": "a2",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": true,
-            "actual": null,
+            "actual": true,
             "detail": null,
             "self_agreement": false
           },
@@ -1834,9 +1879,9 @@
             "id": "a3",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": null,
+            "actual": "seen",
             "detail": null,
             "self_agreement": false
           },
@@ -1844,9 +1889,9 @@
             "id": "a4",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": true,
-            "actual": null,
+            "actual": true,
             "detail": null,
             "self_agreement": false
           },
@@ -1854,7 +1899,7 @@
             "id": "a5",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": null,
@@ -1873,11 +1918,29 @@
               "sn": 1,
               "wits": []
             },
-            "actual": null,
+            "actual": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t",
+                "DIWZAGQjlfeuoe266FsEy-Lkr53JAVUmhhQytTRhcooq"
+              ],
+              "kt": "2",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj",
+                "EKPM0u5_W-hpfJGV3QP1CkEYSRROBOuLaybXfON3y6hH",
+                "EEpGIivDtQ6em8gYNjbdAhcevSLaa9TDG4A3uV5ve0X-"
+              ],
+              "nt": "2",
+              "said": "EEfu7KYf88KAaNF0uwFkzeeeoD3geFxCGVz3fxJhcYRz",
+              "sn": 1,
+              "wits": []
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "KERI-0161",
@@ -1886,19 +1949,14 @@
         "operation": "keri.process",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "kel.nontransferable",
-          "kel.partial-rotation"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": null,
+            "actual": "seen",
             "detail": null,
             "self_agreement": false
           },
@@ -1906,9 +1964,9 @@
             "id": "a2",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": true,
-            "actual": null,
+            "actual": true,
             "detail": null,
             "self_agreement": false
           },
@@ -1916,9 +1974,9 @@
             "id": "a3",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "not-seen",
-            "actual": null,
+            "actual": "rejected",
             "detail": null,
             "self_agreement": false
           },
@@ -1926,9 +1984,9 @@
             "id": "a4",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "not-seen",
-            "actual": null,
+            "actual": "rejected",
             "detail": null,
             "self_agreement": false
           },
@@ -1936,7 +1994,7 @@
             "id": "a5",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": null,
@@ -1950,11 +2008,24 @@
               "sn": 0,
               "wits": []
             },
-            "actual": null,
+            "actual": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "BAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
+              ],
+              "kt": "1",
+              "ndigs": [],
+              "nt": "0",
+              "said": "EGy8QHlsa0z_X8iJ-pJPt3vJBc6x-IHi0Oa2XnWA7nPf",
+              "sn": 0,
+              "wits": []
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       },
       {
         "id": "KERI-0162",
@@ -1988,47 +2059,47 @@
             "id": "a3",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "rejected",
-            "actual": "seen",
-            "detail": "Message 1's initial reading is seen, not rejected.",
+            "actual": "rejected",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a4",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "not-seen",
-            "actual": "seen",
-            "detail": "Message 1 was seen on arrival, and a seen message is always seen, so its final reading cannot be not-seen.",
+            "actual": "rejected",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a5",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": "rejected",
-            "detail": "Message 2's initial reading is rejected, not seen.",
+            "actual": "seen",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a6",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": true,
-            "actual": false,
-            "detail": "Message 2 is off the trunk at the end, where it should be on the trunk.",
+            "actual": true,
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a7",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-applicable",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": null,
@@ -2044,12 +2115,26 @@
               "sn": 1,
               "wits": []
             },
-            "actual": "rejected",
-            "detail": "The assertion applies only if message 2 was seen, and its readings are rejected and rejected.",
+            "actual": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+              ],
+              "nt": "1",
+              "said": "ELRyKblSLamEejFB7J1x80Nd2nWoFd6H5rK8Aq5OIM-3",
+              "sn": 1,
+              "wits": []
+            },
+            "detail": null,
             "self_agreement": false
           }
         ],
-        "outcome": "fail"
+        "outcome": "pass"
       },
       {
         "id": "KERI-0163",
@@ -2140,8 +2225,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 1,
-              "said": "EAMsILOgPSHdUeYApNzXMoT6PDJmAqEyn2CCkFV2c95D",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
               ],
@@ -2150,9 +2235,9 @@
                 "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "EAMsILOgPSHdUeYApNzXMoT6PDJmAqEyn2CCkFV2c95D",
+              "sn": 1,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -2178,8 +2263,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "EPy35vaq3pvXOt3CaMFvovfqjFMK5PXHyWyuw-o9ajmO",
+              "bt": "0",
+              "delegator": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_",
               "keys": [
                 "DKsQLaFtlu2YuRtQ2F8Vea1KjklG8cAtuaDBUs_3cwdM"
               ],
@@ -2188,9 +2273,9 @@
                 "EIBc_-6oqkliwKGvXlLw50H_vXQR2itLG9zo2ehYcMKK"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_"
+              "said": "EPy35vaq3pvXOt3CaMFvovfqjFMK5PXHyWyuw-o9ajmO",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -2321,8 +2406,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 1,
-              "said": "EAMsILOgPSHdUeYApNzXMoT6PDJmAqEyn2CCkFV2c95D",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
               ],
@@ -2331,9 +2416,9 @@
                 "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "EAMsILOgPSHdUeYApNzXMoT6PDJmAqEyn2CCkFV2c95D",
+              "sn": 1,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -2434,8 +2519,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DEOnJS6GpB-WbT7RObqCqw7v9Uf4zL2greC_iJ5hqLuB"
               ],
@@ -2444,9 +2529,9 @@
                 "EOmxiP0GkuPj03UU4ljgKE-fZWG2Uzsvg5SKZ4qiNz6B"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -2526,47 +2611,47 @@
             "id": "a7",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": "rejected",
-            "detail": "Message 3's initial reading is rejected, not seen.",
+            "actual": "seen",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a8",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": true,
-            "actual": false,
-            "detail": "Message 3 is off the trunk at the end, where it should be on the trunk.",
+            "actual": true,
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a9",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": "rejected",
-            "detail": "Message 4's initial reading is rejected, not seen.",
+            "actual": "seen",
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a10",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "fail",
+            "outcome": "pass",
             "expected": true,
-            "actual": false,
-            "detail": "Message 4 is off the trunk at the end, where it should be on the trunk.",
+            "actual": true,
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a11",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-applicable",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": null,
@@ -2582,15 +2667,29 @@
               "sn": 2,
               "wits": []
             },
-            "actual": "rejected",
-            "detail": "The assertion applies only if message 3 was seen, and its readings are rejected and rejected.",
+            "actual": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DO10Au81r9v4gxkcYq7rA891CX6CrEq-eC7xyJK9pPXi"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EDkseLxju3L-EJ_rUAOiT06W93ecdgmSX5FRWt-kaU12"
+              ],
+              "nt": "1",
+              "said": "EH4T69j0fQKd8zJdOxtpz6ZtwJrM-zOcwB7_F5G3a9lp",
+              "sn": 2,
+              "wits": []
+            },
+            "detail": null,
             "self_agreement": false
           },
           {
             "id": "a12",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-applicable",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_",
@@ -2606,12 +2705,26 @@
               "sn": 1,
               "wits": []
             },
-            "actual": "rejected",
-            "detail": "The assertion applies only if message 4 was seen, and its readings are rejected and rejected.",
+            "actual": {
+              "bt": "0",
+              "delegator": "EHP7TSRBaLttRlKN657BLu9mYfBbLT4qBInLyVvUgZu_",
+              "keys": [
+                "DOT2-ru-S0F3H8a_aNO4vJ5KHdg4N2ireudTvidJYZJ4"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EAjiEndRj0UiAFN2Ky9ls4OHxXBtpRXurSDuqouwr1rK"
+              ],
+              "nt": "1",
+              "said": "EENdGs5COJJzLbkhp0xTxEcoJlLKBxXreer2sf8N3ose",
+              "sn": 1,
+              "wits": []
+            },
+            "detail": null,
             "self_agreement": false
           }
         ],
-        "outcome": "fail"
+        "outcome": "pass"
       },
       {
         "id": "KERI-0168",
@@ -3015,8 +3128,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 1,
-              "said": "EFaROuFn_ZhY_NgD_2thJhWExFbPRA92ssgzYhegA7aQ",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
               ],
@@ -3025,9 +3138,9 @@
                 "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "EFaROuFn_ZhY_NgD_2thJhWExFbPRA92ssgzYhegA7aQ",
+              "sn": 1,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -3104,8 +3217,8 @@
               "wits": []
             },
             "actual": {
-              "sn": 0,
-              "said": "EAxAHwq4JsWOH6Q2QdnJOg3Xlf5SMzNN5UUUP07_Rpzm",
+              "bt": "0",
+              "delegator": null,
               "keys": [
                 "DAamtW_L-ZQsLVzXJNvCKum9rxLt_8E1fLZNaXY8E1h4"
               ],
@@ -3114,9 +3227,9 @@
                 "EL7Hrhyxf9BbU9RstTqdYPEySMzUKfNjQlvI1l2cODud"
               ],
               "nt": "1",
-              "wits": [],
-              "bt": "0",
-              "delegator": null
+              "said": "EAxAHwq4JsWOH6Q2QdnJOg3Xlf5SMzNN5UUUP07_Rpzm",
+              "sn": 0,
+              "wits": []
             },
             "detail": null,
             "self_agreement": false
@@ -3131,18 +3244,14 @@
         "operation": "keri.process",
         "failure": null,
         "stderr": "",
-        "outcome": "not-supported",
-        "missing_features": [
-          "kel.recovery"
-        ],
         "assertions": [
           {
             "id": "a1",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": null,
+            "actual": "seen",
             "detail": null,
             "self_agreement": false
           },
@@ -3150,9 +3259,9 @@
             "id": "a2",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": true,
-            "actual": null,
+            "actual": true,
             "detail": null,
             "self_agreement": false
           },
@@ -3160,9 +3269,9 @@
             "id": "a3",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": null,
+            "actual": "seen",
             "detail": null,
             "self_agreement": false
           },
@@ -3170,9 +3279,9 @@
             "id": "a4",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": false,
-            "actual": null,
+            "actual": false,
             "detail": null,
             "self_agreement": false
           },
@@ -3180,9 +3289,9 @@
             "id": "a5",
             "check": "disposition",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": "seen",
-            "actual": null,
+            "actual": "seen",
             "detail": null,
             "self_agreement": false
           },
@@ -3190,9 +3299,9 @@
             "id": "a6",
             "check": "trunk",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": true,
-            "actual": null,
+            "actual": true,
             "detail": null,
             "self_agreement": false
           },
@@ -3200,7 +3309,7 @@
             "id": "a7",
             "check": "key_state",
             "level": "INTEROP",
-            "outcome": "not-supported",
+            "outcome": "pass",
             "expected": {
               "bt": "0",
               "delegator": null,
@@ -3216,11 +3325,26 @@
               "sn": 1,
               "wits": []
             },
-            "actual": null,
+            "actual": {
+              "bt": "0",
+              "delegator": null,
+              "keys": [
+                "DMnFSm0uIPV8vyfefY5vZmJvycPq5hDwCFHbWsL-6F2t"
+              ],
+              "kt": "1",
+              "ndigs": [
+                "EBZ9M09XF39mnArXFJyblP-vkoWX5nvyRTw8rdFZHjnj"
+              ],
+              "nt": "1",
+              "said": "EKbTTEQwU22xP5yL17L1uJqIVNOu_N_iX4MnofYHUMKv",
+              "sn": 1,
+              "wits": []
+            },
             "detail": null,
             "self_agreement": false
           }
-        ]
+        ],
+        "outcome": "pass"
       }
     ]
   }
