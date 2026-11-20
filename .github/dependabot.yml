@@ -1,45 +1,72 @@
 version: 2
+# Each adapter pins the implementation it tests. Moving one of those pins changes what is being
+# tested: it is made by hand, with the reported identity and the committed results refreshed in the
+# same change, so every such crate or module is ignored below. Everything else is a routine bump,
+# grouped into one pull request per ecosystem and directory so a week's bumps land together.
 updates:
   - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      routine:
+        patterns: ["*"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      routine:
+        patterns: ["*"]
   - package-ecosystem: "cargo"
     directory: "/adapters/keriox"
     schedule:
       interval: "weekly"
-    # The adapter deliberately pins the cesrox and said versions keri-core 0.17.13 ships
-    # (adapters/keriox/README.md); moving either is a change to what is being tested, made by
-    # hand with a re-recorded baseline, not a routine bump.
+    # The adapter pins keri-core and the cesrox and said versions that keri-core release ships
+    # (adapters/keriox/README.md).
     ignore:
+      - dependency-name: "keri-core"
       - dependency-name: "cesrox"
       - dependency-name: "said"
+    groups:
+      routine:
+        patterns: ["*"]
   - package-ecosystem: "cargo"
     directory: "/adapters/affinidi"
     schedule:
       interval: "weekly"
+    # The adapter pins affinidi-keri-core, affinidi-keri-crypto and affinidi-cesr, which must move
+    # together with the identity constants in src/protocol.rs (tests/pins.rs;
+    # adapters/affinidi/README.md).
+    ignore:
+      - dependency-name: "affinidi-keri-core"
+      - dependency-name: "affinidi-keri-crypto"
+      - dependency-name: "affinidi-cesr"
+    groups:
+      routine:
+        patterns: ["*"]
   - package-ecosystem: "gomod"
     directory: "/adapters/keri-go"
     schedule:
       interval: "weekly"
-    # The adapter pins the keri-go release it tests (adapters/keri-go/README.md); moving it is a
-    # change to what is being tested, made by hand with refreshed results, not a routine bump.
+    # The adapter pins the keri-go release it tests (adapters/keri-go/README.md).
     ignore:
       - dependency-name: "github.com/grapeid/keri-go"
+    groups:
+      routine:
+        patterns: ["*"]
   - package-ecosystem: "cargo"
     directory: "/adapters/devrandom"
     schedule:
       interval: "weekly"
     # The adapter pins the five crates devrandom-labs published together at tag keri-rs-v0.1.0
-    # (adapters/devrandom/README.md); moving them is a change to what is being tested, made by
-    # hand with every pin and the reported tag and commit together, not a routine bump.
+    # (adapters/devrandom/README.md); they move together with the reported tag and commit.
     ignore:
       - dependency-name: "keri-rs"
       - dependency-name: "keri-codec"
       - dependency-name: "keri-events"
       - dependency-name: "cesr-rs"
       - dependency-name: "cesr-stream"
+    groups:
+      routine:
+        patterns: ["*"]
