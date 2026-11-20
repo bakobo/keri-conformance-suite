@@ -3,7 +3,7 @@
   "provenance": {
     "kind": "maintainer-run",
     "maintainer": "Daniel Hardman",
-    "commit": "a737246f1f5063e76837d217f9601c96fcbd07bb",
+    "commit": "52ffa5529829d64f06c981ab97554ee58b06655b",
     "date": "2026-11-20"
   },
   "report": {
@@ -23,7 +23,6 @@
       "composes": [],
       "features": [
         "cesr.genus-2.00",
-        "cesr.item-extents",
         "cesr.serialization.json",
         "keri.version-1.x"
       ],
@@ -40,7 +39,6 @@
     },
     "declared_features": [
       "cesr.genus-2.00",
-      "cesr.item-extents",
       "cesr.serialization.json",
       "keri.version-1.x"
     ],
@@ -127,7 +125,8 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-1.00"
+          "cesr.genus-1.00",
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -185,7 +184,8 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-1.00"
+          "cesr.genus-1.00",
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -257,7 +257,8 @@
         "stderr": "",
         "outcome": "not-supported",
         "missing_features": [
-          "cesr.genus-1.00"
+          "cesr.genus-1.00",
+          "cesr.item-extents"
         ],
         "assertions": [
           {
@@ -316,6 +317,7 @@
         "outcome": "not-supported",
         "missing_features": [
           "cesr.genus-1.00",
+          "cesr.item-extents",
           "keri.version-2.x"
         ],
         "assertions": [
