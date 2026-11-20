@@ -1,5 +1,7 @@
 //! Records which keri-core, cesrox and said this binary was built against, read from Cargo.lock, so that
 //! hello reports the resolved versions rather than a constant that could drift from the lock.
+//! Every keriox build runs this file against its own Cargo.lock (the keri-core 0.18 build names it
+//! in its Cargo.toml), so the table holds the crates of every line the adapter tests.
 //! The commit for each version comes from the crate's .cargo_vcs_info.json as published on
 //! crates.io; a version without a recorded commit fails the build instead of reporting a guess.
 
@@ -17,6 +19,17 @@ const COMMITS: &[(&str, &str, &str)] = &[
         "40840948fb669424a0b7629979291ee0c777bb0e",
     ),
     ("said", "0.4.3", "a385e69028fa2d9bd8fda31a9401ad0a630e1361"),
+    (
+        "keri-core",
+        "0.18.0",
+        "411f6d4e0591d81e771ae5636ffa8f57ac1a01e3",
+    ),
+    (
+        "cesrox",
+        "2.0.0-beta.8",
+        "ca35e3efe1cadfcc08fd237e76281b3994524825",
+    ),
+    ("said", "0.5.4", "86a3f81ca9cdac9535d3405cdd3906d31c89598b"),
 ];
 
 fn locked_version(lock: &str, name: &str) -> String {

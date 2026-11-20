@@ -3,36 +3,31 @@
 //! `handle_line` never panics and always returns exactly one response line. Operations that call
 //! into keri-core, cesrox or said run on a worker thread (see `isolate`), so a panic inside them becomes a
 //! `harness` error for that request and the adapter answers the next one.
+//!
+//! This file is shared by every keriox build (the crate here and the keri-core 0.18 crate beside
+//! it), because it touches no keriox API. What a build offers is its own `line` module: the
+//! operations, the features, and the `keri.process` it runs, if any. Each build's `cesr` module
+//! supplies `parse` and `encode`.
 
 use std::io::{self, BufRead, Write};
 use std::panic::{self, AssertUnwindSafe};
 
 use serde_json::{json, Map, Value};
 
-use crate::cesr::{self, OpError};
-use crate::kel;
+use crate::cesr;
+use crate::line;
+pub use crate::line::{FEATURES, OPERATIONS};
+
+/// Why an operation produced no result: a `harness` or an `unsupported` error response.
+#[derive(Debug, Clone, PartialEq)]
+pub enum OpError {
+    Harness(String),
+    Unsupported(String),
+}
 
 pub const PROTOCOL: u64 = 1;
 pub const ADAPTER_NAME: &str = "kcs-adapter-keriox";
 pub const ADAPTER_VERSION: &str = env!("CARGO_PKG_VERSION");
-pub const OPERATIONS: [&str; 3] = ["cesr.parse", "cesr.encode", "keri.process"];
-/// Drawn from profiles/features.json; README.md says why each is or is not declared.
-pub const FEATURES: [&str; 14] = [
-    "cesr.genus-1.00",
-    "cesr.serialization.json",
-    "crypto.ed25519",
-    "kel.basic",
-    "kel.delegation",
-    "kel.multisig.numeric",
-    "kel.multisig.weighted",
-    "kel.nontransferable",
-    "kel.partial-rotation",
-    "kel.witness",
-    "keri.duplicity",
-    "keri.escrow",
-    "keri.routing",
-    "keri.version-1.x",
-];
 
 /// The longest request line the adapter reads, in bytes, not counting its newline. A longer line
 /// is answered with an error whose id is null and skipped without being held in memory.
@@ -162,7 +157,7 @@ fn encode_op(request: &Map<String, Value>) -> Result<Value, OpError> {
     isolate(move || cesr::encode(&code, &raw, &domain))
 }
 
-fn process_op(request: &Map<String, Value>) -> Result<Value, OpError> {
+fn process_op(request: &Map<String, Value>, process: line::Process) -> Result<Value, OpError> {
     match request.get("perspective") {
         Some(Value::Object(p)) if p.get("role") == Some(&Value::from("validator")) => {}
         Some(Value::Object(p)) => {
@@ -194,7 +189,7 @@ fn process_op(request: &Map<String, Value>) -> Result<Value, OpError> {
             )))
         }
     };
-    isolate(move || kel::process(streams))
+    isolate(move || process(streams))
 }
 
 /// Run one operation on a fresh worker thread and turn a panic into a harness error. The panic's
@@ -232,6 +227,12 @@ where
     }
 }
 
+fn undeclared(op: &str) -> OpError {
+    OpError::Unsupported(format!(
+        "{E_UNDECLARED_OP}: This adapter does not implement {op} and did not declare it in hello."
+    ))
+}
+
 fn handle(id: Value, request: &Map<String, Value>) -> Value {
     let op = match request.get("op") {
         Some(Value::String(op)) => op.as_str(),
@@ -247,11 +248,11 @@ fn handle(id: Value, request: &Map<String, Value>) -> Value {
         "hello" => hello(request),
         "cesr.parse" => parse_op(request),
         "cesr.encode" => encode_op(request),
-        "keri.process" => process_op(request),
-        "keri.emit" => Err(OpError::Unsupported(format!(
-            "{E_UNDECLARED_OP}: This adapter does not implement {op} and did not declare it in \
-             hello."
-        ))),
+        "keri.process" => match line::PROCESS {
+            Some(process) => process_op(request, process),
+            None => Err(undeclared(op)),
+        },
+        "keri.emit" => Err(undeclared(op)),
         _ => Err(OpError::Harness(format!(
             "{E_UNKNOWN_OP}: {} is not an operation of adapter protocol version {PROTOCOL}.",
             Value::String(op.into())
@@ -373,6 +374,14 @@ mod tests {
         }
         let second = isolate(|| Ok(json!({"items": []})));
         assert_eq!(second, Ok(json!({"items": []})));
+    }
+
+    #[test]
+    fn keri_process_is_declared_exactly_when_the_build_runs_one() {
+        assert_eq!(
+            OPERATIONS.contains(&"keri.process"),
+            line::PROCESS.is_some()
+        );
     }
 
     #[test]

@@ -1,6 +1,6 @@
 # keriox adapter
 
-Connects THCLab's keriox to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It implements `cesr.parse` and `cesr.encode` on keriox's CESR layer (cesrox and said) and `keri.process` on its KEL engine (keri-core), and declares those three operations. It composes nothing: `composes` is empty, and every value it reports either comes from keri-core, cesrox or said or is measured from what cesrox consumed. The tables below say which, value by value.
+Connects THCLab's keriox to the conformance runner over adapter protocol version 1 ([`docs/adapter-protocol.md`](../../docs/adapter-protocol.md)). It is built twice, from two lines of keriox: keri-core 0.17.13, described first and throughout, and keri-core 0.18.0, a second build beside it in [`keri-core-0.18/`](keri-core-0.18) that offers only the CESR operations (see "The keri-core 0.18.0 build"). The 0.17.13 build implements `cesr.parse` and `cesr.encode` on keriox's CESR layer (cesrox and said) and `keri.process` on its KEL engine (keri-core), and declares those three operations. It composes nothing: `composes` is empty, and every value it reports either comes from keri-core, cesrox or said or is measured from what cesrox consumed. The tables below say which, value by value.
 
 ## What it tests, pinned
 
@@ -10,9 +10,9 @@ Connects THCLab's keriox to the conformance runner over adapter protocol version
 | `cesrox` | `=0.1.8`, feature `cesr-proof` | `40840948fb669424a0b7629979291ee0c777bb0e` | keri-core 0.17.13 (keriox tag `v0.17.13`, the newest 0.17.x on crates.io) requires `cesrox = "0.1.8"` with `cesr-proof` |
 | `said` | `=0.4.3` | `a385e69028fa2d9bd8fda31a9401ad0a630e1361` | keri-core 0.17.13 requires `said = "0.4.0"`; 0.4.3 is the newest 0.4.x. It reads version strings |
 
-All three come from crates.io, pinned exactly in `Cargo.toml` and resolved in `Cargo.lock`. The adapter uses only the crates' public API and patches nothing. keri-core 0.18.0 is newer, but it moved to the cesrox 2.0.0 betas, whose CESR 2.0 counters count items where keripy counts quadlets, so no keripy line reads what it writes; that line is not tested here. The crates.io release of keri-core 0.17.13 is commit `b25ba2b1`, not the `ddcd2aba` the 2026-09 Rust survey built from source, and the adapter's tests re-checked the survey's findings on it.
+All three come from crates.io, pinned exactly in `Cargo.toml` and resolved in `Cargo.lock`. The adapter uses only the crates' public API and patches nothing. keri-core 0.18.0 is newer, but it moved to the cesrox 2.0.0 betas, whose CESR 2.0 counters count items where keripy counts quadlets, so no keripy line reads what it writes; it is tested as a separate build rather than in place of 0.17.13, and offers no `keri.process`. The crates.io release of keri-core 0.17.13 is commit `b25ba2b1`, not the `ddcd2aba` the 2026-09 Rust survey built from source, and the adapter's tests re-checked the survey's findings on it.
 
-`hello` reports `implementation` as `{"name": "keri-core", "version": "0.17.13 (cesrox 0.1.8, said 0.4.3)", "commit": "b25ba2b1… (cesrox 40840948…, said a385e690…)"}`, with all three full commits. `build.rs` reads the versions from `Cargo.lock` and looks the commits up in a table it carries; a version without a recorded commit fails the build rather than reporting a guess.
+`hello` reports `implementation` as `{"name": "keri-core", "version": "0.17.13 (cesrox 0.1.8, said 0.4.3)", "commit": "b25ba2b1… (cesrox 40840948…, said a385e690…)"}`, with all three full commits. `build.rs` reads the versions from `Cargo.lock` and looks the commits up in a table it carries; a version without a recorded commit fails the build rather than reporting a guess. Both builds run the same `build.rs`, each against its own `Cargo.lock`, so the table holds the crates of both lines.
 
 ## Licence
 
@@ -31,6 +31,8 @@ uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" 
 uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile keripy-1x-interop
 uv run kcs run --adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox" --profile keri-v1.0.1
 ```
+
+The keri-core 0.18.0 build is built and tested the same way from its own directory, `adapters/keriox/keri-core-0.18`, and leaves `adapters/keriox/keri-core-0.18/target/debug/kcs-adapter-keriox`.
 
 `keri.process` keeps keri-core's database in a file under the temporary directory (`TMPDIR`, else `/tmp`), one per request, removed when the request is answered.
 
@@ -145,6 +147,28 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 
 `hello` negotiates from the request's `supported` list, or `[protocol]` when the list is absent, and answers with protocol 1, or with an `unsupported` error (`e.feature.unsupported.protocol-version.f`) when 1 is not offered. Request fields the adapter does not know are ignored. A request line may be at most 64 MiB (`protocol::MAX_REQUEST_LINE`, not counting its newline); the adapter holds at most that much of a line, answers a longer one with an error whose `id` is null (`e.input.range.request-size.f`), drops the rest of it, and answers the next request. A line that is not a JSON object, including a blank line, or a request whose `id` is not a non-negative integer, gets an error whose `id` is null (`e.input.format.request.f`). A request without a string `op` or with malformed fields is a `harness` error carrying its id (`e.input.format.request.f`), and an unknown `op` is too (`e.input.range.unknown-op.f`). The adapter exits with status 0 at end of input. If it cannot read standard input or write standard output, it explains why on standard error (`e.env.io.stdio.f`) and exits with status 1. A `keri.process` request whose `perspective` is not an object, or whose `messages` is not a list of objects each with a lowercase hex `stream`, is a `harness` error (`e.input.format.request.f`). If keri-core's database cannot be created or read in the temporary directory, the request is a `harness` error (`e.env.io.storage.r`). Every code ends in `f` except `e.self.resource.worker-thread.r`, the failure to start a worker thread, and `e.env.io.storage.r`; both may clear on retry.
 
+## The keri-core 0.18.0 build
+
+[`keri-core-0.18/`](keri-core-0.18) is a separate Cargo project with its own `Cargo.toml`, `Cargo.lock` and `rust-toolchain.toml` (1.97.1), so neither line's dependency updates move the other's resolution. It has the same adapter name, `kcs-adapter-keriox`, as the keripy 1.2.14 build keeps the keripy adapter's name, and is told apart by its `implementation`: `{"name": "keri-core", "version": "0.18.0 (cesrox 2.0.0-beta.8, said 0.5.4)", "commit": "411f6d4e… (cesrox ca35e3ef…, said 86a3f81c…)"}`, with all three full commits.
+
+| Crate | Version | Commit (from the crate's `.cargo_vcs_info.json`) | Why |
+|---|---|---|---|
+| `keri-core` | `=0.18.0`, default features off | `411f6d4e0591d81e771ae5636ffa8f57ac1a01e3` | The newest stable keri-core on crates.io (2026-10-05); 0.19.0 exists only as release candidates. Linked so that the lock records the line it selects; this build calls only cesrox and said |
+| `cesrox` | `=2.0.0-beta.8`, feature `cesr-proof` | `ca35e3efe1cadfcc08fd237e76281b3994524825` | keri-core 0.18.0 requires `cesrox = "^2.0.0-beta.8"` with `cesr-proof`, and said 0.5.4 caps it below 2.0.0-rc, so this is the only version both allow |
+| `said` | `=0.5.4` | `86a3f81ca9cdac9535d3405cdd3906d31c89598b` | keri-core 0.18.0 requires `said = "^0.5.3-beta.1"`; 0.5.4 is the newest, with 0.5.3-beta.1's source unchanged |
+
+It shares with the 0.17.13 build the files that touch no keriox API: `src/protocol.rs` (stdio, request validation, panic isolation), `src/main.rs`, `build.rs` and `tests/mechanics.rs`. What each build offers is declared in its own `src/line.rs`. Its `src/cesr.rs` is its own, because cesrox 2.0's API (text input, a tree of values, universal groups, one merged primitive code type) shares nothing with cesrox 0.1.8's.
+
+**Why it offers no `keri.process`.** keri-core 0.18.0 writes every body with a KERI 1.0 version string, and said 0.5.4 reads only that 1.XX form, while its attachments are cesrox 2.0's: the letters and genus code of the CESR 2.00 table (`-K`, `-L`, `-M`, `-S`, `-T`, `-Y`, `-_AAA`), with a specific group's count read as items where the specification counts quadlets. cesrox 2.0 has no 1.00 table at all; `-A` is its generic group. No profile has a `keri.process` case in that shape (`keri-v1.0.1` and `keri-escrow` need `keri.version-2.x`, `keripy-1x-interop` needs `cesr.genus-1.00`), so no case could reach it, and its KEL features could not be checked against the suite. It answers `keri.process` with `e.feature.unsupported.undeclared-op.f`.
+
+**Declared**: `cesr.genus-2.00`, because cesrox 2.0 is keriox's implementation of that table, and how it reads a count is exactly what the cases test; `cesr.item-extents`; `cesr.serialization.json`; `keri.version-1.x`. **Not declared**: `keri.version-2.x`, which said 0.5.4 cannot read; `cesr.domain.binary`, because cesrox 2.0 parses only text (a stream that is not UTF-8 is answered `unsupported`, `e.feature.unsupported.binary-domain.f`, since it cannot be handed to cesrox at all); `cesr.genus-1.00`, which cesrox 2.0 does not have.
+
+**How a stream is parsed.** The verdict is `cesrox::parse_and_send`, which calls `cesrox::value::parse_value` until the stream is used up; a failure is a rejection with class `ParsingError`. As in the 0.17.13 build, the adapter measures offsets by replaying the public functions cesrox calls (`parse_value`, `genus_code`, `short_universal_group_code`, `parse_group`, `group_code`, `parse_primitive`, `identifier`, `serial_number_parser`) on the same text and the same bounded slices, and answers `e.self.unknown.replay-mismatch.f` if any replayed value or end differs from what cesrox returned. A genus item's `version` is the major and minor cesrox decoded; its `code` and `genus` are the characters cesrox consumed. A universal group's `size` is its quadlet count, as cesrox reads it, and its members are measured inside its quadlets. A body's version string is read with said's `SerializationInfo`, as in the 0.17.13 build, and one said cannot read, including every 2.XX version string, is a rejection with class `VersionString`. A stream holding first-seen couples (`-O`), pathed material (`-P`), a TSP payload (`-Z`), a tag or a variable-length primitive, none of which cesrox keeps offsets for, is answered with the accepted summary.
+
+**cesr.encode.** The code is read by the first of cesrox 2.0's matter code families (`Basic`, `SelfAddressing`, `SelfSigning`, `SeedCode`, `Rand128Code`, `TimestampCode`) that accepts it and gives it back exactly, and written with cesrox's own writer for a primitive value. cesrox's merged `PrimitiveCode::from_str` is not used, because it tries the indexed signature table first and would read a matter code such as `D` as an indexed code. A code every family refuses is a rejection whose class is cesrox's error variant, such as `UnknownCodeError` for `M`.
+
+**What the cases find.** Of `cesr-v1.0`, the runner sends this build the seven text-domain `cesr.encode` cases and CESR-0013, the one genus 2.00 `cesr.parse` case with a 1.XX body. cesrox encodes six of the seven as the specification does; it does not know `M` (CESR-0010). On CESR-0013 it reads `-KAW` as 22 signatures rather than 22 quadlets, runs out of input inside the second, and panics (`attached_signature_code.rs:164`), so the case gets a harness error. The same panic follows a signature group that ends right after its count code. Every case of `cesr-strict` and `keripy-1x-interop` needs `keri.version-2.x` or `cesr.genus-1.00`, so both verdicts are `no-evidence`.
+
 ## Results
 
 <!-- BEGIN generated results: scripts/reproduce-results writes this table from results/; do not edit it -->
@@ -161,11 +185,11 @@ Each request runs on its own worker thread. A panic inside cesrox or said is cau
 
 ## CI and the committed results
 
-The `keriox-adapter` job in `.github/workflows/ci.yml` installs the toolchain `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test` and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results, `results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/<profile>.json`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
+The `keriox-adapter` job in `.github/workflows/ci.yml` runs once per build: it installs the toolchain that build's `rust-toolchain.toml` names, builds with `--locked`, runs `cargo test` and runs `kcs check-adapter`. It does not run a profile: the table under Results is generated from this adapter's committed results, `results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/<profile>.json` and `results/keri-core/0.18.0-cesrox-2.0.0-beta.8-said-0.5.4/<profile>.json`, which the suite's maintainer refreshes and checks locally (`docs/design.md`, Continuous integration). The tool builds the adapter itself, as above, before it runs it:
 
 ```sh
-uv run python scripts/reproduce-results check --adapter keriox     # compare a fresh run with the committed results
-uv run python scripts/reproduce-results refresh --adapter keriox   # replace them, from a clean tree
+uv run python scripts/reproduce-results check --adapter keriox --adapter keriox-0.18     # compare a fresh run with the committed results
+uv run python scripts/reproduce-results refresh --adapter keriox --adapter keriox-0.18   # replace them, from a clean tree
 ```
 
 `check` fails on a regression, and on an improvement too, including a different keri-core, cesrox or said commit, until the results are refreshed in the same change.
