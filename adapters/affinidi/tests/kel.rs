@@ -316,6 +316,12 @@ fn witness_receipt_couples_attached_to_the_event_meet_its_threshold() {
         vec![rejected()],
         "Affinidi does not count -B"
     );
+    // Rejected for the threshold, not because the -B group failed to parse.
+    assert!(
+        reason(&indexed, 0).contains("witness receipt threshold not met"),
+        "{}",
+        reason(&indexed, 0)
+    );
     let met = process(&[stream(&icp, &[sig.clone(), couples(&icp, &[&w1, &w2])])]);
     assert_eq!(readings(&met), vec![seen()]);
     assert_eq!(met["key_states"][&pre]["wits"], json!([key(&w1), key(&w2)]));

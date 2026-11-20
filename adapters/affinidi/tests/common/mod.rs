@@ -75,20 +75,26 @@ pub fn said(serder: &Serder) -> String {
 /// `-A` controller signatures by the signers at the given indexes, each indexed into both the
 /// current key list and the prior next-key list (`only` false, keripy's default).
 pub fn sigs(serder: &Serder, signers: &[(&Signer, usize)]) -> String {
-    format!("-A{}{}", count(signers.len()), indexed(serder, signers))
+    format!(
+        "-A{}{}",
+        count(signers.len()),
+        indexed(serder, signers, false)
+    )
 }
 
 /// The same signatures as a 2.00 `-K` group, which counts quadlets rather than items.
 pub fn sigs_v2(serder: &Serder, signers: &[(&Signer, usize)]) -> String {
-    let body = indexed(serder, signers);
+    let body = indexed(serder, signers, false);
     format!("-K{}{body}", count(body.len() / 4))
 }
 
-fn indexed(serder: &Serder, signers: &[(&Signer, usize)]) -> String {
+/// Indexed signatures over the event; `only` true gives the single-indexed form a witness signs
+/// with, false the dual-indexed form a controller signs with by default.
+fn indexed(serder: &Serder, signers: &[(&Signer, usize)], only: bool) -> String {
     let mut out = String::new();
     for (signer, index) in signers {
         out += &signer
-            .sign_indexed(serder.raw(), *index, false)
+            .sign_indexed(serder.raw(), *index, only)
             .unwrap()
             .qb64()
             .unwrap();
@@ -96,9 +102,13 @@ fn indexed(serder: &Serder, signers: &[(&Signer, usize)]) -> String {
     out
 }
 
-/// `-B` witness indexed signatures.
+/// `-B` witness indexed signatures, single-indexed as a witness signs them.
 pub fn wigs(serder: &Serder, signers: &[(&Signer, usize)]) -> String {
-    format!("-B{}{}", count(signers.len()), indexed(serder, signers))
+    format!(
+        "-B{}{}",
+        count(signers.len()),
+        indexed(serder, signers, true)
+    )
 }
 
 /// `-C` non-transferable receipt couples.
