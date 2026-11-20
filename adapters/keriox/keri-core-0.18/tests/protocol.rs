@@ -35,13 +35,31 @@ fn hello_reports_the_keri_core_0_18_line_and_only_the_cesr_operations() {
         result["features"],
         json!([
             "cesr.genus-2.00",
-            "cesr.item-extents",
             "cesr.serialization.json",
             "keri.version-1.x"
         ])
     );
     assert_eq!(result["composes"], json!([]));
     assert_eq!(result.as_object().unwrap().len(), 6);
+}
+
+/// cesr.item-extents promises items for every accepted stream, and cesrox keeps no offsets inside
+/// first-seen couples, pathed material, TSP payloads, tags or variable-length primitives, so the
+/// build answers those with a summary and must not declare the feature (hostile pass on PR #91).
+#[test]
+fn a_build_that_answers_some_accepted_streams_with_a_summary_does_not_declare_item_extents() {
+    let r = answer(r#"{"id":0,"op":"hello","protocol":1,"supported":[1]}"#);
+    let features = r["result"]["features"].as_array().unwrap();
+    assert!(!features.contains(&json!("cesr.item-extents")));
+    let first_seen = "-OAB0AAAAAAAAAAAAAAAAAAAAAAA1AAG2022-10-25T12c04c30d175309p00c00";
+    let r = answer(&format!(
+        r#"{{"id":1,"op":"cesr.parse","stream":"{}"}}"#,
+        hex(first_seen.as_bytes())
+    ));
+    assert_eq!(
+        r["result"],
+        json!({"accepted": {"consumed": first_seen.len()}})
+    );
 }
 
 #[test]

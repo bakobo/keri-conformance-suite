@@ -13,7 +13,6 @@ pub const OPERATIONS: &[&str] = &["cesr.parse", "cesr.encode"];
 /// Drawn from profiles/features.json.
 pub const FEATURES: &[&str] = &[
     "cesr.genus-2.00",
-    "cesr.item-extents",
     "cesr.serialization.json",
     "keri.version-1.x",
 ];
