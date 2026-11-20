@@ -3,10 +3,12 @@
 //! The accept/reject verdict is `parse_all`'s. Affinidi's parser does not expose where it found
 //! each item, nor the count codes it read, so the adapter does not declare `cesr.item-extents`
 //! and answers every stream Affinidi accepts with the protocol's summary: the bytes Affinidi
-//! consumed, measured as the sum of what `parse_next` says it consumed for each message. It
-//! never reconstructs items. README.md lists every value and its source.
+//! consumed, measured as the sum of what `parse_next_in` says it consumed for each message, in the
+//! genus `parse_all` would hold at that point. It never reconstructs items. README.md lists every
+//! value and its source.
 
 use affinidi_cesr::Matter;
+use affinidi_keri_core::counter_table::{CounterTable, read_counter};
 use affinidi_keri_core::parser;
 use serde_json::{Value, json};
 
@@ -41,25 +43,38 @@ pub fn parse(stream: &[u8]) -> Result<Value, OpError> {
             return Ok(reject(class_of("CoreError", &error)));
         }
     };
-    // parse_all accepted it. Walk it again as parse_all does, skipping the whitespace it skips
-    // between messages and calling parse_next once per message, to measure how many bytes
-    // Affinidi consumed from what parse_next says it consumed.
+    // parse_all accepted it. Walk it again as parse_all does, to measure how many bytes Affinidi
+    // consumed from what its own functions say they consumed: skip the whitespace parse_all skips
+    // between messages, skip a genus-version counter that ends the stream as parse_all does (sized
+    // by read_counter, the function parse_all sizes it with), and call parse_next_in once per
+    // message, carrying the genus a genus-version counter sets from one message to the next as
+    // parse_all carries it.
     let mut offset = 0;
     let mut found = 0;
+    let mut genus = CounterTable::V1;
     while offset < stream.len() {
         if stream[offset].is_ascii_whitespace() {
             offset += 1;
             continue;
         }
-        let (_, consumed) = parser::parse_next(&stream[offset..]).map_err(|error| {
-            inconsistent(format!(
-                "parse_all accepted the stream but parse_next rejected the message at offset \
-                 {offset}: {error}."
-            ))
-        })?;
+        if stream[offset..].starts_with(b"-_")
+            && let Ok(counter) = read_counter(&stream[offset..])
+            && offset + counter.size == stream.len()
+        {
+            offset = stream.len();
+            break;
+        }
+        let (_, consumed) =
+            parser::parse_next_in(&stream[offset..], &mut genus).map_err(|error| {
+                inconsistent(format!(
+                    "parse_all accepted the stream but parse_next_in rejected the message at \
+                     offset {offset}: {error}."
+                ))
+            })?;
         if consumed == 0 || consumed > stream.len() - offset {
             return Err(inconsistent(format!(
-                "parse_next said it consumed {consumed} bytes of the {} left at offset {offset}.",
+                "parse_next_in said it consumed {consumed} bytes of the {} left at offset \
+                 {offset}.",
                 stream.len() - offset
             )));
         }
@@ -68,7 +83,7 @@ pub fn parse(stream: &[u8]) -> Result<Value, OpError> {
     }
     if found != messages.len() {
         return Err(inconsistent(format!(
-            "parse_all found {} messages but parse_next found {found}.",
+            "parse_all found {} messages but parse_next_in found {found}.",
             messages.len()
         )));
     }

@@ -39,8 +39,8 @@ fn hello_negotiates_the_highest_version_both_speak_from_supported() {
     );
     assert_eq!(
         result["implementation"],
-        json!({"name": "affinidi-keri-core", "version": "0.4.0 (affinidi-cesr 0.1.3)",
-               "commit": "6277ae866c5761edb5cfa807a5f7ac83ebf3700c (affinidi-cesr b970cb01bdd1acd0530137b67460579e4624ab47)"})
+        json!({"name": "affinidi-keri-core", "version": "0.8.1 (affinidi-cesr 0.1.8)",
+               "commit": "4a1433fb82a90cbff48aedf7716eb75e286198f4 (affinidi-cesr 10ee3f21fa8546849b5706af9f280d1de7258928)"})
     );
     assert_eq!(
         result["operations"],
@@ -50,15 +50,20 @@ fn hello_negotiates_the_highest_version_both_speak_from_supported() {
         result["features"],
         json!([
             "cesr.genus-1.00",
+            "cesr.genus-2.00",
             "cesr.serialization.json",
             "crypto.ed25519",
             "kel.basic",
             "kel.delegation",
             "kel.multisig.numeric",
             "kel.multisig.weighted",
+            "kel.nontransferable",
+            "kel.partial-rotation",
+            "kel.recovery",
             "kel.witness",
             "keri.routing",
-            "keri.version-1.x"
+            "keri.version-1.x",
+            "keri.version-2.x"
         ])
     );
     assert_eq!(result["composes"], json!(["keri.routing"]));

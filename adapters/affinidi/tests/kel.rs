@@ -3,6 +3,7 @@
 
 mod common;
 
+use affinidi_keri_core::sad;
 use common::*;
 use kcs_adapter_affinidi::kel::E_PERSPECTIVE;
 use kcs_adapter_affinidi::protocol::{E_MALFORMED, handle_line};
@@ -72,13 +73,13 @@ fn an_inception_is_seen_and_its_key_state_reported() {
 }
 
 #[test]
-fn a_kel_in_affinidis_rotation_form_is_seen_to_its_end() {
+fn a_kel_in_keripys_rotation_form_is_seen_to_its_end() {
     let (k0, k1, k2) = (signer(1), signer(2), signer(3));
     let icp = Icp::single(&[&k0], &[&k1]).icp();
     let pre = said(&icp);
-    let ixn1 = ixn(&pre, 1, &pre, json!([]));
-    let rot2 = rot(&pre, 2, &said(&ixn1), &[&k1], &[&k2], true);
-    let ixn3 = ixn(&pre, 3, &said(&rot2), json!([]));
+    let ixn1 = ixn(&pre, 1, &pre, sad!([]));
+    let rot2 = rot(&pre, 2, &said(&ixn1), &[&k1], &[&k2], false);
+    let ixn3 = ixn(&pre, 3, &said(&rot2), sad!([]));
     let result = process(&[
         stream(&icp, &[sigs(&icp, &[(&k0, 0)])]),
         stream(&ixn1, &[sigs(&ixn1, &[(&k0, 0)])]),
@@ -94,18 +95,18 @@ fn a_kel_in_affinidis_rotation_form_is_seen_to_its_end() {
 }
 
 #[test]
-fn a_rotation_without_c_is_rejected_as_affinidi_rejects_it() {
-    // keripy 1.x's rot has no c field; Affinidi's RotationEvent requires one.
+fn a_1x_rotation_with_c_is_rejected_as_affinidi_rejects_it() {
+    // keripy 1.x's rot has no c field, and Affinidi enforces keripy's field list.
     let (k0, k1, k2) = (signer(1), signer(2), signer(3));
     let icp = Icp::single(&[&k0], &[&k1]).icp();
     let pre = said(&icp);
-    let rot1 = rot(&pre, 1, &pre, &[&k1], &[&k2], false);
+    let rot1 = rot(&pre, 1, &pre, &[&k1], &[&k2], true);
     let result = process(&[
         stream(&icp, &[sigs(&icp, &[(&k0, 0)])]),
         stream(&rot1, &[sigs(&rot1, &[(&k1, 0)])]),
     ]);
     assert_eq!(readings(&result), vec![seen(), rejected()]);
-    assert!(reason(&result, 1).contains("`c`"), "{result}");
+    assert!(reason(&result, 1).contains("field"), "{result}");
     assert!(!reason(&result, 1).starts_with("routing: "), "{result}");
     assert_eq!(result["key_states"][&pre]["sn"], 0);
 }
@@ -115,7 +116,7 @@ fn a_bad_signature_is_rejected_and_state_does_not_move() {
     let (k0, k1, other) = (signer(1), signer(2), signer(9));
     let icp = Icp::single(&[&k0], &[&k1]).icp();
     let pre = said(&icp);
-    let ixn1 = ixn(&pre, 1, &pre, json!([]));
+    let ixn1 = ixn(&pre, 1, &pre, sad!([]));
     let result = process(&[
         stream(&icp, &[sigs(&icp, &[(&k0, 0)])]),
         stream(&ixn1, &[sigs(&ixn1, &[(&other, 0)])]),
@@ -144,7 +145,7 @@ fn an_event_before_its_prior_is_rejected_for_good_without_escrow() {
     let (k0, k1) = (signer(1), signer(2));
     let icp = Icp::single(&[&k0], &[&k1]).icp();
     let pre = said(&icp);
-    let ixn1 = ixn(&pre, 1, &pre, json!([]));
+    let ixn1 = ixn(&pre, 1, &pre, sad!([]));
     let result = process(&[
         stream(&ixn1, &[sigs(&ixn1, &[(&k0, 0)])]),
         stream(&icp, &[sigs(&icp, &[(&k0, 0)])]),
@@ -158,8 +159,8 @@ fn a_replayed_event_reads_seen_and_a_conflicting_one_is_rejected() {
     let (k0, k1) = (signer(1), signer(2));
     let icp = Icp::single(&[&k0], &[&k1]).icp();
     let pre = said(&icp);
-    let first = ixn(&pre, 1, &pre, json!([]));
-    let second = ixn(&pre, 1, &pre, json!([{"d": pre.clone()}]));
+    let first = ixn(&pre, 1, &pre, sad!([]));
+    let second = ixn(&pre, 1, &pre, sad!([{"d": pre.clone()}]));
     let icp_stream = stream(&icp, &[sigs(&icp, &[(&k0, 0)])]);
     let result = process(&[
         icp_stream.clone(),
@@ -178,7 +179,7 @@ fn a_second_inception_of_a_held_prefix_is_rejected() {
     let (k0, k1, k2) = (signer(1), signer(2), signer(3));
     let basic = |next: &Signer| {
         finish(
-            json!({"v": "", "t": "icp", "d": "", "i": key(&k0), "s": "0", "kt": "1",
+            sad!({"v": "", "t": "icp", "d": "", "i": key(&k0), "s": "0", "kt": "1",
                    "k": [key(&k0)], "nt": "1", "n": [commit(next)], "bt": "0", "b": [],
                    "c": [], "a": []}),
             false,
@@ -202,9 +203,9 @@ fn numeric_multisig_needs_its_threshold() {
     let (na, nb, nc) = (signer(4), signer(5), signer(6));
     let icp = Icp {
         keys: &[&a, &b, &c],
-        kt: json!("2"),
+        kt: sad!("2"),
         next: &[&na, &nb, &nc],
-        nt: json!("2"),
+        nt: sad!("2"),
         wits: &[],
         bt: "0",
     }
@@ -217,23 +218,30 @@ fn numeric_multisig_needs_its_threshold() {
 }
 
 #[test]
-fn a_numeric_threshold_is_reported_in_hex() {
+fn a_numeric_threshold_is_read_and_reported_in_hex() {
     let keys: Vec<_> = (1..=10).map(signer).collect();
     let refs: Vec<&_> = keys.iter().collect();
-    let icp = Icp {
-        keys: &refs,
-        kt: json!("10"),
-        next: &refs[..1],
-        nt: json!("1"),
-        wits: &[],
-        bt: "0",
-    }
-    .icp();
     let signed: Vec<_> = refs.iter().enumerate().map(|(i, s)| (*s, i)).collect();
-    let result = process(&[stream(&icp, &[sigs(&icp, &signed)])]);
+    let with = |kt: &str| {
+        Icp {
+            keys: &refs,
+            kt: kt.into(),
+            next: &refs[..1],
+            nt: sad!("1"),
+            wits: &[],
+            bt: "0",
+        }
+        .icp()
+    };
+    // "a" is ten, met by all ten keys.
+    let ten = with("a");
+    let result = process(&[stream(&ten, &[sigs(&ten, &signed)])]);
     assert_eq!(readings(&result), vec![seen()]);
-    // Affinidi read "10" as ten, which KERI writes as hex "a".
-    assert_eq!(result["key_states"][said(&icp)]["kt"], "a");
+    assert_eq!(result["key_states"][said(&ten)]["kt"], "a");
+    // "10" is sixteen, which ten keys can never meet.
+    let sixteen = with("10");
+    let result = process(&[stream(&sixteen, &[sigs(&sixteen, &signed)])]);
+    assert_eq!(readings(&result), vec![rejected()]);
 }
 
 #[test]
@@ -241,9 +249,9 @@ fn weighted_thresholds_in_affinidis_nested_form_are_held_and_reported() {
     let (a, b, c) = (signer(1), signer(2), signer(3));
     let icp = Icp {
         keys: &[&a, &b, &c],
-        kt: json!([["1/2", "1/2", "1/2"]]),
+        kt: sad!([["1/2", "1/2", "1/2"]]),
         next: &[&a],
-        nt: json!([["1"]]),
+        nt: sad!([["1"]]),
         wits: &[],
         bt: "0",
     }
@@ -260,20 +268,26 @@ fn weighted_thresholds_in_affinidis_nested_form_are_held_and_reported() {
 }
 
 #[test]
-fn a_flat_weighted_threshold_is_rejected_as_affinidi_rejects_it() {
+fn a_flat_weighted_threshold_is_read_as_keripy_writes_it() {
     let (a, b) = (signer(1), signer(2));
     let icp = Icp {
         keys: &[&a, &b],
-        kt: json!(["1/2", "1/2"]),
+        kt: sad!(["1/2", "1/2"]),
         next: &[&a],
-        nt: json!("1"),
+        nt: sad!("1"),
         wits: &[],
         bt: "0",
     }
     .icp();
+    let under = process(&[stream(&icp, &[sigs(&icp, &[(&a, 0)])])]);
+    assert_eq!(readings(&under), vec![rejected()]);
     let result = process(&[stream(&icp, &[sigs(&icp, &[(&a, 0), (&b, 1)])])]);
-    assert_eq!(readings(&result), vec![rejected()]);
-    assert!(reason(&result, 0).contains("clause"), "{result}");
+    assert_eq!(readings(&result), vec![seen()]);
+    // Reported as Affinidi renders a weighted threshold, nested.
+    assert_eq!(
+        result["key_states"][said(&icp)]["kt"],
+        json!([["1/2", "1/2"]])
+    );
 }
 
 #[test]
@@ -282,9 +296,9 @@ fn witness_receipt_couples_attached_to_the_event_meet_its_threshold() {
     let (w1, w2) = (witness(11), witness(12));
     let icp = Icp {
         keys: &[&k0],
-        kt: json!("1"),
+        kt: sad!("1"),
         next: &[&k1],
-        nt: json!("1"),
+        nt: sad!("1"),
         wits: &[&w1, &w2],
         bt: "2",
     }
@@ -302,13 +316,19 @@ fn witness_receipt_couples_attached_to_the_event_meet_its_threshold() {
         vec![rejected()],
         "Affinidi does not count -B"
     );
+    // Rejected for the threshold, not because the -B group failed to parse.
+    assert!(
+        reason(&indexed, 0).contains("witness receipt threshold not met"),
+        "{}",
+        reason(&indexed, 0)
+    );
     let met = process(&[stream(&icp, &[sig.clone(), couples(&icp, &[&w1, &w2])])]);
     assert_eq!(readings(&met), vec![seen()]);
     assert_eq!(met["key_states"][&pre]["wits"], json!([key(&w1), key(&w2)]));
     assert_eq!(met["key_states"][&pre]["bt"], "2");
 
     // An ixn short of receipts is not accepted on arrival, and its receipted copy is.
-    let ixn1 = ixn(&pre, 1, &pre, json!([]));
+    let ixn1 = ixn(&pre, 1, &pre, sad!([]));
     let later = process(&[
         stream(&icp, &[sig, couples(&icp, &[&w1, &w2])]),
         stream(&ixn1, &[sigs(&ixn1, &[(&k0, 0)])]),
@@ -349,7 +369,7 @@ fn a_delegated_inception_anchored_by_its_delegator_is_seen() {
         &dpre,
         1,
         &dpre,
-        json!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
+        sad!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
     );
     let first_three = [
         stream(&dicp, &[sigs(&dicp, &[(&d0, 0)])]),
@@ -366,12 +386,12 @@ fn a_delegated_inception_anchored_by_its_delegator_is_seen() {
 
     // A delegated rotation, in Affinidi's form, anchored by a later delegator event.
     let e2 = signer(23);
-    let drt1 = drt(&epre, 1, &epre, &[&e1], &[&e2], &dpre);
+    let drt1 = drt(&epre, 1, &epre, &[&e1], &[&e2]);
     let anchor2 = ixn(
         &dpre,
         2,
         &said(&anchor),
-        json!([{"i": epre.clone(), "s": "1", "d": said(&drt1)}]),
+        sad!([{"i": epre.clone(), "s": "1", "d": said(&drt1)}]),
     );
     let mut all = first_three.to_vec();
     all.push(stream(&anchor2, &[sigs(&anchor2, &[(&d0, 0)])]));
@@ -395,9 +415,9 @@ fn a_delegated_event_without_a_verified_anchor_is_rejected() {
         &dpre,
         1,
         &dpre,
-        json!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
+        sad!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
     );
-    let unanchoring = ixn(&dpre, 1, &dpre, json!([]));
+    let unanchoring = ixn(&dpre, 1, &dpre, sad!([]));
     let icp_stream = stream(&dicp, &[sigs(&dicp, &[(&d0, 0)])]);
     let dip_signed = sigs(&dip, &[(&e0, 0)]);
 
@@ -451,10 +471,10 @@ fn a_delegated_rotation_needs_its_own_anchor() {
         &dpre,
         1,
         &dpre,
-        json!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
+        sad!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
     );
     let e2 = signer(23);
-    let drt1 = drt(&epre, 1, &epre, &[&e1], &[&e2], &dpre);
+    let drt1 = drt(&epre, 1, &epre, &[&e1], &[&e2]);
     let result = process(&[
         stream(&dicp, &[sigs(&dicp, &[(&d0, 0)])]),
         stream(&anchor, &[sigs(&anchor, &[(&d0, 0)])]),
@@ -483,6 +503,166 @@ fn a_delegated_rotation_needs_its_own_anchor() {
 }
 
 #[test]
+fn an_interaction_after_an_establishment_only_inception_is_rejected() {
+    let (k0, k1, k2) = (signer(1), signer(2), signer(3));
+    let icp = Icp::single(&[&k0], &[&k1]).body_as(V1, "icp", None, &["EO"]);
+    let pre = said(&icp);
+    let ixn1 = ixn(&pre, 1, &pre, sad!([]));
+    let rot1 = rot(&pre, 1, &pre, &[&k1], &[&k2], false);
+    let result = process(&[
+        stream(&icp, &[sigs(&icp, &[(&k0, 0)])]),
+        stream(&ixn1, &[sigs(&ixn1, &[(&k0, 0)])]),
+        stream(&rot1, &[sigs(&rot1, &[(&k1, 0)])]),
+    ]);
+    assert_eq!(readings(&result), vec![seen(), rejected(), seen()]);
+    assert!(!reason(&result, 1).starts_with("routing: "), "{result}");
+}
+
+#[test]
+fn a_delegation_under_a_do_not_delegate_delegator_is_rejected() {
+    // Affinidi asks the adapter for the delegator's traits, which it answers from the delegator's
+    // Kever, and refuses the delegation itself.
+    let (d0, d1, e0, e1) = delegator_and_delegate();
+    let dicp = Icp::single(&[&d0], &[&d1]).body_as(V1, "icp", None, &["DND"]);
+    let dpre = said(&dicp);
+    let dip = Icp::single(&[&e0], &[&e1]).dip(&dpre);
+    let epre = said(&dip);
+    let anchor = ixn(
+        &dpre,
+        1,
+        &dpre,
+        sad!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
+    );
+    let result = process(&[
+        stream(&dicp, &[sigs(&dicp, &[(&d0, 0)])]),
+        stream(&anchor, &[sigs(&anchor, &[(&d0, 0)])]),
+        stream(
+            &dip,
+            &[sigs(&dip, &[(&e0, 0)]), seal_source(1, &said(&anchor))],
+        ),
+    ]);
+    assert_eq!(readings(&result), vec![seen(), seen(), rejected()]);
+    assert!(!reason(&result, 2).starts_with("routing: "), "{result}");
+    assert!(result["key_states"].get(&epre).is_none(), "{result}");
+}
+
+#[test]
+fn a_seal_in_a_displaced_delegator_event_does_not_authorize_a_delegation() {
+    // The delegating seal must lie on the delegator's trunk: the model the expected readings come
+    // from (generators/spec_tables/keri_model.py) looks for it there. A superseding rotation displaces
+    // the interaction that carried the seal, so the delegated inception that cites it afterwards
+    // is not seen, although the displaced interaction itself stays seen.
+    let (d0, d1, e0, e1) = delegator_and_delegate();
+    let d2 = signer(3);
+    let dicp = Icp::single(&[&d0], &[&d1]).icp();
+    let dpre = said(&dicp);
+    let dip = Icp::single(&[&e0], &[&e1]).dip(&dpre);
+    let epre = said(&dip);
+    let anchor = ixn(
+        &dpre,
+        1,
+        &dpre,
+        sad!([{"i": epre.clone(), "s": "0", "d": epre.clone()}]),
+    );
+    let recovery = rot(&dpre, 1, &dpre, &[&d1], &[&d2], false);
+    let result = process(&[
+        stream(&dicp, &[sigs(&dicp, &[(&d0, 0)])]),
+        stream(&anchor, &[sigs(&anchor, &[(&d0, 0)])]),
+        stream(&recovery, &[sigs(&recovery, &[(&d1, 0)])]),
+        stream(
+            &dip,
+            &[sigs(&dip, &[(&e0, 0)]), seal_source(1, &said(&anchor))],
+        ),
+    ]);
+    let displaced = ("seen".to_string(), "seen".to_string(), false);
+    let readings = readings(&result);
+    assert_eq!(readings[..3], [seen(), displaced, seen()]);
+    assert_eq!(readings[3].1, "rejected", "{readings:?}");
+    assert!(result["key_states"].get(&epre).is_none());
+}
+
+#[test]
+fn a_superseding_rotation_leaves_the_interaction_it_displaces_seen_but_off_the_trunk() {
+    let (k0, k1, k2) = (signer(1), signer(2), signer(3));
+    let icp = Icp::single(&[&k0], &[&k1]).icp();
+    let pre = said(&icp);
+    let ixn1 = ixn(&pre, 1, &pre, sad!([]));
+    let ixn2 = ixn(&pre, 2, &said(&ixn1), sad!([]));
+    let rot1 = rot(&pre, 1, &pre, &[&k1], &[&k2], false);
+    // An interaction that extends the displaced branch, delivered after the recovery.
+    let ixn3 = ixn(&pre, 3, &said(&ixn2), sad!([]));
+    let result = process(&[
+        stream(&icp, &[sigs(&icp, &[(&k0, 0)])]),
+        stream(&ixn1, &[sigs(&ixn1, &[(&k0, 0)])]),
+        stream(&ixn2, &[sigs(&ixn2, &[(&k0, 0)])]),
+        stream(&rot1, &[sigs(&rot1, &[(&k1, 0)])]),
+        stream(&ixn3, &[sigs(&ixn3, &[(&k1, 0)])]),
+    ]);
+    let displaced = ("seen".to_string(), "seen".to_string(), false);
+    assert_eq!(
+        readings(&result),
+        vec![seen(), displaced.clone(), displaced, seen(), rejected()]
+    );
+    let state = &result["key_states"][&pre];
+    assert_eq!(state["sn"], 1);
+    assert_eq!(state["said"], json!(said(&rot1)));
+    assert_eq!(state["keys"], json!([key(&k1)]));
+}
+
+#[test]
+fn a_non_transferable_inception_is_seen() {
+    let b0 = witness(31);
+    let icp = finish(
+        sad!({"v": "", "t": "icp", "d": "", "i": key(&b0), "s": "0", "kt": "1",
+              "k": [key(&b0)], "nt": "0", "n": [], "bt": "0", "b": [], "c": [], "a": []}),
+        false,
+    );
+    let result = process(&[stream(&icp, &[sigs(&icp, &[(&b0, 0)])])]);
+    assert_eq!(readings(&result), vec![seen()]);
+    assert_eq!(result["key_states"][key(&b0)]["nt"], "0");
+    assert_eq!(result["key_states"][key(&b0)]["ndigs"], json!([]));
+}
+
+#[test]
+fn a_rotation_may_reveal_part_of_its_commitment_and_hold_the_rest_in_reserve() {
+    let (k0, k1, k2, k3) = (signer(1), signer(2), signer(3), signer(4));
+    let icp = Icp {
+        keys: &[&k0],
+        kt: sad!("1"),
+        next: &[&k1, &k2],
+        nt: sad!("1"),
+        wits: &[],
+        bt: "0",
+    }
+    .icp();
+    let pre = said(&icp);
+    // Reveals k1 alone; k2 stays committed in reserve.
+    let rot1 = rot(&pre, 1, &pre, &[&k1], &[&k3], false);
+    let result = process(&[
+        stream(&icp, &[sigs(&icp, &[(&k0, 0)])]),
+        stream(&rot1, &[sigs(&rot1, &[(&k1, 0)])]),
+    ]);
+    assert_eq!(readings(&result), vec![seen(), seen()]);
+    assert_eq!(result["key_states"][&pre]["keys"], json!([key(&k1)]));
+}
+
+#[test]
+fn a_version_2_kel_in_a_genus_2_stream_is_seen() {
+    let (k0, k1) = (signer(1), signer(2));
+    let icp = Icp::single(&[&k0], &[&k1]).body_as(V2, "icp", None, &[]);
+    let pre = said(&icp);
+    let ixn1 = ixn_as(V2, &pre, 1, &pre, sad!([]));
+    let genus = hex(b"-_AAACAA");
+    let result = process(&[
+        format!("{genus}{}", stream(&icp, &[sigs_v2(&icp, &[(&k0, 0)])])),
+        format!("{genus}{}", stream(&ixn1, &[sigs_v2(&ixn1, &[(&k0, 0)])])),
+    ]);
+    assert_eq!(readings(&result), vec![seen(); 2]);
+    assert_eq!(result["key_states"][&pre]["sn"], 1);
+    assert_eq!(result["key_states"][&pre]["said"], json!(said(&ixn1)));
+}
+
+#[test]
 fn streams_affinidi_cannot_read_as_one_key_event_are_rejected() {
     let (k0, k1) = (signer(1), signer(2));
     let icp = Icp::single(&[&k0], &[&k1]).icp();
@@ -490,33 +670,33 @@ fn streams_affinidi_cannot_read_as_one_key_event_are_rejected() {
     let two = format!("{one}{one}");
     // A message that parses but is not a key event.
     let qry = finish(
-        json!({"v": "", "t": "qry", "d": "", "i": said(&icp), "s": "0"}),
+        sad!({"v": "", "t": "qry", "d": "", "i": said(&icp), "s": "0"}),
         false,
     );
     // Inceptions whose keys cannot be read: none at all, and one that is not a key.
     let keyless = finish(
-        json!({"v": "", "t": "icp", "d": "", "i": "", "s": "0", "kt": "1", "nt": "1", "n": [],
+        sad!({"v": "", "t": "icp", "d": "", "i": "", "s": "0", "kt": "1", "nt": "1", "n": [],
                "bt": "0", "b": [], "c": [], "a": []}),
         true,
     );
     let badkey = finish(
-        json!({"v": "", "t": "icp", "d": "", "i": "", "s": "0", "kt": "1", "k": ["Dnotakey"],
+        sad!({"v": "", "t": "icp", "d": "", "i": "", "s": "0", "kt": "1", "k": ["Dnotakey"],
                "nt": "1", "n": [], "bt": "0", "b": [], "c": [], "a": []}),
         true,
     );
     // Bodies Affinidi frames but whose ilk, or sequence number, it cannot read.
-    let no_ilk = finish(json!({"v": "", "d": "", "i": said(&icp), "s": "0"}), false);
+    let no_ilk = finish(sad!({"v": "", "d": "", "i": said(&icp), "s": "0"}), false);
     let no_sn = finish(
-        json!({"v": "", "t": "ixn", "d": "", "i": said(&icp), "p": said(&icp), "a": []}),
+        sad!({"v": "", "t": "ixn", "d": "", "i": said(&icp), "p": said(&icp), "a": []}),
         false,
     );
     let numeric_key = finish(
-        json!({"v": "", "t": "icp", "d": "", "i": "", "s": "0", "kt": "1", "k": [1],
+        sad!({"v": "", "t": "icp", "d": "", "i": "", "s": "0", "kt": "1", "k": [1],
                "nt": "1", "n": [], "bt": "0", "b": [], "c": [], "a": []}),
         true,
     );
-    let no_prefix = bare(json!({"v": "", "t": "ixn", "d": said(&icp), "s": "1"}));
-    let no_said = bare(json!({"v": "", "t": "ixn", "i": said(&icp), "s": "1"}));
+    let no_prefix = bare(sad!({"v": "", "t": "ixn", "d": said(&icp), "s": "1"}));
+    let no_said = bare(sad!({"v": "", "t": "ixn", "i": said(&icp), "s": "1"}));
     let streams = [
         String::new(),
         "2d4b".to_string(),
