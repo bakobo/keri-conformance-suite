@@ -86,13 +86,16 @@ class Instance:
     """One shipped adapter build: what to call it, how to build it (each step a directory, a
     command and extra environment), the executable that build leaves, the profiles it is run
     against, the adapter name its hello reports, and the README whose results table lists its
-    committed results."""
+    committed results. When an adapter ships more than one build, every build but one names
+    `line`, the start of the implementation version its hello reports, so that a committed result
+    is attributed to the build that made it and only that build's refresh supersedes it."""
     name: str
     build: tuple[tuple[str, tuple[str, ...], tuple[tuple[str, str], ...]], ...]
     executable: str
     profiles: tuple[str, ...]
     adapter: str
     readme: str
+    line: str = ""
 
 
 def _step(directory: str, *argv: str, **env: str):
@@ -109,7 +112,7 @@ INSTANCES = (
              (_step("adapters/keripy/keripy-1.2.14", "uv", "sync", "--locked", UV_PYTHON="3.12"),),
              "adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy",
              ("cesr-v1.0", "cesr-strict", "keripy-1x-interop"), "kcs-adapter-keripy",
-             "adapters/keripy/README.md"),
+             "adapters/keripy/README.md", line="1.2."),
     Instance("keriox", (_step("adapters/keriox", "cargo", "build", "--locked"),),
              "adapters/keriox/target/debug/kcs-adapter-keriox",
              ("cesr-v1.0", "cesr-strict", "keripy-1x-interop", "keri-v1.0.1", "keri-escrow"),
@@ -121,7 +124,7 @@ INSTANCES = (
              (_step("adapters/keriox/keri-core-0.18", "cargo", "build", "--locked"),),
              "adapters/keriox/keri-core-0.18/target/debug/kcs-adapter-keriox",
              ("cesr-v1.0", "cesr-strict", "keripy-1x-interop"), "kcs-adapter-keriox",
-             "adapters/keriox/README.md"),
+             "adapters/keriox/README.md", line="0.18."),
     Instance("affinidi", (_step("adapters/affinidi", "cargo", "build", "--locked"),),
              "adapters/affinidi/target/debug/kcs-adapter-affinidi",
              ("cesr-v1.0", "cesr-strict", "keri-v1.0.1", "keri-escrow", "keripy-1x-interop"),
@@ -313,15 +316,27 @@ def _install(source: Path, target: Path) -> None:
                                 "already moved into place stay; rerun the refresh.") from exc
 
 
+def build_of(hello: dict) -> str | None:
+    """The shipped build a hello came from: of the builds with its adapter name, the one whose
+    `line` starts its implementation version, else the one without a `line`."""
+    version = hello["implementation"]["version"]
+    builds = [i for i in INSTANCES if i.adapter == hello["adapter"]["name"]]
+    for i in sorted(builds, key=lambda i: not i.line):
+        if version.startswith(i.line):
+            return i.name
+    return None
+
+
 def _remove_superseded(results: Path, runs, kept: set[str]) -> list[str]:
     """Committed maintainer-run results that a run just replaced under a new version: the same
-    implementation and profile, from the same adapter, at another path."""
-    ran = {(r["hello"]["adapter"]["name"], r["hello"]["implementation"]["name"],
-            r["filters"]["profile"]) for _, _, r in runs}
+    implementation and profile, from the same build, at another path. A result another build of
+    the same adapter made is that build's, and stays."""
+    ran = {(instance.name, r["hello"]["implementation"]["name"], r["filters"]["profile"])
+           for instance, _, r in runs}
     removed = []
     for result in load_results(results, kinds=COMMITTED_KINDS):
         report = result.doc["report"]
-        key = (report["hello"]["adapter"]["name"], report["hello"]["implementation"]["name"],
+        key = (build_of(report["hello"]), report["hello"]["implementation"]["name"],
                report["filters"]["profile"])
         if (result.doc["provenance"]["kind"] == "maintainer-run" and key in ran
                 and result.path.as_posix() not in kept):
