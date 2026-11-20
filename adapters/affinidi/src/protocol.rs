@@ -18,24 +18,29 @@ pub const OPERATIONS: [&str; 3] = ["cesr.parse", "cesr.encode", "keri.process"];
 /// these against Cargo.lock and against the `.cargo_vcs_info.json` that crates.io published with
 /// each crate, so they cannot drift from what is actually built.
 pub const IMPLEMENTATION_NAME: &str = "affinidi-keri-core";
-pub const IMPLEMENTATION_VERSION: &str = "0.4.0";
-pub const IMPLEMENTATION_COMMIT: &str = "6277ae866c5761edb5cfa807a5f7ac83ebf3700c";
-pub const CESR_CRATE_VERSION: &str = "0.1.3";
-pub const CESR_CRATE_COMMIT: &str = "b970cb01bdd1acd0530137b67460579e4624ab47";
+pub const IMPLEMENTATION_VERSION: &str = "0.8.1";
+pub const IMPLEMENTATION_COMMIT: &str = "4a1433fb82a90cbff48aedf7716eb75e286198f4";
+pub const CESR_CRATE_VERSION: &str = "0.1.8";
+pub const CESR_CRATE_COMMIT: &str = "10ee3f21fa8546849b5706af9f280d1de7258928";
 
 /// Features from profiles/features.json that Affinidi and this adapter together support. See
 /// README.md for why each of the others, cesr.item-extents included, is not declared.
-pub const FEATURES: [&str; 10] = [
+pub const FEATURES: [&str; 15] = [
     "cesr.genus-1.00",
+    "cesr.genus-2.00",
     "cesr.serialization.json",
     "crypto.ed25519",
     "kel.basic",
     "kel.delegation",
     "kel.multisig.numeric",
     "kel.multisig.weighted",
+    "kel.nontransferable",
+    "kel.partial-rotation",
+    "kel.recovery",
     "kel.witness",
     "keri.routing",
     "keri.version-1.x",
+    "keri.version-2.x",
 ];
 
 /// The features in FEATURES that this adapter supplies itself rather than Affinidi: keri.process

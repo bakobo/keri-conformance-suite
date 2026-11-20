@@ -6,14 +6,18 @@
 //! and their refusals are Affinidi's verdicts. What this module adds is the routing
 //! Affinidi leaves to its caller, declared as `keri.routing` in hello's `composes`: it picks which of
 //! those calls a message needs from its ilk and prefix, holds one `Kever` per prefix, records the
-//! bodies Affinidi accepted, and answers Affinidi's `DelegatorAnchors` lookup from that record only. A
-//! message routing cannot hand to a Kever is reported rejected with a reason marked `routing:`.
+//! bodies Affinidi accepted, and answers Affinidi's `DelegatorAnchors` lookups from that record and
+//! from the `Kever`s only. A message routing cannot hand to a Kever is reported rejected with a
+//! reason marked `routing:`. The trunk is read from Affinidi: an accepted event is on it when the
+//! prior-event links of the accepted events lead to it from the last event Affinidi's `Kever`
+//! holds, so an interaction a superseding rotation displaced stays seen but leaves the trunk.
 //! README.md, "keri.process", says where each reported value comes from.
 
 use std::collections::{BTreeMap, HashMap, HashSet};
 
 use affinidi_keri_core::kever::Kever;
 use affinidi_keri_core::parser::{self, Attachment, ParsedMessage};
+use affinidi_keri_core::sad::SadValue;
 use affinidi_keri_core::threshold::Threshold;
 use affinidi_keri_core::{CoreError, DelegationProof, DelegatorAnchors};
 use affinidi_keri_crypto::{Siger, Verfer};
@@ -32,7 +36,10 @@ struct Validator {
     bodies: HashSet<Vec<u8>>,
     /// The anchors (`a`) of every accepted event, by prefix, sequence number and SAID, so that a
     /// delegated event is checked only against its delegator's accepted events.
-    anchors: HashMap<(String, u64, String), Vec<Value>>,
+    anchors: HashMap<(String, u64, String), Vec<SadValue>>,
+    /// Every accepted event by prefix and SAID: its body, and the SAID its `p` names (none for an
+    /// inception), so that the trunk can be followed back from the last event a Kever holds.
+    events: HashMap<(String, String), (Vec<u8>, Option<String>)>,
 }
 
 impl DelegatorAnchors for Validator {
@@ -42,11 +49,20 @@ impl DelegatorAnchors for Validator {
         delegator: &str,
         sn: u64,
         said: &str,
-    ) -> Result<Option<Vec<Value>>, CoreError> {
+    ) -> Result<Option<Vec<SadValue>>, CoreError> {
         Ok(self
             .anchors
             .get(&(delegator.to_string(), sn, said.to_string()))
             .cloned())
+    }
+
+    /// The configuration traits of the delegator's key state as Affinidi's `Kever` holds it, which
+    /// exists only once Affinidi has accepted the delegator's inception.
+    fn delegator_traits(&self, delegator: &str) -> Result<Option<Vec<String>>, CoreError> {
+        Ok(self
+            .kevers
+            .get(delegator)
+            .map(|kever| kever.state().config.clone()))
     }
 }
 
@@ -59,6 +75,26 @@ impl Validator {
         ident
             .as_ref()
             .is_some_and(|body| self.bodies.contains(body))
+    }
+
+    /// The bodies of the events on each prefix's trunk: from the last event its Kever holds, back
+    /// through each accepted event's prior-event link to the inception.
+    fn trunk(&self) -> HashSet<Vec<u8>> {
+        let mut trunk = HashSet::new();
+        for (prefix, kever) in &self.kevers {
+            let mut at = Some(kever.state().last_event_digest.clone());
+            // Each step moves to a distinct accepted event, so the walk ends within their number.
+            for _ in 0..=self.events.len() {
+                let Some((body, prior)) =
+                    at.and_then(|said| self.events.get(&(prefix.clone(), said)))
+                else {
+                    break;
+                };
+                trunk.insert(body.clone());
+                at = prior.clone();
+            }
+        }
+        trunk
     }
 
     /// Deliver one stream. Returns the body of the key event it carries, if Affinidi could parse
@@ -159,9 +195,18 @@ impl Validator {
         let anchors = serder
             .sad()
             .get("a")
-            .and_then(Value::as_array)
+            .and_then(SadValue::as_array)
             .cloned()
             .unwrap_or_default();
+        let prior = serder
+            .sad()
+            .get("p")
+            .and_then(SadValue::as_str)
+            .map(str::to_string);
+        self.events.insert(
+            (prefix.clone(), said.clone()),
+            (serder.raw().to_vec(), prior),
+        );
         self.anchors.insert((prefix, sn, said), anchors);
         self.bodies.insert(serder.raw().to_vec());
         Ok(())
@@ -222,10 +267,10 @@ fn receipt_couples(msg: &ParsedMessage) -> Vec<(String, Vec<u8>)> {
 }
 
 /// The event's `k` field as Affinidi's verifiers, as its direct mode builds them.
-fn verfers(sad: &Value) -> Result<Vec<Verfer>, CoreError> {
+fn verfers(sad: &SadValue) -> Result<Vec<Verfer>, CoreError> {
     let keys = sad
         .get("k")
-        .and_then(Value::as_array)
+        .and_then(SadValue::as_array)
         .ok_or_else(|| CoreError::MissingField("k".into()))?;
     keys.iter()
         .map(|k| {
@@ -331,11 +376,13 @@ pub fn process(request: &Map<String, Value>) -> Result<Value, OpError> {
         let initial = reading(&validator, &ident);
         delivered.push((ident, initial, reason));
     }
+    let trunk = validator.trunk();
     let dispositions: Vec<Value> = delivered
         .iter()
         .map(|(ident, initial, reason)| {
             let last = reading(&validator, ident);
-            let mut d = json!({"initial": initial, "final": last, "trunk": last == "seen"});
+            let on_trunk = ident.as_ref().is_some_and(|body| trunk.contains(body));
+            let mut d = json!({"initial": initial, "final": last, "trunk": on_trunk});
             if let Some(reason) = reason.as_ref().filter(|_| *initial != "seen") {
                 d["reason"] = json!(reason);
             }

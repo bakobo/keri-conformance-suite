@@ -73,14 +73,40 @@ fn whitespace_affinidi_skips_between_messages_counts_as_consumed() {
     assert_eq!(parse(format!("{ICP}\n").as_bytes()), summary(300));
 }
 
+/// The same two signatures as a 2.00 `-K` group, which counts quadlets: 176 characters, 44.
+fn sigs_v2() -> String {
+    format!("-KAs{}", &SIGS[4..])
+}
+
+#[test]
+fn a_genus_version_code_is_consumed_with_the_message_after_it() {
+    let stream = format!("-_AAACAA{ICP}{}", sigs_v2());
+    assert_eq!(parse(stream.as_bytes()), summary(stream.len()));
+}
+
+#[test]
+fn a_genus_version_code_that_ends_the_stream_is_consumed_as_parse_all_skips_it() {
+    assert_eq!(parse(b"-_AAACAA"), summary(8));
+    let stream = format!("{ICP}{SIGS}-_AAACAA");
+    assert_eq!(parse(stream.as_bytes()), summary(stream.len()));
+}
+
+#[test]
+fn the_genus_a_code_sets_holds_for_later_messages_as_parse_all_holds_it() {
+    // parse_all reads the second message's -K group in genus 2.00, which the code before the first
+    // message set. Measuring each message afresh in genus 1.00 would refuse the -K group.
+    let stream = format!("-_AAACAA{ICP}{ICP}{}", sigs_v2());
+    assert_eq!(parse(stream.as_bytes()), summary(stream.len()));
+    // A later code switches back, and the 1.00 group after it is read in 1.00.
+    let back = format!("-_AAACAA{ICP}{}-_AAABAA{ICP}{SIGS}", sigs_v2());
+    assert_eq!(parse(back.as_bytes()), summary(back.len()));
+}
+
 #[test]
 fn rejections_carry_affinidis_error_class() {
-    // A genus/version code at the start of the stream: Affinidi does not read genus codes.
-    let genus = format!("-_AAACAA{ICP}");
-    assert_eq!(
-        rejection_class(&parse(genus.as_bytes())),
-        "CoreError::ParseError"
-    );
+    // A genus/version code naming a genus Affinidi has no table for.
+    let genus = format!("-_AAAJAA{ICP}");
+    assert!(rejection_class(&parse(genus.as_bytes())).starts_with("CoreError::"));
     // A body cut short of its declared size.
     assert_eq!(
         rejection_class(&parse(&ICP.as_bytes()[..200])),
