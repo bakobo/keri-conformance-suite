@@ -495,13 +495,19 @@ def _missing(repo: Path) -> list[str]:
     """Every shipped adapter build has a committed maintainer-run result for each profile it is
     run against. CI never reruns the adapters, so without this a pull request could delete one
     and regenerate the README table to match, and nothing would notice."""
-    have = {(r.doc["report"]["hello"]["adapter"]["name"], r.doc["report"]["filters"]["profile"])
-            for r in load_results(repo / "results", kinds=COMMITTED_KINDS)
-            if r.doc["provenance"]["kind"] == "maintainer-run"}
+    return _missing_from(load_results(repo / "results", kinds=COMMITTED_KINDS))
+
+
+def _missing_from(results) -> list[str]:
+    """What `_missing` reports for these committed results. A result counts only for the build
+    that made it (`build_of`), so one build's results never stand in for another build of the same
+    adapter."""
+    have = {(build_of(r.doc["report"]["hello"]), r.doc["report"]["filters"]["profile"])
+            for r in results if r.doc["provenance"]["kind"] == "maintainer-run"}
     return [f"{E_UNCOMMITTED}: {i.name} {profile}: results/ holds no maintainer-run result from "
-            f"{i.adapter} for {profile}; restore it with scripts/reproduce-results refresh "
-            f"--adapter {i.name}"
-            for i in INSTANCES for profile in i.profiles if (i.adapter, profile) not in have]
+            f"{i.adapter} for that build and profile; restore it with "
+            f"scripts/reproduce-results refresh --adapter {i.name}"
+            for i in INSTANCES for profile in i.profiles if (i.name, profile) not in have]
 
 
 def check_readmes(repo) -> list[str]:

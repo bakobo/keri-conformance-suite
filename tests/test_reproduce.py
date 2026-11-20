@@ -512,8 +512,20 @@ def test_a_shipped_adapter_profile_without_a_committed_result_is_reported(repo):
     P.update_readmes(repo)  # a table regenerated to match the deletion does not hide it
     assert P.check_readmes(repo) == [
         (f"{P.E_UNCOMMITTED}: alpha keri-v1.0.1: results/ holds no maintainer-run result from "
-         "kcs-adapter-keripy for keri-v1.0.1; restore it with scripts/reproduce-results refresh "
-         "--adapter alpha")]
+         "kcs-adapter-keripy for that build and profile; restore it with "
+         "scripts/reproduce-results refresh --adapter alpha")]
+
+
+def test_another_builds_results_do_not_stand_in_for_a_builds_missing_ones():
+    """keriox's 0.17.13 results share the adapter name and profiles of the 0.18 build; with the
+    0.18 results gone, the 0.18 build is still reported missing (hostile pass on PR #91)."""
+    real = [r for r in load_results(ROOT / "results", kinds=COMMITTED_KINDS)
+            if P.build_of(r.doc["report"]["hello"]) != "keriox-0.18"]
+    assert P._missing_from(real) == [
+        (f"{P.E_UNCOMMITTED}: keriox-0.18 {profile}: results/ holds no maintainer-run result "
+         "from kcs-adapter-keriox for that build and profile; restore it with "
+         "scripts/reproduce-results refresh --adapter keriox-0.18")
+        for profile in ("cesr-v1.0", "cesr-strict", "keripy-1x-interop")]
 
 
 def test_a_readme_that_cannot_be_read_is_a_coded_error(repo):
