@@ -15,13 +15,13 @@ name = "kcs-adapter-affinidi"
 path = "src/main.rs"
 
 [dependencies]
-# The implementation under test, pinned exactly to published releases. Change both pins, run
-# `cargo update -p <crate> --precise <version>`, and update IMPLEMENTATION in src/protocol.rs
-# (tests/pins.rs checks that the two agree).
-affinidi-keri-core = "=0.4.0"
-affinidi-cesr = "=0.1.3"
+# The implementation under test, pinned exactly to published releases. Change the pins, run
+# `cargo update -p <crate> --precise <version>` for each, and update the IMPLEMENTATION and
+# CESR_CRATE constants in src/protocol.rs (tests/pins.rs checks that they agree).
+affinidi-keri-core = "=0.8.1"
+affinidi-cesr = "=0.1.8"
 # Key and signature primitives (Verfer) for keri.process; same workspace and commit as affinidi-keri-core.
-affinidi-keri-crypto = "=0.4.0"
+affinidi-keri-crypto = "=0.8.1"
 serde_json = "1"
 
 [profile.dev]
