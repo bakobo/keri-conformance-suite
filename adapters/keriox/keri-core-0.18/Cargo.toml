@@ -1,0 +1,48 @@
+[package]
+# The same package, library and binary name as the keri-core 0.17.13 build in the directory above,
+# so that the shared main.rs and tests/mechanics.rs build unchanged against this crate; the two are
+# told apart by the implementation hello reports, as the keripy builds are.
+name = "kcs-adapter-keriox"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+description = "Connects keri-core 0.18.0's CESR layer (cesrox 2.0.0-beta.8, said 0.5.4) to the KERI conformance suite runner over adapter protocol v1."
+# Shared with the 0.17.13 build: it reads this crate's Cargo.lock.
+build = "../build.rs"
+
+# A standalone crate, never a member of an enclosing workspace.
+[workspace]
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "kcs-adapter-keriox"
+path = "../src/main.rs"
+
+# The protocol mechanics every keriox build shares.
+[[test]]
+name = "mechanics"
+path = "../tests/mechanics.rs"
+
+[dependencies]
+# keri-core 0.18.0 requires cesrox ^2.0.0-beta.8 with cesr-proof and said ^0.5.3-beta.1. said 0.5.4,
+# the newest, has 0.5.3-beta.1's source and caps cesrox below 2.0.0-rc, so the line resolves to
+# exactly these. keri-core itself is linked so that the lock records the line it selects; this
+# build calls only cesrox and said (README.md, "The keri-core 0.18.0 build").
+keri-core = { version = "=0.18.0", default-features = false }
+cesrox = { version = "=2.0.0-beta.8", features = ["cesr-proof"] }
+said = { version = "=0.5.4" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.dev]
+# Panics inside cesrox are caught and reported; they must unwind, never abort.
+panic = "unwind"
+
+# Dependencies keep the arithmetic and debug-assertion semantics of a release build, which is how
+# keri-core ships them, while the adapter itself stays a quick debug build.
+[profile.dev.package."*"]
+overflow-checks = false
+debug-assertions = false

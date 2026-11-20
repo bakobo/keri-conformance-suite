@@ -137,6 +137,74 @@ def test_refresh_removes_the_result_a_new_version_supersedes(repo):
     assert claim.exists()
 
 
+# The two-build adapters: (build refreshed, its new version, the other build, its committed
+# version). Each build's results belong to it alone (this.i, decision 7lxj5552).
+PAIRS = [("keripy", "2.2.0", "keripy-1.2.14", "1.2.14"),
+         ("keripy-1.2.14", "1.2.15", "keripy", "2.1.0.dev1"),
+         ("keriox", "0.17.14", "keriox-0.18", "0.18.0 (cesrox 2.0.0-beta.8, said 0.5.4)"),
+         ("keriox-0.18", "0.18.1", "keriox", "0.17.13 (cesrox 0.1.8, said 0.4.3)")]
+
+
+@pytest.mark.parametrize(("name", "version", "other", "other_version"), PAIRS)
+def test_refreshing_one_build_leaves_the_other_builds_results_alone(
+        tmp_path, monkeypatch, name, version, other, other_version):
+    builds = {i.name: i for i in P.INSTANCES}
+    instance = builds[name]
+    monkeypatch.setattr(P, "INSTANCES", (builds[name], builds[other]))
+    root = tmp_path / "repo"
+    for i in (builds[name], builds[other]):
+        exe = root / i.executable
+        exe.parent.mkdir(parents=True, exist_ok=True)
+        exe.write_text("#!/bin/sh\n")
+        exe.chmod(0o755)
+        (root / i.readme).parent.mkdir(parents=True, exist_ok=True)
+        (root / i.readme).write_text(TABLE)
+    (root / "results").mkdir()
+    (root / ".gitignore").write_text("bin/\ntarget/\n.venv/\n")
+    implementation = "keripy" if name.startswith("keripy") else "keri-core"
+
+    def rep(v):
+        doc = report(name=implementation, version=v)
+        doc["hello"]["adapter"]["name"] = instance.adapter
+        return doc
+
+    others = committed(root, result(rep(other_version), MAINTAINER_RUN))
+    previous = "0.0.1" if name in ("keripy", "keriox") else version.rsplit(".", 1)[0] + ".0"
+    own = committed(root, result(rep(previous), MAINTAINER_RUN))
+    git(root, "init", "-q")
+    git(root, "-c", "user.name=T", "-c", "user.email=t@x", "add", "-A")
+    git(root, "-c", "user.name=T", "-c", "user.email=t@x", "commit", "-qm", "init")
+    folder = instance.executable.split("/")[-3]  # what Runs keys a run by
+    runs = {(folder, profile): rep(version) for profile in instance.profiles}
+    for profile in instance.profiles:
+        runs[(folder, profile)]["filters"]["profile"] = profile
+        runs[(folder, profile)]["cases"][0]["profile"] = profile
+    lines = refresh(root, Runs(runs), [name])
+    assert others.exists(), lines
+    assert not own.exists(), lines
+
+
+def test_every_committed_result_is_attributed_to_the_build_that_made_it():
+    made = {}
+    for r in load_results(ROOT / "results", kinds=COMMITTED_KINDS):
+        if r.doc["provenance"]["kind"] == "maintainer-run":
+            hello = r.doc["report"]["hello"]
+            made.setdefault(P.build_of(hello), set()).add(hello["implementation"]["version"])
+    assert made["keriox"] == {"0.17.13 (cesrox 0.1.8, said 0.4.3)"}
+    assert made.get("keriox-0.18", set()) <= {"0.18.0 (cesrox 2.0.0-beta.8, said 0.5.4)"}
+    assert made["keripy-1.2.14"] == {"1.2.14"}
+    assert all(not v.startswith("1.2.") for v in made["keripy"])
+
+
+def test_a_hello_no_shipped_build_could_have_made_belongs_to_none(monkeypatch):
+    hello = {"adapter": {"name": "kcs-adapter-elsewhere"}, "implementation": {"version": "1"}}
+    assert P.build_of(hello) is None
+    only = P.Instance("only", (), "x", (), "kcs-adapter-elsewhere", "README.md", line="2.")
+    monkeypatch.setattr(P, "INSTANCES", (only,))
+    assert P.build_of(hello) is None
+    assert P.build_of({**hello, "implementation": {"version": "2.0"}}) == "only"
+
+
 @pytest.mark.parametrize(("code", "errno_"), [("e.env.filesystem.result-write.f", 13),
                                                ("e.env.filesystem.result-write.r", 28)])
 def test_refresh_reports_a_result_it_could_not_move_into_place(repo, monkeypatch, code, errno_):
@@ -306,11 +374,23 @@ def test_the_real_instances_build_from_their_lockfiles():
     commands = {i.name: [" ".join(argv) for _, argv, _ in i.build] for i in P.INSTANCES}
     assert commands["keripy-1.2.14"] == ["uv sync --locked"]
     assert dict(P.INSTANCES[1].build[0][2]) == {"UV_PYTHON": "3.12"}
-    assert (commands["keriox"] == commands["affinidi"] == commands["devrandom"]
-            == ["cargo build --locked"])
+    assert (commands["keriox"] == commands["keriox-0.18"] == commands["affinidi"]
+            == commands["devrandom"] == ["cargo build --locked"])
     assert commands["signify-ts"] == ["npm ci --no-audit --no-fund"]
     assert commands["keri-go"] == ["go build -mod=readonly -o kcs-adapter-keri-go ."]
     assert commands["cesrixir"] == ["bin/build"]
+
+
+def test_the_keriox_builds_share_an_adapter_name_and_readme_but_not_a_directory():
+    """keri-core 0.18.0 is tested beside 0.17.13, as keripy 1.2.14 is beside keripy: one adapter
+    and README, a separate project with its own lockfile (this.i, decision 7lxj5552)."""
+    builds = {i.name: i for i in P.INSTANCES}
+    old, new = builds["keriox"], builds["keriox-0.18"]
+    assert old.adapter == new.adapter == "kcs-adapter-keriox"
+    assert old.readme == new.readme
+    assert new.build[0][0] == "adapters/keriox/keri-core-0.18" != old.build[0][0]
+    assert new.executable == "adapters/keriox/keri-core-0.18/target/debug/kcs-adapter-keriox"
+    assert new.profiles == ("cesr-v1.0", "cesr-strict", "keripy-1x-interop")
 
 
 def test_an_adapter_that_writes_no_report_is_refused(repo):
@@ -432,8 +512,20 @@ def test_a_shipped_adapter_profile_without_a_committed_result_is_reported(repo):
     P.update_readmes(repo)  # a table regenerated to match the deletion does not hide it
     assert P.check_readmes(repo) == [
         (f"{P.E_UNCOMMITTED}: alpha keri-v1.0.1: results/ holds no maintainer-run result from "
-         "kcs-adapter-keripy for keri-v1.0.1; restore it with scripts/reproduce-results refresh "
-         "--adapter alpha")]
+         "kcs-adapter-keripy for that build and profile; restore it with "
+         "scripts/reproduce-results refresh --adapter alpha")]
+
+
+def test_another_builds_results_do_not_stand_in_for_a_builds_missing_ones():
+    """keriox's 0.17.13 results share the adapter name and profiles of the 0.18 build; with the
+    0.18 results gone, the 0.18 build is still reported missing (hostile pass on PR #91)."""
+    real = [r for r in load_results(ROOT / "results", kinds=COMMITTED_KINDS)
+            if P.build_of(r.doc["report"]["hello"]) != "keriox-0.18"]
+    assert P._missing_from(real) == [
+        (f"{P.E_UNCOMMITTED}: keriox-0.18 {profile}: results/ holds no maintainer-run result "
+         "from kcs-adapter-keriox for that build and profile; restore it with "
+         "scripts/reproduce-results refresh --adapter keriox-0.18")
+        for profile in ("cesr-v1.0", "cesr-strict", "keripy-1x-interop")]
 
 
 def test_a_readme_that_cannot_be_read_is_a_coded_error(repo):

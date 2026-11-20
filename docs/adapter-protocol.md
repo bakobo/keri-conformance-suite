@@ -274,7 +274,7 @@ Keep it small, and keep it outside the implementation. An adapter builds against
 The adapters in this repository are working examples, each a small program in its implementation's own language:
 
 - [`adapters/keripy`](../adapters/keripy), in Python, for keripy, with a second instance for keripy 1.2.14 in [`adapters/keripy/keripy-1.2.14`](../adapters/keripy/keripy-1.2.14).
-- [`adapters/keriox`](../adapters/keriox), in Rust, for keriox.
+- [`adapters/keriox`](../adapters/keriox), in Rust, for keriox (keri-core 0.17.13), with a second build for keri-core 0.18.0 in [`adapters/keriox/keri-core-0.18`](../adapters/keriox/keri-core-0.18).
 - [`adapters/affinidi`](../adapters/affinidi), in Rust, for Affinidi's keri-core and cesr crates.
 - [`adapters/devrandom`](../adapters/devrandom), in Rust, for devrandom-labs/cesr, a sans-IO library of verdict functions; its `keri.process` composes the routing, escrow, delegation-evidence lookup and superseding rewind the library leaves to its caller.
 - [`adapters/keri-go`](../adapters/keri-go), in Go, for grapeid/keri-go, composing `keri.routing` over its whole-log validator.

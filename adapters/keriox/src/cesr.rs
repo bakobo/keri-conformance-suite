@@ -30,11 +30,7 @@ use said::version::SerializationInfo;
 use serde::Deserialize;
 use serde_json::{json, Value};
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum OpError {
-    Harness(String),
-    Unsupported(String),
-}
+pub use crate::protocol::OpError;
 
 pub const E_REPLAY: &str = "e.self.unknown.replay-mismatch.f";
 pub const E_SERIALIZATION: &str = "e.feature.unsupported.serialization.f";

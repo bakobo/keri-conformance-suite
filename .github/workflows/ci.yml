@@ -134,12 +134,17 @@ jobs:
           uv run kcs check-adapter "$PWD/adapters/keripy/.venv/bin/kcs-adapter-keripy"
           uv run kcs check-adapter "$PWD/adapters/keripy/keripy-1.2.14/.venv/bin/kcs-adapter-keripy"
 
-  # The keriox adapter (adapters/keriox): keriox's CESR layer, cesrox 0.1.8 with said 0.4.3,
-  # pinned exactly in Cargo.toml and Cargo.lock. The toolchain is pinned by
-  # adapters/keriox/rust-toolchain.toml and installed with the runner image's rustup, so no
-  # third-party action is involved.
+  # The keriox adapter (adapters/keriox), once per build: keri-core 0.17.13 with cesrox 0.1.8 and
+  # said 0.4.3 in adapters/keriox, and keri-core 0.18.0 with cesrox 2.0.0-beta.8 and said 0.5.4 in
+  # adapters/keriox/keri-core-0.18, each pinned exactly in its own Cargo.toml and Cargo.lock. Each
+  # build's toolchain is pinned by its rust-toolchain.toml and installed with the runner image's
+  # rustup, so no third-party action is involved.
   keriox-adapter:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build: ["adapters/keriox", "adapters/keriox/keri-core-0.18"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -152,19 +157,19 @@ jobs:
       - name: Sync the runner
         run: uv sync --locked
       - name: Install the pinned Rust toolchain
-        working-directory: adapters/keriox
+        working-directory: ${{ matrix.build }}
         run: |
           rustup toolchain install "$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)" --profile minimal
           rustc --version
       # --locked refuses a Cargo.lock that does not match Cargo.toml, so the build is the pin.
       - name: Build the keriox adapter at its pin
-        working-directory: adapters/keriox
+        working-directory: ${{ matrix.build }}
         run: cargo build --locked
       - name: Adapter tests
-        working-directory: adapters/keriox
+        working-directory: ${{ matrix.build }}
         run: cargo test --locked
       - name: Probe the adapter
-        run: uv run kcs check-adapter "$PWD/adapters/keriox/target/debug/kcs-adapter-keriox"
+        run: uv run kcs check-adapter "$PWD/${{ matrix.build }}/target/debug/kcs-adapter-keriox"
 
   # The Affinidi adapter (adapters/affinidi/README.md). It builds the adapter against its exact
   # crates.io pins from Cargo.lock with the toolchain rust-toolchain.toml names, runs the
