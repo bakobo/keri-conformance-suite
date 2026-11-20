@@ -295,3 +295,28 @@ fn encode_in_the_binary_domain_is_unsupported() {
         other => panic!("{other:?}"),
     }
 }
+
+/// cesrox frames a JSON body as one JSON value (payload/message.rs, json_message) and nothing in
+/// cesrox, said or keri-core compares that extent with the version string's size, so a body that
+/// declares the wrong size is accepted; `size` is what said read and `end` what cesrox consumed.
+#[test]
+fn cesrox_frames_a_body_by_its_json_not_by_its_declared_size() {
+    for (declared, size) in [("000000", 0), ("000fff", 4095)] {
+        let body = BODY.replace("00012b", declared);
+        let mut expected = message(0);
+        expected["size"] = json!(size);
+        assert_eq!(items(&body), vec![expected]);
+    }
+}
+
+/// cesrox 2.0.0-beta.8 never checks a raw value's length against its code when it writes one
+/// (it declares IncorrectLengthError and never raises it): it pads with leading zero bytes, so 31
+/// and 32 zero bytes encode alike under D, and an empty raw value panics in its writer.
+#[test]
+fn cesrox_encodes_without_checking_the_raw_length() {
+    assert_eq!(
+        encode("D", &[0u8; 31], "text").unwrap(),
+        encode("D", &[0u8; 32], "text").unwrap()
+    );
+    assert!(std::panic::catch_unwind(|| encode("D", &[], "text")).is_err());
+}
