@@ -180,6 +180,9 @@ It shares with the 0.17.13 build the files that touch no keriox API: `src/protoc
 | keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keri-escrow` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 3 | [2026-10-16, suite 819ecdd4](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keri-escrow.json) |
 | keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keri-v1.0.1` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 114 | [2026-10-16, suite 819ecdd4](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keri-v1.0.1.json) |
 | keri-core 0.17.13 (cesrox 0.1.8, said 0.4.3) | `keripy-1x-interop` | not-interoperable | 0 / 0 | 0 / 0 | 146 / 16 | 5 | [2026-10-16, suite 819ecdd4](../../results/keri-core/0.17.13-cesrox-0.1.8-said-0.4.3/keripy-1x-interop.json) |
+| keri-core 0.18.0 (cesrox 2.0.0-beta.8, said 0.5.4) | `cesr-strict` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 2 | [2026-11-20, suite a737246f](../../results/keri-core/0.18.0-cesrox-2.0.0-beta.8-said-0.5.4/cesr-strict.json) |
+| keri-core 0.18.0 (cesrox 2.0.0-beta.8, said 0.5.4) | `cesr-v1.0` | not-conformant | 6 / 2 | 0 / 0 | 0 / 0 | 34 | [2026-11-20, suite a737246f](../../results/keri-core/0.18.0-cesrox-2.0.0-beta.8-said-0.5.4/cesr-v1.0.json) |
+| keri-core 0.18.0 (cesrox 2.0.0-beta.8, said 0.5.4) | `keripy-1x-interop` | no-evidence | 0 / 0 | 0 / 0 | 0 / 0 | 43 | [2026-11-20, suite a737246f](../../results/keri-core/0.18.0-cesrox-2.0.0-beta.8-said-0.5.4/keripy-1x-interop.json) |
 
 <!-- END generated results -->
 
