@@ -32,6 +32,19 @@ updates:
       routine:
         patterns: ["*"]
   - package-ecosystem: "cargo"
+    directory: "/adapters/keriox/keri-core-0.18"
+    schedule:
+      interval: "weekly"
+    # The keri-core 0.18.0 build pins keri-core and the cesrox and said versions it resolves to
+    # (adapters/keriox/README.md).
+    ignore:
+      - dependency-name: "keri-core"
+      - dependency-name: "cesrox"
+      - dependency-name: "said"
+    groups:
+      routine:
+        patterns: ["*"]
+  - package-ecosystem: "cargo"
     directory: "/adapters/affinidi"
     schedule:
       interval: "weekly"

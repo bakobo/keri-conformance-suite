@@ -306,11 +306,23 @@ def test_the_real_instances_build_from_their_lockfiles():
     commands = {i.name: [" ".join(argv) for _, argv, _ in i.build] for i in P.INSTANCES}
     assert commands["keripy-1.2.14"] == ["uv sync --locked"]
     assert dict(P.INSTANCES[1].build[0][2]) == {"UV_PYTHON": "3.12"}
-    assert (commands["keriox"] == commands["affinidi"] == commands["devrandom"]
-            == ["cargo build --locked"])
+    assert (commands["keriox"] == commands["keriox-0.18"] == commands["affinidi"]
+            == commands["devrandom"] == ["cargo build --locked"])
     assert commands["signify-ts"] == ["npm ci --no-audit --no-fund"]
     assert commands["keri-go"] == ["go build -mod=readonly -o kcs-adapter-keri-go ."]
     assert commands["cesrixir"] == ["bin/build"]
+
+
+def test_the_keriox_builds_share_an_adapter_name_and_readme_but_not_a_directory():
+    """keri-core 0.18.0 is tested beside 0.17.13, as keripy 1.2.14 is beside keripy: one adapter
+    and README, a separate project with its own lockfile (this.i, decision 7lxj5552)."""
+    builds = {i.name: i for i in P.INSTANCES}
+    old, new = builds["keriox"], builds["keriox-0.18"]
+    assert old.adapter == new.adapter == "kcs-adapter-keriox"
+    assert old.readme == new.readme
+    assert new.build[0][0] == "adapters/keriox/keri-core-0.18" != old.build[0][0]
+    assert new.executable == "adapters/keriox/keri-core-0.18/target/debug/kcs-adapter-keriox"
+    assert new.profiles == ("cesr-v1.0", "cesr-strict", "keripy-1x-interop")
 
 
 def test_an_adapter_that_writes_no_report_is_refused(repo):

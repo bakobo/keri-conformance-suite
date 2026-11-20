@@ -115,6 +115,13 @@ INSTANCES = (
              ("cesr-v1.0", "cesr-strict", "keripy-1x-interop", "keri-v1.0.1", "keri-escrow"),
              "kcs-adapter-keriox",
              "adapters/keriox/README.md"),
+    # keri-core 0.18.0 beside 0.17.13: a separate Cargo project with its own lockfile, the same
+    # adapter and README. It offers only the CESR operations (adapters/keriox/README.md).
+    Instance("keriox-0.18",
+             (_step("adapters/keriox/keri-core-0.18", "cargo", "build", "--locked"),),
+             "adapters/keriox/keri-core-0.18/target/debug/kcs-adapter-keriox",
+             ("cesr-v1.0", "cesr-strict", "keripy-1x-interop"), "kcs-adapter-keriox",
+             "adapters/keriox/README.md"),
     Instance("affinidi", (_step("adapters/affinidi", "cargo", "build", "--locked"),),
              "adapters/affinidi/target/debug/kcs-adapter-affinidi",
              ("cesr-v1.0", "cesr-strict", "keri-v1.0.1", "keri-escrow", "keripy-1x-interop"),
